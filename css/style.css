@@ -1,0 +1,160 @@
+/* ===== 旅游网站共用样式 ===== */
+
+/* CSS变量 */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #f59e0b;
+  --success: #10b981;
+  --danger: #ef4444;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-300: #d1d5db;
+  --gray-600: #4b5563;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+  --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+  --radius: 12px;
+  --transition: all 0.3s ease;
+}
+
+/* 重置 */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.6;color:var(--gray-800);background:var(--gray-50)}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+img{max-width:100%;display:block}
+
+/* 容器 */
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+
+/* 导航栏 */
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:15px 0;background:#fff;box-shadow:var(--shadow);position:sticky;top:0;z-index:100}
+.logo{font-size:1.5rem;font-weight:700;color:var(--primary);display:flex;align-items:center;gap:8px}
+.nav-links{display:flex;gap:8px;flex-wrap:wrap}
+.nav-links a{padding:8px 16px;border-radius:8px;transition:var(--transition);font-size:0.95rem}
+.nav-links a:hover,.nav-links a.active{background:var(--primary);color:#fff}
+.nav-toggle{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:8px}
+.nav-toggle span{width:24px;height:2px;background:var(--gray-800);transition:var(--transition)}
+
+/* Hero区域 */
+.hero{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#fff;padding:60px 0;text-align:center}
+.hero h1{font-size:2.5rem;margin-bottom:15px}
+.hero p{font-size:1.2rem;opacity:0.9;max-width:600px;margin:0 auto}
+
+/* 卡片网格 */
+.card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;padding:40px 0}
+.card{background:#fff;border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);transition:var(--transition);cursor:pointer}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+.card-icon{font-size:3rem;margin-bottom:16px}
+.card h3{font-size:1.25rem;margin-bottom:8px;color:var(--gray-900)}
+.card p{color:var(--gray-600);font-size:0.95rem}
+.card-badge{display:inline-block;padding:4px 12px;background:var(--primary);color:#fff;border-radius:20px;font-size:0.8rem;margin-top:12px}
+
+/* 区域导航（侧边栏布局） */
+.layout{display:flex;gap:30px;padding:40px 0}
+.sidebar{flex-shrink:0;width:220px;background:#fff;border-radius:var(--radius);padding:20px;height:fit-content;position:sticky;top:90px}
+.sidebar h3{font-size:1rem;color:var(--gray-600);margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid var(--gray-200)}
+.sidebar-nav{display:flex;flex-direction:column;gap:4px}
+.sidebar-nav a{padding:10px 14px;border-radius:8px;transition:var(--transition);font-size:0.95rem}
+.sidebar-nav a:hover,.sidebar-nav a.active{background:var(--primary);color:#fff}
+.content{flex:1;min-width:0}
+
+/* 标签页 */
+.tabs{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap}
+.tab{padding:10px 20px;border-radius:8px;background:var(--gray-100);cursor:pointer;transition:var(--transition);border:none;font-size:0.95rem}
+.tab:hover{background:var(--gray-200)}
+.tab.active{background:var(--primary);color:#fff}
+.tab-content{display:none;padding:20px 0}
+.tab-content.active{display:block}
+
+/* 内容卡片 */
+.content-card{background:#fff;border-radius:var(--radius);padding:24px;margin-bottom:20px;box-shadow:var(--shadow)}
+.content-card h2{font-size:1.5rem;margin-bottom:16px;color:var(--gray-900);display:flex;align-items:center;gap:10px}
+.content-card h3{font-size:1.2rem;margin:20px 0 12px;color:var(--gray-800)}
+.content-card ul{padding-left:20px;margin:12px 0}
+.content-card li{margin-bottom:8px;position:relative;padding-left:16px}
+.content-card li::before{content:'✓';position:absolute;left:0;color:var(--success)}
+.content-card .warning li::before{content:'⚠';color:var(--secondary)}
+.content-card .danger li::before{content:'✗';color:var(--danger)}
+
+/* FAQ手风琴 */
+.faq-item{background:#fff;border-radius:var(--radius);margin-bottom:12px;overflow:hidden;box-shadow:var(--shadow)}
+.faq-question{padding:16px 20px;font-weight:600;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:var(--transition)}
+.faq-question:hover{background:var(--gray-50)}
+.faq-question::after{content:'+';font-size:1.5rem;transition:var(--transition)}
+.faq-item.open .faq-question::after{transform:rotate(45deg)}
+.faq-answer{padding:0 20px;max-height:0;overflow:hidden;transition:max-height 0.3s ease}
+.faq-item.open .faq-answer{padding:0 20px 16px;max-height:500px}
+
+/* 联系表单 */
+.form-group{margin-bottom:20px}
+.form-group label{display:block;margin-bottom:8px;font-weight:500}
+.form-group input,.form-group textarea{width:100%;padding:12px 16px;border:2px solid var(--gray-200);border-radius:8px;font-size:1rem;transition:var(--transition)}
+.form-group input:focus,.form-group textarea:focus{border-color:var(--primary);outline:none}
+.form-group textarea{resize:vertical;min-height:120px}
+.btn{padding:12px 24px;border:none;border-radius:8px;font-size:1rem;cursor:pointer;transition:var(--transition);display:inline-flex;align-items:center;gap:8px}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px)}
+
+/* 智能客服按钮 */
+.chatbot-btn{position:fixed;bottom:30px;right:30px;width:60px;height:60px;background:var(--primary);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-lg);transition:var(--transition);z-index:1000;font-size:1.5rem}
+.chatbot-btn:hover{transform:scale(1.1);background:var(--primary-dark)}
+
+/* 客服弹窗 */
+.chatbot-popup{position:fixed;bottom:100px;right:30px;width:380px;height:500px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow-lg);display:none;flex-direction:column;z-index:1000;overflow:hidden}
+.chatbot-popup.open{display:flex}
+.chatbot-header{padding:16px;background:var(--primary);color:#fff;display:flex;justify-content:space-between;align-items:center}
+.chatbot-close{cursor:pointer;font-size:1.5rem;padding:4px 8px}
+.chatbot-body{flex:1;overflow-y:auto;padding:16px}
+.chatbot-input{padding:12px;border-top:1px solid var(--gray-200);display:flex;gap:8px}
+.chatbot-input input{flex:1;padding:10px;border:1px solid var(--gray-200);border-radius:20px}
+.chatbot-input button{background:var(--primary);color:#fff;border:none;padding:10px 16px;border-radius:20px;cursor:pointer}
+.msg{margin-bottom:12px;max-width:80%}
+.msg-user{margin-left:auto;background:var(--primary);color:#fff;padding:10px 14px;border-radius:16px 16px 4px 16px}
+.msg-bot{background:var(--gray-100);padding:10px 14px;border-radius:16px 16px 16px 4px}
+
+/* 页脚 */
+.footer{background:var(--gray-800);color:#fff;padding:40px 0 20px;margin-top:60px}
+.footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;margin-bottom:30px}
+.footer h4{font-size:1.1rem;margin-bottom:16px;color:var(--secondary)}
+.footer a{color:var(--gray-300);display:block;padding:6px 0;transition:var(--transition)}
+.footer a:hover{color:#fff;padding-left:4px}
+.footer-bottom{text-align:center;padding-top:20px;border-top:1px solid var(--gray-600);color:var(--gray-400);font-size:0.9rem}
+
+/* 加载动画 */
+.loading{text-align:center;padding:40px;color:var(--gray-600)}
+.spinner{width:40px;height:40px;border:3px solid var(--gray-200);border-top-color:var(--primary);border-radius:50%;animation:spin 1s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 懒加载占位 */
+.lazy-placeholder{background:linear-gradient(90deg,var(--gray-100) 25%,var(--gray-200) 50%,var(--gray-100) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* 空状态 */
+.empty-state{text-align:center;padding:60px 20px;color:var(--gray-600)}
+.empty-state .icon{font-size:4rem;margin-bottom:16px;opacity:0.5}
+
+/* 响应式 */
+@media(max-width:768px){
+  .nav-links{	display:none;position:absolute;top:100%;left:0;right:0;background:#fff;flex-direction:column;padding:16px;box-shadow:var(--shadow)}
+  .nav-links.open{display:flex}
+  .nav-toggle{display:flex}
+  .layout{flex-direction:column}
+  .sidebar{width:100%;position:static}
+  .hero h1{font-size:1.8rem}
+  .chatbot-popup{width:calc(100vw - 40px);right:20px;bottom:90px}
+}
+
+/* 面包屑 */
+.breadcrumb{display:flex;align-items:center;gap:8px;padding:16px 0;font-size:0.9rem;color:var(--gray-600)}
+.breadcrumb a:hover{color:var(--primary)}
+.breadcrumb span{color:var(--gray-300)}
+
+/* 分页 */
+.pagination{display:flex;justify-content:center;gap:8px;margin-top:30px}
+.pagination button{padding:8px 14px;border:1px solid var(--gray-200);background:#fff;border-radius:6px;cursor:pointer;transition:var(--transition)}
+.pagination button:hover,.pagination button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
