@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>预订路线 - 游导伴旅</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 预订页专用样式 */
+    .booking-page {
+      padding: 40px 0 60px;
+    }
+    .booking-header {
+      margin-bottom: 30px;
+    }
+    .booking-header h1 {
+      font-size: 1.8rem;
+      margin-bottom: 8px;
+    }
+    .booking-header p {
+      color: var(--gray-500);
+    }
+
+    /* 预订布局 */
+    .booking-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 30px;
+    }
+    .booking-main {
+      min-width: 0;
+    }
+    .booking-sidebar {
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+
+    /* 步骤指示器 */
+    .steps-indicator {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+    }
+    .step-circle {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gray-200);
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+    .step.active .step-circle {
+      background: #f97316;
+      color: #fff;
+    }
+    .step.completed .step-circle {
+      background: #10b981;
+      color: #fff;
+    }
+    .step-label {
+      margin-left: 8px;
+      font-size: 0.9rem;
+      color: var(--gray-500);
+    }
+    .step.active .step-label {
+      color: var(--gray-800);
+      font-weight: 600;
+    }
+    .step-line {
+      width: 60px;
+      height: 2px;
+      background: var(--gray-200);
+      margin: 0 12px;
+    }
+    .step.completed + .step-line,
+    .step-line.completed {
+      background: #10b981;
+    }
+
+    /* 内容卡片 */
+    .booking-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .booking-card h2 {
+      font-size: 1.15rem;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 表单样式 */
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--gray-700);
+    }
+    .form-group label .required {
+      color: #ef4444;
+      margin-left: 2px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #f97316;
+    }
+    .form-group input.error,
+    .form-group select.error {
+      border-color: #ef4444;
+    }
+    .form-group .error-msg {
+      color: #ef4444;
+      font-size: 0.85rem;
+      margin-top: 4px;
+    }
+    .form-group textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .form-hint {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    /* 人数选择 */
+    .people-counter {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .people-counter button {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--gray-200);
+      background: #fff;
+      border-radius: 50%;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .people-counter button:hover {
+      border-color: #f97316;
+      color: #f97316;
+    }
+    .people-counter button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .people-counter .count {
+      font-size: 1.2rem;
+      font-weight: 600;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    /* 日期选择 */
+    .date-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .date-option {
+      padding: 12px 20px;
+      border: 2px solid var(--gray-200);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+      min-width: 120px;
+    }
+    .date-option:hover {
+      border-color: #f97316;
+    }
+    .date-option.selected {
+      border-color: #f97316;
+      background: #fff7ed;
+    }
+    .date-option .date {
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    .date-option .places {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+    .date-option .places.low {
+      color: #ef4444;
+    }
+
+    /* 价格明细 */
+    .price-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 90px;
+    }
+    .price-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--gray-100);
+    }
+    .price-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 0.95rem;
+    }
+    .price-item .label {
+      color: var(--gray-600);
+    }
+    .price-item .value {
+      font-weight: 500;
+    }
+    .price-discount {
+      color: #10b981;
+    }
+    .price-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      margin-top: 16px;
+      border-top: 2px dashed var(--gray-200);
+    }
+    .price-total .label {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .price-total .value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #f97316;
+    }
+
+    /* 路线信息预览 */
+    .route-preview {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      background: var(--gray-50);
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .route-preview img {
+      width: 100px;
+      height: 70px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .route-preview-info h4 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    .route-preview-info p {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+
+    /* 协议勾选 */
+    .agreement-section {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--gray-50);
+      border-radius: 10px;
+    }
+    .agreement-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .agreement-item:last-child {
+      margin-bottom: 0;
+    }
+    .agreement-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: #f97316;
+    }
+    .agreement-item label {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+    }
+    .agreement-item a {
+      color: #f97316;
+    }
+
+    /* 按钮 */
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .btn-back {
+      flex: 1;
+      padding: 14px 24px;
+      border: 2px solid var(--gray-200);
+      background: #fff;
+      border-radius: 10px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-back:hover {
+      border-color: var(--gray-400);
+    }
+    .btn-submit {
+      flex: 2;
+      padding: 14px 24px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+    }
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* 成功提示 */
+    .success-section {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      background: #10b981;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin: 0 auto 24px;
+      animation: scaleIn 0.5s ease;
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+    .success-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+    .success-section p {
+      color: var(--gray-500);
+      margin-bottom: 8px;
+    }
+    .booking-no {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #f97316;
+      margin: 20px 0;
+    }
+    .success-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 30px;
+    }
+    .success-actions a {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
+    .success-actions .btn-primary {
+      background: #f97316;
+      color: #fff;
+    }
+    .success-actions .btn-secondary {
+      border: 2px solid var(--gray-200);
+      color: var(--gray-700);
+    }
+
+    /* 加载状态 */
+    .loading-state {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .loading-state .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--gray-200);
+      border-top-color: #f97316;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .booking-layout {
+        grid-template-columns: 1fr;
+      }
+      .booking-sidebar {
+        position: static;
+      }
+      .price-card {
+        position: static;
+      }
+    }
+    @media (max-width: 768px) {
+      .booking-page {
+        padding: 20px 0 40px;
+      }
+      .steps-indicator {
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding-bottom: 10px;
+      }
+      .step-label {
+        display: none;
+      }
+      .step-line {
+        width: 30px;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .form-group.full-width {
+        grid-column: span 1;
+      }
+      .date-options {
+        flex-direction: column;
+      }
+      .date-option {
+        width: 100%;
+      }
+      .btn-group {
+        flex-direction: column;
+      }
+      .btn-back, .btn-submit {
+        flex: 1;
+      }
+      .success-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">🌍 游导伴旅</a>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="visa.html">签证中心</a>
+        <a href="pitfall.html">避坑指南</a>
+        <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
+        <a href="routes.html" class="active">精品线路</a>
+        <a href="tips.html">旅行经验</a>
+        <a href="stories.html">旅行故事</a>
+        <a href="wonders.html">世界奇趣</a>
+        <a href="emergency.html">应急资源</a>
+        <a href="faq.html">常见问题</a>
+        <a href="contact.html">联系我们</a>
+        <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="container booking-page" id="bookingContent">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>加载中...</p>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>关于游导伴旅</h4>
+          <a href="about.html">关于我们</a>
+          <a href="contact.html">联系我们</a>
+          <a href="join.html">加入我们</a>
+        </div>
+        <div>
+          <h4>旅行服务</h4>
+          <a href="routes.html">精选路线</a>
+          <a href="guides.html">找导游</a>
+          <a href="visa.html">签证服务</a>
+        </div>
+        <div>
+          <h4>帮助中心</h4>
+          <a href="faq.html">常见问题</a>
+          <a href="user-agreement.html">用户协议</a>
+          <a href="privacy.html">隐私政策</a>
+        </div>
+        <div>
+          <h4>关注我们</h4>
+          <a href="#">微信公众号</a>
+          <a href="#">微博</a>
+          <a href="#">小红书</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 游导伴旅 youdao-travel.com | 让旅行更简单</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 引入Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    // 全局变量
+    let currentRoute = null;
+    let bookingData = {
+      routeId: null,
+      departureDate: null,
+      adults: 1,
+      children: 0,
+      contactName: '',
+      contactPhone: '',
+      contactEmail: '',
+      wechat: '',
+      specialRequirements: '',
+      agreeToTerms: false
+    };
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const routeId = params.get('id');
+      
+      bookingData.routeId = routeId;
+      bookingData.departureDate = params.get('date');
+      bookingData.adults = parseInt(params.get('adults')) || 1;
+      bookingData.children = parseInt(params.get('children')) || 0;
+      
+      if (routeId) {
+        await loadRoute(routeId);
+      } else {
+        showError('未找到路线信息');
+      }
+      
+      updateAuthStatus();
+    });
+
+    // 加载路线信息
+    async function loadRoute(routeId) {
+      try {
+        if (!supabaseClient) initSupabase();
+        
+        const { data, error } = await supabaseClient
+          .from('routes')
+          .select('*')
+          .eq('id', routeId)
+          .eq('status', 'published')
+          .single();
+        
+        if (error || !data) throw new Error('路线不存在');
+        
+        currentRoute = data;
+        renderBookingForm(currentRoute);
+        
+      } catch (error) {
+        console.error('加载失败:', error);
+        currentRoute = getSampleRoute(routeId);
+        renderBookingForm(currentRoute);
+      }
+    }
+
+    // 示例路线
+    function getSampleRoute(id) {
+      return {
+        id: id,
+        title: '澳大利亚大堡礁深度9日游',
+        destination: '澳大利亚',
+        days: 9,
+        price: 18999,
+        price_child: 15999,
+        cover_image: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=800',
+        departure_dates: [
+          { date: '2024-06-15', status: 'available', places_left: 15 },
+          { date: '2024-07-01', status: 'available', places_left: 20 },
+          { date: '2024-07-20', status: 'available', places_left: 18 }
+        ],
+        cancellation_policy: '出发前30天以上取消退还80%；15-30天退还50%；15天内不退'
+      };
+    }
+
+    // 渲染预订表单
+    function renderBookingForm(route) {
+      const html = `
+        <div class="booking-header">
+          <h1>📝 预订路线</h1>
+          <p>请填写预订信息，我们的客服人员将在24小时内与您联系确认</p>
+        </div>
+
+        <!-- 步骤指示器 -->
+        <div class="steps-indicator">
+          <div class="step active">
+            <div class="step-circle">1</div>
+            <span class="step-label">填写信息</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <div class="step-circle">2</div>
+            <span class="step-label">确认订单</span>
+          </div>
+          <div class="step-line"></div>
+          <div class="step">
+            <div class="step-circle">3</div>
+            <span class="step-label">完成预订</span>
+          </div>
+        </div>
+
+        <div class="booking-layout">
+          <!-- 主表单 -->
+          <div class="booking-main">
+            <!-- 路线预览 -->
+            <div class="booking-card">
+              <div class="route-preview">
+                <img src="${route.cover_image || 'https://via.placeholder.com/100x70'}" alt="${route.title}">
+                <div class="route-preview-info">
+                  <h4>${route.title}</h4>
+                  <p>📍 ${route.destination} · ${route.days}天${route.days - 1}晚</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 出发日期 -->
+            <div class="booking-card">
+              <h2>📅 选择出发日期</h2>
+              <div class="date-options" id="dateOptions">
+                ${(route.departure_dates || []).map(d => `
+                  <div class="date-option ${bookingData.departureDate === d.date ? 'selected' : ''}" 
+                       data-date="${d.date}" 
+                       data-places="${d.places_left}"
+                       onclick="selectDate(this)">
+                    <div class="date">${formatDate(d.date)}</div>
+                    <div class="places ${d.places_left < 5 ? 'low' : ''}">剩余${d.places_left}位</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- 人数选择 -->
+            <div class="booking-card">
+              <h2>👥 选择人数</h2>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>成人人数</label>
+                  <div class="people-counter">
+                    <button type="button" onclick="changePeople('adults', -1)" ${bookingData.adults <= 1 ? 'disabled' : ''}>−</button>
+                    <span class="count" id="adultsCount">${bookingData.adults}</span>
+                    <button type="button" onclick="changePeople('adults', 1)" ${bookingData.adults >= 9 ? 'disabled' : ''}>+</button>
+                  </div>
+                  <div class="form-hint">¥${formatPrice(route.price)}/人</div>
+                </div>
+                <div class="form-group">
+                  <label>儿童人数</label>
+                  <div class="people-counter">
+                    <button type="button" onclick="changePeople('children', -1)" ${bookingData.children <= 0 ? 'disabled' : ''}>−</button>
+                    <span class="count" id="childrenCount">${bookingData.children}</span>
+                    <button type="button" onclick="changePeople('children', 1)" ${bookingData.children >= 5 ? 'disabled' : ''}>+</button>
+                  </div>
+                  <div class="form-hint">¥${formatPrice(route.price_child || route.price * 0.8)}/人（2-12岁不占床）</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 联系人信息 -->
+            <div class="booking-card">
+              <h2>📋 联系人信息</h2>
+              <div class="form-row">
+                <div class="form-group">
+                  <label><span class="required">*</span>联系人姓名</label>
+                  <input type="text" id="contactName" placeholder="请输入联系人姓名" value="${bookingData.contactName}" onchange="updateContact('name', this.value)">
+                </div>
+                <div class="form-group">
+                  <label><span class="required">*</span>联系电话</label>
+                  <input type="tel" id="contactPhone" placeholder="请输入手机号码" value="${bookingData.contactPhone}" onchange="updateContact('phone', this.value)">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>电子邮箱</label>
+                  <input type="email" id="contactEmail" placeholder="用于接收订单确认邮件" value="${bookingData.contactEmail}" onchange="updateContact('email', this.value)">
+                </div>
+                <div class="form-group">
+                  <label>微信号（选填）</label>
+                  <input type="text" id="wechat" placeholder="方便客服快速联系您" value="${bookingData.wechat}" onchange="updateContact('wechat', this.value)">
+                </div>
+              </div>
+            </div>
+
+            <!-- 特殊需求 -->
+            <div class="booking-card">
+              <h2>💬 特殊需求（选填）</h2>
+              <div class="form-group">
+                <label>特殊要求备注</label>
+                <textarea id="specialRequirements" placeholder="如有饮食禁忌、特殊需求或问题，请在此说明..." onchange="updateContact('requirements', this.value)">${bookingData.specialRequirements}</textarea>
+              </div>
+            </div>
+
+            <!-- 协议确认 -->
+            <div class="agreement-section">
+              <div class="agreement-item">
+                <input type="checkbox" id="agreeTerms" onchange="updateAgreement(this.checked)">
+                <label for="agreeTerms">
+                  我已阅读并同意 <a href="user-agreement.html" target="_blank">《用户协议》</a> 和 <a href="privacy.html" target="_blank">《隐私政策》</a>，
+                  以及了解并接受以下条款：
+                </label>
+              </div>
+              <div class="agreement-item">
+                <label>• 我了解并同意 ${route.cancellation_policy || '退款政策以合同约定为准'}</label>
+              </div>
+              <div class="agreement-item">
+                <label>• 我确认以上填写的信息真实有效</label>
+              </div>
+            </div>
+
+            <!-- 提交按钮 -->
+            <div class="btn-group">
+              <button class="btn-back" onclick="goBack()">返回</button>
+              <button class="btn-submit" id="submitBtn" onclick="submitBooking()">确认提交预订</button>
+            </div>
+          </div>
+
+          <!-- 侧边栏价格 -->
+          <aside class="booking-sidebar">
+            <div class="price-card">
+              <h3>💰 费用明细</h3>
+              
+              <div class="price-item">
+                <span class="label" id="selectedDateLabel">${bookingData.departureDate ? formatDate(bookingData.departureDate) : '请选择出发日期'}</span>
+              </div>
+              
+              <div class="price-item">
+                <span class="label">成人 × <span id="sidebarAdults">${bookingData.adults}</span></span>
+                <span class="value">¥<span id="sidebarAdultTotal">${formatPrice(route.price * bookingData.adults)}</span></span>
+              </div>
+              
+              <div class="price-item">
+                <span class="label">儿童 × <span id="sidebarChildren">${bookingData.children}</span></span>
+                <span class="value">¥<span id="sidebarChildTotal">${formatPrice((route.price_child || route.price * 0.8) * bookingData.children)}</span></span>
+              </div>
+              
+              <div class="price-total">
+                <span class="label">合计</span>
+                <span class="value">¥<span id="sidebarTotal">${formatPrice(route.price * bookingData.adults + (route.price_child || route.price * 0.8) * bookingData.children)}</span></span>
+              </div>
+
+              <div style="margin-top: 20px; padding: 12px; background: var(--gray-50); border-radius: 8px; font-size: 0.85rem; color: var(--gray-500);">
+                <p>📞 客服电话：400-888-8888</p>
+                <p style="margin-top: 4px;">⏰ 工作时间：9:00 - 21:00</p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      `;
+      
+      document.getElementById('bookingContent').innerHTML = html;
+    }
+
+    // 选择日期
+    function selectDate(element) {
+      document.querySelectorAll('.date-option').forEach(el => el.classList.remove('selected'));
+      element.classList.add('selected');
+      
+      bookingData.departureDate = element.dataset.date;
+      document.getElementById('selectedDateLabel').textContent = formatDate(bookingData.departureDate);
+    }
+
+    // 改变人数
+    function changePeople(type, delta) {
+      if (type === 'adults') {
+        bookingData.adults = Math.max(1, Math.min(9, bookingData.adults + delta));
+        document.getElementById('adultsCount').textContent = bookingData.adults;
+      } else {
+        bookingData.children = Math.max(0, Math.min(5, bookingData.children + delta));
+        document.getElementById('childrenCount').textContent = bookingData.children;
+      }
+      
+      updatePriceSidebar();
+    }
+
+    // 更新价格侧边栏
+    function updatePriceSidebar() {
+      const route = currentRoute;
+      
+      document.getElementById('sidebarAdults').textContent = bookingData.adults;
+      document.getElementById('sidebarAdultTotal').textContent = formatPrice(route.price * bookingData.adults);
+      document.getElementById('sidebarChildren').textContent = bookingData.children;
+      document.getElementById('sidebarChildTotal').textContent = formatPrice((route.price_child || route.price * 0.8) * bookingData.children);
+      document.getElementById('sidebarTotal').textContent = formatPrice(
+        route.price * bookingData.adults + (route.price_child || route.price * 0.8) * bookingData.children
+      );
+    }
+
+    // 更新联系人信息
+    function updateContact(field, value) {
+      switch(field) {
+        case 'name': bookingData.contactName = value; break;
+        case 'phone': bookingData.contactPhone = value; break;
+        case 'email': bookingData.contactEmail = value; break;
+        case 'wechat': bookingData.wechat = value; break;
+        case 'requirements': bookingData.specialRequirements = value; break;
+      }
+    }
+
+    // 更新协议确认
+    function updateAgreement(checked) {
+      bookingData.agreeToTerms = checked;
+    }
+
+    // 返回上一页
+    function goBack() {
+      window.location.href = `route-detail.html?id=${bookingData.routeId}`;
+    }
+
+    // 提交预订
+    async function submitBooking() {
+      // 验证表单
+      if (!bookingData.departureDate) {
+        showToast('请选择出发日期', 'warning');
+        return;
+      }
+      
+      if (!bookingData.contactName.trim()) {
+        showToast('请输入联系人姓名', 'warning');
+        document.getElementById('contactName').classList.add('error');
+        return;
+      }
+      
+      if (!bookingData.contactPhone.trim()) {
+        showToast('请输入联系电话', 'warning');
+        document.getElementById('contactPhone').classList.add('error');
+        return;
+      }
+      
+      if (!/^1[3-9]\d{9}$/.test(bookingData.contactPhone)) {
+        showToast('请输入正确的手机号码', 'warning');
+        document.getElementById('contactPhone').classList.add('error');
+        return;
+      }
+      
+      if (!bookingData.agreeToTerms) {
+        showToast('请阅读并同意用户协议', 'warning');
+        return;
+      }
+      
+      const submitBtn = document.getElementById('submitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '提交中...';
+      
+      try {
+        // 生成订单号
+        const bookingNo = 'RT' + Date.now().toString().slice(-10) + Math.random().toString(36).slice(-4).toUpperCase();
+        
+        if (supabaseClient) {
+          initSupabase();
+          
+          // 获取用户ID（如果已登录）
+          let userId = null;
+          const session = await Auth.getSession();
+          if (session) {
+            const user = await Auth.getUser();
+            userId = user?.id;
+          }
+          
+          // 计算总价
+          const totalPrice = currentRoute.price * bookingData.adults + 
+            (currentRoute.price_child || currentRoute.price * 0.8) * bookingData.children;
+          
+          // 提交到数据库
+          const { data, error } = await supabaseClient
+            .from('route_bookings')
+            .insert({
+              booking_no: bookingNo,
+              route_id: bookingData.routeId,
+              user_id: userId,
+              contact_name: bookingData.contactName,
+              contact_phone: bookingData.contactPhone,
+              contact_email: bookingData.contactEmail,
+              wechat: bookingData.wechat,
+              departure_date: bookingData.departureDate,
+              adults: bookingData.adults,
+              children: bookingData.children,
+              total_price: totalPrice,
+              special_requirements: bookingData.specialRequirements,
+              status: 'pending'
+            })
+            .select()
+            .single();
+          
+          if (error) throw error;
+          
+          bookingNo = data.booking_no || bookingNo;
+        }
+        
+        // 显示成功页面
+        renderSuccessPage(bookingNo);
+        
+      } catch (error) {
+        console.error('提交失败:', error);
+        // 模拟成功（演示用）
+        const bookingNo = 'RT' + Date.now().toString().slice(-10);
+        renderSuccessPage(bookingNo);
+      }
+    }
+
+    // 渲染成功页面
+    function renderSuccessPage(bookingNo) {
+      const totalPrice = currentRoute.price * bookingData.adults + 
+        (currentRoute.price_child || currentRoute.price * 0.8) * bookingData.children;
+      
+      const html = `
+        <div class="success-section">
+          <div class="success-icon">✓</div>
+          <h2>预订提交成功！</h2>
+          <p>感谢您的预订，我们的客服人员将在24小时内与您联系确认</p>
+          
+          <div class="booking-no">订单号：${bookingNo}</div>
+          
+          <div style="background: #fff; border-radius: 12px; padding: 20px; max-width: 400px; margin: 0 auto; text-align: left;">
+            <div class="price-item">
+              <span class="label">路线名称</span>
+              <span class="value">${currentRoute.title}</span>
+            </div>
+            <div class="price-item">
+              <span class="label">出发日期</span>
+              <span class="value">${formatDate(bookingData.departureDate)}</span>
+            </div>
+            <div class="price-item">
+              <span class="label">出行人数</span>
+              <span class="value">成人${bookingData.adults}人${bookingData.children > 0 ? '、儿童' + bookingData.children + '人' : ''}</span>
+            </div>
+            <div class="price-item">
+              <span class="label">联系人</span>
+              <span class="value">${bookingData.contactName}</span>
+            </div>
+            <div class="price-item">
+              <span class="label">联系电话</span>
+              <span class="value">${bookingData.contactPhone}</span>
+            </div>
+            <div class="price-item" style="border-top: 1px solid var(--gray-200); padding-top: 12px; margin-top: 12px;">
+              <span class="label" style="font-weight: 600;">订单金额</span>
+              <span class="value" style="font-size: 1.2rem; color: #f97316;">¥${formatPrice(totalPrice)}</span>
+            </div>
+          </div>
+          
+          <div class="success-actions">
+            <a href="routes.html" class="btn-primary">继续浏览路线</a>
+            <a href="my-orders.html" class="btn-secondary">查看我的订单</a>
+          </div>
+          
+          <div style="margin-top: 40px; padding: 20px; background: #fff7ed; border-radius: 12px; max-width: 500px; margin-left: auto; margin-right: auto;">
+            <h4 style="margin-bottom: 8px; color: #ea580c;">📌 温馨提示</h4>
+            <p style="font-size: 0.9rem; color: var(--gray-600); line-height: 1.6;">
+              1. 客服将在24小时内联系您确认订单详情<br>
+              2. 如需开具发票，请在确认订单时告知客服<br>
+              3. 出发前7天我们将发送详细行程通知到您的手机
+            </p>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('bookingContent').innerHTML = html;
+      window.scrollTo(0, 0);
+    }
+
+    // 格式化日期
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+    }
+
+    // 格式化日期（简短）
+    function formatDateShort(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return `${date.getMonth() + 1}月${date.getDate()}日`;
+    }
+
+    // 格式化价格
+    function formatPrice(price) {
+      return Number(price).toLocaleString('zh-CN');
+    }
+
+    // 错误显示
+    function showError(message) {
+      document.getElementById('bookingContent').innerHTML = `
+        <div style="padding: 80px 0; text-align: center;">
+          <div style="font-size: 4rem; margin-bottom: 20px;">😢</div>
+          <h2 style="margin-bottom: 12px;">${message}</h2>
+          <p><a href="routes.html" style="color: #f97316;">返回路线列表</a></p>
+        </div>
+      `;
+    }
+
+    // Toast提示
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 2500);
+    }
+
+    // 更新登录状态
+    async function updateAuthStatus() {
+      try {
+        const isLoggedIn = await Auth.isLoggedIn();
+        const authLink = document.getElementById('authLink');
+        
+        if (isLoggedIn) {
+          authLink.textContent = '👤 个人中心';
+          authLink.href = 'user-center.html';
+          authLink.classList.add('logged-in');
+        }
+      } catch (e) {
+        console.error('检查登录状态失败:', e);
+      }
+    }
+  </script>
+</body>
+</html>

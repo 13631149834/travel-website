@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>路线详情 - 游导伴旅</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 详情页专用样式 */
+    .detail-header {
+      position: relative;
+      height: 400px;
+      overflow: hidden;
+    }
+    .detail-banner {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .detail-banner-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(transparent, rgba(0,0,0,0.7));
+      padding: 60px 0 30px;
+    }
+    .detail-banner-content {
+      position: relative;
+      z-index: 1;
+    }
+    .detail-breadcrumb {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+    .detail-breadcrumb a {
+      color: rgba(255,255,255,0.8);
+    }
+    .detail-breadcrumb a:hover {
+      color: #fff;
+    }
+    .detail-title {
+      font-size: 2rem;
+      color: #fff;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    .detail-subtitle {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.9);
+    }
+
+    /* 概览信息栏 */
+    .overview-bar {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: -40px;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+    .overview-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+    }
+    .overview-item {
+      text-align: center;
+      padding: 12px;
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+    .overview-item:hover {
+      background: #fff7ed;
+    }
+    .overview-icon {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+    .overview-label {
+      color: var(--gray-500);
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .overview-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+    .overview-value.price {
+      color: #f97316;
+      font-size: 1.4rem;
+    }
+
+    /* 页面布局 */
+    .detail-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 30px;
+      padding-bottom: 60px;
+    }
+    .detail-main {
+      min-width: 0;
+    }
+    .detail-sidebar {
+      position: sticky;
+      top: 90px;
+      height: fit-content;
+    }
+
+    /* 内容卡片 */
+    .detail-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .detail-card h2 {
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .detail-card h2 .icon {
+      font-size: 1.5rem;
+    }
+
+    /* 行程亮点 */
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .highlight-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      background: #fff7ed;
+      border-radius: 12px;
+    }
+    .highlight-icon {
+      width: 40px;
+      height: 40px;
+      background: #f97316;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .highlight-text h4 {
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+    .highlight-text p {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+
+    /* 主题标签 */
+    .theme-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .theme-tag {
+      padding: 6px 14px;
+      background: var(--gray-100);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: var(--gray-600);
+    }
+
+    /* 详细行程 */
+    .itinerary-day {
+      border: 1px solid var(--gray-200);
+      border-radius: 12px;
+      margin-bottom: 16px;
+      overflow: hidden;
+    }
+    .itinerary-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--gray-50);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .itinerary-header:hover {
+      background: var(--gray-100);
+    }
+    .itinerary-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .itinerary-day-num {
+      width: 36px;
+      height: 36px;
+      background: #f97316;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+    .itinerary-day-title {
+      font-weight: 600;
+    }
+    .itinerary-day-city {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+    .itinerary-toggle {
+      font-size: 1.5rem;
+      color: var(--gray-400);
+      transition: transform 0.3s;
+    }
+    .itinerary-day.open .itinerary-toggle {
+      transform: rotate(180deg);
+    }
+    .itinerary-content {
+      display: none;
+      padding: 20px;
+      background: #fff;
+    }
+    .itinerary-day.open .itinerary-content {
+      display: block;
+    }
+    .itinerary-summary {
+      margin-bottom: 16px;
+      font-size: 1rem;
+      color: var(--gray-700);
+    }
+    .itinerary-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: var(--gray-50);
+      border-radius: 8px;
+    }
+    .itinerary-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      color: var(--gray-600);
+    }
+    .itinerary-activities {
+      margin-bottom: 16px;
+    }
+    .itinerary-activities h4 {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+    .itinerary-activities ul {
+      padding-left: 20px;
+    }
+    .itinerary-activities li {
+      position: relative;
+      padding-left: 16px;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+    .itinerary-activities li::before {
+      content: '📍';
+      position: absolute;
+      left: 0;
+    }
+    .itinerary-hotel {
+      padding: 12px;
+      background: #fef3c7;
+      border-radius: 8px;
+      font-size: 0.9rem;
+    }
+    .itinerary-hotel strong {
+      color: #d97706;
+    }
+    .itinerary-tips {
+      margin-top: 12px;
+      padding: 12px;
+      background: #dbeafe;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #1e40af;
+    }
+
+    /* 费用说明 */
+    .cost-section {
+      margin-bottom: 20px;
+    }
+    .cost-section h4 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cost-list {
+      padding-left: 24px;
+    }
+    .cost-list li {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 10px;
+      font-size: 0.95rem;
+    }
+    .cost-include li::before {
+      content: '✅';
+      position: absolute;
+      left: 0;
+    }
+    .cost-exclude li::before {
+      content: '❌';
+      position: absolute;
+      left: 0;
+    }
+
+    /* 预订须知 */
+    .notice-item {
+      margin-bottom: 20px;
+    }
+    .notice-item h4 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .notice-item p {
+      color: var(--gray-600);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      padding-left: 24px;
+    }
+
+    /* 导游信息 */
+    .guide-card {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      background: var(--gray-50);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .guide-card:hover {
+      background: var(--gray-100);
+    }
+    .guide-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .guide-info h4 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+    }
+    .guide-info p {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+
+    /* 侧边栏预订卡片 */
+    .booking-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 90px;
+    }
+    .booking-price {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .booking-price .label {
+      color: var(--gray-500);
+      font-size: 0.9rem;
+    }
+    .booking-price .value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f97316;
+    }
+    .booking-price .unit {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+    }
+    .booking-form {
+      margin-bottom: 20px;
+    }
+    .booking-form .form-group {
+      margin-bottom: 16px;
+    }
+    .booking-form label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: var(--gray-700);
+    }
+    .booking-form select,
+    .booking-form input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.95rem;
+    }
+    .booking-form select:focus,
+    .booking-form input:focus {
+      outline: none;
+      border-color: #f97316;
+    }
+    .booking-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 12px;
+    }
+    .booking-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+    }
+    .booking-secondary {
+      display: flex;
+      gap: 12px;
+    }
+    .booking-secondary button {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--gray-200);
+      background: #fff;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .booking-secondary button:hover {
+      border-color: #f97316;
+      color: #f97316;
+    }
+    .booking-note {
+      margin-top: 16px;
+      padding: 12px;
+      background: var(--gray-50);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      text-align: center;
+    }
+
+    /* 相关推荐 */
+    .related-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+    .related-item {
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .related-item:hover {
+      transform: translateY(-4px);
+    }
+    .related-item img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+    }
+    .related-item-info {
+      padding: 12px;
+      background: #fff;
+    }
+    .related-item h4 {
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 1;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .related-item .price {
+      color: #f97316;
+      font-weight: 600;
+    }
+
+    /* 加载状态 */
+    .loading-state {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .loading-state .spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--gray-200);
+      border-top-color: #f97316;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .detail-layout {
+        grid-template-columns: 1fr;
+      }
+      .detail-sidebar {
+        position: static;
+      }
+      .booking-card {
+        position: static;
+      }
+    }
+    @media (max-width: 768px) {
+      .detail-header {
+        height: 280px;
+      }
+      .detail-title {
+        font-size: 1.4rem;
+      }
+      .overview-bar {
+        margin-top: -30px;
+        padding: 16px;
+      }
+      .overview-items {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      .overview-item {
+        padding: 8px;
+      }
+      .overview-value {
+        font-size: 0.95rem;
+      }
+      .overview-value.price {
+        font-size: 1.1rem;
+      }
+      .related-grid {
+        grid-template-columns: 1fr;
+      }
+      .highlights-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">🌍 游导伴旅</a>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="visa.html">签证中心</a>
+        <a href="pitfall.html">避坑指南</a>
+        <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
+        <a href="routes.html" class="active">精品线路</a>
+        <a href="tips.html">旅行经验</a>
+        <a href="stories.html">旅行故事</a>
+        <a href="wonders.html">世界奇趣</a>
+        <a href="emergency.html">应急资源</a>
+        <a href="faq.html">常见问题</a>
+        <a href="contact.html">联系我们</a>
+        <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 详情内容 -->
+  <main id="detailContent">
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>加载中...</p>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>关于游导伴旅</h4>
+          <a href="about.html">关于我们</a>
+          <a href="contact.html">联系我们</a>
+          <a href="join.html">加入我们</a>
+        </div>
+        <div>
+          <h4>旅行服务</h4>
+          <a href="routes.html">精选路线</a>
+          <a href="guides.html">找导游</a>
+          <a href="visa.html">签证服务</a>
+        </div>
+        <div>
+          <h4>帮助中心</h4>
+          <a href="faq.html">常见问题</a>
+          <a href="user-agreement.html">用户协议</a>
+          <a href="privacy.html">隐私政策</a>
+        </div>
+        <div>
+          <h4>关注我们</h4>
+          <a href="#">微信公众号</a>
+          <a href="#">微博</a>
+          <a href="#">小红书</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 游导伴旅 youdao-travel.com | 让旅行更简单</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 引入Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase-config.js"></script>
+  <script src="js/common.js"></script>
+  <script>
+    // 全局变量
+    let currentRoute = null;
+    let selectedDate = null;
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const routeId = params.get('id');
+      
+      if (routeId) {
+        await loadRouteDetail(routeId);
+      } else {
+        showError('未找到路线信息');
+      }
+      
+      updateAuthStatus();
+    });
+
+    // 加载路线详情
+    async function loadRouteDetail(routeId) {
+      try {
+        if (!supabaseClient) initSupabase();
+        
+        const { data, error } = await supabaseClient
+          .from('routes')
+          .select('*')
+          .eq('id', routeId)
+          .eq('status', 'published')
+          .single();
+        
+        if (error || !data) throw new Error('路线不存在');
+        
+        currentRoute = data;
+        renderRouteDetail(currentRoute);
+        
+        // 记录浏览
+        await recordView(routeId);
+        
+      } catch (error) {
+        console.error('加载失败:', error);
+        // 使用示例数据
+        currentRoute = getSampleRoute(routeId);
+        renderRouteDetail(currentRoute);
+      }
+    }
+
+    // 示例路线数据
+    function getSampleRoute(id) {
+      const routes = {
+        '1': {
+          id: 1,
+          title: '澳大利亚大堡礁深度9日游',
+          subtitle: '悉尼进凯恩斯出，一次玩遍澳东精华',
+          destination: '澳大利亚',
+          region: 'oceania',
+          country: '澳大利亚',
+          days: 9,
+          price: 18999,
+          price_child: 15999,
+          price_note: '起/人',
+          highlights: ['悉尼歌剧院入内参观', '大堡礁出海浮潜', '蓝山国家公园', '热带雨林缆车', '澳式BBQ体验'],
+          themes: ['自然', '海岛', '美食'],
+          itinerary: [
+            { day: 1, title: 'Day 1', city: '悉尼', summary: '抵达悉尼，接机入住酒店', meals: '不含', activities: ['机场接机', '酒店入住'], hotel: '悉尼4星酒店', tips: '建议提前3小时到达机场' },
+            { day: 2, title: 'Day 2', city: '悉尼', summary: '悉尼市区经典游览', meals: '含早餐、午餐', activities: ['悉尼歌剧院', '海港大桥', '岩石区', '环形码头'], hotel: '悉尼4星酒店', tips: '歌剧院建议提前预约入内参观' },
+            { day: 3, title: 'Day 3', city: '悉尼-蓝山', summary: '蓝山国家公园一日游', meals: '含早餐、午餐', activities: ['蓝山缆车', '回声角', '三姐妹峰'], hotel: '蓝山度假村', tips: '山区温差大，请携带外套' },
+            { day: 4, title: 'Day 4', city: '悉尼', summary: '自由活动/推荐邦迪海滩', meals: '含早餐', activities: ['邦迪海滩', '悉尼塔'], hotel: '悉尼4星酒店', tips: '海滩紫外线强，注意防晒' },
+            { day: 5, title: 'Day 5', city: '悉尼-凯恩斯', summary: '飞往凯恩斯，热带雨林探秘', meals: '含早餐、午餐', activities: ['库兰达雨林', '缆车观光'], hotel: '凯恩斯4星酒店', tips: '雨林蚊虫较多，建议带驱蚊水' },
+            { day: 6, title: 'Day 6', city: '凯恩斯', summary: '大堡礁一日游', meals: '含早餐、午餐', activities: ['出海浮潜', '玻璃底船', '珊瑚礁观光'], hotel: '凯恩斯4星酒店', tips: '请自带泳衣和防晒霜' },
+            { day: 7, title: 'Day 7', city: '凯恩斯', summary: '大堡礁深海体验', meals: '含早餐、午餐', activities: ['半潜水艇', '海底漫步', '直升机观光（自费）'], hotel: '凯恩斯4星酒店', tips: '直升机需提前预约' },
+            { day: 8, title: 'Day 8', city: '凯恩斯', summary: '自由活动/推荐棕榈湾', meals: '含早餐', activities: ['棕榈湾', '夜市'], hotel: '凯恩斯4星酒店', tips: '凯恩斯夜市每周五开放' },
+            { day: 9, title: 'Day 9', city: '凯恩斯-返回', summary: '退房送机，结束行程', meals: '含早餐', activities: ['酒店退房', '送机'], tips: '建议提前2小时到达机场' }
+          ],
+          includes: ['全程4-5星酒店住宿', '行程所列餐食', '空调旅游巴士', '中文导游服务', '景点首道门票', '澳洲境内机票'],
+          excludes: ['国际往返机票', '护照及签证费用', '单房差', '自费项目', '个人消费', '旅游保险'],
+          departure_dates: [
+            { date: '2024-06-15', status: 'available', places_left: 15 },
+            { date: '2024-07-01', status: 'available', places_left: 20 },
+            { date: '2024-07-20', status: 'available', places_left: 18 }
+          ],
+          min_people: 8,
+          max_people: 25,
+          cover_image: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=1200',
+          gallery: [
+            'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=800',
+            'https://images.unsplash.com/photo-1524293581917-878a6d017c71?w=800',
+            'https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800'
+          ],
+          guide_id: 1,
+          visa_info: '澳大利亚访客签证（600类别），需提供在职证明、银行流水、行程单等材料，建议提前1个月办理。',
+          insurance_info: '建议购买境外旅游保险，覆盖医疗、意外、行李延误等，保额建议不低于30万元。',
+          cancellation_policy: '出发前30天以上取消：退还费用的80%；15-30天：退还50%；15天内：不予退款',
+          tips: '澳洲季节与中国相反，12月-2月为夏季。转换插头为三脚扁插。建议携带防晒霜、墨镜、帽子等防晒用品。'
+        },
+        '2': {
+          id: 2,
+          title: '新西兰南北岛全景12日',
+          subtitle: '纯净中土世界，峡湾冰川雪山一次揽尽',
+          destination: '新西兰',
+          region: 'oceania',
+          country: '新西兰',
+          days: 12,
+          price: 25800,
+          price_child: 21800,
+          price_note: '起/人',
+          highlights: ['皇后镇缆车360°观景', '米尔福德峡湾游船', '弗朗茨约瑟夫冰川', '霍比特人村', '萤火虫洞'],
+          themes: ['自然', '徒步', '摄影'],
+          itinerary: [
+            { day: 1, title: 'Day 1', city: '奥克兰', summary: '抵达奥克兰', meals: '不含', activities: ['机场接机', '奥克兰市区观光'] },
+            { day: 2, title: 'Day 2', city: '奥克兰-罗托鲁阿', summary: '前往地热之城', meals: '含早餐、晚餐', activities: ['霍比特人村', '毛利文化村'] }
+          ],
+          includes: ['全程4星酒店', '行程所列餐食', '中文导游', '行程门票', '内陆航班'],
+          excludes: ['国际机票', '签证', '个人消费', '小费'],
+          departure_dates: [{ date: '2024-08-10', status: 'available', places_left: 12 }],
+          min_people: 10,
+          max_people: 20,
+          cover_image: 'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=1200',
+          guide_id: 2,
+          visa_info: '新西兰访客签证，需提供行程计划、住宿预订单、资金证明',
+          insurance_info: '强烈建议购买旅游保险，新西兰医疗费用较高',
+          cancellation_policy: '出发前45天以上取消退还90%；30-45天退还70%；30天内退还50%'
+        }
+      };
+      
+      return routes[id] || routes['1'];
+    }
+
+    // 渲染路线详情
+    function renderRouteDetail(route) {
+      const regionMap = {
+        'oceania': '🌊 澳新',
+        'western_europe': '🏰 西欧',
+        'spain': '💃 西班牙',
+        'egypt': '🏛️ 埃及',
+        'other': '🌍 其他'
+      };
+      
+      const html = `
+        <!-- Banner -->
+        <section class="detail-header">
+          <img src="${route.cover_image || 'https://via.placeholder.com/1200x400?text=路线封面'}" alt="${route.title}" class="detail-banner">
+          <div class="detail-banner-overlay">
+            <div class="container">
+              <div class="detail-banner-content">
+                <div class="detail-breadcrumb">
+                  <a href="index.html">首页</a> / 
+                  <a href="routes.html">精选路线</a> / 
+                  ${route.destination}
+                </div>
+                <h1 class="detail-title">${route.title}</h1>
+                <p class="detail-subtitle">${route.subtitle || ''}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 概览信息 -->
+        <div class="container">
+          <div class="overview-bar">
+            <div class="overview-items">
+              <div class="overview-item">
+                <div class="overview-icon">📍</div>
+                <div class="overview-label">目的地</div>
+                <div class="overview-value">${route.destination}</div>
+              </div>
+              <div class="overview-item">
+                <div class="overview-icon">⏱️</div>
+                <div class="overview-label">行程天数</div>
+                <div class="overview-value">${route.days}天${route.nights || (route.days - 1)}晚</div>
+              </div>
+              <div class="overview-item">
+                <div class="overview-icon">📅</div>
+                <div class="overview-label">最近团期</div>
+                <div class="overview-value">${formatDate(route.departure_dates?.[0]?.date)}</div>
+              </div>
+              <div class="overview-item">
+                <div class="overview-icon">👥</div>
+                <div class="overview-label">已成团人数</div>
+                <div class="overview-value">${route.min_people}人起</div>
+              </div>
+              <div class="overview-item">
+                <div class="overview-icon">💰</div>
+                <div class="overview-label">起售价</div>
+                <div class="overview-value price">¥${formatPrice(route.price)}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 主体布局 -->
+          <div class="detail-layout">
+            <!-- 左侧主内容 -->
+            <div class="detail-main">
+              <!-- 行程亮点 -->
+              <section class="detail-card">
+                <h2><span class="icon">✨</span>行程亮点</h2>
+                <div class="highlights-grid">
+                  ${(route.highlights || []).map((h, i) => `
+                    <div class="highlight-item">
+                      <div class="highlight-icon">${['🎭', '🏛️', '🌅', '🍽️', '🎪'][i % 5]}</div>
+                      <div class="highlight-text">
+                        <h4>${h}</h4>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+                ${route.themes?.length ? `
+                  <div style="margin-top: 20px;">
+                    <span style="font-weight: 600; margin-right: 8px;">主题标签:</span>
+                    <div class="theme-tags" style="display: inline-flex;">
+                      ${route.themes.map(t => `<span class="theme-tag">${t}</span>`).join('')}
+                    </div>
+                  </div>
+                ` : ''}
+              </section>
+
+              <!-- 详细行程 -->
+              <section class="detail-card">
+                <h2><span class="icon">🗓️</span>详细行程</h2>
+                <div class="itinerary-list">
+                  ${(route.itinerary || []).map(day => `
+                    <div class="itinerary-day" onclick="toggleItinerary(this)">
+                      <div class="itinerary-header">
+                        <div class="itinerary-header-left">
+                          <div class="itinerary-day-num">${day.day}</div>
+                          <div>
+                            <div class="itinerary-day-title">${day.title}</div>
+                            <div class="itinerary-day-city">📍 ${day.city}</div>
+                          </div>
+                        </div>
+                        <span class="itinerary-toggle">▼</span>
+                      </div>
+                      <div class="itinerary-content">
+                        <p class="itinerary-summary">${day.summary}</p>
+                        <div class="itinerary-meta">
+                          <div class="itinerary-meta-item">🍽️ ${day.meals}</div>
+                          ${day.hotel ? `<div class="itinerary-meta-item">🏨 ${day.hotel}</div>` : ''}
+                        </div>
+                        ${day.activities?.length ? `
+                          <div class="itinerary-activities">
+                            <h4>📍 游览活动</h4>
+                            <ul>
+                              ${day.activities.map(a => `<li>${a}</li>`).join('')}
+                            </ul>
+                          </div>
+                        ` : ''}
+                        ${day.tips ? `
+                          <div class="itinerary-tips">💡 ${day.tips}</div>
+                        ` : ''}
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </section>
+
+              <!-- 费用说明 -->
+              <section class="detail-card">
+                <h2><span class="icon">💵</span>费用说明</h2>
+                <div class="cost-section">
+                  <h4>✅ 费用包含</h4>
+                  <ul class="cost-list cost-include">
+                    ${(route.includes || []).map(item => `<li>${item}</li>`).join('')}
+                  </ul>
+                </div>
+                <div class="cost-section">
+                  <h4>❌ 费用不含</h4>
+                  <ul class="cost-list cost-exclude">
+                    ${(route.excludes || []).map(item => `<li>${item}</li>`).join('')}
+                  </ul>
+                </div>
+                <div style="margin-top: 20px; padding: 16px; background: #fff7ed; border-radius: 12px;">
+                  <p style="font-weight: 600; color: #ea580c; margin-bottom: 8px;">💰 价格说明</p>
+                  <p style="color: var(--gray-600);">成人价：¥${formatPrice(route.price)}/${route.price_note || '人'}</p>
+                  ${route.price_child ? `<p style="color: var(--gray-600);">儿童价：¥${formatPrice(route.price_child)}/${route.price_note || '人'}（2-12岁不占床）</p>` : ''}
+                  <p style="color: var(--gray-500); font-size: 0.9rem; margin-top: 8px;">* 单房差另计，具体价格请咨询</p>
+                </div>
+              </section>
+
+              <!-- 预订须知 -->
+              <section class="detail-card">
+                <h2><span class="icon">📋</span>预订须知</h2>
+                ${route.visa_info ? `
+                  <div class="notice-item">
+                    <h4>🛂 签证说明</h4>
+                    <p>${route.visa_info}</p>
+                  </div>
+                ` : ''}
+                ${route.insurance_info ? `
+                  <div class="notice-item">
+                    <h4>🏥 保险说明</h4>
+                    <p>${route.insurance_info}</p>
+                  </div>
+                ` : ''}
+                ${route.cancellation_policy ? `
+                  <div class="notice-item">
+                    <h4>📅 退改政策</h4>
+                    <p>${route.cancellation_policy}</p>
+                  </div>
+                ` : ''}
+                ${route.tips ? `
+                  <div class="notice-item">
+                    <h4>💡 温馨提示</h4>
+                    <p>${route.tips}</p>
+                  </div>
+                ` : ''}
+              </section>
+
+              <!-- 导游信息 -->
+              ${route.guide_id ? `
+                <section class="detail-card">
+                  <h2><span class="icon">🎤</span>导游服务</h2>
+                  <div class="guide-card" onclick="goToGuide(${route.guide_id})">
+                    <img src="https://via.placeholder.com/60x60?text=导游" alt="导游头像" class="guide-avatar">
+                    <div class="guide-info">
+                      <h4>专业导游带你游</h4>
+                      <p>查看导游详情和评价 →</p>
+                    </div>
+                  </div>
+                </section>
+              ` : ''}
+            </div>
+
+            <!-- 右侧侧边栏 -->
+            <aside class="detail-sidebar">
+              <!-- 预订卡片 -->
+              <div class="booking-card">
+                <div class="booking-price">
+                  <div class="label">起售价</div>
+                  <div class="value">¥${formatPrice(route.price)}</div>
+                  <div class="unit">${route.price_note || '起/人'}</div>
+                </div>
+                
+                <div class="booking-form">
+                  <div class="form-group">
+                    <label>选择出发日期</label>
+                    <select id="departureDate" onchange="updatePrice()">
+                      <option value="">请选择日期</option>
+                      ${(route.departure_dates || []).map(d => `
+                        <option value="${d.date}" data-places="${d.places_left}">
+                          ${formatDate(d.date)} (剩余${d.places_left}位)
+                        </option>
+                      `).join('')}
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>成人数</label>
+                    <select id="adultCount" onchange="updatePrice()">
+                      ${Array.from({length: 10}, (_, i) => `<option value="${i + 1}">${i + 1}人</option>`).join('')}
+                    </select>
+                  </div>
+                  
+                  <div class="form-group">
+                    <label>儿童数</label>
+                    <select id="childCount" onchange="updatePrice()">
+                      ${Array.from({length: 6}, (_, i) => `<option value="${i}">${i}人</option>`).join('')}
+                    </select>
+                  </div>
+                </div>
+                
+                <div id="priceSummary" style="margin-bottom: 16px; padding: 12px; background: var(--gray-50); border-radius: 8px; display: none;">
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>成人 × <span id="adultNum">1</span></span>
+                    <span>¥<span id="adultTotal">0</span></span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span>儿童 × <span id="childNum">0</span></span>
+                    <span>¥<span id="childTotal">0</span></span>
+                  </div>
+                  <div style="border-top: 1px dashed var(--gray-300); padding-top: 8px; display: flex; justify-content: space-between; font-weight: 600;">
+                    <span>合计</span>
+                    <span style="color: #f97316;">¥<span id="totalPrice">0</span></span>
+                  </div>
+                </div>
+                
+                <button class="booking-btn" onclick="goToBooking()">立即预订</button>
+                
+                <div class="booking-secondary">
+                  <button onclick="contactUs()">📞 咨询客服</button>
+                  <button onclick="toggleFavorite()">🤍 收藏</button>
+                </div>
+                
+                <div class="booking-note">
+                  已有${route.min_people}人报名 | 最低${route.min_people}人成团
+                </div>
+              </div>
+
+              <!-- 相关推荐 -->
+              <div class="detail-card" style="margin-top: 20px;">
+                <h2><span class="icon">🔖</span>相关路线</h2>
+                <div class="related-grid">
+                  ${getRelatedRoutes(route).map(r => `
+                    <div class="related-item" onclick="window.location.href='route-detail.html?id=${r.id}'">
+                      <img src="${r.cover_image || 'https://via.placeholder.com/200x120'}" alt="${r.title}">
+                      <div class="related-item-info">
+                        <h4>${r.title}</h4>
+                        <div><span class="price">¥${formatPrice(r.price)}</span>起</div>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('detailContent').innerHTML = html;
+      
+      // 默认展开第一天行程
+      setTimeout(() => {
+        const firstDay = document.querySelector('.itinerary-day');
+        if (firstDay) firstDay.classList.add('open');
+      }, 100);
+    }
+
+    // 相关路线
+    function getRelatedRoutes(currentRoute) {
+      const all = getSampleRoutes();
+      return all
+        .filter(r => r.id !== currentRoute.id && r.region === currentRoute.region)
+        .slice(0, 2);
+    }
+
+    // 获取示例路线列表
+    function getSampleRoutes() {
+      return [
+        { id: 1, title: '澳大利亚大堡礁深度9日游', region: 'oceania', price: 18999, cover_image: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=200' },
+        { id: 2, title: '新西兰南北岛全景12日', region: 'oceania', price: 25800, cover_image: 'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=200' },
+        { id: 3, title: '法意瑞三国12日经典游', region: 'western_europe', price: 29800, cover_image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=200' },
+        { id: 4, title: '西班牙全景10日深度游', region: 'spain', price: 22800, cover_image: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=200' },
+        { id: 5, title: '埃及尼罗河10日探秘', region: 'egypt', price: 16800, cover_image: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=200' }
+      ];
+    }
+
+    // 切换行程展开
+    function toggleItinerary(element) {
+      element.classList.toggle('open');
+    }
+
+    // 更新价格计算
+    function updatePrice() {
+      if (!currentRoute) return;
+      
+      const dateSelect = document.getElementById('departureDate');
+      const adults = parseInt(document.getElementById('adultCount').value) || 1;
+      const children = parseInt(document.getElementById('childCount').value) || 0;
+      
+      if (!dateSelect.value) {
+        document.getElementById('priceSummary').style.display = 'none';
+        return;
+      }
+      
+      const priceSummary = document.getElementById('priceSummary');
+      priceSummary.style.display = 'block';
+      
+      document.getElementById('adultNum').textContent = adults;
+      document.getElementById('adultTotal').textContent = formatPrice(currentRoute.price * adults);
+      document.getElementById('childNum').textContent = children;
+      document.getElementById('childTotal').textContent = formatPrice((currentRoute.price_child || currentRoute.price * 0.8) * children);
+      document.getElementById('totalPrice').textContent = formatPrice(currentRoute.price * adults + (currentRoute.price_child || currentRoute.price * 0.8) * children);
+      
+      selectedDate = dateSelect.value;
+    }
+
+    // 前往预订页
+    function goToBooking() {
+      if (!selectedDate) {
+        showToast('请选择出发日期', 'warning');
+        return;
+      }
+      
+      const adults = document.getElementById('adultCount').value;
+      const children = document.getElementById('childCount').value;
+      
+      window.location.href = `route-booking.html?id=${currentRoute.id}&date=${selectedDate}&adults=${adults}&children=${children}`;
+    }
+
+    // 联系客服
+    function contactUs() {
+      showToast('客服电话：400-888-8888', 'info');
+    }
+
+    // 收藏
+    function toggleFavorite() {
+      let favorites = JSON.parse(localStorage.getItem('routeFavorites') || '[]');
+      const index = favorites.indexOf(currentRoute.id);
+      
+      if (index > -1) {
+        favorites.splice(index, 1);
+        showToast('已取消收藏', 'success');
+      } else {
+        favorites.push(currentRoute.id);
+        showToast('已添加收藏', 'success');
+      }
+      
+      localStorage.setItem('routeFavorites', JSON.stringify(favorites));
+    }
+
+    // 跳转导游详情
+    function goToGuide(guideId) {
+      window.location.href = `guide-detail.html?id=${guideId}`;
+    }
+
+    // 记录浏览
+    async function recordView(routeId) {
+      try {
+        if (!supabaseClient) initSupabase();
+        await supabaseClient.rpc('increment_route_view', { route_id: routeId });
+      } catch (e) {
+        // 静默失败
+      }
+    }
+
+    // 格式化日期
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      const date = new Date(dateStr);
+      return `${date.getMonth() + 1}月${date.getDate()}日`;
+    }
+
+    // 格式化价格
+    function formatPrice(price) {
+      return Number(price).toLocaleString('zh-CN');
+    }
+
+    // 错误显示
+    function showError(message) {
+      document.getElementById('detailContent').innerHTML = `
+        <div class="container" style="padding: 80px 0; text-align: center;">
+          <div style="font-size: 4rem; margin-bottom: 20px;">😢</div>
+          <h2 style="margin-bottom: 12px;">${message}</h2>
+          <p><a href="routes.html" style="color: #f97316;">返回路线列表</a></p>
+        </div>
+      `;
+    }
+
+    // Toast提示
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.remove();
+      }, 2500);
+    }
+
+    // 更新登录状态
+    async function updateAuthStatus() {
+      try {
+        const isLoggedIn = await Auth.isLoggedIn();
+        const authLink = document.getElementById('authLink');
+        
+        if (isLoggedIn) {
+          authLink.textContent = '👤 个人中心';
+          authLink.href = 'user-center.html';
+          authLink.classList.add('logged-in');
+        }
+      } catch (e) {
+        console.error('检查登录状态失败:', e);
+      }
+    }
+  </script>
+</body>
+</html>
