@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>路线规划器 - 导游工具</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/guide/guide-tools.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">🌍 TravelHub</a>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guide-tools.html">导游工具</a>
+        <a href="knowledge-base.html">景点知识库</a>
+        <a href="emergency.html">应急预案</a>
+        <a href="route-planner.html" class="active">路线规划</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 页面头部 -->
+  <header class="tool-header" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);">
+    <div class="container">
+      <h1>🗺️ 路线规划器</h1>
+      <p>智能生成推荐行程 · 自定义编辑调整 · 历史方案保存</p>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <section class="tool-container">
+    <!-- 规划表单 -->
+    <div class="form-card" style="margin-bottom: 30px;">
+      <h3 style="margin-bottom: 20px;">📝 创建新行程</h3>
+      <form id="routeForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>目的地</label>
+            <select id="destination" required>
+              <option value="">请选择目的地</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>出行天数</label>
+            <select id="days" required>
+              <option value="">请选择天数</option>
+              <option value="1">1天</option>
+              <option value="2">2天</option>
+              <option value="3">3天</option>
+              <option value="4">4天</option>
+              <option value="5">5天</option>
+              <option value="6">6天</option>
+              <option value="7">7天</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>客人类型</label>
+            <select id="guestType" required>
+              <option value="">请选择类型</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>预算等级</label>
+            <select id="budget" required>
+              <option value="">请选择预算</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>行程名称</label>
+          <input type="text" id="routeName" placeholder="例如：北京4日经典游" required>
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="btn btn-primary">
+            ✨ 生成行程
+          </button>
+          <button type="reset" class="btn btn-secondary">
+            🔄 重置
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 生成结果区域 -->
+    <div id="resultSection" style="display: none;">
+      <div class="content-card" style="margin-bottom: 24px;">
+        <h3 id="resultTitle">📋 行程安排</h3>
+        <div id="resultContent">
+          <!-- 动态生成 -->
+        </div>
+        <div class="btn-group" style="margin-top: 20px;">
+          <button class="btn btn-primary" onclick="saveRoute()">
+            💾 保存行程
+          </button>
+          <button class="btn btn-secondary" onclick="editRoute()">
+            ✏️ 编辑行程
+          </button>
+          <button class="btn btn-secondary" onclick="exportRoute()">
+            📤 导出行程
+          </button>
+          <button class="btn btn-secondary" onclick="hideResult()">
+            ❌ 关闭
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 历史方案 -->
+    <div class="content-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3>📚 历史方案</h3>
+        <button class="btn btn-secondary" onclick="exportAllRoutes()" style="padding: 8px 16px; font-size: 0.9rem;">
+          📤 导出全部
+        </button>
+      </div>
+      <div id="historyList" class="data-list">
+        <!-- 动态渲染 -->
+      </div>
+      <div class="empty-state" id="historyEmpty">
+        <div class="icon">📋</div>
+        <h3>暂无历史方案</h3>
+        <p>创建行程后会自动保存在这里</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 编辑模态框 -->
+  <div class="modal" id="editModal">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3>✏️ 编辑行程</h3>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="editBody">
+        <!-- 动态内容 -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeEditModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveEditedRoute()">保存修改</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 游导Travel (youdao-travel.com) 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 全局变量
+    let routeData = {};
+    let savedRoutes = JSON.parse(localStorage.getItem('guide_routes') || '[]');
+    let currentRoute = null;
+    let editingRouteId = null;
+
+    // 页面加载完成后
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadRouteData();
+      setupEventListeners();
+      renderHistory();
+    });
+
+    // 加载路线数据
+    async function loadRouteData() {
+      try {
+        const response = await fetch('data/routes.json');
+        routeData = await response.json();
+        
+        // 填充下拉选项
+        populateSelects();
+      } catch (error) {
+        console.error('加载路线数据失败:', error);
+        routeData = { destinations: [], guestTypes: [], budgetLevels: [] };
+      }
+    }
+
+    // 填充选择框
+    function populateSelects() {
+      // 目的地
+      const destSelect = document.getElementById('destination');
+      routeData.destinations.forEach(d => {
+        destSelect.innerHTML += `<option value="${d.id}">${d.name} - ${d.description.substring(0, 15)}...</option>`;
+      });
+
+      // 客人类型
+      const guestSelect = document.getElementById('guestType');
+      routeData.guestTypes.forEach(g => {
+        guestSelect.innerHTML += `<option value="${g.id}">${g.name}</option>`;
+      });
+
+      // 预算等级
+      const budgetSelect = document.getElementById('budget');
+      routeData.budgetLevels.forEach(b => {
+        budgetSelect.innerHTML += `<option value="${b.id}">${b.name} - ${b.description}</option>`;
+      });
+    }
+
+    // 设置事件监听
+    function setupEventListeners() {
+      document.getElementById('routeForm').addEventListener('submit', generateRoute);
+    }
+
+    // 生成行程
+    function generateRoute(e) {
+      e.preventDefault();
+
+      const destId = document.getElementById('destination').value;
+      const days = parseInt(document.getElementById('days').value);
+      const guestTypeId = document.getElementById('guestType').value;
+      const budgetId = document.getElementById('budget').value;
+      const name = document.getElementById('routeName').value;
+
+      const destination = routeData.destinations.find(d => d.id === destId);
+      const guestType = routeData.guestTypes.find(g => g.id === guestTypeId);
+      const budget = routeData.budgetLevels.find(b => b.id === budgetId);
+
+      if (!destination || !guestType || !budget) {
+        showToast('请填写完整信息', 'error');
+        return;
+      }
+
+      // 生成行程内容
+      const itinerary = generateItinerary(destination, days, guestType);
+
+      currentRoute = {
+        id: Date.now().toString(),
+        name,
+        destination: destination.name,
+        days,
+        guestType: guestType.name,
+        budget: budget.name,
+        itinerary,
+        recommendations: guestType.recommendations,
+        createdAt: new Date().toISOString()
+      };
+
+      renderResult(currentRoute);
+    }
+
+    // 生成行程内容
+    function generateItinerary(destination, days, guestType) {
+      const itinerary = [];
+      const attractions = destination.attractions.slice(0, days * 3);
+      
+      for (let i = 0; i < days; i++) {
+        const dayAttractions = [];
+        const startIdx = i * 3;
+        
+        for (let j = 0; j < 3 && startIdx + j < attractions.length; j++) {
+          dayAttractions.push(attractions[startIdx + j]);
+        }
+
+        itinerary.push({
+          day: i + 1,
+          theme: getDayTheme(i, days),
+          attractions: dayAttractions,
+          tips: getDayTips(i, guestType)
+        });
+      }
+
+      return itinerary;
+    }
+
+    // 获取每日主题
+    function getDayTheme(dayIndex, totalDays) {
+      if (totalDays === 1) return '精华一日游';
+      const themes = [
+        ['历史文化之旅', '自然风光探索', '休闲度假时光'],
+        ['经典必游', '深度体验', '轻松收尾'],
+        ['第一天', '第二天', '第三天'],
+        ['经典景点', '特色体验', '轻松游览', '精彩收尾'],
+        ['精华景点', '深度探索', '特色体验', '休闲时光', '完美收官']
+      ];
+      return themes[Math.min(totalDays - 1, themes.length - 1)][dayIndex] || `第${dayIndex + 1}天`;
+    }
+
+    // 获取每日建议
+    function getDayTips(dayIndex, guestType) {
+      const tips = [];
+      if (dayIndex === 0) tips.push('建议早起，避开人流高峰');
+      if (guestType.name === '老人团') tips.push('注意休息节奏，不宜过于紧凑');
+      if (guestType.name === '学生团') tips.push('可以安排一些互动体验项目');
+      tips.push('随身携带水和零食');
+      return tips;
+    }
+
+    // 渲染结果
+    function renderResult(route) {
+      document.getElementById('resultSection').style.display = 'block';
+      document.getElementById('resultTitle').textContent = `📋 ${route.name}`;
+
+      document.getElementById('resultContent').innerHTML = `
+        <div style="display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 20px; padding: 16px; background: var(--gray-50); border-radius: 10px;">
+          <span style="padding: 8px 16px; background: #fff; border-radius: 20px; font-size: 0.9rem;">📍 ${route.destination}</span>
+          <span style="padding: 8px 16px; background: #fff; border-radius: 20px; font-size: 0.9rem;">📅 ${route.days}天</span>
+          <span style="padding: 8px 16px; background: #fff; border-radius: 20px; font-size: 0.9rem;">👥 ${route.guestType}</span>
+          <span style="padding: 8px 16px; background: #fff; border-radius: 20px; font-size: 0.9rem;">💰 ${route.budget}</span>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+          <h4 style="margin-bottom: 16px;">📝 每日行程</h4>
+          ${route.itinerary.map(day => `
+            <div style="background: var(--gray-50); border-radius: 10px; padding: 20px; margin-bottom: 16px;">
+              <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                <span style="width: 40px; height: 40px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">D${day.day}</span>
+                <div>
+                  <h5 style="font-size: 1.1rem; color: var(--gray-800);">${day.theme}</h5>
+                </div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 10px;">
+                ${day.attractions.map((attr, idx) => `
+                  <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #fff; border-radius: 8px;">
+                    <span style="width: 28px; height: 28px; background: var(--gray-100); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: var(--gray-600);">${idx + 1}</span>
+                    <span style="font-weight: 500;">${attr}</span>
+                  </div>
+                `).join('')}
+              </div>
+              ${day.tips.length > 0 ? `
+                <div style="margin-top: 12px; padding: 12px; background: #fffbeb; border-radius: 8px; border-left: 3px solid #f59e0b;">
+                  <span style="font-size: 0.85rem; color: var(--gray-600);">💡 ${day.tips.join(' · ')}</span>
+                </div>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
+
+        ${route.recommendations && route.recommendations.length > 0 ? `
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 10px; padding: 20px; color: #fff;">
+            <h4 style="margin-bottom: 12px;">👥 ${route.guestType}特别建议</h4>
+            <ul style="list-style: none;">
+              ${route.recommendations.map(r => `<li style="padding: 6px 0; padding-left: 20px; position: relative;">✓ ${r}</li>`).join('')}
+            </ul>
+          </div>
+        ` : ''}
+      `;
+
+      // 滚动到结果区域
+      document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // 保存行程
+    function saveRoute() {
+      if (!currentRoute) return;
+
+      savedRoutes.unshift(currentRoute);
+      localStorage.setItem('guide_routes', JSON.stringify(savedRoutes));
+      
+      renderHistory();
+      showToast('行程已保存', 'success');
+    }
+
+    // 编辑行程
+    function editRoute() {
+      if (!currentRoute) return;
+      
+      editingRouteId = currentRoute.id;
+      
+      document.getElementById('editBody').innerHTML = `
+        <div class="form-group">
+          <label>行程名称</label>
+          <input type="text" id="editName" value="${currentRoute.name}">
+        </div>
+        <div class="form-group">
+          <label>每日安排（JSON格式）</label>
+          <textarea id="editItinerary" style="font-family: monospace; font-size: 0.9rem;">${JSON.stringify(currentRoute.itinerary, null, 2)}</textarea>
+        </div>
+      `;
+      
+      document.getElementById('editModal').classList.add('open');
+    }
+
+    // 保存编辑
+    function saveEditedRoute() {
+      const name = document.getElementById('editName').value;
+      let itinerary;
+      
+      try {
+        itinerary = JSON.parse(document.getElementById('editItinerary').value);
+      } catch (e) {
+        showToast('JSON格式错误', 'error');
+        return;
+      }
+
+      // 更新当前行程
+      currentRoute.name = name;
+      currentRoute.itinerary = itinerary;
+
+      // 更新历史记录中的对应行程
+      const idx = savedRoutes.findIndex(r => r.id === editingRouteId);
+      if (idx > -1) {
+        savedRoutes[idx] = currentRoute;
+        localStorage.setItem('guide_routes', JSON.stringify(savedRoutes));
+      }
+
+      renderResult(currentRoute);
+      renderHistory();
+      closeEditModal();
+      showToast('修改已保存', 'success');
+    }
+
+    // 关闭编辑模态框
+    function closeEditModal() {
+      document.getElementById('editModal').classList.remove('open');
+    }
+
+    // 导出行程
+    function exportRoute() {
+      if (!currentRoute) return;
+
+      let text = `${currentRoute.name}\n`;
+      text += `${'='.repeat(30)}\n`;
+      text += `目的地: ${currentRoute.destination}\n`;
+      text += `天数: ${currentRoute.days}天\n`;
+      text += `类型: ${currentRoute.guestType}\n`;
+      text += `预算: ${currentRoute.budget}\n\n`;
+      text += `【行程安排】\n\n`;
+
+      currentRoute.itinerary.forEach(day => {
+        text += `Day ${day.day}: ${day.theme}\n`;
+        day.attractions.forEach((attr, idx) => {
+          text += `  ${idx + 1}. ${attr}\n`;
+        });
+        if (day.tips.length > 0) {
+          text += `  💡 ${day.tips.join(' · ')}\n`;
+        }
+        text += '\n';
+      });
+
+      downloadText(text, `${currentRoute.name}.txt`);
+      showToast('行程已导出', 'success');
+    }
+
+    // 导出全部历史
+    function exportAllRoutes() {
+      if (savedRoutes.length === 0) {
+        showToast('暂无历史方案', 'error');
+        return;
+      }
+
+      let text = '导游路线规划汇总\n';
+      text += `${'='.repeat(40)}\n\n`;
+
+      savedRoutes.forEach(route => {
+        text += `${route.name}\n`;
+        text += `${'-'.repeat(20)}\n`;
+        text += `目的地: ${route.destination} | 天数: ${route.days}天\n`;
+        text += `创建时间: ${new Date(route.createdAt).toLocaleDateString()}\n\n`;
+        route.itinerary.forEach(day => {
+          text += `Day${day.day}: ${day.theme}\n`;
+          day.attractions.forEach((attr, idx) => {
+            text += `  ${idx + 1}. ${attr}\n`;
+          });
+          text += '\n';
+        });
+        text += `${'='.repeat(40)}\n\n`;
+      });
+
+      downloadText(text, '路线规划汇总.txt');
+      showToast('汇总已导出', 'success');
+    }
+
+    // 下载文本文件
+    function downloadText(text, filename) {
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // 隐藏结果
+    function hideResult() {
+      document.getElementById('resultSection').style.display = 'none';
+      currentRoute = null;
+    }
+
+    // 渲染历史记录
+    function renderHistory() {
+      const list = document.getElementById('historyList');
+      const empty = document.getElementById('historyEmpty');
+
+      if (savedRoutes.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      list.innerHTML = savedRoutes.map(route => `
+        <div class="data-item">
+          <div class="data-item-icon">🗺️</div>
+          <div class="data-item-content">
+            <h4>${route.name}</h4>
+            <p>${route.destination} · ${route.days}天 · ${route.guestType} · ${new Date(route.createdAt).toLocaleDateString()}</p>
+          </div>
+          <div class="data-item-actions">
+            <button class="edit-btn" onclick="loadRoute('${route.id}')">查看</button>
+            <button class="delete-btn" onclick="deleteRoute('${route.id}')">删除</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 加载历史行程
+    function loadRoute(id) {
+      const route = savedRoutes.find(r => r.id === id);
+      if (route) {
+        currentRoute = route;
+        renderResult(route);
+        showToast('已加载历史方案', 'success');
+      }
+    }
+
+    // 删除历史行程
+    function deleteRoute(id) {
+      if (confirm('确定要删除这个行程吗？')) {
+        savedRoutes = savedRoutes.filter(r => r.id !== id);
+        localStorage.setItem('guide_routes', JSON.stringify(savedRoutes));
+        renderHistory();
+        showToast('已删除', 'success');
+      }
+    }
+
+    // 显示Toast
+    function showToast(message, type = '') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+
+    // 点击模态框外部关闭
+    document.getElementById('editModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeEditModal();
+      }
+    });
+  </script>
+</body>
+</html>

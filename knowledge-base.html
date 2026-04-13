@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>景点知识库 - 导游工具</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/guide/guide-tools.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">🌍 TravelHub</a>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guide-tools.html">导游工具</a>
+        <a href="knowledge-base.html" class="active">景点知识库</a>
+        <a href="emergency.html">应急预案</a>
+        <a href="route-planner.html">路线规划</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 页面头部 -->
+  <header class="tool-header">
+    <div class="container">
+      <h1>📚 景点知识库</h1>
+      <p>20个热门景点详细资料 · 三种讲解风格自由切换</p>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <section class="tool-container">
+    <!-- 搜索和筛选 -->
+    <div class="search-bar">
+      <input type="text" class="search-input" id="searchInput" placeholder="搜索景点名称或城市...">
+      <select class="search-input" id="typeFilter" style="max-width: 180px;">
+        <option value="">全部类型</option>
+        <option value="历史古迹">历史古迹</option>
+        <option value="自然风光">自然风光</option>
+      </select>
+      <select class="search-input" id="favoritesFilter" style="max-width: 160px;">
+        <option value="">全部景点</option>
+        <option value="favorites">⭐ 我的收藏</option>
+      </select>
+    </div>
+
+    <!-- 风格切换提示 -->
+    <div style="background: #fff; padding: 16px 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+      <span style="font-weight: 600; color: var(--gray-700);">讲解风格：</span>
+      <div class="style-toggle" style="margin: 0;">
+        <button class="style-btn active" data-style="literary" onclick="setGlobalStyle('literary')">
+          📝 文艺
+        </button>
+        <button class="style-btn" data-style="humorous" onclick="setGlobalStyle('humorous')">
+          😄 幽默
+        </button>
+        <button class="style-btn" data-style="professional" onclick="setGlobalStyle('professional')">
+          🎓 专业
+        </button>
+      </div>
+      <span style="color: var(--gray-500); font-size: 0.9rem; margin-left: auto;">切换后将应用到所有景点卡片</span>
+    </div>
+
+    <!-- 景点列表 -->
+    <div class="tool-card-grid" id="attractionsList">
+      <!-- 动态渲染 -->
+    </div>
+
+    <!-- 空状态 -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="icon">🔍</div>
+      <h3>没有找到匹配的景点</h3>
+      <p>试试调整搜索条件或筛选条件</p>
+    </div>
+  </section>
+
+  <!-- 景点详情模态框 -->
+  <div class="modal" id="detailModal">
+    <div class="modal-content" style="max-width: 700px;">
+      <div class="modal-header">
+        <h3 id="detailTitle">景点详情</h3>
+        <button class="modal-close" onclick="closeDetailModal()">&times;</button>
+      </div>
+      <div class="modal-body" id="detailBody">
+        <!-- 动态内容 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 游导Travel (youdao-travel.com) 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 全局变量
+    let attractions = [];
+    let favorites = JSON.parse(localStorage.getItem('guide_favorites') || '[]');
+    let currentStyle = localStorage.getItem('guide_story_style') || 'literary';
+    let currentSearch = '';
+    let currentType = '';
+    let currentFavoritesFilter = '';
+
+    // 页面加载完成后获取数据
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadAttractions();
+      setupEventListeners();
+      renderAttractions();
+      updateStyleButtons();
+    });
+
+    // 加载景点数据
+    async function loadAttractions() {
+      try {
+        const response = await fetch('data/attractions.json');
+        attractions = await response.json();
+      } catch (error) {
+        console.error('加载景点数据失败:', error);
+        attractions = [];
+      }
+    }
+
+    // 设置事件监听
+    function setupEventListeners() {
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        currentSearch = e.target.value.toLowerCase();
+        renderAttractions();
+      });
+
+      document.getElementById('typeFilter').addEventListener('change', (e) => {
+        currentType = e.target.value;
+        renderAttractions();
+      });
+
+      document.getElementById('favoritesFilter').addEventListener('change', (e) => {
+        currentFavoritesFilter = e.target.value;
+        renderAttractions();
+      });
+    }
+
+    // 设置全局讲解风格
+    function setGlobalStyle(style) {
+      currentStyle = style;
+      localStorage.setItem('guide_story_style', style);
+      updateStyleButtons();
+      renderAttractions();
+    }
+
+    // 更新风格按钮状态
+    function updateStyleButtons() {
+      document.querySelectorAll('.style-toggle .style-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.style === currentStyle);
+      });
+    }
+
+    // 筛选景点
+    function filterAttractions() {
+      return attractions.filter(item => {
+        // 搜索匹配
+        const matchSearch = !currentSearch || 
+          item.name.toLowerCase().includes(currentSearch) ||
+          item.city.toLowerCase().includes(currentSearch) ||
+          item.description.toLowerCase().includes(currentSearch);
+        
+        // 类型筛选
+        const matchType = !currentType || item.type === currentType;
+        
+        // 收藏筛选
+        const matchFavorites = !currentFavoritesFilter || 
+          (currentFavoritesFilter === 'favorites' && favorites.includes(item.id));
+        
+        return matchSearch && matchType && matchFavorites;
+      });
+    }
+
+    // 渲染景点列表
+    function renderAttractions() {
+      const list = document.getElementById('attractionsList');
+      const emptyState = document.getElementById('emptyState');
+      const filtered = filterAttractions();
+
+      if (filtered.length === 0) {
+        list.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      list.innerHTML = filtered.map(item => `
+        <div class="attraction-card">
+          <div class="attraction-card-header">
+            <button class="favorite-btn ${favorites.includes(item.id) ? 'active' : ''}" onclick="toggleFavorite('${item.id}', event)">
+              ${favorites.includes(item.id) ? '❤️' : '🤍'}
+            </button>
+            <div class="emoji">${item.image}</div>
+            <h3>${item.name}</h3>
+            <div class="meta">
+              <span>📍 ${item.city}</span>
+              <span>🏷️ ${item.type}</span>
+              <span>⭐ ${item.level}</span>
+            </div>
+          </div>
+          <div class="attraction-card-body">
+            <p>${item.description}</p>
+            
+            <div class="style-toggle">
+              <button class="style-btn ${currentStyle === 'literary' ? 'active' : ''}" onclick="setCardStyle('${item.id}', 'literary')">
+                📝 文艺
+              </button>
+              <button class="style-btn ${currentStyle === 'humorous' ? 'active' : ''}" onclick="setCardStyle('${item.id}', 'humorous')">
+                😄 幽默
+              </button>
+              <button class="style-btn ${currentStyle === 'professional' ? 'active' : ''}" onclick="setCardStyle('${item.id}', 'professional')">
+                🎓 专业
+              </button>
+            </div>
+            
+            <div class="story-content">
+              ${item.stories[currentStyle]}
+            </div>
+
+            <div class="tips-section">
+              <h4>💡 游览贴士</h4>
+              <ul>
+                ${item.tips.map(tip => `<li>${tip}</li>`).join('')}
+              </ul>
+            </div>
+
+            <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+              <span style="font-size: 0.9rem; color: var(--gray-600);">
+                ⏰ 最佳时间: ${item.bestTime}
+              </span>
+              <span style="font-size: 0.9rem; color: var(--gray-600);">
+                🎫 ${item.ticket}
+              </span>
+            </div>
+
+            <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="showDetail('${item.id}')">
+              查看完整讲解词
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 切换收藏状态
+    function toggleFavorite(id, event) {
+      event.stopPropagation();
+      const index = favorites.indexOf(id);
+      if (index > -1) {
+        favorites.splice(index, 1);
+        showToast('已取消收藏');
+      } else {
+        favorites.push(id);
+        showToast('已添加到收藏');
+      }
+      localStorage.setItem('guide_favorites', JSON.stringify(favorites));
+      renderAttractions();
+    }
+
+    // 设置单卡片风格
+    function setCardStyle(id, style) {
+      currentStyle = style;
+      localStorage.setItem('guide_story_style', style);
+      updateStyleButtons();
+      renderAttractions();
+    }
+
+    // 显示详情
+    function showDetail(id) {
+      const item = attractions.find(a => a.id === id);
+      if (!item) return;
+
+      document.getElementById('detailTitle').textContent = item.name;
+      document.getElementById('detailBody').innerHTML = `
+        <div style="margin-bottom: 24px;">
+          <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+            <span style="padding: 6px 14px; background: var(--gray-100); border-radius: 20px; font-size: 0.9rem;">📍 ${item.city}</span>
+            <span style="padding: 6px 14px; background: var(--gray-100); border-radius: 20px; font-size: 0.9rem;">🏷️ ${item.type}</span>
+            <span style="padding: 6px 14px; background: var(--gray-100); border-radius: 20px; font-size: 0.9rem;">⭐ ${item.level}</span>
+            <span style="padding: 6px 14px; background: var(--gray-100); border-radius: 20px; font-size: 0.9rem;">🎫 ${item.ticket}</span>
+          </div>
+          <p style="color: var(--gray-600); line-height: 1.8;">${item.description}</p>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 16px; border-radius: 10px; color: #fff; margin-bottom: 16px;">
+          <h4 style="margin-bottom: 12px;">⏰ 最佳游览时间</h4>
+          <p>${item.bestTime}</p>
+        </div>
+
+        <h4 style="font-size: 1.1rem; margin-bottom: 16px;">📝 三种讲解风格</h4>
+        
+        <div class="tabs" style="margin-bottom: 20px;">
+          <button class="tab active" onclick="showTab('literary', '${item.id}')">📝 文艺版</button>
+          <button class="tab" onclick="showTab('humorous', '${item.id}')">😄 幽默版</button>
+          <button class="tab" onclick="showTab('professional', '${item.id}')">🎓 专业版</button>
+        </div>
+        
+        <div id="storyTabContent" class="story-content" style="min-height: 150px;">
+          ${item.stories.literary}
+        </div>
+
+        <div class="tips-section">
+          <h4>💡 游览贴士</h4>
+          <ul>
+            ${item.tips.map(tip => `<li>${tip}</li>`).join('')}
+          </ul>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="copyStory('${item.id}')">
+          复制当前讲解词
+        </button>
+      `;
+
+      document.getElementById('detailModal').classList.add('open');
+    }
+
+    // 显示讲解风格标签页
+    function showTab(style, id) {
+      const item = attractions.find(a => a.id === id);
+      if (!item) return;
+
+      // 更新标签状态
+      document.querySelectorAll('#detailBody .tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.classList.add('active');
+
+      // 更新内容
+      document.getElementById('storyTabContent').textContent = item.stories[style];
+    }
+
+    // 复制讲解词
+    function copyStory(id) {
+      const item = attractions.find(a => a.id === id);
+      if (!item) return;
+
+      const activeTab = document.querySelector('#detailBody .tab.active');
+      const style = activeTab ? activeTab.textContent.includes('文艺') ? 'literary' : 
+        activeTab.textContent.includes('幽默') ? 'humorous' : 'professional' : 'literary';
+      
+      navigator.clipboard.writeText(item.stories[style]).then(() => {
+        showToast('讲解词已复制到剪贴板', 'success');
+      });
+    }
+
+    // 关闭详情模态框
+    function closeDetailModal() {
+      document.getElementById('detailModal').classList.remove('open');
+    }
+
+    // 显示Toast
+    function showToast(message, type = '') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+
+    // 点击模态框外部关闭
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeDetailModal();
+      }
+    });
+  </script>
+</body>
+</html>

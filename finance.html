@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>收入记账本 - 导游工具</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/guide/guide-tools.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">🌍 TravelHub</a>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guide-tools.html">导游工具</a>
+        <a href="schedule.html">团期管理</a>
+        <a href="finance.html" class="active">收入记账</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 页面头部 -->
+  <header class="tool-header" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+    <div class="container">
+      <h1>💰 收入记账本</h1>
+      <p>轻松记录收支 · 月度统计图表 · 数据导出CSV</p>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <section class="tool-container">
+    <!-- 统计卡片 -->
+    <div class="stats-grid">
+      <div class="stat-card income">
+        <div class="stat-icon">💵</div>
+        <div class="stat-value" id="totalIncome">¥0</div>
+        <div class="stat-label">总收入</div>
+      </div>
+      <div class="stat-card expense">
+        <div class="stat-icon">📤</div>
+        <div class="stat-value" id="totalExpense">¥0</div>
+        <div class="stat-label">总支出</div>
+      </div>
+      <div class="stat-card profit">
+        <div class="stat-icon">💹</div>
+        <div class="stat-value" id="totalProfit">¥0</div>
+        <div class="stat-label">净利润</div>
+      </div>
+    </div>
+
+    <!-- 月度筛选 -->
+    <div class="content-card" style="margin-bottom: 24px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="btn btn-secondary" onclick="changeMonth(-1)" style="padding: 8px 12px;">&lt;</button>
+          <h3 id="monthTitle" style="min-width: 140px; text-align: center;">2024年1月</h3>
+          <button class="btn btn-secondary" onclick="changeMonth(1)" style="padding: 8px 12px;">&gt;</button>
+          <button class="btn btn-secondary" onclick="goToCurrentMonth()" style="padding: 8px 12px;">今天</button>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <select id="recordTypeFilter" class="search-input" style="width: auto; padding: 8px 16px;" onchange="renderRecords()">
+            <option value="">全部记录</option>
+            <option value="income">💵 收入</option>
+            <option value="expense">📤 支出</option>
+          </select>
+          <button class="btn btn-primary" onclick="openAddModal('income')" style="padding: 8px 16px;">
+            ➕ 记一笔
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 记录列表 -->
+    <div class="content-card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3>📋 收支记录</h3>
+        <button class="btn btn-secondary" onclick="exportCSV()" style="padding: 8px 16px; font-size: 0.9rem;">
+          📤 导出CSV
+        </button>
+      </div>
+      <div id="recordsList">
+        <!-- 动态渲染 -->
+      </div>
+      <div class="empty-state" id="recordsEmpty">
+        <div class="icon">📝</div>
+        <h3>本月暂无记录</h3>
+        <p>点击"记一笔"按钮添加收支记录</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 添加/编辑模态框 -->
+  <div class="modal" id="recordModal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h3 id="modalTitle">添加记录</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="recordForm">
+          <input type="hidden" id="recordId">
+          <div class="form-group">
+            <label>记录类型</label>
+            <div class="style-toggle" style="margin: 0;">
+              <button type="button" class="style-btn active" data-type="income" onclick="setRecordType('income')">
+                💵 收入
+              </button>
+              <button type="button" class="style-btn" data-type="expense" onclick="setRecordType('expense')">
+                📤 支出
+              </button>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>金额 *</label>
+              <input type="number" id="amount" placeholder="0.00" step="0.01" min="0" required>
+            </div>
+            <div class="form-group">
+              <label>日期 *</label>
+              <input type="date" id="recordDate" required>
+            </div>
+          </div>
+          <div class="form-group" id="expenseTypeGroup" style="display: none;">
+            <label>支出类型</label>
+            <select id="expenseType">
+              <option value="交通">🚗 交通</option>
+              <option value="餐饮">🍜 餐饮</option>
+              <option value="门票">🎫 门票</option>
+              <option value="住宿">🏨 住宿</option>
+              <option value="导游费">👨‍🏫 导游费</option>
+              <option value="其他">📦 其他</option>
+            </select>
+          </div>
+          <div class="form-group" id="teamSelectGroup">
+            <label>关联团队</label>
+            <select id="teamSelect">
+              <option value="">无关联</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>备注</label>
+            <textarea id="notes" placeholder="可选：补充说明..." style="min-height: 80px;"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveRecord()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>© 2024 游导Travel (youdao-travel.com) 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 全局变量
+    let records = JSON.parse(localStorage.getItem('guide_finance') || '[]');
+    let teams = JSON.parse(localStorage.getItem('guide_teams') || '[]');
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth();
+    let currentRecordType = 'income';
+    let editingRecordId = null;
+
+    // 页面加载完成后
+    document.addEventListener('DOMContentLoaded', () => {
+      populateTeamSelect();
+      updateMonthDisplay();
+      renderRecords();
+      updateStats();
+    });
+
+    // 填充团队选择
+    function populateTeamSelect() {
+      const select = document.getElementById('teamSelect');
+      select.innerHTML = '<option value="">无关联</option>';
+      teams.forEach(t => {
+        select.innerHTML += `<option value="${t.id}">${t.name}</option>`;
+      });
+    }
+
+    // 切换月份
+    function changeMonth(delta) {
+      currentMonth += delta;
+      if (currentMonth < 0) {
+        currentMonth = 11;
+        currentYear--;
+      } else if (currentMonth > 11) {
+        currentMonth = 0;
+        currentYear++;
+      }
+      updateMonthDisplay();
+      renderRecords();
+    }
+
+    // 回到当月
+    function goToCurrentMonth() {
+      const now = new Date();
+      currentYear = now.getFullYear();
+      currentMonth = now.getMonth();
+      updateMonthDisplay();
+      renderRecords();
+    }
+
+    // 更新月份显示
+    function updateMonthDisplay() {
+      document.getElementById('monthTitle').textContent = `${currentYear}年${currentMonth + 1}月`;
+    }
+
+    // 获取当月日期字符串前缀
+    function getMonthPrefix() {
+      return `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+    }
+
+    // 筛选当月记录
+    function getMonthRecords() {
+      const prefix = getMonthPrefix();
+      const typeFilter = document.getElementById('recordTypeFilter').value;
+      
+      return records
+        .filter(r => r.date.startsWith(prefix))
+        .filter(r => !typeFilter || r.type === typeFilter)
+        .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id);
+    }
+
+    // 渲染记录列表
+    function renderRecords() {
+      const list = document.getElementById('recordsList');
+      const empty = document.getElementById('recordsEmpty');
+      const monthRecords = getMonthRecords();
+
+      if (monthRecords.length === 0) {
+        list.innerHTML = '';
+        empty.style.display = 'block';
+        return;
+      }
+
+      empty.style.display = 'none';
+      list.innerHTML = monthRecords.map(r => {
+        const team = teams.find(t => t.id === r.teamId);
+        return `
+          <div class="data-item" style="border-left: 4px solid ${r.type === 'income' ? '#10b981' : '#ef4444'};">
+            <div class="data-item-icon" style="background: ${r.type === 'income' ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'};">
+              ${r.type === 'income' ? '💵' : '📤'}
+            </div>
+            <div class="data-item-content">
+              <h4>${r.type === 'income' ? '收入' : r.expenseType || '支出'}</h4>
+              <p>${r.date} · ${r.amount.toFixed(2)}元${team ? ' · ' + team.name : ''}${r.notes ? ' · ' + r.notes : ''}</p>
+            </div>
+            <div class="data-item-actions">
+              <button class="edit-btn" onclick="editRecord('${r.id}')">编辑</button>
+              <button class="delete-btn" onclick="deleteRecord('${r.id}')">删除</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 更新统计数据
+    function updateStats() {
+      const income = records.filter(r => r.type === 'income').reduce((sum, r) => sum + r.amount, 0);
+      const expense = records.filter(r => r.type === 'expense').reduce((sum, r) => sum + r.amount, 0);
+      const profit = income - expense;
+
+      document.getElementById('totalIncome').textContent = `¥${income.toFixed(0)}`;
+      document.getElementById('totalExpense').textContent = `¥${expense.toFixed(0)}`;
+      document.getElementById('totalProfit').textContent = `¥${profit.toFixed(0)}`;
+      document.getElementById('totalProfit').style.color = profit >= 0 ? '#10b981' : '#ef4444';
+    }
+
+    // 设置记录类型
+    function setRecordType(type) {
+      currentRecordType = type;
+      document.querySelectorAll('#recordForm .style-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.type === type);
+      });
+      document.getElementById('expenseTypeGroup').style.display = type === 'expense' ? 'block' : 'none';
+    }
+
+    // 打开添加模态框
+    function openAddModal(type) {
+      editingRecordId = null;
+      document.getElementById('modalTitle').textContent = type === 'income' ? '💵 记收入' : '📤 记支出';
+      document.getElementById('recordForm').reset();
+      document.getElementById('recordId').value = '';
+      
+      setRecordType(type);
+      
+      // 设置默认日期为今天
+      document.getElementById('recordDate').value = new Date().toISOString().split('T')[0];
+      
+      document.getElementById('recordModal').classList.add('open');
+    }
+
+    // 编辑记录
+    function editRecord(id) {
+      const record = records.find(r => r.id === id);
+      if (!record) return;
+
+      editingRecordId = id;
+      document.getElementById('modalTitle').textContent = '编辑记录';
+      document.getElementById('recordId').value = record.id;
+      document.getElementById('amount').value = record.amount;
+      document.getElementById('recordDate').value = record.date;
+      document.getElementById('teamSelect').value = record.teamId || '';
+      document.getElementById('notes').value = record.notes || '';
+      
+      setRecordType(record.type);
+      if (record.type === 'expense') {
+        document.getElementById('expenseType').value = record.expenseType || '其他';
+      }
+
+      document.getElementById('recordModal').classList.add('open');
+    }
+
+    // 关闭模态框
+    function closeModal() {
+      document.getElementById('recordModal').classList.remove('open');
+      editingRecordId = null;
+    }
+
+    // 保存记录
+    function saveRecord() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const date = document.getElementById('recordDate').value;
+
+      if (!amount || amount <= 0 || !date) {
+        showToast('请填写金额和日期', 'error');
+        return;
+      }
+
+      const record = {
+        id: editingRecordId || Date.now().toString(),
+        type: currentRecordType,
+        amount,
+        date,
+        expenseType: currentRecordType === 'expense' ? document.getElementById('expenseType').value : '',
+        teamId: document.getElementById('teamSelect').value,
+        notes: document.getElementById('notes').value,
+        createdAt: editingRecordId ? records.find(r => r.id === editingRecordId)?.createdAt : new Date().toISOString()
+      };
+
+      if (editingRecordId) {
+        const idx = records.findIndex(r => r.id === editingRecordId);
+        if (idx > -1) records[idx] = record;
+      } else {
+        records.push(record);
+      }
+
+      localStorage.setItem('guide_finance', JSON.stringify(records));
+      closeModal();
+      renderRecords();
+      updateStats();
+      showToast(editingRecordId ? '已更新' : '已添加', 'success');
+    }
+
+    // 删除记录
+    function deleteRecord(id) {
+      if (confirm('确定要删除这条记录吗？')) {
+        records = records.filter(r => r.id !== id);
+        localStorage.setItem('guide_finance', JSON.stringify(records));
+        renderRecords();
+        updateStats();
+        showToast('已删除', 'success');
+      }
+    }
+
+    // 导出CSV
+    function exportCSV() {
+      if (records.length === 0) {
+        showToast('暂无数据', 'error');
+        return;
+      }
+
+      let csv = '\uFEFF日期,类型,金额,支出类型,关联团队,备注\n';
+      records.forEach(r => {
+        const team = teams.find(t => t.id === r.teamId);
+        csv += `"${r.date}","${r.type === 'income' ? '收入' : '支出'}","${r.amount.toFixed(2)}","${r.expenseType || ''}","${team?.name || ''}","${(r.notes || '').replace(/"/g, '""')}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `收支记录_${new Date().toISOString().split('T')[0]}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('已导出CSV', 'success');
+    }
+
+    // 显示Toast
+    function showToast(message, type = '') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
+    }
+
+    // 点击模态框外部关闭
+    document.getElementById('recordModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+  </script>
+</body>
+</html>
