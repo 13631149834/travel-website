@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>评价导游 - TravelHub</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/guide/reviews.css">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px 0;
+    }
+    
+    .submit-container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .submit-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    
+    .submit-header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    
+    .submit-header h1 {
+      font-size: 1.5rem;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    
+    .submit-header p {
+      color: var(--gray-600);
+    }
+    
+    .rating-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .rating-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background: #f9f9f9;
+      border-radius: 12px;
+    }
+    
+    .rating-label {
+      font-weight: 500;
+      color: var(--gray-800);
+    }
+    
+    .star-rating {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .star-rating input {
+      display: none;
+    }
+    
+    .star-rating label {
+      font-size: 1.8rem;
+      color: var(--gray-300);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+      color: #f59e0b;
+    }
+    
+    .average-rating {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .average-rating .rating-number {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--gray-800);
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+    
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .success-message {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    
+    .success-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    
+    .success-message h2 {
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    
+    .success-message p {
+      color: var(--gray-600);
+    }
+    
+    @media (max-width: 480px) {
+      .submit-card {
+        padding: 20px;
+      }
+      
+      .rating-item {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="submit-container">
+    <div class="submit-card" id="submitCard">
+      <div class="submit-header">
+        <h1>⭐ 评价导游服务</h1>
+        <p>您的反馈是我们进步的动力</p>
+      </div>
+      
+      <form id="reviewForm">
+        <div class="form-group">
+          <label>您的称呼 <span style="color: var(--gray-500); font-weight: normal;">(可选)</span></label>
+          <input type="text" id="visitorName" placeholder="方便我们称呼您">
+        </div>
+        
+        <div class="rating-group">
+          <div class="rating-item">
+            <span class="rating-label">服务态度</span>
+            <div class="star-rating" data-field="serviceScore">
+              <input type="radio" name="serviceScore" id="service5" value="5"><label for="service5">★</label>
+              <input type="radio" name="serviceScore" id="service4" value="4"><label for="service4">★</label>
+              <input type="radio" name="serviceScore" id="service3" value="3"><label for="service3">★</label>
+              <input type="radio" name="serviceScore" id="service2" value="2"><label for="service2">★</label>
+              <input type="radio" name="serviceScore" id="service1" value="1"><label for="service1">★</label>
+            </div>
+          </div>
+          
+          <div class="rating-item">
+            <span class="rating-label">专业程度</span>
+            <div class="star-rating" data-field="professionalScore">
+              <input type="radio" name="professionalScore" id="prof5" value="5"><label for="prof5">★</label>
+              <input type="radio" name="professionalScore" id="prof4" value="4"><label for="prof4">★</label>
+              <input type="radio" name="professionalScore" id="prof3" value="3"><label for="prof3">★</label>
+              <input type="radio" name="professionalScore" id="prof2" value="2"><label for="prof2">★</label>
+              <input type="radio" name="professionalScore" id="prof1" value="1"><label for="prof1">★</label>
+            </div>
+          </div>
+          
+          <div class="rating-item">
+            <span class="rating-label">行程安排</span>
+            <div class="star-rating" data-field="itineraryScore">
+              <input type="radio" name="itineraryScore" id="itin5" value="5"><label for="itin5">★</label>
+              <input type="radio" name="itineraryScore" id="itin4" value="4"><label for="itin4">★</label>
+              <input type="radio" name="itineraryScore" id="itin3" value="3"><label for="itin3">★</label>
+              <input type="radio" name="itineraryScore" id="itin2" value="2"><label for="itin2">★</label>
+              <input type="radio" name="itineraryScore" id="itin1" value="1"><label for="itin1">★</label>
+            </div>
+          </div>
+        </div>
+        
+        <div class="average-rating">
+          <span>综合评分</span>
+          <span class="rating-number"><span id="averageRating">0.0</span> 分</span>
+        </div>
+        
+        <div class="form-group">
+          <label>分享您的体验 <span style="color: var(--gray-500); font-weight: normal;">(可选)</span></label>
+          <textarea id="reviewContent" placeholder="这次旅行让您满意吗？有什么想说的~" maxlength="200"></textarea>
+        </div>
+        
+        <button type="submit" class="submit-btn" id="submitBtn">
+          提交评价
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // 数据管理
+    const ReviewsData = {
+      STORAGE_KEY: 'guide_reviews',
+      
+      getReviews() {
+        const data = localStorage.getItem(this.STORAGE_KEY);
+        return data ? JSON.parse(data) : [];
+      },
+      
+      saveReview(review) {
+        const reviews = this.getReviews();
+        review.id = Date.now().toString();
+        review.createdAt = new Date().toISOString();
+        reviews.unshift(review);
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(reviews));
+        return review;
+      }
+    };
+    
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', () => {
+      // 设置日期
+      const today = new Date().toISOString().split('T')[0];
+      
+      // 星级评分交互
+      document.querySelectorAll('.star-rating').forEach(rating => {
+        rating.addEventListener('change', updateAverageRating);
+      });
+      
+      // 表单提交
+      document.getElementById('reviewForm').addEventListener('submit', handleSubmit);
+    });
+    
+    function updateAverageRating() {
+      const serviceScore = parseInt(document.querySelector('input[name="serviceScore"]:checked')?.value || 0);
+      const professionalScore = parseInt(document.querySelector('input[name="professionalScore"]:checked')?.value || 0);
+      const itineraryScore = parseInt(document.querySelector('input[name="itineraryScore"]:checked')?.value || 0);
+      
+      const avg = ((serviceScore + professionalScore + itineraryScore) / 3).toFixed(1);
+      document.getElementById('averageRating').textContent = avg;
+      
+      // 激活按钮
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = !(serviceScore && professionalScore && itineraryScore);
+    }
+    
+    function handleSubmit(e) {
+      e.preventDefault();
+      
+      const serviceScore = parseInt(document.querySelector('input[name="serviceScore"]:checked')?.value);
+      const professionalScore = parseInt(document.querySelector('input[name="professionalScore"]:checked')?.value);
+      const itineraryScore = parseInt(document.querySelector('input[name="itineraryScore"]:checked')?.value);
+      
+      if (!serviceScore || !professionalScore || !itineraryScore) {
+        alert('请完成所有评分');
+        return;
+      }
+      
+      const review = {
+        visitorName: document.getElementById('visitorName').value.trim() || '匿名游客',
+        date: new Date().toISOString().split('T')[0],
+        serviceScore,
+        professionalScore,
+        itineraryScore,
+        overallScore: ((serviceScore + professionalScore + itineraryScore) / 3).toFixed(1),
+        content: document.getElementById('reviewContent').value.trim(),
+        isFeatured: false,
+        reply: ''
+      };
+      
+      ReviewsData.saveReview(review);
+      
+      // 显示成功消息
+      document.getElementById('submitCard').innerHTML = `
+        <div class="success-message">
+          <div class="success-icon">🎉</div>
+          <h2>感谢您的评价！</h2>
+          <p>您的反馈将帮助导游提供更好的服务</p>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>

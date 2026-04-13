@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>导游个人主页 - TravelHub</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/guide/guide-tools.css">
+  <link rel="stylesheet" href="css/guide/profile.css">
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">🌍 TravelHub</a>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="visa.html">签证中心</a>
+        <a href="pitfall.html">避坑指南</a>
+        <a href="guide-tools.html" class="active">导游工具</a>
+        <a href="routes.html">精品线路</a>
+        <a href="wonders.html">世界奇趣</a>
+        <a href="emergency.html">应急资源</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 页面头部 -->
+  <header class="profile-header">
+    <div class="container">
+      <h1>👤 导游个人主页</h1>
+      <p>打造专属个人品牌，让游客更了解你</p>
+    </div>
+  </header>
+
+  <!-- 主内容区 -->
+  <main class="tool-container">
+    <!-- 预览模式提示 -->
+    <div class="preview-header no-print">
+      <span class="preview-badge">👁️ 预览模式</span>
+      <span>这是客户看到的页面效果</span>
+    </div>
+
+    <div class="profile-form">
+      <!-- 个人信息 -->
+      <section class="form-section">
+        <h3>👤 个人信息</h3>
+        
+        <!-- 头像上传 -->
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div class="avatar-upload">
+            <img id="avatarPreview" src="" alt="头像">
+            <div class="avatar-placeholder" id="avatarPlaceholder">
+              <span>👤</span>
+            </div>
+            <label class="upload-btn edit-only">
+              点击上传头像
+              <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>姓名</label>
+            <input type="text" id="name" placeholder="请输入真实姓名">
+          </div>
+          <div class="form-group">
+            <label>昵称</label>
+            <input type="text" id="nickname" placeholder="游客看到的昵称">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>个人简介</label>
+          <textarea id="intro" placeholder="向游客介绍一下自己吧~" rows="4"></textarea>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>从业年限</label>
+            <input type="number" id="years" placeholder="0" min="0" max="50">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>服务语言</label>
+          <div class="language-options">
+            <label class="language-option" data-lang="中文">
+              <input type="checkbox" name="language" value="中文">
+              <span>🇨🇳 中文</span>
+            </label>
+            <label class="language-option" data-lang="英语">
+              <input type="checkbox" name="language" value="英语">
+              <span>🇬🇧 英语</span>
+            </label>
+            <label class="language-option" data-lang="日语">
+              <input type="checkbox" name="language" value="日语">
+              <span>🇯🇵 日语</span>
+            </label>
+            <label class="language-option" data-lang="韩语">
+              <input type="checkbox" name="language" value="韩语">
+              <span>🇰🇷 韩语</span>
+            </label>
+            <label class="language-option" data-lang="法语">
+              <input type="checkbox" name="language" value="法语">
+              <span>🇫🇷 法语</span>
+            </label>
+            <label class="language-option" data-lang="德语">
+              <input type="checkbox" name="language" value="德语">
+              <span>🇩🇪 德语</span>
+            </label>
+            <label class="language-option" data-lang="西班牙语">
+              <input type="checkbox" name="language" value="西班牙语">
+              <span>🇪🇸 西班牙语</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- 资质证书 -->
+      <section class="form-section">
+        <h3>📜 资质证书</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>导游证号</label>
+            <input type="text" id="licenseNumber" placeholder="请输入导游证号">
+          </div>
+          <div class="form-group">
+            <label>导游等级</label>
+            <select id="licenseLevel">
+              <option value="初级">初级导游</option>
+              <option value="中级">中级导游</option>
+              <option value="高级">高级导游</option>
+              <option value="特级">特级导游</option>
+            </select>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>证书照片</label>
+          <div class="certificate-upload">
+            <div class="certificate-preview edit-only" onclick="document.getElementById('licenseInput').click()">
+              <img id="licensePreview" src="" alt="证书" style="display: none;">
+              <div class="placeholder" id="licensePlaceholder">
+                <div class="icon">📄</div>
+                <div>点击上传证书</div>
+              </div>
+            </div>
+            <input type="file" id="licenseInput" accept="image/*" style="display: none;">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>擅长领域</label>
+          <div class="tag-input-container" id="expertiseTags">
+            <!-- 标签会在这里渲染 -->
+          </div>
+          <div style="margin-top: 8px;">
+            <input type="text" id="expertiseInput" placeholder="输入后按回车添加标签" style="width: 100%; padding: 12px 16px; border: 2px solid var(--gray-200); border-radius: 8px;">
+          </div>
+        </div>
+      </section>
+
+      <!-- 服务范围 -->
+      <section class="form-section">
+        <h3>🗺️ 服务范围</h3>
+        
+        <div class="form-group">
+          <label>擅长线路</label>
+          <div id="routesContainer" class="route-list">
+            <p class="empty-text" style="text-align: center; color: var(--gray-500); padding: 20px;">暂无擅长线路，添加一条吧</p>
+          </div>
+          <button type="button" class="btn btn-primary edit-only" style="margin-top: 12px;" onclick="showAddRouteModal()">
+            ➕ 添加线路
+          </button>
+        </div>
+        
+        <div class="form-group">
+          <label>服务城市</label>
+          <div class="language-options">
+            <label class="language-option city-option" data-city="北京">
+              <input type="checkbox" name="city" value="北京">
+              <span>北京</span>
+            </label>
+            <label class="language-option city-option" data-city="上海">
+              <input type="checkbox" name="city" value="上海">
+              <span>上海</span>
+            </label>
+            <label class="language-option city-option" data-city="广州">
+              <input type="checkbox" name="city" value="广州">
+              <span>广州</span>
+            </label>
+            <label class="language-option city-option" data-city="深圳">
+              <input type="checkbox" name="city" value="深圳">
+              <span>深圳</span>
+            </label>
+            <label class="language-option city-option" data-city="成都">
+              <input type="checkbox" name="city" value="成都">
+              <span>成都</span>
+            </label>
+            <label class="language-option city-option" data-city="杭州">
+              <input type="checkbox" name="city" value="杭州">
+              <span>杭州</span>
+            </label>
+            <label class="language-option city-option" data-city="西安">
+              <input type="checkbox" name="city" value="西安">
+              <span>西安</span>
+            </label>
+            <label class="language-option city-option" data-city="重庆">
+              <input type="checkbox" name="city" value="重庆">
+              <span>重庆</span>
+            </label>
+            <label class="language-option city-option" data-city="云南">
+              <input type="checkbox" name="city" value="云南">
+              <span>云南</span>
+            </label>
+            <label class="language-option city-option" data-city="西藏">
+              <input type="checkbox" name="city" value="西藏">
+              <span>西藏</span>
+            </label>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>服务类型</label>
+          <div class="service-type-options">
+            <label class="service-type" data-type="group">
+              <input type="checkbox" name="serviceType" value="group">
+              <span>👥 跟团游</span>
+            </label>
+            <label class="service-type" data-type="custom">
+              <input type="checkbox" name="serviceType" value="custom">
+              <span>🎨 定制游</span>
+            </label>
+            <label class="service-type" data-type="private">
+              <input type="checkbox" name="serviceType" value="private">
+              <span>🚗 私家团</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- 联系方式 -->
+      <section class="form-section">
+        <h3>📞 联系方式</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>手机号</label>
+            <input type="tel" id="phone" placeholder="请输入手机号">
+          </div>
+          <div class="form-group">
+            <label>微信号</label>
+            <input type="text" id="wechat" placeholder="请输入微信号">
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <label>邮箱</label>
+          <input type="email" id="email" placeholder="请输入邮箱">
+        </div>
+        
+        <div style="margin-top: 16px;">
+          <button type="button" class="btn btn-primary" onclick="copyWechat()">
+            📋 复制微信号
+          </button>
+        </div>
+      </section>
+
+      <!-- 分享功能 -->
+      <section class="form-section no-print">
+        <h3>📤 分享主页</h3>
+        
+        <div class="share-section">
+          <p>让游客扫码查看您的个人主页</p>
+          <div class="qrcode-container" id="qrcodeContainer"></div>
+          
+          <div class="share-buttons">
+            <button type="button" class="share-btn primary" onclick="copyProfileLink()">
+              📋 复制链接
+            </button>
+            <button type="button" class="share-btn secondary" onclick="shareProfile()">
+              📱 分享到
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 操作按钮 -->
+      <div class="form-section no-print" style="text-align: center;">
+        <button type="button" class="btn btn-primary" id="saveProfileBtn" style="margin-right: 12px;">
+          💾 保存信息
+        </button>
+        <button type="button" class="btn btn-secondary" id="previewToggle" onclick="togglePreviewMode()">
+          👁️ 预览主页
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="printProfile()" style="margin-left: 12px;">
+          🖨️ 打印简历
+        </button>
+      </div>
+    </div>
+
+    <!-- 预览模式内容 -->
+    <div id="previewContent" class="profile-preview" style="display: none;">
+      <div class="preview-avatar">
+        <img id="previewAvatar" src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='50' x='50' text-anchor='middle' font-size='50'>👤</text></svg>" alt="头像">
+      </div>
+      <div class="preview-name" id="previewName">导游昵称</div>
+      <div class="preview-title" id="previewTitle">初级导游 · 从业0年</div>
+      <div class="preview-intro" id="previewIntro">暂无简介</div>
+      
+      <div class="preview-info-grid">
+        <div class="preview-info-item">
+          <div class="label">服务语言</div>
+          <div class="value" id="previewLanguages">中文</div>
+        </div>
+        <div class="preview-info-item">
+          <div class="label">服务城市</div>
+          <div class="value" id="previewCities">全国</div>
+        </div>
+        <div class="preview-info-item">
+          <div class="label">服务类型</div>
+          <div class="value" id="previewServiceTypes">全部类型</div>
+        </div>
+        <div class="preview-info-item">
+          <div class="label">擅长线路</div>
+          <div class="value" id="previewRoutes">暂无</div>
+        </div>
+      </div>
+      
+      <div class="preview-tags" id="previewExpertise"></div>
+      
+      <div class="preview-contact">
+        <button class="btn btn-primary" onclick="copyWechat()">📞 联系导游</button>
+      </div>
+      
+      <div style="margin-top: 24px; text-align: center; font-size: 0.9rem; color: var(--gray-500);">
+        <p>手机: <span id="previewPhone">暂无</span></p>
+        <p>微信: <span id="previewWechat">暂无</span></p>
+        <p>邮箱: <span id="previewEmail">暂无</span></p>
+      </div>
+    </div>
+  </main>
+
+  <!-- 线路添加/编辑模态框 -->
+  <div class="modal" id="routeModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="routeModalTitle">添加线路</h3>
+        <button class="modal-close" onclick="closeModal('routeModal')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>线路名称 <span class="required">*</span></label>
+          <input type="text" id="routeName" placeholder="如：云南5日深度游">
+        </div>
+        <div class="form-group">
+          <label>线路描述</label>
+          <textarea id="routeDesc" placeholder="简要描述这条线路的特点" rows="3"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('routeModal')">取消</button>
+        <button class="btn btn-primary" onclick="saveRoute()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>关于游导Travel</h4>
+          <a href="about.html">关于我们</a>
+          <a href="contact.html">联系我们</a>
+          <a href="jobs.html">加入我们</a>
+        </div>
+        <div>
+          <h4>服务支持</h4>
+          <a href="faq.html">常见问题</a>
+          <a href="guide-tools.html">导游工具</a>
+          <a href="emergency.html">应急资源</a>
+        </div>
+        <div>
+          <h4>法律信息</h4>
+          <a href="privacy.html">隐私政策</a>
+          <a href="terms.html">使用条款</a>
+          <a href="disclaimer.html">免责声明</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 游导Travel (youdao-travel.com) 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="js/guide/profile.js"></script>
+  <script>
+    // 导航切换
+    function toggleNav() {
+      document.querySelector('.nav-links').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>
