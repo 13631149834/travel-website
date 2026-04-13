@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导游管理 - 游导伴旅管理后台</title>
+  <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #F3F4F6;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航 */
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .admin-header .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-header .logo a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .admin-nav a {
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .admin-nav a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .admin-nav a.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .admin-nav .logout-btn {
+            background: rgba(239, 68, 68, 0.9);
+            margin-left: 20px;
+        }
+
+        .admin-nav .logout-btn:hover {
+            background: #EF4444;
+        }
+
+        /* 主容器 */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* 页面标题 */
+        .page-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* 内容卡片 */
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .content-card h2 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #F3F4F6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 标签页 */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border-radius: 8px;
+            background: #F3F4F6;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .tab:hover {
+            background: #E5E7EB;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        /* 搜索框 */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* 表格样式 */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        th {
+            background: #F9FAFB;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: #F9FAFB;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .btn-secondary {
+            background: #E5E7EB;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #D1D5DB;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 0.85rem;
+        }
+
+        /* 徽章 */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .badge-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: #F59E0B;
+        }
+
+        .badge-approved {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+
+        .badge-rejected {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #E5E7EB;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+        }
+
+        .pagination button {
+            padding: 8px 14px;
+            border: 1px solid #E5E7EB;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pagination button:hover,
+        .pagination button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 9999;
+            animation: slideDown 0.3s ease;
+        }
+
+        .toast-success { background-color: #10B981; }
+        .toast-error { background-color: #EF4444; }
+        .toast-warning { background-color: #F59E0B; }
+        .toast-info { background-color: #3B82F6; }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .admin-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .admin-container {
+                padding: 15px;
+            }
+            .search-bar {
+                flex-direction: column;
+            }
+        }
+
+        /* 登录模态框 */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-box .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-box label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-box .btn {
+            width: 100%;
+            justify-content: center;
+            padding: 14px;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录模态框 -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-box">
+            <h2>🔐 管理后台登录</h2>
+            <div class="form-group">
+                <label>管理员密码</label>
+                <input type="password" id="adminPassword" placeholder="请输入管理员密码">
+            </div>
+            <button class="btn btn-primary" onclick="handleLogin()">
+                登录
+            </button>
+        </div>
+    </div>
+
+    <!-- 顶部导航 -->
+    <header class="admin-header">
+        <div class="logo">
+            <a href="admin.html">⚙️ 游导伴旅管理后台</a>
+        </div>
+        <nav class="admin-nav">
+            <a href="admin.html">📊 仪表盘</a>
+            <a href="admin-guides.html" class="active">🎤 导游管理</a>
+            <a href="admin-users.html">👥 用户管理</a>
+            <a href="admin-reviews.html">⭐ 评价管理</a>
+            <a href="index.html" class="logout-btn">🚪 退出</a>
+        </nav>
+    </header>
+
+    <!-- 主容器 -->
+    <main class="admin-container">
+        <h1 class="page-title">🎤 导游管理</h1>
+
+        <!-- 标签页切换 -->
+        <div class="tabs">
+            <button class="tab active" onclick="switchTab('pending', this)">
+                ⏳ 待审核 <span id="pendingCount" class="badge badge-pending">0</span>
+            </button>
+            <button class="tab" onclick="switchTab('approved', this)">
+                ✅ 已通过 <span id="approvedCount" class="badge badge-approved">0</span>
+            </button>
+            <button class="tab" onclick="switchTab('rejected', this)">
+                ❌ 已拒绝
+            </button>
+            <button class="tab" onclick="switchTab('all', this)">
+                📋 全部导游
+            </button>
+        </div>
+
+        <!-- 搜索栏 -->
+        <div class="content-card">
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索导游昵称、邮箱或专业领域...">
+                <select class="filter-select" id="expertiseFilter">
+                    <option value="">全部专业</option>
+                    <option value="日本">日本</option>
+                    <option value="泰国">泰国</option>
+                    <option value="欧洲">欧洲</option>
+                    <option value="海岛">海岛</option>
+                    <option value="国内">国内</option>
+                </select>
+                <button class="btn btn-primary" onclick="loadGuides()">🔍 搜索</button>
+            </div>
+
+            <!-- 导游列表 -->
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>导游信息</th>
+                            <th>专业领域</th>
+                            <th>语言能力</th>
+                            <th>状态</th>
+                            <th>申请时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="guidesTable">
+                        <tr>
+                            <td colspan="6" class="loading">
+                                <div class="spinner"></div>
+                                加载中...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页 -->
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        const ADMIN_PASSWORD = 'admin123';
+        let currentTab = 'pending';
+        let currentPage = 1;
+        const pageSize = 10;
+
+        // 检查登录
+        function checkLogin() {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').style.display = 'flex';
+                return false;
+            }
+            document.getElementById('loginModal').style.display = 'none';
+            return true;
+        }
+
+        // 处理登录
+        function handleLogin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('loginModal').style.display = 'none';
+                init();
+            } else {
+                showToast('密码错误，请重试！', 'error');
+            }
+        }
+
+        // 回车登录
+        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        // 显示提示
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // 标签切换
+        function switchTab(tab, btn) {
+            currentTab = tab;
+            currentPage = 1;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            btn.classList.add('active');
+            loadGuides();
+        }
+
+        // 加载导游数量统计
+        async function loadCounts() {
+            try {
+                const [pending, approved] = await Promise.all([
+                    supabaseClient.from('guide_profiles').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+                    supabaseClient.from('guide_profiles').select('*', { count: 'exact', head: true }).eq('status', 'approved')
+                ]);
+                document.getElementById('pendingCount').textContent = pending.count || 0;
+                document.getElementById('approvedCount').textContent = approved.count || 0;
+            } catch (error) {
+                console.error('加载统计数据失败:', error);
+            }
+        }
+
+        // 加载导游列表
+        async function loadGuides() {
+            const tbody = document.getElementById('guidesTable');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="loading">
+                        <div class="spinner"></div>
+                        加载中...
+                    </td>
+                </tr>
+            `;
+
+            try {
+                let query = supabaseClient
+                    .from('guide_profiles')
+                    .select(`
+                        *,
+                        users (nickname, email)
+                    `, { count: 'exact' });
+
+                // 状态筛选
+                if (currentTab !== 'all') {
+                    query = query.eq('status', currentTab);
+                }
+
+                // 搜索筛选
+                const search = document.getElementById('searchInput').value.trim();
+                const expertise = document.getElementById('expertiseFilter').value;
+
+                if (search) {
+                    query = query.or(`nickname.ilike.%${search}%,expertise.ilike.%${search}%`);
+                }
+                if (expertise) {
+                    query = query.eq('expertise', expertise);
+                }
+
+                // 分页
+                const from = (currentPage - 1) * pageSize;
+                const to = from + pageSize - 1;
+                query = query.range(from, to).order('created_at', { ascending: false });
+
+                const { data: guides, error, count } = await query;
+
+                if (error) throw error;
+
+                // 渲染表格
+                if (!guides || guides.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="empty-state">
+                                <div class="icon">🔍</div>
+                                <p>暂无导游数据</p>
+                            </td>
+                        </tr>
+                    `;
+                    renderPagination(0);
+                    return;
+                }
+
+                tbody.innerHTML = guides.map(guide => {
+                    const statusMap = {
+                        'pending': '<span class="badge badge-pending">待审核</span>',
+                        'approved': '<span class="badge badge-approved">已通过</span>',
+                        'rejected': '<span class="badge badge-rejected">已拒绝</span>'
+                    };
+
+                    let actions = '';
+                    if (guide.status === 'pending') {
+                        actions = `
+                            <button class="btn btn-success btn-sm" onclick="approveGuide('${guide.id}')">通过</button>
+                            <button class="btn btn-danger btn-sm" onclick="rejectGuide('${guide.id}')">拒绝</button>
+                        `;
+                    } else if (guide.status === 'approved') {
+                        actions = `
+                            <button class="btn btn-danger btn-sm" onclick="rejectGuide('${guide.id}')">禁用</button>
+                            <button class="btn btn-secondary btn-sm" onclick="viewGuide('${guide.user_id}')">详情</button>
+                        `;
+                    } else {
+                        actions = `
+                            <button class="btn btn-success btn-sm" onclick="approveGuide('${guide.id}')">重新通过</button>
+                        `;
+                    }
+
+                    return `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 10px;">
+                                    <span style="font-size: 24px;">${guide.avatar || '🎤'}</span>
+                                    <div>
+                                        <div style="font-weight: 600;">${guide.nickname || guide.users?.nickname || '未命名'}</div>
+                                        <div style="font-size: 12px; color: #666;">${guide.users?.email || ''}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>${guide.expertise || '-'}</td>
+                            <td>${guide.languages || '-'}</td>
+                            <td>${statusMap[guide.status] || '-'}</td>
+                            <td>${new Date(guide.created_at).toLocaleDateString('zh-CN')}</td>
+                            <td>${actions}</td>
+                        </tr>
+                    `;
+                }).join('');
+
+                renderPagination(count || 0);
+            } catch (error) {
+                console.error('加载导游列表失败:', error);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="icon">❌</div>
+                            <p>加载失败，请刷新重试</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // 渲染分页
+        function renderPagination(total) {
+            const totalPages = Math.ceil(total / pageSize);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            
+            // 上一页
+            html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goPage(${currentPage - 1})">←</button>`;
+            
+            // 页码
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span style="padding: 8px;">...</span>`;
+                }
+            }
+            
+            // 下一页
+            html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="goPage(${currentPage + 1})">→</button>`;
+            
+            pagination.innerHTML = html;
+        }
+
+        // 跳转页面
+        function goPage(page) {
+            currentPage = page;
+            loadGuides();
+        }
+
+        // 通过导游
+        async function approveGuide(guideId) {
+            try {
+                const { error } = await supabaseClient
+                    .from('guide_profiles')
+                    .update({ status: 'approved', updated_at: new Date().toISOString() })
+                    .eq('id', guideId);
+
+                if (error) throw error;
+
+                showToast('导游审核已通过！', 'success');
+                loadCounts();
+                loadGuides();
+            } catch (error) {
+                showToast('操作失败：' + error.message, 'error');
+            }
+        }
+
+        // 拒绝导游
+        async function rejectGuide(guideId) {
+            try {
+                const { error } = await supabaseClient
+                    .from('guide_profiles')
+                    .update({ status: 'rejected', updated_at: new Date().toISOString() })
+                    .eq('id', guideId);
+
+                if (error) throw error;
+
+                showToast('已拒绝该导游申请', 'success');
+                loadCounts();
+                loadGuides();
+            } catch (error) {
+                showToast('操作失败：' + error.message, 'error');
+            }
+        }
+
+        // 查看导游详情
+        function viewGuide(userId) {
+            window.open(`profile-preview.html?userId=${userId}`, '_blank');
+        }
+
+        // 初始化
+        async function init() {
+            if (!checkLogin()) return;
+            
+            // 检查URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const filter = urlParams.get('filter');
+            if (filter === 'pending') {
+                switchTab('pending', document.querySelectorAll('.tab')[0]);
+            }
+            
+            loadCounts();
+            loadGuides();
+        }
+
+        // 搜索框回车事件
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                currentPage = 1;
+                loadGuides();
+            }
+        });
+
+        // 启动
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

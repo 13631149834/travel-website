@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>导游名片 - 游导伴旅 | 数字导游名片</title>
+  <meta name="description" content="游导伴旅导游数字名片，生成专属导游名片二维码，方便游客扫码了解导游信息，快速建立联系。">
+  <meta name="keywords" content="导游名片,导游二维码,数字名片">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://youdao-travel.com/guide-card.html">
+  <style>
+    :root {
+      --primary: #f59e0b;
+      --primary-dark: #d97706;
+      --primary-light: #fbbf24;
+      --secondary: #2563eb;
+      --success: #10b981;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-800: #1f2937;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      line-height: 1.6;
+      color: var(--gray-800);
+      background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    /* 品牌头部 */
+    .brand-header {
+      text-align: center;
+      padding: 16px 0;
+      margin-bottom: 20px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+    }
+
+    .brand-logo img {
+      height: 32px;
+    }
+
+    /* 名片主体 */
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--primary-light) 50%, var(--primary) 100%);
+    }
+
+    /* 导游基本信息区 */
+    .guide-header {
+      padding: 30px 24px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      border-bottom: 1px dashed var(--gray-200);
+    }
+
+    .avatar-wrapper {
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--primary-light);
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+
+    .avatar-placeholder {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #fff;
+      border: 3px solid var(--primary-light);
+    }
+
+    .online-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 16px;
+      height: 16px;
+      background: var(--success);
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    .guide-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .guide-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-800);
+      margin-bottom: 4px;
+    }
+
+    .guide-city {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+
+    .guide-rating {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stars {
+      color: #fbbf24;
+      letter-spacing: -2px;
+    }
+
+    .rating-text {
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+
+    .review-count {
+      color: var(--gray-600);
+      font-size: 0.85rem;
+    }
+
+    /* 专业领域标签 */
+    .tags-section {
+      padding: 16px 24px;
+      border-bottom: 1px dashed var(--gray-200);
+    }
+
+    .section-label {
+      font-size: 0.8rem;
+      color: var(--gray-600);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(251, 191, 36, 0.1) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--primary-dark);
+      font-weight: 500;
+    }
+
+    /* 个人简介 */
+    .intro-section {
+      padding: 16px 24px;
+      border-bottom: 1px dashed var(--gray-200);
+    }
+
+    .intro-text {
+      color: var(--gray-600);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    /* 服务价格 */
+    .price-section {
+      padding: 16px 24px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, rgba(251, 191, 36, 0.05) 100%);
+      border-bottom: 1px dashed var(--gray-200);
+    }
+
+    .price-display {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .price-currency {
+      font-size: 1rem;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .price-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .price-unit {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+    }
+
+    /* 联系方式 */
+    .contact-section {
+      padding: 20px 24px;
+    }
+
+    .contact-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qr-grid {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .qr-item {
+      flex: 1;
+      text-align: center;
+      background: var(--gray-50);
+      border-radius: var(--radius-sm);
+      padding: 16px 12px;
+    }
+
+    .qr-code {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 8px;
+      background: #fff;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--gray-200);
+      overflow: hidden;
+    }
+
+    .qr-code img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .qr-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-400);
+      font-size: 0.75rem;
+    }
+
+    .qr-placeholder span {
+      font-size: 1.5rem;
+      margin-bottom: 4px;
+    }
+
+    .qr-label {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+
+    /* 按钮 */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 20px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-secondary {
+      background: var(--gray-100);
+      color: var(--gray-800);
+      border: 1px solid var(--gray-200);
+    }
+
+    .btn-secondary:hover {
+      background: var(--gray-200);
+    }
+
+    .btn-wechat {
+      background: linear-gradient(135deg, #07c160 0%, #06ad56 100%);
+      color: #fff;
+    }
+
+    /* 分享区域 */
+    .share-section {
+      padding: 20px 24px;
+      background: var(--gray-50);
+      border-top: 1px dashed var(--gray-200);
+    }
+
+    .share-title {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .share-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .share-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+    }
+
+    .share-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .share-xiaohongshu {
+      background: linear-gradient(135deg, #fe2c55 0%, #ff6b6b 100%);
+      color: #fff;
+    }
+
+    .share-wechat {
+      background: linear-gradient(135deg, #07c160 0%, #06ad56 100%);
+      color: #fff;
+    }
+
+    .share-download {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: #fff;
+    }
+
+    /* 底部品牌 */
+    .brand-footer {
+      text-align: center;
+      padding: 24px 0;
+      color: var(--gray-600);
+      font-size: 0.85rem;
+    }
+
+    .brand-footer a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    /* 打印样式 */
+    @media print {
+      body {
+        background: #fff;
+        padding: 0;
+      }
+
+      .container {
+        max-width: 100%;
+      }
+
+      .brand-header,
+      .share-section,
+      .btn-group,
+      .contact-title {
+        display: none !important;
+      }
+
+      .card {
+        box-shadow: none;
+        border: 2px solid var(--primary);
+        page-break-inside: avoid;
+      }
+
+      .brand-footer {
+        display: block !important;
+      }
+    }
+
+    /* 响应式 */
+    @media (max-width: 380px) {
+      body {
+        padding: 12px;
+      }
+
+      .guide-header {
+        padding: 24px 16px 16px;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .tags-section,
+      .intro-section,
+      .price-section,
+      .contact-section {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .qr-grid {
+        gap: 10px;
+      }
+
+      .qr-code {
+        width: 80px;
+        height: 80px;
+      }
+    }
+
+    /* Toast提示 */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      padding: 12px 24px;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      z-index: 9999;
+      transition: transform 0.3s ease;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .toast-success { background-color: var(--success); }
+    .toast-error { background-color: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 品牌头部 -->
+    <div class="brand-header">
+      <div class="brand-logo">
+        <span>🌍</span>
+        <span>游导伴旅</span>
+      </div>
+    </div>
+
+    <!-- 名片主体 -->
+    <div class="card" id="guideCard">
+      <!-- 导游基本信息 -->
+      <div class="guide-header">
+        <div class="avatar-wrapper">
+          <div class="avatar-placeholder" id="avatarPlaceholder">👤</div>
+          <div class="online-badge"></div>
+        </div>
+        <div class="guide-info">
+          <h1 class="guide-name" id="guideName">导游姓名</h1>
+          <div class="guide-city" id="guideCity">
+            <span>📍</span>
+            <span id="cityText">服务城市</span>
+          </div>
+          <div class="guide-rating">
+            <span class="stars" id="stars">★★★★★</span>
+            <span class="rating-text" id="rating">5.0</span>
+            <span class="review-count" id="reviewCount">(128条评价)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 专业领域 -->
+      <div class="tags-section">
+        <div class="section-label">专业领域</div>
+        <div class="tags" id="tagsContainer">
+          <span class="tag">🏛️ 历史文化</span>
+          <span class="tag">📸 摄影向导</span>
+        </div>
+      </div>
+
+      <!-- 个人简介 -->
+      <div class="intro-section">
+        <div class="section-label">个人简介</div>
+        <p class="intro-text" id="introText">
+          热爱旅行，专注本地文化深度讲解，用专业和热情为每一位游客创造难忘的旅行体验。
+        </p>
+      </div>
+
+      <!-- 服务价格 -->
+      <div class="price-section">
+        <div class="section-label">参考价格</div>
+        <div class="price-display">
+          <span class="price-currency">¥</span>
+          <span class="price-value" id="priceValue">500</span>
+          <span class="price-unit">/ 天</span>
+        </div>
+      </div>
+
+      <!-- 联系方式 -->
+      <div class="contact-section">
+        <div class="contact-title">📱 联系方式</div>
+        <div class="qr-grid">
+          <div class="qr-item">
+            <div class="qr-code" id="wechatQr">
+              <div class="qr-placeholder">
+                <span>💬</span>
+                <small>上传二维码</small>
+              </div>
+            </div>
+            <div class="qr-label">微信</div>
+          </div>
+          <div class="qr-item">
+            <div class="qr-code" id="platformQr">
+              <div class="qr-placeholder">
+                <span>🔗</span>
+                <small>扫码联系</small>
+              </div>
+            </div>
+            <div class="qr-label">平台主页</div>
+          </div>
+        </div>
+        <div class="btn-group">
+          <button class="btn btn-primary" id="consultBtn" onclick="startConsult()">
+            💬 在线咨询
+          </button>
+          <button class="btn btn-secondary" id="phoneBtn" onclick="makeCall()" style="display: none;">
+            📞 拨打电话
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分享区域 -->
+    <div class="share-section">
+      <div class="share-title">分享导游名片给朋友</div>
+      <div class="share-buttons">
+        <button class="share-btn share-xiaohongshu" onclick="shareToXiaohongshu()" title="分享到小红书">
+          <span>📕</span>
+        </button>
+        <button class="share-btn share-wechat" onclick="shareToWechat()" title="分享到微信">
+          <span>💬</span>
+        </button>
+        <button class="share-btn share-download" onclick="downloadCard()" title="下载名片">
+          <span>⬇️</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 底部品牌 -->
+    <div class="brand-footer">
+      <a href="https://youdao-travel.com" target="_blank">youdao-travel.com</a>
+      <br>
+      <small>让旅行更简单 · 游导伴旅</small>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // 从URL参数获取数据
+    function getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        name: params.get('name') || '',
+        city: params.get('city') || '',
+        tags: params.get('tags') ? params.get('tags').split(',') : [],
+        avatar: params.get('avatar') || '',
+        rating: params.get('rating') || '',
+        reviews: params.get('reviews') || '',
+        intro: params.get('intro') || '',
+        price: params.get('price') || '',
+        phone: params.get('phone') || '',
+        wechat: params.get('wechat') || '',
+        wechatQr: params.get('wechatQr') || '',
+        stars: params.get('stars') || ''
+      };
+    }
+
+    // 初始化页面
+    function initPage() {
+      const params = getUrlParams();
+
+      // 基本信息
+      if (params.name) {
+        document.getElementById('guideName').textContent = decodeURIComponent(params.name);
+      }
+      if (params.city) {
+        document.getElementById('cityText').textContent = decodeURIComponent(params.city);
+      }
+
+      // 头像
+      if (params.avatar) {
+        const avatarPlaceholder = document.getElementById('avatarPlaceholder');
+        avatarPlaceholder.outerHTML = `<img src="${decodeURIComponent(params.avatar)}" class="avatar" alt="导游头像">`;
+      }
+
+      // 评分
+      if (params.rating) {
+        document.getElementById('rating').textContent = params.rating;
+      }
+      if (params.reviews) {
+        document.getElementById('reviewCount').textContent = `(${params.reviews}条评价)`;
+      }
+      if (params.stars) {
+        const starCount = parseInt(params.stars) || 5;
+        document.getElementById('stars').textContent = '★'.repeat(starCount) + '☆'.repeat(5 - starCount);
+      }
+
+      // 标签
+      if (params.tags && params.tags.length > 0) {
+        const container = document.getElementById('tagsContainer');
+        container.innerHTML = '';
+        const tagIcons = ['🏛️', '📸', '🗺️', '🍜', '🎭', '🏔️', '🌊', '🎪', '🏛️', '🌸'];
+        params.tags.forEach((tag, index) => {
+          const tagEl = document.createElement('span');
+          tagEl.className = 'tag';
+          tagEl.innerHTML = `${tagIcons[index % tagIcons.length]} ${decodeURIComponent(tag)}`;
+          container.appendChild(tagEl);
+        });
+      }
+
+      // 简介
+      if (params.intro) {
+        document.getElementById('introText').textContent = decodeURIComponent(params.intro);
+      }
+
+      // 价格
+      if (params.price) {
+        document.getElementById('priceValue').textContent = params.price;
+      }
+
+      // 电话
+      if (params.phone) {
+        const phoneBtn = document.getElementById('phoneBtn');
+        phoneBtn.style.display = 'flex';
+        phoneBtn.setAttribute('data-phone', params.phone);
+      }
+
+      // 微信二维码
+      if (params.wechatQr) {
+        const wechatQr = document.getElementById('wechatQr');
+        wechatQr.innerHTML = `<img src="${decodeURIComponent(params.wechatQr)}" alt="微信二维码">`;
+      }
+
+      // 更新文档标题
+      document.title = `${params.name || '导游'}名片 - 游导伴旅`;
+    }
+
+    // 显示Toast提示
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast toast-${type} show`;
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // 在线咨询
+    function startConsult() {
+      showToast('正在跳转在线咨询...', 'success');
+      setTimeout(() => {
+        window.location.href = 'https://youdao-travel.com/contact.html';
+      }, 500);
+    }
+
+    // 拨打电话
+    function makeCall() {
+      const phoneBtn = document.getElementById('phoneBtn');
+      const phone = phoneBtn.getAttribute('data-phone');
+      if (phone) {
+        window.location.href = `tel:${phone}`;
+      }
+    }
+
+    // 分享到小红书
+    function shareToXiaohongshu() {
+      const name = document.getElementById('guideName').textContent;
+      const city = document.getElementById('cityText').textContent;
+      const text = `🌍 发现了超棒的导游【${name}】，在【游导伴旅】平台上预约的！服务城市：${city}，推荐给大家~`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: `${name} - 游导伴旅导游名片`,
+          text: text,
+          url: window.location.href
+        }).catch(() => {
+          copyToClipboard(window.location.href);
+          showToast('链接已复制，请粘贴到小红书分享~', 'success');
+        });
+      } else {
+        copyToClipboard(window.location.href);
+        showToast('链接已复制，请粘贴到小红书分享~', 'success');
+      }
+    }
+
+    // 分享到微信
+    function shareToWechat() {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+          showToast('名片链接已复制，打开微信粘贴分享~', 'success');
+        }).catch(() => {
+          showToast('复制失败，请手动复制链接', 'error');
+        });
+      } else {
+        showToast('请长按复制下方链接：' + window.location.href, 'success');
+      }
+    }
+
+    // 复制到剪贴板
+    function copyToClipboard(text) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+
+    // 下载名片图片
+    function downloadCard() {
+      showToast('正在生成名片图片...', 'success');
+
+      // 使用html2canvas生成图片
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
+      script.onload = function() {
+        html2canvas(document.getElementById('guideCard'), {
+          backgroundColor: '#ffffff',
+          scale: 2,
+          useCORS: true
+        }).then(canvas => {
+          const link = document.createElement('a');
+          link.download = '导游名片.png';
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          showToast('名片图片已下载~', 'success');
+        }).catch(() => {
+          showToast('生成失败，请使用截图功能', 'error');
+        });
+      };
+      script.onerror = function() {
+        showToast('请使用浏览器截图功能保存名片', 'info');
+      };
+      document.head.appendChild(script);
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', initPage);
+  </script>
+</body>
+</html>
