@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 有道旅游</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .auth-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-header .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .auth-header h1 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .auth-header p {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .auth-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E5E7EB;
+        }
+        
+        .divider span {
+            padding: 0 15px;
+        }
+        
+        .role-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .role-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .role-btn:hover {
+            border-color: #667eea;
+        }
+        
+        .role-btn.active {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .role-btn .icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .role-btn .text {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .error-message {
+            color: #EF4444;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .forgot-password {
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        
+        .forgot-password a {
+            color: #667eea;
+            font-size: 14px;
+            text-decoration: none;
+        }
+        
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(0); opacity: 1; }
+            to { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-box">
+            <div class="auth-header">
+                <div class="logo">🌏</div>
+                <h1>欢迎回来</h1>
+                <p>登录有道旅游，开启精彩旅程</p>
+            </div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">邮箱地址</label>
+                    <input type="email" id="email" placeholder="请输入邮箱" required>
+                    <div class="error-message" id="emailError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" placeholder="请输入密码" required>
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+                
+                <div class="forgot-password">
+                    <a href="#" id="forgotPassword">忘记密码？</a>
+                </div>
+                
+                <button type="submit" class="btn-primary" id="loginBtn">登 录</button>
+            </form>
+            
+            <div class="divider"><span>或</span></div>
+            
+            <div class="auth-footer">
+                还没有账号？<a href="register.html">立即注册</a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        // 检查是否已登录
+        Auth.getUser().then(user => {
+            if (user) {
+                window.location.href = 'index.html';
+            }
+        });
+        
+        // 表单提交
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            
+            // 清除错误
+            document.querySelectorAll('.error-message').forEach(el => el.style.display = 'none');
+            
+            // 验证
+            if (!email) {
+                document.getElementById('emailError').textContent = '请输入邮箱';
+                document.getElementById('emailError').style.display = 'block';
+                return;
+            }
+            
+            if (!password) {
+                document.getElementById('passwordError').textContent = '请输入密码';
+                document.getElementById('passwordError').style.display = 'block';
+                return;
+            }
+            
+            // 登录
+            loginBtn.disabled = true;
+            loginBtn.textContent = '登录中...';
+            
+            const { data, error } = await Auth.signIn(email, password);
+            
+            if (error) {
+                loginBtn.disabled = false;
+                loginBtn.textContent = '登 录';
+                
+                if (error.message.includes('Invalid login credentials')) {
+                    Utils.showToast('邮箱或密码错误', 'error');
+                } else {
+                    Utils.showToast(error.message, 'error');
+                }
+                return;
+            }
+            
+            Utils.showToast('登录成功！', 'success');
+            
+            // 检查是否有重定向
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirect = urlParams.get('redirect') || 'index.html';
+            
+            setTimeout(() => {
+                window.location.href = redirect;
+            }, 1000);
+        });
+        
+        // 忘记密码
+        document.getElementById('forgotPassword').addEventListener('click', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            
+            if (!email) {
+                Utils.showToast('请先输入邮箱地址', 'warning');
+                return;
+            }
+            
+            const { error } = await supabase.auth.resetPasswordForEmail(email);
+            
+            if (error) {
+                Utils.showToast(error.message, 'error');
+            } else {
+                Utils.showToast('重置密码邮件已发送，请查收', 'success');
+            }
+        });
+    </script>
+</body>
+</html>

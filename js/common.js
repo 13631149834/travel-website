@@ -236,13 +236,41 @@ function highlightNav() {
   });
 }
 
+// ===== 用户认证相关 =====
+
+// 检查登录状态并更新导航栏
+async function checkAuthStatus() {
+  const authLink = document.getElementById('authLink');
+  if (!authLink) return;
+  
+  // 检查是否已登录（从localStorage快速判断）
+  const sessionStr = localStorage.getItem('supabase.auth.token');
+  if (sessionStr) {
+    try {
+      const session = JSON.parse(sessionStr);
+      if (session && session.currentSession) {
+        authLink.href = 'user-center.html';
+        authLink.innerHTML = '👤 我的';
+        authLink.classList.add('logged-in');
+        return;
+      }
+    } catch (e) {}
+  }
+  
+  // 未登录状态
+  authLink.href = 'login.html';
+  authLink.innerHTML = '🔐 登录';
+  authLink.classList.remove('logged-in');
+}
+
 // 页面加载完成后执行
 document.addEventListener('DOMContentLoaded', () => {
   highlightNav();
+  checkAuthStatus();  // 检查登录状态
   lazyLoadImages();
   lazyLoadContent();
   
-  // 初始化第一 个标签
+  // 初始化第一个标签
   const firstTab = document.querySelector('.tab');
   if (firstTab) {
     firstTab.click();

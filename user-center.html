@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户中心 - 有道旅游</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .user-center {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .user-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        
+        .user-details h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .user-details p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        
+        .user-role {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+        
+        .stat-item .value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+        
+        .stat-item .label {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 20px;
+        }
+        
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            height: fit-content;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #666;
+        }
+        
+        .menu-item:hover {
+            background: #F3F4F6;
+        }
+        
+        .menu-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .menu-item .icon {
+            font-size: 20px;
+        }
+        
+        .main-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #F3F4F6;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn-save {
+            padding: 12px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-logout {
+            padding: 12px 30px;
+            background: white;
+            color: #EF4444;
+            border: 2px solid #EF4444;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #EF4444;
+            color: white;
+        }
+        
+        .avatar-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .avatar-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #F3F4F6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .avatar-option:hover {
+            transform: scale(1.1);
+        }
+        
+        .avatar-option.selected {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .quick-action {
+            padding: 20px;
+            background: #F3F4F6;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-action:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .quick-action .icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .quick-action .text {
+            font-size: 14px;
+            color: #333;
+        }
+        
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="user-center">
+        <!-- 用户头部 -->
+        <div class="user-header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">🌍</div>
+                <div class="user-details">
+                    <h1 id="userName">加载中...</h1>
+                    <p id="userEmail">加载中...</p>
+                    <span class="user-role" id="userRole">加载中...</span>
+                </div>
+            </div>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-item">
+                    <div class="value" id="statDays">0</div>
+                    <div class="label">注册天数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="value" id="statVisits">0</div>
+                    <div class="label">访问次数</div>
+                </div>
+                <div class="stat-item">
+                    <div class="value" id="statRecords">0</div>
+                    <div class="label">学习记录</div>
+                </div>
+                <div class="stat-item">
+                    <div class="value" id="statReviews">0</div>
+                    <div class="label">收到评价</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 内容区域 -->
+        <div class="content-grid">
+            <!-- 侧边栏菜单 -->
+            <div class="sidebar">
+                <div class="menu-item active" data-section="profile">
+                    <span class="icon">👤</span>
+                    <span>个人资料</span>
+                </div>
+                <div class="menu-item" data-section="security">
+                    <span class="icon">🔒</span>
+                    <span>账号安全</span>
+                </div>
+                <div class="menu-item" data-section="data">
+                    <span class="icon">📊</span>
+                    <span>我的数据</span>
+                </div>
+                <div class="menu-item" data-section="notifications">
+                    <span class="icon">🔔</span>
+                    <span>消息通知</span>
+                </div>
+                <div class="menu-item" data-section="help">
+                    <span class="icon">❓</span>
+                    <span>帮助中心</span>
+                </div>
+                <div class="menu-item" style="margin-top: 20px; color: #EF4444;" id="logoutBtn">
+                    <span class="icon">🚪</span>
+                    <span>退出登录</span>
+                </div>
+            </div>
+            
+            <!-- 主内容区 -->
+            <div class="main-content">
+                <!-- 个人资料 -->
+                <div class="content-section" id="section-profile">
+                    <h2 class="section-title">个人资料</h2>
+                    
+                    <div class="form-group">
+                        <label>选择头像</label>
+                        <div class="avatar-selector" id="avatarSelector">
+                            <!-- 动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>昵称</label>
+                        <input type="text" id="nickname" placeholder="给自己起个名字">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>个人简介</label>
+                        <textarea id="bio" placeholder="介绍一下自己..." rows="3"></textarea>
+                    </div>
+                    
+                    <button class="btn-save" id="saveProfileBtn">保存修改</button>
+                </div>
+                
+                <!-- 账号安全 -->
+                <div class="content-section" id="section-security" style="display: none;">
+                    <h2 class="section-title">账号安全</h2>
+                    
+                    <div class="form-group">
+                        <label>修改密码</label>
+                        <input type="password" id="newPassword" placeholder="请输入新密码（至少6位）">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>确认密码</label>
+                        <input type="password" id="confirmPassword" placeholder="请再次输入新密码">
+                    </div>
+                    
+                    <button class="btn-save" id="changePasswordBtn">修改密码</button>
+                </div>
+                
+                <!-- 我的数据 -->
+                <div class="content-section" id="section-data" style="display: none;">
+                    <h2 class="section-title">我的数据</h2>
+                    
+                    <div class="quick-actions">
+                        <div class="quick-action" onclick="location.href='learning.html'">
+                            <div class="icon">📚</div>
+                            <div class="text">学习记录</div>
+                        </div>
+                        <div class="quick-action" onclick="location.href='reviews.html'">
+                            <div class="icon">⭐</div>
+                            <div class="text">我的评价</div>
+                        </div>
+                        <div class="quick-action" onclick="location.href='route-planner.html'">
+                            <div class="icon">🗺️</div>
+                            <div class="text">我的路线</div>
+                        </div>
+                        <div class="quick-action" onclick="location.href='schedule.html'">
+                            <div class="icon">📅</div>
+                            <div class="text">我的团期</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 消息通知 -->
+                <div class="content-section" id="section-notifications" style="display: none;">
+                    <h2 class="section-title">消息通知</h2>
+                    <p style="color: #666; text-align: center; padding: 40px;">暂无新消息</p>
+                </div>
+                
+                <!-- 帮助中心 -->
+                <div class="content-section" id="section-help" style="display: none;">
+                    <h2 class="section-title">帮助中心</h2>
+                    
+                    <div style="color: #666; line-height: 1.8;">
+                        <p><strong>常见问题：</strong></p>
+                        <p>1. 如何修改头像？<br>在个人资料页面选择喜欢的头像即可。</p>
+                        <p>2. 数据会丢失吗？<br>所有数据都存储在云端，不会丢失。</p>
+                        <p>3. 如何联系客服？<br>发送邮件至 support@youdao-travel.com</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script>
+        let currentUser = null;
+        let userData = null;
+        
+        const avatars = ['🌍', '🌏', '🌎', '🧳', '🎒', '🗺️', '✈️', '🚗', '🏔️', '🏖️', '🏝️', '🌄'];
+        
+        // 初始化
+        async function init() {
+            currentUser = await Auth.getUser();
+            
+            if (!currentUser) {
+                window.location.href = 'login.html?redirect=user-center.html';
+                return;
+            }
+            
+            // 加载用户数据
+            const { data } = await DB.users.get(currentUser.id);
+            userData = data || {};
+            
+            // 渲染用户信息
+            renderUserInfo();
+            
+            // 渲染头像选择器
+            renderAvatarSelector();
+            
+            // 加载统计数据
+            loadStats();
+        }
+        
+        function renderUserInfo() {
+            document.getElementById('userName').textContent = userData.nickname || currentUser.email.split('@')[0];
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userRole').textContent = userData.role === 'guide' ? '🎤 导游' : '🎒 游客';
+            document.getElementById('userAvatar').textContent = userData.avatar || '🌍';
+            
+            document.getElementById('nickname').value = userData.nickname || '';
+            document.getElementById('bio').value = userData.bio || '';
+        }
+        
+        function renderAvatarSelector() {
+            const container = document.getElementById('avatarSelector');
+            container.innerHTML = avatars.map(avatar => `
+                <div class="avatar-option ${avatar === (userData.avatar || '🌍') ? 'selected' : ''}" data-avatar="${avatar}">
+                    ${avatar}
+                </div>
+            `).join('');
+            
+            container.querySelectorAll('.avatar-option').forEach(option => {
+                option.addEventListener('click', () => {
+                    container.querySelectorAll('.avatar-option').forEach(o => o.classList.remove('selected'));
+                    option.classList.add('selected');
+                });
+            });
+        }
+        
+        async function loadStats() {
+            // 注册天数
+            const createdAt = new Date(userData.created_at || currentUser.created_at);
+            const days = Math.floor((Date.now() - createdAt) / (1000 * 60 * 60 * 24));
+            document.getElementById('statDays').textContent = days;
+            
+            // 学习记录
+            if (userData.role === 'guide') {
+                const { data: stats } = await DB.learningRecords.getStats(currentUser.id);
+                if (stats) {
+                    document.getElementById('statRecords').textContent = stats.total;
+                }
+                
+                // 评价数
+                const { data: reviews } = await DB.reviews.getByGuideId(currentUser.id);
+                if (reviews) {
+                    document.getElementById('statReviews').textContent = reviews.length;
+                }
+            }
+        }
+        
+        // 菜单切换
+        document.querySelectorAll('.menu-item[data-section]').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.menu-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                const section = item.dataset.section;
+                document.querySelectorAll('.content-section').forEach(s => s.style.display = 'none');
+                document.getElementById(`section-${section}`).style.display = 'block';
+            });
+        });
+        
+        // 保存个人资料
+        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+            const selectedAvatar = document.querySelector('.avatar-option.selected');
+            
+            const updates = {
+                nickname: document.getElementById('nickname').value,
+                bio: document.getElementById('bio').value,
+                avatar: selectedAvatar ? selectedAvatar.dataset.avatar : userData.avatar
+            };
+            
+            const { error } = await DB.users.update(currentUser.id, updates);
+            
+            if (error) {
+                Utils.showToast('保存失败：' + error.message, 'error');
+            } else {
+                Utils.showToast('保存成功！', 'success');
+                userData = { ...userData, ...updates };
+                renderUserInfo();
+            }
+        });
+        
+        // 修改密码
+        document.getElementById('changePasswordBtn').addEventListener('click', async () => {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (newPassword.length < 6) {
+                Utils.showToast('密码至少6位', 'error');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                Utils.showToast('两次密码不一致', 'error');
+                return;
+            }
+            
+            const { error } = await supabase.auth.updateUser({ password: newPassword });
+            
+            if (error) {
+                Utils.showToast('修改失败：' + error.message, 'error');
+            } else {
+                Utils.showToast('密码修改成功！', 'success');
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            }
+        });
+        
+        // 退出登录
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            if (confirm('确定要退出登录吗？')) {
+                await Auth.signOut();
+                Utils.showToast('已退出登录', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        });
+        
+        init();
+    </script>
+</body>
+</html>
