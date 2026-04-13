@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行程规划 - 游导伴旅</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .planner-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        .planner-header {
+            background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            border-radius: 20px; padding: 40px; color: white;
+            margin-bottom: 30px; text-align: center;
+        }
+        .planner-header h1 { font-size: 32px; margin-bottom: 10px; }
+        
+        .planner-form {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); margin-bottom: 30px;
+        }
+        .form-section { margin-bottom: 30px; }
+        .form-section h3 { font-size: 18px; color: #333; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #F3F4F6; }
+        
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px 16px; border: 2px solid #E5E7EB;
+            border-radius: 10px; font-size: 16px; transition: all 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none; border-color: #667eea;
+        }
+        
+        .city-selector { display: flex; flex-wrap: wrap; gap: 10px; }
+        .city-tag {
+            padding: 10px 20px; background: #F3F4F6; border-radius: 20px;
+            cursor: pointer; transition: all 0.3s; font-size: 14px;
+        }
+        .city-tag:hover { background: rgba(102, 126, 234, 0.1); }
+        .city-tag.selected { background: #667eea; color: white; }
+        
+        .interest-selector { display: flex; flex-wrap: wrap; gap: 10px; }
+        .interest-tag {
+            padding: 12px 20px; background: #F3F4F6; border-radius: 25px;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .interest-tag:hover { background: rgba(102, 126, 234, 0.1); }
+        .interest-tag.selected { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .interest-tag .icon { margin-right: 8px; }
+        
+        .btn-generate {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 12px;
+            font-size: 18px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-generate:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); }
+        
+        .result-section { display: none; }
+        .result-section.show { display: block; }
+        
+        .day-plan {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 20px;
+        }
+        .day-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .day-num {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; display: flex; align-items: center;
+            justify-content: center; font-size: 20px; font-weight: 700;
+        }
+        .day-title { font-size: 18px; color: #333; }
+        
+        .spot-list { }
+        .spot-item {
+            display: flex; gap: 15px; padding: 15px;
+            background: #F9FAFB; border-radius: 10px; margin-bottom: 10px;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .spot-item:hover { background: rgba(102, 126, 234, 0.1); }
+        .spot-time {
+            width: 60px; text-align: center;
+            color: #667eea; font-weight: 600;
+        }
+        .spot-info { flex: 1; }
+        .spot-info h4 { font-size: 15px; color: #333; margin-bottom: 5px; }
+        .spot-info p { font-size: 13px; color: #666; }
+        
+        .result-actions { display: flex; gap: 15px; justify-content: center; margin-top: 30px; }
+        .result-actions button {
+            padding: 14px 30px; border: none; border-radius: 10px;
+            font-size: 16px; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-save { background: #10B981; color: white; }
+        .btn-share { background: #F3F4F6; color: #333; }
+        .btn-guide { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        
+        @media (max-width: 768px) {
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html">🎤 找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="tourist-center.html" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: #fff;">🎒 游客中心</a>
+                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="planner-page">
+        <div class="planner-header">
+            <h1>✏️ 行程规划</h1>
+            <p>输入您的需求，AI智能生成个性化行程</p>
+        </div>
+        
+        <div class="planner-form">
+            <div class="form-section">
+                <h3>📍 基本信息</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>目的地</label>
+                        <div class="city-selector">
+                            <span class="city-tag" onclick="selectCity(this, '北京')">北京</span>
+                            <span class="city-tag" onclick="selectCity(this, '上海')">上海</span>
+                            <span class="city-tag" onclick="selectCity(this, '广州')">广州</span>
+                            <span class="city-tag" onclick="selectCity(this, '成都')">成都</span>
+                            <span class="city-tag" onclick="selectCity(this, '西安')">西安</span>
+                            <span class="city-tag" onclick="selectCity(this, '杭州')">杭州</span>
+                            <span class="city-tag" onclick="selectCity(this, '厦门')">厦门</span>
+                            <span class="city-tag" onclick="selectCity(this, '重庆')">重庆</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>出行天数</label>
+                        <select id="days">
+                            <option value="1">1天</option>
+                            <option value="2">2天</option>
+                            <option value="3" selected>3天</option>
+                            <option value="4">4天</option>
+                            <option value="5">5天</option>
+                            <option value="7">7天</option>
+                            <option value="10">10天以上</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>出行日期</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label>出游人数</label>
+                        <select id="people">
+                            <option value="1">1人</option>
+                            <option value="2" selected>2人</option>
+                            <option value="3">3人</option>
+                            <option value="4">4人</option>
+                            <option value="5">5人及以上</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>🎯 旅行偏好</h3>
+                <div class="interest-selector">
+                    <span class="interest-tag" onclick="selectInterest(this)"><span class="icon">🏯</span>历史文化</span>
+                    <span class="interest-tag" onclick="selectInterest(this)"><span class="icon">🏔️</span>自然风光</span>
+                    <span class="interest-tag" onclick="selectInterest(this)"><span class="icon">🍜</span>美食探店</span>
+                    <span class="interest-tag" onclick="selectInterest(this)"><span class="icon">📷</span>摄影打卡</span>
+                    <span class="interest-tag" onclick="selectInterest(this)"><span class="icon">👨‍👩‍👧</span>亲子研学</span>
+                    <span class="interest-tag" onclick="selectInterest(this)"><span class="icon">🧗</span>户外探险</span>
+                    <span class="interest-tag" onclick="selectInterest(this)"><span class="icon">🛍️</span>购物血拼</span>
+                    <span class="interest-tag" onclick="selectInterest(this)"><span class="icon">🎭</span>文艺体验</span>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>💰 预算范围</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>人均预算</label>
+                        <select id="budget">
+                            <option value="low">经济型（¥500/天以下）</option>
+                            <option value="medium" selected>舒适型（¥500-1000/天）</option>
+                            <option value="high">豪华型（¥1000/天以上）</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>特殊需求</label>
+                        <textarea id="notes" placeholder="如：老人同行、素食偏好、必去景点等..." rows="2"></textarea>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-generate" onclick="generatePlan()">🚀 智能生成行程</button>
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <div class="day-plan">
+                <div class="day-header">
+                    <div class="day-num">D1</div>
+                    <div class="day-title">北京初印象</div>
+                </div>
+                <div class="spot-list">
+                    <div class="spot-item">
+                        <div class="spot-time">09:00</div>
+                        <div class="spot-info">
+                            <h4>故宫博物院</h4>
+                            <p>明清两代皇家宫殿，世界文化遗产</p>
+                        </div>
+                    </div>
+                    <div class="spot-item">
+                        <div class="spot-time">12:00</div>
+                        <div class="spot-info">
+                            <h4>景山公园午餐</h4>
+                            <p>俯瞰紫禁城全景，品尝北京特色小吃</p>
+                        </div>
+                    </div>
+                    <div class="spot-item">
+                        <div class="spot-time">14:00</div>
+                        <div class="spot-info">
+                            <h4>天坛公园</h4>
+                            <p>明清皇帝祭天场所，祈年殿必打卡</p>
+                        </div>
+                    </div>
+                    <div class="spot-item">
+                        <div class="spot-time">18:00</div>
+                        <div class="spot-info">
+                            <h4>王府井步行街</h4>
+                            <p>购物美食一条街，感受北京夜生活</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="day-plan">
+                <div class="day-header">
+                    <div class="day-num">D2</div>
+                    <div class="day-title">长城雄风</div>
+                </div>
+                <div class="spot-list">
+                    <div class="spot-item">
+                        <div class="spot-time">07:00</div>
+                        <div class="spot-info">
+                            <h4>八达岭长城</h4>
+                            <p>万里长城精华段，建议早出发避开人流</p>
+                        </div>
+                    </div>
+                    <div class="spot-item">
+                        <div class="spot-time">13:00</div>
+                        <div class="spot-info">
+                            <h4>明十三陵</h4>
+                            <p>明朝皇帝陵墓群，了解皇家殡葬文化</p>
+                        </div>
+                    </div>
+                    <div class="spot-item">
+                        <div class="spot-time">17:00</div>
+                        <div class="spot-info">
+                            <h4>鸟巢水立方</h4>
+                            <p>奥运场馆夜景打卡，感受北京现代魅力</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="day-plan">
+                <div class="day-header">
+                    <div class="day-num">D3</div>
+                    <div class="day-title">皇家园林</div>
+                </div>
+                <div class="spot-list">
+                    <div class="spot-item">
+                        <div class="spot-time">09:00</div>
+                        <div class="spot-info">
+                            <h4>颐和园</h4>
+                            <p>中国古典园林之首，昆明湖长廊必游</p>
+                        </div>
+                    </div>
+                    <div class="spot-item">
+                        <div class="spot-time">13:00</div>
+                        <div class="spot-info">
+                            <h4>圆明园遗址公园</h4>
+                            <p>铭记历史，感受昔日万园之园</p>
+                        </div>
+                    </div>
+                    <div class="spot-item">
+                        <div class="spot-time">16:00</div>
+                        <div class="spot-info">
+                            <h4>清华大学/北京大学</h4>
+                            <p>中国顶尖学府，感受学术氛围</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="result-actions">
+                <button class="btn-save" onclick="savePlan()">💾 保存行程</button>
+                <button class="btn-share" onclick="sharePlan()">📤 分享行程</button>
+                <button class="btn-guide" onclick="findGuide()">🎤 找导游带我玩</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        let selectedCities = [];
+        let selectedInterests = [];
+        
+        function selectCity(el, city) {
+            document.querySelectorAll('.city-tag').forEach(t => t.classList.remove('selected'));
+            el.classList.add('selected');
+            selectedCities = [city];
+        }
+        
+        function selectInterest(el) {
+            el.classList.toggle('selected');
+        }
+        
+        function generatePlan() {
+            const resultSection = document.getElementById('resultSection');
+            resultSection.classList.add('show');
+            resultSection.scrollIntoView({ behavior: 'smooth' });
+            Utils.showToast('行程生成成功！', 'success');
+        }
+        
+        async function savePlan() {
+            const user = await Auth.getUser();
+            if (!user) {
+                if (confirm('请先登录后再保存行程，是否前往登录？')) {
+                    window.location.href = 'login.html?redirect=trip-planner.html';
+                }
+                return;
+            }
+            Utils.showToast('行程已保存！', 'success');
+        }
+        
+        function sharePlan() {
+            Utils.showToast('分享链接已复制！', 'success');
+        }
+        
+        function findGuide() {
+            window.location.href = 'guides.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找导游 - 游导伴旅</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .guides-page { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        
+        .search-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px; padding: 40px; color: white; margin-bottom: 30px;
+        }
+        .search-header h1 { font-size: 32px; margin-bottom: 10px; }
+        .search-header p { opacity: 0.9; margin-bottom: 25px; }
+        
+        .search-box { display: flex; gap: 15px; flex-wrap: wrap; }
+        .search-input {
+            flex: 1; min-width: 200px; padding: 15px 20px;
+            border: none; border-radius: 12px; font-size: 16px;
+            background: rgba(255,255,255,0.95);
+        }
+        .search-btn {
+            padding: 15px 30px; background: white; color: #667eea;
+            border: none; border-radius: 12px; font-size: 16px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
+        }
+        .search-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.2); }
+        
+        .filter-bar {
+            display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 25px;
+            padding: 20px; background: white; border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .filter-group { display: flex; align-items: center; gap: 8px; }
+        .filter-group label { font-size: 14px; color: #666; }
+        .filter-select {
+            padding: 8px 15px; border: 2px solid #E5E7EB;
+            border-radius: 8px; font-size: 14px; cursor: pointer;
+        }
+        .filter-select:focus { outline: none; border-color: #667eea; }
+        
+        .tag-filter { display: flex; gap: 8px; flex-wrap: wrap; }
+        .tag-filter .tag {
+            padding: 8px 16px; background: #F3F4F6; border-radius: 20px;
+            font-size: 14px; cursor: pointer; transition: all 0.3s;
+        }
+        .tag-filter .tag:hover, .tag-filter .tag.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .guides-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .guide-card {
+            background: white; border-radius: 20px; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s; cursor: pointer;
+        }
+        .guide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .guide-cover {
+            height: 120px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: relative;
+        }
+        .guide-avatar {
+            width: 80px; height: 80px; border-radius: 50%; background: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px; position: absolute; bottom: -40px; left: 50%;
+            transform: translateX(-50%); box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+        .verified-badge {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(255,255,255,0.9); padding: 4px 12px;
+            border-radius: 20px; font-size: 12px; color: #10B981; font-weight: 600;
+        }
+        
+        .guide-info { padding: 50px 20px 20px; text-align: center; }
+        .guide-name { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 5px; }
+        .guide-title { font-size: 14px; color: #666; margin-bottom: 10px; }
+        
+        .guide-stats { display: flex; justify-content: center; gap: 20px; margin-bottom: 15px; }
+        .stat { text-align: center; }
+        .stat .value { font-size: 18px; font-weight: 700; color: #667eea; }
+        .stat .label { font-size: 12px; color: #999; }
+        
+        .guide-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-bottom: 15px; }
+        .guide-tag { padding: 4px 10px; background: #F3F4F6; border-radius: 12px; font-size: 12px; color: #666; }
+        
+        .guide-price {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 15px; border-top: 1px solid #F3F4F6;
+        }
+        .price-value { font-size: 20px; font-weight: 700; color: #EF4444; }
+        .price-value span { font-size: 14px; font-weight: 400; color: #999; }
+        .btn-booking {
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 8px;
+            font-size: 14px; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-booking:hover { transform: scale(1.05); }
+        
+        .no-results { text-align: center; padding: 60px; color: #666; }
+        .no-results .icon { font-size: 60px; margin-bottom: 15px; }
+        
+        .loading-spinner { text-align: center; padding: 60px; }
+        .loading-spinner .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid #F3F4F6; border-top-color: #667eea;
+            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        @media (max-width: 768px) {
+            .search-box { flex-direction: column; }
+            .search-input, .search-btn { width: 100%; }
+            .filter-bar { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html" class="active">找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
+                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="guides-page">
+        <div class="search-header">
+            <h1>🎤 找导游</h1>
+            <p>专业认证导游，为你定制专属旅程</p>
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索城市、导游姓名、擅长领域...">
+                <button class="search-btn" onclick="searchGuides()">🔍 搜索</button>
+            </div>
+        </div>
+        
+        <div class="filter-bar">
+            <div class="filter-group">
+                <label>服务城市：</label>
+                <select class="filter-select" id="cityFilter" onchange="searchGuides()">
+                    <option value="">全部城市</option>
+                    <option value="北京">北京</option>
+                    <option value="上海">上海</option>
+                    <option value="广州">广州</option>
+                    <option value="深圳">深圳</option>
+                    <option value="成都">成都</option>
+                    <option value="杭州">杭州</option>
+                    <option value="西安">西安</option>
+                    <option value="厦门">厦门</option>
+                    <option value="重庆">重庆</option>
+                    <option value="南京">南京</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>服务语言：</label>
+                <select class="filter-select" id="languageFilter" onchange="searchGuides()">
+                    <option value="">全部语言</option>
+                    <option value="普通话">普通话</option>
+                    <option value="英语">英语</option>
+                    <option value="日语">日语</option>
+                    <option value="韩语">韩语</option>
+                    <option value="粤语">粤语</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>排序：</label>
+                <select class="filter-select" id="sortFilter" onchange="searchGuides()">
+                    <option value="rating">评分最高</option>
+                    <option value="reviews">评价最多</option>
+                    <option value="years">经验最久</option>
+                    <option value="price_low">价格最低</option>
+                    <option value="price_high">价格最高</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="filter-bar" style="padding: 15px 20px;">
+            <div class="tag-filter" id="specialtyFilter">
+                <span class="tag active" data-type="all">全部</span>
+                <span class="tag" data-type="历史文化">🏯 历史文化</span>
+                <span class="tag" data-type="自然风光">🏔️ 自然风光</span>
+                <span class="tag" data-type="美食探店">🍜 美食探店</span>
+                <span class="tag" data-type="摄影打卡">📷 摄影打卡</span>
+                <span class="tag" data-type="亲子研学">👨‍👩‍👧 亲子研学</span>
+                <span class="tag" data-type="户外探险">🧗 户外探险</span>
+            </div>
+        </div>
+        
+        <div class="guides-grid" id="guidesGrid"></div>
+        <div class="no-results" id="noResults" style="display: none;">
+            <div class="icon">🔍</div>
+            <p>没有找到符合条件的导游</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        let guides = [];
+        
+        const sampleGuides = [
+            { id: 1, name: '张导', avatar: '👨‍💼', title: '高级导游 | 10年经验', years: 10, rating: 4.9, reviews: 328, languages: ['普通话', '英语'], specialties: ['历史文化', '摄影打卡'], cities: ['北京', '西安'], bio: '专注历史文化深度游，带您穿越千年', price: 580, verified: true },
+            { id: 2, name: '李姐', avatar: '👩‍💼', title: '金牌导游 | 8年经验', years: 8, rating: 4.8, reviews: 256, languages: ['普通话', '粤语'], specialties: ['美食探店', '亲子研学'], cities: ['广州', '深圳'], bio: '美食达人，带您吃遍岭南', price: 480, verified: true },
+            { id: 3, name: '王哥', avatar: '🧔', title: '资深导游 | 12年经验', years: 12, rating: 5.0, reviews: 512, languages: ['普通话', '英语', '日语'], specialties: ['户外探险', '自然风光'], cities: ['成都', '杭州'], bio: '户外运动爱好者，带您探索秘境', price: 680, verified: true },
+            { id: 4, name: '小美', avatar: '👩', title: '新锐导游 | 3年经验', years: 3, rating: 4.7, reviews: 89, languages: ['普通话', '韩语'], specialties: ['摄影打卡', '美食探店'], cities: ['厦门'], bio: '网红打卡点一网打尽', price: 380, verified: false },
+            { id: 5, name: '老陈', avatar: '👴', title: '特级导游 | 20年经验', years: 20, rating: 4.9, reviews: 876, languages: ['普通话', '英语', '法语'], specialties: ['历史文化', '亲子研学'], cities: ['北京', '上海', '西安'], bio: '历史文化专家，讲透千年故事', price: 880, verified: true },
+            { id: 6, name: '阿杰', avatar: '🧑', title: '认证导游 | 5年经验', years: 5, rating: 4.6, reviews: 145, languages: ['普通话'], specialties: ['自然风光', '户外探险'], cities: ['成都', '重庆'], bio: '自然风光爱好者，带您看最美风景', price: 420, verified: true },
+            { id: 7, name: '晓雯', avatar: '👩‍🦰', title: '金牌导游 | 6年经验', years: 6, rating: 4.8, reviews: 198, languages: ['普通话', '英语'], specialties: ['亲子研学', '美食探店'], cities: ['上海', '南京'], bio: '亲子游专家，带娃旅行更轻松', price: 520, verified: true },
+            { id: 8, name: '大鹏', avatar: '👨', title: '资深导游 | 15年经验', years: 15, rating: 4.9, reviews: 623, languages: ['普通话', '英语', '粤语'], specialties: ['历史文化', '自然风光'], cities: ['西安', '成都'], bio: '深度游专家，不走寻常路', price: 750, verified: true }
+        ];
+        
+        async function loadGuides() {
+            const grid = document.getElementById('guidesGrid');
+            grid.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>加载中...</p></div>';
+            await new Promise(r => setTimeout(r, 500));
+            guides = sampleGuides;
+            renderGuides(guides);
+        }
+        
+        function renderGuides(guidesList) {
+            const grid = document.getElementById('guidesGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (guidesList.length === 0) {
+                grid.innerHTML = '';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            noResults.style.display = 'none';
+            grid.innerHTML = guidesList.map(guide => `
+                <div class="guide-card" onclick="location.href='guide-detail.html?id=${guide.id}'">
+                    <div class="guide-cover">
+                        ${guide.verified ? '<span class="verified-badge">✓ 已认证</span>' : ''}
+                        <div class="guide-avatar">${guide.avatar}</div>
+                    </div>
+                    <div class="guide-info">
+                        <div class="guide-name">${guide.name}</div>
+                        <div class="guide-title">${guide.title}</div>
+                        <div class="guide-stats">
+                            <div class="stat"><div class="value">⭐ ${guide.rating}</div><div class="label">评分</div></div>
+                            <div class="stat"><div class="value">${guide.reviews}</div><div class="label">评价</div></div>
+                            <div class="stat"><div class="value">${guide.years}年</div><div class="label">经验</div></div>
+                        </div>
+                        <div class="guide-tags">${guide.specialties.map(s => `<span class="guide-tag">${s}</span>`).join('')}</div>
+                        <div class="guide-price">
+                            <div class="price-value">¥${guide.price}<span>/天</span></div>
+                            <button class="btn-booking" onclick="event.stopPropagation(); location.href='guide-detail.html?id=${guide.id}'">预约咨询</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function searchGuides() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const city = document.getElementById('cityFilter').value;
+            const language = document.getElementById('languageFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+            
+            let filtered = guides.filter(g => {
+                const matchKeyword = !keyword || g.name.toLowerCase().includes(keyword) || g.bio.toLowerCase().includes(keyword) || g.cities.some(c => c.includes(keyword));
+                const matchCity = !city || g.cities.includes(city);
+                const matchLanguage = !language || g.languages.includes(language);
+                return matchKeyword && matchCity && matchLanguage;
+            });
+            
+            if (sort === 'rating') filtered.sort((a, b) => b.rating - a.rating);
+            else if (sort === 'reviews') filtered.sort((a, b) => b.reviews - a.reviews);
+            else if (sort === 'years') filtered.sort((a, b) => b.years - a.years);
+            else if (sort === 'price_low') filtered.sort((a, b) => a.price - b.price);
+            else if (sort === 'price_high') filtered.sort((a, b) => b.price - a.price);
+            
+            renderGuides(filtered);
+        }
+        
+        document.querySelectorAll('.tag-filter .tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                document.querySelectorAll('.tag-filter .tag').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                const type = tag.dataset.type;
+                if (type === 'all') renderGuides(guides);
+                else renderGuides(guides.filter(g => g.specialties.includes(type)));
+            });
+        });
+        
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchGuides();
+        });
+        
+        loadGuides();
+    </script>
+</body>
+</html>

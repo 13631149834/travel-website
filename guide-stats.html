@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据中心 - 游导伴旅</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .stats-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        .stats-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px; padding: 30px; color: white;
+            margin-bottom: 30px;
+        }
+        .stats-header h1 { font-size: 28px; margin-bottom: 10px; }
+        
+        .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 20px; }
+        .stat-card { background: rgba(255,255,255,0.15); border-radius: 12px; padding: 20px; text-align: center; }
+        .stat-card .value { font-size: 28px; font-weight: 700; }
+        .stat-card .label { font-size: 14px; opacity: 0.8; margin-top: 5px; }
+        
+        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        
+        .section-card {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 20px;
+        }
+        .section-title { font-size: 18px; color: #333; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #F3F4F6; }
+        
+        .chart-placeholder {
+            background: #F3F4F6; border-radius: 10px; height: 200px;
+            display: flex; align-items: center; justify-content: center;
+            color: #999; margin-bottom: 20px;
+        }
+        
+        .order-list { }
+        .order-item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px 0; border-bottom: 1px solid #F3F4F6;
+        }
+        .order-item:last-child { border-bottom: none; }
+        .order-info h4 { font-size: 16px; color: #333; margin-bottom: 5px; }
+        .order-info p { font-size: 14px; color: #999; }
+        .order-amount { font-size: 18px; font-weight: 700; color: #10B981; }
+        .order-amount.expense { color: #EF4444; }
+        
+        .quick-actions { display: grid; gap: 15px; }
+        .action-btn {
+            display: flex; align-items: center; gap: 15px;
+            padding: 20px; background: #F3F4F6; border-radius: 12px;
+            cursor: pointer; transition: all 0.3s;
+        }
+        .action-btn:hover { background: rgba(102, 126, 234, 0.1); transform: translateX(5px); }
+        .action-btn .icon { font-size: 30px; }
+        .action-btn .text h4 { font-size: 16px; color: #333; }
+        .action-btn .text p { font-size: 13px; color: #999; }
+        
+        .progress-bar {
+            height: 8px; background: #E5E7EB; border-radius: 4px;
+            overflow: hidden; margin-top: 10px;
+        }
+        .progress-bar .fill {
+            height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+        }
+        
+        .rank-item {
+            display: flex; align-items: center; gap: 15px;
+            padding: 12px 0; border-bottom: 1px solid #F3F4F6;
+        }
+        .rank-item:last-child { border-bottom: none; }
+        .rank-num {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: #F3F4F6; display: flex; align-items: center;
+            justify-content: center; font-weight: 600; color: #666;
+        }
+        .rank-num.top1 { background: #F59E0B; color: white; }
+        .rank-num.top2 { background: #9CA3AF; color: white; }
+        .rank-num.top3 { background: #B45309; color: white; }
+        .rank-info { flex: 1; }
+        .rank-info .name { font-weight: 500; color: #333; }
+        .rank-info .count { font-size: 12px; color: #999; }
+        .rank-value { font-weight: 600; color: #667eea; }
+        
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .content-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html">🎤 找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
+                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="stats-page">
+        <div class="stats-header">
+            <h1>📊 数据中心</h1>
+            <p>查看您的业务数据，优化服务策略</p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="value" id="totalViews">1,234</div>
+                    <div class="label">本月浏览</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="totalInquiries">56</div>
+                    <div class="label">本月咨询</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="totalOrders">23</div>
+                    <div class="label">本月订单</div>
+                </div>
+                <div class="stat-card">
+                    <div class="value" id="totalIncome">¥12,580</div>
+                    <div class="label">本月收入</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="content-grid">
+            <div class="main-content">
+                <div class="section-card">
+                    <h2 class="section-title">📈 浏览趋势（近7天）</h2>
+                    <div class="chart-placeholder" id="viewsChart">
+                        <div style="text-align: center;">
+                            <div style="font-size: 40px; margin-bottom: 10px;">📊</div>
+                            <div>周一: 156 | 周二: 189 | 周三: 234</div>
+                            <div>周四: 178 | 周五: 267 | 周六: 312 | 周日: 298</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-card">
+                    <h2 class="section-title">💰 收支明细</h2>
+                    <div class="order-list">
+                        <div class="order-item">
+                            <div class="order-info">
+                                <h4>北京一日游</h4>
+                                <p>2024-04-13 · 张先生 · 2人</p>
+                            </div>
+                            <div class="order-amount">+¥1,160</div>
+                        </div>
+                        <div class="order-item">
+                            <div class="order-info">
+                                <h4>故宫深度讲解</h4>
+                                <p>2024-04-12 · 李女士 · 3人</p>
+                            </div>
+                            <div class="order-amount">+¥1,740</div>
+                        </div>
+                        <div class="order-item">
+                            <div class="order-info">
+                                <h4>会员升级 - 专业版</h4>
+                                <p>2024-04-10</p>
+                            </div>
+                            <div class="order-amount expense">-¥299</div>
+                        </div>
+                        <div class="order-item">
+                            <div class="order-info">
+                                <h4>长城一日游</h4>
+                                <p>2024-04-08 · 王先生 · 4人</p>
+                            </div>
+                            <div class="order-amount">+¥2,320</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="section-card">
+                    <h2 class="section-title">🏆 排名统计</h2>
+                    <div class="rank-item">
+                        <div class="rank-num top1">1</div>
+                        <div class="rank-info">
+                            <div class="name">历史文化</div>
+                            <div class="count">156次服务</div>
+                        </div>
+                        <div class="rank-value">¥45,680</div>
+                    </div>
+                    <div class="rank-item">
+                        <div class="rank-num top2">2</div>
+                        <div class="rank-info">
+                            <div class="name">摄影打卡</div>
+                            <div class="count">89次服务</div>
+                        </div>
+                        <div class="rank-value">¥28,340</div>
+                    </div>
+                    <div class="rank-item">
+                        <div class="rank-num top3">3</div>
+                        <div class="rank-info">
+                            <div class="name">亲子研学</div>
+                            <div class="count">45次服务</div>
+                        </div>
+                        <div class="rank-value">¥15,890</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="section-card">
+                    <h2 class="section-title">🎯 本月目标</h2>
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>订单目标</span>
+                            <span style="color: #667eea; font-weight: 600;">23/30</span>
+                        </div>
+                        <div class="progress-bar"><div class="fill" style="width: 76%"></div></div>
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>收入目标</span>
+                            <span style="color: #667eea; font-weight: 600;">¥12,580/¥20,000</span>
+                        </div>
+                        <div class="progress-bar"><div class="fill" style="width: 63%"></div></div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span>好评目标</span>
+                            <span style="color: #10B981; font-weight: 600;">✓ 已完成</span>
+                        </div>
+                        <div class="progress-bar"><div class="fill" style="width: 100%; background: #10B981;"></div></div>
+                    </div>
+                </div>
+                
+                <div class="section-card">
+                    <h2 class="section-title">⚡ 快捷操作</h2>
+                    <div class="quick-actions">
+                        <a href="promotion.html" class="action-btn">
+                            <div class="icon">🚀</div>
+                            <div class="text">
+                                <h4>推广引流</h4>
+                                <p>提升曝光量</p>
+                            </div>
+                        </a>
+                        <a href="profile.html" class="action-btn">
+                            <div class="icon">📝</div>
+                            <div class="text">
+                                <h4>完善资料</h4>
+                                <p>提高转化率</p>
+                            </div>
+                        </a>
+                        <a href="reviews.html" class="action-btn">
+                            <div class="icon">⭐</div>
+                            <div class="text">
+                                <h4>管理评价</h4>
+                                <p>维护口碑</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        async function checkAuth() {
+            const user = await Auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html?redirect=guide-stats.html';
+            }
+        }
+        
+        checkAuth();
+    </script>
+</body>
+</html>

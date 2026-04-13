@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>推广服务 - 游导伴旅</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .promo-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        .promo-header {
+            background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            border-radius: 20px; padding: 50px; color: white;
+            text-align: center; margin-bottom: 30px;
+        }
+        .promo-header h1 { font-size: 36px; margin-bottom: 15px; }
+        .promo-header p { font-size: 18px; opacity: 0.9; }
+        
+        .stats-row {
+            display: flex; justify-content: center; gap: 60px;
+            margin-top: 30px;
+        }
+        .stats-row .stat { text-align: center; }
+        .stats-row .num { font-size: 36px; font-weight: 700; }
+        .stats-row .label { font-size: 14px; opacity: 0.8; }
+        
+        .pricing-section { margin-bottom: 40px; }
+        .section-title { font-size: 24px; color: #333; margin-bottom: 20px; text-align: center; }
+        
+        .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        
+        .pricing-card {
+            background: white; border-radius: 20px; padding: 30px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            text-align: center; transition: all 0.3s; position: relative;
+        }
+        .pricing-card:hover { transform: translateY(-5px); box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+        .pricing-card.popular { border: 3px solid #667eea; }
+        .pricing-card.popular::before {
+            content: '最受欢迎'; position: absolute; top: -12px; left: 50%;
+            transform: translateX(-50%); background: #667eea; color: white;
+            padding: 4px 16px; border-radius: 20px; font-size: 12px;
+        }
+        
+        .pricing-card .name { font-size: 20px; color: #333; margin-bottom: 10px; }
+        .pricing-card .price { font-size: 48px; font-weight: 700; color: #EF4444; }
+        .pricing-card .price span { font-size: 16px; color: #999; font-weight: 400; }
+        .pricing-card .desc { color: #666; margin: 15px 0; min-height: 40px; }
+        
+        .feature-list { text-align: left; margin: 20px 0; }
+        .feature-list li { padding: 8px 0; color: #666; display: flex; align-items: center; gap: 10px; }
+        .feature-list li::before { content: '✓'; color: #10B981; font-weight: bold; }
+        
+        .btn-buy {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 10px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-buy:hover { transform: scale(1.02); box-shadow: 0 5px 20px rgba(102,126,234,0.4); }
+        .btn-buy.outline { background: white; color: #667eea; border: 2px solid #667eea; }
+        
+        .ad-slots { margin-top: 40px; }
+        .ad-slot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        
+        .ad-slot-card {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            display: flex; align-items: center; gap: 20px;
+        }
+        .ad-slot-icon { font-size: 40px; }
+        .ad-slot-info h3 { font-size: 18px; color: #333; margin-bottom: 5px; }
+        .ad-slot-info p { font-size: 14px; color: #666; margin-bottom: 10px; }
+        .ad-slot-info .price { font-size: 20px; font-weight: 700; color: #EF4444; }
+        
+        .faq-section { margin-top: 40px; }
+        .faq-item { background: white; border-radius: 15px; margin-bottom: 15px; overflow: hidden; }
+        .faq-question { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .faq-question h4 { font-size: 16px; color: #333; }
+        .faq-question .icon { font-size: 20px; transition: transform 0.3s; }
+        .faq-item.open .faq-question .icon { transform: rotate(180deg); }
+        .faq-answer { padding: 0 20px 20px; color: #666; display: none; }
+        .faq-item.open .faq-answer { display: block; }
+        
+        @media (max-width: 768px) {
+            .pricing-grid { grid-template-columns: 1fr; }
+            .ad-slot-grid { grid-template-columns: 1fr; }
+            .stats-row { flex-direction: column; gap: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html">🎤 找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
+                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="promo-page">
+        <div class="promo-header">
+            <h1>🚀 推广服务</h1>
+            <p>让更多游客找到你，提升订单量</p>
+            <div class="stats-row">
+                <div class="stat"><div class="num">50万+</div><div class="label">月访问量</div></div>
+                <div class="stat"><div class="num">10万+</div><div class="label">注册用户</div></div>
+                <div class="stat"><div class="num">3000+</div><div class="label">认证导游</div></div>
+            </div>
+        </div>
+        
+        <div class="pricing-section">
+            <h2 class="section-title">💎 会员套餐</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <div class="name">基础版</div>
+                    <div class="price">¥99<span>/月</span></div>
+                    <div class="desc">适合刚入驻的新手导游</div>
+                    <ul class="feature-list">
+                        <li>个人主页展示</li>
+                        <li>基础搜索排名</li>
+                        <li>接收游客咨询</li>
+                        <li>评价系统使用</li>
+                    </ul>
+                    <button class="btn-buy outline" onclick="buyPlan('basic')">立即开通</button>
+                </div>
+                
+                <div class="pricing-card popular">
+                    <div class="name">专业版</div>
+                    <div class="price">¥299<span>/月</span></div>
+                    <div class="desc">适合有一定客源的导游</div>
+                    <ul class="feature-list">
+                        <li>基础版全部功能</li>
+                        <li>搜索排名优先</li>
+                        <li>首页推荐位展示</li>
+                        <li>数据分析报表</li>
+                        <li>专属客服支持</li>
+                    </ul>
+                    <button class="btn-buy" onclick="buyPlan('pro')">立即开通</button>
+                </div>
+                
+                <div class="pricing-card">
+                    <div class="name">旗舰版</div>
+                    <div class="price">¥699<span>/月</span></div>
+                    <div class="desc">适合追求高曝光的导游</div>
+                    <ul class="feature-list">
+                        <li>专业版全部功能</li>
+                        <li>搜索置顶展示</li>
+                        <li>首页轮播广告</li>
+                        <li>精准客户推荐</li>
+                        <li>1对1运营指导</li>
+                    </ul>
+                    <button class="btn-buy" onclick="buyPlan('premium')">立即开通</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ad-slots">
+            <h2 class="section-title">📢 广告位</h2>
+            <div class="ad-slot-grid">
+                <div class="ad-slot-card">
+                    <div class="ad-slot-icon">🏠</div>
+                    <div class="ad-slot-info">
+                        <h3>首页轮播位</h3>
+                        <p>首页顶部轮播广告，曝光量最高</p>
+                        <div class="price">¥500/周</div>
+                    </div>
+                    <button class="btn-buy" style="width:auto;padding:10px 20px;" onclick="buyAd('banner')">购买</button>
+                </div>
+                
+                <div class="ad-slot-card">
+                    <div class="ad-slot-icon">🔍</div>
+                    <div class="ad-slot-info">
+                        <h3>搜索置顶</h3>
+                        <p>搜索结果固定置顶位置</p>
+                        <div class="price">¥300/周</div>
+                    </div>
+                    <button class="btn-buy" style="width:auto;padding:10px 20px;" onclick="buyAd('search')">购买</button>
+                </div>
+                
+                <div class="ad-slot-card">
+                    <div class="ad-slot-icon">📋</div>
+                    <div class="ad-slot-info">
+                        <h3>列表推荐</h3>
+                        <p>导游列表页推荐位展示</p>
+                        <div class="price">¥200/周</div>
+                    </div>
+                    <button class="btn-buy" style="width:auto;padding:10px 20px;" onclick="buyAd('list')">购买</button>
+                </div>
+                
+                <div class="ad-slot-card">
+                    <div class="ad-slot-icon">📱</div>
+                    <div class="ad-slot-info">
+                        <h3>弹窗推广</h3>
+                        <p>首页弹窗推荐，强曝光</p>
+                        <div class="price">¥800/周</div>
+                    </div>
+                    <button class="btn-buy" style="width:auto;padding:10px 20px;" onclick="buyAd('popup')">购买</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="faq-section">
+            <h2 class="section-title">❓ 常见问题</h2>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-question"><h4>开通会员后多久生效？</h4><span class="icon">▼</span></div>
+                <div class="faq-answer">支付成功后立即生效，会员有效期从开通时刻开始计算。</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-question"><h4>可以随时取消会员吗？</h4><span class="icon">▼</span></div>
+                <div class="faq-answer">会员支持随时取消，取消后当前周期仍可使用，到期后不再续费。</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-question"><h4>广告位如何安排？</h4><span class="icon">▼</span></div>
+                <div class="faq-answer">购买广告位后，客服会在24小时内联系您确认投放时间和素材要求。</div>
+            </div>
+            <div class="faq-item" onclick="this.classList.toggle('open')">
+                <div class="faq-question"><h4>效果有保障吗？</h4><span class="icon">▼</span></div>
+                <div class="faq-answer">平台提供数据报表，您可以实时查看曝光量、点击量等数据。效果因导游资料完整度、服务评价等因素而异。</div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        async function buyPlan(plan) {
+            const user = await Auth.getUser();
+            if (!user) {
+                if (confirm('请先登录后再购买，是否前往登录？')) {
+                    window.location.href = 'login.html?redirect=promotion.html';
+                }
+                return;
+            }
+            
+            const planNames = { basic: '基础版', pro: '专业版', premium: '旗舰版' };
+            const prices = { basic: 99, pro: 299, premium: 699 };
+            
+            if (confirm(`确认购买${planNames[plan]}（¥${prices[plan]}/月）？\n\n请联系客服微信：ximao101 完成支付`)) {
+                Utils.showToast('请联系客服完成支付', 'info');
+            }
+        }
+        
+        async function buyAd(type) {
+            const user = await Auth.getUser();
+            if (!user) {
+                if (confirm('请先登录后再购买，是否前往登录？')) {
+                    window.location.href = 'login.html?redirect=promotion.html';
+                }
+                return;
+            }
+            
+            Utils.showToast('请联系客服微信：ximao101 咨询广告投放', 'info');
+        }
+    </script>
+</body>
+</html>

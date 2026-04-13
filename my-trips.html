@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的行程 - 游导伴旅</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .trips-page { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .trips-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px; padding: 30px; color: white;
+            margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .trips-header h1 { font-size: 28px; margin-bottom: 5px; }
+        .btn-create {
+            padding: 12px 24px; background: white; color: #667eea;
+            border: none; border-radius: 10px; font-size: 16px;
+            font-weight: 600; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-create:hover { transform: scale(1.05); }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab {
+            padding: 10px 20px; background: #F3F4F6; border-radius: 20px;
+            cursor: pointer; font-size: 14px; transition: all 0.3s;
+        }
+        .tab:hover, .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .trip-card {
+            background: white; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 15px;
+        }
+        .trip-card-header {
+            padding: 20px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #F3F4F6;
+        }
+        .trip-card-header h3 { font-size: 18px; color: #333; }
+        .trip-status {
+            padding: 4px 12px; border-radius: 20px; font-size: 12px;
+        }
+        .trip-status.upcoming { background: #DBEAFE; color: #2563EB; }
+        .trip-status.ongoing { background: #D1FAE5; color: #059669; }
+        .trip-status.completed { background: #F3F4F6; color: #6B7280; }
+        
+        .trip-card-body { padding: 20px; }
+        .trip-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 20px; }
+        .trip-meta-item { text-align: center; }
+        .trip-meta-item .icon { font-size: 20px; margin-bottom: 5px; }
+        .trip-meta-item .value { font-size: 14px; color: #333; font-weight: 500; }
+        .trip-meta-item .label { font-size: 12px; color: #999; }
+        
+        .trip-days { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; }
+        .day-item {
+            min-width: 150px; padding: 15px; background: #F3F4F6;
+            border-radius: 10px; cursor: pointer; transition: all 0.3s;
+        }
+        .day-item:hover { background: rgba(102, 126, 234, 0.1); }
+        .day-item.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .day-item .day { font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+        .day-item .city { font-size: 12px; opacity: 0.8; }
+        
+        .trip-card-footer {
+            padding: 15px 20px; background: #F9FAFB;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .trip-budget { font-size: 20px; font-weight: 700; color: #EF4444; }
+        .trip-actions { display: flex; gap: 10px; }
+        .btn-action {
+            padding: 8px 16px; border: none; border-radius: 8px;
+            font-size: 14px; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-action.primary { background: #667eea; color: white; }
+        .btn-action.secondary { background: #E5E7EB; color: #333; }
+        
+        .empty-state { text-align: center; padding: 60px; }
+        .empty-state .icon { font-size: 60px; margin-bottom: 15px; }
+        
+        @media (max-width: 768px) {
+            .trips-header { flex-direction: column; text-align: center; gap: 20px; }
+            .trip-meta { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html">🎤 找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="tourist-center.html" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: #fff;">🎒 游客中心</a>
+                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="trips-page">
+        <div class="trips-header">
+            <div>
+                <h1>🗺️ 我的行程</h1>
+                <p>管理您的所有旅行计划</p>
+            </div>
+            <button class="btn-create" onclick="location.href='trip-planner.html'">✏️ 创建新行程</button>
+        </div>
+        
+        <div class="tabs">
+            <span class="tab active">全部行程</span>
+            <span class="tab">即将出行</span>
+            <span class="tab">进行中</span>
+            <span class="tab">已完成</span>
+        </div>
+        
+        <div class="trip-card">
+            <div class="trip-card-header">
+                <h3>🏯 北京历史文化之旅</h3>
+                <span class="trip-status upcoming">即将出行</span>
+            </div>
+            <div class="trip-card-body">
+                <div class="trip-meta">
+                    <div class="trip-meta-item">
+                        <div class="icon">📅</div>
+                        <div class="value">4月20日 - 4月22日</div>
+                        <div class="label">出行日期</div>
+                    </div>
+                    <div class="trip-meta-item">
+                        <div class="icon">👥</div>
+                        <div class="value">2人</div>
+                        <div class="label">出游人数</div>
+                    </div>
+                    <div class="trip-meta-item">
+                        <div class="icon">🎤</div>
+                        <div class="value">张导</div>
+                        <div class="label">导游</div>
+                    </div>
+                </div>
+                <div class="trip-days">
+                    <div class="day-item active">
+                        <div class="day">Day 1</div>
+                        <div class="city">故宫·天安门</div>
+                    </div>
+                    <div class="day-item">
+                        <div class="day">Day 2</div>
+                        <div class="city">长城·明十三陵</div>
+                    </div>
+                    <div class="day-item">
+                        <div class="day">Day 3</div>
+                        <div class="city">颐和园·圆明园</div>
+                    </div>
+                </div>
+            </div>
+            <div class="trip-card-footer">
+                <div class="trip-budget">预算：¥5,800</div>
+                <div class="trip-actions">
+                    <button class="btn-action secondary" onclick="editTrip()">编辑</button>
+                    <button class="btn-action primary" onclick="viewDetail()">查看详情</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="trip-card">
+            <div class="trip-card-header">
+                <h3>🍜 广州美食探店之旅</h3>
+                <span class="trip-status upcoming">即将出行</span>
+            </div>
+            <div class="trip-card-body">
+                <div class="trip-meta">
+                    <div class="trip-meta-item">
+                        <div class="icon">📅</div>
+                        <div class="value">5月1日 - 5月3日</div>
+                        <div class="label">出行日期</div>
+                    </div>
+                    <div class="trip-meta-item">
+                        <div class="icon">👥</div>
+                        <div class="value">3人</div>
+                        <div class="label">出游人数</div>
+                    </div>
+                    <div class="trip-meta-item">
+                        <div class="icon">🎤</div>
+                        <div class="value">李姐</div>
+                        <div class="label">导游</div>
+                    </div>
+                </div>
+                <div class="trip-days">
+                    <div class="day-item">
+                        <div class="day">Day 1</div>
+                        <div class="city">早茶·上下九</div>
+                    </div>
+                    <div class="day-item">
+                        <div class="day">Day 2</div>
+                        <div class="city">沙面·珠江夜游</div>
+                    </div>
+                    <div class="day-item">
+                        <div class="day">Day 3</div>
+                        <div class="city">广州塔·宵夜</div>
+                    </div>
+                </div>
+            </div>
+            <div class="trip-card-footer">
+                <div class="trip-budget">预算：¥4,200</div>
+                <div class="trip-actions">
+                    <button class="btn-action secondary" onclick="editTrip()">编辑</button>
+                    <button class="btn-action primary" onclick="viewDetail()">查看详情</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="trip-card">
+            <div class="trip-card-header">
+                <h3>🏔️ 川西户外探险</h3>
+                <span class="trip-status completed">已完成</span>
+            </div>
+            <div class="trip-card-body">
+                <div class="trip-meta">
+                    <div class="trip-meta-item">
+                        <div class="icon">📅</div>
+                        <div class="value">3月15日 - 3月20日</div>
+                        <div class="label">出行日期</div>
+                    </div>
+                    <div class="trip-meta-item">
+                        <div class="icon">👥</div>
+                        <div class="value">4人</div>
+                        <div class="label">出游人数</div>
+                    </div>
+                    <div class="trip-meta-item">
+                        <div class="icon">🎤</div>
+                        <div class="value">王哥</div>
+                        <div class="label">导游</div>
+                    </div>
+                </div>
+            </div>
+            <div class="trip-card-footer">
+                <div class="trip-budget">实际花费：¥12,800</div>
+                <div class="trip-actions">
+                    <button class="btn-action secondary" onclick="writeReview()">写评价</button>
+                    <button class="btn-action primary" onclick="viewDetail()">查看详情</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        async function checkAuth() {
+            const user = await Auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html?redirect=my-trips.html';
+            }
+        }
+        
+        function editTrip() {
+            Utils.showToast('行程编辑功能开发中', 'info');
+        }
+        
+        function viewDetail() {
+            Utils.showToast('行程详情功能开发中', 'info');
+        }
+        
+        function writeReview() {
+            window.location.href = 'review-submit.html';
+        }
+        
+        checkAuth();
+    </script>
+</body>
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导游详情 - 游导伴旅</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .detail-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        .guide-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px; padding: 40px; color: white;
+            display: flex; gap: 30px; align-items: center; margin-bottom: 30px;
+        }
+        .guide-avatar-big {
+            width: 120px; height: 120px; border-radius: 50%;
+            background: white; display: flex; align-items: center;
+            justify-content: center; font-size: 60px; flex-shrink: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .guide-header-info h1 { font-size: 28px; margin-bottom: 8px; }
+        .guide-header-info .title { opacity: 0.9; margin-bottom: 15px; }
+        .guide-badges { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        .badge {
+            padding: 6px 14px; background: rgba(255,255,255,0.2);
+            border-radius: 20px; font-size: 14px;
+        }
+        .badge.verified { background: #10B981; }
+        
+        .stats-row { display: flex; gap: 30px; margin-top: 15px; }
+        .stat-item { text-align: center; }
+        .stat-item .num { font-size: 24px; font-weight: 700; }
+        .stat-item .label { font-size: 12px; opacity: 0.8; }
+        
+        .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+        
+        .section-card {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 20px;
+        }
+        .section-title { font-size: 18px; color: #333; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #F3F4F6; }
+        
+        .info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        .info-item { display: flex; gap: 10px; }
+        .info-item .icon { font-size: 20px; }
+        .info-item .text { color: #666; }
+        .info-item .value { color: #333; font-weight: 500; }
+        
+        .tag-list { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tag {
+            padding: 8px 16px; background: #F3F4F6; border-radius: 20px;
+            font-size: 14px; color: #666;
+        }
+        
+        .booking-card {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            position: sticky; top: 80px;
+        }
+        .booking-price { text-align: center; margin-bottom: 20px; }
+        .booking-price .amount { font-size: 36px; font-weight: 700; color: #EF4444; }
+        .booking-price .unit { font-size: 16px; color: #999; }
+        
+        .booking-form .form-group { margin-bottom: 15px; }
+        .booking-form label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
+        .booking-form input, .booking-form select, .booking-form textarea {
+            width: 100%; padding: 12px; border: 2px solid #E5E7EB;
+            border-radius: 10px; font-size: 16px;
+        }
+        .booking-form input:focus, .booking-form select:focus, .booking-form textarea:focus {
+            outline: none; border-color: #667eea;
+        }
+        
+        .btn-book {
+            width: 100%; padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 10px;
+            font-size: 18px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; margin-top: 10px;
+        }
+        .btn-book:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4); }
+        
+        .contact-btn {
+            width: 100%; padding: 12px; background: white;
+            color: #667eea; border: 2px solid #667eea;
+            border-radius: 10px; font-size: 16px; cursor: pointer;
+            transition: all 0.3s; margin-top: 10px;
+        }
+        .contact-btn:hover { background: rgba(102, 126, 234, 0.1); }
+        
+        .review-item { padding: 20px 0; border-bottom: 1px solid #F3F4F6; }
+        .review-item:last-child { border-bottom: none; }
+        .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .reviewer-name { font-weight: 600; color: #333; }
+        .review-rating { color: #F59E0B; }
+        .review-date { font-size: 12px; color: #999; }
+        .review-content { color: #666; line-height: 1.6; }
+        
+        @media (max-width: 768px) {
+            .guide-header { flex-direction: column; text-align: center; }
+            .content-grid { grid-template-columns: 1fr; }
+            .booking-card { position: static; }
+            .stats-row { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html" class="active">找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
+                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="detail-page" id="detailPage">
+        <!-- 动态加载 -->
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        const guideData = {
+            1: { id: 1, name: '张导', avatar: '👨‍💼', title: '高级导游 | 10年经验', years: 10, rating: 4.9, reviews: 328, languages: ['普通话', '英语'], specialties: ['历史文化', '摄影打卡'], cities: ['北京', '西安'], bio: '专注历史文化深度游，带您穿越千年时光，聆听历史的声音。熟悉故宫、长城、兵马俑等著名景点的每一个角落，擅长为游客讲述不为人知的历史故事。', price: 580, verified: true, agency: '北京国际旅行社', license: 'D-1100-2014-001234', serviceTypes: ['私人定制', '跟团游', '景点讲解'] },
+            2: { id: 2, name: '李姐', avatar: '👩‍💼', title: '金牌导游 | 8年经验', years: 8, rating: 4.8, reviews: 256, languages: ['普通话', '粤语'], specialties: ['美食探店', '亲子研学'], cities: ['广州', '深圳'], bio: '地道广州人，美食达人，带您吃遍岭南美食。从早茶到宵夜，从老字号到网红店，让您体验最地道的粤式生活。亲子游专家，带娃旅行更轻松。', price: 480, verified: true, agency: '广州岭南旅行社', license: 'D-4401-2016-002345', serviceTypes: ['私人定制', '美食之旅', '亲子游'] },
+            3: { id: 3, name: '王哥', avatar: '🧔', title: '资深导游 | 12年经验', years: 12, rating: 5.0, reviews: 512, languages: ['普通话', '英语', '日语'], specialties: ['户外探险', '自然风光'], cities: ['成都', '杭州'], bio: '户外运动爱好者，带您探索秘境。熟悉川西高原、九寨沟、稻城亚丁等目的地，有丰富的高原带队经验。摄影达人，帮您拍出最美的旅行照片。', price: 680, verified: true, agency: '成都户外俱乐部', license: 'D-5101-2012-003456', serviceTypes: ['户外探险', '摄影之旅', '包车服务'] },
+            4: { id: 4, name: '小美', avatar: '👩', title: '新锐导游 | 3年经验', years: 3, rating: 4.7, reviews: 89, languages: ['普通话', '韩语'], specialties: ['摄影打卡', '美食探店'], cities: ['厦门'], bio: '厦门本地人，网红打卡点一网打尽。鼓浪屿、曾厝垵、沙坡尾...带您发现最美的拍照角度，品尝最地道的闽南美食。', price: 380, verified: false, agency: '厦门青年旅行社', license: 'D-3502-2021-004567', serviceTypes: ['网红打卡', '美食探店'] },
+            5: { id: 5, name: '老陈', avatar: '👴', title: '特级导游 | 20年经验', years: 20, rating: 4.9, reviews: 876, languages: ['普通话', '英语', '法语'], specialties: ['历史文化', '亲子研学'], cities: ['北京', '上海', '西安'], bio: '历史文化专家，讲透千年故事。曾接待多国政要，精通故宫、颐和园、兵马俑等世界文化遗产的深度讲解。亲子研学专家，让孩子爱上历史。', price: 880, verified: true, agency: '中国国际旅行社', license: 'D-1100-2004-005678', serviceTypes: ['深度游', '研学旅行', '商务接待'] },
+            6: { id: 6, name: '阿杰', avatar: '🧑', title: '认证导游 | 5年经验', years: 5, rating: 4.6, reviews: 145, languages: ['普通话'], specialties: ['自然风光', '户外探险'], cities: ['成都', '重庆'], bio: '自然风光爱好者，带您看最美风景。熟悉川渝两地，从城市美食到山野秘境，都能带您深度体验。', price: 420, verified: true, agency: '重庆山水旅行社', license: 'D-5001-2019-006789', serviceTypes: ['自然风光', '美食之旅', '包车服务'] },
+            7: { id: 7, name: '晓雯', avatar: '👩‍🦰', title: '金牌导游 | 6年经验', years: 6, rating: 4.8, reviews: 198, languages: ['普通话', '英语'], specialties: ['亲子研学', '美食探店'], cities: ['上海', '南京'], bio: '亲子游专家，带娃旅行更轻松。熟悉迪士尼、科技馆、博物馆等亲子景点，让孩子在旅行中学习和成长。', price: 520, verified: true, agency: '上海亲子俱乐部', license: 'D-3101-2018-007890', serviceTypes: ['亲子游', '研学旅行', '主题乐园'] },
+            8: { id: 8, name: '大鹏', avatar: '👨', title: '资深导游 | 15年经验', years: 15, rating: 4.9, reviews: 623, languages: ['普通话', '英语', '粤语'], specialties: ['历史文化', '自然风光'], cities: ['西安', '成都'], bio: '深度游专家，不走寻常路。熟悉丝绸之路、茶马古道等历史文化线路，带您探索不一样的西部风情。', price: 750, verified: true, agency: '西安古都旅行社', license: 'D-6101-2009-008901', serviceTypes: ['深度游', '文化之旅', '户外探险'] }
+        };
+        
+        const sampleReviews = [
+            { name: '张先生', rating: 5, date: '2024-03-15', content: '张导讲解非常专业，把故宫的历史讲得生动有趣，孩子都听得津津有味。强烈推荐！' },
+            { name: '李女士', rating: 5, date: '2024-03-10', content: '行程安排很合理，不赶时间，每个景点都玩得很尽兴。张导还帮我们拍了很多好看的照片！' },
+            { name: '王先生', rating: 4, date: '2024-03-05', content: '整体体验很好，就是价格稍贵，但物有所值。讲解专业，服务周到。' },
+            { name: '刘女士', rating: 5, date: '2024-02-28', content: '第三次找张导了，每次都有新的收获。最靠谱的导游，没有之一！' }
+        ];
+        
+        function loadGuide() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const id = parseInt(urlParams.get('id')) || 1;
+            const guide = guideData[id] || guideData[1];
+            
+            document.title = `${guide.name} - 游导伴旅`;
+            
+            const page = document.getElementById('detailPage');
+            page.innerHTML = `
+                <div class="guide-header">
+                    <div class="guide-avatar-big">${guide.avatar}</div>
+                    <div class="guide-header-info">
+                        <h1>${guide.name}</h1>
+                        <div class="title">${guide.title}</div>
+                        <div class="guide-badges">
+                            ${guide.verified ? '<span class="badge verified">✓ 实名认证</span>' : ''}
+                            <span class="badge">${guide.years}年经验</span>
+                        </div>
+                        <div class="stats-row">
+                            <div class="stat-item"><div class="num">⭐ ${guide.rating}</div><div class="label">评分</div></div>
+                            <div class="stat-item"><div class="num">${guide.reviews}</div><div class="label">评价</div></div>
+                            <div class="stat-item"><div class="num">${guide.years}年</div><div class="label">从业</div></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="content-grid">
+                    <div class="main-content">
+                        <div class="section-card">
+                            <h2 class="section-title">👤 导游简介</h2>
+                            <p style="color: #666; line-height: 1.8;">${guide.bio}</p>
+                        </div>
+                        
+                        <div class="section-card">
+                            <h2 class="section-title">📋 基本信息</h2>
+                            <div class="info-grid">
+                                <div class="info-item"><span class="icon">🏢</span><div><div class="text">所属机构</div><div class="value">${guide.agency}</div></div></div>
+                                <div class="info-item"><span class="icon">📜</span><div><div class="text">导游证号</div><div class="value">${guide.license}</div></div></div>
+                                <div class="info-item"><span class="icon">🌍</span><div><div class="text">服务城市</div><div class="value">${guide.cities.join('、')}</div></div></div>
+                                <div class="info-item"><span class="icon">🗣️</span><div><div class="text">服务语言</div><div class="value">${guide.languages.join('、')}</div></div></div>
+                            </div>
+                        </div>
+                        
+                        <div class="section-card">
+                            <h2 class="section-title">🎯 擅长领域</h2>
+                            <div class="tag-list">${guide.specialties.map(s => `<span class="tag">${s}</span>`).join('')}</div>
+                        </div>
+                        
+                        <div class="section-card">
+                            <h2 class="section-title">✅ 服务类型</h2>
+                            <div class="tag-list">${guide.serviceTypes.map(s => `<span class="tag">${s}</span>`).join('')}</div>
+                        </div>
+                        
+                        <div class="section-card">
+                            <h2 class="section-title">⭐ 游客评价 (${guide.reviews})</h2>
+                            ${sampleReviews.map(r => `
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <div>
+                                            <span class="reviewer-name">${r.name}</span>
+                                            <span class="review-rating">${'⭐'.repeat(r.rating)}</span>
+                                        </div>
+                                        <span class="review-date">${r.date}</span>
+                                    </div>
+                                    <div class="review-content">${r.content}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="sidebar">
+                        <div class="booking-card">
+                            <div class="booking-price">
+                                <span class="amount">¥${guide.price}</span>
+                                <span class="unit">/天</span>
+                            </div>
+                            
+                            <form class="booking-form" onsubmit="handleBooking(event, ${guide.id})">
+                                <div class="form-group">
+                                    <label>出行日期</label>
+                                    <input type="date" id="bookingDate" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>出游人数</label>
+                                    <select id="bookingPeople">
+                                        <option value="1">1人</option>
+                                        <option value="2" selected>2人</option>
+                                        <option value="3">3人</option>
+                                        <option value="4">4人</option>
+                                        <option value="5">5人及以上</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>联系电话</label>
+                                    <input type="tel" id="bookingPhone" placeholder="请输入手机号" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>备注信息</label>
+                                    <textarea id="bookingNote" placeholder="请说明您的需求..." rows="3"></textarea>
+                                </div>
+                                <button type="submit" class="btn-book">立即预约</button>
+                            </form>
+                            
+                            <button class="contact-btn" onclick="contactGuide()">💬 在线咨询</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // 设置最小日期为今天
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('bookingDate').min = today;
+        }
+        
+        async function handleBooking(e, guideId) {
+            e.preventDefault();
+            
+            const user = await Auth.getUser();
+            if (!user) {
+                if (confirm('请先登录后再预约，是否前往登录？')) {
+                    window.location.href = 'login.html?redirect=guide-detail.html?id=' + guideId;
+                }
+                return;
+            }
+            
+            const booking = {
+                date: document.getElementById('bookingDate').value,
+                people: document.getElementById('bookingPeople').value,
+                phone: document.getElementById('bookingPhone').value,
+                note: document.getElementById('bookingNote').value
+            };
+            
+            Utils.showToast('预约成功！导游会尽快与您联系', 'success');
+            setTimeout(() => {
+                window.location.href = 'user-center.html';
+            }, 1500);
+        }
+        
+        function contactGuide() {
+            Utils.showToast('请添加微信咨询：ximao101', 'info');
+        }
+        
+        loadGuide();
+    </script>
+</body>
+</html>

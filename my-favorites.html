@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的收藏 - 游导伴旅</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .favorites-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        
+        .favorites-header {
+            background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            border-radius: 20px; padding: 30px; color: white;
+            margin-bottom: 30px;
+        }
+        .favorites-header h1 { font-size: 28px; margin-bottom: 10px; }
+        
+        .section-title { font-size: 20px; color: #333; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .section-title .count { font-size: 14px; color: #999; font-weight: 400; }
+        
+        .favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        
+        .favorite-card {
+            background: white; border-radius: 15px; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s;
+            cursor: pointer;
+        }
+        .favorite-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        
+        .favorite-cover {
+            height: 100px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 40px;
+        }
+        .favorite-info { padding: 20px; }
+        .favorite-info h3 { font-size: 16px; color: #333; margin-bottom: 8px; }
+        .favorite-info p { font-size: 13px; color: #666; margin-bottom: 10px; }
+        .favorite-info .meta { font-size: 12px; color: #999; }
+        
+        .favorite-actions { display: flex; gap: 10px; padding: 0 20px 20px; }
+        .favorite-actions button {
+            flex: 1; padding: 10px; border: none; border-radius: 8px;
+            cursor: pointer; font-size: 14px; transition: all 0.3s;
+        }
+        .favorite-actions .btn-view { background: #F3F4F6; color: #333; }
+        .favorite-actions .btn-remove { background: #FEE2E2; color: #DC2626; }
+        .favorite-actions button:hover { transform: scale(1.02); }
+        
+        .empty-state { text-align: center; padding: 60px; }
+        .empty-state .icon { font-size: 60px; margin-bottom: 15px; }
+        .empty-state p { color: #666; margin-bottom: 20px; }
+        .btn-browse {
+            padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; border: none; border-radius: 10px;
+            font-size: 16px; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html">🎤 找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
+                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="favorites-page">
+        <div class="favorites-header">
+            <h1>❤️ 我的收藏</h1>
+            <p>收藏的导游和线路，一键查看</p>
+        </div>
+        
+        <h2 class="section-title">🎤 收藏的导游 <span class="count">(3)</span></h2>
+        <div class="favorites-grid">
+            <div class="favorite-card">
+                <div class="favorite-cover">👨‍💼</div>
+                <div class="favorite-info">
+                    <h3>张导</h3>
+                    <p>高级导游 | 北京、西安</p>
+                    <div class="meta">⭐ 4.9 | 328评价</div>
+                </div>
+                <div class="favorite-actions">
+                    <button class="btn-view" onclick="location.href='guide-detail.html?id=1'">查看</button>
+                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
+                </div>
+            </div>
+            
+            <div class="favorite-card">
+                <div class="favorite-cover">👩‍💼</div>
+                <div class="favorite-info">
+                    <h3>李姐</h3>
+                    <p>金牌导游 | 广州、深圳</p>
+                    <div class="meta">⭐ 4.8 | 256评价</div>
+                </div>
+                <div class="favorite-actions">
+                    <button class="btn-view" onclick="location.href='guide-detail.html?id=2'">查看</button>
+                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
+                </div>
+            </div>
+            
+            <div class="favorite-card">
+                <div class="favorite-cover">🧔</div>
+                <div class="favorite-info">
+                    <h3>王哥</h3>
+                    <p>资深导游 | 成都、杭州</p>
+                    <div class="meta">⭐ 5.0 | 512评价</div>
+                </div>
+                <div class="favorite-actions">
+                    <button class="btn-view" onclick="location.href='guide-detail.html?id=3'">查看</button>
+                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
+                </div>
+            </div>
+        </div>
+        
+        <h2 class="section-title">🗺️ 收藏的线路 <span class="count">(2)</span></h2>
+        <div class="favorites-grid">
+            <div class="favorite-card">
+                <div class="favorite-cover" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">🏔️</div>
+                <div class="favorite-info">
+                    <h3>川西小环线5日游</h3>
+                    <p>稻城亚丁 | 四姑娘山</p>
+                    <div class="meta">💰 ¥3,800起 | 📅 5天4晚</div>
+                </div>
+                <div class="favorite-actions">
+                    <button class="btn-view" onclick="location.href='routes.html'">查看</button>
+                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
+                </div>
+            </div>
+            
+            <div class="favorite-card">
+                <div class="favorite-cover" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">🏯</div>
+                <div class="favorite-info">
+                    <h3>西安历史深度游</h3>
+                    <p>兵马俑 | 华清池 | 大雁塔</p>
+                    <div class="meta">💰 ¥2,200起 | 📅 4天3晚</div>
+                </div>
+                <div class="favorite-actions">
+                    <button class="btn-view" onclick="location.href='routes.html'">查看</button>
+                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        async function checkAuth() {
+            const user = await Auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html?redirect=my-favorites.html';
+            }
+        }
+        
+        function removeFavorite(btn) {
+            if (confirm('确定要移除收藏吗？')) {
+                btn.closest('.favorite-card').remove();
+                Utils.showToast('已移除收藏', 'success');
+            }
+        }
+        
+        checkAuth();
+    </script>
+</body>
+</html>

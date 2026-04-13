@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的订单 - 游导伴旅</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .orders-page { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .orders-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px; padding: 30px; color: white;
+            margin-bottom: 30px;
+        }
+        .orders-header h1 { font-size: 28px; margin-bottom: 10px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tab {
+            padding: 10px 20px; background: #F3F4F6; border-radius: 20px;
+            cursor: pointer; transition: all 0.3s; font-size: 14px;
+        }
+        .tab:hover, .tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .order-card {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 15px;
+        }
+        .order-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #F3F4F6;
+        }
+        .order-id { font-size: 14px; color: #999; }
+        .order-status {
+            padding: 4px 12px; border-radius: 20px; font-size: 12px;
+        }
+        .order-status.pending { background: #FEF3C7; color: #D97706; }
+        .order-status.confirmed { background: #DBEAFE; color: #2563EB; }
+        .order-status.completed { background: #D1FAE5; color: #059669; }
+        .order-status.cancelled { background: #FEE2E2; color: #DC2626; }
+        
+        .order-content { display: flex; gap: 20px; }
+        .order-avatar {
+            width: 80px; height: 80px; border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px; flex-shrink: 0;
+        }
+        .order-info { flex: 1; }
+        .order-info h3 { font-size: 18px; color: #333; margin-bottom: 8px; }
+        .order-info p { font-size: 14px; color: #666; margin-bottom: 5px; }
+        .order-info .highlight { color: #667eea; font-weight: 500; }
+        
+        .order-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 15px; padding-top: 15px; border-top: 1px solid #F3F4F6;
+        }
+        .order-price { font-size: 24px; font-weight: 700; color: #EF4444; }
+        .order-actions { display: flex; gap: 10px; }
+        .btn-action {
+            padding: 10px 20px; border-radius: 8px; font-size: 14px;
+            cursor: pointer; transition: all 0.3s; border: none;
+        }
+        .btn-action.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-action.secondary {
+            background: #F3F4F6; color: #666;
+        }
+        .btn-action:hover { transform: scale(1.02); }
+        
+        .empty-state { text-align: center; padding: 60px; color: #666; }
+        .empty-state .icon { font-size: 60px; margin-bottom: 15px; }
+        
+        @media (max-width: 768px) {
+            .order-content { flex-direction: column; align-items: center; text-align: center; }
+            .order-footer { flex-direction: column; gap: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html">🎤 找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
+                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="orders-page">
+        <div class="orders-header">
+            <h1>📋 我的订单</h1>
+            <p>管理您的所有预约记录</p>
+        </div>
+        
+        <div class="tabs">
+            <span class="tab active" data-status="all">全部订单</span>
+            <span class="tab" data-status="pending">待确认</span>
+            <span class="tab" data-status="confirmed">已确认</span>
+            <span class="tab" data-status="completed">已完成</span>
+            <span class="tab" data-status="cancelled">已取消</span>
+        </div>
+        
+        <div id="ordersList">
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">订单号：YD20240413001</span>
+                    <span class="order-status confirmed">已确认</span>
+                </div>
+                <div class="order-content">
+                    <div class="order-avatar">👨‍💼</div>
+                    <div class="order-info">
+                        <h3>张导 - 北京一日游</h3>
+                        <p>📅 出行日期：<span class="highlight">2024年4月20日</span></p>
+                        <p>👥 出游人数：2人</p>
+                        <p>📍 集合地点：天安门广场</p>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="order-price">¥1,160</div>
+                    <div class="order-actions">
+                        <button class="btn-action secondary" onclick="contactGuide()">💬 联系导游</button>
+                        <button class="btn-action primary" onclick="viewDetail()">查看详情</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">订单号：YD20240410002</span>
+                    <span class="order-status completed">已完成</span>
+                </div>
+                <div class="order-content">
+                    <div class="order-avatar">👩‍💼</div>
+                    <div class="order-info">
+                        <h3>李姐 - 广州美食之旅</h3>
+                        <p>📅 出行日期：2024年4月10日</p>
+                        <p>👥 出游人数：3人</p>
+                        <p>📍 集合地点：广州塔</p>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="order-price">¥1,440</div>
+                    <div class="order-actions">
+                        <button class="btn-action secondary" onclick="writeReview()">⭐ 写评价</button>
+                        <button class="btn-action primary" onclick="rebook()">再次预约</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="order-card">
+                <div class="order-header">
+                    <span class="order-id">订单号：YD20240408003</span>
+                    <span class="order-status pending">待确认</span>
+                </div>
+                <div class="order-content">
+                    <div class="order-avatar">🧔</div>
+                    <div class="order-info">
+                        <h3>王哥 - 成都户外探险</h3>
+                        <p>📅 出行日期：<span class="highlight">2024年4月25日</span></p>
+                        <p>👥 出游人数：4人</p>
+                        <p>📍 集合地点：待确认</p>
+                    </div>
+                </div>
+                <div class="order-footer">
+                    <div class="order-price">¥2,720</div>
+                    <div class="order-actions">
+                        <button class="btn-action secondary" onclick="cancelOrder()">取消订单</button>
+                        <button class="btn-action primary" onclick="contactGuide()">联系导游</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        async function checkAuth() {
+            const user = await Auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html?redirect=my-orders.html';
+            }
+        }
+        
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // 这里可以根据状态筛选订单
+            });
+        });
+        
+        function contactGuide() {
+            Utils.showToast('请联系微信：ximao101', 'info');
+        }
+        
+        function viewDetail() {
+            Utils.showToast('订单详情功能开发中', 'info');
+        }
+        
+        function writeReview() {
+            window.location.href = 'review-submit.html';
+        }
+        
+        function rebook() {
+            window.location.href = 'guides.html';
+        }
+        
+        function cancelOrder() {
+            if (confirm('确定要取消此订单吗？')) {
+                Utils.showToast('订单已取消', 'success');
+            }
+        }
+        
+        checkAuth();
+    </script>
+</body>
+</html>

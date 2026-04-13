@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的评价 - 游导伴旅</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .reviews-page { max-width: 900px; margin: 0 auto; padding: 20px; }
+        
+        .reviews-header {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            border-radius: 20px; padding: 30px; color: white;
+            margin-bottom: 30px;
+        }
+        .reviews-header h1 { font-size: 28px; margin-bottom: 10px; }
+        
+        .stats-row { display: flex; gap: 30px; margin-top: 20px; }
+        .stat-item { text-align: center; }
+        .stat-item .value { font-size: 32px; font-weight: 700; }
+        .stat-item .label { font-size: 14px; opacity: 0.8; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab {
+            padding: 10px 20px; background: #F3F4F6; border-radius: 20px;
+            cursor: pointer; font-size: 14px; transition: all 0.3s;
+        }
+        .tab:hover, .tab.active {
+            background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            color: white;
+        }
+        
+        .review-card {
+            background: white; border-radius: 15px; padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 15px;
+        }
+        .review-header {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .review-guide { display: flex; gap: 15px; align-items: center; }
+        .review-guide .avatar {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+        }
+        .review-guide .info h4 { font-size: 16px; color: #333; }
+        .review-guide .info p { font-size: 13px; color: #999; }
+        .review-rating { font-size: 18px; color: #F59E0B; }
+        .review-date { font-size: 12px; color: #999; margin-top: 5px; }
+        
+        .review-content {
+            font-size: 15px; color: #666; line-height: 1.8;
+            margin-bottom: 15px; padding: 15px; background: #F9FAFB;
+            border-radius: 10px;
+        }
+        
+        .review-trip {
+            display: flex; gap: 20px; padding-top: 15px;
+            border-top: 1px solid #F3F4F6; font-size: 14px; color: #666;
+        }
+        .review-trip span { display: flex; align-items: center; gap: 5px; }
+        
+        .review-footer {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 15px; padding-top: 15px; border-top: 1px solid #F3F4F6;
+        }
+        .review-status {
+            padding: 4px 12px; border-radius: 20px; font-size: 12px;
+        }
+        .review-status.published { background: #D1FAE5; color: #059669; }
+        .review-status.pending { background: #FEF3C7; color: #D97706; }
+        
+        .btn-action {
+            padding: 8px 16px; border: none; border-radius: 8px;
+            font-size: 14px; cursor: pointer; transition: all 0.3s;
+        }
+        .btn-action.edit { background: #E5E7EB; color: #333; }
+        .btn-action.delete { background: #FEE2E2; color: #DC2626; }
+        
+        .empty-state { text-align: center; padding: 60px; }
+        .empty-state .icon { font-size: 60px; margin-bottom: 15px; }
+        
+        @media (max-width: 768px) {
+            .stats-row { flex-direction: column; gap: 15px; }
+            .review-trip { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html">🎤 找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="tourist-center.html" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); color: #fff;">🎒 游客中心</a>
+                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="reviews-page">
+        <div class="reviews-header">
+            <h1>⭐ 我的评价</h1>
+            <p>查看您给导游的所有评价</p>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <div class="value">8</div>
+                    <div class="label">已评价</div>
+                </div>
+                <div class="stat-item">
+                    <div class="value">4.8</div>
+                    <div class="label">平均评分</div>
+                </div>
+                <div class="stat-item">
+                    <div class="value">2</div>
+                    <div class="label">待评价</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <span class="tab active">全部评价</span>
+            <span class="tab">待评价订单</span>
+            <span class="tab">已发布</span>
+        </div>
+        
+        <div class="review-card">
+            <div class="review-header">
+                <div class="review-guide">
+                    <div class="avatar">👨‍💼</div>
+                    <div class="info">
+                        <h4>张导</h4>
+                        <p>北京一日游</p>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                    <div class="review-date">2024-04-13</div>
+                </div>
+            </div>
+            <div class="review-content">
+                张导讲解非常专业，把故宫的历史讲得生动有趣，孩子都听得津津有味。行程安排合理，不赶时间，每个景点都玩得很尽兴。还帮我们拍了很多好看的照片！强烈推荐！
+            </div>
+            <div class="review-trip">
+                <span>📅 2024-04-10</span>
+                <span>👥 2人</span>
+                <span>💰 ¥1,160</span>
+            </div>
+            <div class="review-footer">
+                <span class="review-status published">已发布</span>
+                <div>
+                    <button class="btn-action edit" onclick="editReview()">编辑</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="review-card">
+            <div class="review-header">
+                <div class="review-guide">
+                    <div class="avatar">👩‍💼</div>
+                    <div class="info">
+                        <h4>李姐</h4>
+                        <p>广州美食之旅</p>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="review-rating">⭐⭐⭐⭐⭐</div>
+                    <div class="review-date">2024-03-25</div>
+                </div>
+            </div>
+            <div class="review-content">
+                李姐是地道广州人，带我们吃了好多隐藏的美食小店，早茶、糖水、宵夜一样不落。而且她对每个景点的历史都很了解，讲得很有趣。下次来广州还找李姐！
+            </div>
+            <div class="review-trip">
+                <span>📅 2024-03-20</span>
+                <span>👥 3人</span>
+                <span>💰 ¥1,440</span>
+            </div>
+            <div class="review-footer">
+                <span class="review-status published">已发布</span>
+                <div>
+                    <button class="btn-action edit" onclick="editReview()">编辑</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="review-card">
+            <div class="review-header">
+                <div class="review-guide">
+                    <div class="avatar">🧔</div>
+                    <div class="info">
+                        <h4>王哥</h4>
+                        <p>川西户外探险</p>
+                    </div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="review-rating">⭐⭐⭐⭐</div>
+                    <div class="review-date">2024-03-22</div>
+                </div>
+            </div>
+            <div class="review-content">
+                王哥户外经验很丰富，带我们走了很多小众路线，风景超美！高原反应也帮我们处理得很及时。唯一不足是行程稍微有点紧，下次希望能更悠闲一点。
+            </div>
+            <div class="review-trip">
+                <span>📅 2024-03-15</span>
+                <span>👥 4人</span>
+                <span>💰 ¥12,800</span>
+            </div>
+            <div class="review-footer">
+                <span class="review-status published">已发布</span>
+                <div>
+                    <button class="btn-action edit" onclick="editReview()">编辑</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/common.js"></script>
+    <script>
+        async function checkAuth() {
+            const user = await Auth.getUser();
+            if (!user) {
+                window.location.href = 'login.html?redirect=my-reviews.html';
+            }
+        }
+        
+        function editReview() {
+            Utils.showToast('评价编辑功能开发中', 'info');
+        }
+        
+        checkAuth();
+    </script>
+</body>
+</html>
