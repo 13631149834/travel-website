@@ -830,28 +830,44 @@
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
     <script>
+        // 工具函数
+        const Utils = {
+            showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                toast.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; color: white; font-size: 14px; z-index: 9999; background: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#3B82F6'};`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
         let currentMode = 'tourist';
-        
-        // Tab切换
-        function switchTab(tab) {
-            currentMode = tab;
-            document.body.className = tab + '-mode';
-            
-            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector('.' + tab + '-tab').classList.add('active');
-            
-            document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
-            document.getElementById(tab + 'Section').classList.add('active');
-        }
-        
-        // 复选框点击处理
-        document.querySelectorAll('.checkbox-item').forEach(item => {
-            item.addEventListener('click', () => {
-                item.classList.toggle('selected');
-                item.querySelector('input').checked = item.classList.contains('selected');
+
+        // 等待页面加载完成
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab切换
+            window.switchTab = function(tab) {
+                currentMode = tab;
+                document.body.className = tab + '-mode';
+                
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector('.' + tab + '-tab').classList.add('active');
+                
+                document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(tab + 'Section').classList.add('active');
+            };
+
+            // 复选框点击处理
+            document.querySelectorAll('.checkbox-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    this.classList.toggle('selected');
+                    const input = this.querySelector('input');
+                    if (input) {
+                        input.checked = this.classList.contains('selected');
+                    }
+                });
             });
         });
         
