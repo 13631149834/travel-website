@@ -578,9 +578,10 @@
                         <div class="form-group">
                             <label for="touristCode">验证码 <span class="required">*</span></label>
                             <div class="input-with-btn">
-                                <input type="text" id="touristCode" placeholder="请输入验证码" required>
+                                <input type="text" id="touristCode" placeholder="请输入任意4位数字" required>
                                 <button type="button" class="verify-btn" onclick="sendVerifyCode(this)">获取验证码</button>
                             </div>
+                            <div class="field-note" style="font-size:12px;color:#7C3AED;margin-top:5px;">💡 演示模式：可输入任意数字</div>
                             <div class="error-message" id="touristCodeError"></div>
                         </div>
                         
@@ -671,9 +672,9 @@
                             
                             <div class="form-group">
                                 <label for="guideCert">导游证号 <span class="required">*</span></label>
-                                <input type="text" id="guideCert" placeholder="请输入导游证号（如 D-1234567）" required>
-                                <div class="field-warning" id="guideCertWarning">
-                                    ⚠️ 导游证号格式：以"D-"开头+7位数字
+                                <input type="text" id="guideCert" placeholder="请输入您的导游证号" required>
+                                <div class="field-note" id="guideCertNote">
+                                    ✏️ 请填写真实的导游证号，用于身份验证
                                 </div>
                                 <div class="error-message" id="guideCertError"></div>
                             </div>
@@ -914,8 +915,8 @@
                 hasError = true;
             }
             
-            if (!code) {
-                showError('touristCodeError', 'touristCode', '请输入验证码');
+            if (!code || code.length < 4) {
+                showError('touristCodeError', 'touristCode', '请输入验证码（任意4位以上数字即可）');
                 hasError = true;
             }
             
@@ -1024,9 +1025,9 @@
                 hasError = true;
             }
             
-            // 导游证号格式验证
-            if (!cert || !/^D-\d{7}$/.test(cert)) {
-                showError('guideCertError', 'guideCert', '导游证号格式：以D-开头+7位数字');
+            // 导游证号验证（只验证非空）
+            if (!cert || cert.length < 4) {
+                showError('guideCertError', 'guideCert', '请输入有效的导游证号');
                 hasError = true;
             }
             
