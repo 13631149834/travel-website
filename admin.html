@@ -641,12 +641,35 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
     <script>
-        const ADMIN_PASSWORD = 'admin123'; // 简单验证，可改为更安全的认证方式
+        const ADMIN_PASSWORD = 'admin123';
 
-        // 检查是否已登录
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
+        // 模拟数据
+        const mockData = {
+            users: JSON.parse(localStorage.getItem('admin_users') || '[{"id":"u1","nickname":"张三","email":"zhangsan@example.com","role":"tourist","status":"active","created_at":"2024-01-15T08:00:00Z"},{"id":"u2","nickname":"李四","email":"lisi@example.com","role":"guide","status":"active","created_at":"2024-02-20T10:30:00Z"},{"id":"u3","nickname":"王五","email":"wangwu@example.com","role":"tourist","status":"active","created_at":"2024-03-10T14:20:00Z"}]'),
+            guideProfiles: JSON.parse(localStorage.getItem('admin_guideProfiles') || '[{"id":"g1","user_id":"u2","nickname":"李四导游","avatar":"👨‍🏫","expertise":"历史文化","languages":"普通话,英语","status":"approved","created_at":"2024-02-20T10:30:00Z"},{"id":"g2","user_id":"u4","nickname":"赵六导游","avatar":"👩‍🏫","expertise":"美食探店","languages":"普通话,粤语","status":"pending","created_at":"2024-04-01T09:00:00Z"},{"id":"g3","user_id":"u5","nickname":"钱七导游","avatar":"🧔","expertise":"户外探险","languages":"普通话","status":"pending","created_at":"2024-04-05T11:00:00Z"}]'),
+            reviews: JSON.parse(localStorage.getItem('admin_reviews') || '[{"id":"r1","guide_id":"g1","user_nickname":"游客A","rating":5,"content":"讲解非常专业！","created_at":"2024-03-15T10:00:00Z"},{"id":"r2","guide_id":"g1","user_nickname":"游客B","rating":4,"content":"服务很好，推荐！","created_at":"2024-03-18T14:30:00Z"},{"id":"r3","guide_id":"g2","user_nickname":"游客C","rating":5,"content":"美食之旅太棒了！","created_at":"2024-04-02T16:00:00Z"}]')
+        };
+
+        // 保存模拟数据到localStorage
+        function saveMockData() {
+            localStorage.setItem('admin_users', JSON.stringify(mockData.users));
+            localStorage.setItem('admin_guideProfiles', JSON.stringify(mockData.guideProfiles));
+            localStorage.setItem('admin_reviews', JSON.stringify(mockData.reviews));
+        }
+
+        // 检查登录状态
         function checkLogin() {
             const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
             if (!isLoggedIn) {
@@ -665,224 +688,133 @@
                 document.getElementById('loginModal').style.display = 'none';
                 init();
             } else {
-                showToast('密码错误，请重试！', 'error');
+                Utils.showToast('密码错误，请重试！', 'error');
             }
         }
 
         // 回车登录
         document.getElementById('adminPassword').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                handleLogin();
-            }
+            if (e.key === 'Enter') handleLogin();
         });
 
         // 显示提示
         function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.remove();
-            }, 3000);
+            Utils.showToast(message, type);
         }
 
         // 加载统计数据
-        async function loadStats() {
-            try {
-                // 用户总数
-                const { count: userCount } = await supabaseClient
-                    .from('users')
-                    .select('*', { count: 'exact', head: true });
-                
-                // 导游总数
-                const { count: guideCount } = await supabaseClient
-                    .from('guide_profiles')
-                    .select('*', { count: 'exact', head: true });
-                
-                // 待审核导游
-                const { count: pendingCount } = await supabaseClient
-                    .from('guide_profiles')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('status', 'pending');
-                
-                // 评价总数
-                const { count: reviewCount } = await supabaseClient
-                    .from('reviews')
-                    .select('*', { count: 'exact', head: true });
+        function loadStats() {
+            const userCount = mockData.users.length;
+            const guideCount = mockData.guideProfiles.filter(g => g.status === 'approved').length;
+            const pendingCount = mockData.guideProfiles.filter(g => g.status === 'pending').length;
+            const reviewCount = mockData.reviews.length;
 
-                document.getElementById('statUsers').textContent = userCount || 0;
-                document.getElementById('statGuides').textContent = guideCount || 0;
-                document.getElementById('statPending').textContent = pendingCount || 0;
-                document.getElementById('statReviews').textContent = reviewCount || 0;
-            } catch (error) {
-                console.error('加载统计数据失败:', error);
-            }
+            document.getElementById('statUsers').textContent = userCount;
+            document.getElementById('statGuides').textContent = guideCount;
+            document.getElementById('statPending').textContent = pendingCount;
+            document.getElementById('statReviews').textContent = reviewCount;
         }
 
         // 加载待审核导游
-        async function loadPendingGuides() {
-            try {
-                const { data: guides, error } = await supabaseClient
-                    .from('guide_profiles')
-                    .select(`
-                        *,
-                        users (nickname, email)
-                    `)
-                    .eq('status', 'pending')
-                    .order('created_at', { ascending: false })
-                    .limit(5);
-
-                if (error) throw error;
-
-                const tbody = document.getElementById('pendingGuidesTable');
-                
-                if (!guides || guides.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="4" class="empty-state">
-                                <div class="icon">✅</div>
-                                <p>暂无待审核导游</p>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                tbody.innerHTML = guides.map(guide => `
-                    <tr>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <span style="font-size: 24px;">${guide.avatar || '🎤'}</span>
-                                <div>
-                                    <div style="font-weight: 600;">${guide.nickname || guide.users?.nickname || '未命名'}</div>
-                                    <div style="font-size: 12px; color: #666;">${guide.users?.email || ''}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>${guide.expertise || '-'}</td>
-                        <td>${new Date(guide.created_at).toLocaleDateString('zh-CN')}</td>
-                        <td>
-                            <button class="btn btn-success btn-sm" onclick="approveGuide('${guide.id}')">通过</button>
-                            <button class="btn btn-danger btn-sm" onclick="rejectGuide('${guide.id}')">拒绝</button>
-                        </td>
-                    </tr>
-                `).join('');
-            } catch (error) {
-                console.error('加载待审核导游失败:', error);
-                document.getElementById('pendingGuidesTable').innerHTML = `
+        function loadPendingGuides() {
+            const pendingGuides = mockData.guideProfiles.filter(g => g.status === 'pending');
+            const tbody = document.getElementById('pendingGuidesTable');
+            
+            if (pendingGuides.length === 0) {
+                tbody.innerHTML = `
                     <tr>
                         <td colspan="4" class="empty-state">
-                            <div class="icon">❌</div>
-                            <p>加载失败，请刷新重试</p>
+                            <div class="icon">✅</div>
+                            <p>暂无待审核导游</p>
                         </td>
                     </tr>
                 `;
+                return;
             }
+
+            tbody.innerHTML = pendingGuides.slice(0, 5).map(guide => `
+                <tr>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 24px;">${guide.avatar || '🎤'}</span>
+                            <div>
+                                <div style="font-weight: 600;">${guide.nickname || '未命名'}</div>
+                                <div style="font-size: 12px; color: #666;"></div>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${guide.expertise || '-'}</td>
+                    <td>${new Date(guide.created_at).toLocaleDateString('zh-CN')}</td>
+                    <td>
+                        <button class="btn btn-success btn-sm" onclick="approveGuide('${guide.id}')">通过</button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectGuide('${guide.id}')">拒绝</button>
+                    </td>
+                </tr>
+            `).join('');
         }
 
         // 加载最新评价
-        async function loadRecentReviews() {
-            try {
-                const { data: reviews, error } = await supabaseClient
-                    .from('reviews')
-                    .select(`
-                        *,
-                        guide:guide_profiles(nickname, avatar),
-                        user:users(nickname)
-                    `)
-                    .order('created_at', { ascending: false })
-                    .limit(5);
-
-                if (error) throw error;
-
-                const tbody = document.getElementById('recentReviewsTable');
-                
-                if (!reviews || reviews.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="empty-state">
-                                <div class="icon">📝</div>
-                                <p>暂无评价</p>
-                            </td>
-                        </tr>
-                    `;
-                    return;
-                }
-
-                tbody.innerHTML = reviews.map(review => `
+        function loadRecentReviews() {
+            const recentReviews = mockData.reviews.slice(0, 5);
+            const tbody = document.getElementById('recentReviewsTable');
+            
+            if (recentReviews.length === 0) {
+                tbody.innerHTML = `
                     <tr>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span>${review.guide?.avatar || '🎤'}</span>
-                                <span>${review.guide?.nickname || '导游'}</span>
-                            </div>
+                        <td colspan="5" class="empty-state">
+                            <div class="icon">📝</div>
+                            <p>暂无评价</p>
                         </td>
-                        <td>${review.user?.nickname || '游客'}</td>
-                        <td>
-                            <span style="color: #F59E0B;">
-                                ${'⭐'.repeat(review.rating || 5)}
-                            </span>
-                        </td>
-                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            ${review.content || '-'}
-                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = recentReviews.map(review => {
+                const guide = mockData.guideProfiles.find(g => g.id === review.guide_id);
+                return `
+                    <tr>
+                        <td>${guide ? guide.nickname : '-'}</td>
+                        <td>${review.user_nickname}</td>
+                        <td>${'⭐'.repeat(review.rating)}</td>
+                        <td>${review.content.substring(0, 20)}...</td>
                         <td>${new Date(review.created_at).toLocaleDateString('zh-CN')}</td>
                     </tr>
-                `).join('');
-            } catch (error) {
-                console.error('加载评价失败:', error);
-            }
+                `;
+            }).join('');
         }
 
         // 通过导游
-        async function approveGuide(guideId) {
-            try {
-                const { error } = await supabaseClient
-                    .from('guide_profiles')
-                    .update({ status: 'approved', updated_at: new Date().toISOString() })
-                    .eq('id', guideId);
-
-                if (error) throw error;
-
+        function approveGuide(guideId) {
+            const guide = mockData.guideProfiles.find(g => g.id === guideId);
+            if (guide) {
+                guide.status = 'approved';
+                saveMockData();
                 showToast('导游审核已通过！', 'success');
-                loadPendingGuides();
                 loadStats();
-            } catch (error) {
-                showToast('操作失败：' + error.message, 'error');
+                loadPendingGuides();
             }
         }
 
         // 拒绝导游
-        async function rejectGuide(guideId) {
-            try {
-                const { error } = await supabaseClient
-                    .from('guide_profiles')
-                    .update({ status: 'rejected', updated_at: new Date().toISOString() })
-                    .eq('id', guideId);
-
-                if (error) throw error;
-
+        function rejectGuide(guideId) {
+            const guide = mockData.guideProfiles.find(g => g.id === guideId);
+            if (guide) {
+                guide.status = 'rejected';
+                saveMockData();
                 showToast('已拒绝该导游申请', 'success');
-                loadPendingGuides();
                 loadStats();
-            } catch (error) {
-                showToast('操作失败：' + error.message, 'error');
+                loadPendingGuides();
             }
         }
 
-        // 初始化
-        async function init() {
+        function init() {
             if (!checkLogin()) return;
-            
-            await Promise.all([
-                loadStats(),
-                loadPendingGuides(),
-                loadRecentReviews()
-            ]);
+            loadStats();
+            loadPendingGuides();
+            loadRecentReviews();
         }
 
-        // 启动
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

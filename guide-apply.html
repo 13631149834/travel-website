@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>导游入驻 - 游导旅游</title>
+    <title>导游入驻 - 游导伴旅 | 成为认证导游</title>
+  <meta name="description" content="申请入驻游导伴旅平台，成为认证导游，享受订单管理、收入结算、推广曝光等服务，开启导游职业新篇章。">
+  <meta name="keywords" content="导游入驻,导游申请,认证导游,导游注册,导游平台">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/guide-apply.html">
+  <meta property="og:title" content="导游入驻 - 游导伴旅">
+  <meta property="og:description" content="成为认证导游，开启导游职业新篇章。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://youdao-travel.com/guide-apply.html">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/guide/profile.css">
     <style>
@@ -411,16 +419,77 @@
         </form>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
     <script>
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    color: white;
+                    font-size: 14px;
+                    z-index: 9999;
+                    animation: slideDown 0.3s ease;
+                    background-color: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : '#3B82F6'};
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideUp 0.3s ease forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        // Auth 模拟
+        const Auth = {
+            getUser: function() {
+                const userStr = localStorage.getItem('user');
+                return Promise.resolve(userStr ? JSON.parse(userStr) : null);
+            }
+        };
+
+        // DB 模拟
+        const DB = {
+            guideProfiles: {
+                getByUserId: function(userId) {
+                    const profiles = JSON.parse(localStorage.getItem('guideProfiles') || '[]');
+                    const profile = profiles.find(p => p.user_id === userId);
+                    return Promise.resolve({ data: profile || null });
+                },
+                create: function(profile) {
+                    const profiles = JSON.parse(localStorage.getItem('guideProfiles') || '[]');
+                    profile.id = Date.now();
+                    profile.created_at = new Date().toISOString();
+                    profile.status = 'pending';
+                    profiles.push(profile);
+                    localStorage.setItem('guideProfiles', JSON.stringify(profiles));
+                    return Promise.resolve({ data: profile, error: null });
+                }
+            }
+        };
+
         let currentStep = 1;
         let selectedLanguages = [];
         let selectedSpecialties = [];
         let selectedServiceTypes = [];
         
+        function init() {
+            checkAuth();
+            setupTagSelectors();
+            setupFileUpload();
+            setupStepButtons();
+            setupFormSubmit();
+        }
+        
         // 检查登录状态
-        Auth.getUser().then(async user => {
+        async function checkAuth() {
+            const user = await Auth.getUser();
             if (!user) {
                 window.location.href = 'login.html?redirect=guide-apply.html';
                 return;
@@ -432,9 +501,15 @@
                 Utils.showToast('您已提交导游资料', 'info');
                 window.location.href = 'profile.html';
             }
-        });
+        }
         
         // 标签选择
+        function setupTagSelectors() {
+            setupTagSelector('languageTags', selectedLanguages);
+            setupTagSelector('specialtyTags', selectedSpecialties);
+            setupTagSelector('serviceTypes', selectedServiceTypes);
+        }
+        
         function setupTagSelector(containerId, selectedArray) {
             const container = document.getElementById(containerId);
             container.querySelectorAll('.tag-btn').forEach(btn => {
@@ -451,30 +526,44 @@
             });
         }
         
-        setupTagSelector('languageTags', selectedLanguages);
-        setupTagSelector('specialtyTags', selectedSpecialties);
-        setupTagSelector('serviceTypes', selectedServiceTypes);
-        
         // 文件上传
-        const uploadArea = document.getElementById('certificateUpload');
-        const fileInput = document.getElementById('certificateFile');
-        const preview = document.getElementById('certificatePreview');
-        
-        uploadArea.addEventListener('click', () => fileInput.click());
-        
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    preview.innerHTML = `<img src="${e.target.result}" style="max-width: 200px; border-radius: 10px;">`;
-                    preview.style.display = 'block';
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+        function setupFileUpload() {
+            const uploadArea = document.getElementById('certificateUpload');
+            const fileInput = document.getElementById('certificateFile');
+            const preview = document.getElementById('certificatePreview');
+            
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        preview.innerHTML = `<img src="${e.target.result}" style="max-width: 200px; border-radius: 10px;">`;
+                        preview.style.display = 'block';
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
         
         // 步骤切换
+        function setupStepButtons() {
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                if (currentStep < 3) {
+                    currentStep++;
+                    updateSteps();
+                }
+            });
+            
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateSteps();
+                }
+            });
+        }
+        
         function updateSteps() {
             document.querySelectorAll('.step-item').forEach((item, index) => {
                 item.classList.remove('active', 'completed');
@@ -494,64 +583,54 @@
             document.getElementById('submitBtn').style.display = currentStep === 3 ? 'block' : 'none';
         }
         
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            if (currentStep < 3) {
-                currentStep++;
-                updateSteps();
-            }
-        });
-        
-        document.getElementById('prevBtn').addEventListener('click', () => {
-            if (currentStep > 1) {
-                currentStep--;
-                updateSteps();
-            }
-        });
-        
         // 提交表单
-        document.getElementById('applyForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const user = await Auth.getUser();
-            if (!user) return;
-            
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '提交中...';
-            
-            const profile = {
-                user_id: user.id,
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                wechat: document.getElementById('wechat').value,
-                email: document.getElementById('email').value || user.email,
-                languages: selectedLanguages,
-                license_no: document.getElementById('licenseNo').value,
-                license_level: document.getElementById('licenseLevel').value,
-                years: parseInt(document.getElementById('years').value),
-                agency: document.getElementById('agency').value,
-                specialties: selectedSpecialties,
-                cities: document.getElementById('cities').value.split(',').map(c => c.trim()),
-                bio: document.getElementById('bio').value,
-                service_types: selectedServiceTypes,
-                verified: false,
-                created_at: new Date().toISOString()
-            };
-            
-            const { data, error } = await DB.guideProfiles.create(profile);
-            
-            if (error) {
-                submitBtn.disabled = false;
-                submitBtn.textContent = '提交申请';
-                Utils.showToast('提交失败：' + error.message, 'error');
-                return;
-            }
-            
-            Utils.showToast('申请提交成功！等待审核', 'success');
-            setTimeout(() => {
-                window.location.href = 'profile.html';
-            }, 1500);
-        });
+        function setupFormSubmit() {
+            document.getElementById('applyForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const user = await Auth.getUser();
+                if (!user) return;
+                
+                const submitBtn = document.getElementById('submitBtn');
+                submitBtn.disabled = true;
+                submitBtn.textContent = '提交中...';
+                
+                const profile = {
+                    user_id: user.id,
+                    name: document.getElementById('name').value,
+                    phone: document.getElementById('phone').value,
+                    wechat: document.getElementById('wechat').value,
+                    email: document.getElementById('email').value || user.email,
+                    languages: selectedLanguages,
+                    license_no: document.getElementById('licenseNo').value,
+                    license_level: document.getElementById('licenseLevel').value,
+                    years: parseInt(document.getElementById('years').value),
+                    agency: document.getElementById('agency').value,
+                    specialties: selectedSpecialties,
+                    cities: document.getElementById('cities').value.split(',').map(c => c.trim()),
+                    bio: document.getElementById('bio').value,
+                    service_types: selectedServiceTypes,
+                    verified: false,
+                    created_at: new Date().toISOString()
+                };
+                
+                const { data, error } = await DB.guideProfiles.create(profile);
+                
+                if (error) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '提交申请';
+                    Utils.showToast('提交失败：' + error.message, 'error');
+                    return;
+                }
+                
+                Utils.showToast('申请提交成功！等待审核', 'success');
+                setTimeout(() => {
+                    window.location.href = 'profile.html';
+                }, 1500);
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>

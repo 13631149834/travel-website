@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的收藏 - 游导伴旅</title>
+    <title>我的收藏 - 游导伴旅 | 收藏导游与线路</title>
+  <meta name="description" content="管理游导伴旅收藏的导游、精品线路、旅行攻略，方便随时查看和规划下次旅行。">
+  <meta name="keywords" content="我的收藏,收藏导游,收藏线路,收藏攻略">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://youdao-travel.com/my-favorites.html">
     <link rel="stylesheet" href="css/style.css">
     <style>
         .favorites-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
@@ -78,82 +82,64 @@
             <p>收藏的导游和线路，一键查看</p>
         </div>
         
-        <h2 class="section-title">🎤 收藏的导游 <span class="count">(3)</span></h2>
-        <div class="favorites-grid">
-            <div class="favorite-card">
-                <div class="favorite-cover">👨‍💼</div>
-                <div class="favorite-info">
-                    <h3>张导</h3>
-                    <p>高级导游 | 北京、西安</p>
-                    <div class="meta">⭐ 4.9 | 328评价</div>
-                </div>
-                <div class="favorite-actions">
-                    <button class="btn-view" onclick="location.href='guide-detail.html?id=1'">查看</button>
-                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
-                </div>
-            </div>
-            
-            <div class="favorite-card">
-                <div class="favorite-cover">👩‍💼</div>
-                <div class="favorite-info">
-                    <h3>李姐</h3>
-                    <p>金牌导游 | 广州、深圳</p>
-                    <div class="meta">⭐ 4.8 | 256评价</div>
-                </div>
-                <div class="favorite-actions">
-                    <button class="btn-view" onclick="location.href='guide-detail.html?id=2'">查看</button>
-                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
-                </div>
-            </div>
-            
-            <div class="favorite-card">
-                <div class="favorite-cover">🧔</div>
-                <div class="favorite-info">
-                    <h3>王哥</h3>
-                    <p>资深导游 | 成都、杭州</p>
-                    <div class="meta">⭐ 5.0 | 512评价</div>
-                </div>
-                <div class="favorite-actions">
-                    <button class="btn-view" onclick="location.href='guide-detail.html?id=3'">查看</button>
-                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
-                </div>
-            </div>
-        </div>
+        <h2 class="section-title">🎤 收藏的导游 <span class="count" id="guideCount">(3)</span></h2>
+        <div class="favorites-grid" id="guideFavorites"></div>
         
-        <h2 class="section-title">🗺️ 收藏的线路 <span class="count">(2)</span></h2>
-        <div class="favorites-grid">
-            <div class="favorite-card">
-                <div class="favorite-cover" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">🏔️</div>
-                <div class="favorite-info">
-                    <h3>川西小环线5日游</h3>
-                    <p>稻城亚丁 | 四姑娘山</p>
-                    <div class="meta">💰 ¥3,800起 | 📅 5天4晚</div>
-                </div>
-                <div class="favorite-actions">
-                    <button class="btn-view" onclick="location.href='routes.html'">查看</button>
-                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
-                </div>
-            </div>
-            
-            <div class="favorite-card">
-                <div class="favorite-cover" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);">🏯</div>
-                <div class="favorite-info">
-                    <h3>西安历史深度游</h3>
-                    <p>兵马俑 | 华清池 | 大雁塔</p>
-                    <div class="meta">💰 ¥2,200起 | 📅 4天3晚</div>
-                </div>
-                <div class="favorite-actions">
-                    <button class="btn-view" onclick="location.href='routes.html'">查看</button>
-                    <button class="btn-remove" onclick="removeFavorite(this)">移除</button>
-                </div>
-            </div>
-        </div>
+        <h2 class="section-title">🗺️ 收藏的线路 <span class="count" id="routeCount">(2)</span></h2>
+        <div class="favorites-grid" id="routeFavorites"></div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
-    <script src="js/common.js"></script>
     <script>
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    color: white;
+                    font-size: 14px;
+                    z-index: 9999;
+                    animation: slideDown 0.3s ease;
+                    background-color: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : '#3B82F6'};
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideUp 0.3s ease forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        // Auth 模拟
+        const Auth = {
+            getUser: function() {
+                const userStr = localStorage.getItem('user');
+                return Promise.resolve(userStr ? JSON.parse(userStr) : null);
+            }
+        };
+
+        const sampleGuideFavorites = [
+            { id: 1, name: '张导', subtitle: '高级导游 | 北京、西安', rating: 4.9, reviews: 328 },
+            { id: 2, name: '李姐', subtitle: '金牌导游 | 广州、深圳', rating: 4.8, reviews: 256 },
+            { id: 3, name: '王哥', subtitle: '资深导游 | 成都、杭州', rating: 5.0, reviews: 512 }
+        ];
+
+        const sampleRouteFavorites = [
+            { id: 1, name: '川西小环线5日游', subtitle: '稻城亚丁 | 四姑娘山', price: '¥3,800起', duration: '5天4晚' },
+            { id: 2, name: '西安历史深度游', subtitle: '兵马俑 | 华清池 | 大雁塔', price: '¥2,200起', duration: '4天3晚' }
+        ];
+
+        function init() {
+            checkAuth();
+            renderFavorites();
+        }
+
         async function checkAuth() {
             const user = await Auth.getUser();
             if (!user) {
@@ -161,14 +147,63 @@
             }
         }
         
-        function removeFavorite(btn) {
+        function renderFavorites() {
+            const guideGrid = document.getElementById('guideFavorites');
+            const routeGrid = document.getElementById('routeFavorites');
+            
+            guideGrid.innerHTML = sampleGuideFavorites.map(g => `
+                <div class="favorite-card">
+                    <div class="favorite-cover">👨‍💼</div>
+                    <div class="favorite-info">
+                        <h3>${g.name}</h3>
+                        <p>${g.subtitle}</p>
+                        <div class="meta">⭐ ${g.rating} | ${g.reviews}评价</div>
+                    </div>
+                    <div class="favorite-actions">
+                        <button class="btn-view" onclick="location.href='guide-detail.html?id=${g.id}'">查看</button>
+                        <button class="btn-remove" onclick="removeFavorite(this, 'guide', ${g.id})">移除</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            routeGrid.innerHTML = sampleRouteFavorites.map(r => `
+                <div class="favorite-card">
+                    <div class="favorite-cover" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">🏔️</div>
+                    <div class="favorite-info">
+                        <h3>${r.name}</h3>
+                        <p>${r.subtitle}</p>
+                        <div class="meta">💰 ${r.price} | 📅 ${r.duration}</div>
+                    </div>
+                    <div class="favorite-actions">
+                        <button class="btn-view" onclick="location.href='routes.html'">查看</button>
+                        <button class="btn-remove" onclick="removeFavorite(this, 'route', ${r.id})">移除</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('guideCount').textContent = `(${sampleGuideFavorites.length})`;
+            document.getElementById('routeCount').textContent = `(${sampleRouteFavorites.length})`;
+        }
+        
+        function removeFavorite(btn, type, id) {
             if (confirm('确定要移除收藏吗？')) {
-                btn.closest('.favorite-card').remove();
+                const card = btn.closest('.favorite-card');
+                card.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => {
+                    card.remove();
+                    if (type === 'guide') {
+                        const remaining = document.querySelectorAll('#guideFavorites .favorite-card');
+                        document.getElementById('guideCount').textContent = `(${remaining.length})`;
+                    } else {
+                        const remaining = document.querySelectorAll('#routeFavorites .favorite-card');
+                        document.getElementById('routeCount').textContent = `(${remaining.length})`;
+                    }
+                }, 300);
                 Utils.showToast('已移除收藏', 'success');
             }
         }
         
-        checkAuth();
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>

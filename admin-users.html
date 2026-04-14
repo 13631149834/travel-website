@@ -566,12 +566,30 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
     <script>
         const ADMIN_PASSWORD = 'admin123';
         let currentPage = 1;
         const pageSize = 10;
+
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
+        // 模拟数据
+        const mockData = {
+            users: JSON.parse(localStorage.getItem('admin_users') || '[{"id":"u1","nickname":"张三","email":"zhangsan@example.com","role":"tourist","status":"active","created_at":"2024-01-15T08:00:00Z"},{"id":"u2","nickname":"李四导游","email":"lisi@example.com","role":"guide","status":"active","created_at":"2024-02-20T10:30:00Z"},{"id":"u3","nickname":"王五","email":"wangwu@example.com","role":"tourist","status":"active","created_at":"2024-03-10T14:20:00Z"},{"id":"u4","nickname":"赵六","email":"zhaoliu@example.com","role":"tourist","status":"disabled","created_at":"2024-03-15T09:00:00Z"},{"id":"u5","nickname":"钱七","email":"qianqi@example.com","role":"tourist","status":"active","created_at":"2024-04-01T11:00:00Z"}]')
+        };
+
+        function saveMockData() {
+            localStorage.setItem('admin_users', JSON.stringify(mockData.users));
+        }
 
         // 检查登录
         function checkLogin() {
@@ -592,7 +610,7 @@
                 document.getElementById('loginModal').style.display = 'none';
                 init();
             } else {
-                showToast('密码错误，请重试！', 'error');
+                Utils.showToast('密码错误，请重试！', 'error');
             }
         }
 
@@ -603,46 +621,26 @@
 
         // 显示提示
         function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            Utils.showToast(message, type);
         }
 
         // 加载统计数据
-        async function loadStats() {
-            try {
-                // 总用户数
-                const { count: total } = await supabaseClient
-                    .from('users')
-                    .select('*', { count: 'exact', head: true });
+        function loadStats() {
+            const total = mockData.users.length;
+            const guides = mockData.users.filter(u => u.role === 'guide').length;
+            const tourists = total - guides;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayNew = mockData.users.filter(u => new Date(u.created_at) >= today).length;
 
-                // 导游用户
-                const { count: guides } = await supabaseClient
-                    .from('users')
-                    .select('*', { count: 'exact', head: true })
-                    .eq('role', 'guide');
-
-                // 今日新增
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const { count: todayNew } = await supabaseClient
-                    .from('users')
-                    .select('*', { count: 'exact', head: true })
-                    .gte('created_at', today.toISOString());
-
-                document.getElementById('statTotal').textContent = total || 0;
-                document.getElementById('statGuides').textContent = guides || 0;
-                document.getElementById('statTourists').textContent = (total || 0) - (guides || 0);
-                document.getElementById('statToday').textContent = todayNew || 0;
-            } catch (error) {
-                console.error('加载统计数据失败:', error);
-            }
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statGuides').textContent = guides;
+            document.getElementById('statTourists').textContent = tourists;
+            document.getElementById('statToday').textContent = todayNew;
         }
 
         // 加载用户列表
-        async function loadUsers() {
+        function loadUsers() {
             const tbody = document.getElementById('usersTable');
             tbody.innerHTML = `
                 <tr>
@@ -653,95 +651,84 @@
                 </tr>
             `;
 
-            try {
-                let query = supabaseClient
-                    .from('users')
-                    .select('*', { count: 'exact' });
+            // 筛选
+            let filtered = mockData.users;
 
-                // 搜索筛选
-                const search = document.getElementById('searchInput').value.trim();
-                const role = document.getElementById('roleFilter').value;
-                const status = document.getElementById('statusFilter').value;
+            // 搜索筛选
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const role = document.getElementById('roleFilter').value;
+            const status = document.getElementById('statusFilter').value;
 
-                if (search) {
-                    query = query.or(`nickname.ilike.%${search}%,email.ilike.%${search}%`);
-                }
-                if (role) {
-                    query = query.eq('role', role);
-                }
-                if (status) {
-                    query = query.eq('status', status);
-                }
+            if (search) {
+                filtered = filtered.filter(u => 
+                    (u.nickname && u.nickname.toLowerCase().includes(search)) ||
+                    (u.email && u.email.toLowerCase().includes(search))
+                );
+            }
+            if (role) {
+                filtered = filtered.filter(u => u.role === role);
+            }
+            if (status) {
+                filtered = filtered.filter(u => u.status === status);
+            }
 
-                // 分页
-                const from = (currentPage - 1) * pageSize;
-                const to = from + pageSize - 1;
-                query = query.range(from, to).order('created_at', { ascending: false });
+            // 排序
+            filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-                const { data: users, error, count } = await query;
+            // 分页
+            const total = filtered.length;
+            const start = (currentPage - 1) * pageSize;
+            const paged = filtered.slice(start, start + pageSize);
 
-                if (error) throw error;
-
-                if (!users || users.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" class="empty-state">
-                                <div class="icon">🔍</div>
-                                <p>暂无用户数据</p>
-                            </td>
-                        </tr>
-                    `;
-                    renderPagination(0);
-                    return;
-                }
-
-                tbody.innerHTML = users.map(user => {
-                    const roleBadge = user.role === 'guide' 
-                        ? '<span class="badge badge-guide">🎤 导游</span>'
-                        : '<span class="badge badge-tourist">🎒 游客</span>';
-                    
-                    const statusBadge = user.status === 'disabled'
-                        ? '<span class="badge badge-disabled">已禁用</span>'
-                        : '<span class="badge badge-active">正常</span>';
-
-                    const actions = user.status === 'disabled'
-                        ? `<button class="btn btn-success btn-sm" onclick="enableUser('${user.id}')">启用</button>`
-                        : `<button class="btn btn-danger btn-sm" onclick="disableUser('${user.id}')">禁用</button>`;
-
-                    return `
-                        <tr>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 24px;">${user.avatar || '👤'}</span>
-                                    <div>
-                                        <div style="font-weight: 600;">${user.nickname || '未设置昵称'}</div>
-                                        <div style="font-size: 12px; color: #666;">${user.email || ''}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${roleBadge}</td>
-                            <td>${statusBadge}</td>
-                            <td>${new Date(user.created_at).toLocaleDateString('zh-CN')}</td>
-                            <td>
-                                ${actions}
-                                <button class="btn btn-secondary btn-sm" onclick="viewUser('${user.id}')">详情</button>
-                            </td>
-                        </tr>
-                    `;
-                }).join('');
-
-                renderPagination(count || 0);
-            } catch (error) {
-                console.error('加载用户列表失败:', error);
+            if (paged.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="5" class="empty-state">
-                            <div class="icon">❌</div>
-                            <p>加载失败，请刷新重试</p>
+                            <div class="icon">🔍</div>
+                            <p>暂无用户数据</p>
                         </td>
                     </tr>
                 `;
+                renderPagination(0);
+                return;
             }
+
+            tbody.innerHTML = paged.map(user => {
+                const roleBadge = user.role === 'guide' 
+                    ? '<span class="badge badge-guide">🎤 导游</span>'
+                    : '<span class="badge badge-tourist">🎒 游客</span>';
+                
+                const statusBadge = user.status === 'disabled'
+                    ? '<span class="badge badge-disabled">已禁用</span>'
+                    : '<span class="badge badge-active">正常</span>';
+
+                const actions = user.status === 'disabled'
+                    ? `<button class="btn btn-success btn-sm" onclick="enableUser('${user.id}')">启用</button>`
+                    : `<button class="btn btn-danger btn-sm" onclick="disableUser('${user.id}')">禁用</button>`;
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 24px;">👤</span>
+                                <div>
+                                    <div style="font-weight: 600;">${user.nickname || '未设置昵称'}</div>
+                                    <div style="font-size: 12px; color: #666;">${user.email || ''}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${roleBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString('zh-CN')}</td>
+                        <td>
+                            ${actions}
+                            <button class="btn btn-secondary btn-sm" onclick="viewUser('${user.id}')">详情</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            renderPagination(total);
         }
 
         // 渲染分页
@@ -777,62 +764,40 @@
         }
 
         // 禁用用户
-        async function disableUser(userId) {
+        function disableUser(userId) {
             if (!confirm('确定要禁用该用户吗？')) return;
             
-            try {
-                const { error } = await supabaseClient
-                    .from('users')
-                    .update({ status: 'disabled', updated_at: new Date().toISOString() })
-                    .eq('id', userId);
-
-                if (error) throw error;
-
+            const user = mockData.users.find(u => u.id === userId);
+            if (user) {
+                user.status = 'disabled';
+                saveMockData();
                 showToast('用户已禁用', 'success');
                 loadUsers();
-            } catch (error) {
-                showToast('操作失败：' + error.message, 'error');
             }
         }
 
         // 启用用户
-        async function enableUser(userId) {
-            try {
-                const { error } = await supabaseClient
-                    .from('users')
-                    .update({ status: 'active', updated_at: new Date().toISOString() })
-                    .eq('id', userId);
-
-                if (error) throw error;
-
+        function enableUser(userId) {
+            const user = mockData.users.find(u => u.id === userId);
+            if (user) {
+                user.status = 'active';
+                saveMockData();
                 showToast('用户已启用', 'success');
                 loadUsers();
-            } catch (error) {
-                showToast('操作失败：' + error.message, 'error');
             }
         }
 
         // 查看用户详情
         function viewUser(userId) {
-            window.open(`profile-preview.html?userId=${userId}`, '_blank');
+            showToast('用户详情功能开发中', 'info');
         }
 
-        // 初始化
         function init() {
             if (!checkLogin()) return;
             loadStats();
             loadUsers();
         }
 
-        // 搜索框回车事件
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                currentPage = 1;
-                loadUsers();
-            }
-        });
-
-        // 启动
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

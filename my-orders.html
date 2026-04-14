@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的订单 - 游导伴旅</title>
+    <title>我的订单 - 游导伴旅 | 订单查询与管理</title>
+  <meta name="description" content="查看和管理游导伴旅订单记录，包括导游预约、线路订单、签证服务等，随时掌握订单状态。">
+  <meta name="keywords" content="我的订单,订单查询,订单管理,导游订单,旅行订单">
+  <meta name="robots" content="noindex, follow">
+  <link rel="canonical" href="https://youdao-travel.com/my-orders.html">
     <link rel="stylesheet" href="css/style.css">
     <style>
         .orders-page { max-width: 900px; margin: 0 auto; padding: 20px; }
@@ -112,120 +116,186 @@
             <span class="tab" data-status="cancelled">已取消</span>
         </div>
         
-        <div id="ordersList">
-            <div class="order-card">
-                <div class="order-header">
-                    <span class="order-id">订单号：YD20240413001</span>
-                    <span class="order-status confirmed">已确认</span>
-                </div>
-                <div class="order-content">
-                    <div class="order-avatar">👨‍💼</div>
-                    <div class="order-info">
-                        <h3>张导 - 北京一日游</h3>
-                        <p>📅 出行日期：<span class="highlight">2024年4月20日</span></p>
-                        <p>👥 出游人数：2人</p>
-                        <p>📍 集合地点：天安门广场</p>
-                    </div>
-                </div>
-                <div class="order-footer">
-                    <div class="order-price">¥1,160</div>
-                    <div class="order-actions">
-                        <button class="btn-action secondary" onclick="contactGuide()">💬 联系导游</button>
-                        <button class="btn-action primary" onclick="viewDetail()">查看详情</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="order-card">
-                <div class="order-header">
-                    <span class="order-id">订单号：YD20240410002</span>
-                    <span class="order-status completed">已完成</span>
-                </div>
-                <div class="order-content">
-                    <div class="order-avatar">👩‍💼</div>
-                    <div class="order-info">
-                        <h3>李姐 - 广州美食之旅</h3>
-                        <p>📅 出行日期：2024年4月10日</p>
-                        <p>👥 出游人数：3人</p>
-                        <p>📍 集合地点：广州塔</p>
-                    </div>
-                </div>
-                <div class="order-footer">
-                    <div class="order-price">¥1,440</div>
-                    <div class="order-actions">
-                        <button class="btn-action secondary" onclick="writeReview()">⭐ 写评价</button>
-                        <button class="btn-action primary" onclick="rebook()">再次预约</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="order-card">
-                <div class="order-header">
-                    <span class="order-id">订单号：YD20240408003</span>
-                    <span class="order-status pending">待确认</span>
-                </div>
-                <div class="order-content">
-                    <div class="order-avatar">🧔</div>
-                    <div class="order-info">
-                        <h3>王哥 - 成都户外探险</h3>
-                        <p>📅 出行日期：<span class="highlight">2024年4月25日</span></p>
-                        <p>👥 出游人数：4人</p>
-                        <p>📍 集合地点：待确认</p>
-                    </div>
-                </div>
-                <div class="order-footer">
-                    <div class="order-price">¥2,720</div>
-                    <div class="order-actions">
-                        <button class="btn-action secondary" onclick="cancelOrder()">取消订单</button>
-                        <button class="btn-action primary" onclick="contactGuide()">联系导游</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id="ordersList"></div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
-    <script src="js/common.js"></script>
     <script>
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    color: white;
+                    font-size: 14px;
+                    z-index: 9999;
+                    animation: slideDown 0.3s ease;
+                    background-color: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : '#3B82F6'};
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideUp 0.3s ease forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        // Auth 模拟
+        const Auth = {
+            getUser: function() {
+                const userStr = localStorage.getItem('user');
+                return Promise.resolve(userStr ? JSON.parse(userStr) : null);
+            }
+        };
+
+        const sampleOrders = [
+            {
+                id: 'YD20240413001',
+                guideName: '张导 - 北京一日游',
+                avatar: '👨‍💼',
+                date: '2024年4月20日',
+                people: 2,
+                location: '天安门广场',
+                price: '¥1,160',
+                status: 'confirmed',
+                statusText: '已确认'
+            },
+            {
+                id: 'YD20240410002',
+                guideName: '李姐 - 广州美食之旅',
+                avatar: '👩‍💼',
+                date: '2024年4月10日',
+                people: 3,
+                location: '广州塔',
+                price: '¥1,440',
+                status: 'completed',
+                statusText: '已完成'
+            },
+            {
+                id: 'YD20240408003',
+                guideName: '王哥 - 成都户外探险',
+                avatar: '🧔',
+                date: '2024年4月25日',
+                people: 4,
+                location: '待确认',
+                price: '¥2,720',
+                status: 'pending',
+                statusText: '待确认'
+            }
+        ];
+
+        function init() {
+            checkAuth();
+            setupTabs();
+            renderOrders('all');
+        }
+
         async function checkAuth() {
             const user = await Auth.getUser();
             if (!user) {
                 window.location.href = 'login.html?redirect=my-orders.html';
             }
         }
-        
-        document.querySelectorAll('.tab').forEach(tab => {
-            tab.addEventListener('click', () => {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                tab.classList.add('active');
-                // 这里可以根据状态筛选订单
+
+        function setupTabs() {
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    const status = tab.dataset.status;
+                    renderOrders(status);
+                });
             });
-        });
-        
+        }
+
+        function renderOrders(status) {
+            const ordersList = document.getElementById('ordersList');
+            const filtered = status === 'all' ? sampleOrders : sampleOrders.filter(o => o.status === status);
+
+            if (filtered.length === 0) {
+                ordersList.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📋</div>
+                        <p>暂无订单记录</p>
+                    </div>
+                `;
+                return;
+            }
+
+            ordersList.innerHTML = filtered.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <span class="order-id">订单号：${order.id}</span>
+                        <span class="order-status ${order.status}">${order.statusText}</span>
+                    </div>
+                    <div class="order-content">
+                        <div class="order-avatar">${order.avatar}</div>
+                        <div class="order-info">
+                            <h3>${order.guideName}</h3>
+                            <p>📅 出行日期：<span class="${order.status === 'pending' ? 'highlight' : ''}">${order.date}</span></p>
+                            <p>👥 出游人数：${order.people}人</p>
+                            <p>📍 集合地点：${order.location}</p>
+                        </div>
+                    </div>
+                    <div class="order-footer">
+                        <div class="order-price">${order.price}</div>
+                        <div class="order-actions">
+                            ${getOrderActions(order)}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getOrderActions(order) {
+            if (order.status === 'pending') {
+                return `
+                    <button class="btn-action secondary" onclick="cancelOrder()">取消订单</button>
+                    <button class="btn-action primary" onclick="contactGuide()">联系导游</button>
+                `;
+            } else if (order.status === 'confirmed') {
+                return `
+                    <button class="btn-action secondary" onclick="contactGuide()">💬 联系导游</button>
+                    <button class="btn-action primary" onclick="viewDetail()">查看详情</button>
+                `;
+            } else if (order.status === 'completed') {
+                return `
+                    <button class="btn-action secondary" onclick="writeReview()">⭐ 写评价</button>
+                    <button class="btn-action primary" onclick="rebook()">再次预约</button>
+                `;
+            }
+            return '';
+        }
+
         function contactGuide() {
             Utils.showToast('请联系微信：ximao101', 'info');
         }
-        
+
         function viewDetail() {
             Utils.showToast('订单详情功能开发中', 'info');
         }
-        
+
         function writeReview() {
             window.location.href = 'review-submit.html';
         }
-        
+
         function rebook() {
             window.location.href = 'guides.html';
         }
-        
+
         function cancelOrder() {
             if (confirm('确定要取消此订单吗？')) {
                 Utils.showToast('订单已取消', 'success');
             }
         }
         
-        checkAuth();
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>

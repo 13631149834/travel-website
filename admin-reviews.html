@@ -647,13 +647,32 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
     <script>
         const ADMIN_PASSWORD = 'admin123';
         let currentPage = 1;
         const pageSize = 10;
         let currentView = 'table';
+
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
+        // 模拟数据
+        const mockData = {
+            reviews: JSON.parse(localStorage.getItem('admin_reviews') || '[{"id":"r1","guide_id":"g1","guide_nickname":"李四导游","user_nickname":"游客A","rating":5,"content":"讲解非常专业！历史典故信手拈来，让我们的旅行增色不少。故宫、长城都讲解得特别精彩！","created_at":"2024-03-15T10:00:00Z"},{"id":"r2","guide_id":"g1","guide_nickname":"李四导游","user_nickname":"游客B","rating":4,"content":"服务很好，推荐！虽然价格稍贵，但物有所值。","created_at":"2024-03-18T14:30:00Z"},{"id":"r3","guide_id":"g2","guide_nickname":"赵六导游","user_nickname":"游客C","rating":5,"content":"美食之旅太棒了！带我们吃遍了当地最正宗的美食，强烈推荐！","created_at":"2024-04-02T16:00:00Z"},{"id":"r4","guide_id":"g1","guide_nickname":"李四导游","user_nickname":"游客D","rating":3,"content":"整体还行，但感觉可以更专业一些。","created_at":"2024-04-05T09:00:00Z"},{"id":"r5","guide_id":"g4","guide_nickname":"孙八导游","user_nickname":"游客E","rating":5,"content":"摄影技术一流！帮我们拍了很多好看的照片，强烈推荐！","created_at":"2024-04-08T11:30:00Z"}]'),
+            guideProfiles: JSON.parse(localStorage.getItem('admin_guideProfiles') || '[]')
+        };
+
+        function saveMockData() {
+            localStorage.setItem('admin_reviews', JSON.stringify(mockData.reviews));
+        }
 
         // 检查登录
         function checkLogin() {
@@ -674,7 +693,7 @@
                 document.getElementById('loginModal').style.display = 'none';
                 init();
             } else {
-                showToast('密码错误，请重试！', 'error');
+                Utils.showToast('密码错误，请重试！', 'error');
             }
         }
 
@@ -685,11 +704,7 @@
 
         // 显示提示
         function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            Utils.showToast(message, type);
         }
 
         // 视图切换
@@ -703,155 +718,107 @@
         }
 
         // 加载统计数据
-        async function loadStats() {
-            try {
-                // 总评价数
-                const { count: total } = await supabaseClient
-                    .from('reviews')
-                    .select('*', { count: 'exact', head: true });
+        function loadStats() {
+            const total = mockData.reviews.length;
+            const ratings = mockData.reviews.map(r => r.rating);
+            const avgRating = ratings.length > 0 
+                ? (ratings.reduce((sum, r) => sum + r, 0) / ratings.length).toFixed(1) 
+                : '0.0';
+            
+            const startOfMonth = new Date();
+            startOfMonth.setDate(1);
+            startOfMonth.setHours(0, 0, 0, 0);
+            const thisMonth = mockData.reviews.filter(r => new Date(r.created_at) >= startOfMonth).length;
+            
+            const lowRating = mockData.reviews.filter(r => r.rating < 3).length;
 
-                // 获取所有评分计算平均分
-                const { data: ratings } = await supabaseClient
-                    .from('reviews')
-                    .select('rating');
-
-                const avgRating = ratings && ratings.length > 0
-                    ? (ratings.reduce((sum, r) => sum + r.rating, 0) / ratings.length).toFixed(1)
-                    : '0.0';
-
-                // 本月新增
-                const startOfMonth = new Date();
-                startOfMonth.setDate(1);
-                startOfMonth.setHours(0, 0, 0, 0);
-                const { count: thisMonth } = await supabaseClient
-                    .from('reviews')
-                    .select('*', { count: 'exact', head: true })
-                    .gte('created_at', startOfMonth.toISOString());
-
-                // 低分评价 (3分以下)
-                const { count: lowRating } = await supabaseClient
-                    .from('reviews')
-                    .select('*', { count: 'exact', head: true })
-                    .lt('rating', 3);
-
-                document.getElementById('statTotal').textContent = total || 0;
-                document.getElementById('statAvgRating').textContent = avgRating;
-                document.getElementById('statThisMonth').textContent = thisMonth || 0;
-                document.getElementById('statLowRating').textContent = lowRating || 0;
-            } catch (error) {
-                console.error('加载统计数据失败:', error);
-            }
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statAvgRating').textContent = avgRating;
+            document.getElementById('statThisMonth').textContent = thisMonth;
+            document.getElementById('statLowRating').textContent = lowRating;
         }
 
         // 加载评价列表
-        async function loadReviews() {
-            try {
-                let query = supabaseClient
-                    .from('reviews')
-                    .select(`
-                        *,
-                        guide:guide_profiles(id, nickname, avatar, user_id),
-                        user:users(id, nickname, email)
-                    `, { count: 'exact' });
+        function loadReviews() {
+            let filtered = mockData.reviews;
 
-                // 搜索筛选
-                const search = document.getElementById('searchInput').value.trim();
-                const rating = document.getElementById('ratingFilter').value;
+            // 搜索筛选
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const rating = document.getElementById('ratingFilter').value;
 
-                if (search) {
-                    query = query.or(`content.ilike.%${search}%,guide.nickname.ilike.%${search}%`);
-                }
-                if (rating) {
-                    query = query.eq('rating', parseInt(rating));
-                }
+            if (search) {
+                filtered = filtered.filter(r => 
+                    r.content.toLowerCase().includes(search) ||
+                    r.guide_nickname.toLowerCase().includes(search)
+                );
+            }
+            if (rating) {
+                filtered = filtered.filter(r => r.rating === parseInt(rating));
+            }
 
-                // 分页
-                const from = (currentPage - 1) * pageSize;
-                const to = from + pageSize - 1;
-                query = query.range(from, to).order('created_at', { ascending: false });
+            // 排序
+            filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-                const { data: reviews, error, count } = await query;
+            // 分页
+            const total = filtered.length;
+            const start = (currentPage - 1) * pageSize;
+            const paged = filtered.slice(start, start + pageSize);
 
-                if (error) throw error;
-
-                if (!reviews || reviews.length === 0) {
-                    const emptyHtml = `
-                        <tr>
-                            <td colspan="6" class="empty-state">
-                                <div class="icon">📝</div>
-                                <p>暂无评价数据</p>
-                            </td>
-                        </tr>
-                    `;
-                    document.getElementById('reviewsTable').innerHTML = emptyHtml;
-                    document.getElementById('cardView').innerHTML = `
-                        <div class="empty-state">
-                            <div class="icon">📝</div>
-                            <p>暂无评价数据</p>
-                        </div>
-                    `;
-                    renderPagination(0);
-                    return;
-                }
-
-                // 表格视图
-                document.getElementById('reviewsTable').innerHTML = reviews.map(review => `
-                    <tr>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <span>${review.guide?.avatar || '🎤'}</span>
-                                <span>${review.guide?.nickname || '导游'}</span>
-                            </div>
-                        </td>
-                        <td>${review.user?.nickname || '游客'}</td>
-                        <td>
-                            <span class="review-rating">${'⭐'.repeat(review.rating || 5)}</span>
-                        </td>
-                        <td style="max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                            ${review.content || '-'}
-                        </td>
-                        <td>${new Date(review.created_at).toLocaleDateString('zh-CN')}</td>
-                        <td>
-                            <button class="btn btn-secondary btn-sm" onclick="viewReview('${review.id}')">查看</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteReview('${review.id}')">删除</button>
-                        </td>
-                    </tr>
-                `).join('');
-
-                // 卡片视图
-                document.getElementById('cardView').innerHTML = reviews.map(review => `
-                    <div class="review-card">
-                        <div class="review-header">
-                            <div class="review-info">
-                                <span style="font-size: 24px;">${review.guide?.avatar || '🎤'}</span>
-                                <div>
-                                    <div class="review-user">${review.guide?.nickname || '导游'}</div>
-                                    <div class="review-time">评价者：${review.user?.nickname || '游客'} · ${new Date(review.created_at).toLocaleDateString('zh-CN')}</div>
-                                </div>
-                            </div>
-                            <span class="review-rating">${'⭐'.repeat(review.rating || 5)}</span>
-                        </div>
-                        <div class="review-content">${review.content || '暂无评价内容'}</div>
-                        <div class="review-actions">
-                            <button class="btn btn-secondary btn-sm" onclick="viewReview('${review.id}')">查看</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteReview('${review.id}')">删除</button>
-                        </div>
-                    </div>
-                `).join('');
-
-                renderPagination(count || 0);
-            } catch (error) {
-                console.error('加载评价列表失败:', error);
-                const errorHtml = `
+            if (paged.length === 0) {
+                const emptyHtml = `
                     <tr>
                         <td colspan="6" class="empty-state">
-                            <div class="icon">❌</div>
-                            <p>加载失败，请刷新重试</p>
+                            <div class="icon">📝</div>
+                            <p>暂无评价数据</p>
                         </td>
                     </tr>
                 `;
-                document.getElementById('reviewsTable').innerHTML = errorHtml;
+                document.getElementById('reviewsTable').innerHTML = emptyHtml;
+                document.getElementById('cardView').innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📝</div>
+                        <p>暂无评价数据</p>
+                    </div>
+                `;
+                renderPagination(0);
+                return;
             }
+
+            // 表格视图
+            document.getElementById('reviewsTable').innerHTML = paged.map(review => `
+                <tr>
+                    <td>${review.guide_nickname}</td>
+                    <td>${review.user_nickname}</td>
+                    <td><span class="review-rating">${'⭐'.repeat(review.rating)}</span></td>
+                    <td>${review.content.substring(0, 30)}...</td>
+                    <td>${new Date(review.created_at).toLocaleDateString('zh-CN')}</td>
+                    <td>
+                        <button class="btn btn-secondary btn-sm" onclick="viewReview('${review.id}')">查看</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteReview('${review.id}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // 卡片视图
+            document.getElementById('cardView').innerHTML = paged.map(review => `
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="review-info">
+                            <span class="review-user">${review.user_nickname}</span>
+                            <span class="review-rating">${'⭐'.repeat(review.rating)}</span>
+                        </div>
+                        <span class="review-time">${new Date(review.created_at).toLocaleDateString('zh-CN')}</span>
+                    </div>
+                    <div style="font-size: 12px; color: #666; margin-bottom: 8px;">导游：${review.guide_nickname}</div>
+                    <div class="review-content">${review.content}</div>
+                    <div class="review-actions">
+                        <button class="btn btn-secondary btn-sm" onclick="viewReview('${review.id}')">查看</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteReview('${review.id}')">删除</button>
+                    </div>
+                </div>
+            `).join('');
+
+            renderPagination(total);
         }
 
         // 渲染分页
@@ -886,47 +853,34 @@
             loadReviews();
         }
 
-        // 查看评价详情
+        // 查看评价
         function viewReview(reviewId) {
-            alert('评价详情功能开发中...\n评价ID: ' + reviewId);
-        }
-
-        // 删除评价
-        async function deleteReview(reviewId) {
-            if (!confirm('确定要删除这条评价吗？此操作不可撤销。')) return;
-            
-            try {
-                const { error } = await supabaseClient
-                    .from('reviews')
-                    .delete()
-                    .eq('id', reviewId);
-
-                if (error) throw error;
-
-                showToast('评价已删除', 'success');
-                loadReviews();
-                loadStats();
-            } catch (error) {
-                showToast('删除失败：' + error.message, 'error');
+            const review = mockData.reviews.find(r => r.id === reviewId);
+            if (review) {
+                alert(`导游: ${review.guide_nickname}\n游客: ${review.user_nickname}\n评分: ${'⭐'.repeat(review.rating)}\n评价: ${review.content}`);
             }
         }
 
-        // 初始化
+        // 删除评价
+        function deleteReview(reviewId) {
+            if (!confirm('确定要删除这条评价吗？')) return;
+            
+            const index = mockData.reviews.findIndex(r => r.id === reviewId);
+            if (index > -1) {
+                mockData.reviews.splice(index, 1);
+                saveMockData();
+                showToast('评价已删除', 'success');
+                loadStats();
+                loadReviews();
+            }
+        }
+
         function init() {
             if (!checkLogin()) return;
             loadStats();
             loadReviews();
         }
 
-        // 搜索框回车事件
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                currentPage = 1;
-                loadReviews();
-            }
-        });
-
-        // 启动
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

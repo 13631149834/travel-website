@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据中心 - 游导伴旅</title>
+    <title>数据中心 - 游导伴旅 | 导游数据分析</title>
+  <meta name="description" content="游导伴旅导游数据中心，查看订单统计、收入报表、服务数据，帮助导游了解业务表现，优化服务策略。">
+  <meta name="keywords" content="导游数据,订单统计,收入报表,数据分析,服务统计">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/guide-stats.html">
+  <meta property="og:title" content="数据中心 - 游导伴旅">
+  <meta property="og:description" content="导游数据分析，了解业务表现。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://youdao-travel.com/guide-stats.html">
     <link rel="stylesheet" href="css/style.css">
     <style>
         .stats-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
@@ -90,6 +98,12 @@
     </style>
 </head>
 <body>
+    <script>
+        const userType = localStorage.getItem('userType');
+        if (userType !== 'guide') {
+            window.location.href = 'login.html?type=guide&msg=请先登录导游账号';
+        }
+    </script>
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo">🌍 游导伴旅</a>
@@ -260,10 +274,41 @@
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
-    <script src="js/common.js"></script>
     <script>
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    color: white;
+                    font-size: 14px;
+                    z-index: 9999;
+                    animation: slideDown 0.3s ease;
+                    background-color: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : '#3B82F6'};
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideUp 0.3s ease forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        // Auth 模拟
+        const Auth = {
+            getUser: function() {
+                const userStr = localStorage.getItem('user');
+                return Promise.resolve(userStr ? JSON.parse(userStr) : null);
+            }
+        };
+
         async function checkAuth() {
             const user = await Auth.getUser();
             if (!user) {
@@ -271,7 +316,7 @@
             }
         }
         
-        checkAuth();
+        document.addEventListener('DOMContentLoaded', checkAuth);
     </script>
 </body>
 </html>

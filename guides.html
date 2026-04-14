@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>找导游 - 游导伴旅</title>
+    <title>导游列表 - 游导伴旅 | 查看导游信息</title>
+  <meta name="description" content="在游导伴旅平台查看导游信息，支持按地区、语言、特长筛选导游，查看真实评价。">
+  <meta name="keywords" content="找导游,导游列表,导游搜索,专业导游,导游推荐,导游信息">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/guides.html">
+  <meta property="og:title" content="导游列表 - 游导伴旅">
+  <meta property="og:description" content="查看导游信息，筛选对比，找到合适的导游。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://youdao-travel.com/guides.html">
     <link rel="stylesheet" href="css/style.css">
     <style>
         .guides-page { max-width: 1200px; margin: 0 auto; padding: 20px; }
@@ -125,6 +133,127 @@
             .search-input, .search-btn { width: 100%; }
             .filter-bar { flex-direction: column; }
         }
+        
+        /* 顾问弹窗样式 */
+        .consultant-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .consultant-modal.show {
+            display: flex;
+        }
+        .consultant-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+        @keyframes modalSlideIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .consultant-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .consultant-subtitle {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .consultant-intro {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .consultant-intro p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.8;
+            margin: 0;
+        }
+        .consultant-intro .regions {
+            color: #667eea;
+            font-weight: 600;
+        }
+        .consultant-intro .slogan {
+            color: #764ba2;
+            font-style: italic;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .consultant-qr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .consultant-qr img {
+            width: 180px;
+            height: 180px;
+            border-radius: 12px;
+            background: white;
+            padding: 10px;
+        }
+        .consultant-qr-label {
+            color: white;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+        .consultant-benefits {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .benefit-item {
+            background: #f8f9ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #667eea;
+        }
+        .consultant-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+        .consultant-close:hover {
+            color: #333;
+        }
+        .consultant-card-wrapper {
+            position: relative;
+        }
+        .consultant-tip {
+            font-size: 13px;
+            color: #999;
+            margin-top: 15px;
+        }
     </style>
 </head>
 <body>
@@ -211,29 +340,56 @@
         </div>
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
-    <script src="js/common.js"></script>
     <script>
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    color: white;
+                    font-size: 14px;
+                    z-index: 9999;
+                    animation: slideDown 0.3s ease;
+                    background-color: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : '#3B82F6'};
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideUp 0.3s ease forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        };
+
         let guides = [];
         
         const sampleGuides = [
-            { id: 1, name: '张导', avatar: '👨‍💼', title: '高级导游 | 10年经验', years: 10, rating: 4.9, reviews: 328, languages: ['普通话', '英语'], specialties: ['历史文化', '摄影打卡'], cities: ['北京', '西安'], bio: '专注历史文化深度游，带您穿越千年', price: 580, verified: true },
-            { id: 2, name: '李姐', avatar: '👩‍💼', title: '金牌导游 | 8年经验', years: 8, rating: 4.8, reviews: 256, languages: ['普通话', '粤语'], specialties: ['美食探店', '亲子研学'], cities: ['广州', '深圳'], bio: '美食达人，带您吃遍岭南', price: 480, verified: true },
-            { id: 3, name: '王哥', avatar: '🧔', title: '资深导游 | 12年经验', years: 12, rating: 5.0, reviews: 512, languages: ['普通话', '英语', '日语'], specialties: ['户外探险', '自然风光'], cities: ['成都', '杭州'], bio: '户外运动爱好者，带您探索秘境', price: 680, verified: true },
-            { id: 4, name: '小美', avatar: '👩', title: '新锐导游 | 3年经验', years: 3, rating: 4.7, reviews: 89, languages: ['普通话', '韩语'], specialties: ['摄影打卡', '美食探店'], cities: ['厦门'], bio: '网红打卡点一网打尽', price: 380, verified: false },
-            { id: 5, name: '老陈', avatar: '👴', title: '特级导游 | 20年经验', years: 20, rating: 4.9, reviews: 876, languages: ['普通话', '英语', '法语'], specialties: ['历史文化', '亲子研学'], cities: ['北京', '上海', '西安'], bio: '历史文化专家，讲透千年故事', price: 880, verified: true },
-            { id: 6, name: '阿杰', avatar: '🧑', title: '认证导游 | 5年经验', years: 5, rating: 4.6, reviews: 145, languages: ['普通话'], specialties: ['自然风光', '户外探险'], cities: ['成都', '重庆'], bio: '自然风光爱好者，带您看最美风景', price: 420, verified: true },
-            { id: 7, name: '晓雯', avatar: '👩‍🦰', title: '金牌导游 | 6年经验', years: 6, rating: 4.8, reviews: 198, languages: ['普通话', '英语'], specialties: ['亲子研学', '美食探店'], cities: ['上海', '南京'], bio: '亲子游专家，带娃旅行更轻松', price: 520, verified: true },
-            { id: 8, name: '大鹏', avatar: '👨', title: '资深导游 | 15年经验', years: 15, rating: 4.9, reviews: 623, languages: ['普通话', '英语', '粤语'], specialties: ['历史文化', '自然风光'], cities: ['西安', '成都'], bio: '深度游专家，不走寻常路', price: 750, verified: true }
+            { id: 1, name: '张导', avatar: '👨‍💼', title: '高级导游 | 10年经验', years: 10, rating: 4.9, reviews: 328, languages: ['普通话', '英语'], specialties: ['历史文化', '摄影打卡'], cities: ['北京', '西安'], bio: '专注历史文化深度游，带您穿越千年', verified: true, price: 580 },
+            { id: 2, name: '李姐', avatar: '👩‍💼', title: '金牌导游 | 8年经验', years: 8, rating: 4.8, reviews: 256, languages: ['普通话', '粤语'], specialties: ['美食探店', '亲子研学'], cities: ['广州', '深圳'], bio: '美食达人，带您吃遍岭南', verified: true, price: 520 },
+            { id: 3, name: '王哥', avatar: '🧔', title: '资深导游 | 12年经验', years: 12, rating: 5.0, reviews: 512, languages: ['普通话', '英语', '日语'], specialties: ['自然风光', '户外探险'], cities: ['成都', '杭州'], bio: '户外探险专家，带您领略大自然的魅力', verified: true, price: 680 },
+            { id: 4, name: '阿杰', avatar: '👨‍💻', title: '专业导游 | 6年经验', years: 6, rating: 4.7, reviews: 189, languages: ['普通话', '韩语'], specialties: ['购物血拼', '美食探店'], cities: ['上海', '首尔'], bio: '购物达人，帮您淘遍全球好物', verified: true, price: 480 },
+            { id: 5, name: '小林', avatar: '👨‍🎨', title: '特色导游 | 5年经验', years: 5, rating: 4.9, reviews: 298, languages: ['普通话', '日语'], specialties: ['历史文化', '宗教文化'], cities: ['西安', '京都'], bio: '历史学硕士，深度解读文化底蕴', verified: true, price: 620 },
+            { id: 6, name: '阿美', avatar: '👩‍🏫', title: '亲子导游 | 7年经验', years: 7, rating: 4.8, reviews: 345, languages: ['普通话', '英语'], specialties: ['亲子研学', '摄影打卡'], cities: ['北京', '上海'], bio: '专业亲子导游，让孩子在旅行中成长', verified: true, price: 550 }
         ];
         
-        async function loadGuides() {
+        function init() {
+            loadGuides();
+            setupEventListeners();
+        }
+        
+        function loadGuides() {
             const grid = document.getElementById('guidesGrid');
             grid.innerHTML = '<div class="loading-spinner"><div class="spinner"></div><p>加载中...</p></div>';
-            await new Promise(r => setTimeout(r, 500));
-            guides = sampleGuides;
-            renderGuides(guides);
+            setTimeout(() => {
+                guides = [...sampleGuides];
+                renderGuides(guides);
+            }, 500);
         }
         
         function renderGuides(guidesList) {
@@ -263,8 +419,7 @@
                         </div>
                         <div class="guide-tags">${guide.specialties.map(s => `<span class="guide-tag">${s}</span>`).join('')}</div>
                         <div class="guide-price">
-                            <div class="price-value">¥${guide.price}<span>/天</span></div>
-                            <button class="btn-booking" onclick="event.stopPropagation(); location.href='guide-detail.html?id=${guide.id}'">预约咨询</button>
+                            <a href="guide-detail.html?id=${guide.id}" class="btn-booking" onclick="event.stopPropagation()">查看详情</a>
                         </div>
                     </div>
                 </div>
@@ -287,27 +442,93 @@
             if (sort === 'rating') filtered.sort((a, b) => b.rating - a.rating);
             else if (sort === 'reviews') filtered.sort((a, b) => b.reviews - a.reviews);
             else if (sort === 'years') filtered.sort((a, b) => b.years - a.years);
-            else if (sort === 'price_low') filtered.sort((a, b) => a.price - b.price);
-            else if (sort === 'price_high') filtered.sort((a, b) => b.price - a.price);
+            else if (sort === 'price_low') filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+            else if (sort === 'price_high') filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
             
             renderGuides(filtered);
         }
         
-        document.querySelectorAll('.tag-filter .tag').forEach(tag => {
-            tag.addEventListener('click', () => {
-                document.querySelectorAll('.tag-filter .tag').forEach(t => t.classList.remove('active'));
-                tag.classList.add('active');
-                const type = tag.dataset.type;
-                if (type === 'all') renderGuides(guides);
-                else renderGuides(guides.filter(g => g.specialties.includes(type)));
+        function setupEventListeners() {
+            document.querySelectorAll('.tag-filter .tag').forEach(tag => {
+                tag.addEventListener('click', () => {
+                    document.querySelectorAll('.tag-filter .tag').forEach(t => t.classList.remove('active'));
+                    tag.classList.add('active');
+                    const type = tag.dataset.type;
+                    if (type === 'all') renderGuides(guides);
+                    else renderGuides(guides.filter(g => g.specialties.includes(type)));
+                });
             });
+            
+            document.getElementById('searchInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') searchGuides();
+            });
+        }
+        
+        // 顾问弹窗功能
+        function openConsultantModal() {
+            document.getElementById('consultantModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeConsultantModal() {
+            document.getElementById('consultantModal').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        // 点击背景关闭
+        document.getElementById('consultantModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeConsultantModal();
+            }
         });
         
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') searchGuides();
-        });
-        
-        loadGuides();
+        document.addEventListener('DOMContentLoaded', init);
     </script>
+    
+    <!-- 顾问弹窗 -->
+    <div class="consultant-modal" id="consultantModal">
+        <div class="consultant-card-wrapper">
+            <button class="consultant-close" onclick="closeConsultantModal()">&times;</button>
+            <div class="consultant-card">
+                <div class="consultant-title">🧳 找导游？</div>
+                <div class="consultant-subtitle">让旅行顾问为您精准匹配</div>
+                
+                <div class="consultant-intro">
+                    <p>大家好，我是阿曼😊 您的全球旅行策划师</p>
+                    <p>专注于 <span class="regions">欧洲 | 日本 | 澳新 | 东南亚</span> 深度游</p>
+                    <p>定制专属路线 | 全程无忧服务</p>
+                    <p class="slogan">"把世界的美好，装进你的行囊"</p>
+                </div>
+                
+                <div class="consultant-qr">
+                    <img src="images/aman-wechat.jpg" alt="微信二维码">
+                    <div class="consultant-qr-label">扫码添加微信，免费咨询</div>
+                </div>
+                
+                <div class="consultant-benefits">
+                    <span class="benefit-item">✅ 免费咨询</span>
+                    <span class="benefit-item">✅ 精准匹配</span>
+                    <span class="benefit-item">✅ 行程建议</span>
+                </div>
+                
+                <div class="consultant-tip">💡 加微信后，告诉我您的旅行需求，为您推荐最合适的导游</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2024 游导伴旅 · 旅行信息工具平台</p>
+                <div class="footer-links">
+                    <a href="user-agreement.html">用户协议</a>
+                    <a href="privacy-policy.html">隐私政策</a>
+                    <a href="disclaimer.html">免责声明</a>
+                    <a href="about.html">关于我们</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

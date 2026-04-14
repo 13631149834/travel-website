@@ -3,7 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>导游详情 - 游导伴旅</title>
+    <title>导游详情 - 游导伴旅 | 查看导游个人主页</title>
+  <meta name="description" content="查看游导伴旅导游详细信息，了解导游专业背景、服务特色、历史评价，预约心仪导游，开启愉快旅程。">
+  <meta name="keywords" content="导游详情,导游主页,导游评价,导游预约,导游服务">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/guide-detail.html">
+  <meta property="og:title" content="导游详情 - 游导伴旅">
+  <meta property="og:description" content="查看导游详细信息，预约心仪导游。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://youdao-travel.com/guide-detail.html">
     <link rel="stylesheet" href="css/style.css">
     <style>
         .detail-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
@@ -103,6 +111,90 @@
             .booking-card { position: static; }
             .stats-row { justify-content: center; }
         }
+        
+        /* 顾问弹窗样式 */
+        .consultant-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+        .consultant-modal.show { display: flex; }
+        .consultant-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+            position: relative;
+        }
+        @keyframes modalSlideIn {
+            from { transform: translateY(-30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .consultant-title { font-size: 28px; font-weight: 700; color: #333; margin-bottom: 8px; }
+        .consultant-subtitle { font-size: 14px; color: #667eea; font-weight: 600; margin-bottom: 20px; }
+        .consultant-intro {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        .consultant-intro p { font-size: 14px; color: #555; line-height: 1.8; margin: 0; }
+        .consultant-intro .regions { color: #667eea; font-weight: 600; }
+        .consultant-intro .slogan { color: #764ba2; font-style: italic; margin-top: 10px; text-align: center; }
+        .consultant-qr {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .consultant-qr img {
+            width: 180px;
+            height: 180px;
+            border-radius: 12px;
+            background: white;
+            padding: 10px;
+        }
+        .consultant-qr-label { color: white; font-size: 14px; margin-top: 12px; }
+        .consultant-benefits {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .benefit-item {
+            background: #f8f9ff;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #667eea;
+        }
+        .consultant-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            color: #999;
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+        }
+        .consultant-close:hover { color: #333; }
+        .consultant-tip { font-size: 13px; color: #999; margin-top: 15px; }
     </style>
 </head>
 <body>
@@ -124,19 +216,45 @@
         <!-- 动态加载 -->
     </div>
     
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
-    <script src="js/common.js"></script>
     <script>
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    padding: 12px 24px;
+                    border-radius: 8px;
+                    color: white;
+                    font-size: 14px;
+                    z-index: 9999;
+                    animation: slideDown 0.3s ease;
+                    background-color: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : '#3B82F6'};
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => {
+                    toast.style.animation = 'slideUp 0.3s ease forwards';
+                    setTimeout(() => toast.remove(), 300);
+                }, 3000);
+            }
+        };
+
+        // Auth 模拟
+        const Auth = {
+            getUser: function() {
+                const userStr = localStorage.getItem('user');
+                return Promise.resolve(userStr ? JSON.parse(userStr) : null);
+            }
+        };
+
         const guideData = {
-            1: { id: 1, name: '张导', avatar: '👨‍💼', title: '高级导游 | 10年经验', years: 10, rating: 4.9, reviews: 328, languages: ['普通话', '英语'], specialties: ['历史文化', '摄影打卡'], cities: ['北京', '西安'], bio: '专注历史文化深度游，带您穿越千年时光，聆听历史的声音。熟悉故宫、长城、兵马俑等著名景点的每一个角落，擅长为游客讲述不为人知的历史故事。', price: 580, verified: true, agency: '北京国际旅行社', license: 'D-1100-2014-001234', serviceTypes: ['私人定制', '跟团游', '景点讲解'] },
-            2: { id: 2, name: '李姐', avatar: '👩‍💼', title: '金牌导游 | 8年经验', years: 8, rating: 4.8, reviews: 256, languages: ['普通话', '粤语'], specialties: ['美食探店', '亲子研学'], cities: ['广州', '深圳'], bio: '地道广州人，美食达人，带您吃遍岭南美食。从早茶到宵夜，从老字号到网红店，让您体验最地道的粤式生活。亲子游专家，带娃旅行更轻松。', price: 480, verified: true, agency: '广州岭南旅行社', license: 'D-4401-2016-002345', serviceTypes: ['私人定制', '美食之旅', '亲子游'] },
-            3: { id: 3, name: '王哥', avatar: '🧔', title: '资深导游 | 12年经验', years: 12, rating: 5.0, reviews: 512, languages: ['普通话', '英语', '日语'], specialties: ['户外探险', '自然风光'], cities: ['成都', '杭州'], bio: '户外运动爱好者，带您探索秘境。熟悉川西高原、九寨沟、稻城亚丁等目的地，有丰富的高原带队经验。摄影达人，帮您拍出最美的旅行照片。', price: 680, verified: true, agency: '成都户外俱乐部', license: 'D-5101-2012-003456', serviceTypes: ['户外探险', '摄影之旅', '包车服务'] },
-            4: { id: 4, name: '小美', avatar: '👩', title: '新锐导游 | 3年经验', years: 3, rating: 4.7, reviews: 89, languages: ['普通话', '韩语'], specialties: ['摄影打卡', '美食探店'], cities: ['厦门'], bio: '厦门本地人，网红打卡点一网打尽。鼓浪屿、曾厝垵、沙坡尾...带您发现最美的拍照角度，品尝最地道的闽南美食。', price: 380, verified: false, agency: '厦门青年旅行社', license: 'D-3502-2021-004567', serviceTypes: ['网红打卡', '美食探店'] },
-            5: { id: 5, name: '老陈', avatar: '👴', title: '特级导游 | 20年经验', years: 20, rating: 4.9, reviews: 876, languages: ['普通话', '英语', '法语'], specialties: ['历史文化', '亲子研学'], cities: ['北京', '上海', '西安'], bio: '历史文化专家，讲透千年故事。曾接待多国政要，精通故宫、颐和园、兵马俑等世界文化遗产的深度讲解。亲子研学专家，让孩子爱上历史。', price: 880, verified: true, agency: '中国国际旅行社', license: 'D-1100-2004-005678', serviceTypes: ['深度游', '研学旅行', '商务接待'] },
-            6: { id: 6, name: '阿杰', avatar: '🧑', title: '认证导游 | 5年经验', years: 5, rating: 4.6, reviews: 145, languages: ['普通话'], specialties: ['自然风光', '户外探险'], cities: ['成都', '重庆'], bio: '自然风光爱好者，带您看最美风景。熟悉川渝两地，从城市美食到山野秘境，都能带您深度体验。', price: 420, verified: true, agency: '重庆山水旅行社', license: 'D-5001-2019-006789', serviceTypes: ['自然风光', '美食之旅', '包车服务'] },
-            7: { id: 7, name: '晓雯', avatar: '👩‍🦰', title: '金牌导游 | 6年经验', years: 6, rating: 4.8, reviews: 198, languages: ['普通话', '英语'], specialties: ['亲子研学', '美食探店'], cities: ['上海', '南京'], bio: '亲子游专家，带娃旅行更轻松。熟悉迪士尼、科技馆、博物馆等亲子景点，让孩子在旅行中学习和成长。', price: 520, verified: true, agency: '上海亲子俱乐部', license: 'D-3101-2018-007890', serviceTypes: ['亲子游', '研学旅行', '主题乐园'] },
-            8: { id: 8, name: '大鹏', avatar: '👨', title: '资深导游 | 15年经验', years: 15, rating: 4.9, reviews: 623, languages: ['普通话', '英语', '粤语'], specialties: ['历史文化', '自然风光'], cities: ['西安', '成都'], bio: '深度游专家，不走寻常路。熟悉丝绸之路、茶马古道等历史文化线路，带您探索不一样的西部风情。', price: 750, verified: true, agency: '西安古都旅行社', license: 'D-6101-2009-008901', serviceTypes: ['深度游', '文化之旅', '户外探险'] }
+            1: { id: 1, name: '张导', avatar: '👨‍💼', title: '高级导游 | 10年经验', years: 10, rating: 4.9, reviews: 328, languages: ['普通话', '英语'], specialties: ['历史文化', '摄影打卡'], cities: ['北京', '西安'], bio: '专注历史文化深度游，带您穿越千年时光，聆听历史的声音。熟悉故宫、长城、兵马俑等著名景点的每一个角落，擅长为游客讲述不为人知的历史故事。', verified: true, agency: '北京国际旅行社', license: 'D-1100-2014-001234', serviceTypes: ['私人定制', '跟团游', '景点讲解'], price: 580 },
+            2: { id: 2, name: '李姐', avatar: '👩‍💼', title: '金牌导游 | 8年经验', years: 8, rating: 4.8, reviews: 256, languages: ['普通话', '粤语'], specialties: ['美食探店', '亲子研学'], cities: ['广州', '深圳'], bio: '地道广州人，美食达人，带您吃遍岭南美食。从早茶到宵夜，从老字号到网红店，让您体验最地道的粤式生活。亲子游专家，带娃旅行更轻松。', verified: true, agency: '广州岭南旅行社', license: 'D-4401-2016-002345', serviceTypes: ['私人定制', '美食之旅', '亲子游'], price: 520 },
+            3: { id: 3, name: '王哥', avatar: '🧔', title: '资深导游 | 12年经验', years: 12, rating: 5.0, reviews: 512, languages: ['普通话', '英语', '日语'], specialties: ['自然风光', '户外探险'], cities: ['成都', '杭州'], bio: '户外探险专家，足迹遍布国内外著名自然景观。擅长设计徒步、登山、摄影路线，带您领略大自然的鬼斧神工。', verified: true, agency: '四川探索旅行社', license: 'D-5101-2012-003456', serviceTypes: ['私人定制', '户外探险', '摄影之旅'], price: 680 }
         };
         
         const sampleReviews = [
@@ -183,10 +301,11 @@
                             <h2 class="section-title">📋 基本信息</h2>
                             <div class="info-grid">
                                 <div class="info-item"><span class="icon">🏢</span><div><div class="text">所属机构</div><div class="value">${guide.agency}</div></div></div>
-                                <div class="info-item"><span class="icon">📜</span><div><div class="text">导游证号</div><div class="value">${guide.license}</div></div></div>
                                 <div class="info-item"><span class="icon">🌍</span><div><div class="text">服务城市</div><div class="value">${guide.cities.join('、')}</div></div></div>
                                 <div class="info-item"><span class="icon">🗣️</span><div><div class="text">服务语言</div><div class="value">${guide.languages.join('、')}</div></div></div>
+                                <div class="info-item"><span class="icon">📅</span><div><div class="text">从业年限</div><div class="value">${guide.years}年</div></div></div>
                             </div>
+                            <p style="margin-top:16px;font-size:.85rem;color:#9ca3af">* 联系方式请通过顾问咨询获取</p>
                         </div>
                         
                         <div class="section-card">
@@ -218,38 +337,29 @@
                     
                     <div class="sidebar">
                         <div class="booking-card">
-                            <div class="booking-price">
-                                <span class="amount">¥${guide.price}</span>
-                                <span class="unit">/天</span>
+                            <div style="text-align:center;padding:20px 0">
+                                <div style="font-size:3rem;margin-bottom:12px">💬</div>
+                                <p style="color:#666;font-size:14px;margin-bottom:8px">想联系这位导游？</p>
+                                <p style="color:#667eea;font-size:14px;font-weight:600">添加顾问微信，为您精准匹配</p>
                             </div>
                             
-                            <form class="booking-form" onsubmit="handleBooking(event, ${guide.id})">
-                                <div class="form-group">
-                                    <label>出行日期</label>
-                                    <input type="date" id="bookingDate" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>出游人数</label>
-                                    <select id="bookingPeople">
-                                        <option value="1">1人</option>
-                                        <option value="2" selected>2人</option>
-                                        <option value="3">3人</option>
-                                        <option value="4">4人</option>
-                                        <option value="5">5人及以上</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label>联系电话</label>
-                                    <input type="tel" id="bookingPhone" placeholder="请输入手机号" required>
-                                </div>
-                                <div class="form-group">
-                                    <label>备注信息</label>
-                                    <textarea id="bookingNote" placeholder="请说明您的需求..." rows="3"></textarea>
-                                </div>
-                                <button type="submit" class="btn-book">立即预约</button>
-                            </form>
+                            <button class="btn-book" onclick="contactGuide()">💬 添加微信咨询</button>
                             
-                            <button class="contact-btn" onclick="contactGuide()">💬 在线咨询</button>
+                            <div style="margin-top:20px;padding:16px;background:#f0f9f4;border-radius:12px">
+                                <h4 style="font-size:13px;color:#059669;margin-bottom:8px">✅ 服务范围</h4>
+                                <ul style="font-size:12px;color:#666;padding-left:16px">
+                                    <li>导游推荐预约</li>
+                                    <li>行程定制规划</li>
+                                    <li>签证代办咨询</li>
+                                    <li>全程服务跟进</li>
+                                </ul>
+                            </div>
+                            
+                            <div style="margin-top:16px;padding-top:16px;border-top:1px solid #F3F4F6">
+                                <p style="font-size:12px;color:#999;line-height:1.6">
+                                    <strong style="color:#666">温馨提示：</strong>本平台导游信息仅供参考，服务详情请添加微信咨询。
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -257,7 +367,6 @@
             
             // 设置最小日期为今天
             const today = new Date().toISOString().split('T')[0];
-            document.getElementById('bookingDate').min = today;
         }
         
         async function handleBooking(e, guideId) {
@@ -271,13 +380,6 @@
                 return;
             }
             
-            const booking = {
-                date: document.getElementById('bookingDate').value,
-                people: document.getElementById('bookingPeople').value,
-                phone: document.getElementById('bookingPhone').value,
-                note: document.getElementById('bookingNote').value
-            };
-            
             Utils.showToast('预约成功！导游会尽快与您联系', 'success');
             setTimeout(() => {
                 window.location.href = 'user-center.html';
@@ -285,10 +387,67 @@
         }
         
         function contactGuide() {
-            Utils.showToast('请添加微信咨询：ximao101', 'info');
+            openConsultantModal();
         }
         
-        loadGuide();
+        // 顾问弹窗功能
+        function openConsultantModal() {
+            document.getElementById('consultantModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeConsultantModal() {
+            document.getElementById('consultantModal').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGuide();
+        });
     </script>
+    
+    <!-- 顾问弹窗 -->
+    <div class="consultant-modal" id="consultantModal" onclick="if(event.target===this)closeConsultantModal()">
+        <div class="consultant-card">
+            <button class="consultant-close" onclick="closeConsultantModal()">&times;</button>
+            <div class="consultant-title">🧳 找导游？</div>
+            <div class="consultant-subtitle">让旅行顾问为您精准匹配</div>
+            
+            <div class="consultant-intro">
+                <p>大家好，我是阿曼😊 您的全球旅行策划师</p>
+                <p>专注于 <span class="regions">欧洲 | 日本 | 澳新 | 东南亚</span> 深度游</p>
+                <p>定制专属路线 | 全程无忧服务</p>
+                <p class="slogan">"把世界的美好，装进你的行囊"</p>
+            </div>
+            
+            <div class="consultant-qr">
+                <img src="images/aman-wechat.jpg" alt="微信二维码">
+                <div class="consultant-qr-label">扫码添加微信，免费咨询</div>
+            </div>
+            
+            <div class="consultant-benefits">
+                <span class="benefit-item">✅ 免费咨询</span>
+                <span class="benefit-item">✅ 精准匹配</span>
+                <span class="benefit-item">✅ 行程建议</span>
+            </div>
+            
+            <div class="consultant-tip">💡 加微信后，告诉我您的旅行需求，为您推荐最合适的导游</div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>© 2024 游导伴旅 · 旅行信息工具平台</p>
+                <div class="footer-links">
+                    <a href="user-agreement.html">用户协议</a>
+                    <a href="privacy-policy.html">隐私政策</a>
+                    <a href="disclaimer.html">免责声明</a>
+                    <a href="about.html">关于我们</a>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

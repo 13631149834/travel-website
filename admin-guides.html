@@ -537,13 +537,31 @@
         </div>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase-config.js"></script>
     <script>
         const ADMIN_PASSWORD = 'admin123';
         let currentTab = 'pending';
         let currentPage = 1;
         const pageSize = 10;
+
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
+        // 模拟数据
+        const mockData = {
+            guideProfiles: JSON.parse(localStorage.getItem('admin_guideProfiles') || '[{"id":"g1","user_id":"u2","nickname":"李四导游","avatar":"👨‍🏫","expertise":"历史文化","languages":"普通话,英语","status":"approved","created_at":"2024-02-20T10:30:00Z"},{"id":"g2","user_id":"u4","nickname":"赵六导游","avatar":"👩‍🏫","expertise":"美食探店","languages":"普通话,粤语","status":"pending","created_at":"2024-04-01T09:00:00Z"},{"id":"g3","user_id":"u5","nickname":"钱七导游","avatar":"🧔","expertise":"户外探险","languages":"普通话","status":"pending","created_at":"2024-04-05T11:00:00Z"},{"id":"g4","user_id":"u6","nickname":"孙八导游","avatar":"👨‍💼","expertise":"摄影打卡","languages":"普通话,日语","status":"approved","created_at":"2024-03-15T14:00:00Z"},{"id":"g5","user_id":"u7","nickname":"周九导游","avatar":"👩‍💼","expertise":"亲子研学","languages":"普通话,英语","status":"rejected","created_at":"2024-03-20T16:00:00Z"}]')
+        };
+
+        function saveMockData() {
+            localStorage.setItem('admin_guideProfiles', JSON.stringify(mockData.guideProfiles));
+        }
 
         // 检查登录
         function checkLogin() {
@@ -564,7 +582,7 @@
                 document.getElementById('loginModal').style.display = 'none';
                 init();
             } else {
-                showToast('密码错误，请重试！', 'error');
+                Utils.showToast('密码错误，请重试！', 'error');
             }
         }
 
@@ -575,11 +593,7 @@
 
         // 显示提示
         function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            Utils.showToast(message, type);
         }
 
         // 标签切换
@@ -592,21 +606,15 @@
         }
 
         // 加载导游数量统计
-        async function loadCounts() {
-            try {
-                const [pending, approved] = await Promise.all([
-                    supabaseClient.from('guide_profiles').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-                    supabaseClient.from('guide_profiles').select('*', { count: 'exact', head: true }).eq('status', 'approved')
-                ]);
-                document.getElementById('pendingCount').textContent = pending.count || 0;
-                document.getElementById('approvedCount').textContent = approved.count || 0;
-            } catch (error) {
-                console.error('加载统计数据失败:', error);
-            }
+        function loadCounts() {
+            const pending = mockData.guideProfiles.filter(g => g.status === 'pending').length;
+            const approved = mockData.guideProfiles.filter(g => g.status === 'approved').length;
+            document.getElementById('pendingCount').textContent = pending;
+            document.getElementById('approvedCount').textContent = approved;
         }
 
         // 加载导游列表
-        async function loadGuides() {
+        function loadGuides() {
             const tbody = document.getElementById('guidesTable');
             tbody.innerHTML = `
                 <tr>
@@ -617,109 +625,93 @@
                 </tr>
             `;
 
-            try {
-                let query = supabaseClient
-                    .from('guide_profiles')
-                    .select(`
-                        *,
-                        users (nickname, email)
-                    `, { count: 'exact' });
+            // 筛选
+            let filtered = mockData.guideProfiles;
+            if (currentTab !== 'all') {
+                filtered = filtered.filter(g => g.status === currentTab);
+            }
 
-                // 状态筛选
-                if (currentTab !== 'all') {
-                    query = query.eq('status', currentTab);
-                }
+            // 搜索筛选
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const expertise = document.getElementById('expertiseFilter').value;
 
-                // 搜索筛选
-                const search = document.getElementById('searchInput').value.trim();
-                const expertise = document.getElementById('expertiseFilter').value;
+            if (search) {
+                filtered = filtered.filter(g => 
+                    (g.nickname && g.nickname.toLowerCase().includes(search)) ||
+                    (g.expertise && g.expertise.toLowerCase().includes(search))
+                );
+            }
+            if (expertise) {
+                filtered = filtered.filter(g => g.expertise === expertise);
+            }
 
-                if (search) {
-                    query = query.or(`nickname.ilike.%${search}%,expertise.ilike.%${search}%`);
-                }
-                if (expertise) {
-                    query = query.eq('expertise', expertise);
-                }
+            // 排序
+            filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-                // 分页
-                const from = (currentPage - 1) * pageSize;
-                const to = from + pageSize - 1;
-                query = query.range(from, to).order('created_at', { ascending: false });
+            // 分页
+            const total = filtered.length;
+            const start = (currentPage - 1) * pageSize;
+            const paged = filtered.slice(start, start + pageSize);
 
-                const { data: guides, error, count } = await query;
-
-                if (error) throw error;
-
-                // 渲染表格
-                if (!guides || guides.length === 0) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="6" class="empty-state">
-                                <div class="icon">🔍</div>
-                                <p>暂无导游数据</p>
-                            </td>
-                        </tr>
-                    `;
-                    renderPagination(0);
-                    return;
-                }
-
-                tbody.innerHTML = guides.map(guide => {
-                    const statusMap = {
-                        'pending': '<span class="badge badge-pending">待审核</span>',
-                        'approved': '<span class="badge badge-approved">已通过</span>',
-                        'rejected': '<span class="badge badge-rejected">已拒绝</span>'
-                    };
-
-                    let actions = '';
-                    if (guide.status === 'pending') {
-                        actions = `
-                            <button class="btn btn-success btn-sm" onclick="approveGuide('${guide.id}')">通过</button>
-                            <button class="btn btn-danger btn-sm" onclick="rejectGuide('${guide.id}')">拒绝</button>
-                        `;
-                    } else if (guide.status === 'approved') {
-                        actions = `
-                            <button class="btn btn-danger btn-sm" onclick="rejectGuide('${guide.id}')">禁用</button>
-                            <button class="btn btn-secondary btn-sm" onclick="viewGuide('${guide.user_id}')">详情</button>
-                        `;
-                    } else {
-                        actions = `
-                            <button class="btn btn-success btn-sm" onclick="approveGuide('${guide.id}')">重新通过</button>
-                        `;
-                    }
-
-                    return `
-                        <tr>
-                            <td>
-                                <div style="display: flex; align-items: center; gap: 10px;">
-                                    <span style="font-size: 24px;">${guide.avatar || '🎤'}</span>
-                                    <div>
-                                        <div style="font-weight: 600;">${guide.nickname || guide.users?.nickname || '未命名'}</div>
-                                        <div style="font-size: 12px; color: #666;">${guide.users?.email || ''}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>${guide.expertise || '-'}</td>
-                            <td>${guide.languages || '-'}</td>
-                            <td>${statusMap[guide.status] || '-'}</td>
-                            <td>${new Date(guide.created_at).toLocaleDateString('zh-CN')}</td>
-                            <td>${actions}</td>
-                        </tr>
-                    `;
-                }).join('');
-
-                renderPagination(count || 0);
-            } catch (error) {
-                console.error('加载导游列表失败:', error);
+            // 渲染表格
+            if (paged.length === 0) {
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="6" class="empty-state">
-                            <div class="icon">❌</div>
-                            <p>加载失败，请刷新重试</p>
+                            <div class="icon">🔍</div>
+                            <p>暂无导游数据</p>
                         </td>
                     </tr>
                 `;
+                renderPagination(0);
+                return;
             }
+
+            tbody.innerHTML = paged.map(guide => {
+                const statusMap = {
+                    'pending': '<span class="badge badge-pending">待审核</span>',
+                    'approved': '<span class="badge badge-approved">已通过</span>',
+                    'rejected': '<span class="badge badge-rejected">已拒绝</span>'
+                };
+
+                let actions = '';
+                if (guide.status === 'pending') {
+                    actions = `
+                        <button class="btn btn-success btn-sm" onclick="approveGuide('${guide.id}')">通过</button>
+                        <button class="btn btn-danger btn-sm" onclick="rejectGuide('${guide.id}')">拒绝</button>
+                    `;
+                } else if (guide.status === 'approved') {
+                    actions = `
+                        <button class="btn btn-danger btn-sm" onclick="rejectGuide('${guide.id}')">禁用</button>
+                        <button class="btn btn-secondary btn-sm" onclick="viewGuide('${guide.user_id}')">详情</button>
+                    `;
+                } else {
+                    actions = `
+                        <button class="btn btn-success btn-sm" onclick="approveGuide('${guide.id}')">重新通过</button>
+                    `;
+                }
+
+                return `
+                    <tr>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 24px;">${guide.avatar || '🎤'}</span>
+                                <div>
+                                    <div style="font-weight: 600;">${guide.nickname || '未命名'}</div>
+                                    <div style="font-size: 12px; color: #666;"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${guide.expertise || '-'}</td>
+                        <td>${guide.languages || '-'}</td>
+                        <td>${statusMap[guide.status] || '-'}</td>
+                        <td>${new Date(guide.created_at).toLocaleDateString('zh-CN')}</td>
+                        <td>${actions}</td>
+                    </tr>
+                `;
+            }).join('');
+
+            renderPagination(total);
         }
 
         // 渲染分页
@@ -759,70 +751,40 @@
         }
 
         // 通过导游
-        async function approveGuide(guideId) {
-            try {
-                const { error } = await supabaseClient
-                    .from('guide_profiles')
-                    .update({ status: 'approved', updated_at: new Date().toISOString() })
-                    .eq('id', guideId);
-
-                if (error) throw error;
-
+        function approveGuide(guideId) {
+            const guide = mockData.guideProfiles.find(g => g.id === guideId);
+            if (guide) {
+                guide.status = 'approved';
+                saveMockData();
                 showToast('导游审核已通过！', 'success');
                 loadCounts();
                 loadGuides();
-            } catch (error) {
-                showToast('操作失败：' + error.message, 'error');
             }
         }
 
         // 拒绝导游
-        async function rejectGuide(guideId) {
-            try {
-                const { error } = await supabaseClient
-                    .from('guide_profiles')
-                    .update({ status: 'rejected', updated_at: new Date().toISOString() })
-                    .eq('id', guideId);
-
-                if (error) throw error;
-
+        function rejectGuide(guideId) {
+            const guide = mockData.guideProfiles.find(g => g.id === guideId);
+            if (guide) {
+                guide.status = 'rejected';
+                saveMockData();
                 showToast('已拒绝该导游申请', 'success');
                 loadCounts();
                 loadGuides();
-            } catch (error) {
-                showToast('操作失败：' + error.message, 'error');
             }
         }
 
         // 查看导游详情
         function viewGuide(userId) {
-            window.open(`profile-preview.html?userId=${userId}`, '_blank');
+            showToast('导游详情功能开发中', 'info');
         }
 
-        // 初始化
-        async function init() {
+        function init() {
             if (!checkLogin()) return;
-            
-            // 检查URL参数
-            const urlParams = new URLSearchParams(window.location.search);
-            const filter = urlParams.get('filter');
-            if (filter === 'pending') {
-                switchTab('pending', document.querySelectorAll('.tab')[0]);
-            }
-            
             loadCounts();
             loadGuides();
         }
 
-        // 搜索框回车事件
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                currentPage = 1;
-                loadGuides();
-            }
-        });
-
-        // 启动
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
