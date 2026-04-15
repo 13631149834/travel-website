@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>用户主页 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#f97316',
+            secondary: '#ea580c',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+    }
+    
+    .tab-active {
+      position: relative;
+    }
+    .tab-active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      border-radius: 2px;
+    }
+    
+    .cover-gradient {
+      background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%);
+    }
+    
+    .avatar-ring {
+      box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.3);
+    }
+    
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+    
+    @media (max-width: 640px) {
+      .post-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-16 lg:pb-0">
+  <!-- Header -->
+  <header class="sticky top-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-4">
+          <a href="index.html" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+            <i class="fas fa-arrow-left text-gray-600"></i>
+          </a>
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+              <i class="fas fa-compass text-white text-sm"></i>
+            </div>
+            <span class="text-lg font-bold text-gray-800">游导</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600">
+            <i class="fas fa-search"></i>
+          </button>
+          <button class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600">
+            <i class="fas fa-ellipsis-v"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Profile Cover & Info -->
+  <div id="profile-container">
+    <!-- Cover Image -->
+    <div class="relative h-48 md:h-64 bg-gradient-to-br from-orange-400 to-orange-600">
+      <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop" alt="封面" class="w-full h-full object-cover">
+      <div class="absolute inset-0 cover-gradient"></div>
+    </div>
+    
+    <!-- Profile Info -->
+    <div class="bg-white">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="relative -mt-16 mb-4">
+          <div class="flex flex-col sm:flex-row sm:items-end gap-4">
+            <!-- Avatar -->
+            <div class="relative">
+              <img id="user-avatar" src="" alt="头像" class="w-28 h-28 md:w-32 md:h-32 rounded-full object-cover border-4 border-white avatar-ring">
+              <button class="absolute bottom-2 right-2 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm shadow-md">
+                <i class="fas fa-camera"></i>
+              </button>
+            </div>
+            
+            <!-- Name & Bio -->
+            <div class="flex-1 pb-2">
+              <div class="flex items-center gap-2 mb-1">
+                <h1 id="user-name" class="text-2xl font-bold text-gray-800">加载中...</h1>
+                <span id="user-badge" class="hidden px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs rounded-full">年度旅行家</span>
+              </div>
+              <p id="user-bio" class="text-gray-500 text-sm">-</p>
+              <div class="flex items-center gap-4 mt-2 text-sm text-gray-500">
+                <span><i class="fas fa-map-marker-alt mr-1"></i><span id="user-location">-</span></span>
+              </div>
+            </div>
+            
+            <!-- Actions -->
+            <div id="profile-actions" class="flex gap-2 pb-2">
+              <!-- Will be populated by JS -->
+            </div>
+          </div>
+        </div>
+        
+        <!-- Stats -->
+        <div class="flex items-center gap-8 py-4 border-t border-b">
+          <div class="text-center cursor-pointer hover:text-primary transition">
+            <p id="user-posts" class="text-xl font-bold text-gray-800">0</p>
+            <p class="text-sm text-gray-500">动态</p>
+          </div>
+          <div class="text-center cursor-pointer hover:text-primary transition" onclick="showFollowers()">
+            <p id="user-followers" class="text-xl font-bold text-gray-800">0</p>
+            <p class="text-sm text-gray-500">粉丝</p>
+          </div>
+          <div class="text-center cursor-pointer hover:text-primary transition" onclick="showFollowing()">
+            <p id="user-following" class="text-xl font-bold text-gray-800">0</p>
+            <p class="text-sm text-gray-500">关注</p>
+          </div>
+          <div class="flex-1"></div>
+          <div id="user-badges" class="hidden sm:flex gap-2">
+            <!-- Badges will be added here -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Tabs -->
+    <div class="bg-white mt-2 sticky top-16 z-30">
+      <div class="max-w-6xl mx-auto px-4">
+        <div class="flex border-b">
+          <button class="px-6 py-4 text-center font-medium text-primary tab-active" data-tab="posts">
+            <i class="fas fa-th-large mr-2"></i>动态
+          </button>
+          <button class="px-6 py-4 text-center font-medium text-gray-400 hover:text-gray-600" data-tab="travels">
+            <i class="fas fa-route mr-2"></i>游记
+          </button>
+          <button class="px-6 py-4 text-center font-medium text-gray-400 hover:text-gray-600" data-tab="about">
+            <i class="fas fa-user mr-2"></i>关于
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <div id="posts-content">
+      <!-- Posts Grid -->
+      <div id="posts-grid" class="post-grid">
+        <!-- Posts will be loaded here -->
+      </div>
+    </div>
+    
+    <div id="travels-content" class="hidden">
+      <!-- Travels/Guides will be loaded here -->
+    </div>
+    
+    <div id="about-content" class="hidden">
+      <div class="bg-white rounded-2xl shadow-sm p-6">
+        <h3 class="font-bold text-lg text-gray-800 mb-4">个人简介</h3>
+        <p id="about-bio" class="text-gray-600 leading-relaxed mb-6">-</p>
+        
+        <h3 class="font-bold text-lg text-gray-800 mb-4">旅行足迹</h3>
+        <div id="travel-history" class="flex flex-wrap gap-2 mb-6">
+          <!-- Travel countries/cities -->
+        </div>
+        
+        <h3 class="font-bold text-lg text-gray-800 mb-4">获得的徽章</h3>
+        <div id="about-badges" class="flex flex-wrap gap-3">
+          <!-- Badges -->
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Followers/Following Modal -->
+  <div id="follow-modal" class="fixed inset-0 bg-black/50 z-50 hidden">
+    <div class="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl max-h-[70vh] overflow-auto slide-up">
+      <div class="sticky top-0 bg-white p-4 border-b flex items-center justify-between">
+        <h3 id="follow-modal-title" class="font-bold text-lg">粉丝</h3>
+        <button onclick="closeFollowModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div id="follow-list" class="p-4">
+        <!-- Users will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Modal -->
+  <div id="report-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-md slide-up">
+      <div class="p-4 border-b flex items-center justify-between">
+        <h3 class="font-bold text-lg">举报用户</h3>
+        <button onclick="closeReportModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <p class="text-gray-600 mb-4">请选择举报原因：</p>
+        <div class="space-y-2">
+          <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <input type="radio" name="report-reason" value="spam" class="text-primary">
+            <span>垃圾广告</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <input type="radio" name="report-reason" value="harassment" class="text-primary">
+            <span>骚扰他人</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <input type="radio" name="report-reason" value="fake" class="text-primary">
+            <span>虚假信息</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <input type="radio" name="report-reason" value="other" class="text-primary">
+            <span>其他</span>
+          </label>
+        </div>
+        <textarea id="report-detail" rows="3" placeholder="详细说明（选填）" class="w-full mt-4 p-3 border rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-primary/50"></textarea>
+        <button onclick="submitReport()" class="w-full mt-4 py-3 gradient-bg text-white rounded-full font-medium hover:opacity-90 transition">
+          提交举报
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let socialData = null;
+    let currentUser = null;
+    let isOwnProfile = false;
+    
+    // Get user ID from URL
+    function getUserId() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('user') || 'user_001'; // Default to user_001 for demo
+    }
+    
+    async function loadData() {
+      try {
+        const response = await fetch('../data/social.json');
+        socialData = await response.json();
+        
+        const userId = getUserId();
+        currentUser = socialData.users.find(u => u.id === userId) || socialData.users[0];
+        isOwnProfile = currentUser.id === 'user_001'; // Assume current user is user_001
+        
+        renderProfile();
+        renderPosts();
+        renderTravels();
+        setupTabs();
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    }
+    
+    function renderProfile() {
+      document.getElementById('user-avatar').src = currentUser.avatar;
+      document.getElementById('user-name').textContent = currentUser.username;
+      document.getElementById('user-bio').textContent = currentUser.bio;
+      document.getElementById('user-location').textContent = currentUser.location;
+      document.getElementById('user-posts').textContent = formatNumber(currentUser.posts);
+      document.getElementById('user-followers').textContent = formatNumber(currentUser.followers);
+      document.getElementById('user-following').textContent = formatNumber(currentUser.following);
+      document.getElementById('about-bio').textContent = currentUser.bio;
+      
+      // Badges
+      const badgesContainer = document.getElementById('user-badges');
+      if (currentUser.badges && currentUser.badges.length > 0) {
+        badgesContainer.classList.remove('hidden');
+        badgesContainer.innerHTML = currentUser.badges.map(badge => `
+          <span class="px-3 py-1 bg-yellow-50 text-yellow-700 text-sm rounded-full border border-yellow-200">${badge}</span>
+        `).join('');
+        
+        const aboutBadges = document.getElementById('about-badges');
+        aboutBadges.innerHTML = currentUser.badges.map(badge => `
+          <div class="flex items-center gap-2 px-4 py-2 bg-yellow-50 rounded-xl">
+            <i class="fas fa-medal text-yellow-600"></i>
+            <span class="text-yellow-800">${badge}</span>
+          </div>
+        `).join('');
+      }
+      
+      // Profile actions
+      const actions = document.getElementById('profile-actions');
+      if (isOwnProfile) {
+        actions.innerHTML = `
+          <button class="px-5 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition">
+            <i class="fas fa-edit mr-2"></i>编辑资料
+          </button>
+        `;
+      } else {
+        const isFollowing = currentUser.isFollowing;
+        actions.innerHTML = `
+          <button onclick="sendMessage()" class="px-4 py-2 border border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition">
+            <i class="fas fa-envelope mr-2"></i>私信
+          </button>
+          <button onclick="toggleFollow()" id="follow-btn" class="px-5 py-2 ${isFollowing ? 'bg-gray-100 text-gray-700' : 'gradient-bg text-white'} rounded-full hover:opacity-90 transition">
+            ${isFollowing ? '已关注' : '+ 关注'}
+          </button>
+          <button onclick="openReportModal()" class="w-10 h-10 border border-gray-300 rounded-full hover:bg-gray-50 transition flex items-center justify-center text-gray-500">
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+        `;
+      }
+      
+      // Travel history
+      const travelHistory = document.getElementById('travel-history');
+      const countries = ['冰岛', '日本', '泰国', '法国', '意大利', '美国', '澳大利亚', '新西兰'];
+      travelHistory.innerHTML = countries.slice(0, 6).map(c => `
+        <span class="px-3 py-1.5 bg-orange-50 text-orange-600 rounded-full text-sm">${c}</span>
+      `).join('');
+    }
+    
+    function renderPosts() {
+      const container = document.getElementById('posts-grid');
+      const userPosts = socialData.posts.filter(p => p.userId === currentUser.id);
+      
+      if (userPosts.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full text-center py-12">
+            <i class="fas fa-camera text-6xl text-gray-300 mb-4"></i>
+            <p class="text-gray-500">还没有发布动态</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = userPosts.map(post => `
+        <a href="detail.html?post=${post.id}" class="aspect-square relative overflow-hidden group cursor-pointer">
+          ${post.images && post.images[0] ? `
+            <img src="${post.images[0]}" alt="图片" class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
+          ` : `
+            <div class="w-full h-full bg-gray-200 flex items-center justify-center">
+              <i class="fas fa-image text-4xl text-gray-400"></i>
+            </div>
+          `}
+          <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-4 text-white">
+            <span class="flex items-center gap-1"><i class="fas fa-heart"></i> ${formatNumber(post.likes)}</span>
+            <span class="flex items-center gap-1"><i class="fas fa-comment"></i> ${post.comments}</span>
+          </div>
+        </a>
+      `).join('');
+    }
+    
+    function renderTravels() {
+      const container = document.getElementById('travels-content');
+      container.innerHTML = `
+        <div class="grid md:grid-cols-2 gap-4">
+          <a href="../travel-notes.html" class="bg-white rounded-2xl overflow-hidden shadow-sm card-hover">
+            <img src="https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=600&h=400&fit=crop" alt="冰岛之旅" class="w-full h-48 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold text-gray-800 mb-2">冰岛7日自驾游全攻略</h4>
+              <p class="text-sm text-gray-500 mb-3">环岛自驾、蓝湖温泉、追极光...这篇攻略帮你搞定一切！</p>
+              <div class="flex items-center gap-4 text-sm text-gray-400">
+                <span><i class="fas fa-eye mr-1"></i>12.5k</span>
+                <span><i class="fas fa-heart mr-1"></i>892</span>
+              </div>
+            </div>
+          </a>
+          <a href="../travel-notes.html" class="bg-white rounded-2xl overflow-hidden shadow-sm card-hover">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600&h=400&fit=crop" alt="日本之旅" class="w-full h-48 object-cover">
+            <div class="p-4">
+              <h4 class="font-bold text-gray-800 mb-2">日本关西深度游指南</h4>
+              <p class="text-sm text-gray-500 mb-3">大阪、京都、奈良，10天玩转关西精华</p>
+              <div class="flex items-center gap-4 text-sm text-gray-400">
+                <span><i class="fas fa-eye mr-1"></i>8.3k</span>
+                <span><i class="fas fa-heart mr-1"></i>567</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      `;
+    }
+    
+    function setupTabs() {
+      document.querySelectorAll('[data-tab]').forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabName = this.dataset.tab;
+          
+          // Update tab styles
+          document.querySelectorAll('[data-tab]').forEach(t => {
+            t.classList.remove('tab-active', 'text-primary');
+            t.classList.add('text-gray-400');
+          });
+          this.classList.add('tab-active', 'text-primary');
+          this.classList.remove('text-gray-400');
+          
+          // Show/hide content
+          document.getElementById('posts-content').classList.add('hidden');
+          document.getElementById('travels-content').classList.add('hidden');
+          document.getElementById('about-content').classList.add('hidden');
+          
+          if (tabName === 'posts') {
+            document.getElementById('posts-content').classList.remove('hidden');
+          } else if (tabName === 'travels') {
+            document.getElementById('travels-content').classList.remove('hidden');
+          } else {
+            document.getElementById('about-content').classList.remove('hidden');
+          }
+        });
+      });
+    }
+    
+    function toggleFollow() {
+      const btn = document.getElementById('follow-btn');
+      const isFollowing = btn.textContent.trim() === '已关注';
+      
+      if (isFollowing) {
+        btn.textContent = '+ 关注';
+        btn.classList.remove('bg-gray-100', 'text-gray-700');
+        btn.classList.add('gradient-bg', 'text-white');
+      } else {
+        btn.textContent = '已关注';
+        btn.classList.add('bg-gray-100', 'text-gray-700');
+        btn.classList.remove('gradient-bg', 'text-white');
+      }
+    }
+    
+    function sendMessage() {
+      window.location.href = `messages.html?user=${currentUser.id}`;
+    }
+    
+    function showFollowers() {
+      const modal = document.getElementById('follow-modal');
+      const title = document.getElementById('follow-modal-title');
+      const list = document.getElementById('follow-list');
+      
+      title.textContent = '粉丝';
+      list.innerHTML = socialData.users.slice(0, 5).map(user => `
+        <div class="flex items-center gap-3 py-3">
+          <a href="profile.html?user=${user.id}">
+            <img src="${user.avatar}" alt="${user.username}" class="w-12 h-12 rounded-full object-cover">
+          </a>
+          <div class="flex-1 min-w-0">
+            <a href="profile.html?user=${user.id}" class="font-medium text-gray-800 hover:text-primary block truncate">${user.username}</a>
+            <p class="text-sm text-gray-500 truncate">${user.bio.split('|')[0]}</p>
+          </div>
+          <button class="px-3 py-1.5 ${user.isFollowing ? 'bg-gray-100 text-gray-600' : 'gradient-bg text-white'} text-sm rounded-full">
+            ${user.isFollowing ? '已关注' : '+ 关注'}
+          </button>
+        </div>
+      `).join('');
+      
+      modal.classList.remove('hidden');
+    }
+    
+    function showFollowing() {
+      const modal = document.getElementById('follow-modal');
+      const title = document.getElementById('follow-modal-title');
+      const list = document.getElementById('follow-list');
+      
+      title.textContent = '关注';
+      list.innerHTML = socialData.users.filter(u => u.isFollowing).slice(0, 5).map(user => `
+        <div class="flex items-center gap-3 py-3">
+          <a href="profile.html?user=${user.id}">
+            <img src="${user.avatar}" alt="${user.username}" class="w-12 h-12 rounded-full object-cover">
+          </a>
+          <div class="flex-1 min-w-0">
+            <a href="profile.html?user=${user.id}" class="font-medium text-gray-800 hover:text-primary block truncate">${user.username}</a>
+            <p class="text-sm text-gray-500 truncate">${user.bio.split('|')[0]}</p>
+          </div>
+          <button class="px-3 py-1.5 bg-gray-100 text-gray-600 text-sm rounded-full hover:bg-gray-200">
+            已关注
+          </button>
+        </div>
+      `).join('');
+      
+      modal.classList.remove('hidden');
+    }
+    
+    function closeFollowModal() {
+      document.getElementById('follow-modal').classList.add('hidden');
+    }
+    
+    document.getElementById('follow-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeFollowModal();
+    });
+    
+    function openReportModal() {
+      document.getElementById('report-modal').classList.remove('hidden');
+      document.getElementById('report-modal').classList.add('flex');
+    }
+    
+    function closeReportModal() {
+      document.getElementById('report-modal').classList.add('hidden');
+      document.getElementById('report-modal').classList.remove('flex');
+    }
+    
+    document.getElementById('report-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeReportModal();
+    });
+    
+    function submitReport() {
+      alert('举报已提交，我们会尽快处理！');
+      closeReportModal();
+    }
+    
+    function formatNumber(num) {
+      if (num >= 10000) return (num / 10000).toFixed(1) + 'w';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+      return num.toString();
+    }
+    
+    // Initialize
+    loadData();
+  </script>
+  
+  <style>
+    .slide-up {
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+  </style>
+</body>
+</html>

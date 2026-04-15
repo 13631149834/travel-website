@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>在线客服 - 游导旅游</title>
+  <meta name="description" content="游导旅游在线客服，实时对话解决您的旅游问题，即时响应，专业服务。">
+  <meta name="keywords" content="在线客服,实时聊天,旅游咨询,游导旅游">
+  
+  <link rel="preload" href="../css/style.css" as="style">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/customer-service.css">
+  <link rel="stylesheet" href="../css/enhanced.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+  
+  <style>
+    :root {
+      --primary: #ff6b35;
+      --primary-dark: #e55a2b;
+      --secondary: #1e3a5f;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--gray-800);
+      line-height: 1.6;
+      background: var(--gray-100);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* 导航栏 */
+    .chat-nav {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8f6b 100%);
+      color: #fff;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    
+    .chat-nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .chat-nav-left .logo {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      text-decoration: none;
+    }
+    
+    .chat-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      font-size: 0.85rem;
+    }
+    
+    .chat-status .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    
+    .chat-nav-right a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .chat-nav-right a:hover { opacity: 1; text-decoration: underline; }
+    
+    /* 主内容区 */
+    .chat-container {
+      flex: 1;
+      display: flex;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 20px;
+      gap: 20px;
+      overflow: hidden;
+    }
+    
+    /* 左侧快捷问题 */
+    .chat-sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .sidebar-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    
+    .sidebar-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .quick-questions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .quick-question {
+      padding: 12px 14px;
+      background: var(--gray-50);
+      border: 1px solid var(--gray-100);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .quick-question:hover {
+      background: #fff;
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    
+    .quick-question span:first-child {
+      font-size: 1rem;
+    }
+    
+    /* 服务信息 */
+    .service-info {
+      text-align: center;
+    }
+    
+    .service-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8f6b 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      font-size: 2rem;
+    }
+    
+    .service-name {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+    
+    .service-desc {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      margin-bottom: 16px;
+    }
+    
+    .service-hours {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      padding: 12px;
+      background: var(--gray-50);
+      border-radius: 8px;
+    }
+    
+    .service-hours div {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+    }
+    
+    /* 聊天区域 */
+    .chat-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      overflow: hidden;
+    }
+    
+    .chat-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .chat-header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .chat-header-info .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8f6b 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.2rem;
+    }
+    
+    .chat-header-info .name {
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+    
+    .chat-header-info .status {
+      font-size: 0.8rem;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .chat-header-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .chat-action-btn {
+      padding: 8px 12px;
+      border: none;
+      background: var(--gray-100);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .chat-action-btn:hover {
+      background: var(--gray-200);
+    }
+    
+    /* 消息区域 */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .message {
+      display: flex;
+      gap: 12px;
+      max-width: 85%;
+    }
+    
+    .message.service {
+      align-self: flex-start;
+    }
+    
+    .message.user {
+      align-self: flex-end;
+      flex-direction: row-reverse;
+    }
+    
+    .message-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    
+    .message.service .message-avatar {
+      background: linear-gradient(135deg, var(--primary) 0%, #ff8f6b 100%);
+      color: #fff;
+    }
+    
+    .message.user .message-avatar {
+      background: var(--secondary);
+      color: #fff;
+    }
+    
+    .message-content {
+      flex: 1;
+    }
+    
+    .message-bubble {
+      padding: 14px 18px;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    
+    .message.service .message-bubble {
+      background: var(--gray-100);
+      color: var(--gray-800);
+      border-bottom-left-radius: 4px;
+    }
+    
+    .message.user .message-bubble {
+      background: var(--primary);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+    
+    .message-time {
+      font-size: 0.75rem;
+      color: var(--gray-400);
+      margin-top: 6px;
+    }
+    
+    .message.user .message-time {
+      text-align: right;
+    }
+    
+    /* 欢迎消息 */
+    .welcome-message {
+      text-align: center;
+      padding: 40px 20px;
+      background: var(--gray-50);
+      border-radius: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .welcome-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+    
+    .welcome-message h3 {
+      font-size: 1.1rem;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    
+    .welcome-message p {
+      color: var(--gray-500);
+      font-size: 0.9rem;
+    }
+    
+    /* 快捷回复按钮 */
+    .quick-replies {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .quick-reply {
+      padding: 8px 16px;
+      background: #fff;
+      border: 1px solid var(--primary);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--primary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .quick-reply:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    
+    /* 提示消息 */
+    .tip-message {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      background: #fef3c7;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      color: #92400e;
+      margin: 8px 0;
+    }
+    
+    /* 聊天输入 */
+    .chat-input-area {
+      padding: 16px 20px;
+      border-top: 1px solid var(--gray-100);
+      background: #fff;
+    }
+    
+    .chat-input-wrapper {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+    
+    .chat-input-tools {
+      display: flex;
+      gap: 4px;
+    }
+    
+    .input-tool-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: var(--gray-100);
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .input-tool-btn:hover {
+      background: var(--gray-200);
+    }
+    
+    .chat-input-container {
+      flex: 1;
+      position: relative;
+    }
+    
+    #chatInput {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: 12px;
+      font-size: 1rem;
+      resize: none;
+      max-height: 120px;
+      font-family: inherit;
+      transition: all 0.3s;
+    }
+    
+    #chatInput:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .chat-send-btn {
+      padding: 12px 24px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .chat-send-btn:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+    
+    .chat-send-btn:disabled {
+      background: var(--gray-300);
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    /* 转人工按钮 */
+    .transfer-btn {
+      margin-top: 12px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, var(--secondary) 0%, #2d5a87 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .transfer-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(30,58,95,0.3);
+    }
+    
+    /* 离线状态 */
+    .offline-overlay {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(255,255,255,0.95);
+      z-index: 100;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px;
+    }
+    
+    .offline-overlay.show { display: flex; }
+    
+    .offline-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+    
+    .offline-overlay h3 {
+      font-size: 1.3rem;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    
+    .offline-overlay p {
+      color: var(--gray-500);
+      margin-bottom: 24px;
+    }
+    
+    .offline-actions {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .offline-btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+    
+    .offline-btn.primary {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+    }
+    
+    .offline-btn.primary:hover {
+      background: var(--primary-dark);
+    }
+    
+    .offline-btn.secondary {
+      background: #fff;
+      color: var(--gray-700);
+      border: 2px solid var(--gray-200);
+    }
+    
+    .offline-btn.secondary:hover {
+      border-color: var(--gray-300);
+    }
+    
+    /* 响应式 */
+    @media (max-width: 900px) {
+      .chat-sidebar { display: none; }
+      .chat-container { padding: 10px; }
+    }
+    
+    @media (max-width: 600px) {
+      .chat-nav { padding: 12px 16px; }
+      .chat-status { display: none; }
+      .message { max-width: 95%; }
+      .chat-send-btn span { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="chat-nav">
+    <div class="chat-nav-left">
+      <a href="../index.html" class="logo">🌍 游导旅游</a>
+      <div class="chat-status" id="serviceStatus">
+        <span class="dot"></span>
+        <span>在线服务中</span>
+      </div>
+    </div>
+    <div class="chat-nav-right">
+      <a href="index.html">← 返回客服中心</a>
+    </div>
+  </nav>
+  
+  <!-- 主内容 -->
+  <div class="chat-container">
+    <!-- 左侧边栏 -->
+    <aside class="chat-sidebar">
+      <!-- 服务信息 -->
+      <div class="sidebar-card service-info">
+        <div class="service-avatar">🛎️</div>
+        <div class="service-name">游导旅游客服</div>
+        <div class="service-desc">为您提供专业服务</div>
+        <div class="service-hours">
+          <div><span>周一至周五</span><span>09:00-18:00</span></div>
+          <div><span>周末</span><span>10:00-17:00</span></div>
+        </div>
+      </div>
+      
+      <!-- 常见问题 -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">💬 常见问题</div>
+        <div class="quick-questions">
+          <button class="quick-question" onclick="sendQuickQuestion('如何预约导游？')">
+            <span>📅</span> 如何预约导游
+          </button>
+          <button class="quick-question" onclick="sendQuickQuestion('订单退款规则是什么？')">
+            <span>💰</span> 订单退款规则
+          </button>
+          <button class="quick-question" onclick="sendQuickQuestion('签证如何办理？')">
+            <span>🛂</span> 签证办理流程
+          </button>
+          <button class="quick-question" onclick="sendQuickQuestion('可以开具发票吗？')">
+            <span>📄</span> 如何开具发票
+          </button>
+        </div>
+      </div>
+      
+      <!-- 其他联系方式 -->
+      <div class="sidebar-card">
+        <div class="sidebar-title">📞 其他联系方式</div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <a href="tel:13631149834" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--gray-50); border-radius: 10px; text-decoration: none; color: var(--gray-700);">
+            <span>📞</span>
+            <div>
+              <div style="font-weight: 600; font-size: 0.95rem;">电话客服</div>
+              <div style="font-size: 0.8rem; color: var(--gray-500);">13631149834</div>
+            </div>
+          </a>
+          <a href="mailto:2173381363@qq.com" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--gray-50); border-radius: 10px; text-decoration: none; color: var(--gray-700);">
+            <span>✉️</span>
+            <div>
+              <div style="font-weight: 600; font-size: 0.95rem;">邮件客服</div>
+              <div style="font-size: 0.8rem; color: var(--gray-500);">2173381363@qq.com</div>
+            </div>
+          </a>
+          <a href="#" onclick="showWechat()" style="display: flex; align-items: center; gap: 10px; padding: 12px; background: var(--gray-50); border-radius: 10px; text-decoration: none; color: var(--gray-700);">
+            <span>💚</span>
+            <div>
+              <div style="font-weight: 600; font-size: 0.95rem;">微信客服</div>
+              <div style="font-size: 0.8rem; color: var(--gray-500);">ximao101</div>
+            </div>
+          </a>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- 聊天主区域 -->
+    <main class="chat-main">
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <div class="avatar">🛎️</div>
+          <div>
+            <div class="name">游导旅游客服</div>
+            <div class="status"><span style="width:6px;height:6px;background:#10b981;border-radius:50%;"></span> 在线</div>
+          </div>
+        </div>
+        <div class="chat-header-actions">
+          <button class="chat-action-btn" onclick="clearChat()">🗑️ 清空</button>
+          <button class="chat-action-btn" onclick="exportChat()">📥 导出</button>
+        </div>
+      </div>
+      
+      <!-- 消息区域 -->
+      <div class="chat-messages" id="chatMessages">
+        <div class="welcome-message">
+          <div class="welcome-icon">👋</div>
+          <h3>欢迎来到游导旅游客服中心</h3>
+          <p>有什么可以帮到您的吗？请描述您的问题，我会尽快为您解答。</p>
+        </div>
+        
+        <!-- 提示消息 -->
+        <div class="tip-message">
+          <span>💡</span>
+          <span>您也可以尝试点击左侧的常见问题快速获取答案</span>
+        </div>
+      </div>
+      
+      <!-- 输入区域 -->
+      <div class="chat-input-area">
+        <div class="chat-input-wrapper">
+          <div class="chat-input-tools">
+            <button class="input-tool-btn" onclick="toggleEmoji()" title="表情">😊</button>
+            <button class="input-tool-btn" onclick="document.getElementById('imageInput').click()" title="图片">🖼️</button>
+            <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="handleImage(event)">
+          </div>
+          <div class="chat-input-container">
+            <textarea id="chatInput" placeholder="输入您的问题..." rows="1" onkeydown="handleKeyDown(event)" oninput="autoResize(this)"></textarea>
+          </div>
+          <button class="chat-send-btn" id="sendBtn" onclick="sendMessage()">
+            <span>发送</span>
+            <span>➤</span>
+          </button>
+        </div>
+        <button class="transfer-btn" onclick="transferToHuman()">
+          <span>👤</span>
+          <span>转人工客服</span>
+        </button>
+      </div>
+      
+      <!-- 离线状态遮罩 -->
+      <div class="offline-overlay" id="offlineOverlay">
+        <div class="offline-icon">🌙</div>
+        <h3>当前非服务时间</h3>
+        <p>客服人员将在工作时间内第一时间回复您</p>
+        <div class="offline-actions">
+          <a href="ticket.html" class="offline-btn primary">📝 提交工单</a>
+          <button onclick="hideOffline()" class="offline-btn secondary">继续咨询</button>
+        </div>
+      </div>
+    </main>
+  </div>
+  
+  <script>
+    let isOnline = true;
+    let chatHistory = [];
+    
+    // 检查服务状态
+    function checkServiceStatus() {
+      const now = new Date();
+      const day = now.getDay();
+      const hour = now.getHours();
+      
+      let online = false;
+      if (day === 0 || day === 6) {
+        online = hour >= 10 && hour < 17;
+      } else {
+        online = hour >= 9 && hour < 18;
+      }
+      
+      isOnline = online;
+      
+      if (!isOnline) {
+        document.getElementById('serviceStatus').innerHTML = '<span style="width:8px;height:8px;background:#9ca3af;border-radius:50%;"></span><span>服务已结束</span>';
+        document.getElementById('offlineOverlay').classList.add('show');
+      }
+    }
+    
+    // 发送消息
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const message = input.value.trim();
+      
+      if (!message) return;
+      
+      addUserMessage(message);
+      input.value = '';
+      autoResize(input);
+      
+      // 模拟客服回复
+      setTimeout(() => {
+        const reply = getAutoReply(message);
+        addServiceMessage(reply);
+      }, 800);
+    }
+    
+    // 添加用户消息
+    function addUserMessage(text) {
+      const container = document.getElementById('chatMessages');
+      const time = formatTime(new Date());
+      
+      const msgHtml = `
+        <div class="message user">
+          <div class="message-avatar">👤</div>
+          <div class="message-content">
+            <div class="message-bubble">${escapeHtml(text)}</div>
+            <div class="message-time">${time}</div>
+          </div>
+        </div>
+      `;
+      
+      container.insertAdjacentHTML('beforeend', msgHtml);
+      scrollToBottom();
+      chatHistory.push({ type: 'user', content: text, time });
+    }
+    
+    // 添加客服消息
+    function addServiceMessage(text, quickReplies = []) {
+      const container = document.getElementById('chatMessages');
+      const time = formatTime(new Date());
+      
+      let repliesHtml = '';
+      if (quickReplies.length > 0) {
+        repliesHtml = `<div class="quick-replies">${quickReplies.map(r => `<button class="quick-reply" onclick="sendQuickQuestion('${r}')">${r}</button>`).join('')}</div>`;
+      }
+      
+      const msgHtml = `
+        <div class="message service">
+          <div class="message-avatar">🛎️</div>
+          <div class="message-content">
+            <div class="message-bubble">${text}</div>
+            ${repliesHtml}
+            <div class="message-time">${time}</div>
+          </div>
+        </div>
+      `;
+      
+      container.insertAdjacentHTML('beforeend', msgHtml);
+      scrollToBottom();
+      chatHistory.push({ type: 'service', content: text, time });
+    }
+    
+    // 快捷问题
+    function sendQuickQuestion(question) {
+      document.getElementById('chatInput').value = question;
+      sendMessage();
+    }
+    
+    // 自动回复
+    function getAutoReply(message) {
+      const lower = message.toLowerCase();
+      
+      if (lower.includes('预约') || lower.includes('预订')) {
+        return '关于预约导游服务，您可以：\n\n1. 在导游详情页选择服务日期和人数\n2. 点击"立即预订"并完成支付\n3. 预订成功后，导游会与您联系确认行程\n\n<strong>建议提前3-7天预订，热门导游需要更早预约哦！</strong>';
+      }
+      
+      if (lower.includes('退款')) {
+        return '关于退款规则：\n\n• 距服务开始<strong>48小时以上</strong>：全额退款\n• 24-48小时：退款70%\n• 24小时内：退款50%\n• 服务开始后：不支持退款\n\n<em>如因不可抗力（天气等原因）可全额退款</em>';
+      }
+      
+      if (lower.includes('签证')) {
+        return '签证办理流程：\n\n1. 准备基本材料（护照、照片、身份证等）\n2. 提交材料至平台\n3. 专业团队审核并代为申请\n4. 领取签证\n\n<strong>各国办理时间不同，一般5-20个工作日</strong>。需要加急请提前说明！';
+      }
+      
+      if (lower.includes('发票')) {
+        return '关于发票：\n\n• 支持<strong>电子普通发票</strong>和<strong>增值税专用发票</strong>\n• 在"我的订单"中申请开票\n• 发票将在3个工作日内发送至您的邮箱\n\n如有报销需求，请提前告知我们！';
+      }
+      
+      if (lower.includes('支付') || lower.includes('钱')) {
+        return '我们支持以下支付方式：\n\n• 微信支付\n• 支付宝\n• 银行卡（银联）\n• 信用卡\n\n<strong>支付遇到问题？</strong>\n请检查网络和账户余额，如仍无法支付可尝试更换支付方式。';
+      }
+      
+      if (lower.includes('联系') || lower.includes('电话')) {
+        return '联系我们：\n\n📞 电话：13631149834\n✉️ 邮箱：2173381363@qq.com\n💚 微信：ximao101\n\n<strong>工作时间：</strong>\n周一至周五 09:00-18:00\n周末 10:00-17:00';
+      }
+      
+      // 默认回复
+      return {
+        text: '感谢您的咨询！您的问题我已经收到。\n\n根据您描述的情况，建议您：\n1. 访问我们的<strong>常见问题页面</strong>查看详细解答\n2. 或者通过以下方式联系我们获得更详细的帮助',
+        replies: ['查看常见问题', '提交工单', '转人工客服']
+      };
+    }
+    
+    // 格式化时间
+    function formatTime(date) {
+      return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+    }
+    
+    // HTML转义
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+    
+    // 滚动到底部
+    function scrollToBottom() {
+      const container = document.getElementById('chatMessages');
+      container.scrollTop = container.scrollHeight;
+    }
+    
+    // 自动高度
+    function autoResize(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+    
+    // 回车发送
+    function handleKeyDown(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    }
+    
+    // 清空聊天
+    function clearChat() {
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = `
+        <div class="welcome-message">
+          <div class="welcome-icon">👋</div>
+          <h3>欢迎来到游导旅游客服中心</h3>
+          <p>聊天记录已清空，有什么可以帮到您的吗？</p>
+        </div>
+      `;
+      chatHistory = [];
+    }
+    
+    // 导出聊天
+    function exportChat() {
+      if (chatHistory.length === 0) {
+        alert('暂无聊天记录可导出');
+        return;
+      }
+      
+      let content = '游导旅游客服聊天记录\n';
+      content += `导出时间：${new Date().toLocaleString()}\n\n`;
+      
+      chatHistory.forEach(msg => {
+        const type = msg.type === 'user' ? '我' : '客服';
+        content += `[${msg.time}] ${type}：${msg.content}\n\n`;
+      });
+      
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `chat-${Date.now()}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    
+    // 转人工
+    function transferToHuman() {
+      addServiceMessage('正在为您转接人工客服，请稍候...\n\n🔄 预计等待时间：3-5分钟\n\n感谢您的耐心等待！');
+    }
+    
+    // 隐藏离线提示
+    function hideOffline() {
+      document.getElementById('offlineOverlay').classList.remove('show');
+    }
+    
+    // 显示微信
+    function showWechat() {
+      alert('微信号：ximao101\n\n长按复制微信号，搜索并添加好友');
+    }
+    
+    // 表情（简化版）
+    function toggleEmoji() {
+      const emojis = ['😊', '😃', '🙏', '👍', '❤️', '🎉', '🌹', '💯'];
+      const random = emojis[Math.floor(Math.random() * emojis.length)];
+      const input = document.getElementById('chatInput');
+      input.value += random;
+      input.focus();
+    }
+    
+    // 处理图片
+    function handleImage(e) {
+      const file = e.target.files[0];
+      if (file) {
+        addUserMessage(`[图片] ${file.name}`);
+        setTimeout(() => {
+          addServiceMessage('图片已收到，请问您想咨询什么？');
+        }, 500);
+      }
+    }
+    
+    // 初始化
+    checkServiceStatus();
+  </script>
+</body>
+</html>

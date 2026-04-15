@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>个性化推荐 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 16px 32px rgba(0,0,0,0.1); }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-active { border-bottom: 3px solid #0ea5e9; color: #0ea5e9; }
+    .style-card { transition: all 0.3s ease; }
+    .style-card:hover { transform: scale(1.05); }
+    .style-card.selected { border-color: #0ea5e9; background: linear-gradient(135deg, rgba(14,165,233,0.1), rgba(6,182,212,0.1)); }
+    .progress-ring { transform: rotate(-90deg); }
+    .progress-ring-circle { transition: stroke-dashoffset 1s ease-in-out; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-bg text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="../destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="index.html" class="font-semibold border-b-2 border-white pb-1">个性化推荐</a>
+          <a href="settings.html" class="hover:opacity-80 transition">推荐设置</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="../destinations.html" class="block py-2">目的地</a>
+        <a href="index.html" class="block py-2 font-semibold">个性化推荐</a>
+        <a href="settings.html" class="block py-2">推荐设置</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="gradient-bg text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 fade-in">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-5xl">🎨</span>
+        <div>
+          <h1 class="text-3xl font-bold">个性化推荐</h1>
+          <p class="opacity-90">根据您的偏好、旅行风格和季节因素，为您量身定制</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Tabs -->
+  <div class="bg-white shadow-sm sticky top-[72px] z-40">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex overflow-x-auto">
+        <button onclick="switchTab('preference')" class="tab-btn px-6 py-4 font-medium text-gray-600 hover:text-primary whitespace-nowrap border-b-3 border-transparent tab-active">
+          🎯 根据偏好
+        </button>
+        <button onclick="switchTab('similar')" class="tab-btn px-6 py-4 font-medium text-gray-600 hover:text-primary whitespace-nowrap border-b-3 border-transparent">
+          👥 相似用户
+        </button>
+        <button onclick="switchTab('season')" class="tab-btn px-6 py-4 font-medium text-gray-600 hover:text-primary whitespace-nowrap border-b-3 border-transparent">
+          🌤️ 季节推荐
+        </button>
+        <button onclick="switchTab('budget')" class="tab-btn px-6 py-4 font-medium text-gray-600 hover:text-primary whitespace-nowrap border-b-3 border-transparent">
+          💰 预算推荐
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-10">
+    <!-- Preference Based -->
+    <section id="preference-tab" class="tab-content">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+          <span>🎯</span> 根据您的旅行偏好推荐
+        </h2>
+        <p class="text-gray-600">基于您设置的旅行风格和兴趣标签进行匹配</p>
+      </div>
+
+      <!-- User Preference Summary -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <h3 class="font-semibold text-gray-800 mb-4">您的当前偏好</h3>
+        <div class="flex flex-wrap gap-3">
+          <div class="px-4 py-2 bg-blue-50 rounded-full flex items-center gap-2">
+            <span>🏛️</span>
+            <span class="text-blue-700 font-medium">文化探索</span>
+          </div>
+          <div class="px-4 py-2 bg-orange-50 rounded-full flex items-center gap-2">
+            <span>🍜</span>
+            <span class="text-orange-700 font-medium">美食之旅</span>
+          </div>
+          <div class="px-4 py-2 bg-green-50 rounded-full flex items-center gap-2">
+            <span>🏔️</span>
+            <span class="text-green-700 font-medium">自然风光</span>
+          </div>
+          <div class="px-4 py-2 bg-purple-50 rounded-full flex items-center gap-2">
+            <span>📷</span>
+            <span class="text-purple-700 font-medium">摄影</span>
+          </div>
+          <a href="settings.html" class="px-4 py-2 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition">
+            ✏️ 编辑偏好
+          </a>
+        </div>
+      </div>
+
+      <!-- Preference Match Cards -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div class="bg-gradient-to-br from-amber-100 to-orange-200 h-44 flex items-center justify-center relative">
+            <span class="text-7xl">🏛️</span>
+            <div class="absolute top-3 right-3 bg-white/90 px-3 py-1 rounded-full text-sm font-medium text-primary">
+              96% 匹配
+            </div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">西安</h3>
+                <p class="text-gray-500 text-sm">千年古都 · 历史名城</p>
+              </div>
+              <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs">文化探索</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">完美契合您的文化探索偏好，13朝古都的历史底蕴</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">📅 建议3-4天</span>
+              <button class="text-primary font-medium text-sm hover:underline">查看详情 →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div class="bg-gradient-to-br from-red-100 to-orange-200 h-44 flex items-center justify-center relative">
+            <span class="text-7xl">🐼</span>
+            <div class="absolute top-3 right-3 bg-white/90 px-3 py-1 rounded-full text-sm font-medium text-primary">
+              94% 匹配
+            </div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">成都</h3>
+                <p class="text-gray-500 text-sm">天府之国 · 美食之都</p>
+              </div>
+              <span class="px-2 py-1 bg-orange-50 text-orange-600 rounded text-xs">美食之旅</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">匹配您的美食探索偏好，川菜与火锅的天堂</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">📅 建议3-4天</span>
+              <button class="text-primary font-medium text-sm hover:underline">查看详情 →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div class="bg-gradient-to-br from-teal-100 to-green-200 h-44 flex items-center justify-center relative">
+            <span class="text-7xl">🏯</span>
+            <div class="absolute top-3 right-3 bg-white/90 px-3 py-1 rounded-full text-sm font-medium text-primary">
+              91% 匹配
+            </div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">苏州</h3>
+                <p class="text-gray-500 text-sm">园林城市 · 江南水乡</p>
+              </div>
+              <span class="px-2 py-1 bg-purple-50 text-purple-600 rounded text-xs">摄影采风</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">园林建筑是摄影爱好者的绝佳取景地</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">📅 建议2-3天</span>
+              <button class="text-primary font-medium text-sm hover:underline">查看详情 →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div class="bg-gradient-to-br from-emerald-100 to-teal-200 h-44 flex items-center justify-center relative">
+            <span class="text-7xl">🌊</span>
+            <div class="absolute top-3 right-3 bg-white/90 px-3 py-1 rounded-full text-sm font-medium text-primary">
+              88% 匹配
+            </div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">大理</h3>
+                <p class="text-gray-500 text-sm">风花雪月 · 文艺古城</p>
+              </div>
+              <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs">城市漫步</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">洱海边的慢生活，文艺青年的向往之地</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">📅 建议3-5天</span>
+              <button class="text-primary font-medium text-sm hover:underline">查看详情 →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div class="bg-gradient-to-br from-orange-100 to-yellow-200 h-44 flex items-center justify-center relative">
+            <span class="text-7xl">⛰️</span>
+            <div class="absolute top-3 right-3 bg-white/90 px-3 py-1 rounded-full text-sm font-medium text-primary">
+              85% 匹配
+            </div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">黄山</h3>
+                <p class="text-gray-500 text-sm">五岳归来不看山</p>
+              </div>
+              <span class="px-2 py-1 bg-purple-50 text-purple-600 rounded text-xs">摄影采风</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">日出云海、奇松怪石，摄影师的天堂</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">📅 建议2-3天</span>
+              <button class="text-primary font-medium text-sm hover:underline">查看详情 →</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card 6 -->
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div class="bg-gradient-to-br from-blue-100 to-indigo-200 h-44 flex items-center justify-center relative">
+            <span class="text-7xl">🏔️</span>
+            <div class="absolute top-3 right-3 bg-white/90 px-3 py-1 rounded-full text-sm font-medium text-primary">
+              82% 匹配
+            </div>
+          </div>
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-2">
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">张家界</h3>
+                <p class="text-gray-500 text-sm">奇峰仙境 · 世界遗产</p>
+              </div>
+              <span class="px-2 py-1 bg-green-50 text-green-600 rounded text-xs">自然风光</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">独特的石英砂岩峰林地貌，大自然的鬼斧神工</p>
+            <div class="flex items-center justify-between">
+              <span class="text-sm text-gray-500">📅 建议3-4天</span>
+              <button class="text-primary font-medium text-sm hover:underline">查看详情 →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Similar Users -->
+    <section id="similar-tab" class="tab-content hidden">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+          <span>👥</span> 与您相似的用户都在去
+        </h2>
+        <p class="text-gray-600">基于相同偏好、旅行风格的用户行为分析</p>
+      </div>
+
+      <!-- Similar Users Stats -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          <div>
+            <div class="text-3xl font-bold text-primary mb-1">12,847</div>
+            <div class="text-gray-500 text-sm">与您相似的用户</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-green-500 mb-1">89%</div>
+            <div class="text-gray-500 text-sm">推荐准确率</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-orange-500 mb-1">5,234</div>
+            <div class="text-gray-500 text-sm">本月出行人数</div>
+          </div>
+          <div>
+            <div class="text-3xl font-bold text-purple-500 mb-1">4.7</div>
+            <div class="text-gray-500 text-sm">平均评分</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Similar User Recommendations -->
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-200 to-cyan-300 rounded-full flex items-center justify-center text-3xl">
+              👩‍💼
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-semibold text-gray-800">小雅</span>
+                <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-xs">与您相似度 95%</span>
+              </div>
+              <p class="text-gray-500 text-sm">美食爱好者 · 文化探索 · 摄影达人</p>
+            </div>
+          </div>
+          <div class="border-t border-gray-100 pt-4">
+            <p class="text-gray-600 text-sm mb-3">"刚去了成都，真的太棒了！强烈推荐宽窄巷子和锦里，美食多到吃不完！"</p>
+            <div class="flex gap-3">
+              <div class="bg-gradient-to-br from-orange-200 to-red-300 rounded-lg px-3 py-2 text-center">
+                <span class="text-2xl">🐼</span>
+                <div class="text-xs text-gray-600">成都</div>
+              </div>
+              <div class="bg-gradient-to-br from-amber-200 to-orange-300 rounded-lg px-3 py-2 text-center">
+                <span class="text-2xl">🏛️</span>
+                <div class="text-xs text-gray-600">西安</div>
+              </div>
+              <div class="bg-gradient-to-br from-teal-200 to-green-300 rounded-lg px-3 py-2 text-center">
+                <span class="text-2xl">🏯</span>
+                <div class="text-xs text-gray-600">杭州</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+            <span class="text-sm text-gray-500">获得 328 次相同推荐</span>
+            <button class="text-primary text-sm font-medium hover:underline">查看她的足迹 →</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-lg p-6 card-hover">
+          <div class="flex items-start gap-4 mb-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-purple-200 to-pink-300 rounded-full flex items-center justify-center text-3xl">
+              👨‍🎨
+            </div>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-semibold text-gray-800">摄影师老王</span>
+                <span class="px-2 py-0.5 bg-blue-50 text-blue-600 rounded text-xs">与您相似度 91%</span>
+              </div>
+              <p class="text-gray-500 text-sm">摄影采风 · 自然风光 · 小众目的地</p>
+            </div>
+          </div>
+          <div class="border-t border-gray-100 pt-4">
+            <p class="text-gray-600 text-sm mb-3">"婺源的秋天太美了，油菜花和晒秋都是绝美取景地！"</p>
+            <div class="flex gap-3">
+              <div class="bg-gradient-to-br from-yellow-200 to-amber-300 rounded-lg px-3 py-2 text-center">
+                <span class="text-2xl">🏘️</span>
+                <div class="text-xs text-gray-600">婺源</div>
+              </div>
+              <div class="bg-gradient-to-br from-emerald-200 to-teal-300 rounded-lg px-3 py-2 text-center">
+                <span class="text-2xl">🏔️</span>
+                <div class="text-xs text-gray-600">张家界</div>
+              </div>
+              <div class="bg-gradient-to-br from-orange-200 to-yellow-300 rounded-lg px-3 py-2 text-center">
+                <span class="text-2xl">⛰️</span>
+                <div class="text-xs text-gray-600">黄山</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+            <span class="text-sm text-gray-500">获得 256 次相同推荐</span>
+            <button class="text-primary text-sm font-medium hover:underline">查看他的足迹 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Similar User Destinations -->
+      <div class="mt-8 bg-white rounded-2xl shadow-lg p-6">
+        <h3 class="font-semibold text-gray-800 mb-4">📍 共同推荐目的地</h3>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-200 to-cyan-300 rounded-lg flex items-center justify-center">
+              <span class="text-2xl">🏯</span>
+            </div>
+            <div>
+              <div class="font-medium text-gray-800">杭州</div>
+              <div class="text-xs text-gray-500">1,234 位相似用户去过</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+            <div class="w-12 h-12 bg-gradient-to-br from-red-200 to-orange-300 rounded-lg flex items-center justify-center">
+              <span class="text-2xl">🐼</span>
+            </div>
+            <div>
+              <div class="font-medium text-gray-800">成都</div>
+              <div class="text-xs text-gray-500">1,089 位相似用户去过</div>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+            <div class="w-12 h-12 bg-gradient-to-br from-amber-200 to-yellow-300 rounded-lg flex items-center justify-center">
+              <span class="text-2xl">🏛️</span>
+            </div>
+            <div>
+              <div class="font-medium text-gray-800">西安</div>
+              <div class="text-xs text-gray-500">987 位相似用户去过</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Season Based -->
+    <section id="season-tab" class="tab-content hidden">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+          <span>🌤️</span> 适合当前季节的推荐
+        </h2>
+        <p class="text-gray-600">现在是春季，这些目的地正当时</p>
+      </div>
+
+      <!-- Current Season -->
+      <div class="bg-gradient-to-r from-green-400 to-emerald-500 text-white rounded-2xl p-6 mb-8">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <span class="text-6xl">🌸</span>
+            <div>
+              <h3 class="text-2xl font-bold mb-1">春季推荐</h3>
+              <p class="opacity-90">春暖花开，踏青赏花的最佳时节</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-4xl font-bold">15-25°C</div>
+            <div class="opacity-90">平均气温</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Season Cards -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-xl p-4 shadow-md card-hover border-2 border-green-200">
+          <div class="text-3xl mb-2">🌸</div>
+          <h4 class="font-semibold text-gray-800 mb-1">婺源</h4>
+          <p class="text-sm text-gray-500 mb-2">油菜花海盛开中</p>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs">当季热门</span>
+            <span class="text-xs text-gray-400">花期: 3-4月</span>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-md card-hover border-2 border-pink-200">
+          <div class="text-3xl mb-2">🌸</div>
+          <h4 class="font-semibold text-gray-800 mb-1">武汉</h4>
+          <p class="text-sm text-gray-500 mb-2">樱花烂漫时节</p>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-1 bg-pink-100 text-pink-600 rounded text-xs">限时推荐</span>
+            <span class="text-xs text-gray-400">花期: 3-4月</span>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-md card-hover border-2 border-blue-200">
+          <div class="text-3xl mb-2">🌷</div>
+          <h4 class="font-semibold text-gray-800 mb-1">杭州</h4>
+          <p class="text-sm text-gray-500 mb-2">太子湾郁金香</p>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-1 bg-blue-100 text-blue-600 rounded text-xs">花期正盛</span>
+            <span class="text-xs text-gray-400">花期: 3-5月</span>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-md card-hover border-2 border-yellow-200">
+          <div class="text-3xl mb-2">🌼</div>
+          <h4 class="font-semibold text-gray-800 mb-1">无锡</h4>
+          <p class="text-sm text-gray-500 mb-2">太湖鼋头渚樱花</p>
+          <div class="flex items-center gap-2">
+            <span class="px-2 py-1 bg-yellow-100 text-yellow-600 rounded text-xs">即将盛放</span>
+            <span class="text-xs text-gray-400">花期: 3-4月</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Other Seasons Preview -->
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <h3 class="font-semibold text-gray-800 mb-4">其他季节推荐预览</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl text-center">
+            <span class="text-4xl mb-2 block">☀️</span>
+            <h4 class="font-medium text-gray-800 mb-1">夏季</h4>
+            <p class="text-xs text-gray-500">避暑胜地和海滨</p>
+          </div>
+          <div class="p-4 bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl text-center">
+            <span class="text-4xl mb-2 block">🍂</span>
+            <h4 class="font-medium text-gray-800 mb-1">秋季</h4>
+            <p class="text-xs text-gray-500">赏秋和收获季</p>
+          </div>
+          <div class="p-4 bg-gradient-to-br from-blue-50 to-slate-50 rounded-xl text-center">
+            <span class="text-4xl mb-2 block">❄️</span>
+            <h4 class="font-medium text-gray-800 mb-1">冬季</h4>
+            <p class="text-xs text-gray-500">冰雪和温泉</p>
+          </div>
+          <div class="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl text-center">
+            <span class="text-4xl mb-2 block">🌿</span>
+            <h4 class="font-medium text-gray-800 mb-1">全年皆宜</h4>
+            <p class="text-xs text-gray-500">四季如春目的地</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Budget Based -->
+    <section id="budget-tab" class="tab-content hidden">
+      <div class="mb-8">
+        <h2 class="text-xl font-bold text-gray-800 mb-2 flex items-center gap-2">
+          <span>💰</span> 根据预算推荐
+        </h2>
+        <p class="text-gray-600">在您的预算范围内，为您精选最佳目的地</p>
+      </div>
+
+      <!-- Current Budget -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+        <div class="flex items-center justify-between mb-4">
+          <h3 class="font-semibold text-gray-800">您的预算范围</h3>
+          <a href="settings.html" class="text-primary text-sm hover:underline">修改预算</a>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="flex-1">
+            <div class="h-4 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-green-400 to-emerald-500 w-[60%] rounded-full"></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+              <span>¥500</span>
+              <span class="text-green-600 font-medium">¥1500</span>
+              <span>¥3000</span>
+            </div>
+          </div>
+          <div class="px-4 py-2 bg-green-100 text-green-700 rounded-full font-medium">
+            舒适型
+          </div>
+        </div>
+      </div>
+
+      <!-- Budget Range Cards -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div class="p-4 bg-green-50 rounded-xl border-2 border-green-300">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xl">💚</span>
+            <span class="font-semibold text-green-700">经济型</span>
+          </div>
+          <div class="text-2xl font-bold text-green-600 mb-1">¥500-1500</div>
+          <p class="text-sm text-gray-600">适合穷游和背包客</p>
+        </div>
+        <div class="p-4 bg-blue-50 rounded-xl border-2 border-blue-300">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xl">💙</span>
+            <span class="font-semibold text-blue-700">舒适型</span>
+          </div>
+          <div class="text-2xl font-bold text-blue-600 mb-1">¥1500-3000</div>
+          <p class="text-sm text-gray-600">性价比最佳选择</p>
+        </div>
+        <div class="p-4 bg-purple-50 rounded-xl border-2 border-purple-300">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xl">💜</span>
+            <span class="font-semibold text-purple-700">品质型</span>
+          </div>
+          <div class="text-2xl font-bold text-purple-600 mb-1">¥3000-6000</div>
+          <p class="text-sm text-gray-600">享受更优质体验</p>
+        </div>
+        <div class="p-4 bg-orange-50 rounded-xl border-2 border-orange-300">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-xl">🧡</span>
+            <span class="font-semibold text-orange-700">豪华型</span>
+          </div>
+          <div class="text-2xl font-bold text-orange-600 mb-1">¥6000+</div>
+          <p class="text-sm text-gray-600">尊享高端服务</p>
+        </div>
+      </div>
+
+      <!-- Budget Recommendations -->
+      <h3 class="font-semibold text-gray-800 mb-4">💎 您的预算内精选</h3>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div class="bg-gradient-to-br from-teal-100 to-green-200 h-36 flex items-center justify-center relative">
+            <span class="text-6xl">🏯</span>
+            <div class="absolute top-3 left-3 px-2 py-1 bg-green-500 text-white rounded-full text-xs font-medium">
+              ¥1000/人
+            </div>
+          </div>
+          <div class="p-4">
+            <h4 class="font-bold text-gray-800 mb-1">大理</h4>
+            <p class="text-sm text-gray-500 mb-2">文艺古城 · 洱海风光</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-green-600 font-medium">预算内最佳</span>
+              <button class="text-primary text-sm hover:underline">查看</button>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div class="bg-gradient-to-br from-orange-100 to-red-200 h-36 flex items-center justify-center relative">
+            <span class="text-6xl">🐼</span>
+            <div class="absolute top-3 left-3 px-2 py-1 bg-green-500 text-white rounded-full text-xs font-medium">
+              ¥1100/人
+            </div>
+          </div>
+          <div class="p-4">
+            <h4 class="font-bold text-gray-800 mb-1">成都</h4>
+            <p class="text-sm text-gray-500 mb-2">美食之都 · 大熊猫</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-green-600 font-medium">预算内最佳</span>
+              <button class="text-primary text-sm hover:underline">查看</button>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+          <div class="bg-gradient-to-br from-amber-100 to-yellow-200 h-36 flex items-center justify-center relative">
+            <span class="text-6xl">🏛️</span>
+            <div class="absolute top-3 left-3 px-2 py-1 bg-green-500 text-white rounded-full text-xs font-medium">
+              ¥1200/人
+            </div>
+          </div>
+          <div class="p-4">
+            <h4 class="font-bold text-gray-800 mb-1">西安</h4>
+            <p class="text-sm text-gray-500 mb-2">千年古都 · 兵马俑</p>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-green-600 font-medium">预算内最佳</span>
+              <button class="text-primary text-sm hover:underline">查看</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- More Actions -->
+    <div class="mt-12 text-center">
+      <a href="discover.html" class="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white rounded-full font-semibold hover:bg-primary/90 transition shadow-lg">
+        <span>🔮</span>
+        发现更多惊喜目的地
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-10 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-gray-400">&copy; 2024 游导旅游 youdao-travel.com</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    function switchTab(tabName) {
+      // Hide all tabs
+      document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.add('hidden');
+      });
+      // Remove active class from all buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('tab-active');
+      });
+      // Show selected tab
+      document.getElementById(tabName + '-tab').classList.remove('hidden');
+      // Add active class to clicked button
+      event.currentTarget.classList.add('tab-active');
+    }
+  </script>
+</body>
+</html>
