@@ -1,0 +1,497 @@
+<!-- 消息提醒铃铛组件 -->
+<!-- 使用方法: 将此组件添加到页面导航栏中 -->
+
+<style>
+/* ===== 消息铃铛组件样式 ===== */
+.notification-bell-wrapper {
+  position: relative;
+}
+
+.notification-bell-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-left: 8px;
+}
+
+.notification-bell-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.notification-bell-btn .bell-icon {
+  font-size: 1.4rem;
+  transition: transform 0.3s ease;
+}
+
+.notification-bell-btn:hover .bell-icon {
+  transform: scale(1.1);
+}
+
+/* 铃铛动画 */
+@keyframes bellRing {
+  0%, 100% { transform: rotate(0deg); }
+  15% { transform: rotate(15deg); }
+  30% { transform: rotate(-10deg); }
+  45% { transform: rotate(10deg); }
+  60% { transform: rotate(-5deg); }
+  75% { transform: rotate(5deg); }
+}
+
+.notification-bell-btn.has-unread .bell-icon {
+  animation: bellRing 0.6s ease-in-out;
+}
+
+/* 未读数量徽章 */
+.notification-bell-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
+  animation: badgeBounce 0.4s ease;
+}
+
+@keyframes badgeBounce {
+  0% { transform: scale(0); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.notification-bell-badge.zero {
+  display: none;
+}
+
+/* ===== 下拉消息列表 ===== */
+.notification-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: -60px;
+  width: 360px;
+  background: var(--bg-white);
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.notification-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* 下拉箭头 */
+.notification-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 70px;
+  width: 16px;
+  height: 16px;
+  background: var(--bg-white);
+  transform: rotate(45deg);
+  box-shadow: -2px -2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* 下拉头部 */
+.notification-dropdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: linear-gradient(135deg, #fff7ed 0%, #fff 100%);
+}
+
+.dropdown-title {
+  font-weight: 600;
+  color: var(--text-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdown-title-icon {
+  font-size: 1.1rem;
+}
+
+.dropdown-count {
+  padding: 2px 8px;
+  background: var(--primary);
+  color: white;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.dropdown-view-all {
+  font-size: 0.85rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.dropdown-view-all:hover {
+  color: var(--primary-dark);
+}
+
+/* 消息列表 */
+.notification-dropdown-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.notification-dropdown-item {
+  display: flex;
+  gap: 12px;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.notification-dropdown-item:last-child {
+  border-bottom: none;
+}
+
+.notification-dropdown-item:hover {
+  background: var(--bg-light);
+}
+
+.notification-dropdown-item.unread {
+  background: #fff7ed;
+}
+
+.notification-dropdown-item.unread:hover {
+  background: #ffedd5;
+}
+
+.dropdown-item-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.dropdown-item-icon.system { background: #f1f5f9; }
+.dropdown-item-icon.activity { background: #fef3c7; }
+.dropdown-item-icon.interaction { background: #ede9fe; }
+.dropdown-item-icon.order { background: #d1fae5; }
+
+.dropdown-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.dropdown-item-title {
+  font-weight: 500;
+  color: var(--text-dark);
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-item-time {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.dropdown-item-unread {
+  width: 8px;
+  height: 8px;
+  background: var(--primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 6px;
+}
+
+/* 空状态 */
+.notification-dropdown-empty {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.dropdown-empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.dropdown-empty-text {
+  color: var(--text-gray);
+  font-size: 0.9rem;
+}
+
+/* 下拉底部 */
+.notification-dropdown-footer {
+  padding: 12px 20px;
+  background: var(--bg-light);
+  text-align: center;
+  border-top: 1px solid var(--border);
+}
+
+.dropdown-footer-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.dropdown-footer-btn:hover {
+  color: var(--primary-dark);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .notification-dropdown {
+    position: fixed;
+    top: 60px;
+    right: 10px;
+    left: 10px;
+    width: auto;
+  }
+
+  .notification-dropdown::before {
+    right: 20px;
+  }
+}
+</style>
+
+<div class="notification-bell-wrapper">
+  <button class="notification-bell-btn" onclick="toggleNotificationDropdown()" aria-label="消息通知">
+    <span class="bell-icon">🔔</span>
+    <span class="notification-bell-badge zero" id="bellBadge">0</span>
+  </button>
+  
+  <!-- 下拉消息列表 -->
+  <div class="notification-dropdown" id="notificationDropdown">
+    <div class="notification-dropdown-header">
+      <div class="dropdown-title">
+        <span class="dropdown-title-icon">📬</span>
+        <span>最新消息</span>
+        <span class="dropdown-count" id="dropdownCount">0</span>
+      </div>
+      <a href="messages/index.html" class="dropdown-view-all">查看全部</a>
+    </div>
+    
+    <div class="notification-dropdown-list" id="dropdownList">
+      <!-- 动态加载消息 -->
+    </div>
+    
+    <div class="notification-dropdown-footer">
+      <a href="messages/settings.html" class="dropdown-footer-btn">
+        <span>⚙️</span>
+        <span>通知设置</span>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+// 消息数据（从localStorage或消息API获取）
+function getNotificationMessages() {
+  // 尝试从localStorage获取
+  const stored = localStorage.getItem('userNotifications');
+  if (stored) {
+    return JSON.parse(stored);
+  }
+  
+  // 默认返回未读消息示例
+  return [
+    {
+      id: 'msg-001',
+      type: 'system',
+      title: '系统维护通知',
+      time: '10:30',
+      isUnread: true
+    },
+    {
+      id: 'msg-002',
+      type: 'activity',
+      title: '五一特惠活动开始啦！',
+      time: '09:00',
+      isUnread: true
+    },
+    {
+      id: 'msg-003',
+      type: 'order',
+      title: '订单支付成功',
+      time: '14:22',
+      isUnread: true
+    },
+    {
+      id: 'msg-004',
+      type: 'interaction',
+      title: '收到新评论',
+      time: '11:45',
+      isUnread: true
+    }
+  ];
+}
+
+// 获取未读数量
+function getUnreadCount() {
+  const messages = getNotificationMessages();
+  return messages.filter(m => m.isUnread).length;
+}
+
+// 更新徽章显示
+function updateBellBadge() {
+  const count = getUnreadCount();
+  const badge = document.getElementById('bellBadge');
+  if (badge) {
+    badge.textContent = count > 99 ? '99+' : count;
+    badge.classList.toggle('zero', count === 0);
+    
+    // 添加动画类
+    const btn = document.querySelector('.notification-bell-btn');
+    if (btn) {
+      btn.classList.toggle('has-unread', count > 0);
+    }
+  }
+}
+
+// 更新下拉列表
+function updateDropdownList() {
+  const messages = getNotificationMessages();
+  const listEl = document.getElementById('dropdownList');
+  const countEl = document.getElementById('dropdownCount');
+  
+  if (!listEl) return;
+  
+  // 更新数量
+  const unreadCount = messages.filter(m => m.isUnread).length;
+  if (countEl) {
+    countEl.textContent = unreadCount;
+  }
+  
+  // 渲染列表
+  if (messages.length === 0) {
+    listEl.innerHTML = `
+      <div class="notification-dropdown-empty">
+        <div class="dropdown-empty-icon">📭</div>
+        <div class="dropdown-empty-text">暂无新消息</div>
+      </div>
+    `;
+    return;
+  }
+  
+  const typeIcons = {
+    system: '⚙️',
+    activity: '🎉',
+    interaction: '💬',
+    order: '📦'
+  };
+  
+  listEl.innerHTML = messages.slice(0, 5).map(msg => `
+    <div class="notification-dropdown-item ${msg.isUnread ? 'unread' : ''}" 
+         onclick="goToMessage('${msg.id}')">
+      <div class="dropdown-item-icon ${msg.type}">${typeIcons[msg.type]}</div>
+      <div class="dropdown-item-content">
+        <div class="dropdown-item-title">${msg.title}</div>
+        <div class="dropdown-item-time">${msg.time}</div>
+      </div>
+      ${msg.isUnread ? '<div class="dropdown-item-unread"></div>' : ''}
+    </div>
+  `).join('');
+}
+
+// 切换下拉菜单
+function toggleNotificationDropdown() {
+  const dropdown = document.getElementById('notificationDropdown');
+  if (dropdown) {
+    dropdown.classList.toggle('show');
+    if (dropdown.classList.contains('show')) {
+      updateDropdownList();
+    }
+  }
+}
+
+// 跳转到消息详情
+function goToMessage(messageId) {
+  window.location.href = `messages/detail.html?id=${messageId}`;
+}
+
+// 点击外部关闭下拉菜单
+document.addEventListener('click', function(e) {
+  const wrapper = document.querySelector('.notification-bell-wrapper');
+  const dropdown = document.getElementById('notificationDropdown');
+  
+  if (wrapper && dropdown) {
+    if (!wrapper.contains(e.target)) {
+      dropdown.classList.remove('show');
+    }
+  }
+});
+
+// 初始化
+document.addEventListener('DOMContentLoaded', function() {
+  updateBellBadge();
+  
+  // 监听消息更新事件
+  window.addEventListener('notificationsUpdated', function() {
+    updateBellBadge();
+    updateDropdownList();
+  });
+});
+
+// 模拟收到新消息（用于演示）
+function simulateNewMessage() {
+  const messages = getNotificationMessages();
+  const newMsg = {
+    id: 'msg-' + Date.now(),
+    type: 'interaction',
+    title: '您有新的点赞！',
+    time: '刚刚',
+    isUnread: true
+  };
+  
+  messages.unshift(newMsg);
+  localStorage.setItem('userNotifications', JSON.stringify(messages));
+  
+  // 触发更新
+  window.dispatchEvent(new Event('notificationsUpdated'));
+  
+  // 显示Toast
+  if (typeof showToast === 'function') {
+    showToast({
+      type: 'interaction',
+      icon: '💬',
+      title: '新消息',
+      message: newMsg.title
+    });
+  }
+}
+</script>

@@ -1,0 +1,553 @@
+<!-- 增强版语言切换器组件 -->
+<!-- 支持自动检测、手动切换、记住偏好、动画效果 -->
+
+<div class="enhanced-lang-switcher" id="enhancedLangSwitcher">
+  <!-- 触发按钮 -->
+  <button class="lang-trigger-btn" id="langTriggerBtn" aria-label="切换语言" aria-expanded="false">
+    <span class="lang-icon">🌐</span>
+    <span class="current-lang-name" id="currentLangDisplay">中文</span>
+    <span class="lang-arrow-icon">▼</span>
+  </button>
+
+  <!-- 语言选择面板 -->
+  <div class="lang-panel" id="langPanel" role="dialog" aria-label="选择语言">
+    <!-- 语言检测提示 -->
+    <div class="lang-detected-notice" id="langDetectedNotice" style="display: none;">
+      <span class="notice-icon">💡</span>
+      <span class="notice-text">检测到您使用 <strong id="detectedLangName"></strong>，是否切换？</span>
+    </div>
+
+    <!-- 语言列表 -->
+    <div class="lang-list" role="listbox">
+      <!-- 中文 -->
+      <button class="lang-item" data-lang="zh" role="option" aria-selected="false">
+        <span class="lang-flag">🇨🇳</span>
+        <div class="lang-info">
+          <span class="lang-native">中文</span>
+          <span class="lang-english">Chinese</span>
+        </div>
+        <span class="lang-check">✓</span>
+      </button>
+
+      <!-- English -->
+      <button class="lang-item" data-lang="en" role="option" aria-selected="false">
+        <span class="lang-flag">🇺🇸</span>
+        <div class="lang-info">
+          <span class="lang-native">English</span>
+          <span class="lang-english">English</span>
+        </div>
+        <span class="lang-check">✓</span>
+      </button>
+
+      <!-- 日本語 -->
+      <button class="lang-item" data-lang="ja" role="option" aria-selected="false">
+        <span class="lang-flag">🇯🇵</span>
+        <div class="lang-info">
+          <span class="lang-native">日本語</span>
+          <span class="lang-english">Japanese</span>
+        </div>
+        <span class="lang-check">✓</span>
+      </button>
+
+      <!-- 한국어 -->
+      <button class="lang-item" data-lang="ko" role="option" aria-selected="false">
+        <span class="lang-flag">🇰🇷</span>
+        <div class="lang-info">
+          <span class="lang-native">한국어</span>
+          <span class="lang-english">Korean</span>
+        </div>
+        <span class="lang-check">✓</span>
+      </button>
+
+      <!-- Français -->
+      <button class="lang-item" data-lang="fr" role="option" aria-selected="false">
+        <span class="lang-flag">🇫🇷</span>
+        <div class="lang-info">
+          <span class="lang-native">Français</span>
+          <span class="lang-english">French</span>
+        </div>
+        <span class="lang-check">✓</span>
+      </button>
+
+      <!-- Deutsch -->
+      <button class="lang-item" data-lang="de" role="option" aria-selected="false">
+        <span class="lang-flag">🇩🇪</span>
+        <div class="lang-info">
+          <span class="lang-native">Deutsch</span>
+          <span class="lang-english">German</span>
+        </div>
+        <span class="lang-check">✓</span>
+      </button>
+
+      <!-- Español -->
+      <button class="lang-item" data-lang="es" role="option" aria-selected="false">
+        <span class="lang-flag">🇪🇸</span>
+        <div class="lang-info">
+          <span class="lang-native">Español</span>
+          <span class="lang-english">Spanish</span>
+        </div>
+        <span class="lang-check">✓</span>
+      </button>
+
+      <!-- Русский -->
+      <button class="lang-item" data-lang="ru" role="option" aria-selected="false">
+        <span class="lang-flag">🇷🇺</span>
+        <div class="lang-info">
+          <span class="lang-native">Русский</span>
+          <span class="lang-english">Russian</span>
+        </div>
+        <span class="lang-check">✓</span>
+      </button>
+    </div>
+
+    <!-- 热门目的地快捷切换 -->
+    <div class="lang-region-quick">
+      <span class="region-label">热门地区</span>
+      <div class="region-buttons">
+        <button class="region-btn" data-lang="zh">🇨🇳 中国</button>
+        <button class="region-btn" data-lang="en">🌍 Global</button>
+        <button class="region-btn" data-lang="ja">🇯🇵 日本</button>
+        <button class="region-btn" data-lang="ko">🇰🇷 韩国</button>
+        <button class="region-btn" data-lang="es">🌎 América</button>
+        <button class="region-btn" data-lang="fr">🇪🇺 Europe</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* 增强语言切换器样式 */
+.enhanced-lang-switcher {
+  position: relative;
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* 触发按钮 */
+.lang-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 25px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.lang-trigger-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.lang-trigger-btn:active {
+  transform: translateY(0);
+}
+
+.lang-icon {
+  font-size: 18px;
+}
+
+.lang-arrow-icon {
+  font-size: 10px;
+  transition: transform 0.3s ease;
+}
+
+.enhanced-lang-switcher.open .lang-arrow-icon {
+  transform: rotate(180deg);
+}
+
+/* 语言面板 */
+.lang-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 320px;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.enhanced-lang-switcher.open .lang-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* 语言检测提示 */
+.lang-detected-notice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #667eea20, #764ba220);
+  border-bottom: 1px solid #eee;
+}
+
+.notice-icon {
+  font-size: 20px;
+}
+
+.notice-text {
+  font-size: 13px;
+  color: #333;
+}
+
+/* 语言列表 */
+.lang-list {
+  max-height: 350px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.lang-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lang-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.lang-list::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 3px;
+}
+
+/* 语言项 */
+.lang-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.lang-item:hover {
+  background: #f5f5f5;
+}
+
+.lang-item:active {
+  background: #e8e8e8;
+}
+
+.lang-item.active {
+  background: linear-gradient(135deg, #667eea10, #764ba210);
+}
+
+.lang-flag {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.lang-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.lang-native {
+  font-size: 15px;
+  font-weight: 600;
+  color: #333;
+}
+
+.lang-english {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.lang-check {
+  font-size: 16px;
+  color: #667eea;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+}
+
+.lang-item.active .lang-check {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* 地区快捷切换 */
+.lang-region-quick {
+  padding: 12px 16px;
+  background: #f9f9f9;
+  border-top: 1px solid #eee;
+}
+
+.region-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.region-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.region-btn {
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #555;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.region-btn:hover {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+.region-btn.active {
+  background: #667eea;
+  border-color: #667eea;
+  color: white;
+}
+
+/* 切换动画 */
+@keyframes langPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.lang-switching {
+  animation: langPulse 0.3s ease;
+}
+
+/* 响应式 */
+@media (max-width: 480px) {
+  .lang-panel {
+    width: calc(100vw - 32px);
+    right: -60px;
+  }
+
+  .lang-trigger-btn {
+    padding: 6px 12px;
+    font-size: 13px;
+  }
+}
+</style>
+
+<script>
+// 增强语言切换器控制器
+(function() {
+  'use strict';
+
+  const LANG_NAMES = {
+    zh: '中文',
+    en: 'English',
+    ja: '日本語',
+    ko: '한국어',
+    fr: 'Français',
+    de: 'Deutsch',
+    es: 'Español',
+    ru: 'Русский'
+  };
+
+  const STORAGE_KEY = 'youdao_lang';
+  const DETECTION_KEY = 'youdao_lang_detected';
+
+  // 检测浏览器语言
+  function detectBrowserLanguage() {
+    const browserLang = navigator.language.toLowerCase();
+    const supported = ['zh', 'en', 'ja', 'ko', 'fr', 'de', 'es', 'ru'];
+
+    for (const lang of supported) {
+      if (browserLang.startsWith(lang)) {
+        return lang;
+      }
+    }
+    return 'zh';
+  }
+
+  // 获取存储的语言
+  function getStoredLanguage() {
+    return localStorage.getItem(STORAGE_KEY) || null;
+  }
+
+  // 保存语言选择
+  function saveLanguage(lang) {
+    localStorage.setItem(STORAGE_KEY, lang);
+    localStorage.setItem(DETECTION_KEY, 'false');
+  }
+
+  // 初始化
+  function init() {
+    const switcher = document.getElementById('enhancedLangSwitcher');
+    const triggerBtn = document.getElementById('langTriggerBtn');
+    const panel = document.getElementById('langPanel');
+    const currentDisplay = document.getElementById('currentLangDisplay');
+    const notice = document.getElementById('langDetectedNotice');
+    const detectedLangName = document.getElementById('detectedLangName');
+
+    if (!switcher) return;
+
+    const storedLang = getStoredLanguage();
+    const detectedLang = detectBrowserLanguage();
+    const currentLang = storedLang || 'zh';
+
+    // 更新显示
+    currentDisplay.textContent = LANG_NAMES[currentLang];
+
+    // 检测是否需要显示提示
+    if (!storedLang && detectedLang !== 'zh') {
+      const detected = document.getElementById('langDetectedNotice');
+      if (detected) {
+        detected.style.display = 'flex';
+        detectedLangName.textContent = LANG_NAMES[detectedLang];
+      }
+    }
+
+    // 更新选中状态
+    updateSelectedState(currentLang);
+
+    // 绑定事件
+    if (triggerBtn) {
+      triggerBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        togglePanel();
+      });
+    }
+
+    // 语言项点击
+    switcher.querySelectorAll('.lang-item, .region-btn').forEach(item => {
+      item.addEventListener('click', function() {
+        const lang = this.dataset.lang;
+        if (lang) {
+          switchLanguage(lang);
+        }
+      });
+    });
+
+    // 点击外部关闭
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.enhanced-lang-switcher')) {
+        closePanel();
+      }
+    });
+
+    // ESC 关闭
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closePanel();
+      }
+    });
+  }
+
+  // 切换面板
+  function togglePanel() {
+    const switcher = document.getElementById('enhancedLangSwitcher');
+    const triggerBtn = document.getElementById('langTriggerBtn');
+
+    if (switcher.classList.contains('open')) {
+      closePanel();
+    } else {
+      switcher.classList.add('open');
+      if (triggerBtn) {
+        triggerBtn.setAttribute('aria-expanded', 'true');
+      }
+    }
+  }
+
+  // 关闭面板
+  function closePanel() {
+    const switcher = document.getElementById('enhancedLangSwitcher');
+    const triggerBtn = document.getElementById('langTriggerBtn');
+
+    switcher.classList.remove('open');
+    if (triggerBtn) {
+      triggerBtn.setAttribute('aria-expanded', 'false');
+    }
+  }
+
+  // 切换语言
+  function switchLanguage(lang) {
+    const triggerBtn = document.getElementById('langTriggerBtn');
+    const currentDisplay = document.getElementById('currentLangDisplay');
+
+    // 添加切换动画
+    if (triggerBtn) {
+      triggerBtn.classList.add('lang-switching');
+      setTimeout(() => triggerBtn.classList.remove('lang-switching'), 300);
+    }
+
+    // 保存选择
+    saveLanguage(lang);
+
+    // 更新显示
+    currentDisplay.textContent = LANG_NAMES[lang];
+
+    // 更新选中状态
+    updateSelectedState(lang);
+
+    // 关闭面板
+    closePanel();
+
+    // 触发页面更新
+    if (window.i18n) {
+      window.i18n.setLang(lang);
+    }
+
+    // 自定义事件
+    window.dispatchEvent(new CustomEvent('langSwitch', {
+      detail: { lang, name: LANG_NAMES[lang] }
+    }));
+  }
+
+  // 更新选中状态
+  function updateSelectedState(lang) {
+    const switcher = document.getElementById('enhancedLangSwitcher');
+
+    switcher.querySelectorAll('.lang-item, .region-btn').forEach(item => {
+      const itemLang = item.dataset.lang;
+      const isActive = itemLang === lang;
+      item.classList.toggle('active', isActive);
+      item.setAttribute('aria-selected', isActive);
+    });
+  }
+
+  // 初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // 导出
+  window.EnhancedLanguageSwitcher = {
+    switchLanguage,
+    getStoredLanguage,
+    detectBrowserLanguage
+  };
+})();
+</script>

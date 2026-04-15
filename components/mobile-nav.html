@@ -1,0 +1,157 @@
+<!-- 移动端底部导航栏组件 -->
+<!-- 使用方法: 在页面 </body> 前插入此组件 -->
+
+<!-- 移动端底部导航栏 -->
+<nav class="mobile-nav" id="mobileNav" role="navigation" aria-label="移动端主导航">
+  <!-- 首页 -->
+  <a href="mobile/index.html" class="mobile-nav-item active" data-nav="home">
+    <span class="nav-icon">🏠</span>
+    <span class="nav-text">首页</span>
+  </a>
+  
+  <!-- 目的地 -->
+  <a href="destinations.html" class="mobile-nav-item" data-nav="destinations">
+    <span class="nav-icon">🌍</span>
+    <span class="nav-text">目的地</span>
+  </a>
+  
+  <!-- 攻略 -->
+  <a href="guides.html" class="mobile-nav-item" data-nav="guides">
+    <span class="nav-icon">📚</span>
+    <span class="nav-text">攻略</span>
+  </a>
+  
+  <!-- 收藏 -->
+  <a href="wishlist.html" class="mobile-nav-item" data-nav="favorites">
+    <span class="nav-icon">❤️</span>
+    <span class="nav-text">收藏</span>
+    <span class="badge" id="favoritesBadge" style="display: none;">0</span>
+  </a>
+  
+  <!-- 我的 -->
+  <a href="mobile/profile.html" class="mobile-nav-item" data-nav="profile">
+    <span class="nav-icon">👤</span>
+    <span class="nav-text">我的</span>
+    <span class="badge" id="profileBadge" style="display: none;">0</span>
+  </a>
+</nav>
+
+<script>
+// 底部导航栏初始化脚本
+(function() {
+  // 获取当前页面路径
+  const currentPath = window.location.pathname;
+  
+  // 导航项映射
+  const navItems = document.querySelectorAll('.mobile-nav-item');
+  
+  // 更新当前页面高亮状态
+  function updateActiveNav() {
+    const currentPage = currentPath.split('/').pop() || 'index.html';
+    
+    navItems.forEach(item => {
+      const href = item.getAttribute('href');
+      const navName = item.dataset.nav;
+      
+      // 精确匹配
+      if (href === currentPage || 
+          (currentPage === '' && navName === 'home') ||
+          (currentPage === 'index.html' && navName === 'home') ||
+          (currentPage.includes('profile') && navName === 'profile') ||
+          (currentPage.includes('destinations') && navName === 'destinations') ||
+          (currentPage.includes('guide') && navName === 'guides') ||
+          (currentPage.includes('wishlist') && navName === 'favorites')) {
+        item.classList.add('active');
+      } else {
+        item.classList.remove('active');
+      }
+    });
+  }
+  
+  // 加载收藏数量
+  function loadFavoritesCount() {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const badge = document.getElementById('favoritesBadge');
+    
+    if (badge) {
+      if (favorites.length > 0) {
+        badge.textContent = favorites.length > 99 ? '99+' : favorites.length;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+  
+  // 加载消息数量
+  function loadMessageCount() {
+    // 从本地存储获取未读消息数
+    const unreadCount = localStorage.getItem('unreadMessages') || '0';
+    const badge = document.getElementById('profileBadge');
+    
+    if (badge) {
+      if (parseInt(unreadCount) > 0) {
+        badge.textContent = parseInt(unreadCount) > 99 ? '99+' : unreadCount;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+  
+  // 触摸反馈效果
+  navItems.forEach(item => {
+    item.addEventListener('touchstart', function() {
+      this.style.opacity = '0.7';
+    }, { passive: true });
+    
+    item.addEventListener('touchend', function() {
+      this.style.opacity = '1';
+    }, { passive: true });
+  });
+  
+  // 初始化
+  updateActiveNav();
+  loadFavoritesCount();
+  loadMessageCount();
+  
+  // 监听收藏变化
+  window.addEventListener('storage', function(e) {
+    if (e.key === 'favorites') {
+      loadFavoritesCount();
+    }
+    if (e.key === 'unreadMessages') {
+      loadMessageCount();
+    }
+  });
+  
+  // 自定义事件监听（同一页面内更新）
+  document.addEventListener('favoritesUpdated', loadFavoritesCount);
+  document.addEventListener('messagesUpdated', loadMessageCount);
+})();
+</script>
+
+<style>
+/* 移动端导航栏可见性控制 - 仅在移动端显示 */
+@media (min-width: 769px) {
+  .mobile-nav {
+    display: none !important;
+  }
+}
+
+/* 导航激活动画 */
+.mobile-nav-item.active .nav-icon {
+  animation: navBounce 0.3s ease;
+}
+
+@keyframes navBounce {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+/* 加载动画 */
+.mobile-nav.loading .mobile-nav-item {
+  pointer-events: none;
+  opacity: 0.5;
+}
+</style>

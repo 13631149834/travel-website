@@ -1,0 +1,325 @@
+<!-- 历史记录侧边栏组件 -->
+<div class="history-widget" id="historyWidget">
+  <div class="widget-header">
+    <h3><span>📋</span> 最近浏览</h3>
+    <a href="history/index.html" class="widget-more">查看全部</a>
+  </div>
+  
+  <div class="widget-content" id="recentHistoryList">
+    <!-- 动态加载最近浏览记录 -->
+  </div>
+  
+  <div class="widget-divider"></div>
+  
+  <div class="widget-links">
+    <a href="history/search.html" class="widget-link">
+      <span>🔍</span> 搜索历史
+    </a>
+    <a href="history/reading.html" class="widget-link">
+      <span>📖</span> 阅读历史
+    </a>
+    <a href="history/footprint.html" class="widget-link">
+      <span>🗺️</span> 足迹地图
+    </a>
+    <a href="history/statistics.html" class="widget-link">
+      <span>📊</span> 浏览统计
+    </a>
+  </div>
+</div>
+
+<style>
+/* 历史组件样式 */
+.history-widget {
+  background: white;
+  border-radius: var(--radius-xl);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.widget-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.widget-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.widget-header h3 span {
+  font-size: 1.2rem;
+}
+
+.widget-more {
+  font-size: 0.85rem;
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.widget-more:hover {
+  text-decoration: underline;
+}
+
+.widget-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.recent-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+  cursor: pointer;
+}
+
+.recent-item:hover {
+  background: var(--gray-50);
+}
+
+.recent-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.recent-thumb-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--primary-light) 0%, #fef3c7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.recent-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.recent-title {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.recent-time {
+  font-size: 0.75rem;
+  color: var(--gray-400);
+}
+
+.recent-delete {
+  opacity: 0;
+  padding: 4px;
+  background: none;
+  border: none;
+  color: var(--gray-400);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.recent-item:hover .recent-delete {
+  opacity: 1;
+}
+
+.recent-delete:hover {
+  color: var(--danger-color);
+}
+
+.widget-empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--gray-400);
+}
+
+.widget-empty-icon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.widget-empty-text {
+  font-size: 0.9rem;
+}
+
+.widget-divider {
+  height: 1px;
+  background: var(--gray-100);
+  margin: 16px 0;
+}
+
+.widget-links {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.widget-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  color: var(--gray-600);
+  font-size: 0.85rem;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.widget-link:hover {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.widget-link span {
+  font-size: 1rem;
+}
+
+/* 加载动画 */
+.widget-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.widget-loading::after {
+  content: "";
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--gray-200);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+</style>
+
+<script>
+// 历史组件初始化
+function initHistoryWidget() {
+  const container = document.getElementById('recentHistoryList');
+  if (!container) return;
+  
+  // 显示加载状态
+  container.innerHTML = '<div class="widget-loading"></div>';
+  
+  // 获取最近浏览记录
+  setTimeout(() => {
+    const history = HistoryManager.getBrowseHistory().slice(0, 5);
+    
+    if (history.length === 0) {
+      container.innerHTML = `
+        <div class="widget-empty">
+          <div class="widget-empty-icon">📭</div>
+          <div class="widget-empty-text">暂无浏览记录</div>
+        </div>
+      `;
+      return;
+    }
+    
+    container.innerHTML = history.map(item => `
+      <div class="recent-item" data-id="${item.id}" onclick="window.location.href='${item.url}'">
+        ${item.thumbnail 
+          ? `<img src="${item.thumbnail}" alt="" class="recent-thumb" loading="lazy">`
+          : `<div class="recent-thumb-placeholder">${getTypeIcon(item.type)}</div>`
+        }
+        <div class="recent-info">
+          <div class="recent-title">${escapeHtml(item.title)}</div>
+          <div class="recent-time">${formatRelativeTime(item.timestamp)}</div>
+        </div>
+        <button class="recent-delete" onclick="event.stopPropagation(); deleteRecentItem('${item.id}')" title="删除">
+          ✕
+        </button>
+      </div>
+    `).join('');
+  }, 100);
+}
+
+// 获取类型图标
+function getTypeIcon(type) {
+  const icons = {
+    destination: '🏙️',
+    route: '🗺️',
+    guide: '👤',
+    article: '📄',
+    tool: '🔧',
+    page: '📄'
+  };
+  return icons[type] || '📄';
+}
+
+// 格式化相对时间
+function formatRelativeTime(timestamp) {
+  const now = new Date();
+  const date = new Date(timestamp);
+  const diff = now - date;
+  
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(diff / 3600000);
+  const days = Math.floor(diff / 86400000);
+  
+  if (minutes < 1) return '刚刚';
+  if (minutes < 60) return `${minutes}分钟前`;
+  if (hours < 24) return `${hours}小时前`;
+  if (days < 7) return `${days}天前`;
+  
+  return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+}
+
+// HTML转义
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// 删除单条记录
+function deleteRecentItem(id) {
+  HistoryManager.removeBrowseHistory(id);
+  initHistoryWidget();
+  
+  // 显示提示
+  showToast('已删除该记录');
+}
+
+// 显示提示
+function showToast(message) {
+  let toast = document.querySelector('.history-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'history-toast toast';
+    document.body.appendChild(toast);
+  }
+  
+  toast.textContent = message;
+  toast.classList.add('show');
+  
+  setTimeout(() => {
+    toast.classList.remove('show');
+  }, 2000);
+}
+
+// 页面加载完成后初始化
+document.addEventListener('DOMContentLoaded', initHistoryWidget);
+</script>
