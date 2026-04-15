@@ -1,0 +1,161 @@
+<!--
+  游导旅游 - 首页
+  功能：导游推荐、目的地推荐、快捷工具入口
+-->
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-input-wrap">
+      <text class="search-icon">🔍</text>
+      <input class="search-input" placeholder="搜索导游、目的地..." bindtap="onSearchTap" disabled />
+    </view>
+  </view>
+
+  <!-- Banner轮播 -->
+  <view class="banner-section">
+    <swiper class="banner-swiper" indicator-dots autoplay circular>
+      <swiper-item>
+        <view class="banner-item banner-1">
+          <view class="banner-content">
+            <text class="banner-tag">🌟 新用户专享</text>
+            <text class="banner-title">首次预约立减100元</text>
+            <text class="banner-desc">立即领取优惠券</text>
+          </view>
+        </view>
+      </swiper-item>
+      <swiper-item>
+        <view class="banner-item banner-2">
+          <view class="banner-content">
+            <text class="banner-tag">🏆 明星导游</text>
+            <text class="banner-title">严选认证导游</text>
+            <text class="banner-desc">5200+专业导游入驻</text>
+          </view>
+        </view>
+      </swiper-item>
+      <swiper-item>
+        <view class="banner-item banner-3">
+          <view class="banner-content">
+            <text class="banner-tag">🌍 热门目的地</text>
+            <text class="banner-title">日本樱花季</text>
+            <text class="banner-desc">提前预订享早鸟价</text>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="quick-entry">
+    <view class="quick-entry-item" bindtap="navigateToGuides">
+      <view class="quick-entry-icon" style="background: linear-gradient(135deg, #4F86F7 0%, #3B82F6 100%);">
+        🎤
+      </view>
+      <text class="quick-entry-text">找导游</text>
+    </view>
+    <view class="quick-entry-item" bindtap="navigateToDestinations">
+      <view class="quick-entry-icon" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">
+        🗺️
+      </view>
+      <text class="quick-entry-text">目的地</text>
+    </view>
+    <view class="quick-entry-item" bindtap="navigateToVisa">
+      <view class="quick-entry-icon" style="background: linear-gradient(135deg, #764ba2 0%, #6B4FA2 100%);">
+        📋
+      </view>
+      <text class="quick-entry-text">签证</text>
+    </view>
+    <view class="quick-entry-item" bindtap="navigateToTools">
+      <view class="quick-entry-icon" style="background: linear-gradient(135deg, #FFB800 0%, #FF9500 100%);">
+        🛠️
+      </view>
+      <text class="quick-entry-text">工具</text>
+    </view>
+  </view>
+
+  <!-- 明星导游推荐 -->
+  <view class="section">
+    <view class="section-header">
+      <view>
+        <text class="section-title">⭐ 明星导游</text>
+        <text class="section-desc">专业认证导游，为你定制专属旅程</text>
+      </view>
+      <view class="section-more" bindtap="navigateToGuides">查看全部 ></view>
+    </view>
+    
+    <scroll-view class="guide-scroll" scroll-x>
+      <view class="guide-cards">
+        <view class="guide-card" wx:for="{{topGuides}}" wx:key="id" bindtap="onGuideTap" data-id="{{item.id}}">
+          <view class="guide-avatar">{{item.avatar}}</view>
+          <view class="guide-badge badge-hot" wx:if="{{item.isHot}}">热门</view>
+          <view class="guide-info">
+            <text class="guide-name">{{item.name}}</text>
+            <text class="guide-langs">{{item.languages}}</text>
+            <view class="guide-rating">
+              <text class="star">⭐</text>
+              <text class="score">{{item.rating}}</text>
+              <text class="count">({{item.reviewCount}}评价)</text>
+            </view>
+            <text class="guide-specialty">{{item.specialty}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 热门目的地 -->
+  <view class="section">
+    <view class="section-header">
+      <view>
+        <text class="section-title">🌍 热门目的地</text>
+        <text class="section-desc">探索世界，从这里开始</text>
+      </view>
+      <view class="section-more" bindtap="navigateToDestinations">查看全部 ></view>
+    </view>
+    
+    <view class="destination-grid">
+      <view class="destination-card" wx:for="{{topDestinations}}" wx:key="id" bindtap="onDestinationTap" data-id="{{item.id}}">
+        <view class="destination-bg" style="background: {{item.bgColor}}">{{item.emoji}}</view>
+        <view class="destination-info">
+          <text class="destination-name">{{item.name}}</text>
+          <text class="destination-count">{{item.guideCount}}位导游</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 旅行工具箱 -->
+  <view class="section">
+    <view class="section-header">
+      <view>
+        <text class="section-title">🛠️ 旅行工具箱</text>
+        <text class="section-desc">实用小工具，让旅行更轻松</text>
+      </view>
+    </view>
+    
+    <view class="tools-grid">
+      <view class="tool-card" wx:for="{{tools}}" wx:key="id" bindtap="onToolTap" data-id="{{item.id}}">
+        <view class="tool-icon" style="background: {{item.bgColor}}">{{item.icon}}</view>
+        <text class="tool-name">{{item.name}}</text>
+        <text class="tool-desc">{{item.desc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 平台数据 -->
+  <view class="stats-section">
+    <view class="stats-item">
+      <text class="stats-number">5200+</text>
+      <text class="stats-label">认证导游</text>
+    </view>
+    <view class="stats-divider"></view>
+    <view class="stats-item">
+      <text class="stats-number">128+</text>
+      <text class="stats-label">热门目的地</text>
+    </view>
+    <view class="stats-divider"></view>
+    <view class="stats-item">
+      <text class="stats-number">15万+</text>
+      <text class="stats-label">服务用户</text>
+    </view>
+  </view>
+</view>

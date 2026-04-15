@@ -1,0 +1,55 @@
+<!--
+  游导旅游 - 目的地页
+-->
+<view class="page">
+  <!-- 热门目的地轮播 -->
+  <view class="featured-section">
+    <swiper class="featured-swiper" indicator-dots autoplay circular>
+      <swiper-item wx:for="{{featuredDestinations}}" wx:key="id" bindtap="onDestinationTap" data-id="{{item.id}}">
+        <view class="featured-item" style="background: {{item.bgColor}}">
+          <text class="featured-emoji">{{item.emoji}}</text>
+          <view class="featured-info">
+            <text class="featured-name">{{item.name}}</text>
+            <text class="featured-desc">{{item.desc}}</text>
+            <view class="featured-meta">
+              <text>{{item.guideCount}}位导游</text>
+              <text class="dot">·</text>
+              <text>{{item.routesCount}}条线路</text>
+            </view>
+          </view>
+        </view>
+      </swiper-item>
+    </swiper>
+  </view>
+
+  <!-- 目的地分类 -->
+  <view class="category-section">
+    <view class="category-tabs">
+      <view class="category-tab {{currentCategory === 'all' ? 'active' : ''}}" bindtap="onCategoryTap" data-category="all">全部</view>
+      <view class="category-tab {{currentCategory === 'asia' ? 'active' : ''}}" bindtap="onCategoryTap" data-category="asia">亚洲</view>
+      <view class="category-tab {{currentCategory === 'europe' ? 'active' : ''}}" bindtap="onCategoryTap" data-category="europe">欧洲</view>
+      <view class="category-tab {{currentCategory === 'america' ? 'active' : ''}}" bindtap="onCategoryTap" data-category="america">美洲</view>
+      <view class="category-tab {{currentCategory === 'oceania' ? 'active' : ''}}" bindtap="onCategoryTap" data-category="oceania">大洋洲</view>
+    </view>
+  </view>
+
+  <!-- 目的地网格 -->
+  <view class="destination-grid">
+    <view class="destination-card" wx:for="{{destinations}}" wx:key="id" bindtap="onDestinationTap" data-id="{{item.id}}">
+      <view class="destination-cover" style="background: {{item.bgColor}}">
+        <text class="destination-emoji">{{item.emoji}}</text>
+      </view>
+      <view class="destination-info">
+        <view class="destination-header">
+          <text class="destination-name">{{item.name}}</text>
+          <text class="destination-tag" wx:if="{{item.isHot}}">🔥 热门</text>
+        </view>
+        <text class="destination-desc">{{item.desc}}</text>
+        <view class="destination-footer">
+          <text class="destination-guides">{{item.guideCount}}位导游</text>
+          <text class="destination-price">¥{{item.startPrice}}起</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>
