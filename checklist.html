@@ -3,37 +3,698 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>checklist - 游导旅游工具</title>
-  <meta name="description" content="checklist 工具页面">
+  <title>上线检查清单 | 游导旅游</title>
+  <meta name="description" content="游导旅游网站上线前完整检查清单，确保网站顺利发布。">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>✅</text></svg>">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#667eea',
+            secondary: '#764ba2',
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    .coming-soon {
-      min-height: 60vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 40px 20px;
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
     }
-    .coming-soon h1 { font-size: 2rem; margin-bottom: 16px; }
-    .coming-soon p { color: var(--gray-600); margin-bottom: 24px; }
-    .coming-soon a {
-      display: inline-block;
-      padding: 12px 24px;
-      background: var(--primary);
+    .gradient-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .checklist-item {
+      transition: all 0.3s ease;
+    }
+    .checklist-item:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    .check-btn {
+      transition: all 0.3s ease;
+    }
+    .check-btn.checked {
+      background: #10b981;
+      border-color: #10b981;
+    }
+    .check-btn.checked::after {
+      content: '✓';
       color: white;
-      border-radius: 8px;
-      text-decoration: none;
     }
-    .coming-soon a:hover { background: var(--primary-dark); }
+    .progress-fill {
+      transition: width 0.5s ease;
+    }
+    .category-section {
+      border-left: 4px solid transparent;
+      transition: all 0.3s ease;
+    }
+    .category-section:hover {
+      border-left-color: #667eea;
+    }
+    .completed-section {
+      opacity: 0.7;
+    }
+    .tooltip {
+      position: relative;
+    }
+    .tooltip::after {
+      content: attr(data-tip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 6px 12px;
+      background: #1f2937;
+      color: white;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .tooltip:hover::after {
+      opacity: 1;
+    }
   </style>
 </head>
-<body>
-  <div class="coming-soon">
-    <h1>🔧 checklist 工具</h1>
-    <p>该工具正在开发中，敬请期待...</p>
-    <a href="tools.html">← 返回工具中心</a>
-  </div>
+<body class="bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 min-h-screen">
+  <!-- 导航栏 -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="navigation.html" class="hover:opacity-80 transition">网站导航</a>
+          <a href="status.html" class="hover:opacity-80 transition">系统状态</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="gradient-hero text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <div class="inline-block px-4 py-1.5 bg-white/20 rounded-full text-sm mb-3">🚀 上线前检查</div>
+          <h1 class="text-3xl md:text-4xl font-bold mb-2">网站终极检查清单</h1>
+          <p class="opacity-90">确保您的网站在上线前通过所有关键检查项</p>
+        </div>
+        <div class="hidden md:block text-center">
+          <div class="text-5xl font-bold" id="totalProgress">0%</div>
+          <div class="text-sm opacity-80">完成进度</div>
+        </div>
+      </div>
+      
+      <!-- 总体进度条 -->
+      <div class="mt-6 bg-white/20 rounded-full h-4 overflow-hidden">
+        <div class="progress-fill h-full bg-white rounded-full" id="progressBar" style="width: 0%"></div>
+      </div>
+      <div class="flex justify-between mt-2 text-sm opacity-80">
+        <span>已检查: <span id="checkedCount">0</span> 项</span>
+        <span>总计: <span id="totalCount">0</span> 项</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 操作按钮 -->
+  <section class="max-w-7xl mx-auto px-4 -mt-4 pb-8">
+    <div class="bg-white/10 backdrop-blur rounded-2xl p-4 flex flex-wrap gap-4 justify-center">
+      <button onclick="checkAll()" class="px-6 py-2 bg-emerald-500 text-white rounded-full font-medium hover:bg-emerald-600 transition">
+        ✅ 全选
+      </button>
+      <button onclick="uncheckAll()" class="px-6 py-2 bg-gray-500 text-white rounded-full font-medium hover:bg-gray-600 transition">
+        ⬜ 取消全选
+      </button>
+      <button onclick="expandAll()" class="px-6 py-2 bg-blue-500 text-white rounded-full font-medium hover:bg-blue-600 transition">
+        📂 展开全部
+      </button>
+      <button onclick="collapseAll()" class="px-6 py-2 bg-purple-500 text-white rounded-full font-medium hover:bg-purple-600 transition">
+        📁 收起全部
+      </button>
+      <button onclick="exportChecklist()" class="px-6 py-2 bg-orange-500 text-white rounded-full font-medium hover:bg-orange-600 transition">
+        📥 导出清单
+      </button>
+    </div>
+  </section>
+
+  <!-- 检查清单分类 -->
+  <section class="max-w-7xl mx-auto px-4 pb-16">
+    <div class="grid lg:grid-cols-2 gap-8">
+      
+      <!-- 功能完整性 -->
+      <div class="category-section bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10" id="category-function">
+        <div class="flex items-center justify-between mb-6 cursor-pointer" onclick="toggleCategory('function')">
+          <div class="flex items-center gap-4">
+            <span class="text-4xl">⚡</span>
+            <div>
+              <h2 class="text-xl font-bold text-white">功能完整性检查</h2>
+              <p class="text-white/60 text-sm">验证所有核心功能正常</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-primary font-bold" id="function-progress">0/0</span>
+            <span class="text-2xl transition-transform" id="function-arrow">▼</span>
+          </div>
+        </div>
+        <div class="space-y-3" id="function-content">
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="function"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">导航菜单可访问</div>
+              <div class="text-white/50 text-sm">所有主导航链接正常跳转</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="function"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">搜索功能正常</div>
+              <div class="text-white/50 text-sm">关键词搜索返回正确结果</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="function"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">表单可正常提交</div>
+              <div class="text-white/50 text-sm">联系表单、反馈表单等</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="function"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">页面链接无死链</div>
+              <div class="text-white/50 text-sm">检查所有内部链接有效性</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="function"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">图片加载正常</div>
+              <div class="text-white/50 text-sm">所有图片可正常显示加载</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="function"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">视频/音频播放正常</div>
+              <div class="text-white/50 text-sm">多媒体内容可正常播放</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SEO检查 -->
+      <div class="category-section bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10" id="category-seo">
+        <div class="flex items-center justify-between mb-6 cursor-pointer" onclick="toggleCategory('seo')">
+          <div class="flex items-center gap-4">
+            <span class="text-4xl">🔍</span>
+            <div>
+              <h2 class="text-xl font-bold text-white">SEO 检查</h2>
+              <p class="text-white/60 text-sm">搜索引擎优化验证</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-primary font-bold" id="seo-progress">0/0</span>
+            <span class="text-2xl transition-transform" id="seo-arrow">▼</span>
+          </div>
+        </div>
+        <div class="space-y-3" id="seo-content">
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="seo"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">Title 标签优化</div>
+              <div class="text-white/50 text-sm">每个页面有独特描述性标题</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="seo"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">Meta Description 完善</div>
+              <div class="text-white/50 text-sm">每个页面有独特描述</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="seo"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">Sitemap.xml 存在</div>
+              <div class="text-white/50 text-sm">站点地图可访问</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="seo"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">Robots.txt 配置</div>
+              <div class="text-white/50 text-sm">搜索引擎爬虫规则正确</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="seo"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">语义化 HTML 结构</div>
+              <div class="text-white/50 text-sm">使用正确的标签语义</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="seo"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">图片 Alt 属性</div>
+              <div class="text-white/50 text-sm">所有图片有描述性 Alt</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="seo"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">Canonical URL 设置</div>
+              <div class="text-white/50 text-sm">避免重复内容问题</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 性能检查 -->
+      <div class="category-section bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10" id="category-performance">
+        <div class="flex items-center justify-between mb-6 cursor-pointer" onclick="toggleCategory('performance')">
+          <div class="flex items-center gap-4">
+            <span class="text-4xl">⚡</span>
+            <div>
+              <h2 class="text-xl font-bold text-white">性能检查</h2>
+              <p class="text-white/60 text-sm">页面加载速度和响应时间</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-primary font-bold" id="performance-progress">0/0</span>
+            <span class="text-2xl transition-transform" id="performance-arrow">▼</span>
+          </div>
+        </div>
+        <div class="space-y-3" id="performance-content">
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="performance"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">页面加载时间 &lt; 3秒</div>
+              <div class="text-white/50 text-sm">首屏加载速度达标</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="performance"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">图片已压缩优化</div>
+              <div class="text-white/50 text-sm">WebP 格式或适当压缩</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="performance"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">CSS/JS 文件合并压缩</div>
+              <div class="text-white/50 text-sm">减少HTTP请求数量</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="performance"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">启用浏览器缓存</div>
+              <div class="text-white/50 text-sm">Cache-Control 配置</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="performance"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">CDN 加速已启用</div>
+              <div class="text-white/50 text-sm">静态资源全球加速</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="performance"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">懒加载图片</div>
+              <div class="text-white/50 text-sm">非首屏图片延迟加载</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 安全检查 -->
+      <div class="category-section bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10" id="category-security">
+        <div class="flex items-center justify-between mb-6 cursor-pointer" onclick="toggleCategory('security')">
+          <div class="flex items-center gap-4">
+            <span class="text-4xl">🔒</span>
+            <div>
+              <h2 class="text-xl font-bold text-white">安全检查</h2>
+              <p class="text-white/60 text-sm">网站安全性验证</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-primary font-bold" id="security-progress">0/0</span>
+            <span class="text-2xl transition-transform" id="security-arrow">▼</span>
+          </div>
+        </div>
+        <div class="space-y-3" id="security-content">
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="security"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">HTTPS 已启用</div>
+              <div class="text-white/50 text-sm">全站 SSL 证书有效</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="security"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">表单输入验证</div>
+              <div class="text-white/50 text-sm">防止 XSS 和 SQL 注入</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="security"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">敏感信息不暴露</div>
+              <div class="text-white/50 text-sm">API密钥等不硬编码</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="security"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">CORS 配置正确</div>
+              <div class="text-white/50 text-sm">跨域请求安全控制</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="security"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">Security Headers</div>
+              <div class="text-white/50 text-sm">X-Frame-Options 等设置</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 响应式适配 -->
+      <div class="category-section bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10" id="category-responsive">
+        <div class="flex items-center justify-between mb-6 cursor-pointer" onclick="toggleCategory('responsive')">
+          <div class="flex items-center gap-4">
+            <span class="text-4xl">📱</span>
+            <div>
+              <h2 class="text-xl font-bold text-white">响应式适配</h2>
+              <p class="text-white/60 text-sm">多设备兼容性验证</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-primary font-bold" id="responsive-progress">0/0</span>
+            <span class="text-2xl transition-transform" id="responsive-arrow">▼</span>
+          </div>
+        </div>
+        <div class="space-y-3" id="responsive-content">
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="responsive"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">桌面端显示正常</div>
+              <div class="text-white/50 text-sm">1920px+ 分辨率</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="responsive"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">平板端显示正常</div>
+              <div class="text-white/50 text-sm">768px - 1024px</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="responsive"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">手机端显示正常</div>
+              <div class="text-white/50 text-sm">320px - 767px</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="responsive"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">触摸交互正常</div>
+              <div class="text-white/50 text-sm">按钮点击区域合适</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="responsive"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">字体大小合适</div>
+              <div class="text-white/50 text-sm">小屏幕不出现文字溢出</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 可访问性检查 -->
+      <div class="category-section bg-white/5 backdrop-blur-lg rounded-2xl p-6 border border-white/10" id="category-accessibility">
+        <div class="flex items-center justify-between mb-6 cursor-pointer" onclick="toggleCategory('accessibility')">
+          <div class="flex items-center gap-4">
+            <span class="text-4xl">♿</span>
+            <div>
+              <h2 class="text-xl font-bold text-white">可访问性检查</h2>
+              <p class="text-white/60 text-sm">无障碍访问验证</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-primary font-bold" id="accessibility-progress">0/0</span>
+            <span class="text-2xl transition-transform" id="accessibility-arrow">▼</span>
+          </div>
+        </div>
+        <div class="space-y-3" id="accessibility-content">
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="accessibility"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">键盘导航可用</div>
+              <div class="text-white/50 text-sm">Tab键可访问所有元素</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="accessibility"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">颜色对比度足够</div>
+              <div class="text-white/50 text-sm">WCAG AA 标准 4.5:1</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="accessibility"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">ARIA 标签完整</div>
+              <div class="text-white/50 text-sm">屏幕阅读器支持</div>
+            </div>
+          </div>
+          <div class="checklist-item flex items-center gap-4 p-4 rounded-xl bg-white/5">
+            <button class="check-btn w-8 h-8 rounded-full border-2 border-white/30 flex items-center justify-center text-transparent" data-category="accessibility"></button>
+            <div class="flex-1">
+              <div class="text-white font-medium">焦点状态可见</div>
+              <div class="text-white/50 text-sm">键盘焦点有清晰指示</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 底部 -->
+  <footer class="bg-black/30 backdrop-blur text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="opacity-60 text-sm">© 2024 游导旅游 All Rights Reserved | <a href="checklist.html" class="hover:opacity-100">检查清单</a></p>
+    </div>
+  </footer>
+
+  <script>
+    // 状态管理
+    let checkedItems = {};
+    let categoryStates = {};
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 加载保存的状态
+      const saved = localStorage.getItem('checklistState');
+      if (saved) {
+        checkedItems = JSON.parse(saved);
+      }
+
+      // 绑定复选框事件
+      document.querySelectorAll('.check-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const category = this.dataset.category;
+          const items = this.parentElement.parentElement.querySelectorAll('.check-btn');
+          const index = Array.from(items).indexOf(this);
+          
+          const key = `${category}-${index}`;
+          checkedItems[key] = !checkedItems[key];
+          
+          this.classList.toggle('checked', checkedItems[key]);
+          saveState();
+          updateProgress();
+        });
+
+        // 恢复状态
+        const items = this.parentElement.parentElement.querySelectorAll('.check-btn');
+        const index = Array.from(items).indexOf(this);
+        const key = `${this.dataset.category}-${index}`;
+        
+        if (checkedItems[key]) {
+          this.classList.add('checked');
+        }
+      });
+
+      updateProgress();
+      updateAllCategoryProgress();
+    });
+
+    // 更新进度
+    function updateProgress() {
+      const categories = ['function', 'seo', 'performance', 'security', 'responsive', 'accessibility'];
+      let total = 0;
+      let checked = 0;
+
+      categories.forEach(cat => {
+        const items = document.querySelectorAll(`[data-category="${cat}"]`);
+        total += items.length;
+        items.forEach((btn, index) => {
+          const key = `${cat}-${index}`;
+          if (checkedItems[key]) checked++;
+        });
+      });
+
+      const percent = total > 0 ? Math.round((checked / total) * 100) : 0;
+      document.getElementById('totalProgress').textContent = percent + '%';
+      document.getElementById('progressBar').style.width = percent + '%';
+      document.getElementById('checkedCount').textContent = checked;
+      document.getElementById('totalCount').textContent = total;
+    }
+
+    function updateAllCategoryProgress() {
+      const categories = ['function', 'seo', 'performance', 'security', 'responsive', 'accessibility'];
+      
+      categories.forEach(cat => {
+        const items = document.querySelectorAll(`[data-category="${cat}"]`);
+        let checked = 0;
+        
+        items.forEach((btn, index) => {
+          const key = `${cat}-${index}`;
+          if (checkedItems[key]) checked++;
+        });
+
+        const progressEl = document.getElementById(`${cat}-progress`);
+        if (progressEl) {
+          progressEl.textContent = `${checked}/${items.length}`;
+        }
+      });
+    }
+
+    // 保存状态
+    function saveState() {
+      localStorage.setItem('checklistState', JSON.stringify(checkedItems));
+      updateAllCategoryProgress();
+    }
+
+    // 全选
+    function checkAll() {
+      document.querySelectorAll('.check-btn').forEach((btn, index) => {
+        const key = `${btn.dataset.category}-${Array.from(btn.parentElement.parentElement.querySelectorAll('.check-btn')).indexOf(btn)}`;
+        checkedItems[key] = true;
+        btn.classList.add('checked');
+      });
+      saveState();
+      updateProgress();
+    }
+
+    // 取消全选
+    function uncheckAll() {
+      checkedItems = {};
+      document.querySelectorAll('.check-btn').forEach(btn => {
+        btn.classList.remove('checked');
+      });
+      saveState();
+      updateProgress();
+    }
+
+    // 展开/收起
+    function toggleCategory(cat) {
+      const content = document.getElementById(`${cat}-content`);
+      const arrow = document.getElementById(`${cat}-arrow`);
+      
+      if (categoryStates[cat] === 'collapsed') {
+        content.style.display = 'block';
+        arrow.style.transform = 'rotate(0deg)';
+        categoryStates[cat] = 'expanded';
+      } else {
+        content.style.display = 'none';
+        arrow.style.transform = 'rotate(-90deg)';
+        categoryStates[cat] = 'collapsed';
+      }
+    }
+
+    function expandAll() {
+      document.querySelectorAll('[id$="-content"]').forEach(el => {
+        el.style.display = 'block';
+      });
+      document.querySelectorAll('[id$="-arrow"]').forEach(el => {
+        el.style.transform = 'rotate(0deg)';
+      });
+      Object.keys(categoryStates).forEach(k => categoryStates[k] = 'expanded');
+    }
+
+    function collapseAll() {
+      document.querySelectorAll('[id$="-content"]').forEach(el => {
+        el.style.display = 'none';
+      });
+      document.querySelectorAll('[id$="-arrow"]').forEach(el => {
+        el.style.transform = 'rotate(-90deg)';
+      });
+      Object.keys(categoryStates).forEach(k => categoryStates[k] = 'collapsed');
+    }
+
+    // 导出清单
+    function exportChecklist() {
+      const categories = ['function', 'seo', 'performance', 'security', 'responsive', 'accessibility'];
+      const catNames = {
+        function: '功能完整性检查',
+        seo: 'SEO 检查',
+        performance: '性能检查',
+        security: '安全检查',
+        responsive: '响应式适配',
+        accessibility: '可访问性检查'
+      };
+
+      let report = '游导旅游网站上线检查清单\n';
+      report += '========================\n\n';
+      report += `生成时间: ${new Date().toLocaleString()}\n\n`;
+
+      categories.forEach(cat => {
+        const items = document.querySelectorAll(`[data-category="${cat}"]`);
+        let checked = 0;
+        
+        report += `【${catNames[cat]}】\n`;
+        items.forEach((btn, index) => {
+          const title = btn.parentElement.querySelector('.text-white.font-medium').textContent;
+          const key = `${cat}-${index}`;
+          const status = checkedItems[key] ? '✅' : '⬜';
+          if (checkedItems[key]) checked++;
+          report += `${status} ${title}\n`;
+        });
+        report += `完成度: ${checked}/${items.length}\n\n`;
+      });
+
+      const total = document.querySelectorAll('.check-btn').length;
+      const checkedTotal = Object.values(checkedItems).filter(v => v).length;
+      report += `========================\n`;
+      report += `总体完成度: ${checkedTotal}/${total} (${Math.round((checkedTotal/total)*100)}%)`;
+
+      const blob = new Blob([report], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `checklist-${new Date().toISOString().slice(0,10)}.txt`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
 </body>
 </html>

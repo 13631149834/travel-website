@@ -1,1153 +1,415 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <style>
-/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
-.skip-link {
-  position: absolute;
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--primary);
-  color: #fff !important;
-  padding: 12px 24px;
-  border-radius: 0 0 8px 8px;
-  z-index: 10000;
-  font-weight: 600;
-  transition: top 0.2s;
-}
-.skip-link:focus {
-  top: 0;
-  outline: 3px solid var(--primary-dark);
-  outline-offset: 2px;
-}
-
-/* 全局焦点样式 */
-:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-}
-:focus:not(:focus-visible) {
-  outline: none;
-}
-:focus-visible {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-}
-
-/* 链接焦点样式 */
-a:focus,
-button:focus,
-[tabindex]:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* 输入框焦点 */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 0;
-  border-color: var(--primary);
-}
-  </style>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- 关键CSS预加载 - 提升首屏渲染速度 -->
-  <link rel="preload" href="css/style.css" as="style">
-  <link rel="preload" href="css/enhanced.css" as="style">
-  
-  <!-- DNS预解析外部资源 -->
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  
-  <link rel="stylesheet" href="css/customer-service.css">
-  
-  <!-- 关键样式 -->
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/enhanced.css">
-  <link rel="stylesheet" href="css/mobile.css">
-  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media='all'">
-  <link rel="stylesheet" href="css/animations.css">
-  <link rel="stylesheet" href="css/activity.css">
-  <link rel="stylesheet" href="css/onboarding.css">
-  
-  <!-- SEO Meta Tags -->
-  <title>游导旅游 - 导游与游客的一站式旅行平台 | 专业导游预约</title>
-  <meta name="description" content="游导旅游是专业的导游与游客全平台，提供找导游、签证办理、精品线路、避坑指南、应急资源等一站式旅行服务。支持导游入驻和游客预约，让旅行更简单。">
-  <meta name="keywords" content="游导旅游,找导游,导游预约,签证办理,旅行平台,精品线路,避坑指南,应急资源,导游工具,旅行攻略">
-  <meta name="author" content="游导旅游">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://youdao-travel.com/index.html">
-  
-  <!-- Open Graph / Social Media -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="游导旅游 - 导游与游客的一站式旅行平台 | 专业导游预约">
-  <meta property="og:description" content="游导旅游是专业的导游与游客全平台，提供找导游、签证办理、精品线路、避坑指南、应急资源等一站式旅行服务。支持导游入驻和游客预约，让旅行更简单。">
-  <meta property="og:url" content="https://youdao-travel.com/index.html">
-  <meta property="og:site_name" content="游导旅游">
-  <meta property="og:locale" content="zh_CN">
-    <meta property="og:image" content="images/og-image.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-  
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="游导旅游 - 导游与游客的一站式旅行平台 | 专业导游预约">
-  <meta name="twitter:description" content="游导旅游是专业的导游与游客全平台，提供找导游、签证办理、精品线路、避坑指南、应急资源等一站式旅行服务。支持导游入驻和游客预约，让旅行更简单。">
-  <meta name="twitter:image" content="https://youdao-travel.com/images/og-image.png">
-  
-  <!-- Structured Data - Organization -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "游导旅游",
-    "alternateName": "YouDao Travel",
-    "url": "https://youdao-travel.com",
-    "logo": "https://youdao-travel.com/images/logo.png",
-    "sameAs": [
-      "https://weibo.com/youdautravel",
-      "https://mp.weixin.qq.com/s/youdautravel"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+86-400-888-8888",
-      "contactType": "customer service",
-      "availableLanguage": ["Chinese", "English"]
-    }
-  }
-  </script>
-  
-  <!-- Structured Data - Website -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "游导旅游",
-    "url": "https://youdao-travel.com",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://youdao-travel.com/search.html?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
-  
-  <!-- PWA Meta Tags (合并重复项) -->
-  <meta name="theme-color" content="#3b82f6">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="游导旅游">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="images/icon-192.png">
-  
-  <!-- 关键JS预加载，非阻塞加载i18n -->
-  <link rel="preload" href="js/i18n.js" as="script">
-  <script src="js/i18n.js" defer></script>
-  <!-- Favicon & App Icons -->
-  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
-  <meta name="msapplication-TileImage" content="images/icon-192.png">
-  <meta name="msapplication-TileColor" content="#4F86F7">
-  <meta name="theme-color" content="#4F86F7">
-  <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游导旅游 - 发现精彩世界</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        * { font-family: 'Noto Sans SC', sans-serif; }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #7c3aed 100%);
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .destination-card {
+            transition: all 0.4s ease;
+        }
+        .destination-card:hover {
+            transform: scale(1.05);
+        }
+        .destination-card:hover .overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);
+        }
+        
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #3b82f6, #8b5cf6); border-radius: 4px; }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
 </head>
-<body>
-
-<!-- 无障碍 - 状态消息区域 -->
-<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
-
-<!-- 无障碍 - 屏幕阅读器专用样式 -->
-<style>
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-.sr-only-focusable:focus,
-.sr-only-focusable:active {
-  position: static;
-  width: auto;
-  height: auto;
-  margin: 0;
-  overflow: visible;
-  clip: auto;
-  white-space: normal;
-}
-</style>
-
-  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
-  <a href="#main-content" class="skip-link">跳转到主内容</a>
-  <a href="#main-nav" class="skip-link">跳转到导航</a>
-  <a href="#main-footer" class="skip-link">跳转到页脚</a>
-
-  <!-- 页面过渡加载动画 -->
-  <div class="page-transition-overlay">
-    <div class="page-transition-content">
-      <div class="page-transition-logo">🌍</div>
-      <div class="loading-progress">
-        <div class="loading-progress-bar"></div>
-      </div>
-    </div>
-  </div>
-  
-  <!-- 导航栏 -->
-  <nav class="navbar" aria-label="主导航">
-    <div class="container nav-container">
-      <a href="index.html" class="logo">🌍 游导旅游</a>
-      <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
-      <div class="nav-links">
-        <a href="index.html" class="active" data-i18n="nav.home">🏠 首页</a>
-        <a href="guides.html" data-i18n="nav.guides">🎤 找导游</a>
-        <a href="visa.html" data-i18n="nav.visa">📋 签证中心</a>
-        <a href="routes.html" data-i18n="nav.routes">🗺️ 线路</a>
-        <a href="knowledge.html" data-i18n="nav.knowledge">📚 知识</a>
-        <a href="guide-content.html" data-i18n="nav.guideContent">📖 攻略</a>
-        <a href="tools.html" data-i18n="nav.tools">🛠️ 工具</a>
-        <a href="safety-tips.html">🛡️ 安全</a>
-        <a href="activities.html" style="color:#f59e0b;font-weight:600">🎯 活动</a>
-        <a href="search.html" style="color:#667eea" data-i18n-title="nav.search"><span aria-hidden="true">🔍</span><span class="sr-only">搜索</span></a>
-        <a href="wechat-contact.html" style="color:#07c160;font-weight:600" data-i18n="nav.contact">💬 咨询</a>
-        <div class="lang-switcher">
-          <button class="lang-btn active" data-lang="zh" data-lang-btn>中文</button>
-          <button class="lang-btn" data-lang="en" data-lang-btn>EN</button>
-        </div>
-      </div>
-    </div>
-  </nav>
-
-  <!-- 活动Banner -->
-  <div class="container" style="padding-top: 20px;">
-    <div id="activityBanner" class="activity-banner"></div>
-  </div>
-
-  <!-- 活动弹窗 -->
-  <div id="activityPopup" class="activity-popup-overlay">
-    <div class="activity-popup"></div>
-  </div>
-
-<main id="main-content" role="main">
-<!-- Hero区域 - 优化版 -->
-  <section class="hero-optimized">
-    <div class="hero-bg-pattern"></div>
-    <div class="container">
-      <!-- 主标题区域 -->
-      <div class="hero-headline fade-in-up">
-        <span class="hero-badge-new">
-          <span class="badge-dot"></span>
-          <span data-i18n="hero.tagline">旅行从此不同</span>
-        </span>
-        <h1 data-i18n="hero.title">探索世界，从这里开始</h1>
-        <p class="hero-subtitle-new" data-i18n="hero.subtitle">连接优秀导游与旅行者，让每一次出发都充满期待</p>
-      </div>
-      
-      <!-- 双入口卡片 -->
-      <div class="hero-entry-cards fade-in-up delay-200">
-        <a href="guides.html" class="entry-card tourist-card card-hover">
-          <div class="entry-card-icon">🎒</div>
-          <div class="entry-card-content">
-            <h3 data-i18n="hero.forTourist">开启旅程</h3>
-            <p data-i18n="hero.forTouristDesc">发现专属导游</p>
-          </div>
-          <span class="entry-card-arrow">→</span>
-        </a>
-        <a href="guide-tools.html" class="entry-card guide-card card-hover">
-          <div class="entry-card-icon">🎤</div>
-          <div class="entry-card-content">
-            <h3 data-i18n="hero.forGuide">成为导游</h3>
-            <p data-i18n="hero.forGuideDesc">开启事业新篇章</p>
-          </div>
-          <span class="entry-card-arrow">→</span>
-        </a>
-      </div>
-      
-      <!-- 搜索框 -->
-      <div class="hero-search-new fade-in-up delay-300">
-        <span class="search-icon-new">🔍</span>
-        <input type="text" data-i18n-placeholder="hero.searchPlaceholder" placeholder="搜索目的地、导游、线路..." class="search-input-new" id="input-7537">
-        <button class="search-btn-new btn-animate btn-ripple" data-i18n="hero.searchBtn">搜索</button>
-      </div>
-      
-      <!-- 热门标签 -->
-      <div class="hot-tags-new fade-in-up delay-400">
-        <span class="tag-label-new" data-i18n="hero.hotSearch">热门搜索:</span>
-        <a href="guides.html?q=日本" class="hot-tag-new">日本</a>
-        <a href="guides.html?q=泰国" class="hot-tag-new">泰国</a>
-        <a href="guides.html?q=欧洲" class="hot-tag-new">欧洲</a>
-        <a href="guides.html?q=澳新" class="hot-tag-new">澳新</a>
-        <a href="guides.html?q=海岛" class="hot-tag-new">海岛度假</a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 热门目的地 -->
-  <section class="section-block">
-    <div class="container">
-      <div class="section-header-new scroll-reveal">
-        <div class="section-header-left">
-          <h2 class="section-title-new" data-i18n="destinations.title">🌏 热门目的地</h2>
-          <p class="section-desc-new" data-i18n="destinations.subtitle">发现全球最受欢迎的旅行目的地，开启你的下一段旅程</p>
-        </div>
-        <a href="routes.html" class="section-more-link" data-i18n="destinations.viewAll">查看全部 →</a>
-      </div>
-      
-      <div class="destinations-showcase">
-        <a href="routes.html?dest=japan" class="dest-showcase-card dest-featured card-hover scroll-reveal">
-          <div class="dest-showcase-bg" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);"></div>
-          <div class="dest-showcase-content">
-            <span class="dest-emoji-large">🗾</span>
-            <h3 data-i18n="destinations.japan">日本</h3>
-            <p data-i18n="destinations.japanDesc">樱花温泉 · 和风文化</p>
-            <span class="dest-count" data-i18n="destinations.guides">128位导游</span>
-          </div>
-        </a>
-        
-        <div class="dest-small-grid">
-          <a href="routes.html?dest=thailand" class="dest-showcase-card dest-small card-hover scroll-reveal delay-100">
-            <div class="dest-showcase-bg" style="background: linear-gradient(135deg, #feca57 0%, #ff9f43 100%);"></div>
-            <div class="dest-showcase-content">
-              <span class="dest-emoji-small">🏝️</span>
-              <h3 data-i18n="destinations.thailand">泰国</h3>
-              <p data-i18n="destinations.thailandDesc">佛寺美食</p>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-compass text-white text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">游导旅游</span>
+                </a>
+                
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-blue-600 font-medium">首页</a>
+                    <a href="photos/destinations.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">目的地</a>
+                    <a href="photos/themes.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">主题</a>
+                    <a href="photos/index.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">图片库</a>
+                    <a href="photos/my-photos.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">我的图库</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="hidden sm:flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all">
+                        <i class="fas fa-cloud-upload-alt mr-2"></i>
+                        上传图片
+                    </button>
+                    <button class="md:hidden p-2 text-gray-500">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
             </div>
-          </a>
-          
-          <a href="routes.html?dest=europe" class="dest-showcase-card dest-small card-hover scroll-reveal delay-200">
-            <div class="dest-showcase-bg" style="background: linear-gradient(135deg, #54a0ff 0%, #2e86de 100%);"></div>
-            <div class="dest-showcase-content">
-              <span class="dest-emoji-small">🗼</span>
-              <h3 data-i18n="destinations.europe">欧洲</h3>
-              <p data-i18n="destinations.europeDesc">古堡艺术</p>
-            </div>
-          </a>
-          
-          <a href="routes.html?dest=australia" class="dest-showcase-card dest-small card-hover scroll-reveal delay-300">
-            <div class="dest-showcase-bg" style="background: linear-gradient(135deg, #5f27cd 0%, #341f97 100%);"></div>
-            <div class="dest-showcase-content">
-              <span class="dest-emoji-small">🦘</span>
-              <h3 data-i18n="destinations.australia">澳新</h3>
-              <p data-i18n="destinations.australiaDesc">自然冰川</p>
-            </div>
-          </a>
-          
-          <a href="routes.html?dest=southeast" class="dest-showcase-card dest-small card-hover scroll-reveal delay-400">
-            <div class="dest-showcase-bg" style="background: linear-gradient(135deg, #00d2d3 0%, #01a3a4 100%);"></div>
-            <div class="dest-showcase-content">
-              <span class="dest-emoji-small">🌴</span>
-              <h3 data-i18n="destinations.southeast">东南亚</h3>
-              <p data-i18n="destinations.southeastDesc">海岛度假</p>
-            </div>
-          </a>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 为什么选择我们 -->
-  <section class="section-block why-us-section">
-    <div class="container">
-      <div class="section-header-center scroll-reveal">
-        <h2 class="section-title-new" data-i18n="whyUs.title">✨ 为什么选择游导</h2>
-        <p class="section-desc-new" data-i18n="whyUs.subtitle">专业、可信赖的旅行伙伴，让你的旅程更精彩</p>
-      </div>
-      
-      <div class="why-us-grid">
-        <div class="why-us-card card-hover scroll-reveal">
-          <div class="why-us-icon">🎯</div>
-          <h3 data-i18n="whyUs.selectGuides">严选导游</h3>
-          <p data-i18n="whyUs.selectGuidesDesc">所有导游经过专业认证审核，确保服务品质</p>
-        </div>
-        
-        <div class="why-us-card card-hover scroll-reveal delay-100">
-          <div class="why-us-icon">🛡️</div>
-          <h3 data-i18n="whyUs.safe">安全保障</h3>
-          <p data-i18n="whyUs.safeDesc">完善的评价体系，旅行更安心</p>
-        </div>
-        
-        <div class="why-us-card card-hover scroll-reveal delay-200">
-          <div class="why-us-icon">⚡</div>
-          <h3 data-i18n="whyUs.efficient">高效匹配</h3>
-          <p data-i18n="whyUs.efficientDesc">智能推荐系统，快速找到合适的导游</p>
-        </div>
-        
-        <div class="why-us-card card-hover scroll-reveal delay-300">
-          <div class="why-us-icon">💰</div>
-          <h3 data-i18n="whyUs.value">透明定价</h3>
-          <p data-i18n="whyUs.valueDesc">明码标价，无隐形消费</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 热门导游推荐 -->
-  <section class="section-block">
-    <div class="container">
-      <div class="section-header-new scroll-reveal">
-        <div class="section-header-left">
-          <h2 class="section-title-new">⭐ 明星导游</h2>
-          <p class="section-desc-new">专业认证导游，为你定制专属旅程</p>
-        </div>
-        <a href="guides.html" class="section-more-link">查看全部 →</a>
-      </div>
-      
-      <div class="guides-showcase">
-        <a href="guide-detail.html" class="guide-showcase-card">
-          <div class="guide-avatar-new">👩‍💼</div>
-          <div class="guide-info-new">
-            <h4>李婷</h4>
-            <p class="guide-langs">🇨🇳 中文 · 🇯🇵 日语</p>
-            <div class="guide-rating-new">⭐ 4.9 <span>(328评价)</span></div>
-            <p class="guide-specialty">日本深度游 · 樱花季专家</p>
-          </div>
-          <span class="guide-badge hot">热门</span>
-        </a>
-        
-        <a href="guide-detail.html" class="guide-showcase-card">
-          <div class="guide-avatar-new">👨‍🏫</div>
-          <div class="guide-info-new">
-            <h4>王磊</h4>
-            <p class="guide-langs">🇨🇳 中文 · 🇬🇧 英语</p>
-            <div class="guide-rating-new">⭐ 4.8 <span>(256评价)</span></div>
-            <p class="guide-specialty">欧洲艺术史 · 文化深度游</p>
-          </div>
-          <span class="guide-badge">优选</span>
-        </a>
-        
-        <a href="guide-detail.html" class="guide-showcase-card">
-          <div class="guide-avatar-new">👩‍🎨</div>
-          <div class="guide-info-new">
-            <h4>陈静</h4>
-            <p class="guide-langs">🇨🇳 中文 · 🇹🇭 泰语</p>
-            <div class="guide-rating-new">⭐ 4.9 <span>(412评价)</span></div>
-            <p class="guide-specialty">东南亚自由行 · 海岛度假</p>
-          </div>
-          <span class="guide-badge hot">热门</span>
-        </a>
-        
-        <a href="guide-detail.html" class="guide-showcase-card">
-          <div class="guide-avatar-new">👨‍✈️</div>
-          <div class="guide-info-new">
-            <h4>张伟</h4>
-            <p class="guide-langs">🇨🇳 中文 · 🇫🇷 法语</p>
-            <div class="guide-rating-new">⭐ 4.7 <span>(189评价)</span></div>
-            <p class="guide-specialty">法语区深度游 · 定制旅行</p>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 用户评价 -->
-  <section class="section-block testimonials-section">
-    <div class="container">
-      <div class="section-header-center">
-        <h2 class="section-title-new">💬 用户真实评价</h2>
-        <p class="section-desc-new">听听他们的旅行故事</p>
-      </div>
-      
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
-          <p class="testimonial-text">"第一次出国旅行就遇到了李婷导游，她的日本讲解非常专业，还带我们去了很多当地人才知道的美食店，太棒了！"</p>
-          <div class="testimonial-author">
-            <span class="testimonial-avatar">👩</span>
-            <div>
-              <span class="testimonial-name">张女士</span>
-              <span class="testimonial-trip">日本7日游</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="testimonial-card">
-          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
-          <p class="testimonial-text">"平台很靠谱，导游信息透明真实。陈静导游对泰国非常熟悉，整个行程安排得妥妥当当，下次还找她！"</p>
-          <div class="testimonial-author">
-            <span class="testimonial-avatar">👨</span>
-            <div>
-              <span class="testimonial-name">李先生</span>
-              <span class="testimonial-trip">泰国清迈游</span>
-            </div>
-          </div>
-        </div>
-        
-        <div class="testimonial-card">
-          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
-          <p class="testimonial-text">"作为导游，游导平台的工具真的太好用了！客户管理、知识库都整合在一起，工作效率提升了很多。"</p>
-          <div class="testimonial-author">
-            <span class="testimonial-avatar">🧑‍💼</span>
-            <div>
-              <span class="testimonial-name">王导游</span>
-              <span class="testimonial-trip">欧洲专线导游</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 快速入口卡片 -->
-  <section class="section-block">
-    <div class="container">
-      <div class="section-header-new">
-        <div class="section-header-left">
-          <h2 class="section-title-new">🛠️ 旅行工具箱</h2>
-          <p class="section-desc-new">实用小工具，让旅行更轻松</p>
-        </div>
-      </div>
-      
-      <div class="quick-tools-grid">
-        <a href="weather.html" class="quick-tool-card">
-          <div class="quick-tool-icon" style="background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);">🌤️</div>
-          <h3>天气查询</h3>
-          <p>实时天气</p>
-        </a>
-        
-        <a href="exchange.html" class="quick-tool-card">
-          <div class="quick-tool-icon" style="background: linear-gradient(135deg, #55efc4 0%, #00b894 100%);">💱</div>
-          <h3>汇率换算</h3>
-          <p>实时汇率</p>
-        </a>
-        
-        <a href="world-clock.html" class="quick-tool-card">
-          <div class="quick-tool-icon" style="background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);">⏰</div>
-          <h3>世界时钟</h3>
-          <p>全球时间</p>
-        </a>
-        
-        <a href="emergency.html" class="quick-tool-card">
-          <div class="quick-tool-icon" style="background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);">🆘</div>
-          <h3>应急资源</h3>
-          <p>紧急求助</p>
-        </a>
-        
-        <a href="visa.html" class="quick-tool-card">
-          <div class="quick-tool-icon" style="background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);">📋</div>
-          <h3>签证中心</h3>
-          <p>签证攻略</p>
-        </a>
-        
-        <a href="pitfall.html" class="quick-tool-card">
-          <div class="quick-tool-icon" style="background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);">⚠️</div>
-          <h3>避坑指南</h3>
-          <p>防骗必看</p>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- 平台数据 -->
-  <section class="stats-section-new">
-    <div class="container">
-      <div class="stats-grid-new">
-        <div class="stats-item-new">
-          <span class="stats-number">5200</span>
-          <span class="stats-plus">+</span>
-          <p>认证导游</p>
-        </div>
-        <div class="stats-item-new">
-          <span class="stats-number">128</span>
-          <span class="stats-plus">+</span>
-          <p>热门目的地</p>
-        </div>
-        <div class="stats-item-new">
-          <span class="stats-number">98600</span>
-          <span class="stats-plus">+</span>
-          <p>服务游客</p>
-        </div>
-        <div class="stats-item-new">
-          <span class="stats-number">4.9</span>
-          <span class="stats-unit">分</span>
-          <p>用户好评</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 趣味工具 -->
-  <section class="section-block">
-    <div class="container">
-      <div class="section-header-center">
-        <h2 class="section-title-new">🎮 有趣的旅行工具</h2>
-        <p class="section-desc-new">让旅行准备变得更有趣</p>
-      </div>
-      
-      <div class="fun-tools-new">
-        <div class="fun-tool-new" onclick="openCalculator()">
-          <div class="fun-tool-icon-new">💰</div>
-          <h3>旅行费用计算器</h3>
-          <p>预估旅行开销</p>
-        </div>
-        
-        <div class="fun-tool-new" onclick="openChecklist()">
-          <div class="fun-tool-icon-new">📦</div>
-          <h3>出行清单生成器</h3>
-          <p>智能行李清单</p>
-        </div>
-        
-        <div class="fun-tool-new" onclick="openPersonalityTest()">
-          <div class="fun-tool-icon-new">🎭</div>
-          <h3>旅行人格测试</h3>
-          <p>发现旅行风格</p>
-        </div>
-        
-        <div class="fun-tool-new" onclick="openMysteryBox()">
-          <div class="fun-tool-icon-new">🎁</div>
-          <h3>旅行盲盒</h3>
-          <p>神秘目的地</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 功能分区 - 游客/导游专区 -->
-  <section class="section-block dual-zones-section">
-    <div class="container">
-      <div class="dual-zones-grid">
-        <!-- 游客专区 -->
-        <div class="zone-card-new tourist-zone-new">
-          <div class="zone-card-header">
-            <span class="zone-icon-new">🎒</span>
-            <h3>游客专区</h3>
-          </div>
-          <div class="zone-services-list">
-            <a href="guides.html" class="service-item">
-              <span class="service-icon">🎤</span>
-              <span>找导游</span>
-              <span class="service-arrow">→</span>
-            </a>
-            <a href="visa.html" class="service-item">
-              <span class="service-icon">📋</span>
-              <span>签证攻略</span>
-              <span class="service-arrow">→</span>
-            </a>
-            <a href="pitfall.html" class="service-item">
-              <span class="service-icon">⚠️</span>
-              <span>避坑指南</span>
-              <span class="service-arrow">→</span>
-            </a>
-            <a href="routes.html" class="service-item">
-              <span class="service-icon">🗺️</span>
-              <span>精品线路</span>
-              <span class="service-arrow">→</span>
-            </a>
-          </div>
-          <a href="guides.html" class="zone-action-btn btn-animate btn-ripple">探索更多 →</a>
-        </div>
-        
-        <!-- 导游专区 -->
-        <div class="zone-card-new guide-zone-new">
-          <div class="zone-card-header">
-            <span class="zone-icon-new">🎤</span>
-            <h3>导游专区</h3>
-          </div>
-          <div class="zone-services-list">
-            <a href="guide-tools.html" class="service-item">
-              <span class="service-icon">🛠️</span>
-              <span>导游工具</span>
-              <span class="service-arrow">→</span>
-            </a>
-            <a href="knowledge-base.html" class="service-item">
-              <span class="service-icon">📚</span>
-              <span>知识库</span>
-              <span class="service-arrow">→</span>
-            </a>
-            <a href="schedule.html" class="service-item">
-              <span class="service-icon">📆</span>
-              <span>团期管理</span>
-              <span class="service-arrow">→</span>
-            </a>
-            <a href="finance.html" class="service-item">
-              <span class="service-icon">💰</span>
-              <span>财务管理</span>
-              <span class="service-arrow">→</span>
-            </a>
-          </div>
-          <a href="guide-apply.html" class="zone-action-btn guide-action btn-animate btn-ripple">免费入驻 →</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 知识中心入口 -->
-  <section class="section-block knowledge-section">
-    <div class="container">
-      <div class="knowledge-banner">
-        <div class="knowledge-banner-content">
-          <h2>📚 知识中心</h2>
-          <p>全球景点知识库 + 旅行知识问答</p>
-          <div class="knowledge-badges">
-            <span class="kb-badge">🌍 100+热门景点</span>
-            <span class="kb-badge">🎯 200+知识问答</span>
-            <span class="kb-badge">🏳️ 30+国家攻略</span>
-          </div>
-        </div>
-        <div class="knowledge-links">
-          <a href="knowledge-base.html" class="knowledge-link">
-            <span class="kl-icon">🌍</span>
-            <span>景点知识库</span>
-          </a>
-          <a href="quiz.html" class="knowledge-link">
-            <span class="kl-icon">🎯</span>
-            <span>知识问答</span>
-          </a>
-          <a href="destinations.html" class="knowledge-link">
-            <span class="kl-icon">🏳️</span>
-            <span>目的地百科</span>
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-  <!-- 页脚 -->
-  <footer id="main-footer" class="footer-new">
-    <div class="container">
-      <div class="footer-main-grid">
-        <!-- 品牌介绍 -->
-        <div class="footer-brand">
-          <a href="index.html" class="footer-logo">🌍 游导旅游</a>
-          <p class="footer-brand-desc">专业的导游与游客一站式旅行平台，让旅行更简单，让服务更专业。</p>
-          <div class="footer-social">
-            <a href="#" class="social-link" title="微信公众号"><span aria-hidden="true">💬</span><span class="sr-only">链接</span></a>
-            <a href="#" class="social-link" title="微博"><span aria-hidden="true">📱</span><span class="sr-only">链接</span></a>
-            <a href="#" class="social-link" title="小红书"><span aria-hidden="true">📕</span><span class="sr-only">链接</span></a>
-          </div>
-        </div>
-        
-        <!-- 游客服务 -->
-        <div class="footer-links-group">
-          <h4>游客服务</h4>
-          <a href="guides.html">找导游</a>
-          <a href="visa.html">签证中心</a>
-          <a href="routes.html">精品线路</a>
-          <a href="pitfall.html">避坑指南</a>
-          <a href="trip-planner.html">旅行灵感</a>
-        </div>
-        
-        <!-- 导游服务 -->
-        <div class="footer-links-group">
-          <h4>导游服务</h4>
-          <a href="guide-tools.html">导游工具</a>
-          <a href="knowledge-base.html">知识库</a>
-          <a href="schedule.html">团期管理</a>
-          <a href="finance.html">财务管理</a>
-          <a href="guide-apply.html">入驻申请</a>
-        </div>
-        
-        <!-- 帮助中心 -->
-        <div class="footer-links-group">
-          <h4>帮助中心</h4>
-          <a href="help.html">帮助中心</a>
-          <a href="faq.html">常见问题</a>
-          <a href="contact.html">联系我们</a>
-          <a href="about.html">关于我们</a>
-          <a href="terms.html">用户协议</a>
-          <a href="privacy.html">隐私政策</a>
-        </div>
-        
-        <!-- 联系方式 -->
-        <div class="footer-contact">
-          <h4>联系我们</h4>
-          <div class="contact-item">
-            <span class="contact-icon">📧</span>
-            <span>2173381363@qq.com</span>
-          </div>
-          <div class="contact-item">
-            <span class="contact-icon">💬</span>
-            <span>微信：ximao101</span>
-          </div>
-          <div class="contact-item">
-            <span class="contact-icon">🌐</span>
-            <span>youdao-travel.com</span>
-          </div>
-          <div class="contact-item">
-            <span class="contact-icon">⏰</span>
-            <span>工作日 9:00-18:00</span>
-          </div>
-        </div>
-      </div>
-      
-      <div class="footer-bottom-new">
-        <p class="footer-copyright">© 2024 游导旅游 · 旅行信息工具平台</p>
-        <p class="footer-disclaimer">本平台仅为信息展示工具，不提供旅游服务，不对用户与导游间的交易负责</p>
-        <div class="footer-legal-links">
-          <a href="user-agreement.html">用户服务协议</a>
-          <a href="privacy.html">隐私政策</a>
-          <a href="disclaimer.html">免责声明</a>
-          <a href="guide-agreement.html">导游入驻协议</a>
-          <a href="about.html">关于我们</a>
-        </div>
-        <p class="footer-icp">ICP备案号：【待填写】 | <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow">查询备案</a></p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- 侧边活动入口 -->
-  <div class="activity-sidebar" id="activitySidebar"></div>
-
-  <!-- 右侧悬浮工具栏 -->
-  <div class="side-toolbar">
-    <a href="javascript:void(0)" class="side-tool" onclick="openChatbot()" title="在线咨询">
-      <span>💬</span>
-    </a>
-    <a href="weather.html" class="side-tool" title="天气查询">
-      <span>🌤️</span>
-    </a>
-    <a href="exchange.html" class="side-tool" title="汇率换算">
-      <span>💱</span>
-    </a>
-    <a href="world-clock.html" class="side-tool" title="世界时钟">
-      <span>⏰</span>
-    </a>
-  </div>
-
-  <!-- 右下角快速找导游 -->
-  <a href="guides.html" class="float-guide-btn">
-    <span>🎤</span>快速找导游
-  </a>
-
-  <!-- 旅行费用计算器弹窗 -->
-  <div id="calculatorModal" class="modal">
-    <div class="modal-content">
-      <span class="modal-close" onclick="closeCalculator()">×</span>
-      <h2>💰 旅行费用计算器</h2>
-      <div class="calc-form">
-        <div class="form-group">
-          <label>目的地</label>
-          <select id="calcDestination">
-            <option value="japan">日本</option>
-            <option value="thailand">泰国</option>
-            <option value="europe">欧洲</option>
-            <option value="australia">澳新</option>
-            <option value="southeast">东南亚</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <div class="form-group">
-            <label>天数</label>
-            <input type="number" id="calcDays" value="5" min="1" max="30">
-          </div>
-          <div class="form-group">
-            <label>人数</label>
-            <input type="number" id="calcPeople" value="2" min="1" max="20">
-          </div>
-        </div>
-        <button class="btn btn-primary" onclick="calculateCost()">计算费用</button>
-      </div>
-      <div id="calcResult" class="calc-result" style="display:none">
-        <h3>预估费用明细</h3>
-        <div class="cost-breakdown">
-          <div class="cost-item"><span>✈️ 机票</span><span id="flightCost">¥0</span></div>
-          <div class="cost-item"><span>🏨 酒店</span><span id="hotelCost">¥0</span></div>
-          <div class="cost-item"><span>🍜 餐饮</span><span id="foodCost">¥0</span></div>
-          <div class="cost-item"><span>🎫 门票</span><span id="ticketCost">¥0</span></div>
-          <div class="cost-item total"><span>总计</span><span id="totalCost">¥0</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 出行清单弹窗 -->
-  <div id="checklistModal" class="modal">
-    <div class="modal-content modal-lg">
-      <span class="modal-close" onclick="closeChecklist()">×</span>
-      <h2>📦 出行清单生成器</h2>
-      <div class="checklist-options">
-        <select id="checklistType" onchange="generateChecklist()">
-          <option value="general">通用行李</option>
-          <option value="beach">海滩度假</option>
-          <option value="hiking">徒步登山</option>
-          <option value="business">商务出行</option>
-          <option value="winter">冬季出行</option>
-        </select>
-      </div>
-      <div id="checklistContent" class="checklist-content"></div>
-      <div class="checklist-progress">
-        <span>已准备: <strong id="checkProgress">0</strong>/<span id="checkTotal">0</span></span>
-        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 旅行人格测试弹窗 -->
-  <div id="personalityModal" class="modal">
-    <div class="modal-content modal-lg">
-      <span class="modal-close" onclick="closePersonalityTest()">×</span>
-      <h2>🎭 旅行人格测试</h2>
-      <div id="testContent" class="test-content">
-        <div class="test-question" data-question="1">
-          <p class="question-num">第 1/5 题</p>
-          <p class="question-text">旅行时，你更喜欢？</p>
-          <div class="test-options">
-            <label><input type="radio" name="q1" value="a" id="q1"> <span>打卡热门景点</span></label>
-            <label><input type="radio" name="q1" value="b" id="q1"> <span>放慢脚步，享受当地</span></label>
-            <label><input type="radio" name="q1" value="c" id="q1"> <span>深入了解历史文化</span></label>
-            <label><input type="radio" name="q1" value="d" id="q1"> <span>挑战极限，体验刺激</span></label>
-          </div>
-          <button class="btn btn-primary" onclick="nextQuestion(1)">下一题</button>
-        </div>
-        
-        <div class="test-question" data-question="2" style="display:none">
-          <p class="question-num">第 2/5 题</p>
-          <p class="question-text">出行前你会做多少准备？</p>
-          <div class="test-options">
-            <label><input type="radio" name="q2" value="a" id="q2"> <span>详细规划到每小时</span></label>
-            <label><input type="radio" name="q2" value="b" id="q2"> <span>大致安排，随缘</span></label>
-            <label><input type="radio" name="q2" value="c" id="q2"> <span>只了解必去景点</span></label>
-            <label><input type="radio" name="q2" value="d" id="q2"> <span>说走就走</span></label>
-          </div>
-          <button class="btn btn-primary" onclick="nextQuestion(2)">下一题</button>
-        </div>
-        
-        <div class="test-question" data-question="3" style="display:none">
-          <p class="question-num">第 3/5 题</p>
-          <p class="question-text">你更喜欢哪种住宿？</p>
-          <div class="test-options">
-            <label><input type="radio" name="q3" value="a" id="q3"> <span>豪华酒店，享受服务</span></label>
-            <label><input type="radio" name="q3" value="b" id="q3"> <span>特色民宿，体验当地</span></label>
-            <label><input type="radio" name="q3" value="c" id="q3"> <span>青旅，结交朋友</span></label>
-            <label><input type="radio" name="q3" value="d" id="q3"> <span>露营，亲近自然</span></label>
-          </div>
-          <button class="btn btn-primary" onclick="nextQuestion(3)">下一题</button>
-        </div>
-        
-        <div class="test-question" data-question="4" style="display:none">
-          <p class="question-num">第 4/5 题</p>
-          <p class="question-text">你通常和谁一起旅行？</p>
-          <div class="test-options">
-            <label><input type="radio" name="q4" value="a" id="q4"> <span>独自一人，享受自由</span></label>
-            <label><input type="radio" name="q4" value="b" id="q4"> <span>家人朋友，一起分享</span></label>
-            <label><input type="radio" name="q4" value="c" id="q4"> <span>跟团，省心省力</span></label>
-            <label><input type="radio" name="q4" value="d" id="q4"> <span>视情况而定</span></label>
-          </div>
-          <button class="btn btn-primary" onclick="nextQuestion(4)">下一题</button>
-        </div>
-        
-        <div class="test-question" data-question="5" style="display:none">
-          <p class="question-num">第 5/5 题</p>
-          <p class="question-text">你对美食的态度是？</p>
-          <div class="test-options">
-            <label><input type="radio" name="q5" value="a" id="q5"> <span>必吃网红店，拍照打卡</span></label>
-            <label><input type="radio" name="q5" value="b" id="q5"> <span>米其林餐厅，精致体验</span></label>
-            <label><input type="radio" name="q5" value="c" id="q5"> <span>街头小吃，地道风味</span></label>
-            <label><input type="radio" name="q5" value="d" id="q5"> <span>随便，能吃饱就行</span></label>
-          </div>
-          <button class="btn btn-primary" onclick="showResult()">查看结果</button>
-        </div>
-        
-        <div id="testResult" class="test-result" style="display:none">
-          <div class="result-icon">🎯</div>
-          <h3>你的旅行人格是：<span id="personalityType">冒险探索家</span></h3>
-          <p id="personalityDesc">你喜欢探索未知，追求独特的旅行体验。不满足于走马观花，热衷于深入当地文化，发现隐藏的美景和美食。</p>
-          <button class="btn btn-primary" onclick="resetTest()">重新测试</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 旅行盲盒弹窗 -->
-  <div id="mysteryBoxModal" class="modal">
-    <div class="modal-content">
-      <span class="modal-close" onclick="closeMysteryBox()">×</span>
-      <div id="mysteryBox" class="mystery-box">
-        <div class="mystery-gift">🎁</div>
-        <h3>旅行盲盒</h3>
-        <p>点击开启，发现你的下一个目的地</p>
-        <button class="btn btn-primary" onclick="openMysteryBox()">开启盲盒</button>
-      </div>
-      <div id="mysteryResult" class="mystery-result" style="display:none">
-        <div class="mystery-dest-icon" id="mysteryEmoji">🗾</div>
-        <h3>你的神秘目的地是</h3>
-        <p class="mystery-dest-name" id="mysteryName">日本</p>
-        <p class="mystery-dest-desc" id="mysteryDesc">樱花、温泉、和风文化</p>
-        <div class="mystery-tags" id="mysteryTags"></div>
-        <button class="btn btn-primary" onclick="resetBox()">再开一次</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // 数字动画
-    function animateNumbers() {
-      document.querySelectorAll('.stats-number').forEach(el => {
-        const target = parseInt(el.textContent.replace(/\D/g, ''));
-        let current = 0;
-        const increment = target / 50;
-        const timer = setInterval(() => {
-          current += increment;
-          if (current >= target) {
-            el.textContent = target.toLocaleString();
-            clearInterval(timer);
-          } else {
-            el.textContent = Math.floor(current).toLocaleString();
-          }
-        }, 30);
-      });
-    }
-
-    // 费用计算器
-    function openCalculator() { document.getElementById('calculatorModal').classList.add('open'); }
-    function closeCalculator() { document.getElementById('calculatorModal').classList.remove('open'); }
+    </header>
     
-    function calculateCost() {
-      const destination = document.getElementById('calcDestination').value;
-      const days = parseInt(document.getElementById('calcDays').value);
-      const people = parseInt(document.getElementById('calcPeople').value);
-      
-      const rates = {
-        japan: { flight: 3500, hotel: 600, food: 300, ticket: 150 },
-        thailand: { flight: 2500, hotel: 350, food: 150, ticket: 80 },
-        europe: { flight: 8000, hotel: 900, food: 400, ticket: 200 },
-        australia: { flight: 7000, hotel: 800, food: 350, ticket: 180 },
-        southeast: { flight: 2200, hotel: 300, food: 120, trip: 70 }
-      };
-      
-      const rate = rates[destination];
-      const flight = rate.flight * people;
-      const hotel = rate.hotel * days * people;
-      const food = rate.food * days * people;
-      const ticket = rate.ticket * days * people;
-      const total = flight + hotel + food + ticket;
-      
-      document.getElementById('flightCost').textContent = '¥' + flight.toLocaleString();
-      document.getElementById('hotelCost').textContent = '¥' + hotel.toLocaleString();
-      document.getElementById('foodCost').textContent = '¥' + food.toLocaleString();
-      document.getElementById('ticketCost').textContent = '¥' + ticket.toLocaleString();
-      document.getElementById('totalCost').textContent = '¥' + total.toLocaleString();
-      document.getElementById('calcResult').style.display = 'block';
-    }
-
-    // 出行清单
-    function openChecklist() { document.getElementById('checklistModal').classList.add('open'); generateChecklist(); }
-    function closeChecklist() { document.getElementById('checklistModal').classList.remove('open'); }
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100" height="100" fill="url(#grid)"/>
+            </svg>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm mb-6">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                        2,800+ 精选旅游图片
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                        发现旅途中的
+                        <span class="text-yellow-300">美好瞬间</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/80 mb-8 leading-relaxed">
+                        汇聚日本、韩国、泰国、新加坡等热门目的地的精美图片<br>
+                        为您的旅行灵感提供视觉支持，免费下载商用
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="photos/index.html" class="px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-gray-100 hover:shadow-xl transition-all text-center flex items-center justify-center">
+                            <i class="fas fa-images mr-2"></i>
+                            浏览图片库
+                        </a>
+                        <a href="photos/upload.html" class="px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-bold rounded-xl border-2 border-white/30 hover:bg-white/30 transition-all text-center flex items-center justify-center">
+                            <i class="fas fa-cloud-upload-alt mr-2"></i>
+                            分享照片
+                        </a>
+                    </div>
+                </div>
+                <div class="relative hidden md:block">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-4">
+                            <img src="https://s.coze.cn/image/KaaYhpVazoU/" alt="富士山" class="rounded-2xl shadow-2xl float-animation w-full h-48 object-cover">
+                            <img src="https://s.coze.cn/image/LfW5Q5FBSqA/" alt="郑王庙" class="rounded-2xl shadow-2xl float-animation w-full h-32 object-cover" style="animation-delay: 1s;">
+                        </div>
+                        <div class="space-y-4 pt-8">
+                            <img src="https://s.coze.cn/image/I-IhDT3bsbY/" alt="滨海湾" class="rounded-2xl shadow-2xl float-animation w-full h-32 object-cover" style="animation-delay: 0.5s;">
+                            <img src="https://s.coze.cn/image/EPXzoGx_VsU/" alt="首尔塔" class="rounded-2xl shadow-2xl float-animation w-full h-48 object-cover" style="animation-delay: 1.5s;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-50 to-transparent"></div>
+    </section>
     
-    function generateChecklist() {
-      const type = document.getElementById('checklistType').value;
-      const items = {
-        general: ['护照/身份证', '手机+充电器', '换洗衣物', '洗漱用品', '常用药品', '相机', '现金/信用卡'],
-        beach: ['防晒霜', '泳衣', '太阳镜', '沙滩巾', '拖鞋', '防水袋', '晒后修复'],
-        hiking: ['登山鞋', '登山包', '雨衣', '登山杖', '头灯', '压缩饼干', '创可贴'],
-        business: ['正装', '名片', '笔记本电脑', '充电宝', '领带/丝巾', '名片夹'],
-        winter: ['羽绒服', '保暖内衣', '围巾手套', '暖宝宝', '润唇膏', '防滑鞋']
-      };
-      
-      const list = items[type];
-      document.getElementById('checklistContent').innerHTML = list.map(item => 
-        `<label class="checklist-item"><input type="checkbox" onchange="updateProgress()" id="input-38239"><span>${item}</span></label>`
-      ).join('');
-      document.getElementById('checkTotal').textContent = list.length;
-      updateProgress();
-    }
+    <!-- Destinations -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">热门目的地</h2>
+                    <p class="text-gray-500 mt-2">探索不同国家的独特魅力</p>
+                </div>
+                <a href="photos/destinations.html" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                    查看全部 <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="photos/destinations.html?country=japan" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group">
+                    <img src="https://s.coze.cn/image/iM7WdiKlrcQ/" alt="日本" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-4xl mb-3">🗾</div>
+                        <h3 class="text-white text-2xl font-bold mb-1">日本</h3>
+                        <p class="text-white/80 text-sm mb-3">传统与现代的完美融合</p>
+                        <div class="flex items-center text-white/60 text-sm">
+                            <i class="fas fa-images mr-2"></i>
+                            <span>1,267 张图片</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="photos/destinations.html?country=korea" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group">
+                    <img src="https://s.coze.cn/image/EPXzoGx_VsU/" alt="韩国" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-4xl mb-3">🇰🇷</div>
+                        <h3 class="text-white text-2xl font-bold mb-1">韩国</h3>
+                        <p class="text-white/80 text-sm mb-3">K-pop与韩剧的浪漫国度</p>
+                        <div class="flex items-center text-white/60 text-sm">
+                            <i class="fas fa-images mr-2"></i>
+                            <span>856 张图片</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="photos/destinations.html?country=thailand" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group">
+                    <img src="https://s.coze.cn/image/LfW5Q5FBSqA/" alt="泰国" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-4xl mb-3">🇹🇭</div>
+                        <h3 class="text-white text-2xl font-bold mb-1">泰国</h3>
+                        <p class="text-white/80 text-sm mb-3">微笑佛国的热带风情</p>
+                        <div class="flex items-center text-white/60 text-sm">
+                            <i class="fas fa-images mr-2"></i>
+                            <span>1,023 张图片</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="photos/destinations.html?country=singapore" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group">
+                    <img src="https://s.coze.cn/image/I-IhDT3bsbY/" alt="新加坡" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-4xl mb-3">🇸🇬</div>
+                        <h3 class="text-white text-2xl font-bold mb-1">新加坡</h3>
+                        <p class="text-white/80 text-sm mb-3">花园城市的现代魅力</p>
+                        <div class="flex items-center text-white/60 text-sm">
+                            <i class="fas fa-images mr-2"></i>
+                            <span>523 张图片</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
     
-    function updateProgress() {
-      const checked = document.querySelectorAll('#checklistContent input:checked').length;
-      const total = parseInt(document.getElementById('checkTotal').textContent);
-      document.getElementById('checkProgress').textContent = checked;
-      document.getElementById('progressFill').style.width = (checked/total*100) + '%';
-    }
-
-    // 人格测试
-    function openPersonalityTest() { document.getElementById('personalityModal').classList.add('open'); }
-    function closePersonalityTest() { document.getElementById('personalityModal').classList.remove('open'); }
+    <!-- Themes -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">图片主题</h2>
+                    <p class="text-gray-500 mt-2">按主题发现精彩内容</p>
+                </div>
+                <a href="photos/themes.html" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                    查看全部 <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <a href="photos/themes.html?theme=landscape" class="card-hover bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🏔️</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">风景</h3>
+                    <p class="text-gray-500 text-sm">1,245 张</p>
+                </a>
+                <a href="photos/themes.html?theme=food" class="card-hover bg-gradient-to-br from-orange-50 to-amber-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🍜</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">美食</h3>
+                    <p class="text-gray-500 text-sm">876 张</p>
+                </a>
+                <a href="photos/themes.html?theme=architecture" class="card-hover bg-gradient-to-br from-purple-50 to-violet-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🏛️</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">建筑</h3>
+                    <p class="text-gray-500 text-sm">654 张</p>
+                </a>
+                <a href="photos/themes.html?theme=culture" class="card-hover bg-gradient-to-br from-pink-50 to-rose-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🎎</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">人文</h3>
+                    <p class="text-gray-500 text-sm">523 张</p>
+                </a>
+                <a href="photos/themes.html?theme=night" class="card-hover bg-gradient-to-br from-indigo-50 to-blue-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🌃</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">夜景</h3>
+                    <p class="text-gray-500 text-sm">432 张</p>
+                </a>
+            </div>
+        </div>
+    </section>
     
-    function nextQuestion(num) {
-      document.querySelector(`.test-question[data-question="${num}"]`).style.display = 'none';
-      document.querySelector(`.test-question[data-question="${num + 1}"]`).style.display = 'block';
-    }
+    <!-- Featured Photos -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">精选图片</h2>
+                    <p class="text-gray-500 mt-2">最受用户喜爱的精彩作品</p>
+                </div>
+                <a href="photos/index.html" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                    查看全部 <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="photos/detail.html?id=jp002" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/KaaYhpVazoU/" alt="富士山倒影" class="w-full aspect-[3/4] object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=sg002" class="card-hover rounded-2xl overflow-hidden shadow-md md:row-span-2">
+                    <img src="https://s.coze.cn/image/9VjLGxp12S4/" alt="鱼尾狮夜景" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=kr001" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/fLEgZXey2nw/" alt="首尔塔日落" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=th004" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/7iZF3qPwKBw/" alt="普吉岛日落" class="w-full aspect-[3/4] object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=jp001" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/SYPKIL_J_bs/" alt="京都竹林" class="w-full aspect-[4/3] object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=th001" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/sYsNEWgjmW4/" alt="大皇宫" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=jp003" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/wOncysDHV5M/" alt="东京樱花" class="w-full aspect-[4/3] object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+            </div>
+        </div>
+    </section>
     
-    function showResult() {
-      document.querySelectorAll('.test-question').forEach(el => el.style.display = 'none');
-      document.getElementById('testResult').style.display = 'block';
-      const types = ['冒险探索家', '慢旅行达人', '文化深度游者', '极限挑战者'];
-      const descs = [
-        '你喜欢探索未知，追求独特的旅行体验。不满足于走马观花，热衷于深入当地文化，发现隐藏的美景和美食。',
-        '旅行对你来说是一种放松，不需要太多计划。喜欢在一个地方慢慢逛，感受当地人的生活节奏。',
-        '你对历史文化有着浓厚的兴趣，喜欢参观博物馆、历史古迹，听导游讲解背后的故事。',
-        '你追求刺激和挑战，喜欢蹦极、潜水、跳伞等极限运动，每次旅行都要突破自己的极限。'
-      ];
-      const idx = Math.floor(Math.random() * 4);
-      document.getElementById('personalityType').textContent = types[idx];
-      document.getElementById('personalityDesc').textContent = descs[idx];
-    }
+    <!-- Features -->
+    <section class="py-16 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">为什么选择游导图片库?</h2>
+                <p class="text-white/80 text-lg">为旅行者和创作者打造的优质图片资源平台</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center p-8">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-high-definition text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">高清图片资源</h3>
+                    <p class="text-white/70">所有图片均为高清原图，支持多尺寸下载，满足各种场景需求</p>
+                </div>
+                <div class="text-center p-8">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-copyright text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">免费商用授权</h3>
+                    <p class="text-white/70">用户上传图片采用CC0协议，免费用于个人和商业用途</p>
+                </div>
+                <div class="text-center p-8">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-share-alt text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">便捷分享收藏</h3>
+                    <p class="text-white/70">一键收藏喜欢的图片，建立个人图集，方便管理和分享</p>
+                </div>
+            </div>
+        </div>
+    </section>
     
-    function resetTest() {
-      document.querySelectorAll('.test-question').forEach((el, i) => el.style.display = i === 0 ? 'block' : 'none');
-      document.getElementById('testResult').style.display = 'none';
-      document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
-    }
-
-    // 盲盒
-    const mysteryDestinations = [
-      { emoji: '🗾', name: '日本', desc: '樱花、温泉、和风文化', tags: ['深度游', '美食', '购物'] },
-      { emoji: '🏝️', name: '马尔代夫', desc: '海岛度假的天堂', tags: ['放松', '潜水', '奢华'] },
-      { emoji: '🗼', name: '法国', desc: '浪漫与艺术的国度', tags: ['美食', '时尚', '历史'] },
-      { emoji: '🦘', name: '澳大利亚', desc: '自然与萌宠的乐园', tags: ['自然', '野生动物', '海岸线'] },
-      { emoji: '🏔️', name: '瑞士', desc: '阿尔卑斯山的明珠', tags: ['滑雪', '徒步', '风景'] },
-      { emoji: '🎭', name: '意大利', desc: '古典与时尚交融', tags: ['艺术', '美食', '历史'] }
-    ];
-
-    function openMysteryBox() {
-      document.getElementById('mysteryBox').style.animation = 'shake 0.5s ease-in-out';
-      setTimeout(() => {
-        const dest = mysteryDestinations[Math.floor(Math.random() * mysteryDestinations.length)];
-        document.getElementById('mysteryBox').style.display = 'none';
-        document.getElementById('mysteryResult').style.display = 'block';
-        document.getElementById('mysteryEmoji').textContent = dest.emoji;
-        document.getElementById('mysteryName').textContent = dest.name;
-        document.getElementById('mysteryDesc').textContent = dest.desc;
-        document.getElementById('mysteryTags').innerHTML = dest.tags.map(t => `<span class="mystery-tag">${t}</span>`).join('');
-      }, 500);
-    }
-    function closeMysteryBox() { document.getElementById('mysteryBoxModal').classList.remove('open'); }
-    function resetBox() {
-      document.getElementById('mysteryBox').style.display = 'flex';
-      document.getElementById('mysteryBox').style.animation = 'none';
-      document.getElementById('mysteryResult').style.display = 'none';
-    }
-
-    // 弹窗关闭
-    document.querySelectorAll('.modal').forEach(modal => {
-      modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('open'); });
-    });
-
-    // 数字动画触发
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => { if (entry.isIntersecting) animateNumbers(); });
-    }, { threshold: 0.5 });
-    document.querySelector('.stats-section-new') && observer.observe(document.querySelector('.stats-section-new'));
-
-    // 页面加载
-    window.addEventListener('load', () => { setTimeout(animateNumbers, 500); });
-  </script>
-  <!-- 性能优化工具 - 图片懒加载 -->
-  <script src="js/performance.js" defer></script>
-  <!-- 增强功能 -->
-  <script src="js/enhanced-common.js" defer></script>
-
-  <!-- PWA Service Worker -->
-  <script src="js/pwa.js" defer></script>
-  <script src="js/mobile.js" defer></script>
-  <script src="js/animations.js" defer></script>
-  <!-- 在线客服 -->
-  <script src="js/customer-service.js" defer></script>
-  <!-- 活动运营模块 -->
-  <script src="js/activity.js" defer></script>
-  <!-- 新用户引导系统 -->
-  <script src="js/onboarding.js" defer></script>
+    <!-- CTA -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">准备好分享您的旅行故事了吗?</h2>
+            <p class="text-gray-500 text-lg mb-8">上传您的旅游照片，让更多人看到世界的美好</p>
+            <a href="photos/upload.html" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-xl hover:shadow-xl transition-all">
+                <i class="fas fa-cloud-upload-alt mr-3"></i>
+                立即上传
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-compass text-white text-lg"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">游导旅游</span>
+                    </div>
+                    <p class="text-sm">您的专业旅游伴侣，提供目的地攻略、旅行规划、图片资源等全方位服务。</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">图片库</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="photos/destinations.html" class="hover:text-white transition-colors">目的地图库</a></li>
+                        <li><a href="photos/themes.html" class="hover:text-white transition-colors">主题图库</a></li>
+                        <li><a href="photos/upload.html" class="hover:text-white transition-colors">上传图片</a></li>
+                        <li><a href="photos/my-photos.html" class="hover:text-white transition-colors">我的图库</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">热门目的地</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="photos/destinations.html?country=japan" class="hover:text-white transition-colors">日本旅游</a></li>
+                        <li><a href="photos/destinations.html?country=korea" class="hover:text-white transition-colors">韩国旅游</a></li>
+                        <li><a href="photos/destinations.html?country=thailand" class="hover:text-white transition-colors">泰国旅游</a></li>
+                        <li><a href="photos/destinations.html?country=singapore" class="hover:text-white transition-colors">新加坡旅游</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">联系我们</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-envelope mr-2"></i>support@youdao-travel.com</li>
+                        <li><i class="fas fa-phone mr-2"></i>13631149834</li>
+                    </ul>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
+                            <i class="fab fa-weibo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors">
+                            <i class="fab fa-weixin"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-sm">
+                <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

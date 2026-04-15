@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>运营工具 - 游导旅游管理后台</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/brand.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #F3F4F6; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+
+        /* 顶部导航 */
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .admin-header .logo { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .admin-header a { color: white; text-decoration: none; }
+        .admin-nav { display: flex; gap: 10px; align-items: center; }
+        .admin-nav a { padding: 8px 16px; border-radius: 8px; color: white; text-decoration: none; transition: all 0.3s; font-size: 0.95rem; }
+        .admin-nav a:hover, .admin-nav a.active { background: rgba(255,255,255,0.2); }
+
+        /* 主容器 */
+        .admin-container { max-width: 1400px; margin: 0 auto; padding: 30px; }
+
+        /* 页面标题 */
+        .page-title { font-size: 1.8rem; color: #333; margin-bottom: 30px; display: flex; align-items: center; gap: 12px; }
+
+        /* 选项卡 */
+        .tabs { display: flex; gap: 5px; margin-bottom: 25px; background: white; padding: 8px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); overflow-x: auto; }
+        .tab-btn { padding: 12px 24px; border: none; background: transparent; border-radius: 8px; cursor: pointer; font-size: 0.95rem; color: #666; transition: all 0.3s; white-space: nowrap; display: flex; align-items: center; gap: 8px; }
+        .tab-btn:hover { background: #F3F4F6; }
+        .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+
+        /* 统计卡片 */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.12); }
+        .stat-card .icon { font-size: 2.5rem; margin-bottom: 15px; }
+        .stat-card .value { font-size: 2rem; font-weight: 700; color: #333; margin-bottom: 5px; }
+        .stat-card .label { color: #666; font-size: 0.95rem; }
+        .stat-card .trend { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.8rem; margin-top: 8px; }
+        .trend.up { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+        .trend.down { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+
+        /* 内容卡片 */
+        .content-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .content-card h2 { font-size: 1.3rem; color: #333; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid #F3F4F6; display: flex; align-items: center; gap: 10px; }
+
+        /* 表格 */
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #F3F4F6; }
+        th { background: #F9FAFB; color: #666; font-weight: 600; font-size: 0.9rem; }
+        tr:hover { background: #F9FAFB; }
+
+        /* 按钮 */
+        .btn { padding: 8px 16px; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer; transition: all 0.3s; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4); }
+        .btn-success { background: #10B981; color: white; }
+        .btn-danger { background: #EF4444; color: white; }
+        .btn-secondary { background: #E5E7EB; color: #666; }
+        .btn-sm { padding: 5px 12px; font-size: 0.85rem; }
+
+        /* 徽章 */
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.8rem; }
+        .badge-pending { background: rgba(245, 158, 11, 0.1); color: #F59E0B; }
+        .badge-approved, .badge-active { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+        .badge-rejected, .badge-failed { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+        .badge-draft { background: rgba(107, 114, 128, 0.1); color: #6B7280; }
+        .badge-running { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
+
+        /* 搜索栏 */
+        .search-bar { display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap; }
+        .search-bar input, .search-bar select { padding: 10px 15px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 0.95rem; }
+        .search-bar input { flex: 1; min-width: 200px; }
+        .search-bar select { min-width: 150px; }
+
+        /* 模态框 */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal.show { display: flex; }
+        .modal-content { background: white; border-radius: 15px; padding: 30px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-header h3 { font-size: 1.3rem; }
+        .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; }
+
+        /* 表单 */
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #333; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 15px; border: 1px solid #E5E7EB; border-radius: 8px; font-size: 0.95rem; }
+        .form-group textarea { min-height: 100px; resize: vertical; }
+        .form-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+
+        /* 图表区域 */
+        .chart-container { height: 300px; margin-top: 20px; }
+
+        /* 标签内容 */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* 操作日志 */
+        .log-list { max-height: 400px; overflow-y: auto; }
+        .log-item { padding: 12px; border-bottom: 1px solid #F3F4F6; display: flex; gap: 15px; align-items: flex-start; }
+        .log-item:last-child { border-bottom: none; }
+        .log-time { color: #999; font-size: 0.85rem; min-width: 150px; }
+        .log-content { flex: 1; }
+        .log-action { font-weight: 500; color: #333; }
+        .log-detail { color: #666; font-size: 0.9rem; margin-top: 4px; }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .admin-container { padding: 15px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-row { grid-template-columns: 1fr; }
+            .tabs { flex-wrap: nowrap; overflow-x: auto; }
+        }
+
+        /* 空状态 */
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; }
+        .empty-state .icon { font-size: 4rem; margin-bottom: 20px; }
+        .empty-state h3 { font-size: 1.2rem; margin-bottom: 10px; color: #666; }
+
+        /* 加载动画 */
+        .loading { text-align: center; padding: 40px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #F3F4F6; border-top-color: #667eea; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 分页 */
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 20px; }
+        .pagination button { padding: 8px 16px; border: 1px solid #E5E7EB; background: white; border-radius: 8px; cursor: pointer; }
+        .pagination button.active { background: #667eea; color: white; border-color: #667eea; }
+
+        /* 进度条 */
+        .progress-bar { height: 8px; background: #E5E7EB; border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s; }
+
+        /* 工具提示 */
+        .tooltip { position: relative; }
+        .tooltip:hover::after { content: attr(data-tip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; white-space: nowrap; z-index: 10; }
+
+        /* 步骤指示器 */
+        .steps { display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
+        .steps::before { content: ''; position: absolute; top: 15px; left: 0; right: 0; height: 2px; background: #E5E7EB; z-index: 0; }
+        .step { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 1; }
+        .step-number { width: 32px; height: 32px; border-radius: 50%; background: #E5E7EB; color: #666; display: flex; align-items: center; justify-content: center; font-weight: 600; margin-bottom: 8px; }
+        .step.active .step-number { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .step.completed .step-number { background: #10B981; color: white; }
+        .step-label { font-size: 0.85rem; color: #666; }
+
+        /* 快速操作 */
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .quick-action { padding: 20px; background: #F9FAFB; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.3s; border: 2px solid transparent; }
+        .quick-action:hover { background: white; border-color: #667eea; transform: translateY(-3px); }
+        .quick-action .icon { font-size: 2rem; margin-bottom: 10px; }
+        .quick-action .label { font-weight: 500; color: #333; }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header class="admin-header">
+        <div class="logo">
+            <span>🚌</span>
+            <a href="admin.html">游导旅游运营后台</a>
+        </div>
+        <nav class="admin-nav">
+            <a href="admin.html">数据概览</a>
+            <a href="admin-users.html">用户管理</a>
+            <a href="admin-guides.html">导游管理</a>
+            <a href="admin-operations.html" class="active">运营工具</a>
+            <a href="admin-marketing.html">营销管理</a>
+            <a href="index.html" style="margin-left: 20px;">返回首页</a>
+        </nav>
+    </header>
+
+    <!-- 主容器 -->
+    <main class="admin-container">
+        <h1 class="page-title">📊 运营工具中心</h1>
+
+        <!-- 统计概览 -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="icon">📝</div>
+                <div class="value" id="articleCount">0</div>
+                <div class="label">内容文章</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🎉</div>
+                <div class="value" id="activityCount">0</div>
+                <div class="label">进行中活动</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🎫</div>
+                <div class="value" id="couponCount">0</div>
+                <div class="label">活跃优惠券</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">👥</div>
+                <div class="value" id="memberCount">0</div>
+                <div class="label">注册会员</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📨</div>
+                <div class="value" id="messageCount">0</div>
+                <div class="label">发送消息</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">⏰</div>
+                <div class="value" id="taskCount">0</div>
+                <div class="label">定时任务</div>
+            </div>
+        </div>
+
+        <!-- 选项卡 -->
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="content">
+                <span>📝</span> 内容管理
+            </button>
+            <button class="tab-btn" data-tab="activity">
+                <span>🎉</span> 活动管理
+            </button>
+            <button class="tab-btn" data-tab="coupon">
+                <span>🎫</span> 优惠券
+            </button>
+            <button class="tab-btn" data-tab="member">
+                <span>👥</span> 会员管理
+            </button>
+            <button class="tab-btn" data-tab="message">
+                <span>📨</span> 消息中心
+            </button>
+            <button class="tab-btn" data-tab="task">
+                <span>⏰</span> 任务调度
+            </button>
+            <button class="tab-btn" data-tab="logs">
+                <span>📋</span> 操作日志
+            </button>
+        </div>
+
+        <!-- 内容管理 -->
+        <div class="tab-content active" id="content">
+            <div class="content-card">
+                <h2>📝 内容列表</h2>
+                <div class="search-bar">
+                    <input type="text" id="contentSearch" placeholder="搜索文章标题...">
+                    <select id="contentTypeFilter">
+                        <option value="">全部类型</option>
+                        <option value="article">文章</option>
+                        <option value="guide">攻略</option>
+                        <option value="news">资讯</option>
+                    </select>
+                    <select id="contentStatusFilter">
+                        <option value="">全部状态</option>
+                        <option value="draft">草稿</option>
+                        <option value="pending">待审核</option>
+                        <option value="published">已发布</option>
+                        <option value="archived">已归档</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openContentModal()">+ 新建文章</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>标题</th>
+                                <th>类型</th>
+                                <th>状态</th>
+                                <th>浏览量</th>
+                                <th>更新时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contentTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 活动管理 -->
+        <div class="tab-content" id="activity">
+            <div class="content-card">
+                <h2>🎉 活动列表</h2>
+                <div class="search-bar">
+                    <input type="text" id="activitySearch" placeholder="搜索活动名称...">
+                    <select id="activityStatusFilter">
+                        <option value="">全部状态</option>
+                        <option value="draft">草稿</option>
+                        <option value="running">进行中</option>
+                        <option value="ended">已结束</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openActivityModal()">+ 创建活动</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>活动名称</th>
+                                <th>类型</th>
+                                <th>状态</th>
+                                <th>参与人数</th>
+                                <th>目标完成</th>
+                                <th>时间范围</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="activityTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 活动效果分析 -->
+            <div class="content-card" id="activityAnalytics" style="display: none;">
+                <h2>📈 活动效果分析</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="label">浏览量</div>
+                        <div class="value" id="analyticsViews">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">参与人数</div>
+                        <div class="value" id="analyticsParticipants">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">转化率</div>
+                        <div class="value" id="analyticsConversion">0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">带来收入</div>
+                        <div class="value" id="analyticsRevenue">¥0</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 优惠券管理 -->
+        <div class="tab-content" id="coupon">
+            <div class="content-card">
+                <h2>🎫 优惠券列表</h2>
+                <div class="search-bar">
+                    <input type="text" id="couponSearch" placeholder="搜索优惠券名称...">
+                    <select id="couponStatusFilter">
+                        <option value="">全部状态</option>
+                        <option value="active">激活</option>
+                        <option value="expired">已过期</option>
+                        <option value="draft">草稿</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openCouponModal()">+ 创建优惠券</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>优惠券名称</th>
+                                <th>类型</th>
+                                <th>面值</th>
+                                <th>状态</th>
+                                <th>已发放/总量</th>
+                                <th>已使用</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="couponTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 优惠券统计 -->
+            <div class="content-card">
+                <h2>📊 优惠券统计</h2>
+                <div id="couponStats" class="stats-grid"></div>
+            </div>
+        </div>
+
+        <!-- 会员管理 -->
+        <div class="tab-content" id="member">
+            <div class="content-card">
+                <h2>👥 会员列表</h2>
+                <div class="search-bar">
+                    <input type="text" id="memberSearch" placeholder="搜索会员ID/姓名...">
+                    <select id="memberLevelFilter">
+                        <option value="">全部等级</option>
+                        <option value="member">普通会员</option>
+                        <option value="silver">银卡会员</option>
+                        <option value="gold">金卡会员</option>
+                        <option value="platinum">白金会员</option>
+                        <option value="diamond">钻石会员</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="refreshMemberStats()">🔄 刷新统计</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>会员ID</th>
+                                <th>昵称</th>
+                                <th>等级</th>
+                                <th>积分</th>
+                                <th>累计消费</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="memberTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 会员等级分布 -->
+            <div class="content-card">
+                <h2>🏆 会员等级分布</h2>
+                <div id="levelDistribution" class="stats-grid"></div>
+            </div>
+        </div>
+
+        <!-- 消息中心 -->
+        <div class="tab-content" id="message">
+            <div class="content-card">
+                <h2>📨 消息模板</h2>
+                <div class="quick-actions">
+                    <div class="quick-action" onclick="openMessageModal('system')">
+                        <div class="icon">🔔</div>
+                        <div class="label">系统通知</div>
+                    </div>
+                    <div class="quick-action" onclick="openMessageModal('promotion')">
+                        <div class="icon">🎁</div>
+                        <div class="label">促销消息</div>
+                    </div>
+                    <div class="quick-action" onclick="openMessageModal('order')">
+                        <div class="icon">📦</div>
+                        <div class="label">订单通知</div>
+                    </div>
+                    <div class="quick-action" onclick="openMessageModal('activity')">
+                        <div class="icon">🎉</div>
+                        <div class="label">活动通知</div>
+                    </div>
+                </div>
+                <div class="table-container" style="margin-top: 20px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>模板名称</th>
+                                <th>类型</th>
+                                <th>渠道</th>
+                                <th>发送量</th>
+                                <th>送达率</th>
+                                <th>最后使用</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messageTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 发送历史 -->
+            <div class="content-card">
+                <h2>📤 发送记录</h2>
+                <div id="messageHistory" class="log-list"></div>
+            </div>
+        </div>
+
+        <!-- 任务调度 -->
+        <div class="tab-content" id="task">
+            <div class="content-card">
+                <h2>⏰ 定时任务</h2>
+                <div class="search-bar">
+                    <select id="taskStatusFilter">
+                        <option value="">全部状态</option>
+                        <option value="pending">待执行</option>
+                        <option value="running">执行中</option>
+                        <option value="completed">已完成</option>
+                        <option value="failed">失败</option>
+                    </select>
+                    <button class="btn btn-primary" onclick="openTaskModal()">+ 创建任务</button>
+                    <button class="btn btn-secondary" onclick="runHealthCheck()">🏥 健康检查</button>
+                </div>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>任务名称</th>
+                                <th>类型</th>
+                                <th>状态</th>
+                                <th>执行成功率</th>
+                                <th>下次执行</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="taskTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 执行日志 -->
+            <div class="content-card">
+                <h2>📋 最近执行记录</h2>
+                <div id="executionLogs" class="log-list"></div>
+            </div>
+        </div>
+
+        <!-- 操作日志 -->
+        <div class="tab-content" id="logs">
+            <div class="content-card">
+                <h2>📋 操作日志</h2>
+                <div class="search-bar">
+                    <select id="logTypeFilter">
+                        <option value="">全部操作</option>
+                        <option value="create">创建</option>
+                        <option value="update">更新</option>
+                        <option value="delete">删除</option>
+                        <option value="send">发送</option>
+                        <option value="execute">执行</option>
+                    </select>
+                    <button class="btn btn-secondary" onclick="exportLogs()">📥 导出日志</button>
+                </div>
+                <div class="log-list" id="operationLogs">
+                    <div class="empty-state">
+                        <div class="icon">📋</div>
+                        <h3>暂无操作记录</h3>
+                        <p>所有操作将被记录在此</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 内容创建/编辑模态框 -->
+    <div class="modal" id="contentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 创建文章</h3>
+                <button class="modal-close" onclick="closeModal('contentModal')">&times;</button>
+            </div>
+            <form id="contentForm">
+                <input type="hidden" id="contentId">
+                <div class="form-group">
+                    <label>标题</label>
+                    <input type="text" id="contentTitle" required placeholder="输入文章标题">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>类型</label>
+                        <select id="contentType">
+                            <option value="article">文章</option>
+                            <option value="guide">攻略</option>
+                            <option value="news">资讯</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>分类</label>
+                        <select id="contentCategory">
+                            <option value="destination">目的地攻略</option>
+                            <option value="travel_tips">出行贴士</option>
+                            <option value="culture">文化风俗</option>
+                            <option value="food">美食推荐</option>
+                            <option value="activity">活动资讯</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>摘要</label>
+                    <textarea id="contentSummary" placeholder="输入文章摘要"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>内容</label>
+                    <textarea id="contentBody" placeholder="输入文章内容" style="min-height: 150px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>状态</label>
+                    <select id="contentStatus">
+                        <option value="draft">草稿</option>
+                        <option value="pending">待审核</option>
+                        <option value="published">直接发布</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('contentModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 活动创建模态框 -->
+    <div class="modal" id="activityModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎉 创建活动</h3>
+                <button class="modal-close" onclick="closeModal('activityModal')">&times;</button>
+            </div>
+            <form id="activityForm">
+                <input type="hidden" id="activityId">
+                <div class="form-group">
+                    <label>活动名称</label>
+                    <input type="text" id="activityName" required placeholder="输入活动名称">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>活动类型</label>
+                        <select id="activityType">
+                            <option value="promotion">促销活动</option>
+                            <option value="contest">竞赛活动</option>
+                            <option value="giveaway">抽奖活动</option>
+                            <option value="seasonal">季节性活动</option>
+                            <option value="festival">节日活动</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>目标类型</label>
+                        <select id="activityGoalType">
+                            <option value="registration">参与人数</option>
+                            <option value="purchase">购买转化</option>
+                            <option value="engagement">用户互动</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>活动描述</label>
+                    <textarea id="activityDesc" placeholder="输入活动描述"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>开始时间</label>
+                        <input type="datetime-local" id="activityStart">
+                    </div>
+                    <div class="form-group">
+                        <label>结束时间</label>
+                        <input type="datetime-local" id="activityEnd">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>目标数量</label>
+                    <input type="number" id="activityTarget" value="1000" min="1">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('activityModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">创建</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 优惠券创建模态框 -->
+    <div class="modal" id="couponModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>🎫 创建优惠券</h3>
+                <button class="modal-close" onclick="closeModal('couponModal')">&times;</button>
+            </div>
+            <form id="couponForm">
+                <div class="form-group">
+                    <label>优惠券名称</label>
+                    <input type="text" id="couponName" required placeholder="输入优惠券名称">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>优惠类型</label>
+                        <select id="couponType">
+                            <option value="discount">折扣券</option>
+                            <option value="cash">现金券</option>
+                            <option value="gift">礼品券</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>面值</label>
+                        <input type="number" id="couponValue" value="50" min="1">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>发行数量</label>
+                        <input type="number" id="couponTotal" value="100" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>每人限领</label>
+                        <input type="number" id="couponPerUser" value="1" min="1">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>开始日期</label>
+                        <input type="date" id="couponValidFrom">
+                    </div>
+                    <div class="form-group">
+                        <label>结束日期</label>
+                        <input type="date" id="couponValidUntil">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>使用门槛（最低消费）</label>
+                    <input type="number" id="couponMinAmount" value="0" min="0">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('couponModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">创建</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 消息发送模态框 -->
+    <div class="modal" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📨 发送消息</h3>
+                <button class="modal-close" onclick="closeModal('messageModal')">&times;</button>
+            </div>
+            <form id="messageForm">
+                <input type="hidden" id="messageType">
+                <div class="form-group">
+                    <label>消息标题</label>
+                    <input type="text" id="messageTitle" required placeholder="输入消息标题">
+                </div>
+                <div class="form-group">
+                    <label>消息内容</label>
+                    <textarea id="messageContent" required placeholder="输入消息内容" style="min-height: 120px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>发送渠道</label>
+                    <select id="messageChannel">
+                        <option value="in_app">站内消息</option>
+                        <option value="push">推送通知</option>
+                        <option value="email">邮件</option>
+                        <option value="sms">短信</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>目标用户</label>
+                    <select id="messageTarget">
+                        <option value="all">全部用户</option>
+                        <option value="vip">VIP会员</option>
+                        <option value="active">活跃用户</option>
+                        <option value="inactive">沉寂用户</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('messageModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">发送</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 任务创建模态框 -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>⏰ 创建定时任务</h3>
+                <button class="modal-close" onclick="closeModal('taskModal')">&times;</button>
+            </div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label>任务名称</label>
+                    <input type="text" id="taskName" required placeholder="输入任务名称">
+                </div>
+                <div class="form-group">
+                    <label>任务类型</label>
+                    <select id="taskType">
+                        <option value="once">单次任务</option>
+                        <option value="recurring">循环任务</option>
+                        <option value="cron">定时任务</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>内置任务</label>
+                    <select id="taskHandler">
+                        <option value="">自定义任务</option>
+                        <option value="coupon_expire_check">优惠券过期检查</option>
+                        <option value="member_level_check">会员等级检查</option>
+                        <option value="birthday_check">生日检查</option>
+                        <option value="data_backup">数据备份</option>
+                        <option value="statistics_update">统计更新</option>
+                        <option value="message_cleanup">消息清理</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>执行时间</label>
+                    <input type="datetime-local" id="taskExecuteAt">
+                </div>
+                <div class="form-group">
+                    <label>循环间隔（小时）</label>
+                    <input type="number" id="taskInterval" value="24" min="1">
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('taskModal')">取消</button>
+                    <button type="submit" class="btn btn-primary">创建</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 加载CMS模块 -->
+    <script src="js/cms/content-manager.js"></script>
+    <script src="js/cms/activity-manager.js"></script>
+    <script src="js/cms/coupon-manager.js"></script>
+    <script src="js/cms/member-manager.js"></script>
+    <script src="js/cms/message-manager.js"></script>
+    <script src="js/cms/task-scheduler.js"></script>
+
+    <script>
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            initTabs();
+            loadAllData();
+            initForms();
+        });
+
+        // 初始化选项卡
+        function initTabs() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // 切换按钮状态
+                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 切换内容
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+        }
+
+        // 加载所有数据
+        function loadAllData() {
+            loadStats();
+            loadContent();
+            loadActivities();
+            loadCoupons();
+            loadMembers();
+            loadMessages();
+            loadTasks();
+            loadAllLogs();
+        }
+
+        // 加载统计概览
+        function loadStats() {
+            // 内容统计
+            const articles = ContentManager.getArticles();
+            document.getElementById('articleCount').textContent = articles.length;
+            
+            // 活动统计
+            const activities = ActivityManager.getActivities({ status: 'running' });
+            document.getElementById('activityCount').textContent = activities.length;
+            
+            // 优惠券统计
+            const coupons = CouponManager.getCoupons({ status: 'active' });
+            document.getElementById('couponCount').textContent = coupons.length;
+            
+            // 会员统计
+            const members = MemberManager.getMembers();
+            document.getElementById('memberCount').textContent = members.length;
+            
+            // 消息统计
+            const messages = MessageManager.getTemplates();
+            document.getElementById('messageCount').textContent = messages.reduce((sum, t) => sum + t.stats.sent, 0);
+            
+            // 任务统计
+            const tasks = TaskScheduler.getTasks({ enabled: true });
+            document.getElementById('taskCount').textContent = tasks.length;
+        }
+
+        // 加载内容列表
+        function loadContent() {
+            const typeFilter = document.getElementById('contentTypeFilter')?.value || '';
+            const statusFilter = document.getElementById('contentStatusFilter')?.value || '';
+            const keyword = document.getElementById('contentSearch')?.value || '';
+            
+            const articles = ContentManager.getArticles({
+                type: typeFilter,
+                status: statusFilter,
+                keyword: keyword
+            });
+            
+            const tbody = document.getElementById('contentTable');
+            tbody.innerHTML = articles.map(a => `
+                <tr>
+                    <td>${a.id.slice(-8)}</td>
+                    <td>${a.title}</td>
+                    <td>${getContentTypeName(a.type)}</td>
+                    <td><span class="badge badge-${a.status}">${getStatusName(a.status)}</span></td>
+                    <td>${a.views}</td>
+                    <td>${formatDate(a.updatedAt)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="editContent('${a.id}')">编辑</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteContent('${a.id}')">删除</button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" class="empty-state">暂无数据</td></tr>';
+        }
+
+        // 加载活动列表
+        function loadActivities() {
+            const statusFilter = document.getElementById('activityStatusFilter')?.value || '';
+            const keyword = document.getElementById('activitySearch')?.value || '';
+            
+            const activities = ActivityManager.getActivities({
+                status: statusFilter,
+                keyword: keyword
+            });
+            
+            const tbody = document.getElementById('activityTable');
+            tbody.innerHTML = activities.map(a => {
+                const progress = a.goal.target > 0 ? (a.goal.current / a.goal.target * 100).toFixed(0) : 0;
+                return `
+                    <tr>
+                        <td>${a.name}</td>
+                        <td>${getActivityTypeName(a.type)}</td>
+                        <td><span class="badge badge-${a.status === 'running' ? 'running' : a.status}">${getStatusName(a.status)}</span></td>
+                        <td>${a.stats.participants}</td>
+                        <td>
+                            <div class="progress-bar" style="width: 100px;">
+                                <div class="progress-fill" style="width: ${progress}%;"></div>
+                            </div>
+                            ${progress}%
+                        </td>
+                        <td>${formatDate(a.startTime)} ~ ${formatDate(a.endTime)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary" onclick="viewActivityAnalytics('${a.id}')">分析</button>
+                            <button class="btn btn-sm btn-primary" onclick="toggleActivity('${a.id}')">${a.status === 'running' ? '暂停' : '启动'}</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="7" class="empty-state">暂无数据</td></tr>';
+        }
+
+        // 查看活动分析
+        function viewActivityAnalytics(activityId) {
+            const analytics = ActivityManager.Analytics.getActivityAnalytics(activityId);
+            
+            document.getElementById('activityAnalytics').style.display = 'block';
+            document.getElementById('analyticsViews').textContent = analytics.stats.views;
+            document.getElementById('analyticsParticipants').textContent = analytics.stats.participants;
+            document.getElementById('analyticsConversion').textContent = analytics.metrics.conversionRate + '%';
+            document.getElementById('analyticsRevenue').textContent = '¥' + analytics.stats.revenue;
+            
+            // 滚动到分析区域
+            document.getElementById('activityAnalytics').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 切换活动状态
+        function toggleActivity(activityId) {
+            const activity = ActivityManager.getActivity(activityId);
+            if (activity) {
+                const newStatus = activity.status === 'running' ? 'paused' : 'running';
+                ActivityManager.updateActivity(activityId, { status: newStatus });
+                loadActivities();
+                loadStats();
+            }
+        }
+
+        // 加载优惠券列表
+        function loadCoupons() {
+            const statusFilter = document.getElementById('couponStatusFilter')?.value || '';
+            const keyword = document.getElementById('couponSearch')?.value || '';
+            
+            const coupons = CouponManager.getCoupons({
+                status: statusFilter,
+                keyword: keyword
+            });
+            
+            const tbody = document.getElementById('couponTable');
+            tbody.innerHTML = coupons.map(c => `
+                <tr>
+                    <td>${c.name}</td>
+                    <td>${getCouponTypeName(c.type)}</td>
+                    <td>${c.discountType === 'percentage' ? c.value + '%' : '¥' + c.value}</td>
+                    <td><span class="badge badge-${c.status}">${getStatusName(c.status)}</span></td>
+                    <td>${c.issuedCount} / ${c.totalCount}</td>
+                    <td>${c.stats.used}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="distributeCoupon('${c.id}')">发放</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteCoupon('${c.id}')">删除</button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" class="empty-state">暂无数据</td></tr>';
+            
+            // 加载优惠券统计
+            const stats = CouponManager.Statistics.getGlobalStats();
+            const statsDiv = document.getElementById('couponStats');
+            statsDiv.innerHTML = `
+                <div class="stat-card">
+                    <div class="label">总发放量</div>
+                    <div class="value">${stats.distribution.totalIssued}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">总使用量</div>
+                    <div class="value">${stats.usage.totalUsed}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">使用率</div>
+                    <div class="value">${stats.usage.usageRate}%</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">优惠总额</div>
+                    <div class="value">¥${stats.revenue.totalDiscount}</div>
+                </div>
+            `;
+        }
+
+        // 发放优惠券
+        function distributeCoupon(couponId) {
+            const userId = prompt('请输入用户ID（多个用逗号分隔）：');
+            if (userId) {
+                const userIds = userId.split(',').map(id => id.trim());
+                const results = CouponManager.batchDistribute(couponId, userIds);
+                alert(`发放完成：成功 ${results.success.length}，失败 ${results.failed.length}`);
+                loadCoupons();
+            }
+        }
+
+        // 加载会员列表
+        function loadMembers() {
+            const levelFilter = document.getElementById('memberLevelFilter')?.value || '';
+            const keyword = document.getElementById('memberSearch')?.value || '';
+            
+            const members = MemberManager.getMembers({
+                level: levelFilter,
+                keyword: keyword
+            });
+            
+            const tbody = document.getElementById('memberTable');
+            tbody.innerHTML = members.map(m => {
+                const levelInfo = MemberManager.getLevel(m.level);
+                return `
+                    <tr>
+                        <td>${m.userId.slice(-8)}</td>
+                        <td>${m.profile.name || '未设置'}</td>
+                        <td>${levelInfo?.icon || ''} ${levelInfo?.name || m.level}</td>
+                        <td>${m.points}</td>
+                        <td>¥${m.spentAmount}</td>
+                        <td>${formatDate(m.createdAt)}</td>
+                        <td>
+                            <button class="btn btn-sm btn-secondary" onclick="viewMemberDetail('${m.userId}')">详情</button>
+                            <button class="btn btn-sm btn-primary" onclick="adjustMemberPoints('${m.userId}')">积分</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="7" class="empty-state">暂无数据</td></tr>';
+            
+            // 加载等级分布
+            const distribution = MemberManager.Statistics.getLevelDistribution();
+            const levelDiv = document.getElementById('levelDistribution');
+            levelDiv.innerHTML = distribution.map(d => `
+                <div class="stat-card">
+                    <div class="icon">${d.level.icon}</div>
+                    <div class="value">${d.count}</div>
+                    <div class="label">${d.level.name}</div>
+                    <div class="trend up">${d.percentage}%</div>
+                </div>
+            `).join('');
+        }
+
+        // 查看会员详情
+        function viewMemberDetail(userId) {
+            const stats = MemberManager.Statistics.getMemberStats(userId);
+            alert(`会员详情：
+等级：${stats.level.name}
+当前积分：${stats.points.current}
+累计积分：${stats.points.total}
+累计消费：¥${stats.consumption.totalSpent}
+消费笔数：${stats.consumption.orderCount}
+入会时间：${formatDate(stats.memberSince)}`);
+        }
+
+        // 调整会员积分
+        function adjustMemberPoints(userId) {
+            const action = prompt('输入积分操作（add增加/ deduct扣除）：');
+            const amount = parseInt(prompt('输入积分数量：'));
+            
+            if (action && amount) {
+                try {
+                    if (action === 'add') {
+                        MemberManager.addPoints(userId, amount, 'adjust', '管理员调整');
+                    } else if (action === 'deduct') {
+                        MemberManager.deductPoints(userId, amount, 'adjust', '管理员调整');
+                    }
+                    alert('积分调整成功');
+                    loadMembers();
+                } catch (e) {
+                    alert('调整失败：' + e.message);
+                }
+            }
+        }
+
+        // 刷新会员统计
+        function refreshMemberStats() {
+            loadMembers();
+            loadStats();
+        }
+
+        // 加载消息列表
+        function loadMessages() {
+            const templates = MessageManager.getTemplates();
+            
+            const tbody = document.getElementById('messageTable');
+            tbody.innerHTML = templates.map(t => `
+                <tr>
+                    <td>${t.name}</td>
+                    <td>${getMessageTypeName(t.type)}</td>
+                    <td>${t.channels.map(c => getChannelName(c)).join(', ')}</td>
+                    <td>${t.stats.sent}</td>
+                    <td>${t.stats.sent > 0 ? ((t.stats.delivered / t.stats.sent) * 100).toFixed(1) : 0}%</td>
+                    <td>${t.lastUsedAt ? formatDate(t.lastUsedAt) : '从未使用'}</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary" onclick="editTemplate('${t.id}')">编辑</button>
+                        <button class="btn btn-sm btn-primary" onclick="useTemplate('${t.id}')">使用</button>
+                    </td>
+                </tr>
+            `).join('') || '<tr><td colspan="7" class="empty-state">暂无数据</td></tr>';
+            
+            // 加载发送历史
+            const records = MessageManager.Statistics.getSentRecords();
+            const historyDiv = document.getElementById('messageHistory');
+            historyDiv.innerHTML = records.slice(0, 20).map(r => `
+                <div class="log-item">
+                    <div class="log-time">${formatDate(r.sentAt)}</div>
+                    <div class="log-content">
+                        <div class="log-action">[${getChannelName(r.type)}] ${r.subject || r.to || '发送消息'}</div>
+                        <div class="log-detail">${r.status === 'sent' ? '✓ 发送成功' : '✗ 发送失败'}</div>
+                    </div>
+                </div>
+            `).join('') || '<div class="empty-state"><div class="icon">📤</div><h3>暂无发送记录</h3></div>';
+        }
+
+        // 使用模板发送消息
+        function useTemplate(templateId) {
+            const template = MessageManager.getTemplate(templateId);
+            if (template) {
+                openMessageModal(template.type);
+                document.getElementById('messageTitle').value = template.title;
+                document.getElementById('messageContent').value = template.content;
+            }
+        }
+
+        // 编辑模板
+        function editTemplate(templateId) {
+            const template = MessageManager.getTemplate(templateId);
+            if (template) {
+                document.getElementById('messageType').value = template.type;
+                document.getElementById('messageTitle').value = template.title;
+                document.getElementById('messageContent').value = template.content;
+                openMessageModal(template.type);
+            }
+        }
+
+        // 加载任务列表
+        function loadTasks() {
+            const statusFilter = document.getElementById('taskStatusFilter')?.value || '';
+            
+            const tasks = TaskScheduler.getTasks({
+                status: statusFilter
+            });
+            
+            const tbody = document.getElementById('taskTable');
+            tbody.innerHTML = tasks.map(t => {
+                const successRate = t.stats.totalRuns > 0 ? 
+                    (t.stats.successRuns / t.stats.totalRuns * 100).toFixed(1) : 0;
+                return `
+                    <tr>
+                        <td>${t.name}</td>
+                        <td>${getTaskTypeName(t.type)}</td>
+                        <td><span class="badge badge-${t.status}">${getStatusName(t.status)}</span></td>
+                        <td>
+                            <div class="progress-bar" style="width: 80px;">
+                                <div class="progress-fill" style="width: ${successRate}%;"></div>
+                            </div>
+                            ${successRate}%
+                        </td>
+                        <td>${t.nextRunAt ? formatDate(t.nextRunAt) : '-'}</td>
+                        <td>
+                            <button class="btn btn-sm btn-success" onclick="executeTask('${t.id}')" ${t.status === 'running' ? 'disabled' : ''}>执行</button>
+                            <button class="btn btn-sm btn-secondary" onclick="toggleTask('${t.id}', ${!t.enabled})">${t.enabled ? '禁用' : '启用'}</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('') || '<tr><td colspan="6" class="empty-state">暂无数据</td></tr>';
+            
+            // 加载执行日志
+            const executions = TaskScheduler.getExecutions(null, {});
+            const logsDiv = document.getElementById('executionLogs');
+            logsDiv.innerHTML = executions.slice(0, 20).map(e => {
+                const task = TaskScheduler.getTask(e.taskId);
+                return `
+                    <div class="log-item">
+                        <div class="log-time">${formatDate(e.startedAt)}</div>
+                        <div class="log-content">
+                            <div class="log-action">${task?.name || '未知任务'}</div>
+                            <div class="log-detail">
+                                状态: ${e.status} | 
+                                耗时: ${e.duration ? (e.duration / 1000).toFixed(2) + 's' : '-'}
+                                ${e.error ? '| 错误: ' + e.error : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('') || '<div class="empty-state"><div class="icon">⏰</div><h3>暂无执行记录</h3></div>';
+        }
+
+        // 执行任务
+        async function executeTask(taskId) {
+            try {
+                const result = await TaskScheduler.executeTask(taskId);
+                alert(result.success ? '任务执行成功' : '任务执行失败：' + result.error);
+                loadTasks();
+                loadAllLogs();
+            } catch (e) {
+                alert('执行失败：' + e.message);
+            }
+        }
+
+        // 切换任务状态
+        function toggleTask(taskId, enabled) {
+            TaskScheduler.toggleTask(taskId, enabled);
+            loadTasks();
+        }
+
+        // 健康检查
+        function runHealthCheck() {
+            const health = TaskScheduler.Monitoring.healthCheck();
+            if (health.healthy) {
+                alert('✓ 所有任务运行正常');
+            } else {
+                alert('⚠ 发现以下问题：\n' + health.issues.map(i => '• ' + i.message).join('\n'));
+            }
+        }
+
+        // 加载所有日志
+        function loadAllLogs() {
+            const logs = [];
+            
+            // 合并各模块日志
+            logs.push(...ContentManager.OperationLogger.getLogs().map(l => ({...l, module: 'content'})));
+            logs.push(...ActivityManager.ActivityLogger.getLogs().map(l => ({...l, module: 'activity'})));
+            logs.push(...CouponManager.CouponLogger.getLogs().map(l => ({...l, module: 'coupon'})));
+            logs.push(...MemberManager.MemberLogger.getLogs().map(l => ({...l, module: 'member'})));
+            logs.push(...MessageManager.MessageLogger.getLogs().map(l => ({...l, module: 'message'})));
+            logs.push(...TaskScheduler.TaskLogger.getLogs().map(l => ({...l, module: 'task'})));
+            
+            // 排序
+            logs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            const logsDiv = document.getElementById('operationLogs');
+            logsDiv.innerHTML = logs.slice(0, 100).map(log => `
+                <div class="log-item">
+                    <div class="log-time">${formatDate(log.timestamp)}</div>
+                    <div class="log-content">
+                        <div class="log-action">[${getModuleName(log.module)}] ${getActionName(log.action)}</div>
+                        <div class="log-detail">${JSON.stringify(log.details)}</div>
+                    </div>
+                </div>
+            `).join('') || '<div class="empty-state"><div class="icon">📋</div><h3>暂无操作记录</h3></div>';
+        }
+
+        // 导出日志
+        function exportLogs() {
+            const logs = document.getElementById('operationLogs').innerText;
+            const blob = new Blob([logs], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'operation_logs_' + new Date().toISOString().split('T')[0] + '.txt';
+            a.click();
+        }
+
+        // 初始化表单
+        function initForms() {
+            // 内容表单
+            document.getElementById('contentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveContent();
+            });
+            
+            // 活动表单
+            document.getElementById('activityForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveActivity();
+            });
+            
+            // 优惠券表单
+            document.getElementById('couponForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveCoupon();
+            });
+            
+            // 消息表单
+            document.getElementById('messageForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveMessage();
+            });
+            
+            // 任务表单
+            document.getElementById('taskForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                saveTask();
+            });
+            
+            // 搜索事件
+            document.getElementById('contentSearch')?.addEventListener('input', debounce(loadContent, 300));
+            document.getElementById('activitySearch')?.addEventListener('input', debounce(loadActivities, 300));
+            document.getElementById('couponSearch')?.addEventListener('input', debounce(loadCoupons, 300));
+            document.getElementById('memberSearch')?.addEventListener('input', debounce(loadMembers, 300));
+            
+            // 筛选事件
+            document.getElementById('contentTypeFilter')?.addEventListener('change', loadContent);
+            document.getElementById('contentStatusFilter')?.addEventListener('change', loadContent);
+            document.getElementById('activityStatusFilter')?.addEventListener('change', loadActivities);
+            document.getElementById('couponStatusFilter')?.addEventListener('change', loadCoupons);
+            document.getElementById('memberLevelFilter')?.addEventListener('change', loadMembers);
+            document.getElementById('taskStatusFilter')?.addEventListener('change', loadTasks);
+        }
+
+        // 防抖函数
+        function debounce(func, wait) {
+            let timeout;
+            return function(...args) {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // 打开模态框
+        function openContentModal(id = null) {
+            document.getElementById('contentModal').classList.add('show');
+            if (id) {
+                editContent(id);
+            } else {
+                document.getElementById('contentForm').reset();
+                document.getElementById('contentId').value = '';
+            }
+        }
+
+        function openActivityModal(id = null) {
+            document.getElementById('activityModal').classList.add('show');
+            if (id) {
+                const activity = ActivityManager.getActivity(id);
+                if (activity) {
+                    document.getElementById('activityId').value = activity.id;
+                    document.getElementById('activityName').value = activity.name;
+                    document.getElementById('activityType').value = activity.type;
+                    document.getElementById('activityDesc').value = activity.description;
+                    document.getElementById('activityStart').value = activity.startTime?.slice(0, 16) || '';
+                    document.getElementById('activityEnd').value = activity.endTime?.slice(0, 16) || '';
+                    document.getElementById('activityTarget').value = activity.goal.target;
+                }
+            } else {
+                document.getElementById('activityForm').reset();
+            }
+        }
+
+        function openCouponModal() {
+            document.getElementById('couponModal').classList.add('show');
+            document.getElementById('couponForm').reset();
+        }
+
+        function openMessageModal(type = 'system') {
+            document.getElementById('messageModal').classList.add('show');
+            document.getElementById('messageType').value = type;
+            document.getElementById('messageForm').reset();
+            document.getElementById('messageType').value = type;
+        }
+
+        function openTaskModal() {
+            document.getElementById('taskModal').classList.add('show');
+            document.getElementById('taskForm').reset();
+        }
+
+        // 关闭模态框
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // 保存内容
+        function saveContent() {
+            const id = document.getElementById('contentId').value;
+            const data = {
+                title: document.getElementById('contentTitle').value,
+                type: document.getElementById('contentType').value,
+                category: document.getElementById('contentCategory').value,
+                summary: document.getElementById('contentSummary').value,
+                content: document.getElementById('contentBody').value,
+                status: document.getElementById('contentStatus').value
+            };
+            
+            if (id) {
+                ContentManager.updateArticle(id, data);
+            } else {
+                ContentManager.createArticle(data);
+            }
+            
+            closeModal('contentModal');
+            loadContent();
+            loadStats();
+            loadAllLogs();
+        }
+
+        // 编辑内容
+        function editContent(id) {
+            const article = ContentManager.getArticle(id);
+            if (article) {
+                document.getElementById('contentId').value = article.id;
+                document.getElementById('contentTitle').value = article.title;
+                document.getElementById('contentType').value = article.type;
+                document.getElementById('contentCategory').value = article.category;
+                document.getElementById('contentSummary').value = article.summary;
+                document.getElementById('contentBody').value = article.content;
+                document.getElementById('contentStatus').value = article.status;
+                openContentModal();
+            }
+        }
+
+        // 删除内容
+        function deleteContent(id) {
+            if (confirm('确定要删除这篇文章吗？')) {
+                ContentManager.deleteArticle(id);
+                loadContent();
+                loadStats();
+                loadAllLogs();
+            }
+        }
+
+        // 保存活动
+        function saveActivity() {
+            const data = {
+                name: document.getElementById('activityName').value,
+                type: document.getElementById('activityType').value,
+                description: document.getElementById('activityDesc').value,
+                startTime: document.getElementById('activityStart').value ? new Date(document.getElementById('activityStart').value).toISOString() : null,
+                endTime: document.getElementById('activityEnd').value ? new Date(document.getElementById('activityEnd').value).toISOString() : null,
+                goal: {
+                    type: document.getElementById('activityGoalType').value,
+                    target: parseInt(document.getElementById('activityTarget').value)
+                }
+            };
+            
+            ActivityManager.createActivity(data);
+            closeModal('activityModal');
+            loadActivities();
+            loadStats();
+            loadAllLogs();
+        }
+
+        // 保存优惠券
+        function saveCoupon() {
+            const data = {
+                name: document.getElementById('couponName').value,
+                type: document.getElementById('couponType').value,
+                value: parseInt(document.getElementById('couponValue').value),
+                discountType: 'fixed',
+                totalCount: parseInt(document.getElementById('couponTotal').value),
+                perUserLimit: parseInt(document.getElementById('couponPerUser').value),
+                validFrom: document.getElementById('couponValidFrom').value ? new Date(document.getElementById('couponValidFrom').value).toISOString() : null,
+                validUntil: document.getElementById('couponValidUntil').value ? new Date(document.getElementById('couponValidUntil').value).toISOString() : null,
+                minOrderAmount: parseInt(document.getElementById('couponMinAmount').value),
+                status: 'active'
+            };
+            
+            CouponManager.createCoupon(data);
+            closeModal('couponModal');
+            loadCoupons();
+            loadStats();
+            loadAllLogs();
+        }
+
+        // 保存消息
+        function saveMessage() {
+            const data = {
+                type: document.getElementById('messageType').value,
+                title: document.getElementById('messageTitle').value,
+                content: document.getElementById('messageContent').value,
+                channel: document.getElementById('messageChannel').value,
+                recipients: []
+            };
+            
+            MessageManager.sendMessage(data);
+            closeModal('messageModal');
+            loadMessages();
+            loadAllLogs();
+            alert('消息发送成功');
+        }
+
+        // 保存任务
+        function saveTask() {
+            const taskType = document.getElementById('taskType').value;
+            const schedule = {};
+            
+            if (taskType === 'once') {
+                schedule.executeAt = document.getElementById('taskExecuteAt').value ? 
+                    new Date(document.getElementById('taskExecuteAt').value).toISOString() : null;
+            } else if (taskType === 'recurring') {
+                schedule.interval = parseInt(document.getElementById('taskInterval').value) * 60 * 60 * 1000;
+            }
+            
+            const data = {
+                name: document.getElementById('taskName').value,
+                type: taskType,
+                handler: document.getElementById('taskHandler').value || 'custom',
+                schedule: schedule
+            };
+            
+            TaskScheduler.createTask(data);
+            closeModal('taskModal');
+            loadTasks();
+            loadStats();
+            loadAllLogs();
+        }
+
+        // 删除优惠券
+        function deleteCoupon(id) {
+            if (confirm('确定要删除这张优惠券吗？')) {
+                CouponManager.deleteCoupon(id);
+                loadCoupons();
+                loadStats();
+                loadAllLogs();
+            }
+        }
+
+        // 工具函数
+        function formatDate(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('zh-CN', { 
+                year: 'numeric', 
+                month: '2-digit', 
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function getContentTypeName(type) {
+            const names = { article: '文章', guide: '攻略', news: '资讯', announcement: '公告', faq: 'FAQ' };
+            return names[type] || type;
+        }
+
+        function getActivityTypeName(type) {
+            const names = { promotion: '促销', contest: '竞赛', giveaway: '抽奖', challenge: '挑战', seasonal: '季节性', festival: '节日', member: '会员' };
+            return names[type] || type;
+        }
+
+        function getCouponTypeName(type) {
+            const names = { discount: '折扣', cash: '现金', gift: '礼品', shipping: '运费', exchange: '兑换' };
+            return names[type] || type;
+        }
+
+        function getMessageTypeName(type) {
+            const names = { system: '系统', user: '用户', order: '订单', promotion: '促销', notification: '通知', activity: '活动', review: '评价' };
+            return names[type] || type;
+        }
+
+        function getChannelName(channel) {
+            const names = { in_app: '站内', push: '推送', email: '邮件', sms: '短信', wechat: '微信' };
+            return names[channel] || channel;
+        }
+
+        function getTaskTypeName(type) {
+            const names = { once: '单次', recurring: '循环', cron: '定时', delayed: '延迟' };
+            return names[type] || type;
+        }
+
+        function getModuleName(module) {
+            const names = { content: '内容', activity: '活动', coupon: '优惠券', member: '会员', message: '消息', task: '任务' };
+            return names[module] || module;
+        }
+
+        function getActionName(action) {
+            const names = { 
+                create: '创建', update: '更新', delete: '删除', 
+                send: '发送', execute: '执行', distribute: '发放',
+                add_points: '增加积分', deduct_points: '扣除积分',
+                approve: '审核通过', reject: '审核拒绝'
+            };
+            return names[action] || action;
+        }
+
+        function getStatusName(status) {
+            const names = {
+                draft: '草稿', pending: '待审核', approved: '已通过',
+                published: '已发布', archived: '已归档', rejected: '已拒绝',
+                running: '进行中', paused: '已暂停', ended: '已结束',
+                cancelled: '已取消', active: '激活', expired: '已过期',
+                completed: '已完成', failed: '失败', retrying: '重试中'
+            };
+            return names[status] || status;
+        }
+
+        // 点击模态框外部关闭
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('show');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

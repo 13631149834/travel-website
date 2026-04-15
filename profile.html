@@ -55,9 +55,9 @@ select:focus {
   </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>导游个人主页 - 游导旅游 | 导游档案设置</title>
-  <meta name="description" content="设置和管理游导旅游导游个人主页，完善专业资料、服务特色、价格设置，展示你的导游形象。">
-  <meta name="keywords" content="导游主页,导游档案,导游设置,导游资料,个人主页">
+  <title>游导旅游 - 专业导游预约平台</title>
+  <meta name="description" content="游导旅游是专业的导游预约平台，严选认证导游，让旅行更简单。">
+  <meta name="keywords" content="游导旅游,导游预约,旅游平台,金牌导游">>
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://youdao-travel.com/profile.html">
   <meta property="og:title" content="导游个人主页 - 游导旅游">
@@ -65,7 +65,9 @@ select:focus {
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://youdao-travel.com/profile.html">
   <link rel="preload" href="css/style.css" as="style">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="stylesheet" href="css/accessibility.css">
+  <link rel="stylesheet" href="css/quick-actions.css">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/enhanced.css">
   <link rel="stylesheet" href="css/mobile.css">
@@ -132,8 +134,7 @@ select:focus {
   <nav class="navbar" aria-label="主导航">
     <div class="container">
       <a href="index.html" class="logo">🌍 游导旅游</a>
-      <div class="nav-toggle" onclick="toggleNav()">
-        <span></span><span></span><span></span>
+      <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单" aria-expanded="false" tabindex="0"><span></span>
       </div>
       <div class="nav-links">
         <a href="index.html">首页</a>
@@ -146,6 +147,12 @@ select:focus {
       </div>
     </div>
   </nav>
+
+  <nav class="breadcrumb" aria-label="面包屑导航">
+      <a href="index.html">首页</a>
+      <span>/</span>
+      <span class="current">用户中心</span>
+    </nav>
 
   <!-- 页面头部 -->
   <header class="profile-header">
@@ -173,7 +180,7 @@ select:focus {
           <div class="avatar-upload">
             <img id="avatarPreview" src="" alt="头像">
             <div class="avatar-placeholder" id="avatarPlaceholder">
-              <span>👤</span>
+              <span aria-hidden="true">👤</span>
             </div>
             <label class="upload-btn edit-only">
               点击上传头像
@@ -471,7 +478,7 @@ select:focus {
     <div class="modal-content">
       <div class="modal-header">
         <h3 id="routeModalTitle">添加线路</h3>
-        <button class="modal-close" onclick="closeModal('routeModal')">&times;</button>
+        <button class="modal-close" onclick="closeModal('routeModal')" aria-label="关闭">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -518,7 +525,7 @@ select:focus {
         </div>
       <div><h4>帮助支持</h4><a href="help.html">帮助中心</a>
           <a href="faq.html">常见问题</a><a href="contact.html">联系我们</a></div>
-        <div><h4>联系我们</h4><p>📧 2173381363@qq.com</p><p>💬 微信：ximao101</p><p>🌐 youdao-travel.com</p></div></div>
+        <div><h4>联系我们</h4><p>📧 service@youdao-travel.com</p><p>💬 微信：ximao101</p><p>🌐 youdao-travel.com</p></div></div>
       <div class="footer-bottom">
         <p>© 2024 游导旅游 · 旅行信息工具平台</p>
         <div class="footer-links">
@@ -536,6 +543,65 @@ select:focus {
     </div>
   </footer>
 
+
+  <!-- ===== 悬浮快捷按钮 ===== -->
+  <div class="quick-float-actions" aria-label="快捷操作">
+    <div class="float-menu-expand">
+      <button class="float-action-btn float-expand-trigger" aria-label="更多操作">
+        <span class="expand-icon">+</span>
+      </button>
+      <div class="float-expand-menu">
+        <a href="guide-apply.html" class="expand-menu-item"><span>🎤</span><span>成为导游</span></a>
+        <a href="promotions.html" class="expand-menu-item"><span>🎁</span><span>领取优惠</span></a>
+        <a href="help.html" class="expand-menu-item"><span>❓</span><span>帮助中心</span></a>
+      </div>
+    </div>
+    <button class="float-action-btn float-btn-customer" onclick="QuickActions.openCustomerService()"><span class="service-pulse"></span><span>💬</span></button>
+    <button class="float-action-btn float-btn-booking" onclick="QuickActions.openQuickBooking()"><span>📅</span></button>
+    <button class="float-action-btn float-btn-feedback" onclick="window.location.href='feedback.html'"><span>📝</span></button>
+    <button class="float-action-btn float-btn-backtop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>↑</span></button>
+  </div>
+
+  <!-- ===== 快速预约弹窗 ===== -->
+  <div class="quick-booking-popup" role="dialog" aria-labelledby="bookingTitle">
+    <div class="quick-booking-header">
+      <h3 class="quick-booking-title" id="bookingTitle">快速预约导游</h3>
+      <button class="quick-booking-close" onclick="QuickActions.closeBooking()">×</button>
+    </div>
+    <div class="quick-booking-body">
+      <form class="quick-booking-form" onsubmit="QuickActions.submitBooking(event)">
+        <div class="form-group"><input type="text" name="name" placeholder="您的姓名" required></div>
+        <div class="form-group"><input type="tel" name="phone" placeholder="手机号码" required></div>
+        <div class="form-group">
+          <select name="destination" required>
+            <option value="">选择目的地</option>
+            <option value="japan">日本</option><option value="korea">韩国</option>
+            <option value="europe">欧洲</option><option value="southeast">东南亚</option>
+            <option value="australia">澳洲</option><option value="usa">美国</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+        <div class="form-group"><input type="date" name="date" required></div>
+        <div class="form-group"><input type="number" name="people" placeholder="出行人数" min="1" max="20" value="1" required></div>
+        <button type="submit" class="quick-booking-submit">立即预约</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== 移动端底部导航 ===== -->
+  <nav class="mobile-bottom-nav" aria-label="底部导航">
+    <div class="bottom-nav-items">
+      <a href="index.html" class="bottom-nav-item"><span class="nav-icon">🏠</span><span class="nav-label">首页</span></a>
+      <a href="guides.html" class="bottom-nav-item"><span class="nav-icon">🎤</span><span class="nav-label">找导游</span></a>
+      <a href="javascript:;" class="bottom-nav-item bottom-nav-quick-btn" onclick="QuickActions.openQuickBooking()"><span class="nav-icon">📅</span><span class="nav-label">预约</span></a>
+      <a href="promotions.html" class="bottom-nav-item"><span class="nav-icon">🎁</span><span class="nav-label">优惠</span></a>
+      <a href="user-center.html" class="bottom-nav-item active"><span class="nav-icon">👤</span><span class="nav-label">我的</span></a>
+    </div>
+  </nav>
+
+  <!-- ===== Toast提示 ===== -->
+  <div class="quick-action-toast" role="alert" aria-live="polite"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js" defer></script>
   <script src="js/guide/profile.js" defer></script>
   <script>
@@ -551,5 +617,6 @@ select:focus {
   <script src="js/pwa.js" defer></script>
   <script src="js/mobile.js" defer></script>
   <script src="js/customer-service.js" defer></script>
+  <script src="js/quick-actions.js" defer></script>
 </body>
 </html>

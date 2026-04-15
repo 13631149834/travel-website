@@ -139,6 +139,39 @@
       font-weight: 700;
       color: var(--gray-800);
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* 认证徽章 */
+    .guide-verified-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      color: white;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    
+    .guide-verified-badge svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+    
+    .guide-level-badge {
+      display: inline-block;
+      padding: 3px 8px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      border-radius: 10px;
+      font-size: 0.65rem;
+      font-weight: 600;
     }
 
     .guide-city {
@@ -563,9 +596,9 @@ select:focus {
 
 </style>
   <!-- SEO Meta Tags -->
-  <title>导游名片 - 游导旅游 | 导游电子名片</title>
-  <meta name="description" content="导游电子名片，展示导游联系方式和服务信息。">
-  <meta name="keywords" content="导游名片,导游联系方式">
+  <title>游导旅游 - 专业导游预约平台</title>
+  <meta name="description" content="游导旅游是专业的导游预约平台，严选认证导游，让旅行更简单。">
+  <meta name="keywords" content="游导旅游,导游预约,旅游平台,金牌导游">>>
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://youdao-travel.com/guide-card.html">
   <meta property="og:type" content="profile">
@@ -595,6 +628,28 @@ select:focus {
   <meta name="theme-color" content="#4F86F7">
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="css/mobile.css">
+
+    <link rel="stylesheet" href="css/accessibility.css">
+<!-- 结构化数据 - Person (导游) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "导游姓名",
+    "image": "https://youdao-travel.com/images/guide-avatar.jpg",
+    "description": "认证导游，提供专业旅行服务",
+    "url": "https://youdao-travel.com/guide-detail.html",
+    "memberOf": {
+      "@type": "Organization",
+      "name": "游导旅游"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.8",
+      "reviewCount": "156"
+    }
+  }
+  </script>
 </head>
 <body>
 
@@ -637,7 +692,7 @@ select:focus {
     <!-- 品牌头部 -->
     <div class="brand-header">
       <div class="brand-logo">
-        <span>🌍</span>
+        <span aria-hidden="true">🌍</span>
         <span>游导旅游</span>
       </div>
     </div>
@@ -651,13 +706,20 @@ select:focus {
           <div class="online-badge"></div>
         </div>
         <div class="guide-info">
-          <h1 class="guide-name" id="guideName">导游姓名</h1>
+          <h1 class="guide-name" id="guideName">
+            导游姓名
+            <span class="guide-verified-badge" id="verifiedBadge" style="display: none;">
+              <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+              已认证
+            </span>
+            <span class="guide-level-badge" id="levelBadge" style="display: none;">金牌</span>
+          </h1>
           <div class="guide-city" id="guideCity">
-            <span>📍</span>
+            <span aria-hidden="true">📍</span>
             <span id="cityText">服务城市</span>
           </div>
           <div class="guide-rating">
-            <span class="stars" id="stars">★★★★★</span>
+            <span class="stars" id="stars" aria-hidden="true">★★★★★</span>
             <span class="rating-text" id="rating">5.0</span>
             <span class="review-count" id="reviewCount">(128条评价)</span>
           </div>
@@ -698,7 +760,7 @@ select:focus {
           <div class="qr-item">
             <div class="qr-code" id="wechatQr">
               <div class="qr-placeholder">
-                <span>💬</span>
+                <span aria-hidden="true">💬</span>
                 <small>上传二维码</small>
               </div>
             </div>
@@ -707,7 +769,7 @@ select:focus {
           <div class="qr-item">
             <div class="qr-code" id="platformQr">
               <div class="qr-placeholder">
-                <span>🔗</span>
+                <span aria-hidden="true">🔗</span>
                 <small>扫码联系</small>
               </div>
             </div>
@@ -729,13 +791,13 @@ select:focus {
     <div class="share-section">
       <div class="share-title">分享导游名片给朋友</div>
       <div class="share-buttons">
-        <button class="share-btn share-xiaohongshu" onclick="shareToXiaohongshu()" title="分享到小红书">
-          <span>📕</span>
+        <button class="share-btn share-xiaohongshu" onclick="shareToXiaohongshu()" title="分享到小红书" aria-label="关闭">
+          <span aria-hidden="true">📕</span>
         </button>
-        <button class="share-btn share-wechat" onclick="shareToWechat()" title="分享到微信">
-          <span>💬</span>
+        <button class="share-btn share-wechat" onclick="shareToWechat()" title="分享到微信" aria-label="分享">
+          <span aria-hidden="true">💬</span>
         </button>
-        <button class="share-btn share-download" onclick="downloadCard()" title="下载名片">
+        <button class="share-btn share-download" onclick="downloadCard()" title="下载名片" aria-label="分享">
           <span>⬇️</span>
         </button>
       </div>
@@ -768,7 +830,9 @@ select:focus {
         phone: params.get('phone') || '',
         wechat: params.get('wechat') || '',
         wechatQr: params.get('wechatQr') || '',
-        stars: params.get('stars') || ''
+        stars: params.get('stars') || '',
+        verified: params.get('verified') === 'true',
+        level: params.get('level') || ''
       };
     }
 
@@ -784,10 +848,20 @@ select:focus {
         document.getElementById('cityText').textContent = decodeURIComponent(params.city);
       }
 
+      // 认证徽章
+      if (params.verified) {
+        document.getElementById('verifiedBadge').style.display = 'inline-flex';
+      }
+      if (params.level) {
+        const levelBadge = document.getElementById('levelBadge');
+        levelBadge.textContent = decodeURIComponent(params.level);
+        levelBadge.style.display = 'inline-block';
+      }
+
       // 头像
       if (params.avatar) {
         const avatarPlaceholder = document.getElementById('avatarPlaceholder');
-        avatarPlaceholder.outerHTML = `<img src="${decodeURIComponent(params.avatar)}" class="avatar" alt="导游头像">`;
+        avatarPlaceholder.outerHTML = `<img src="${decodeURIComponent(params.avatar)}" class="avatar" alt="导游头像" loading="lazy">`;
       }
 
       // 评分

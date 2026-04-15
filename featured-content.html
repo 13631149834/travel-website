@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>精选内容 - 游导旅游</title>
+  <meta name="description" content="游导旅游编辑精选：金牌导游、热门路线、必去目的地、实用攻略，一站式旅行灵感库。">
+  <link rel="canonical" href="https://youdao-travel.com/featured-content.html">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/trust.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <style>
+    /* 精选内容专属样式 */
+    .featured-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 80px 0;
+      text-align: center;
+      color: white;
+    }
+    .featured-hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+    .featured-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+    .section-nav {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .section-nav-btn {
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: 2px solid var(--primary);
+      background: transparent;
+      color: var(--primary);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .section-nav-btn.active,
+    .section-nav-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+    .guides-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .guide-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: all 0.3s;
+    }
+    .guide-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+    .guide-image {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .guide-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+    }
+    .guide-verified {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--secondary);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+    }
+    .guide-content {
+      padding: 20px;
+    }
+    .guide-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .guide-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+    .guide-name {
+      font-size: 1.1rem;
+      margin-bottom: 2px;
+    }
+    .guide-languages {
+      color: var(--gray-500);
+      font-size: 0.85rem;
+    }
+    .guide-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .rating-stars {
+      color: #ffc107;
+    }
+    .rating-score {
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+    .rating-count {
+      color: var(--gray-500);
+      font-size: 0.85rem;
+    }
+    .guide-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .guide-tag {
+      background: var(--gray-100);
+      color: var(--gray-600);
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+    }
+    .guide-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .guide-price {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .guide-price span {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      font-weight: 400;
+    }
+    .route-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: all 0.3s;
+    }
+    .route-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+    .route-image {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .route-price {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.8);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+    .route-content {
+      padding: 20px;
+    }
+    .route-title {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .route-meta {
+      display: flex;
+      gap: 16px;
+      color: var(--gray-500);
+      font-size: 0.85rem;
+      margin-bottom: 12px;
+    }
+    .route-desc {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .destination-card {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      height: 280px;
+      cursor: pointer;
+    }
+    .destination-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+    .destination-card:hover img {
+      transform: scale(1.1);
+    }
+    .destination-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 30px 20px 20px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.8));
+      color: white;
+    }
+    .destination-name {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+    .destination-count {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+    .tip-card {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: all 0.3s;
+    }
+    .tip-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    .tip-icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+    .tip-title {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+    }
+    .tip-desc {
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .destinations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .routes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 24px;
+    }
+    .content-section {
+      display: none;
+    }
+    .content-section.active {
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .featured-hero {
+        padding: 50px 20px;
+      }
+      .featured-hero h1 {
+        font-size: 1.8rem;
+      }
+      .guides-grid,
+      .routes-grid,
+      .destinations-grid,
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+      .section-nav-btn {
+        padding: 10px 16px;
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <nav class="navbar" aria-label="主导航">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单"><span></span></div>
+      <div class="nav-links">
+        <a href="index.html">🏠 首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="routes.html">🗺️ 线路</a>
+        <a href="visa.html">📋 签证</a>
+        <a href="promotions.html">🎁 活动</a>
+        <a href="featured-content.html" class="active">⭐ 精选</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" role="main">
+    <!-- 精选内容头部 -->
+    <section class="featured-hero">
+      <div class="container">
+        <h1>⭐ 精选内容</h1>
+        <p>编辑严选，为您的旅行提供最佳灵感</p>
+      </div>
+    </section>
+
+    <!-- 导航切换 -->
+    <section class="section-block" style="background: white;">
+      <div class="container">
+        <div class="section-nav">
+          <button class="section-nav-btn active" onclick="switchSection('guides')">🎤 精选导游</button>
+          <button class="section-nav-btn" onclick="switchSection('routes')">🗺️ 精选路线</button>
+          <button class="section-nav-btn" onclick="switchSection('destinations')">🌍 精选目的地</button>
+          <button class="section-nav-btn" onclick="switchSection('tips')">📖 精选攻略</button>
+        </div>
+
+        <!-- 精选导游 -->
+        <div id="guides-section" class="content-section active">
+          <h2 style="font-size: 1.5rem; margin-bottom: 24px;">🏆 编辑推荐导游</h2>
+          <div class="guides-grid">
+            <!-- 导游1 -->
+            <article class="guide-card">
+              <div class="guide-image" style="background-image: url('https://images.unsplash.com/photo-1560250097-0b93528c311a?w=400');">
+                <span class="guide-badge">🏆 金牌导游</span>
+                <span class="guide-verified">✓ 认证</span>
+              </div>
+              <div class="guide-content">
+                <div class="guide-header">
+                  <div class="guide-avatar">张</div>
+                  <div>
+                    <div class="guide-name">张明远</div>
+                    <div class="guide-languages">🇨🇳🇯🇵🇬🇧</div>
+                  </div>
+                </div>
+                <div class="guide-rating">
+                  <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                  <span class="rating-score">5.0</span>
+                  <span class="rating-count">(326条评价)</span>
+                </div>
+                <div class="guide-tags">
+                  <span class="guide-tag">日本深度游</span>
+                  <span class="guide-tag">文化讲解</span>
+                  <span class="guide-tag">亲子游</span>
+                </div>
+                <div class="guide-footer">
+                  <div class="guide-price">¥800<span>/天</span></div>
+                  <a href="guide-detail.html" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">查看详情</a>
+                </div>
+              </div>
+            </article>
+
+            <!-- 导游2 -->
+            <article class="guide-card">
+              <div class="guide-image" style="background-image: url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400');">
+                <span class="guide-badge">🌟 特色导游</span>
+                <span class="guide-verified">✓ 认证</span>
+              </div>
+              <div class="guide-content">
+                <div class="guide-header">
+                  <div class="guide-avatar">王</div>
+                  <div>
+                    <div class="guide-name">王思琪</div>
+                    <div class="guide-languages">🇨🇳🇫🇷🇮🇹</div>
+                  </div>
+                </div>
+                <div class="guide-rating">
+                  <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                  <span class="rating-score">4.9</span>
+                  <span class="rating-count">(289条评价)</span>
+                </div>
+                <div class="guide-tags">
+                  <span class="guide-tag">欧洲深度</span>
+                  <span class="guide-tag">美食之旅</span>
+                  <span class="guide-tag">蜜月游</span>
+                </div>
+                <div class="guide-footer">
+                  <div class="guide-price">¥950<span>/天</span></div>
+                  <a href="guide-detail.html" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">查看详情</a>
+                </div>
+              </div>
+            </article>
+
+            <!-- 导游3 -->
+            <article class="guide-card">
+              <div class="guide-image" style="background-image: url('https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400');">
+                <span class="guide-badge">🏆 金牌导游</span>
+                <span class="guide-verified">✓ 认证</span>
+              </div>
+              <div class="guide-content">
+                <div class="guide-header">
+                  <div class="guide-avatar">李</div>
+                  <div>
+                    <div class="guide-name">李浩然</div>
+                    <div class="guide-languages">🇨🇳🇹🇭🇸🇬</div>
+                  </div>
+                </div>
+                <div class="guide-rating">
+                  <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                  <span class="rating-score">5.0</span>
+                  <span class="rating-count">(412条评价)</span>
+                </div>
+                <div class="guide-tags">
+                  <span class="guide-tag">东南亚</span>
+                  <span class="guide-tag">探险游</span>
+                  <span class="guide-tag">摄影</span>
+                </div>
+                <div class="guide-footer">
+                  <div class="guide-price">¥650<span>/天</span></div>
+                  <a href="guide-detail.html" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">查看详情</a>
+                </div>
+              </div>
+            </article>
+
+            <!-- 导游4 -->
+            <article class="guide-card">
+              <div class="guide-image" style="background-image: url('https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400');">
+                <span class="guide-badge">💎 顶级导游</span>
+                <span class="guide-verified">✓ 认证</span>
+              </div>
+              <div class="guide-content">
+                <div class="guide-header">
+                  <div class="guide-avatar">陈</div>
+                  <div>
+                    <div class="guide-name">陈雨薇</div>
+                    <div class="guide-languages">🇨🇳🇩🇪🇳🇱</div>
+                  </div>
+                </div>
+                <div class="guide-rating">
+                  <span class="rating-stars">⭐⭐⭐⭐⭐</span>
+                  <span class="rating-score">5.0</span>
+                  <span class="rating-count">(198条评价)</span>
+                </div>
+                <div class="guide-tags">
+                  <span class="guide-tag">欧洲商务</span>
+                  <span class="guide-tag">艺术之旅</span>
+                  <span class="guide-tag">博物馆</span>
+                </div>
+                <div class="guide-footer">
+                  <div class="guide-price">¥1200<span>/天</span></div>
+                  <a href="guide-detail.html" class="btn btn-primary" style="padding: 8px 20px; font-size: 0.9rem;">查看详情</a>
+                </div>
+              </div>
+            </article>
+          </div>
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="guides.html" class="btn" style="background: var(--primary); color: white; padding: 12px 32px; border-radius: 25px;">查看更多导游 →</a>
+          </div>
+        </div>
+
+        <!-- 精选路线 -->
+        <div id="routes-section" class="content-section">
+          <h2 style="font-size: 1.5rem; margin-bottom: 24px;">🗺️ 编辑推荐路线</h2>
+          <div class="routes-grid">
+            <article class="route-card">
+              <div class="route-image" style="background-image: url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600');">
+                <span class="route-price">¥12,800起</span>
+              </div>
+              <div class="route-content">
+                <h3 class="route-title">🇯🇵 日本关西深度7日游</h3>
+                <div class="route-meta">
+                  <span>📅 7天6晚</span>
+                  <span>👥 2-8人小团</span>
+                  <span>🏨 4星酒店</span>
+                </div>
+                <p class="route-desc">京都古韵 + 大阪美食 + 奈良小鹿，深度体验日本文化精髓。包含专业导游陪同，讲解背后的历史故事。</p>
+              </div>
+            </article>
+
+            <article class="route-card">
+              <div class="route-image" style="background-image: url('https://images.unsplash.com/photo-1528164344705-47542687050d?w=600');">
+                <span class="route-price">¥28,800起</span>
+              </div>
+              <div class="route-content">
+                <h3 class="route-title">🇨🇭 瑞士阿尔卑斯10日全景之旅</h3>
+                <div class="route-meta">
+                  <span>📅 10天9晚</span>
+                  <span>👥 2-6人私家团</span>
+                  <span>🏨 5星酒店</span>
+                </div>
+                <p class="route-desc">少女峰 + 琉森湖 + 策马特马特，乘直升机俯瞰雪山，体验瑞士慢生活。</p>
+              </div>
+            </article>
+
+            <article class="route-card">
+              <div class="route-image" style="background-image: url('https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=600');">
+                <span class="route-price">¥8,800起</span>
+              </div>
+              <div class="route-content">
+                <h3 class="route-title">🇹🇭 泰国清迈+拜县6日休闲游</h3>
+                <div class="route-meta">
+                  <span>📅 6天5晚</span>
+                  <span>👥 4-12人精品团</span>
+                  <span>🏨 特色民宿</span>
+                </div>
+                <p class="route-desc">文艺小城 + 云海日出 + 夜间动物园，适合家庭出行的悠闲之旅。</p>
+              </div>
+            </article>
+
+            <article class="route-card">
+              <div class="route-image" style="background-image: url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600');">
+                <span class="route-price">¥18,800起</span>
+              </div>
+              <div class="route-content">
+                <h3 class="route-title">🇮🇹 意大利文艺复兴12日深度游</h3>
+                <div class="route-meta">
+                  <span>📅 12天11晚</span>
+                  <span>👥 2-8人小团</span>
+                  <span>🏨 4-5星酒店</span>
+                </div>
+                <p class="route-desc">罗马 + 佛罗伦萨 + 威尼斯，专业讲解文艺复兴艺术史，探访小镇隐秘酒庄。</p>
+              </div>
+            </article>
+          </div>
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="routes.html" class="btn" style="background: var(--primary); color: white; padding: 12px 32px; border-radius: 25px;">查看更多路线 →</a>
+          </div>
+        </div>
+
+        <!-- 精选目的地 -->
+        <div id="destinations-section" class="content-section">
+          <h2 style="font-size: 1.5rem; margin-bottom: 24px;">🌍 热门目的地</h2>
+          <div class="destinations-grid">
+            <div class="destination-card">
+              <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600" alt="东京">
+              <div class="destination-overlay">
+                <h3 class="destination-name">🗾 日本 · 东京</h3>
+                <p class="destination-count">386位导游 · 1200+路线</p>
+              </div>
+            </div>
+            <div class="destination-card">
+              <img src="https://images.unsplash.com/photo-1523517774468-083114f9c9dc?w=600" alt="巴黎">
+              <div class="destination-overlay">
+                <h3 class="destination-name">🗼 法国 · 巴黎</h3>
+                <p class="destination-count">256位导游 · 800+路线</p>
+              </div>
+            </div>
+            <div class="destination-card">
+              <img src="https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=600" alt="清迈">
+              <div class="destination-overlay">
+                <h3 class="destination-name">🏝️ 泰国 · 清迈</h3>
+                <p class="destination-count">198位导游 · 600+路线</p>
+              </div>
+            </div>
+            <div class="destination-card">
+              <img src="https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600" alt="托斯卡纳">
+              <div class="destination-overlay">
+                <h3 class="destination-name">🇮🇹 意大利 · 托斯卡纳</h3>
+                <p class="destination-count">145位导游 · 400+路线</p>
+              </div>
+            </div>
+            <div class="destination-card">
+              <img src="https://images.unsplash.com/photo-1528164344705-47542687050d?w=600" alt="瑞士">
+              <div class="destination-overlay">
+                <h3 class="destination-name">🏔️ 瑞士 · 阿尔卑斯</h3>
+                <p class="destination-count">168位导游 · 350+路线</p>
+              </div>
+            </div>
+            <div class="destination-card">
+              <img src="https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=600" alt="海岛">
+              <div class="destination-overlay">
+                <h3 class="destination-name">🏖️ 马尔代夫</h3>
+                <p class="destination-count">89位导游 · 200+路线</p>
+              </div>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="destinations.html" class="btn" style="background: var(--primary); color: white; padding: 12px 32px; border-radius: 25px;">探索更多目的地 →</a>
+          </div>
+        </div>
+
+        <!-- 精选攻略 -->
+        <div id="tips-section" class="content-section">
+          <h2 style="font-size: 1.5rem; margin-bottom: 24px;">📖 实用旅行攻略</h2>
+          <div class="tips-grid">
+            <div class="tip-card">
+              <div class="tip-icon">🛫</div>
+              <h3 class="tip-title">【签证】2024最新各国签证攻略</h3>
+              <p class="tip-desc">涵盖日本、申根、美国等热门国家的签证申请流程、所需材料、常见问题，助你顺利出签。</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-icon">💰</div>
+              <h3 class="tip-title">【省钱】境外支付全攻略</h3>
+              <p class="tip-desc">信用卡、支付宝、微信支付、现金...最全的境外支付方式对比，帮你省下不必要的费用。</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-icon">📸</div>
+              <h3 class="tip-title">【摄影】旅拍技巧大公开</h3>
+              <p class="tip-desc">如何拍出刷爆朋友圈的旅行照？从构图到后期，手把手教你成为旅行摄影达人。</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-icon">🧳</div>
+              <h3 class="tip-title">【打包】行李收纳技巧</h3>
+              <p class="tip-desc">同样的行李箱，为什么别人能装下更多？分享达人私藏的行李收纳秘诀。</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-icon">🍜</div>
+              <h3 class="tip-title">【美食】当地人推荐餐厅</h3>
+              <p class="tip-desc">不做游客要做"本地人"，这些当地人常去的餐厅，比网红店好吃10倍！</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-icon">🗺️</div>
+              <h3 class="tip-title">【交通】境外交通出行指南</h3>
+              <p class="tip-desc">地铁、公交、出租车、包车...各国交通方式详解，让你出行无忧。</p>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 30px;">
+            <a href="docs/EXCLUSIVE_GUIDES.md" class="btn" style="background: var(--primary); color: white; padding: 12px 32px; border-radius: 25px;">查看全部攻略 →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 独家合作 -->
+    <section class="section-block" style="background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);">
+      <div class="container">
+        <h2 style="text-align: center; font-size: 1.8rem; margin-bottom: 12px;">🎁 独家合作权益</h2>
+        <p style="text-align: center; color: var(--gray-600); margin-bottom: 40px;">精选合作伙伴，带来更多专属福利</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px;">
+          <div style="background: white; padding: 30px; border-radius: 16px; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 16px;">🎫</div>
+            <h3 style="font-size: 1.1rem; margin-bottom: 8px;">独家路线</h3>
+            <p style="color: var(--gray-600); font-size: 0.9rem;">与合作景区独家开发的特色路线，不对外公开的隐藏体验</p>
+          </div>
+          <div style="background: white; padding: 30px; border-radius: 16px; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 16px;">💎</div>
+            <h3 style="font-size: 1.1rem; margin-bottom: 8px;">VIP导游</h3>
+            <p style="color: var(--gray-600); font-size: 0.9rem;">顶级导游独家签约，只为平台用户提供专属服务</p>
+          </div>
+          <div style="background: white; padding: 30px; border-radius: 16px; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 16px;">🏨</div>
+            <h3 style="font-size: 1.1rem; margin-bottom: 8px;">专属优惠</h3>
+            <p style="color: var(--gray-600); font-size: 0.9rem;">合作酒店、餐厅、景点门票专属折扣价</p>
+          </div>
+          <div style="background: white; padding: 30px; border-radius: 16px; text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 16px;">🎉</div>
+            <h3 style="font-size: 1.1rem; margin-bottom: 8px;">独家活动</h3>
+            <p style="color: var(--gray-600); font-size: 0.9rem;">会员专属旅行活动、线下聚会、主题沙龙</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 0; text-align: center; color: white;">
+      <div class="container">
+        <h2 style="font-size: 1.8rem; margin-bottom: 12px;">准备好开启你的精选之旅了吗？</h2>
+        <p style="opacity: 0.9; margin-bottom: 30px;">立即预约心仪的导游，开启专属旅行体验</p>
+        <a href="guides.html" style="background: white; color: #667eea; padding: 14px 40px; border-radius: 25px; text-decoration: none; font-weight: 600; display: inline-block;">浏览精选导游 →</a>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer-new">
+    <div class="container">
+      <div class="footer-main-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-logo">🌍 游导旅游</a>
+          <p class="footer-brand-desc">专业的导游预约平台</p>
+        </div>
+        <div class="footer-links-group">
+          <h4>游客服务</h4>
+          <a href="guides.html">找导游</a>
+          <a href="visa.html">签证中心</a>
+          <a href="routes.html">精品线路</a>
+          <a href="featured-content.html">精选内容</a>
+        </div>
+        <div class="footer-links-group">
+          <h4>帮助中心</h4>
+          <a href="help.html">帮助中心</a>
+          <a href="faq.html">常见问题</a>
+          <a href="contact.html">联系我们</a>
+          <a href="about.html">关于我们</a>
+        </div>
+        <div class="footer-contact">
+          <h4>联系我们</h4>
+          <div class="contact-item">
+            <span>📧</span>
+            <span>2173381363@qq.com</span>
+          </div>
+          <div class="contact-item">
+            <span>💬</span>
+            <span>微信：ximao101</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom-new">
+        <p class="footer-copyright">© 2024 游导旅游</p>
+        <div class="footer-legal-links">
+          <a href="user-agreement.html">用户协议</a>
+          <a href="privacy.html">隐私政策</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/theme.js"></script>
+  <script>
+    function switchSection(sectionId) {
+      // 隐藏所有内容区域
+      document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+      });
+      // 显示选中区域
+      document.getElementById(sectionId + '-section').classList.add('active');
+      
+      // 更新按钮状态
+      document.querySelectorAll('.section-nav-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

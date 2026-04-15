@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导游服务系统 - 游导旅游</title>
+    <meta name="description" content="游导旅游导游服务系统，包括认证中心、培训学院、社区交流、激励中心等">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/accessibility.css">
+    <link rel="stylesheet" href="css/enhanced.css">
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+    <style>
+        :root {
+            --primary: #4F86F7;
+            --primary-gradient: linear-gradient(135deg, #4F86F7 0%, #3B82F6 100%);
+            --certification: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --training: linear-gradient(135deg, #059669 0%, #10B981 100%);
+            --community: linear-gradient(135deg, #EC4899 0%, #DB2777 100%);
+            --reward: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            --tools: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+        }
+
+        .guide-system {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .system-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .system-header h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .system-header p {
+            font-size: 1.1rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .system-modules {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .module-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        }
+
+        .module-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .module-card h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .module-card p {
+            font-size: 0.95rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .module-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .module-features span {
+            padding: 6px 14px;
+            background: #F3F4F6;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* 认证模块 */
+        .module-card.certification:hover {
+            border: 2px solid #667eea;
+        }
+
+        .module-card.certification .module-icon {
+            background: var(--certification);
+        }
+
+        /* 培训模块 */
+        .module-card.training:hover {
+            border: 2px solid #059669;
+        }
+
+        .module-card.training .module-icon {
+            background: var(--training);
+        }
+
+        /* 社区模块 */
+        .module-card.community:hover {
+            border: 2px solid #EC4899;
+        }
+
+        .module-card.community .module-icon {
+            background: var(--community);
+        }
+
+        /* 激励模块 */
+        .module-card.reward:hover {
+            border: 2px solid #F59E0B;
+        }
+
+        .module-card.reward .module-icon {
+            background: var(--reward);
+        }
+
+        /* 工具模块 */
+        .module-card.tools:hover {
+            border: 2px solid #3B82F6;
+        }
+
+        .module-card.tools .module-icon {
+            background: var(--tools);
+        }
+
+        /* 管理模块 */
+        .module-card.management:hover {
+            border: 2px solid #8B5CF6;
+        }
+
+        .module-card.management .module-icon {
+            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+        }
+
+        /* 快捷入口 */
+        .quick-access {
+            margin-top: 50px;
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .quick-access h2 {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: #F9FAFB;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s;
+        }
+
+        .quick-link:hover {
+            background: #F3F4F6;
+            transform: translateX(4px);
+        }
+
+        .quick-link-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .quick-link-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        /* 统计概览 */
+        .stats-overview {
+            margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .stat-card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .stat-card-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .stat-card-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        @media (max-width: 992px) {
+            .system-modules {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-links {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-overview {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .system-modules {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-links {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-overview {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">🌍 游导旅游</a>
+            <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单"><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html">找导游</a>
+                <a href="visa.html">签证中心</a>
+                <a href="guide-dashboard.html" class="guide-entrance active">导游服务</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="guide-system" id="main-content">
+        <!-- 页面头部 -->
+        <div class="system-header">
+            <h1>🎖️ 导游服务系统</h1>
+            <p>为导游提供一站式服务，从认证到培训、从社区到激励，全面提升导游职业体验</p>
+        </div>
+
+        <!-- 统计数据 -->
+        <div class="stats-overview">
+            <div class="stat-card">
+                <div class="stat-card-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">👥</div>
+                <div class="stat-card-value">12,580</div>
+                <div class="stat-card-label">注册导游</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon" style="background: linear-gradient(135deg, #059669 0%, #10B981 100%); color: white;">📚</div>
+                <div class="stat-card-value">256</div>
+                <div class="stat-card-label">培训课程</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon" style="background: linear-gradient(135deg, #EC4899 0%, #DB2777 100%); color: white;">💬</div>
+                <div class="stat-card-value">89,600</div>
+                <div class="stat-card-label">社区帖子</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-icon" style="background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%); color: white;">🏆</div>
+                <div class="stat-card-value">1,280</div>
+                <div class="stat-card-label">奖励发放</div>
+            </div>
+        </div>
+
+        <!-- 功能模块 -->
+        <div class="system-modules" style="margin-top: 50px;">
+            <!-- 认证中心 -->
+            <a href="guide/guide-verification.html" class="module-card certification">
+                <div class="module-icon">✅</div>
+                <h3>认证中心</h3>
+                <p>完成资质认证、实名认证、技能认证，获取官方认证标识，提升用户信任</p>
+                <div class="module-features">
+                    <span>资质认证</span>
+                    <span>实名认证</span>
+                    <span>技能认证</span>
+                    <span>认证进度</span>
+                </div>
+            </a>
+
+            <!-- 培训学院 -->
+            <a href="guide/guide-training.html" class="module-card training">
+                <div class="module-icon">🎓</div>
+                <h3>培训学院</h3>
+                <p>系统化培训课程，专业考试认证，持续教育学习，提升专业能力</p>
+                <div class="module-features">
+                    <span>培训课程</span>
+                    <span>培训考试</span>
+                    <span>证书获取</span>
+                    <span>继续教育</span>
+                </div>
+            </a>
+
+            <!-- 导游社区 -->
+            <a href="guide/guide-community.html" class="module-card community">
+                <div class="module-icon">👥</div>
+                <h3>导游社区</h3>
+                <p>与优秀导游交流互动，分享经验心得，共同成长进步</p>
+                <div class="module-features">
+                    <span>导游圈</span>
+                    <span>经验分享</span>
+                    <span>问答交流</span>
+                    <span>资源共享</span>
+                </div>
+            </a>
+
+            <!-- 激励中心 -->
+            <a href="guide/guide-reward.html" class="module-card reward">
+                <div class="module-icon">🏆</div>
+                <h3>激励中心</h3>
+                <p>荣誉激励、积分奖励、晋升通道，让优秀导游获得更多回报</p>
+                <div class="module-features">
+                    <span>优质评选</span>
+                    <span>奖励机制</span>
+                    <span>晋升通道</span>
+                    <span>荣誉展示</span>
+                </div>
+            </a>
+
+            <!-- 导游工具 -->
+            <a href="guide/guide-tools.html" class="module-card tools">
+                <div class="module-icon">🛠️</div>
+                <h3>导游工具</h3>
+                <p>行程规划、路线创建、景点管理、相册管理，提高工作效率</p>
+                <div class="module-features">
+                    <span>行程规划</span>
+                    <span>路线创建</span>
+                    <span>景点管理</span>
+                    <span>相册管理</span>
+                </div>
+            </a>
+
+            <!-- 管理中心 -->
+            <a href="guide/guide-dashboard.html" class="module-card management">
+                <div class="module-icon">📊</div>
+                <h3>管理中心</h3>
+                <p>日程管理、订单管理、收入管理、评价管理，一站式工作台</p>
+                <div class="module-features">
+                    <span>日程管理</span>
+                    <span>订单管理</span>
+                    <span>收入管理</span>
+                    <span>评价管理</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- 快捷入口 -->
+        <div class="quick-access">
+            <h2>⚡ 常用功能</h2>
+            <div class="quick-links">
+                <a href="guide/guide-calendar.html" class="quick-link">
+                    <div class="quick-link-icon" style="background: #DBEAFE; color: #2563EB;">📅</div>
+                    <span class="quick-link-text">日历</span>
+                </a>
+                <a href="guide/guide-bookings.html" class="quick-link">
+                    <div class="quick-link-icon" style="background: #D1FAE5; color: #059669;">📋</div>
+                    <span class="quick-link-text">预约管理</span>
+                </a>
+                <a href="guide/guide-reviews.html" class="quick-link">
+                    <div class="quick-link-icon" style="background: #FEF3C7; color: #D97706;">⭐</div>
+                    <span class="quick-link-text">评价管理</span>
+                </a>
+                <a href="route-planner.html" class="quick-link">
+                    <div class="quick-link-icon" style="background: #FCE7F3; color: #DB2777;">🗺️</div>
+                    <span class="quick-link-text">行程规划</span>
+                </a>
+                <a href="guide/guide-verification.html" class="quick-link">
+                    <div class="quick-link-icon" style="background: #E0E7FF; color: #4F46E5;">🎖️</div>
+                    <span class="quick-link-text">认证进度</span>
+                </a>
+                <a href="guide/guide-training.html" class="quick-link">
+                    <div class="quick-link-icon" style="background: #CCFBF1; color: #0D9488;">📚</div>
+                    <span class="quick-link-text">继续学习</span>
+                </a>
+                <a href="guide/guide-community.html" class="quick-link">
+                    <div class="quick-link-icon" style="background: #FEE2E2; color: #DC2626;">💬</div>
+                    <span class="quick-link-text">发布帖子</span>
+                </a>
+                <a href="guide/guide-reward.html" class="quick-link">
+                    <div class="quick-link-icon" style="background: #FEF3C7; color: #D97706;">💰</div>
+                    <span class="quick-link-text">积分兑换</span>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>关于游导</h4>
+                    <a href="about.html">关于我们</a>
+                    <a href="contact.html">联系我们</a>
+                    <a href="join.html">加入我们</a>
+                </div>
+                <div class="footer-section">
+                    <h4>游客服务</h4>
+                    <a href="help.html">帮助中心</a>
+                    <a href="faq.html">常见问题</a>
+                    <a href="safety-tips.html">安全指南</a>
+                </div>
+                <div class="footer-section">
+                    <h4>导游服务</h4>
+                    <a href="guide-apply.html">申请成为导游</a>
+                    <a href="guide-verification.html">认证中心</a>
+                    <a href="guide-training.html">培训学院</a>
+                </div>
+                <div class="footer-section">
+                    <h4>联系我们</h4>
+                    <p>客服热线：13631149834</p>
+                    <p>邮箱：support@youdau-travel.com</p>
+                    <p>工作时间：9:00-21:00</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 游导旅游 YouDao Travel. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>节日活动 - 游导旅游</title>
+  <meta name="description" content="节日专属旅行优惠，新春、元宵、端午、中秋等节日活动">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    :root {
+      --festival-red: #EF4444;
+      --festival-gold: #F59E0B;
+      --festival-green: #10B981;
+      --festival-pink: #EC4899;
+      --festival-blue: #3B82F6;
+    }
+
+    /* Hero */
+    .festival-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .festival-hero::before {
+      content: '🎊';
+      position: absolute;
+      font-size: 15rem;
+      opacity: 0.1;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    .festival-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .festival-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    .festival-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+
+    .festival-subtitle {
+      font-size: 1.3rem;
+      opacity: 0.9;
+    }
+
+    /* 节日导航 */
+    .festival-nav {
+      background: white;
+      padding: 20px;
+      position: sticky;
+      top: 70px;
+      z-index: 90;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .festival-nav-list {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .festival-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border-radius: 30px;
+      background: #f5f5f5;
+      color: #64748B;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .festival-nav-item:hover,
+    .festival-nav-item.active {
+      background: linear-gradient(135deg, var(--festival-red), var(--festival-pink));
+      color: white;
+    }
+
+    /* 节日活动卡片 */
+    .festival-section {
+      padding: 60px 20px;
+      background: #f8fafc;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      color: #1E293B;
+      margin-bottom: 10px;
+    }
+
+    .section-desc {
+      color: #64748B;
+      font-size: 1.1rem;
+    }
+
+    .festival-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* 活动卡片 */
+    .activity-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+    }
+
+    .activity-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .activity-image {
+      height: 200px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      position: relative;
+    }
+
+    .activity-badge {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--festival-red);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .activity-badge.hot {
+      background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+    }
+
+    .activity-badge.new {
+      background: linear-gradient(135deg, #11998e, #38ef7d);
+    }
+
+    .activity-body {
+      padding: 25px;
+    }
+
+    .activity-title {
+      font-size: 1.3rem;
+      color: #1E293B;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .activity-desc {
+      color: #64748B;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .activity-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 15px;
+      border-top: 1px solid #eee;
+    }
+
+    .activity-time {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #64748B;
+      font-size: 0.9rem;
+    }
+
+    .activity-price {
+      color: var(--festival-red);
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .activity-price .original {
+      text-decoration: line-through;
+      color: #9CA3AF;
+      font-size: 0.9rem;
+      font-weight: 400;
+      margin-left: 8px;
+    }
+
+    /* 红包雨 */
+    .redpacket-section {
+      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+      padding: 80px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .redpacket-title {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+
+    .redpacket-desc {
+      font-size: 1.2rem;
+      opacity: 0.9;
+      margin-bottom: 40px;
+    }
+
+    .redpacket-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #F59E0B 0%, #FCD34D 100%);
+      color: #1E293B;
+      padding: 18px 45px;
+      border-radius: 50px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .redpacket-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.5);
+    }
+
+    .redpacket-grid {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .redpacket-item {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      padding: 20px 30px;
+      border-radius: 16px;
+      text-align: center;
+      border: 2px dashed rgba(255,255,255,0.3);
+      min-width: 140px;
+    }
+
+    .redpacket-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #FCD34D;
+    }
+
+    .redpacket-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-top: 5px;
+    }
+
+    /* 互动游戏 */
+    .game-section {
+      background: #f8fafc;
+      padding: 80px 20px;
+    }
+
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .game-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px 30px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .game-card:hover {
+      transform: translateY(-10px) scale(1.02);
+    }
+
+    .game-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    .game-title {
+      font-size: 1.4rem;
+      color: #1E293B;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .game-desc {
+      color: #64748B;
+      margin-bottom: 20px;
+    }
+
+    .game-btn {
+      display: inline-block;
+      padding: 12px 30px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .game-btn.primary {
+      background: linear-gradient(135deg, var(--festival-red), var(--festival-pink));
+      color: white;
+    }
+
+    .game-btn.primary:hover {
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    }
+
+    /* 节日日历 */
+    .calendar-section {
+      background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
+      padding: 80px 20px;
+      color: white;
+    }
+
+    .calendar-section .section-title {
+      color: white;
+    }
+
+    .calendar-section .section-desc {
+      color: rgba(255,255,255,0.8);
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .calendar-item {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 25px;
+      text-align: center;
+      transition: all 0.3s;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .calendar-item:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-5px);
+    }
+
+    .calendar-item.active {
+      background: linear-gradient(135deg, var(--festival-red), var(--festival-pink));
+      border-color: transparent;
+    }
+
+    .calendar-emoji {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .calendar-name {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .calendar-date {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .calendar-status {
+      margin-top: 10px;
+      padding: 5px 12px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 15px;
+      font-size: 0.85rem;
+      display: inline-block;
+    }
+
+    .calendar-item.active .calendar-status {
+      background: rgba(255,255,255,0.3);
+    }
+
+    /* 优惠券领取 */
+    .coupon-section {
+      background: #f8fafc;
+      padding: 80px 20px;
+    }
+
+    .coupon-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .coupon-item {
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .coupon-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: var(--festival-red);
+    }
+
+    .coupon-left {
+      text-align: center;
+      padding-right: 30px;
+      border-right: 2px dashed #eee;
+      min-width: 150px;
+    }
+
+    .coupon-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: var(--festival-red);
+    }
+
+    .coupon-limit {
+      font-size: 0.9rem;
+      color: #64748B;
+    }
+
+    .coupon-right {
+      flex: 1;
+      padding-left: 30px;
+    }
+
+    .coupon-title {
+      font-size: 1.2rem;
+      color: #1E293B;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .coupon-desc {
+      color: #64748B;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+    }
+
+    .coupon-time {
+      font-size: 0.85rem;
+      color: #9CA3AF;
+    }
+
+    .coupon-btn {
+      padding: 12px 25px;
+      background: linear-gradient(135deg, var(--festival-red), var(--festival-pink));
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .coupon-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .coupon-btn:disabled {
+      background: #D1D5DB;
+      cursor: not-allowed;
+    }
+
+    .coupon-btn:disabled:hover {
+      transform: none;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .festival-title {
+        font-size: 2.2rem;
+      }
+
+      .festival-nav {
+        top: 60px;
+        padding: 15px;
+      }
+
+      .festival-nav-item {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+      }
+
+      .coupon-item {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .coupon-item::before {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: auto;
+        width: 100%;
+        height: 5px;
+      }
+
+      .coupon-left {
+        border-right: none;
+        border-bottom: 2px dashed #eee;
+        padding-right: 0;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        width: 100%;
+      }
+
+      .coupon-right {
+        padding-left: 0;
+        width: 100%;
+      }
+
+      .coupon-btn {
+        margin-top: 15px;
+      }
+    }
+
+    /* 动画 */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单" aria-expanded="false" tabindex="0"><span></span></div>
+      <div class="nav-links">
+        <a href="index.html">🏠 首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="routes.html">🗺️ 线路</a>
+        <a href="activities.html" class="active">🎯 活动</a>
+        <a href="membership.html">👑 会员</a>
+        <a href="search.html" style="color:#667eea">🔍</a>
+        <a href="wechat-contact.html" style="color:#07c160;font-weight:600">💬</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    <!-- Hero -->
+    <section class="festival-hero">
+      <div class="festival-content">
+        <div class="festival-badge">🎉 节日限定活动</div>
+        <h1 class="festival-title">节日专属旅行优惠</h1>
+        <p class="festival-subtitle">新春、元宵、端午、中秋...每个节日都有惊喜好礼</p>
+      </div>
+    </section>
+
+    <!-- 节日导航 -->
+    <div class="festival-nav">
+      <div class="festival-nav-list">
+        <a href="#spring" class="festival-nav-item active">🧧 春节</a>
+        <a href="#lantern" class="festival-nav-item">🏮 元宵节</a>
+        <a href="#qingming" class="festival-nav-item">🌸 清明节</a>
+        <a href="#labor" class="festival-nav-item">🎉 劳动节</a>
+        <a href="#dragon" class="festival-nav-item">🐉 端午节</a>
+        <a href="#midautumn" class="festival-nav-item">🌙 中秋节</a>
+        <a href="#national" class="festival-nav-item">🇨🇳 国庆节</a>
+      </div>
+    </div>
+
+    <!-- 春节活动 -->
+    <section class="festival-section" id="spring">
+      <div class="section-header">
+        <div class="section-icon">🧧</div>
+        <h2 class="section-title">春节特惠</h2>
+        <p class="section-desc">新春佳节，阖家出行尽享团圆之旅</p>
+      </div>
+      <div class="festival-grid">
+        <div class="activity-card">
+          <div class="activity-image" style="background: linear-gradient(135deg, #EF4444, #DC2626);">
+            🏮
+            <span class="activity-badge hot">热门</span>
+          </div>
+          <div class="activity-body">
+            <h3 class="activity-title">春节家庭游套餐</h3>
+            <p class="activity-desc">4天3晚亲子游，包含特色年夜饭、景点门票、专业导游服务</p>
+            <div class="activity-meta">
+              <div class="activity-time">📅 1.20 - 2.10</div>
+              <div class="activity-price">
+                ¥2999/人
+                <span class="original">¥3999</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="activity-card">
+          <div class="activity-image" style="background: linear-gradient(135deg, #F59E0B, #D97706);">
+            ✈️
+            <span class="activity-badge new">新品</span>
+          </div>
+          <div class="activity-body">
+            <h3 class="activity-title">新年祈福之旅</h3>
+            <p class="activity-desc">寺庙祈福、传统文化体验、新年特色活动，感受浓浓年味</p>
+            <div class="activity-meta">
+              <div class="activity-time">📅 1.25 - 2.05</div>
+              <div class="activity-price">
+                ¥1599/人
+                <span class="original">¥1999</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="activity-card">
+          <div class="activity-image" style="background: linear-gradient(135deg, #10B981, #059669);">
+            🎆
+          </div>
+          <div class="activity-body">
+            <h3 class="activity-title">冰雪嘉年华</h3>
+            <p class="activity-desc">冬季限定！滑雪、雪地温泉、冰雪娱乐项目，畅玩冰雪世界</p>
+            <div class="activity-meta">
+              <div class="activity-time">📅 12.01 - 2.28</div>
+              <div class="activity-price">
+                ¥2499/人
+                <span class="original">¥3299</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 红包雨 -->
+    <section class="redpacket-section">
+      <h2 class="redpacket-title">🎁 节日红包雨</h2>
+      <p class="redpacket-desc">节日期间每天10:00、15:00、20:00准时开抢</p>
+      <button class="redpacket-btn" onclick="grabRedpacket()">
+        🧧 立即领取红包
+      </button>
+      <div class="redpacket-grid">
+        <div class="redpacket-item">
+          <div class="redpacket-value">¥50</div>
+          <div class="redpacket-label">满500可用</div>
+        </div>
+        <div class="redpacket-item">
+          <div class="redpacket-value">¥100</div>
+          <div class="redpacket-label">满1000可用</div>
+        </div>
+        <div class="redpacket-item">
+          <div class="redpacket-value">¥200</div>
+          <div class="redpacket-label">满2000可用</div>
+        </div>
+        <div class="redpacket-item">
+          <div class="redpacket-value">¥500</div>
+          <div class="redpacket-label">无门槛</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 互动游戏 -->
+    <section class="game-section">
+      <div class="section-header">
+        <div class="section-icon">🎮</div>
+        <h2 class="section-title">节日互动游戏</h2>
+        <p class="section-desc">玩游戏赢好礼，节日福利不停歇</p>
+      </div>
+      <div class="game-grid">
+        <div class="game-card">
+          <div class="game-icon">🎯</div>
+          <h3 class="game-title">节日大转盘</h3>
+          <p class="game-desc">每日3次抽奖机会，100%中奖</p>
+          <button class="game-btn primary" onclick="playSpin()">立即参与</button>
+        </div>
+        <div class="game-card">
+          <div class="game-icon">🧩</div>
+          <h3 class="game-title">拼图赢好礼</h3>
+          <p class="game-desc">完成拼图即获优惠券</p>
+          <button class="game-btn primary" onclick="playPuzzle()">开始游戏</button>
+        </div>
+        <div class="game-card">
+          <div class="game-icon">🏃</div>
+          <h3 class="game-title">集卡兑大礼</h3>
+          <p class="game-desc">集齐节日卡片换好礼</p>
+          <button class="game-btn primary" onclick="collectCards()">查看进度</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 节日日历 -->
+    <section class="calendar-section">
+      <div class="section-header">
+        <div class="section-icon">📅</div>
+        <h2 class="section-title">2025节日活动日历</h2>
+        <p class="section-desc">提前规划，抢占先机</p>
+      </div>
+      <div class="calendar-grid">
+        <div class="calendar-item">
+          <div class="calendar-emoji">🧧</div>
+          <div class="calendar-name">春节</div>
+          <div class="calendar-date">1月28日</div>
+          <div class="calendar-status">已结束</div>
+        </div>
+        <div class="calendar-item">
+          <div class="calendar-emoji">🏮</div>
+          <div class="calendar-name">元宵节</div>
+          <div class="calendar-date">2月12日</div>
+          <div class="calendar-status">已结束</div>
+        </div>
+        <div class="calendar-item active">
+          <div class="calendar-emoji">🌸</div>
+          <div class="calendar-name">清明节</div>
+          <div class="calendar-date">4月4日</div>
+          <div class="calendar-status">进行中</div>
+        </div>
+        <div class="calendar-item">
+          <div class="calendar-emoji">🎉</div>
+          <div class="calendar-name">劳动节</div>
+          <div class="calendar-date">5月1日</div>
+          <div class="calendar-status">即将开始</div>
+        </div>
+        <div class="calendar-item">
+          <div class="calendar-emoji">🐉</div>
+          <div class="calendar-name">端午节</div>
+          <div class="calendar-date">5月31日</div>
+          <div class="calendar-status">敬请期待</div>
+        </div>
+        <div class="calendar-item">
+          <div class="calendar-emoji">🌙</div>
+          <div class="calendar-name">中秋节</div>
+          <div class="calendar-date">9月17日</div>
+          <div class="calendar-status">敬请期待</div>
+        </div>
+        <div class="calendar-item">
+          <div class="calendar-emoji">🇨🇳</div>
+          <div class="calendar-name">国庆节</div>
+          <div class="calendar-date">10月1日</div>
+          <div class="calendar-status">敬请期待</div>
+        </div>
+        <div class="calendar-item">
+          <div class="calendar-emoji">🎄</div>
+          <div class="calendar-name">圣诞节</div>
+          <div class="calendar-date">12月25日</div>
+          <div class="calendar-status">敬请期待</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 优惠券领取 -->
+    <section class="coupon-section" id="coupons">
+      <div class="section-header">
+        <div class="section-icon">🎫</div>
+        <h2 class="section-title">节日专属优惠券</h2>
+        <p class="section-desc">限时领取，先到先得</p>
+      </div>
+      <div class="coupon-list">
+        <div class="coupon-item">
+          <div class="coupon-left">
+            <div class="coupon-value">¥100</div>
+            <div class="coupon-limit">满500可用</div>
+          </div>
+          <div class="coupon-right">
+            <div class="coupon-title">节日新人券</div>
+            <div class="coupon-desc">新用户专享，首单立减</div>
+            <div class="coupon-time">有效期至 2025.04.30</div>
+          </div>
+          <button class="coupon-btn" onclick="grabCoupon(this)">立即领取</button>
+        </div>
+        <div class="coupon-item">
+          <div class="coupon-left">
+            <div class="coupon-value">¥200</div>
+            <div class="coupon-limit">满1000可用</div>
+          </div>
+          <div class="coupon-right">
+            <div class="coupon-title">节日满减券</div>
+            <div class="coupon-desc">全品类通用，限时优惠</div>
+            <div class="coupon-time">有效期至 2025.05.31</div>
+          </div>
+          <button class="coupon-btn" onclick="grabCoupon(this)">立即领取</button>
+        </div>
+        <div class="coupon-item">
+          <div class="coupon-left">
+            <div class="coupon-value">¥500</div>
+            <div class="coupon-limit">满3000可用</div>
+          </div>
+          <div class="coupon-right">
+            <div class="coupon-title">节日VIP券</div>
+            <div class="coupon-desc">会员专享，高额满减</div>
+            <div class="coupon-time">有效期至 2025.06.30</div>
+          </div>
+          <button class="coupon-btn" onclick="grabCoupon(this)">立即领取</button>
+        </div>
+        <div class="coupon-item">
+          <div class="coupon-left">
+            <div class="coupon-value">8折</div>
+            <div class="coupon-limit">指定线路</div>
+          </div>
+          <div class="coupon-right">
+            <div class="coupon-title">节日折扣券</div>
+            <div class="coupon-desc">热门线路8折起</div>
+            <div class="coupon-time">有效期至 2025.04.15</div>
+          </div>
+          <button class="coupon-btn" onclick="grabCoupon(this)">立即领取</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span style="font-size: 1.5rem;">🧭</span>
+            <span>游导旅游</span>
+          </div>
+          <p>专业的导游与游客一站式旅行平台<br>让旅行更简单，让体验更美好</p>
+        </div>
+        <div class="footer-links">
+          <h4>活动分类</h4>
+          <a href="brand-day.html">品牌日</a>
+          <a href="festival-activities.html">节日活动</a>
+          <a href="membership-events.html">会员活动</a>
+          <a href="flash-sales.html">限时秒杀</a>
+        </div>
+        <div class="footer-links">
+          <h4>帮助中心</h4>
+          <a href="help.html">常见问题</a>
+          <a href="contact.html">联系我们</a>
+          <a href="service-promise.html">服务承诺</a>
+        </div>
+        <div class="footer-links">
+          <h4>法律信息</h4>
+          <a href="privacy.html">隐私政策</a>
+          <a href="terms.html">服务条款</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 游导旅游 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 领取优惠券
+    function grabCoupon(btn) {
+      const originalText = btn.textContent;
+      btn.textContent = '已领取 ✓';
+      btn.disabled = true;
+      btn.style.background = '#10B981';
+      
+      setTimeout(() => {
+        alert('优惠券已放入您的账户，请在我的优惠券中查看！');
+      }, 300);
+    }
+
+    // 抢红包
+    function grabRedpacket() {
+      const prizes = ['很遗憾未中奖', '¥5', '¥10', '¥20', '¥50', '¥100'];
+      const weights = [0.3, 0.3, 0.2, 0.1, 0.08, 0.02];
+      
+      let random = Math.random();
+      let cumulative = 0;
+      let prize = prizes[0];
+      
+      for (let i = 0; i < weights.length; i++) {
+        cumulative += weights[i];
+        if (random < cumulative) {
+          prize = prizes[i];
+          break;
+        }
+      }
+      
+      alert(prize === '很遗憾未中奖' 
+        ? '很遗憾，本次未中奖' 
+        : `恭喜获得 ${prize} 红包！已存入账户`);
+    }
+
+    // 游戏
+    function playSpin() {
+      alert('大转盘游戏即将开启，请稍候...');
+    }
+
+    function playPuzzle() {
+      alert('拼图游戏即将开启，请稍候...');
+    }
+
+    function collectCards() {
+      alert('您已收集 3/6 张节日卡片，继续加油！');
+    }
+
+    // 导航切换
+    function toggleNav() {
+      const nav = document.querySelector('.nav-links');
+      const toggle = document.querySelector('.nav-toggle');
+      nav.classList.toggle('active');
+      toggle.classList.toggle('active');
+    }
+
+    // 节日导航高亮
+    document.querySelectorAll('.festival-nav-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        document.querySelectorAll('.festival-nav-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 滚动动画
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('fade-in');
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.activity-card, .game-card, .calendar-item, .coupon-item').forEach(el => {
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

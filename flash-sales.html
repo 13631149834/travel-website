@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>限时秒杀 - 游导旅游</title>
+  <meta name="description" content="限时秒杀、限量抢购、专属预约，错过再等一年">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    :root {
+      --flash-red: #EF4444;
+      --flash-orange: #F97316;
+    }
+
+    /* Hero */
+    .flash-hero {
+      background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+      min-height: 50vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .flash-hero::before {
+      content: '⚡';
+      position: absolute;
+      font-size: 15rem;
+      opacity: 0.1;
+      animation: flashPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes flashPulse {
+      0%, 100% { transform: scale(1); opacity: 0.1; }
+      50% { transform: scale(1.2); opacity: 0.2; }
+    }
+
+    .flash-content {
+      position: relative;
+      z-index: 10;
+    }
+
+    .flash-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+
+    .flash-subtitle {
+      font-size: 1.3rem;
+      opacity: 0.95;
+    }
+
+    /* 倒计时 */
+    .countdown-bar {
+      background: linear-gradient(90deg, #1E293B, #334155);
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .countdown-label {
+      color: white;
+      font-size: 1.1rem;
+    }
+
+    .countdown-box {
+      display: flex;
+      gap: 10px;
+    }
+
+    .countdown-unit {
+      background: white;
+      color: #EF4444;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 1.5rem;
+      font-weight: 800;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    .countdown-text {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+      align-self: center;
+    }
+
+    /* 秒杀分类 */
+    .flash-nav {
+      background: white;
+      padding: 20px;
+      position: sticky;
+      top: 70px;
+      z-index: 90;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    .flash-nav-list {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .flash-nav-item {
+      padding: 12px 25px;
+      border-radius: 30px;
+      background: #f5f5f5;
+      color: #64748B;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .flash-nav-item:hover,
+    .flash-nav-item.active {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: white;
+    }
+
+    /* 秒杀商品 */
+    .flash-section {
+      background: #f8fafc;
+      padding: 60px 20px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .section-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      color: #1E293B;
+    }
+
+    .flash-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .flash-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      transition: all 0.3s;
+      position: relative;
+    }
+
+    .flash-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(239, 68, 68, 0.2);
+    }
+
+    .flash-card.soon {
+      opacity: 0.7;
+    }
+
+    .flash-image {
+      height: 160px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+    }
+
+    .flash-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .flash-badge.hot {
+      background: #EF4444;
+      color: white;
+    }
+
+    .flash-badge.soon {
+      background: #F97316;
+      color: white;
+    }
+
+    .flash-badge.soldout {
+      background: #6B7280;
+      color: white;
+    }
+
+    .flash-body {
+      padding: 20px;
+    }
+
+    .flash-name {
+      font-size: 1.1rem;
+      color: #1E293B;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .flash-desc {
+      color: #64748B;
+      font-size: 0.9rem;
+      margin-bottom: 15px;
+      line-height: 1.5;
+    }
+
+    .flash-price {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .flash-price-current {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #EF4444;
+    }
+
+    .flash-price-original {
+      font-size: 1rem;
+      color: #9CA3AF;
+      text-decoration: line-through;
+    }
+
+    .flash-discount {
+      background: #FEE2E2;
+      color: #EF4444;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .flash-progress {
+      margin-bottom: 15px;
+    }
+
+    .flash-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: #64748B;
+      margin-bottom: 8px;
+    }
+
+    .flash-progress-bar {
+      height: 8px;
+      background: #E5E7EB;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .flash-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #EF4444, #F97316);
+      border-radius: 4px;
+      transition: width 0.3s;
+    }
+
+    .flash-countdown {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: #EF4444;
+      font-weight: 600;
+      margin-bottom: 15px;
+    }
+
+    .flash-btn {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    .flash-btn.now {
+      background: linear-gradient(135deg, #EF4444, #DC2626);
+      color: white;
+    }
+
+    .flash-btn.now:hover {
+      box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+    }
+
+    .flash-btn.soon {
+      background: #F97316;
+      color: white;
+    }
+
+    .flash-btn.soldout {
+      background: #D1D5DB;
+      color: #6B7280;
+      cursor: not-allowed;
+    }
+
+    /* 限量抢购 */
+    .limited-section {
+      background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
+      padding: 80px 20px;
+      color: white;
+    }
+
+    .limited-section .section-title {
+      color: white;
+    }
+
+    .limited-section .section-desc {
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 40px;
+    }
+
+    .limited-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .limited-card {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s;
+    }
+
+    .limited-card:hover {
+      background: rgba(255,255,255,0.12);
+      transform: scale(1.02);
+    }
+
+    .limited-icon {
+      font-size: 4rem;
+      margin-bottom: 15px;
+    }
+
+    .limited-name {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .limited-desc {
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    .limited-stock {
+      display: inline-block;
+      background: rgba(239, 68, 68, 0.3);
+      padding: 8px 20px;
+      border-radius: 20px;
+      margin-bottom: 15px;
+    }
+
+    .limited-stock span {
+      font-weight: 700;
+      color: #FCA5A5;
+    }
+
+    .limited-btn {
+      padding: 14px 35px;
+      background: linear-gradient(135deg, #EF4444, #F97316);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .limited-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* 活动日历 */
+    .calendar-section {
+      background: #f8fafc;
+      padding: 80px 20px;
+    }
+
+    .calendar-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .calendar-tab {
+      padding: 10px 20px;
+      border: 2px solid #E2E8F0;
+      border-radius: 10px;
+      background: white;
+      color: #64748B;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .calendar-tab.active {
+      border-color: #EF4444;
+      color: #EF4444;
+      background: #FEF2F2;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .calendar-day {
+      background: white;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    .calendar-day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+
+    .calendar-day-title {
+      font-size: 1.2rem;
+      color: #1E293B;
+      font-weight: 700;
+    }
+
+    .calendar-day-status {
+      padding: 5px 12px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .calendar-day-status.today {
+      background: #FEE2E2;
+      color: #EF4444;
+    }
+
+    .calendar-day-status.upcoming {
+      background: #DBEAFE;
+      color: #3B82F6;
+    }
+
+    .calendar-events {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .calendar-event {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: #F8FAFC;
+      border-radius: 10px;
+      transition: all 0.3s;
+    }
+
+    .calendar-event:hover {
+      background: #F1F5F9;
+    }
+
+    .calendar-event-time {
+      background: #EF4444;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .calendar-event-name {
+      flex: 1;
+      color: #1E293B;
+      font-weight: 500;
+    }
+
+    .calendar-event-tag {
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .calendar-event-tag.seckill {
+      background: #FEE2E2;
+      color: #EF4444;
+    }
+
+    .calendar-event-tag.discount {
+      background: #D1FAE5;
+      color: #059669;
+    }
+
+    .calendar-event-tag.gift {
+      background: #FEF3C7;
+      color: #D97706;
+    }
+
+    /* 预约专区 */
+    .booking-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 80px 20px;
+      color: white;
+    }
+
+    .booking-section .section-title {
+      color: white;
+    }
+
+    .booking-section .section-desc {
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 40px;
+    }
+
+    .booking-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .booking-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 30px;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .booking-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .booking-title {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+    }
+
+    .booking-desc {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .booking-btn {
+      display: inline-block;
+      padding: 12px 25px;
+      background: white;
+      color: #764ba2;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .booking-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .flash-title {
+        font-size: 2.2rem;
+      }
+
+      .countdown-bar {
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .calendar-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单" aria-expanded="false" tabindex="0"><span></span></div>
+      <div class="nav-links">
+        <a href="index.html">🏠 首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="routes.html">🗺️ 线路</a>
+        <a href="activities.html" class="active">🎯 活动</a>
+        <a href="membership.html">👑 会员</a>
+        <a href="search.html" style="color:#667eea">🔍</a>
+        <a href="wechat-contact.html" style="color:#07c160;font-weight:600">💬</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    <!-- Hero -->
+    <section class="flash-hero">
+      <div class="flash-content">
+        <h1 class="flash-title">⚡ 限时秒杀</h1>
+        <p class="flash-subtitle">热门线路限时特惠，手慢无！</p>
+      </div>
+    </section>
+
+    <!-- 倒计时 -->
+    <div class="countdown-bar">
+      <span class="countdown-label">⏰ 本场秒杀结束倒计时：</span>
+      <div class="countdown-box">
+        <span class="countdown-unit" id="hours">08</span>
+        <span class="countdown-unit" id="minutes">35</span>
+        <span class="countdown-unit" id="seconds">42</span>
+      </div>
+      <span class="countdown-text">后恢复原价</span>
+    </div>
+
+    <!-- 秒杀导航 -->
+    <div class="flash-nav">
+      <div class="flash-nav-list">
+        <button class="flash-nav-item active">全部</button>
+        <button class="flash-nav-item">🔥 正在进行</button>
+        <button class="flash-nav-item">⏰ 即将开始</button>
+        <button class="flash-nav-item">💎 限量抢购</button>
+        <button class="flash-nav-item">📅 专属预约</button>
+      </div>
+    </div>
+
+    <!-- 正在秒杀 -->
+    <section class="flash-section">
+      <div class="section-header">
+        <div class="section-icon">🔥</div>
+        <h2 class="section-title">正在进行中</h2>
+      </div>
+      <div class="flash-grid">
+        <div class="flash-card">
+          <div class="flash-image" style="background: linear-gradient(135deg, #10B981, #059669);">
+            🏔️
+            <span class="flash-badge hot">🔥 抢疯了</span>
+          </div>
+          <div class="flash-body">
+            <h3 class="flash-name">张家界天门山3日游</h3>
+            <p class="flash-desc">包含景区门票、2晚住宿、专业导游</p>
+            <div class="flash-price">
+              <span class="flash-price-current">¥899</span>
+              <span class="flash-price-original">¥1699</span>
+              <span class="flash-discount">53折</span>
+            </div>
+            <div class="flash-progress">
+              <div class="flash-progress-label">
+                <span>已抢 78%</span>
+                <span>剩余 12 份</span>
+              </div>
+              <div class="flash-progress-bar">
+                <div class="flash-progress-fill" style="width: 78%;"></div>
+              </div>
+            </div>
+            <div class="flash-countdown">
+              ⏰ 剩余 <span id="countdown1">08:35:42</span>
+            </div>
+            <button class="flash-btn now" onclick="grabFlash('张家界天门山3日游')">立即抢购</button>
+          </div>
+        </div>
+        <div class="flash-card">
+          <div class="flash-image" style="background: linear-gradient(135deg, #3B82F6, #2563EB);">
+            🏖️
+            <span class="flash-badge hot">🔥 抢疯了</span>
+          </div>
+          <div class="flash-body">
+            <h3 class="flash-name">三亚亚特兰蒂斯5日游</h3>
+            <p class="flash-desc">五星酒店海景房、含自助早餐、水世界门票</p>
+            <div class="flash-price">
+              <span class="flash-price-current">¥2999</span>
+              <span class="flash-price-original">¥5999</span>
+              <span class="flash-discount">5折</span>
+            </div>
+            <div class="flash-progress">
+              <div class="flash-progress-label">
+                <span>已抢 65%</span>
+                <span>剩余 8 份</span>
+              </div>
+              <div class="flash-progress-bar">
+                <div class="flash-progress-fill" style="width: 65%;"></div>
+              </div>
+            </div>
+            <div class="flash-countdown">
+              ⏰ 剩余 <span id="countdown2">08:35:42</span>
+            </div>
+            <button class="flash-btn now" onclick="grabFlash('三亚亚特兰蒂斯5日游')">立即抢购</button>
+          </div>
+        </div>
+        <div class="flash-card soon">
+          <div class="flash-image" style="background: linear-gradient(135deg, #F97316, #EA580C);">
+            🗼
+            <span class="flash-badge soon">⏰ 即将开始</span>
+          </div>
+          <div class="flash-body">
+            <h3 class="flash-name">日本东京大阪6日游</h3>
+            <p class="flash-desc">全程入住4星酒店、含签证、全程导游</p>
+            <div class="flash-price">
+              <span class="flash-price-current">¥4999</span>
+              <span class="flash-price-original">¥8999</span>
+              <span class="flash-discount">56折</span>
+            </div>
+            <div class="flash-countdown">
+              🕐 距开始 <span id="countdown3">00:45:18</span>
+            </div>
+            <button class="flash-btn soon" onclick="subscribeFlash('日本东京大阪6日游')">立即预约</button>
+          </div>
+        </div>
+        <div class="flash-card">
+          <div class="flash-image" style="background: linear-gradient(135deg, #8B5CF6, #7C3AED);">
+            🏛️
+            <span class="flash-badge hot">🔥 抢疯了</span>
+          </div>
+          <div class="flash-body">
+            <h3 class="flash-name">希腊爱琴海8日游</h3>
+            <p class="flash-desc">浪漫海岛之旅、悬崖酒店、游艇出海</p>
+            <div class="flash-price">
+              <span class="flash-price-current">¥12999</span>
+              <span class="flash-price-original">¥19999</span>
+              <span class="flash-discount">65折</span>
+            </div>
+            <div class="flash-progress">
+              <div class="flash-progress-label">
+                <span>已抢 42%</span>
+                <span>剩余 5 份</span>
+              </div>
+              <div class="flash-progress-bar">
+                <div class="flash-progress-fill" style="width: 42%;"></div>
+              </div>
+            </div>
+            <div class="flash-countdown">
+              ⏰ 剩余 <span id="countdown4">08:35:42</span>
+            </div>
+            <button class="flash-btn now" onclick="grabFlash('希腊爱琴海8日游')">立即抢购</button>
+          </div>
+        </div>
+        <div class="flash-card soon soldout">
+          <div class="flash-image" style="background: linear-gradient(135deg, #6B7280, #4B5563);">
+            ✈️
+            <span class="flash-badge soldout">已售罄</span>
+          </div>
+          <div class="flash-body">
+            <h3 class="flash-name">云南丽江大理6日游</h3>
+            <p class="flash-desc">古城特色客栈、洱海海景房</p>
+            <div class="flash-price">
+              <span class="flash-price-current">¥1299</span>
+              <span class="flash-price-original">¥2599</span>
+              <span class="flash-discount">5折</span>
+            </div>
+            <button class="flash-btn soldout">已售罄</button>
+          </div>
+        </div>
+        <div class="flash-card">
+          <div class="flash-image" style="background: linear-gradient(135deg, #EC4899, #DB2777);">
+            🎿
+            <span class="flash-badge hot">🔥 抢疯了</span>
+          </div>
+          <div class="flash-body">
+            <h3 class="flash-name">长白山滑雪温泉4日游</h3>
+            <p class="flash-desc">包含雪票、温泉、星级酒店</p>
+            <div class="flash-price">
+              <span class="flash-price-current">¥1899</span>
+              <span class="flash-price-original">¥3299</span>
+              <span class="flash-discount">58折</span>
+            </div>
+            <div class="flash-progress">
+              <div class="flash-progress-label">
+                <span>已抢 89%</span>
+                <span>剩余 3 份</span>
+              </div>
+              <div class="flash-progress-bar">
+                <div class="flash-progress-fill" style="width: 89%;"></div>
+              </div>
+            </div>
+            <div class="flash-countdown">
+              ⏰ 剩余 <span id="countdown5">08:35:42</span>
+            </div>
+            <button class="flash-btn now" onclick="grabFlash('长白山滑雪温泉4日游')">立即抢购</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 限量抢购 -->
+    <section class="limited-section">
+      <div class="section-header">
+        <div class="section-icon">💎</div>
+        <h2 class="section-title">限量抢购</h2>
+        <p class="section-desc">稀缺资源，手慢无</p>
+      </div>
+      <div class="limited-grid">
+        <div class="limited-card">
+          <div class="limited-icon">🏨</div>
+          <h3 class="limited-name">马尔代夫水屋体验</h3>
+          <p class="limited-desc">全年仅此10个名额，包含机票、酒店、一日三餐</p>
+          <div class="limited-stock">剩余 <span>3</span> 份</div>
+          <button class="limited-btn" onclick="grabFlash('马尔代夫水屋体验')">¥29999</button>
+        </div>
+        <div class="limited-card">
+          <div class="limited-icon">🚁</div>
+          <h3 class="limited-name">迪拜直升机观光</h3>
+          <p class="limited-desc">俯瞰迪拜全景，专业摄影师跟拍</p>
+          <div class="limited-stock">剩余 <span>5</span> 份</div>
+          <button class="limited-btn" onclick="grabFlash('迪拜直升机观光')">¥2999</button>
+        </div>
+        <div class="limited-card">
+          <div class="limited-icon">⛵</div>
+          <h3 class="limited-name">摩纳哥私人游艇派对</h3>
+          <p class="limited-desc">VIP专属体验，名流社交晚宴</p>
+          <div class="limited-stock">剩余 <span>2</span> 份</div>
+          <button class="limited-btn" onclick="grabFlash('摩纳哥私人游艇派对')">¥59999</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 活动日历 -->
+    <section class="calendar-section">
+      <div class="section-header">
+        <div class="section-icon">📅</div>
+        <h2 class="section-title">活动日历</h2>
+      </div>
+      <div class="calendar-tabs">
+        <button class="calendar-tab active" onclick="switchMonth('today')">今日</button>
+        <button class="calendar-tab" onclick="switchMonth('tomorrow')">明日</button>
+        <button class="calendar-tab" onclick="switchMonth('week')">本周</button>
+        <button class="calendar-tab" onclick="switchMonth('month')">本月</button>
+      </div>
+      <div class="calendar-grid">
+        <div class="calendar-day">
+          <div class="calendar-day-header">
+            <span class="calendar-day-title">📆 4月15日 周二</span>
+            <span class="calendar-day-status today">今日</span>
+          </div>
+          <div class="calendar-events">
+            <div class="calendar-event">
+              <span class="calendar-event-time">10:00</span>
+              <span class="calendar-event-name">张家界特惠秒杀</span>
+              <span class="calendar-event-tag seckill">秒杀</span>
+            </div>
+            <div class="calendar-event">
+              <span class="calendar-event-time">14:00</span>
+              <span class="calendar-event-name">三亚酒店5折起</span>
+              <span class="calendar-event-tag discount">折扣</span>
+            </div>
+            <div class="calendar-event">
+              <span class="calendar-event-time">20:00</span>
+              <span class="calendar-event-name">会员专属红包雨</span>
+              <span class="calendar-event-tag gift">红包</span>
+            </div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-day-header">
+            <span class="calendar-day-title">📆 4月16日 周三</span>
+            <span class="calendar-day-status upcoming">明日</span>
+          </div>
+          <div class="calendar-events">
+            <div class="calendar-event">
+              <span class="calendar-event-time">10:00</span>
+              <span class="calendar-event-name">日本路线秒杀</span>
+              <span class="calendar-event-tag seckill">秒杀</span>
+            </div>
+            <div class="calendar-event">
+              <span class="calendar-event-time">15:00</span>
+              <span class="calendar-event-name">签证服务8折</span>
+              <span class="calendar-event-tag discount">折扣</span>
+            </div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-day-header">
+            <span class="calendar-day-title">📆 4月17日 周四</span>
+            <span class="calendar-day-status upcoming">即将开始</span>
+          </div>
+          <div class="calendar-events">
+            <div class="calendar-event">
+              <span class="calendar-event-time">10:00</span>
+              <span class="calendar-event-name">欧洲专线优惠</span>
+              <span class="calendar-event-tag seckill">秒杀</span>
+            </div>
+            <div class="calendar-event">
+              <span class="calendar-event-time">20:00</span>
+              <span class="calendar-event-name">月度锦鲤抽奖</span>
+              <span class="calendar-event-tag gift">抽奖</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 预约专区 -->
+    <section class="booking-section">
+      <div class="section-header">
+        <div class="section-icon">📝</div>
+        <h2 class="section-title">专属预约</h2>
+        <p class="section-desc">提前预约，锁定优惠</p>
+      </div>
+      <div class="booking-grid">
+        <div class="booking-card">
+          <div class="booking-icon">🎄</div>
+          <h3 class="booking-title">国庆节早鸟价</h3>
+          <p class="booking-desc">提前60天预约国庆行程，享受8折优惠</p>
+          <a href="#" class="booking-btn">立即预约</a>
+        </div>
+        <div class="booking-card">
+          <div class="booking-icon">🎄</div>
+          <h3 class="booking-title">春节团圆游</h3>
+          <p class="booking-desc">提前90天预约春节行程，锁定团圆价</p>
+          <a href="#" class="booking-btn">立即预约</a>
+        </div>
+        <div class="booking-card">
+          <div class="booking-icon">✈️</div>
+          <h3 class="booking-title">端午小长假</h3>
+          <p class="booking-desc">提前30天预约端午行程，专属优惠</p>
+          <a href="#" class="booking-btn">立即预约</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span style="font-size: 1.5rem;">🧭</span>
+            <span>游导旅游</span>
+          </div>
+          <p>专业的导游与游客一站式旅行平台<br>让旅行更简单，让体验更美好</p>
+        </div>
+        <div class="footer-links">
+          <h4>活动分类</h4>
+          <a href="brand-day.html">品牌日</a>
+          <a href="festival-activities.html">节日活动</a>
+          <a href="flash-sales.html">限时秒杀</a>
+          <a href="invite.html">邀请有礼</a>
+        </div>
+        <div class="footer-links">
+          <h4>帮助中心</h4>
+          <a href="help.html">常见问题</a>
+          <a href="contact.html">联系我们</a>
+          <a href="service-promise.html">服务承诺</a>
+        </div>
+        <div class="footer-links">
+          <h4>法律信息</h4>
+          <a href="privacy.html">隐私政策</a>
+          <a href="terms.html">服务条款</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 游导旅游 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 倒计时
+    function updateCountdown() {
+      const now = new Date();
+      const endOfDay = new Date(now);
+      endOfDay.setHours(23, 59, 59, 999);
+      
+      const diff = endOfDay - now;
+      const hours = Math.floor(diff / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // 抢购
+    function grabFlash(product) {
+      if (confirm(`确定抢购「${product}」吗？`)) {
+        alert('恭喜您，抢购成功！请在30分钟内完成支付。');
+      }
+    }
+
+    // 预约
+    function subscribeFlash(product) {
+      if (confirm(`确定预约「${product}」秒杀提醒吗？`)) {
+        alert('预约成功！秒杀开始前15分钟我们会提醒您。');
+      }
+    }
+
+    // Tab切换
+    document.querySelectorAll('.flash-nav-item').forEach(item => {
+      item.addEventListener('click', function() {
+        document.querySelectorAll('.flash-nav-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    document.querySelectorAll('.calendar-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.calendar-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    function switchMonth(type) {
+      document.querySelectorAll('.calendar-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    // 导航
+    function toggleNav() {
+      const nav = document.querySelector('.nav-links');
+      const toggle = document.querySelector('.nav-toggle');
+      nav.classList.toggle('active');
+      toggle.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>

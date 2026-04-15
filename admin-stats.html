@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据统计 - 游导旅游</title>
+    <meta name="description" content="数据统计 - 游导旅游">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="preload" href="css/style.css" as="style">
+      <link rel="stylesheet" href="css/accessibility.css">
+<link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/customer-service.css">
+    <link rel="stylesheet" href="css/enhanced.css">
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #F3F4F6;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航 */
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .admin-header .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-header .logo a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .admin-nav a {
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .admin-nav a:hover { background: rgba(255,255,255,0.2); }
+        .admin-nav a.active { background: rgba(255,255,255,0.25); }
+        .admin-nav .stats-link { background: rgba(255,255,255,0.2); }
+
+        /* 主容器 */
+        .admin-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* 页面标题 */
+        .page-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Tab导航 */
+        .stats-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stats-tab {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats-tab:hover {
+            border-color: #667eea;
+            color: #667eea;
+        }
+
+        .stats-tab.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: white;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .stat-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .stat-card .trend {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+
+        .trend.up { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+        .trend.down { background: rgba(239, 68, 68, 0.1); color: #EF4444; }
+
+        /* 内容卡片 */
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .content-card h2 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #F3F4F6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 图表网格 */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .chart-card h3 {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-full {
+            grid-column: 1 / -1;
+        }
+
+        .chart-third {
+            grid-column: span 1;
+        }
+
+        /* 时间选择器 */
+        .time-filter {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .time-btn {
+            padding: 8px 16px;
+            background: #F3F4F6;
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .time-btn:hover { background: #E5E7EB; }
+        .time-btn.active {
+            background: #667eea;
+            border-color: #667eea;
+            color: white;
+        }
+
+        /* 排名列表 */
+        .rank-list {
+            list-style: none;
+        }
+
+        .rank-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        .rank-item:last-child { border-bottom: none; }
+
+        .rank-badge {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 15px;
+        }
+
+        .rank-badge.gold { background: linear-gradient(135deg, #FFD700, #FFA500); color: white; }
+        .rank-badge.silver { background: linear-gradient(135deg, #C0C0C0, #A8A8A8); color: white; }
+        .rank-badge.bronze { background: linear-gradient(135deg, #CD7F32, #B87333); color: white; }
+        .rank-badge.normal { background: #F3F4F6; color: #666; }
+
+        .rank-info {
+            flex: 1;
+        }
+
+        .rank-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .rank-detail {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .rank-value {
+            text-align: right;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* 数据表格 */
+        .table-container { overflow-x: auto; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        th {
+            background: #F9FAFB;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        tr:hover { background: #F9FAFB; }
+
+        /* 指标卡 */
+        .metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .metric-item {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .metric-item .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .metric-item .label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .metric-item.highlight {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .metric-item.highlight .value { color: #667eea; }
+
+        /* 导出工具栏 */
+        .export-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn-export {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        /* 标签页内容区 */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 9999;
+            animation: slideDown 0.3s ease;
+        }
+
+        .toast-success { background-color: #10B981; }
+        .toast-error { background-color: #EF4444; }
+        .toast-warning { background-color: #F59E0B; }
+        .toast-info { background-color: #3B82F6; }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        /* 响应式 */
+        @media (max-width: 1200px) {
+            .charts-grid { grid-template-columns: 1fr; }
+            .chart-full { grid-column: 1; }
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .metric-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 768px) {
+            .admin-header { flex-direction: column; gap: 15px; padding: 15px; }
+            .admin-nav { flex-wrap: wrap; justify-content: center; }
+            .admin-container { padding: 15px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .stats-tabs { justify-content: center; }
+        }
+    </style>
+  <meta name="keywords" content="游导旅游,admin-stats">
+  <link rel="canonical" href="https://youdao-travel.com/admin-stats.html">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+    <!-- 顶部导航 -->
+    <header class="admin-header">
+        <div class="logo">
+            <a href="admin.html">⚙️ 游导旅游管理后台</a>
+        </div>
+        <nav class="admin-nav" aria-label="主导航">
+            <a href="admin.html">📊 仪表盘</a>
+            <a href="admin-stats.html" class="active">📈 数据报表</a>
+            <a href="admin-guides.html">🎤 导游管理</a>
+            <a href="admin-users.html">👥 用户管理</a>
+            <a href="admin-reviews.html">⭐ 评价管理</a>
+            <a href="index.html" class="logout-btn">🚪 退出</a>
+        </nav>
+    </header>
+
+    <!-- 主容器 -->
+    <main class="admin-container">
+        <h1 class="page-title">📈 数据统计报表</h1>
+
+        <!-- Tab导航 -->
+        <div class="stats-tabs">
+            <button class="stats-tab active" onclick="switchTab('user')">
+                <span aria-hidden="true">👥</span> 用户统计
+            </button>
+            <button class="stats-tab" onclick="switchTab('order')">
+                <span aria-hidden="true">🛒</span> 订单统计
+            </button>
+            <button class="stats-tab" onclick="switchTab('guide')">
+                <span aria-hidden="true">🎤</span> 导游统计
+            </button>
+            <button class="stats-tab" onclick="switchTab('route')">
+                <span aria-hidden="true">🗺️</span> 路线统计
+            </button>
+            <button class="stats-tab" onclick="switchTab('feedback')">
+                <span aria-hidden="true">💬</span> 反馈统计
+            </button>
+        </div>
+
+        <!-- ==================== 用户统计 ==================== -->
+        <div id="userStats" class="tab-content active">
+            <!-- 时间筛选 -->
+            <div class="time-filter">
+                <button class="time-btn" onclick="filterUserData('7d')">近7天</button>
+                <button class="time-btn active" onclick="filterUserData('30d')">近30天</button>
+                <button class="time-btn" onclick="filterUserData('90d')">近90天</button>
+                <button class="time-btn" onclick="filterUserData('365d')">近一年</button>
+            </div>
+
+            <!-- 用户统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">👥</div>
+                    <div class="value">12,568</div>
+                    <div class="label">总用户数</div>
+                    <span class="trend up">↑ 15.8%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🆕</div>
+                    <div class="value">1,256</div>
+                    <div class="label">本月新增</div>
+                    <span class="trend up">↑ 23.5%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">✅</div>
+                    <div class="value">8,942</div>
+                    <div class="label">活跃用户</div>
+                    <span class="trend up">↑ 8.2%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💰</div>
+                    <div class="value">71.1%</div>
+                    <div class="label">活跃率</div>
+                    <span class="trend up">↑ 3.2%</span>
+                </div>
+            </div>
+
+            <!-- 用户增长趋势 -->
+            <div class="charts-grid">
+                <div class="chart-card chart-full">
+                    <h3>📈 用户增长趋势</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户活跃度 & 来源分析 -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>📊 用户活跃度分析</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="userActivityChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>🌐 用户来源分析</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="userSourceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 用户详细数据表 -->
+            <div class="content-card">
+                <h2>📋 用户数据明细</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>新增用户</th>
+                                <th>活跃用户</th>
+                                <th>留存率</th>
+                                <th>累计用户</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userDetailTable">
+                            <tr>
+                                <td>2024-07-01</td>
+                                <td>45</td>
+                                <td>320</td>
+                                <td>68.5%</td>
+                                <td>11,312</td>
+                            </tr>
+                            <tr>
+                                <td>2024-07-02</td>
+                                <td>52</td>
+                                <td>345</td>
+                                <td>69.2%</td>
+                                <td>11,364</td>
+                            </tr>
+                            <tr>
+                                <td>2024-07-03</td>
+                                <td>38</td>
+                                <td>298</td>
+                                <td>67.8%</td>
+                                <td>11,402</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 订单统计 ==================== -->
+        <div id="orderStats" class="tab-content">
+            <!-- 时间筛选 -->
+            <div class="time-filter">
+                <button class="time-btn" onclick="filterOrderData('7d')">近7天</button>
+                <button class="time-btn active" onclick="filterOrderData('30d')">近30天</button>
+                <button class="time-btn" onclick="filterOrderData('90d')">近90天</button>
+                <button class="time-btn" onclick="filterOrderData('365d')">近一年</button>
+            </div>
+
+            <!-- 订单统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">🛒</div>
+                    <div class="value">3,568</div>
+                    <div class="label">总订单数</div>
+                    <span class="trend up">↑ 22.5%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💵</div>
+                    <div class="value">¥89.6万</div>
+                    <div class="label">总销售额</div>
+                    <span class="trend up">↑ 35.8%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">⏳</div>
+                    <div class="value">156</div>
+                    <div class="label">待处理订单</div>
+                    <span class="trend down">↓ 12.3%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📈</div>
+                    <div class="value">8.2%</div>
+                    <div class="label">转化率</div>
+                    <span class="trend up">↑ 1.5%</span>
+                </div>
+            </div>
+
+            <!-- 订单指标 -->
+            <div class="metric-grid">
+                <div class="metric-item highlight">
+                    <div class="value">¥251</div>
+                    <div class="label">平均客单价</div>
+                </div>
+                <div class="metric-item">
+                    <div class="value">92.3%</div>
+                    <div class="label">完成率</div>
+                </div>
+                <div class="metric-item">
+                    <div class="value">4.5%</div>
+                    <div class="label">退款率</div>
+                </div>
+            </div>
+
+            <!-- 订单量 & 销售额趋势 -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>📊 订单量统计</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="orderVolumeChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>💰 销售额统计</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="salesRevenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 转化率分析 -->
+            <div class="charts-grid">
+                <div class="chart-card chart-full">
+                    <h3>🔄 转化率漏斗分析</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="conversionFunnelChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 订单状态分布 -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>📊 订单状态分布</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="orderStatusChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>💳 支付方式分布</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="paymentMethodChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 导游统计 ==================== -->
+        <div id="guideStats" class="tab-content">
+            <!-- 导游统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">🎤</div>
+                    <div class="value">856</div>
+                    <div class="label">导游总数</div>
+                    <span class="trend up">↑ 12.3%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">⭐</div>
+                    <div class="value">4.8</div>
+                    <div class="label">平均评分</div>
+                    <span class="trend up">↑ 0.2</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🤝</div>
+                    <div class="value">12,568</div>
+                    <div class="label">总服务次数</div>
+                    <span class="trend up">↑ 28.5%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">💰</div>
+                    <div class="value">¥45.2万</div>
+                    <div class="label">导游总收入</div>
+                    <span class="trend up">↑ 32.1%</span>
+                </div>
+            </div>
+
+            <!-- 导游评分分布 & 服务次数 -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>⭐ 导游评分分布</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="guideRatingChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>📈 服务次数趋势</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="guideServicesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 热门导游榜单 -->
+            <div class="content-card">
+                <h2>🏆 热门导游榜单 TOP 10</h2>
+                <ul class="rank-list" id="topGuidesList">
+                    <li class="rank-item">
+                        <div class="rank-badge gold">1</div>
+                        <div class="rank-info">
+                            <div class="rank-name">李明导游</div>
+                            <div class="rank-detail">历史文化 · 北京</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 98%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>⭐ 4.9</div>
+                            <div style="font-size: 0.8rem; color: #888;">服务 568 次</div>
+                        </div>
+                    </li>
+                    <li class="rank-item">
+                        <div class="rank-badge silver">2</div>
+                        <div class="rank-info">
+                            <div class="rank-name">张伟导游</div>
+                            <div class="rank-detail">美食探店 · 成都</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>⭐ 4.8</div>
+                            <div style="font-size: 0.8rem; color: #888;">服务 512 次</div>
+                        </div>
+                    </li>
+                    <li class="rank-item">
+                        <div class="rank-badge bronze">3</div>
+                        <div class="rank-info">
+                            <div class="rank-name">王芳导游</div>
+                            <div class="rank-detail">户外探险 · 云南</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 88%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>⭐ 4.8</div>
+                            <div style="font-size: 0.8rem; color: #888;">服务 456 次</div>
+                        </div>
+                    </li>
+                    <li class="rank-item">
+                        <div class="rank-badge normal">4</div>
+                        <div class="rank-info">
+                            <div class="rank-name">刘涛导游</div>
+                            <div class="rank-detail">城市观光 · 上海</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>⭐ 4.7</div>
+                            <div style="font-size: 0.8rem; color: #888;">服务 398 次</div>
+                        </div>
+                    </li>
+                    <li class="rank-item">
+                        <div class="rank-badge normal">5</div>
+                        <div class="rank-info">
+                            <div class="rank-name">陈静导游</div>
+                            <div class="rank-detail">亲子游 · 杭州</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>⭐ 4.7</div>
+                            <div style="font-size: 0.8rem; color: #888;">服务 365 次</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 导游专业分布 -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>🎯 导游专业分布</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="guideExpertiseChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>🌍 导游地区分布</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="guideRegionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 路线统计 ==================== -->
+        <div id="routeStats" class="tab-content">
+            <!-- 路线统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">🗺️</div>
+                    <div class="value">1,256</div>
+                    <div class="label">路线总数</div>
+                    <span class="trend up">↑ 8.5%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">👁️</div>
+                    <div class="value">58.6万</div>
+                    <div class="label">路线总浏览</div>
+                    <span class="trend up">↑ 45.2%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">🛒</div>
+                    <div class="value">8,965</div>
+                    <div class="label">路线预订</div>
+                    <span class="trend up">↑ 32.8%</span>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">📅</div>
+                    <div class="value">3.5天</div>
+                    <div class="label">平均行程</div>
+                    <span class="trend down">↓ 0.2天</span>
+                </div>
+            </div>
+
+            <!-- 热门路线排行 -->
+            <div class="content-card">
+                <h2>🔥 热门路线排行榜 TOP 10</h2>
+                <ul class="rank-list" id="topRoutesList">
+                    <li class="rank-item">
+                        <div class="rank-badge gold">1</div>
+                        <div class="rank-info">
+                            <div class="rank-name">北京故宫深度一日游</div>
+                            <div class="rank-detail">历史文化 · 北京 · ¥328/人</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>👁️ 12.5万</div>
+                            <div style="font-size: 0.8rem; color: #888;">预订 1,568</div>
+                        </div>
+                    </li>
+                    <li class="rank-item">
+                        <div class="rank-badge gold">2</div>
+                        <div class="rank-info">
+                            <div class="rank-name">杭州西湖精华两日游</div>
+                            <div class="rank-detail">城市观光 · 杭州 · ¥568/人</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>👁️ 10.8万</div>
+                            <div style="font-size: 0.8rem; color: #888;">预订 1,256</div>
+                        </div>
+                    </li>
+                    <li class="rank-item">
+                        <div class="rank-badge silver">3</div>
+                        <div class="rank-info">
+                            <div class="rank-name">成都熊猫基地+市区美食游</div>
+                            <div class="rank-detail">美食探店 · 成都 · ¥388/人</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 85%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>👁️ 8.6万</div>
+                            <div style="font-size: 0.8rem; color: #888;">预订 985</div>
+                        </div>
+                    </li>
+                    <li class="rank-item">
+                        <div class="rank-badge bronze">4</div>
+                        <div class="rank-info">
+                            <div class="rank-name">西安兵马俑历史探秘</div>
+                            <div class="rank-detail">历史文化 · 西安 · ¥298/人</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>👁️ 7.2万</div>
+                            <div style="font-size: 0.8rem; color: #888;">预订 856</div>
+                        </div>
+                    </li>
+                    <li class="rank-item">
+                        <div class="rank-badge normal">5</div>
+                        <div class="rank-info">
+                            <div class="rank-name">云南大理丽江六日深度游</div>
+                            <div class="rank-detail">户外探险 · 云南 · ¥2,568/人</div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 72%"></div>
+                            </div>
+                        </div>
+                        <div class="rank-value">
+                            <div>👁️ 6.5万</div>
+                            <div style="font-size: 0.8rem; color: #888;">预订 765</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 目的地热度 & 季节趋势 -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>🌍 目的地热度分析</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="destinationHeatChart"></canvas>
+                    </div>
+                </div>
+                <div class="chart-card">
+                    <h3>📅 季节性趋势</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="seasonTrendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 路线类型分布 -->
+            <div class="charts-grid">
+                <div class="chart-card chart-full">
+                    <h3>🏷️ 路线类型分布</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="routeTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 目的地详情表 -->
+            <div class="content-card">
+                <h2>📍 热门目的地明细</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>排名</th>
+                                <th>目的地</th>
+                                <th>路线数</th>
+                                <th>浏览量</th>
+                                <th>预订数</th>
+                                <th>热度指数</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span style="color: #FFD700; font-weight: bold;" aria-hidden="true">🥇</span></td>
+                                <td>北京</td>
+                                <td>156</td>
+                                <td>18.5万</td>
+                                <td>2,568</td>
+                                <td><span style="color: #667eea; font-weight: bold;">98</span></td>
+                            </tr>
+                            <tr>
+                                <td><span style="color: #C0C0C0; font-weight: bold;" aria-hidden="true">🥈</span></td>
+                                <td>杭州</td>
+                                <td>128</td>
+                                <td>15.2万</td>
+                                <td>2,156</td>
+                                <td><span style="color: #667eea; font-weight: bold;">92</span></td>
+                            </tr>
+                            <tr>
+                                <td><span style="color: #CD7F32; font-weight: bold;" aria-hidden="true">🥉</span></td>
+                                <td>成都</td>
+                                <td>115</td>
+                                <td>12.8万</td>
+                                <td>1,856</td>
+                                <td><span style="color: #667eea; font-weight: bold;">88</span></td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>西安</td>
+                                <td>98</td>
+                                <td>10.5万</td>
+                                <td>1,456</td>
+                                <td><span style="color: #667eea; font-weight: bold;">82</span></td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>云南</td>
+                                <td>86</td>
+                                <td>9.2万</td>
+                                <td>1,256</td>
+                                <td><span style="color: #667eea; font-weight: bold;">78</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 反馈统计 ==================== -->
+        <div id="feedbackStats" class="tab-content">
+            <!-- 反馈统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon">📊</div>
+                    <div class="value" id="feedbackTotal">0</div>
+                    <div class="label">反馈总数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">⏳</div>
+                    <div class="value" id="feedbackPending">0</div>
+                    <div class="label">待处理</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">⚙️</div>
+                    <div class="value" id="feedbackProcessing">0</div>
+                    <div class="label">处理中</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon">✅</div>
+                    <div class="value" id="feedbackResolved">0</div>
+                    <div class="label">已解决</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <!-- 反馈类型分布 -->
+                <div class="chart-card">
+                    <h3>📊 反馈类型分布</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="feedbackTypeChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- 反馈状态分布 -->
+                <div class="chart-card">
+                    <h3>📈 反馈状态分布</h3>
+                    <div class="chart-wrapper">
+                        <canvas id="feedbackStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 热门问题分析 -->
+            <div class="content-card">
+                <h2>🔥 热门问题分析 TOP 10</h2>
+                <ul class="rank-list" id="hotTopicsList">
+                    <!-- 动态生成 -->
+                </ul>
+            </div>
+
+            <!-- 反馈列表 -->
+            <div class="content-card">
+                <h2>💬 最新反馈列表</h2>
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>编号</th>
+                                <th>类型</th>
+                                <th>内容摘要</th>
+                                <th>联系方式</th>
+                                <th>状态</th>
+                                <th>时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="feedbackTableBody">
+                            <!-- 动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="admin/feedback-management.html" class="btn-export" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px;">
+                        📋 进入反馈管理
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 导出工具栏 -->
+        <div class="export-toolbar">
+            <div class="export-info">
+                <span>📅 数据更新时间: <strong id="updateTime"></strong></span>
+                <span style="margin-left: 20px;">📊 共 <strong>0</strong> 条记录</span>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-export" onclick="exportStatsData()">
+                    📥 导出报表 (CSV)
+                </button>
+                <button class="btn-export" onclick="exportStatsPDF()" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    📄 导出PDF
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 颜色配置
+        const colors = {
+            primary: 'rgba(102, 126, 234, 1)',
+            primaryLight: 'rgba(102, 126, 234, 0.2)',
+            success: 'rgba(16, 185, 129, 1)',
+            successLight: 'rgba(16, 185, 129, 0.2)',
+            warning: 'rgba(245, 158, 11, 1)',
+            warningLight: 'rgba(245, 158, 11, 0.2)',
+            danger: 'rgba(239, 68, 68, 1)',
+            dangerLight: 'rgba(239, 68, 68, 0.2)',
+            info: 'rgba(59, 130, 246, 1)',
+            infoLight: 'rgba(59, 130, 246, 0.2)',
+            purple: 'rgba(139, 92, 246, 1)',
+            pink: 'rgba(236, 72, 153, 1)'
+        };
+
+        // Tab切换
+        function switchTab(tab) {
+            document.querySelectorAll('.stats-tab').forEach(t => t.classList.remove('active'));
+            event.target.closest('.stats-tab').classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.getElementById(tab + 'Stats').classList.add('active');
+        }
+
+        // 筛选时间
+        function filterUserData(period) {
+            document.querySelectorAll('#userStats .time-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function filterOrderData(period) {
+            document.querySelectorAll('#orderStats .time-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // Toast提示
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // 导出数据
+        function exportStatsData() {
+            showToast('正在导出数据...', 'info');
+            setTimeout(() => showToast('数据导出成功！', 'success'), 500);
+        }
+
+        function exportStatsPDF() {
+            showToast('正在生成PDF...', 'info');
+            setTimeout(() => showToast('PDF导出功能开发中', 'warning'), 500);
+        }
+
+        // 更新数据时间
+        function updateDataTime() {
+            const now = new Date();
+            document.getElementById('updateTime').textContent = now.toLocaleString('zh-CN');
+        }
+
+        // 初始化图表
+        function initCharts() {
+            Chart.defaults.font.family = "'PingFang SC', 'Microsoft YaHei', sans-serif";
+            Chart.defaults.color = '#666';
+
+            // ===== 用户统计图表 =====
+            // 1. 用户增长趋势
+            new Chart(document.getElementById('userGrowthChart'), {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'],
+                    datasets: [{
+                        label: '新用户注册',
+                        data: [850, 920, 1050, 1180, 1320, 1450, 1580],
+                        borderColor: colors.primary,
+                        backgroundColor: colors.primaryLight,
+                        fill: true,
+                        tension: 0.4
+                    }, {
+                        label: '活跃用户',
+                        data: [5200, 5800, 6500, 7200, 7800, 8500, 8942],
+                        borderColor: colors.success,
+                        backgroundColor: 'transparent',
+                        borderDash: [5, 5],
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top', labels: { usePointStyle: true } } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 2. 用户活跃度分析
+            new Chart(document.getElementById('userActivityChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['日活', '周活', '月活', '季度活'],
+                    datasets: [{
+                        label: '用户数',
+                        data: [8942, 10520, 11856, 12568],
+                        backgroundColor: [colors.primary, colors.info, colors.success, colors.purple],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 3. 用户来源分析
+            new Chart(document.getElementById('userSourceChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['微信', 'APP', '网页', '小程序', '其他'],
+                    datasets: [{
+                        data: [35, 28, 22, 12, 3],
+                        backgroundColor: [colors.success, colors.primary, colors.info, colors.warning, colors.purple],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: { legend: { position: 'right', labels: { usePointStyle: true } } }
+                }
+            });
+
+            // ===== 订单统计图表 =====
+            // 4. 订单量统计
+            new Chart(document.getElementById('orderVolumeChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'],
+                    datasets: [{
+                        label: '订单数',
+                        data: [280, 320, 385, 456, 528, 612, 698],
+                        backgroundColor: colors.primary,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 5. 销售额统计
+            new Chart(document.getElementById('salesRevenueChart'), {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'],
+                    datasets: [{
+                        label: '销售额(万元)',
+                        data: [8.5, 9.8, 11.2, 13.5, 15.8, 18.2, 21.5],
+                        borderColor: colors.success,
+                        backgroundColor: colors.successLight,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 6. 转化率漏斗
+            new Chart(document.getElementById('conversionFunnelChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['访问量', '浏览路线', '加入购物车', '提交订单', '完成支付'],
+                    datasets: [{
+                        label: '用户数',
+                        data: [125680, 68520, 18560, 8560, 3568],
+                        backgroundColor: [colors.primary, colors.info, colors.warning, colors.success, colors.purple],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 7. 订单状态分布
+            new Chart(document.getElementById('orderStatusChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['已完成', '进行中', '待处理', '已取消', '退款'],
+                    datasets: [{
+                        data: [2856, 425, 156, 98, 33],
+                        backgroundColor: [colors.success, colors.primary, colors.warning, colors.danger, colors.purple],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } }
+                }
+            });
+
+            // 8. 支付方式分布
+            new Chart(document.getElementById('paymentMethodChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['微信支付', '支付宝', '银行卡', '其他'],
+                    datasets: [{
+                        data: [45, 38, 12, 5],
+                        backgroundColor: [colors.success, colors.info, colors.primary, colors.warning],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: { legend: { position: 'right', labels: { usePointStyle: true } } }
+                }
+            });
+
+            // ===== 导游统计图表 =====
+            // 9. 导游评分分布
+            new Chart(document.getElementById('guideRatingChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['5星', '4.5星', '4星', '3星', '3星以下'],
+                    datasets: [{
+                        label: '导游数量',
+                        data: [385, 268, 145, 42, 16],
+                        backgroundColor: [colors.success, colors.success, colors.warning, colors.danger, colors.danger],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 10. 服务次数趋势
+            new Chart(document.getElementById('guideServicesChart'), {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'],
+                    datasets: [{
+                        label: '服务次数',
+                        data: [1256, 1385, 1520, 1685, 1856, 2056, 2285],
+                        borderColor: colors.primary,
+                        backgroundColor: colors.primaryLight,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 11. 导游专业分布
+            new Chart(document.getElementById('guideExpertiseChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['城市观光', '历史文化', '美食探店', '户外探险', '亲子游', '其他'],
+                    datasets: [{
+                        data: [28, 25, 18, 15, 8, 6],
+                        backgroundColor: [colors.primary, colors.success, colors.warning, colors.info, colors.purple, colors.pink],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { usePointStyle: true } } }
+                }
+            });
+
+            // 12. 导游地区分布
+            new Chart(document.getElementById('guideRegionChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['北京', '上海', '杭州', '成都', '西安', '云南', '其他'],
+                    datasets: [{
+                        label: '导游数量',
+                        data: [185, 156, 128, 115, 86, 72, 114],
+                        backgroundColor: [colors.danger, colors.primary, colors.success, colors.warning, colors.info, colors.purple, colors.pink],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // ===== 路线统计图表 =====
+            // 13. 目的地热度分析
+            new Chart(document.getElementById('destinationHeatChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['北京', '杭州', '成都', '西安', '云南', '上海', '苏州'],
+                    datasets: [{
+                        label: '热度指数',
+                        data: [98, 92, 88, 82, 78, 72, 68],
+                        backgroundColor: [colors.danger, colors.success, colors.warning, colors.primary, colors.info, colors.purple, colors.pink],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, max: 100, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 14. 季节性趋势
+            new Chart(document.getElementById('seasonTrendChart'), {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                    datasets: [{
+                        label: '预订量',
+                        data: [520, 680, 850, 1250, 1680, 1420, 1580, 1720, 1450, 1680, 980, 680],
+                        borderColor: colors.primary,
+                        backgroundColor: colors.primaryLight,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 15. 路线类型分布
+            new Chart(document.getElementById('routeTypeChart'), {
+                type: 'bar',
+                data: {
+                    labels: ['一日游', '两日游', '三日游', '四日游', '五日及以上', '定制游'],
+                    datasets: [{
+                        label: '路线数量',
+                        data: [385, 285, 225, 156, 128, 77],
+                        backgroundColor: [colors.primary, colors.success, colors.info, colors.warning, colors.purple, colors.pink],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // ===== 反馈统计图表 =====
+            // 加载反馈数据并初始化图表
+            initFeedbackStats();
+        }
+
+        // 初始化反馈统计
+        function initFeedbackStats() {
+            // 从localStorage获取反馈数据
+            const feedbacks = typeof FeedbackStore !== 'undefined' ? FeedbackStore.getAll() : getMockFeedbacks();
+            
+            // 统计各类型数量
+            const typeStats = {
+                suggestion: 0,
+                bug: 0,
+                complaint: 0,
+                other: 0
+            };
+            
+            // 统计各状态数量
+            const statusStats = {
+                pending: 0,
+                processing: 0,
+                resolved: 0
+            };
+            
+            feedbacks.forEach(f => {
+                if (typeStats.hasOwnProperty(f.type)) typeStats[f.type]++;
+                if (statusStats.hasOwnProperty(f.status)) statusStats[f.status]++;
+            });
+            
+            // 更新统计卡片
+            document.getElementById('feedbackTotal').textContent = feedbacks.length;
+            document.getElementById('feedbackPending').textContent = statusStats.pending;
+            document.getElementById('feedbackProcessing').textContent = statusStats.processing;
+            document.getElementById('feedbackResolved').textContent = statusStats.resolved;
+            
+            // 反馈类型分布图表
+            new Chart(document.getElementById('feedbackTypeChart'), {
+                type: 'doughnut',
+                data: {
+                    labels: ['功能建议', 'Bug报告', '投诉', '其他'],
+                    datasets: [{
+                        data: [typeStats.suggestion, typeStats.bug, typeStats.complaint, typeStats.other],
+                        backgroundColor: [colors.success, colors.danger, colors.warning, colors.purple],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '60%',
+                    plugins: { legend: { position: 'right', labels: { usePointStyle: true } } }
+                }
+            });
+            
+            // 反馈状态分布图表
+            new Chart(document.getElementById('feedbackStatusChart'), {
+                type: 'pie',
+                data: {
+                    labels: ['待处理', '处理中', '已解决'],
+                    datasets: [{
+                        data: [statusStats.pending, statusStats.processing, statusStats.resolved],
+                        backgroundColor: [colors.warning, colors.info, colors.success],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'right', labels: { usePointStyle: true } } }
+                }
+            });
+            
+            // 渲染热门问题列表
+            const hotTopicsList = document.getElementById('hotTopicsList');
+            if (hotTopicsList) {
+                const hotKeywords = ['支付', '图片加载', '行程', '导游', '地图', '通知', '优惠券', '客服', '签到', '社区'];
+                const keywordCounts = {};
+                
+                hotKeywords.forEach(k => {
+                    keywordCounts[k] = feedbacks.filter(f => 
+                        f.content.toLowerCase().includes(k.toLowerCase())
+                    ).length;
+                });
+                
+                const sorted = Object.entries(keywordCounts)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 10);
+                
+                hotTopicsList.innerHTML = sorted.map(([keyword, count], index) => {
+                    const maxCount = sorted[0][1] || 1;
+                    const percentage = (count / maxCount) * 100;
+                    const badgeClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : 'normal';
+                    
+                    return `
+                        <li class="rank-item">
+                            <div class="rank-badge ${badgeClass}">${index + 1}</div>
+                            <div class="rank-info">
+                                <div class="rank-name">${keyword}</div>
+                                <div class="rank-detail">相关反馈 ${count} 条</div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: ${percentage}%"></div>
+                                </div>
+                            </div>
+                            <div class="rank-value">${count} 条</div>
+                        </li>
+                    `;
+                }).join('');
+            }
+            
+            // 渲染最新反馈列表
+            const feedbackTableBody = document.getElementById('feedbackTableBody');
+            if (feedbackTableBody) {
+                const recentFeedbacks = feedbacks.slice(0, 10);
+                const statusBadge = {
+                    pending: '<span class="badge badge-warning">待处理</span>',
+                    processing: '<span class="badge badge-info">处理中</span>',
+                    resolved: '<span class="badge badge-success">已解决</span>'
+                };
+                const typeBadge = {
+                    suggestion: '<span class="badge badge-success">功能建议</span>',
+                    bug: '<span class="badge badge-danger">Bug报告</span>',
+                    complaint: '<span class="badge badge-warning">投诉</span>',
+                    other: '<span class="badge badge-secondary">其他</span>'
+                };
+                
+                feedbackTableBody.innerHTML = recentFeedbacks.map(f => `
+                    <tr>
+                        <td><code>${f.id}</code></td>
+                        <td>${typeBadge[f.type] || typeBadge.other}</td>
+                        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${f.content.substring(0, 50)}...</td>
+                        <td>${f.contact}</td>
+                        <td>${statusBadge[f.status] || statusBadge.pending}</td>
+                        <td>${formatDate(f.createdAt)}</td>
+                        <td><a href="admin/feedback-management.html" style="color: #667eea;">查看</a></td>
+                    </tr>
+                `).join('');
+            }
+        }
+
+        // 模拟反馈数据（用于没有加载feedback.js的情况）
+        function getMockFeedbacks() {
+            return [
+                { id: 'FB-L1K2M3-A4B5C6', type: 'bug', status: 'pending', content: 'App在浏览路线详情页时，图片加载很慢', contact: 'zhang***@163.com', createdAt: new Date(Date.now() - 86400000 * 2).toISOString() },
+                { id: 'FB-M4N5O6-P7Q8R9', type: 'suggestion', status: 'processing', content: '希望能增加一个行程分享功能', contact: '李明 138****5678', createdAt: new Date(Date.now() - 86400000 * 5).toISOString() },
+                { id: 'FB-S7T8U9-V1W2X3', type: 'suggestion', status: 'resolved', content: '希望增加境外支付功能', contact: 'wang***@gmail.com', createdAt: new Date(Date.now() - 86400000 * 10).toISOString() },
+                { id: 'FB-Y4Z5A6-B7C8D9', type: 'complaint', status: 'resolved', content: '导游服务态度很差', contact: '陈先生 139****9012', createdAt: new Date(Date.now() - 86400000 * 15).toISOString() },
+                { id: 'FB-E1F2G3-H4I5J6', type: 'other', status: 'resolved', content: '平台的旅行攻略内容非常实用', contact: '小林同学', createdAt: new Date(Date.now() - 86400000 * 20).toISOString() }
+            ];
+        }
+
+        // 格式化日期
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return '刚刚';
+            if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+            if (diff < 604800000) return Math.floor(diff / 86400000) + '天前';
+            
+            return date.toLocaleDateString('zh-CN');
+        }
+
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDataTime();
+            // 等待Chart.js加载
+            if (typeof Chart !== 'undefined') {
+                initCharts();
+            } else {
+                setTimeout(initCharts, 500);
+            }
+        });
+    </script>
+</body>
+</html>

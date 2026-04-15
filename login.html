@@ -3,17 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>登录 - 游导旅游 | 导游与游客登录入口</title>
-    <meta name="description" content="登录游导旅游平台，导游管理订单和服务，游客预约导游和管理行程。">
+    <title>用户登录 - 游导旅游</title>
+    <meta name="description" content="用户登录 - 游导旅游">
     <meta name="keywords" content="登录,账号登录,导游登录,游客登录">
     <meta name="robots" content="noindex, follow">
     <link rel="canonical" href="https://youdao-travel.com/login.html">
     <link rel="preload" href="css/style.css" as="style">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="stylesheet" href="css/accessibility.css">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/enhanced.css">
   <link rel="stylesheet" href="css/mobile.css">
   <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+	  <link rel="stylesheet" href="css/form/form-components.css">
+	  <link rel="stylesheet" href="css/ux-enhancement.css">
     <!-- i18n 语言配置 -->
     <script src="js/i18n.js" defer></script>
     <style>
@@ -552,11 +555,11 @@ select:focus {
             <!-- Tab切换 -->
             <div class="auth-tabs">
                 <button class="auth-tab tourist-tab active" onclick="switchTab('tourist')">
-                    <span class="tab-icon">🎬</span>
+                    <span class="tab-icon" aria-hidden="true">🎬</span>
                     <span class="tab-text" data-i18n="login.touristTab">我是游客</span>
                 </button>
                 <button class="auth-tab guide-tab" onclick="switchTab('guide')">
-                    <span class="tab-icon">🎒</span>
+                    <span class="tab-icon" aria-hidden="true">🎒</span>
                     <span class="tab-text" data-i18n="login.guideTab">我是导游</span>
                 </button>
                 <!-- 语言切换 -->
@@ -579,11 +582,13 @@ select:focus {
                         <div class="form-group">
                             <label for="touristEmail" data-i18n="login.email">手机号 / 邮箱</label>
                             <input type="text" id="touristEmail" data-type="phone" placeholder="请输入手机号" required>
+                            <div class="error-message" id="touristEmailError" style="display: none;"></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="touristPassword" data-i18n="login.password">密码</label>
                             <input type="password" id="touristPassword" placeholder="请输入密码" required>
+                            <div class="error-message" id="touristPasswordError" style="display: none;"></div>
                         </div>
                         
                         <div style="text-align: right; margin-bottom: 20px;">
@@ -596,7 +601,7 @@ select:focus {
                     <div class="social-login">
                         <div class="social-login-title" data-i18n="login.orContinue">其他登录方式</div>
                         <div class="social-btns">
-                            <button class="social-btn wechat" data-i18n-title="login.wechatLogin" title="微信登录"><span aria-hidden="true">💚</span><span class="sr-only">按钮</span></button>
+                            <button class="social-btn wechat" data-i18n-title="login.wechatLogin" title="微信登录" aria-label="客服"><span class="sr-only">按钮</span></button>
                         </div>
                     </div>
                     
@@ -617,11 +622,13 @@ select:focus {
                         <div class="form-group">
                             <label for="guidePhone">手机号</label>
                             <input type="tel" id="guidePhone" data-type="phone" placeholder="请输入11位手机号" required>
+                            <div class="error-message" id="guidePhoneError" style="display: none;"></div>
                         </div>
                         
                         <div class="form-group">
                             <label for="guidePassword">密码</label>
                             <input type="password" id="guidePassword" placeholder="请输入密码" required>
+                            <div class="error-message" id="guidePasswordError" style="display: none;"></div>
                         </div>
                         
                         <!-- 导游专属字段 -->
@@ -657,7 +664,7 @@ select:focus {
                                 <label for="guideCertInput">导游证号（选填）</label>
                                 <input type="text" id="guideCertInput" placeholder="用于快速验证，如 D-12345">
                                 <div class="guide-certificate-note">
-                                    <span>💡</span> 填写的导游证号将用于快速身份验证
+                                    <span aria-hidden="true">💡</span> 填写的导游证号将用于快速身份验证
                                 </div>
                             </div>
                         </div>
@@ -690,6 +697,52 @@ select:focus {
                 toast.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; color: white; font-size: 14px; z-index: 9999; background: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#3B82F6'};`;
                 document.body.appendChild(toast);
                 setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
+        // 表单验证工具函数
+        const FormValidator = {
+            // 验证手机号
+            validatePhone(phone) {
+                return /^1[3-9]\d{9}$/.test(phone);
+            },
+            
+            // 验证邮箱
+            validateEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            },
+            
+            // 验证密码
+            validatePassword(password) {
+                return password && password.length >= 6;
+            },
+            
+            // 设置输入框错误状态
+            setError(inputEl, errorEl, message) {
+                inputEl.classList.remove('input-success');
+                inputEl.classList.add('input-error');
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.style.display = 'block';
+                }
+                Utils.showToast(message, 'error');
+            },
+            
+            // 设置输入框成功状态
+            setSuccess(inputEl, errorEl) {
+                inputEl.classList.remove('input-error');
+                inputEl.classList.add('input-success');
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                }
+            },
+            
+            // 清除状态
+            clearStatus(inputEl, errorEl) {
+                inputEl.classList.remove('input-error', 'input-success');
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                }
             }
         };
 
@@ -744,6 +797,84 @@ select:focus {
             if (mode === 'guide') {
                 switchTab('guide');
             }
+
+            // ====== 游客表单实时验证 ======
+            const touristEmailInput = document.getElementById('touristEmail');
+            const touristEmailError = document.getElementById('touristEmailError');
+            const touristPasswordInput = document.getElementById('touristPassword');
+            const touristPasswordError = document.getElementById('touristPasswordError');
+
+            // 游客邮箱/手机号失焦验证
+            touristEmailInput.addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (!value) {
+                    FormValidator.setError(this, touristEmailError, '请输入手机号或邮箱');
+                } else if (FormValidator.validatePhone(value) || FormValidator.validateEmail(value)) {
+                    FormValidator.setSuccess(this, touristEmailError);
+                } else {
+                    FormValidator.setError(this, touristEmailError, '请输入正确的手机号或邮箱');
+                }
+            });
+
+            // 游客密码失焦验证
+            touristPasswordInput.addEventListener('blur', function() {
+                const value = this.value;
+                if (!value) {
+                    FormValidator.setError(this, touristPasswordError, '请输入密码');
+                } else if (FormValidator.validatePassword(value)) {
+                    FormValidator.setSuccess(this, touristPasswordError);
+                } else {
+                    FormValidator.setError(this, touristPasswordError, '密码至少6位');
+                }
+            });
+
+            // 输入时清除错误状态
+            [touristEmailInput, touristPasswordInput].forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('input-error')) {
+                        FormValidator.clearStatus(this, this.nextElementSibling?.classList.contains('error-message') ? this.nextElementSibling : null);
+                    }
+                });
+            });
+
+            // ====== 导游表单实时验证 ======
+            const guidePhoneInput = document.getElementById('guidePhone');
+            const guidePhoneError = document.getElementById('guidePhoneError');
+            const guidePasswordInput = document.getElementById('guidePassword');
+            const guidePasswordError = document.getElementById('guidePasswordError');
+
+            // 导游手机号失焦验证
+            guidePhoneInput.addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (!value) {
+                    FormValidator.setError(this, guidePhoneError, '请输入手机号');
+                } else if (FormValidator.validatePhone(value)) {
+                    FormValidator.setSuccess(this, guidePhoneError);
+                } else {
+                    FormValidator.setError(this, guidePhoneError, '请输入正确的11位手机号');
+                }
+            });
+
+            // 导游密码失焦验证
+            guidePasswordInput.addEventListener('blur', function() {
+                const value = this.value;
+                if (!value) {
+                    FormValidator.setError(this, guidePasswordError, '请输入密码');
+                } else if (FormValidator.validatePassword(value)) {
+                    FormValidator.setSuccess(this, guidePasswordError);
+                } else {
+                    FormValidator.setError(this, guidePasswordError, '密码至少6位');
+                }
+            });
+
+            // 输入时清除错误状态
+            [guidePhoneInput, guidePasswordInput].forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('input-error')) {
+                        FormValidator.clearStatus(this, this.nextElementSibling?.classList.contains('error-message') ? this.nextElementSibling : null);
+                    }
+                });
+            });
         
         // 游客登录表单提交
         document.getElementById('touristLoginForm').addEventListener('submit', async (e) => {
@@ -912,7 +1043,7 @@ select:focus {
     <footer id="main-footer" class="footer" style="background: transparent; margin-top: 30px;">
         <div class="container">
             <div class="footer-contact" style="text-align: center; margin-bottom: 15px;">
-                <p style="color: #64748B; font-size: 14px;">📧 2173381363@qq.com  💬 微信：ximao101</p>
+                <p style="color: #64748B; font-size: 14px;">📧 service@youdao-travel.com  💬 微信：ximao101</p>
             </div>
             <div class="footer-bottom" style="justify-content: center;">
                 <p style="color: #94A3B8;">© 2024 游导旅游 · 旅行信息工具平台</p>
@@ -939,5 +1070,35 @@ select:focus {
   <script src="js/pwa.js" defer></script>
   <script src="js/mobile.js" defer></script>
   <script src="js/customer-service.js" defer></script>
+  <script src="js/xss-filter.js" defer></script>
+  <script src="js/security/xss-protection.js" defer></script>
+  <script src="js/security/csrf-protection.js" defer></script>
+  <script src="js/security/input-validator.js" defer></script>
+  <script src="js/form/smart-form.js"></script>
+  <script src="js/form/form-init.js"></script>
+  <script>
+    // 登录表单智能增强
+    document.addEventListener('DOMContentLoaded', function() {
+      const touristForm = document.getElementById('touristLoginForm');
+      const guideForm = document.getElementById('guideLoginForm');
+      
+      if (window.SmartForm) {
+        if (touristForm) {
+          new SmartForm(touristForm, {
+            autoSave: { enabled: true },
+            autofill: { enabled: true },
+            history: { enabled: true }
+          });
+        }
+        if (guideForm) {
+          new SmartForm(guideForm, {
+            autoSave: { enabled: true },
+            autofill: { enabled: true },
+            history: { enabled: true }
+          });
+        }
+      }
+    });
+  </script>
 </body>
 </html>

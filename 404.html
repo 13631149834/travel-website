@@ -3,126 +3,231 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>404 - 页面不存在 | 游导旅游</title>
+  <title>404 - 页面去旅行了 | 游导旅游</title>
+  <meta name="description" content="哎呀，这个页面已经去旅行啦~别担心，让我们一起找到正确的方向。">
   <meta name="robots" content="noindex, nofollow">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
-  <link rel="preload" href="css/style.css" as="style">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/customer-service.css">
-  <link rel="stylesheet" href="css/enhanced.css">
-  <link rel="stylesheet" href="css/mobile.css">
-  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
-  <link rel="stylesheet" href="css/loading.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     body {
-      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #5a4fcf 100%);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
-      position: relative;
+      flex-direction: column;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       overflow: hidden;
+      position: relative;
     }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    /* 背景装饰 */
-    .bg-decoration {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+    /* 星空背景 */
+    .stars {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       pointer-events: none;
       overflow: hidden;
     }
 
-    .bg-decoration span {
+    .star {
       position: absolute;
-      display: block;
-      width: 20px;
-      height: 20px;
-      background: rgba(255,255,255,0.1);
+      background: white;
       border-radius: 50%;
-      animation: floatUp 25s linear infinite;
+      animation: twinkle 3s ease-in-out infinite;
     }
 
-    .bg-decoration span:nth-child(1) { left: 10%; animation-delay: 0s; }
-    .bg-decoration span:nth-child(2) { left: 20%; animation-delay: 5s; }
-    .bg-decoration span:nth-child(3) { left: 30%; animation-delay: 10s; }
-    .bg-decoration span:nth-child(4) { left: 40%; animation-delay: 15s; }
-    .bg-decoration span:nth-child(5) { left: 50%; animation-delay: 20s; }
-    .bg-decoration span:nth-child(6) { left: 60%; animation-delay: 2s; }
-    .bg-decoration span:nth-child(7) { left: 70%; animation-delay: 7s; }
-    .bg-decoration span:nth-child(8) { left: 80%; animation-delay: 12s; }
-    .bg-decoration span:nth-child(9) { left: 90%; animation-delay: 17s; }
-    .bg-decoration span:nth-child(10) { left: 95%; animation-delay: 22s; }
-
-    @keyframes floatUp {
-      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
     }
 
-    .error-container {
-      text-align: center;
-      padding: 40px;
-      max-width: 600px;
+    /* 流星 */
+    .shooting-star {
+      position: absolute;
+      width: 4px; height: 4px;
+      background: linear-gradient(45deg, white, transparent);
+      border-radius: 50%;
+      animation: shooting 3s ease-in-out infinite;
+    }
+
+    @keyframes shooting {
+      0% { transform: translateX(0) translateY(0); opacity: 1; }
+      70% { opacity: 1; }
+      100% { transform: translateX(-300px) translateY(300px); opacity: 0; }
+    }
+
+    /* 浮动元素 */
+    .floating-elements {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .floating-item {
+      position: absolute;
+      font-size: 30px;
+      animation: float 6s ease-in-out infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+
+    /* 导航栏 */
+    .nav-bar {
       position: relative;
-      z-index: 1;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .error-emoji {
-      font-size: 120px;
-      margin-bottom: 20px;
-      animation: bounce 2s ease-in-out infinite;
-      filter: drop-shadow(0 10px 30px rgba(0,0,0,0.3));
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
-
-    .error-code {
-      font-size: 100px;
-      font-weight: 800;
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       color: white;
-      text-shadow: 0 10px 30px rgba(0,0,0,0.3);
-      line-height: 1;
-      margin-bottom: 15px;
-      letter-spacing: -5px;
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .logo:hover { opacity: 0.9; }
+
+    .nav-actions {
+      display: flex;
+      gap: 16px;
+    }
+
+    .nav-btn {
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 50px;
+      color: white;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+
+    /* 主容器 */
+    .main-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .error-content {
+      text-align: center;
+      max-width: 700px;
+    }
+
+    /* 迷路指南针动画 */
+    .compass-container {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      margin: 0 auto 40px;
+    }
+
+    .compass {
+      font-size: 130px;
+      filter: drop-shadow(0 0 40px rgba(102, 126, 234, 0.6));
+      animation: compassFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes compassFloat {
+      0%, 100% { transform: translateY(0) rotate(-5deg); }
+      25% { transform: translateY(-15px) rotate(5deg); }
+      50% { transform: translateY(-5px) rotate(-3deg); }
+      75% { transform: translateY(-20px) rotate(8deg); }
+    }
+
+    .compass-orbit {
+      position: absolute;
+      top: 50%; left: 50%;
+      width: 200px; height: 200px;
+      border: 2px dashed rgba(102, 126, 234, 0.4);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      animation: orbit 20s linear infinite;
+    }
+
+    @keyframes orbit {
+      to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .orbit-dot {
+      position: absolute;
+      top: -6px; left: 50%;
+      width: 12px; height: 12px;
+      background: #667eea;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #667eea;
+    }
+
+    .orbit-dot-2 {
+      position: absolute;
+      bottom: -6px; left: 50%;
+      width: 10px; height: 10px;
+      background: #764ba2;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #764ba2;
+      animation: orbit-reverse 15s linear infinite;
+    }
+
+    @keyframes orbit-reverse {
+      to { transform: translateX(-50%) rotate(-360deg); }
     }
 
     h1 {
-      font-size: 1.8rem;
+      font-size: 3rem;
       color: white;
-      margin-bottom: 15px;
+      margin-bottom: 16px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .error-code {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 5rem;
+      font-weight: 800;
+      margin-bottom: 20px;
     }
 
     p {
-      font-size: 1.1rem;
-      color: rgba(255,255,255,0.9);
-      margin-bottom: 35px;
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 30px;
       line-height: 1.8;
     }
 
-    .btn-group {
+    /* 操作按钮 */
+    .actions {
       display: flex;
-      gap: 15px;
+      gap: 16px;
       justify-content: center;
       flex-wrap: wrap;
+      margin-bottom: 50px;
     }
 
     .btn {
@@ -131,254 +236,323 @@
       font-size: 1rem;
       font-weight: 600;
       text-decoration: none;
-      transition: all 0.3s;
+      transition: all 0.3s ease;
       cursor: pointer;
       border: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .btn-primary {
-      background: white;
-      color: #667eea;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
     }
 
     .btn-primary:hover {
-      transform: translateY(-3px) scale(1.02);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-    }
-
-    .btn-outline {
-      background: transparent;
-      color: white;
-      border: 2px solid rgba(255,255,255,0.7);
-      backdrop-filter: blur(5px);
-    }
-
-    .btn-outline:hover {
-      background: rgba(255,255,255,0.2);
       transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
     }
 
-    .help-section {
-      margin-top: 40px;
-      padding: 25px;
+    .btn-secondary {
       background: rgba(255,255,255,0.15);
-      border-radius: 20px;
+      color: white;
+      border: 2px solid rgba(255,255,255,0.4);
       backdrop-filter: blur(10px);
     }
 
-    .help-section h3 {
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-3px);
+    }
+
+    /* 搜索框 */
+    .search-box {
+      max-width: 500px;
+      margin: 0 auto 50px;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 16px 50px 16px 24px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 50px;
+      background: rgba(255,255,255,0.1);
       color: white;
       font-size: 1rem;
-      margin-bottom: 12px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .search-box input::placeholder {
+      color: rgba(255,255,255,0.6);
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #667eea;
+      background: rgba(255,255,255,0.15);
+    }
+
+    .search-box button {
+      position: absolute;
+      right: 8px; top: 50%;
+      transform: translateY(-50%);
+      width: 40px; height: 40px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .search-box button:hover {
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    /* 热门页面推荐 */
+    .hot-pages {
+      background: rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 30px;
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .hot-pages h3 {
+      color: white;
+      font-size: 1.1rem;
+      margin-bottom: 20px;
       display: flex;
       align-items: center;
-      justify-content: center;
       gap: 8px;
     }
 
-    .quick-links {
+    .hot-pages-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+    }
+
+    .hot-page-link {
       display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      justify-content: center;
-    }
-
-    .quick-link {
-      padding: 8px 18px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 20px;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 14px;
       color: white;
-      font-size: 0.9rem;
-      transition: all 0.3s;
       text-decoration: none;
+      transition: all 0.3s ease;
     }
 
-    .quick-link:hover {
-      background: rgba(255,255,255,0.35);
-      transform: translateY(-2px);
+    .hot-page-link:hover {
+      background: rgba(255,255,255,0.15);
+      transform: translateX(5px);
     }
 
-    /* 可爱装饰 */
-    .deco-cloud {
-      position: absolute;
-      font-size: 40px;
-      opacity: 0.3;
-      animation: float 6s ease-in-out infinite;
+    .hot-page-link span:first-child {
+      font-size: 1.5rem;
     }
 
-    .deco-cloud:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
-    .deco-cloud:nth-child(2) { top: 20%; right: 15%; animation-delay: 2s; }
-    .deco-cloud:nth-child(3) { bottom: 20%; left: 15%; animation-delay: 4s; }
-    .deco-cloud:nth-child(4) { bottom: 25%; right: 10%; animation-delay: 1s; }
-
-    @keyframes float {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-15px) rotate(5deg); }
+    .hot-page-link span:last-child {
+      font-size: 0.9rem;
     }
 
-    @media (max-width: 600px) {
-      .error-code { font-size: 80px; letter-spacing: -3px; }
-      .error-emoji { font-size: 80px; }
-      h1 { font-size: 1.4rem; }
-      p { font-size: 1rem; }
-      .btn { padding: 12px 24px; font-size: 0.95rem; }
-      .deco-cloud { display: none; }
+    /* 提示文本 */
+    .tip-text {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      margin-top: 30px;
     }
-  
-/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
-.skip-link {
-  position: absolute;
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--primary);
-  color: #fff !important;
-  padding: 12px 24px;
-  border-radius: 0 0 8px 8px;
-  z-index: 10000;
-  font-weight: 600;
-  transition: top 0.2s;
-}
-.skip-link:focus {
-  top: 0;
-  outline: 3px solid var(--primary-dark);
-  outline-offset: 2px;
-}
 
-/* 全局焦点样式 */
-:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-}
-:focus:not(:focus-visible) {
-  outline: none;
-}
-:focus-visible {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-}
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .nav-bar {
+        padding: 15px 20px;
+      }
 
-/* 链接焦点样式 */
-a:focus,
-button:focus,
-[tabindex]:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
+      .logo {
+        font-size: 1.2rem;
+      }
 
-/* 输入框焦点 */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 0;
-  border-color: var(--primary);
-}
+      .main-container {
+        padding: 20px;
+      }
 
-</style>
-  <!-- PWA Meta Tags -->
-  <meta name="theme-color" content="#3b82f6">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="游导旅游">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="images/icon-192.png">
-  <!-- Favicon & App Icons -->
-  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
-  <meta name="msapplication-TileImage" content="images/icon-192.png">
-  <meta name="msapplication-TileColor" content="#4F86F7">
-  <meta name="theme-color" content="#4F86F7">
-  <link rel="manifest" href="manifest.json">
+      .error-code {
+        font-size: 3.5rem;
+      }
+
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+
+      .compass {
+        font-size: 90px;
+      }
+
+      .compass-container {
+        width: 160px;
+        height: 160px;
+      }
+
+      .compass-orbit {
+        width: 140px;
+        height: 140px;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+        text-align: center;
+      }
+
+      .hot-pages-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
+  <!-- 星空背景 -->
+  <div class="stars" id="stars"></div>
 
-<!-- 无障碍 - 状态消息区域 -->
-<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+  <!-- 流星 -->
+  <div class="shooting-star" style="top: 20%; left: 30%;"></div>
+  <div class="shooting-star" style="top: 40%; left: 70%; animation-delay: 1s;"></div>
+  <div class="shooting-star" style="top: 60%; left: 50%; animation-delay: 2s;"></div>
 
-<!-- 无障碍 - 屏幕阅读器专用样式 -->
-<style>
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-.sr-only-focusable:focus,
-.sr-only-focusable:active {
-  position: static;
-  width: auto;
-  height: auto;
-  margin: 0;
-  overflow: visible;
-  clip: auto;
-  white-space: normal;
-}
-</style>
-
-  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
-  <a href="#main-content" class="skip-link">跳转到主内容</a>
-  <a href="#main-nav" class="skip-link">跳转到导航</a>
-  <a href="#main-footer" class="skip-link">跳转到页脚</a>
-
-  <!-- 背景装饰 -->
-  <div class="bg-decoration">
-    <span></span><span></span><span></span><span></span><span></span>
-    <span></span><span></span><span></span><span></span><span></span>
+  <!-- 浮动旅行元素 -->
+  <div class="floating-elements">
+    <span class="floating-item" style="top: 15%; left: 10%; animation-delay: 0s;">✈️</span>
+    <span class="floating-item" style="top: 25%; right: 15%; animation-delay: 1s;">🌍</span>
+    <span class="floating-item" style="top: 70%; left: 8%; animation-delay: 2s;">🏝️</span>
+    <span class="floating-item" style="bottom: 20%; right: 10%; animation-delay: 0.5s;">🗺️</span>
+    <span class="floating-item" style="bottom: 30%; left: 20%; animation-delay: 1.5s;">🎒</span>
   </div>
 
-  <!-- 漂浮云朵装饰 -->
-  <div class="deco-cloud">☁️</div>
-  <div class="deco-cloud">☁️</div>
-  <div class="deco-cloud">☁️</div>
-  <div class="deco-cloud">☁️</div>
-
-  <div class="error-container">
-<main id="main-content" role="main">
-    <div class="error-emoji">🧭</div>
-    <div class="error-code">404</div>
-    <h1>哎呀，迷路啦！找不到这个页面~</h1>
-    <p>别担心，就像旅行中走错路一样<br>点击下方按钮，回到首页继续探索吧 ✨</p>
-    
-    <div class="btn-group">
-      <a href="index.html" class="btn btn-primary">
-        🏠 返回首页
-      </a>
-      <a href="javascript:history.back()" class="btn btn-outline">
-        ← 返回上页
-      </a>
+  <!-- 导航栏 -->
+  <nav class="nav-bar">
+    <a href="index.html" class="logo">
+      <span>🧭</span>
+      <span>游导旅游</span>
+    </a>
+    <div class="nav-actions">
+      <a href="index.html" class="nav-btn">🏠 首页</a>
+      <a href="search.html" class="nav-btn">🔍 搜索</a>
     </div>
+  </nav>
 
-    <div class="help-section">
-      <h3>💡 您可以试试</h3>
-      <div class="quick-links">
-        <a href="search.html" class="quick-link">🔍 搜索目的地</a>
-        <a href="guides.html" class="quick-link">👨‍🏫 浏览导游</a>
-        <a href="routes.html" class="quick-link">🗺️ 查看路线</a>
-        <a href="contact.html" class="quick-link">📞 联系客服</a>
+  <!-- 主内容 -->
+  <main class="main-container">
+    <div class="error-content">
+      <!-- 迷路指南针动画 -->
+      <div class="compass-container">
+        <div class="compass-orbit">
+          <div class="orbit-dot"></div>
+        </div>
+        <div class="orbit-dot-2"></div>
+        <div class="compass">🧭</div>
       </div>
-    </div>
-  </div>
-  <script src="js/performance.js" defer></script>
-  <script src="js/enhanced-common.js" defer></script>
 
-  <!-- PWA Service Worker -->
-  <script src="js/pwa.js" defer></script>
-  <script src="js/mobile.js" defer></script>
-  <script src="js/customer-service.js" defer></script>
+      <div class="error-code">404</div>
+      <h1>这个页面去旅行了 ✈️</h1>
+      <p>哎呀，这个页面已经打包出发去旅行啦~<br>别担心，让我们一起找到正确的方向！</p>
+
+      <!-- 操作按钮 -->
+      <div class="actions">
+        <a href="index.html" class="btn btn-primary">🏠 返回首页</a>
+        <a href="search.html" class="btn btn-secondary">🔍 搜索内容</a>
+        <a href="navigation.html" class="btn btn-secondary">🗺️ 网站导航</a>
+      </div>
+
+      <!-- 搜索框 -->
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="输入关键词搜索..." autocomplete="off">
+        <button onclick="performSearch()">🔍</button>
+      </div>
+
+      <!-- 热门页面推荐 -->
+      <div class="hot-pages">
+        <h3>🔥 热门页面推荐</h3>
+        <div class="hot-pages-grid">
+          <a href="destinations.html" class="hot-page-link">
+            <span>🌍</span>
+            <span>目的地</span>
+          </a>
+          <a href="routes.html" class="hot-page-link">
+            <span>🗺️</span>
+            <span>旅行路线</span>
+          </a>
+          <a href="tools.html" class="hot-page-link">
+            <span>🧰</span>
+            <span>旅行工具</span>
+          </a>
+          <a href="guides.html" class="hot-page-link">
+            <span>👨‍🏫</span>
+            <span>导游服务</span>
+          </a>
+          <a href="faq.html" class="hot-page-link">
+            <span>❓</span>
+            <span>常见问题</span>
+          </a>
+          <a href="contact.html" class="hot-page-link">
+            <span>📞</span>
+            <span>联系我们</span>
+          </a>
+        </div>
+      </div>
+
+      <p class="tip-text">💡 您可以尝试搜索或浏览热门页面，或者返回首页重新开始</p>
+    </div>
+  </main>
+
+  <script>
+    // 生成星空
+    function createStars() {
+      const starsContainer = document.getElementById('stars');
+      const starCount = 100;
+      
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.width = Math.random() * 3 + 1 + 'px';
+        star.style.height = star.style.width;
+        star.style.animationDelay = Math.random() * 3 + 's';
+        starsContainer.appendChild(star);
+      }
+    }
+
+    // 搜索功能
+    function performSearch() {
+      const query = document.getElementById('searchInput').value.trim();
+      if (query) {
+        window.location.href = `search.html?q=${encodeURIComponent(query)}`;
+      }
+    }
+
+    // 回车搜索
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+
+    // 初始化
+    createStars();
+  </script>
 </body>
 </html>

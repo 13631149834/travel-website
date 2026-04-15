@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- 资源预加载 -->
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="preload" href="css/onboarding.css" as="style">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/onboarding.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  
+  <!-- SEO Meta Tags -->
+  <title>新手入门 - 游导旅游</title>
+  <meta name="description" content="游导旅游新手入门指南，详细介绍平台注册、预约导游、支付退款等操作流程，帮助您快速上手。">
+  <meta name="keywords" content="新手指南,快速入门,注册教程,预约导游,游导旅游">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/getting-started.html">
+  
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="新手入门 - 游导旅游">
+  <meta property="og:description" content="游导旅游新手入门指南，帮助您快速上手平台使用">
+  <meta property="og:url" content="https://youdao-travel.com/getting-started.html">
+  <meta property="og:site_name" content="游导旅游">
+  
+  <!-- Theme -->
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  
+  <style>
+    /* 引导页专属样式 */
+    .gs-hero {
+      background: linear-gradient(135deg, #4F86F7 0%, #3B82F6 100%);
+      padding: 80px 0 100px;
+      text-align: center;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .gs-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    
+    .gs-hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .gs-hero h1 {
+      font-size: 48px;
+      font-weight: 700;
+      margin: 0 0 16px;
+      animation: fadeInUp 0.8s ease;
+    }
+    
+    .gs-hero p {
+      font-size: 20px;
+      opacity: 0.9;
+      margin: 0;
+      animation: fadeInUp 0.8s ease 0.2s both;
+    }
+    
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* 导航标签 */
+    .gs-nav {
+      background: #fff;
+      padding: 0;
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .gs-nav-container {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+      padding: 0 20px;
+      overflow-x: auto;
+    }
+    
+    .gs-nav-item {
+      padding: 16px 24px;
+      color: #666;
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      white-space: nowrap;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+    }
+    
+    .gs-nav-item:hover {
+      color: #4F86F7;
+    }
+    
+    .gs-nav-item.active {
+      color: #4F86F7;
+      border-bottom-color: #4F86F7;
+    }
+    
+    /* 主要内容区 */
+    .gs-main {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+    
+    .gs-section {
+      display: none;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    .gs-section.active {
+      display: block;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .gs-section-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin: 0 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .gs-section-title .icon {
+      font-size: 32px;
+    }
+    
+    /* 步骤卡片 */
+    .gs-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    
+    .gs-step-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      display: flex;
+      gap: 24px;
+      transition: all 0.3s ease;
+    }
+    
+    .gs-step-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    }
+    
+    .gs-step-number {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, #4F86F7 0%, #3B82F6 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 24px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    
+    .gs-step-content {
+      flex: 1;
+    }
+    
+    .gs-step-content h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin: 0 0 8px;
+    }
+    
+    .gs-step-content p {
+      color: #666;
+      line-height: 1.7;
+      margin: 0 0 16px;
+    }
+    
+    .gs-step-content .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .gs-feature-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: #f0f7ff;
+      color: #4F86F7;
+      border-radius: 20px;
+      font-size: 13px;
+    }
+    
+    /* 视频教程 */
+    .gs-video-section {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      margin-bottom: 32px;
+    }
+    
+    .gs-video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      background: #1a1a1a;
+    }
+    
+    .gs-video-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    
+    .gs-video-placeholder:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .gs-play-btn {
+      width: 80px;
+      height: 80px;
+      background: rgba(79, 134, 247, 0.9);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      margin-bottom: 16px;
+      transition: transform 0.3s;
+    }
+    
+    .gs-video-placeholder:hover .gs-play-btn {
+      transform: scale(1.1);
+    }
+    
+    .gs-video-info {
+      padding: 20px;
+    }
+    
+    .gs-video-info h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 8px;
+    }
+    
+    .gs-video-info p {
+      color: #888;
+      margin: 0;
+      font-size: 14px;
+    }
+    
+    /* 图文教程 */
+    .gs-tutorial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    
+    .gs-tutorial-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      transition: all 0.3s ease;
+    }
+    
+    .gs-tutorial-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+    }
+    
+    .gs-tutorial-image {
+      height: 160px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+    }
+    
+    .gs-tutorial-body {
+      padding: 20px;
+    }
+    
+    .gs-tutorial-body h4 {
+      font-size: 17px;
+      font-weight: 600;
+      margin: 0 0 8px;
+      color: #1a1a1a;
+    }
+    
+    .gs-tutorial-body p {
+      color: #666;
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0;
+    }
+    
+    .gs-tutorial-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      color: #4F86F7;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    
+    .gs-tutorial-link:hover {
+      text-decoration: underline;
+    }
+    
+    /* 常见问题 */
+    .gs-faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .gs-faq-item {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+    
+    .gs-faq-question {
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-weight: 600;
+      color: #1a1a1a;
+      transition: background 0.2s;
+    }
+    
+    .gs-faq-question:hover {
+      background: #f8fafc;
+    }
+    
+    .gs-faq-icon {
+      width: 28px;
+      height: 28px;
+      background: #f0f7ff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.3s;
+    }
+    
+    .gs-faq-item.active .gs-faq-icon {
+      transform: rotate(180deg);
+    }
+    
+    .gs-faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    
+    .gs-faq-item.active .gs-faq-answer {
+      max-height: 500px;
+    }
+    
+    .gs-faq-answer-content {
+      padding: 0 24px 20px;
+      color: #666;
+      line-height: 1.7;
+    }
+    
+    /* 快捷入口 */
+    .gs-quick-actions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+    
+    .gs-quick-btn {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 24px;
+      background: #fff;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #1a1a1a;
+      font-weight: 500;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+      transition: all 0.3s ease;
+    }
+    
+    .gs-quick-btn:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(79, 134, 247, 0.15);
+      color: #4F86F7;
+    }
+    
+    .gs-quick-btn .icon {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #4F86F7 0%, #3B82F6 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+    }
+    
+    /* 帮助入口 */
+    .gs-help-section {
+      background: linear-gradient(135deg, #f0f7ff 0%, #e8f4ff 100%);
+      border-radius: 16px;
+      padding: 32px;
+      margin-top: 40px;
+      text-align: center;
+    }
+    
+    .gs-help-section h3 {
+      font-size: 22px;
+      font-weight: 600;
+      margin: 0 0 12px;
+      color: #1a1a1a;
+    }
+    
+    .gs-help-section p {
+      color: #666;
+      margin: 0 0 24px;
+    }
+    
+    .gs-help-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    
+    .gs-help-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .gs-help-btn-primary {
+      background: linear-gradient(135deg, #4F86F7 0%, #3B82F6 100%);
+      color: #fff;
+    }
+    
+    .gs-help-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(79, 134, 247, 0.4);
+    }
+    
+    .gs-help-btn-secondary {
+      background: #fff;
+      color: #4F86F7;
+      border: 2px solid #4F86F7;
+    }
+    
+    .gs-help-btn-secondary:hover {
+      background: #f0f7ff;
+    }
+    
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .gs-hero {
+        padding: 60px 0 80px;
+      }
+      
+      .gs-hero h1 {
+        font-size: 32px;
+      }
+      
+      .gs-hero p {
+        font-size: 16px;
+      }
+      
+      .gs-step-card {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .gs-step-number {
+        margin: 0 auto;
+      }
+      
+      .gs-step-content .features {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero区域 -->
+  <section class="gs-hero">
+    <div class="gs-hero-content container">
+      <h1>🚌 欢迎来到游导旅游</h1>
+      <p>3分钟快速上手，开始您的精彩旅程</p>
+    </div>
+  </section>
+  
+  <!-- 导航 -->
+  <nav class="gs-nav">
+    <div class="gs-nav-container">
+      <a href="#overview" class="gs-nav-item active" data-section="overview">📖 概览</a>
+      <a href="#video" class="gs-nav-item" data-section="video">🎬 视频教程</a>
+      <a href="#tutorials" class="gs-nav-item" data-section="tutorials">📚 图文教程</a>
+      <a href="#faq" class="gs-nav-item" data-section="faq">❓ 常见问题</a>
+      <a href="#quickstart" class="gs-nav-item" data-section="quickstart">🚀 快速开始</a>
+    </div>
+  </nav>
+  
+  <!-- 主要内容 -->
+  <main class="gs-main">
+    <!-- 概览 -->
+    <section id="overview" class="gs-section active">
+      <h2 class="gs-section-title">
+        <span class="icon">📖</span>
+        快速入门指南
+      </h2>
+      
+      <div class="gs-steps">
+        <div class="gs-step-card">
+          <div class="gs-step-number">1</div>
+          <div class="gs-step-content">
+            <h3>注册并登录账号</h3>
+            <p>使用手机号或邮箱快速注册，完善个人信息即可开始使用全部功能。新用户首次登录还可领取新人礼包。</p>
+            <div class="features">
+              <span class="gs-feature-tag">📱 手机号注册</span>
+              <span class="gs-feature-tag">✉️ 邮箱注册</span>
+              <span class="gs-feature-tag">🎁 新人礼包</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="gs-step-card">
+          <div class="gs-step-number">2</div>
+          <div class="gs-step-content">
+            <h3>搜索并选择导游</h3>
+            <p>根据目的地、出行日期、服务类型等条件筛选，快速找到最适合您的导游。查看导游评分、评价和服务详情。</p>
+            <div class="features">
+              <span class="gs-feature-tag">🔍 智能筛选</span>
+              <span class="gs-feature-tag">⭐ 真实评分</span>
+              <span class="gs-feature-tag">📝 用户评价</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="gs-step-card">
+          <div class="gs-step-number">3</div>
+          <div class="gs-step-content">
+            <h3>预约导游服务</h3>
+            <p>选择您需要的日期、时间和人数，提交预约请求。导游确认后即可完成预订，享受专业的旅行服务。</p>
+            <div class="features">
+              <span class="gs-feature-tag">📅 日期选择</span>
+              <span class="gs-feature-tag">👥 人数设置</span>
+              <span class="gs-feature-tag">✅ 即时确认</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="gs-step-card">
+          <div class="gs-step-number">4</div>
+          <div class="gs-step-content">
+            <h3>安全支付与评价</h3>
+            <p>支持多种支付方式，交易安全有保障。服务完成后分享您的体验，帮助其他用户做出选择。</p>
+            <div class="features">
+              <span class="gs-feature-tag">💳 多种支付</span>
+              <span class="gs-feature-tag">🔒 资金安全</span>
+              <span class="gs-feature-tag">⭐ 发表评价</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 视频教程 -->
+    <section id="video" class="gs-section">
+      <h2 class="gs-section-title">
+        <span class="icon">🎬</span>
+        视频教程
+      </h2>
+      
+      <div class="gs-video-section">
+        <div class="gs-video-container">
+          <div class="gs-video-placeholder" onclick="playVideo(this)">
+            <div class="gs-play-btn">▶</div>
+            <span>点击播放完整教程</span>
+          </div>
+        </div>
+        <div class="gs-video-info">
+          <h3>游导旅游 - 新手入门视频教程</h3>
+          <p>时长约 5 分钟，介绍平台主要功能和使用方法</p>
+        </div>
+      </div>
+      
+      <div class="gs-tutorial-grid">
+        <div class="gs-tutorial-card">
+          <div class="gs-tutorial-image">🔍</div>
+          <div class="gs-tutorial-body">
+            <h4>如何搜索导游</h4>
+            <p>学习使用搜索和筛选功能，快速找到合适的导游</p>
+            <a href="#" class="gs-tutorial-link">立即观看 →</a>
+          </div>
+        </div>
+        
+        <div class="gs-tutorial-card">
+          <div class="gs-tutorial-image">📅</div>
+          <div class="gs-tutorial-body">
+            <h4>预约流程详解</h4>
+            <p>从选择日期到完成支付，完整演示预约步骤</p>
+            <a href="#" class="gs-tutorial-link">立即观看 →</a>
+          </div>
+        </div>
+        
+        <div class="gs-tutorial-card">
+          <div class="gs-tutorial-image">💳</div>
+          <div class="gs-tutorial-body">
+            <h4>支付与退款</h4>
+            <p>了解支持的支付方式和退款政策</p>
+            <a href="#" class="gs-tutorial-link">立即观看 →</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 图文教程 -->
+    <section id="tutorials" class="gs-section">
+      <h2 class="gs-section-title">
+        <span class="icon">📚</span>
+        图文教程
+      </h2>
+      
+      <div class="gs-tutorial-grid">
+        <article class="gs-tutorial-card">
+          <div class="gs-tutorial-image">👤</div>
+          <div class="gs-tutorial-body">
+            <h4>账号注册与登录</h4>
+            <p>详细步骤指导您完成账号注册、登录验证和基本信息填写</p>
+            <a href="#" class="gs-tutorial-link">阅读全文 →</a>
+          </div>
+        </article>
+        
+        <article class="gs-tutorial-card">
+          <div class="gs-tutorial-image">🧭</div>
+          <div class="gs-tutorial-body">
+            <h4>导游筛选技巧</h4>
+            <p>掌握多种筛选条件，找到最符合需求的导游服务</p>
+            <a href="#" class="gs-tutorial-link">阅读全文 →</a>
+          </div>
+        </article>
+        
+        <article class="gs-tutorial-card">
+          <div class="gs-tutorial-image">📋</div>
+          <div class="gs-tutorial-body">
+            <h4>订单管理指南</h4>
+            <p>查看订单状态、修改订单、申请退款等操作说明</p>
+            <a href="#" class="gs-tutorial-link">阅读全文 →</a>
+          </div>
+        </article>
+        
+        <article class="gs-tutorial-card">
+          <div class="gs-tutorial-image">🎁</div>
+          <div class="gs-tutorial-body">
+            <h4>积分与优惠券</h4>
+            <p>了解如何获取积分、使用优惠券，节省旅行开支</p>
+            <a href="#" class="gs-tutorial-link">阅读全文 →</a>
+          </div>
+        </article>
+        
+        <article class="gs-tutorial-card">
+          <div class="gs-tutorial-image">🛡️</div>
+          <div class="gs-tutorial-body">
+            <h4>安全保障措施</h4>
+            <p>平台如何保障您的资金安全和个人信息安全</p>
+            <a href="#" class="gs-tutorial-link">阅读全文 →</a>
+          </div>
+        </article>
+        
+        <article class="gs-tutorial-card">
+          <div class="gs-tutorial-image">💬</div>
+          <div class="gs-tutorial-body">
+            <h4>联系客服</h4>
+            <p>多种客服渠道介绍，随时获取帮助支持</p>
+            <a href="#" class="gs-tutorial-link">阅读全文 →</a>
+          </div>
+        </article>
+      </div>
+    </section>
+    
+    <!-- 常见问题 -->
+    <section id="faq" class="gs-section">
+      <h2 class="gs-section-title">
+        <span class="icon">❓</span>
+        常见问题
+      </h2>
+      
+      <div class="gs-faq-list">
+        <div class="gs-faq-item">
+          <div class="gs-faq-question">
+            <span>如何确保导游的质量和可靠性？</span>
+            <div class="gs-faq-icon">▼</div>
+          </div>
+          <div class="gs-faq-answer">
+            <div class="gs-faq-answer-content">
+              游导旅游对所有入驻导游进行严格审核，包括身份认证、资质验证、服务能力评估等。我们还建立了完善的用户评价体系，您可以通过查看其他用户的真实评价来了解导游的服务水平。对于服务质量不达标的导游，平台会进行下架处理。
+            </div>
+          </div>
+        </div>
+        
+        <div class="gs-faq-item">
+          <div class="gs-faq-question">
+            <span>预约后可以取消或更改吗？</span>
+            <div class="gs-faq-icon">▼</div>
+          </div>
+          <div class="gs-faq-answer">
+            <div class="gs-faq-answer-content">
+              可以的。在导游确认接单前，您可以随时取消预约，取消的款项将原路退回。在导游确认接单后，需要联系导游协商取消事宜。如有特殊情况需要退款，可在服务开始前联系客服协助处理。具体的退款规则请参考平台的退款政策。
+            </div>
+          </div>
+        </div>
+        
+        <div class="gs-faq-item">
+          <div class="gs-faq-question">
+            <span>支付方式有哪些？</span>
+            <div class="gs-faq-icon">▼</div>
+          </div>
+          <div class="gs-faq-answer">
+            <div class="gs-faq-answer-content">
+              平台支持多种支付方式，包括：微信支付、支付宝、银联卡支付、信用卡支付等。您可以根据自己的习惯选择合适的支付方式。所有支付均采用银行级别的加密技术，保障您的资金安全。
+            </div>
+          </div>
+        </div>
+        
+        <div class="gs-faq-item">
+          <div class="gs-faq-question">
+            <span>如何获取更多优惠？</span>
+            <div class="gs-faq-icon">▼</div>
+          </div>
+          <div class="gs-faq-answer">
+            <div class="gs-faq-answer-content">
+              您可以通过以下方式获取优惠：1. 关注平台活动，参与限时优惠；2. 完成新手任务获得积分，积分可兑换优惠券；3. 邀请好友注册，双方都可获得奖励；4. 关注官方社交媒体，获取专属优惠码。
+            </div>
+          </div>
+        </div>
+        
+        <div class="gs-faq-item">
+          <div class="gs-faq-question">
+            <span>遇到问题如何联系客服？</span>
+            <div class="gs-faq-icon">▼</div>
+          </div>
+          <div class="gs-faq-answer">
+            <div class="gs-faq-answer-content">
+              您可以通过以下方式联系客服：1. 点击页面右下角的"帮助"按钮进行在线咨询；2. 拨打客服热线 13631149834；3. 发送邮件至 support@youdau-travel.com；4. 在微信公众号"游导旅游"留言。我们的客服团队工作时间为每天 8:00-22:00。
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 快速开始 -->
+    <section id="quickstart" class="gs-section">
+      <h2 class="gs-section-title">
+        <span class="icon">🚀</span>
+        快速开始
+      </h2>
+      
+      <div class="gs-quick-actions">
+        <a href="register.html" class="gs-quick-btn">
+          <span class="icon">👤</span>
+          <span>立即注册</span>
+        </a>
+        <a href="guides.html" class="gs-quick-btn">
+          <span class="icon">🧭</span>
+          <span>浏览导游</span>
+        </a>
+        <a href="routes.html" class="gs-quick-btn">
+          <span class="icon">🗺️</span>
+          <span>探索路线</span>
+        </a>
+        <a href="tools.html" class="gs-quick-btn">
+          <span class="icon">🛠️</span>
+          <span>旅行工具</span>
+        </a>
+      </div>
+      
+      <div class="gs-help-section">
+        <h3>需要更多帮助？</h3>
+        <p>我们的客服团队随时为您提供支持</p>
+        <div class="gs-help-buttons">
+          <a href="#" class="gs-help-btn gs-help-btn-primary">
+            💬 在线咨询
+          </a>
+          <a href="tel:13631149834" class="gs-help-btn gs-help-btn-secondary">
+            📞 13631149834
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+  
+  <!-- 页脚 -->
+  <footer style="background: #f5f5f5; padding: 40px 20px; text-align: center; color: #888; font-size: 14px;">
+    <p style="margin: 0 0 10px;">© 2024 游导旅游 · 专业导游预约平台</p>
+    <p style="margin: 0;">
+      <a href="index.html" style="color: #4F86F7;">返回首页</a> · 
+      <a href="beginner-guide.html" style="color: #4F86F7;">新手指南</a> · 
+      <a href="#" style="color: #4F86F7;">帮助中心</a>
+    </p>
+  </footer>
+
+  <script>
+    // 导航切换
+    document.querySelectorAll('.gs-nav-item').forEach(item => {
+      item.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // 切换导航激活状态
+        document.querySelectorAll('.gs-nav-item').forEach(nav => nav.classList.remove('active'));
+        this.classList.add('active');
+        
+        // 切换内容区
+        const sectionId = this.dataset.section;
+        document.querySelectorAll('.gs-section').forEach(section => {
+          section.classList.remove('active');
+        });
+        document.getElementById(sectionId).classList.add('active');
+        
+        // 平滑滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+    
+    // FAQ 展开/收起
+    document.querySelectorAll('.gs-faq-question').forEach(question => {
+      question.addEventListener('click', function() {
+        const item = this.closest('.gs-faq-item');
+        item.classList.toggle('active');
+      });
+    });
+    
+    // 视频播放占位（实际项目中替换为真实视频）
+    function playVideo(el) {
+      alert('视频播放器加载中...\n\n在实际项目中，这里将嵌入真实的视频播放器');
+    }
+    
+    // URL hash 导航
+    if (window.location.hash) {
+      const hash = window.location.hash.substring(1);
+      const navItem = document.querySelector(`.gs-nav-item[data-section="${hash}"]`);
+      if (navItem) {
+        navItem.click();
+      }
+    }
+  </script>
+</body>
+</html>

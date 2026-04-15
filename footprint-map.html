@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行足迹地图 - 游导旅游</title>
+  <meta name="description" content="在地图上标记你去过和想去的地方，生成专属旅行足迹海报，记录你的环球旅行足迹。">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    :root {
+      --primary: #10b981;
+      --secondary: #059669;
+      --accent: #34d399;
+      --visited: #10b981;
+      --wanted: #f59e0b;
+      --bg-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+    
+    body {
+      background: linear-gradient(180deg, #ecfdf5 0%, #f0fdf4 50%, #fff 100%);
+    }
+    
+    .map-hero {
+      background: var(--bg-gradient);
+      padding: 50px 20px;
+      text-align: center;
+      color: white;
+    }
+    
+    .map-hero h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+    
+    .map-container {
+      max-width: 1400px;
+      margin: -30px auto 60px;
+      padding: 0 20px;
+      position: relative;
+      z-index: 2;
+    }
+    
+    .map-layout {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 25px;
+    }
+    
+    .map-card {
+      background: white;
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+    
+    .map-wrapper {
+      position: relative;
+      width: 100%;
+      padding-top: 60%;
+      background: #e5e7eb;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    
+    .world-map {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(180deg, #dbeafe 0%, #bfdbfe 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    
+    .map-grid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-template-rows: repeat(8, 1fr);
+      gap: 1px;
+    }
+    
+    .map-cell {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .map-cell:hover {
+      background: rgba(16, 185, 129, 0.1);
+    }
+    
+    .map-marker {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    
+    .map-marker.visited {
+      background: var(--visited);
+      color: white;
+    }
+    
+    .map-marker.wanted {
+      background: var(--wanted);
+      color: white;
+    }
+    
+    .map-marker:hover {
+      transform: translate(-50%, -50%) scale(1.3);
+      z-index: 20;
+    }
+    
+    .map-marker::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    .map-marker.visited::after {
+      background: rgba(16, 185, 129, 0.3);
+    }
+    
+    .map-marker.wanted::after {
+      background: rgba(245, 158, 11, 0.3);
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(2); opacity: 0; }
+    }
+    
+    .marker-tooltip {
+      position: absolute;
+      background: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+      font-size: 0.85rem;
+      white-space: nowrap;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      transform: translateX(-50%) translateY(-100%);
+      margin-top: -10px;
+    }
+    
+    .map-marker:hover .marker-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .marker-tooltip::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid white;
+    }
+    
+    .marker-name {
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .marker-date {
+      color: #6b7280;
+      font-size: 0.8rem;
+    }
+    
+    .map-controls {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 50;
+    }
+    
+    .map-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+    }
+    
+    .map-btn:hover {
+      transform: scale(1.1);
+    }
+    
+    .map-legend {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: white;
+      padding: 12px 18px;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 50;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: #374151;
+    }
+    
+    .legend-item + .legend-item {
+      margin-top: 6px;
+    }
+    
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    
+    .legend-dot.visited { background: var(--visited); }
+    .legend-dot.wanted { background: var(--wanted); }
+    
+    /* Sidebar */
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .stats-panel {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .stats-panel h3 {
+      font-size: 1.1rem;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+    
+    .stat-label {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+    
+    .location-list {
+      background: white;
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+    
+    .location-list h3 {
+      font-size: 1.1rem;
+      color: #1f2937;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .location-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+    }
+    
+    .location-tab {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      background: #f3f4f6;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .location-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .location-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .location-item:hover {
+      background: #f9fafb;
+    }
+    
+    .location-emoji {
+      font-size: 1.5rem;
+    }
+    
+    .location-info {
+      flex: 1;
+    }
+    
+    .location-name {
+      font-weight: 600;
+      color: #1f2937;
+    }
+    
+    .location-meta {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    
+    .location-status {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    .status-visited {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+    
+    .status-wanted {
+      background: #fef3c7;
+      color: #d97706;
+    }
+    
+    .add-location-btn {
+      width: 100%;
+      padding: 14px;
+      border: 2px dashed #d1d5db;
+      border-radius: 12px;
+      background: transparent;
+      cursor: pointer;
+      font-size: 0.95rem;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
+    
+    .add-location-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #f0fdf4;
+    }
+    
+    /* Poster Section */
+    .poster-section {
+      background: linear-gradient(135deg, #1f2937, #111827);
+      border-radius: 24px;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .poster-section h3 {
+      color: white;
+      margin-bottom: 10px;
+    }
+    
+    .poster-section p {
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+    
+    .poster-btn {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+    
+    .poster-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+    
+    .share-btns {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .share-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .share-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.1);
+    }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      padding: 20px;
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      background: white;
+      border-radius: 24px;
+      padding: 35px;
+      max-width: 450px;
+      width: 100%;
+      transform: translateY(20px);
+      transition: transform 0.3s ease;
+    }
+    
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+    
+    .modal-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #1f2937;
+    }
+    
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+    
+    .form-group {
+      margin-bottom: 18px;
+    }
+    
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+    
+    .form-input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    
+    .form-select {
+      appearance: none;
+      background: white url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 15px center;
+    }
+    
+    .status-toggle {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .status-option {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .status-option.active {
+      border-color: var(--primary);
+      background: #ecfdf5;
+    }
+    
+    .status-option input {
+      display: none;
+    }
+    
+    .btn-primary {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+    
+    .mobile-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-around;
+      box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+    
+    @media (max-width: 1024px) {
+      .map-layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .sidebar {
+        grid-template-columns: 1fr;
+      }
+      
+      .map-container {
+        margin-bottom: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">🏠 首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="routes.html">🗺️ 线路</a>
+        <a href="footprint-map.html" class="active">📍 足迹地图</a>
+        <a href="search.html">🔍</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="map-hero">
+    <h1>📍 旅行足迹地图</h1>
+    <p>记录你的环球足迹，见证走过的每一步</p>
+  </section>
+
+  <!-- Main Content -->
+  <div class="map-container">
+    <div class="map-layout">
+      <!-- Map -->
+      <div class="map-card">
+        <div class="map-wrapper">
+          <div class="world-map" id="worldMap">
+            <!-- Markers will be rendered here -->
+          </div>
+          <div class="map-legend">
+            <div class="legend-item">
+              <div class="legend-dot visited"></div>
+              <span>已去过</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-dot wanted"></div>
+              <span>想去</span>
+            </div>
+          </div>
+          <div class="map-controls">
+            <button class="map-btn" onclick="zoomIn()" title="放大">➕</button>
+            <button class="map-btn" onclick="zoomOut()" title="缩小">➖</button>
+            <button class="map-btn" onclick="resetView()" title="重置">🔄</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Stats -->
+        <div class="stats-panel">
+          <h3>🌟 我的旅行成就</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value" id="visitedCount">0</div>
+              <div class="stat-label">已去国家</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="wantedCount">0</div>
+              <div class="stat-label">想去国家</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value" id="totalCities">0</div>
+              <div class="stat-label">打卡城市</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">TOP</div>
+              <div class="stat-label">旅行者</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Location List -->
+        <div class="location-list">
+          <h3>📍 地点列表</h3>
+          <div class="location-tabs">
+            <button class="location-tab active" onclick="setListTab('visited')">已去过</button>
+            <button class="location-tab" onclick="setListTab('wanted')">想去</button>
+          </div>
+          <div id="locationList">
+            <!-- Locations will be rendered here -->
+          </div>
+          <button class="add-location-btn" onclick="openModal()">
+            <span>➕</span>
+            <span>添加新地点</span>
+          </button>
+        </div>
+
+        <!-- Poster -->
+        <div class="poster-section">
+          <h3>🎨 生成足迹海报</h3>
+          <p>分享你的旅行成就</p>
+          <button class="poster-btn" onclick="generatePoster()">
+            <span>🖼️</span>
+            <span>立即生成</span>
+          </button>
+          <div class="share-btns">
+            <button class="share-btn" onclick="shareTo('wechat')">💬</button>
+            <button class="share-btn" onclick="shareTo('weibo')">📱</button>
+            <button class="share-btn" onclick="shareTo('qq')">🐧</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Location Modal -->
+  <div class="modal-overlay" id="addModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">📍 添加新地点</h3>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <form onsubmit="addLocation(event)">
+        <div class="form-group">
+          <label class="form-label">地点名称</label>
+          <input type="text" class="form-input" id="locName" placeholder="例如：日本东京" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">所在国家/地区</label>
+          <select class="form-input form-select" id="locCountry">
+            <option value="中国">🇨🇳 中国</option>
+            <option value="日本">🇯🇵 日本</option>
+            <option value="韩国">🇰🇷 韩国</option>
+            <option value="泰国">🇹🇭 泰国</option>
+            <option value="新加坡">🇸🇬 新加坡</option>
+            <option value="美国">🇺🇸 美国</option>
+            <option value="英国">🇬🇧 英国</option>
+            <option value="法国">🇫🇷 法国</option>
+            <option value="意大利">🇮🇹 意大利</option>
+            <option value="澳大利亚">🇦🇺 澳大利亚</option>
+            <option value="其他">🌍 其他</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">添加为</label>
+          <div class="status-toggle">
+            <label class="status-option active" onclick="selectStatus('visited')">
+              <input type="radio" name="status" value="visited" checked>
+              <div>✅ 已去过</div>
+            </label>
+            <label class="status-option" onclick="selectStatus('wanted')">
+              <input type="radio" name="status" value="wanted">
+              <div>⭐ 想去</div>
+            </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">日期/计划时间</label>
+          <input type="text" class="form-input" id="locDate" placeholder="例如：2024年3月">
+        </div>
+        <button type="submit" class="btn-primary">添加地点</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <div class="mobile-nav">
+    <a href="index.html" class="mobile-nav-item">🏠</a>
+    <a href="wishlist.html" class="mobile-nav-item">❤️</a>
+    <a href="footprint-map.html" class="mobile-nav-item active">📍</a>
+    <a href="checkin.html" class="mobile-nav-item">📅</a>
+    <a href="user-center.html" class="mobile-nav-item">👤</a>
+  </div>
+
+  <script>
+    // Sample data with coordinates (percentage-based for responsive map)
+    let locations = [
+      { id: 1, name: '北京', country: '中国', emoji: '🏯', status: 'visited', date: '2023年8月', x: 75, y: 35 },
+      { id: 2, name: '上海', country: '中国', emoji: '🌆', status: 'visited', date: '2023年10月', x: 78, y: 40 },
+      { id: 3, name: '日本东京', country: '日本', emoji: '🗼', status: 'visited', date: '2024年1月', x: 82, y: 38 },
+      { id: 4, name: '泰国曼谷', country: '泰国', emoji: '🛕', status: 'visited', date: '2023年12月', x: 73, y: 52 },
+      { id: 5, name: '法国巴黎', country: '法国', emoji: '🗼', status: 'visited', date: '2023年6月', x: 48, y: 32 },
+      { id: 6, name: '瑞士少女峰', country: '瑞士', emoji: '🏔️', status: 'wanted', date: '2024年冬季', x: 50, y: 33 },
+      { id: 7, name: '冰岛', country: '冰岛', emoji: '🌌', status: 'wanted', date: '2024年极光季', x: 40, y: 18 },
+      { id: 8, name: '马尔代夫', country: '马尔代夫', emoji: '🏝️', status: 'wanted', date: '2025年蜜月', x: 68, y: 55 },
+      { id: 9, name: '澳大利亚悉尼', country: '澳大利亚', emoji: '🦘', status: 'wanted', date: '2025年', x: 85, y: 72 }
+    ];
+
+    let currentListTab = 'visited';
+    let currentStatus = 'visited';
+
+    function init() {
+      renderMap();
+      renderLocationList();
+      updateStats();
+    }
+
+    function renderMap() {
+      const map = document.getElementById('worldMap');
+      map.innerHTML = locations.map(loc => `
+        <div class="map-marker ${loc.status}" style="left: ${loc.x}%; top: ${loc.y}%;" onclick="showLocationDetail(${loc.id})">
+          <span>${loc.emoji}</span>
+          <div class="marker-tooltip">
+            <div class="marker-name">${loc.name}</div>
+            <div class="marker-date">${loc.status === 'visited' ? '去过 ' : '想去 '}${loc.date}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderLocationList() {
+      const list = document.getElementById('locationList');
+      const filtered = locations.filter(l => l.status === currentListTab);
+      
+      if (filtered.length === 0) {
+        list.innerHTML = '<p style="text-align: center; color: #9ca3af; padding: 20px;">暂无数据</p>';
+        return;
+      }
+      
+      list.innerHTML = filtered.map(loc => `
+        <div class="location-item" onclick="focusOnMap(${loc.id})">
+          <span class="location-emoji">${loc.emoji}</span>
+          <div class="location-info">
+            <div class="location-name">${loc.name}</div>
+            <div class="location-meta">${loc.date}</div>
+          </div>
+          <span class="location-status ${loc.status === 'visited' ? 'status-visited' : 'status-wanted'}">
+            ${loc.status === 'visited' ? '✅' : '⭐'}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    function updateStats() {
+      const visited = locations.filter(l => l.status === 'visited');
+      const wanted = locations.filter(l => l.status === 'wanted');
+      
+      document.getElementById('visitedCount').textContent = new Set(visited.map(l => l.country)).size;
+      document.getElementById('wantedCount').textContent = new Set(wanted.map(l => l.country)).size;
+      document.getElementById('totalCities').textContent = visited.length;
+    }
+
+    function setListTab(tab) {
+      currentListTab = tab;
+      document.querySelectorAll('.location-tab').forEach(t => t.classList.remove('active'));
+      event.target.classList.add('active');
+      renderLocationList();
+    }
+
+    function selectStatus(status) {
+      currentStatus = status;
+      document.querySelectorAll('.status-option').forEach(opt => opt.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+    }
+
+    function openModal() {
+      document.getElementById('addModal').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('addModal').classList.remove('active');
+    }
+
+    function addLocation(e) {
+      e.preventDefault();
+      const name = document.getElementById('locName').value;
+      const country = document.getElementById('locCountry').value;
+      const date = document.getElementById('locDate').value;
+      const status = currentStatus;
+      
+      // Generate random position for demo
+      const x = 20 + Math.random() * 60;
+      const y = 20 + Math.random() * 50;
+      
+      const countryEmojis = {
+        '中国': '🏯', '日本': '🗼', '韩国': '🏯', '泰国': '🛕', '新加坡': '🌴',
+        '美国': '🗽', '英国': '🏛️', '法国': '🗼', '意大利': '🏛️', '澳大利亚': '🦘'
+      };
+      
+      const newLocation = {
+        id: Date.now(),
+        name,
+        country,
+        emoji: countryEmojis[country] || '📍',
+        status,
+        date: date || (status === 'visited' ? '已去过' : '想去'),
+        x,
+        y
+      };
+      
+      locations.push(newLocation);
+      renderMap();
+      renderLocationList();
+      updateStats();
+      closeModal();
+      alert('地点添加成功！');
+    }
+
+    function focusOnMap(id) {
+      const loc = locations.find(l => l.id === id);
+      if (loc) {
+        // Scroll to map
+        document.querySelector('.map-wrapper').scrollIntoView({ behavior: 'smooth' });
+        // Highlight marker (simplified for demo)
+      }
+    }
+
+    function showLocationDetail(id) {
+      const loc = locations.find(l => l.id === id);
+      if (loc) {
+        alert(`${loc.emoji} ${loc.name}\n${loc.status === 'visited' ? '已去过' : '想去'}：${loc.date}`);
+      }
+    }
+
+    function zoomIn() {
+      document.querySelector('.world-map').style.transform = 'scale(1.2)';
+    }
+
+    function zoomOut() {
+      document.querySelector('.world-map').style.transform = 'scale(0.8)';
+    }
+
+    function resetView() {
+      document.querySelector('.world-map').style.transform = 'scale(1)';
+    }
+
+    function generatePoster() {
+      alert('正在生成足迹海报...');
+      // In production, use html2canvas to generate image
+    }
+
+    function shareTo(platform) {
+      const visited = locations.filter(l => l.status === 'visited');
+      const text = `我的旅行足迹：已去过 ${visited.length} 个地点，包括 ${visited.slice(0, 3).map(l => l.name).join('、')} 等。📍 足迹地图`;
+      
+      if (platform === 'wechat') {
+        alert('请截图分享到朋友圈');
+      } else if (platform === 'weibo') {
+        window.open(`https://service.weibo.com/share/share.php?title=${encodeURIComponent(text)}`, '_blank');
+      } else if (platform === 'qq') {
+        window.open(`https://connect.qq.com/widget/shareqq/index.html?title=${encodeURIComponent(text)}`, '_blank');
+      }
+    }
+
+    // Close modal on outside click
+    document.getElementById('addModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    init();
+  </script>
+</body>
+</html>

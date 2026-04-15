@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>导游管理 - 游导旅游管理后台</title>
+    <title>导游管理 - 游导旅游</title>
+  <meta name="description" content="导游管理 - 游导旅游">
   <meta name="robots" content="noindex, nofollow">
     <link rel="preload" href="css/style.css" as="style">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="stylesheet" href="css/accessibility.css">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/customer-service.css">
   <link rel="stylesheet" href="css/enhanced.css">
@@ -645,6 +647,179 @@
             }
         }
 
+        /* 表格样式优化 */
+        table tbody tr:nth-child(odd) {
+            background-color: #FAFBFC;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #FFFFFF;
+        }
+
+        table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.08);
+            transform: scale(1.005);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        /* 复选框样式 */
+        .checkbox-wrapper {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        /* 批量操作栏 */
+        .batch-actions-bar {
+            display: none;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .batch-actions-bar.active {
+            display: flex;
+        }
+
+        .batch-actions-bar .selected-info {
+            flex: 1;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .batch-actions-bar .batch-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-batch {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+
+        .btn-batch:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-batch.danger {
+            border-color: #EF4444;
+            color: #EF4444;
+        }
+
+        .btn-batch.danger:hover {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-batch.success {
+            border-color: #10B981;
+            color: #10B981;
+        }
+
+        .btn-batch.success:hover {
+            background: #10B981;
+            color: white;
+        }
+
+        /* 搜索结果高亮 */
+        .highlight {
+            background-color: rgba(245, 158, 11, 0.3);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+
+        /* 空状态优化 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            background: #FAFBFC;
+            border-radius: 12px;
+            margin: 10px 0;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* 表格工具栏 */
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .table-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* 状态选择下拉 */
+        .status-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .status-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: white;
+            min-width: 160px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-radius: 10px;
+            z-index: 100;
+            overflow: hidden;
+        }
+
+        .status-dropdown:hover .status-dropdown-content {
+            display: block;
+        }
+
+        .status-dropdown-item {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .status-dropdown-item:hover {
+            background: #F3F4F6;
+        }
+
         /* 登录模态框 */
         .login-modal {
             position: fixed;
@@ -779,6 +954,8 @@ select:focus {
   <meta name="msapplication-TileColor" content="#4F86F7">
   <meta name="theme-color" content="#4F86F7">
   <link rel="manifest" href="manifest.json">
+  <meta name="keywords" content="游导旅游,admin-guides">
+  <link rel="canonical" href="https://youdao-travel.com/admin-guides.html">
 </head>
 <body>
 
@@ -837,6 +1014,7 @@ select:focus {
         </div>
         <nav class="admin-nav" aria-label="主导航">
             <a href="admin.html">📊 仪表盘</a>
+            <a href="admin-stats.html">📈 数据报表</a>
             <a href="admin-guides.html" class="active">🎤 导游管理</a>
             <a href="admin-users.html">👥 用户管理</a>
             <a href="admin-reviews.html">⭐ 评价管理</a>
@@ -922,11 +1100,47 @@ select:focus {
                 <button class="btn btn-secondary" onclick="resetSearch()">🔄 重置</button>
             </div>
 
+            <!-- 表格工具栏 -->
+            <div class="table-toolbar">
+                <div class="table-info">
+                    共 <strong id="totalGuides">0</strong> 条记录
+                </div>
+                <div class="table-actions">
+                    <button class="btn btn-secondary" onclick="exportGuides()">
+                        📥 导出CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- 批量操作栏 -->
+            <div class="batch-actions-bar" id="batchActionsBar">
+                <span class="selected-info">✅ 已选择 <strong id="selectedCount">0</strong> 项</span>
+                <div class="batch-buttons">
+                    <button class="btn-batch success" onclick="batchApprove()">
+                        ✅ 批量通过
+                    </button>
+                    <button class="btn-batch" onclick="batchSetPending()">
+                        ⏳ 设为待审核
+                    </button>
+                    <button class="btn-batch danger" onclick="batchDelete()">
+                        🗑️ 批量删除
+                    </button>
+                    <button class="btn-batch" onclick="clearSelection()">
+                        ❌ 取消选择
+                    </button>
+                </div>
+            </div>
+
             <!-- 导游列表 -->
             <div class="table-container">
                 <table>
                     <thead>
                         <tr>
+                            <th style="width: 50px;">
+                                <label class="checkbox-wrapper">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                </label>
+                            </th>
                             <th>导游信息</th>
                             <th>专业领域</th>
                             <th>语言能力</th>
@@ -937,7 +1151,7 @@ select:focus {
                     </thead>
                     <tbody id="guidesTable">
                         <tr>
-                            <td colspan="6" class="loading">
+                            <td colspan="7" class="loading">
                                 <div class="spinner"></div>
                                 加载中...
                             </td>
@@ -956,7 +1170,7 @@ select:focus {
         <div class="add-guide-modal">
             <div class="modal-header">
                 <h2>➕ 添加新导游</h2>
-                <button class="modal-close" onclick="closeAddGuideModal()">✕</button>
+                <button class="modal-close" onclick="closeAddGuideModal()" aria-label="关闭">✕</button>
             </div>
             
             <form id="addGuideForm" class="modal-form" onsubmit="handleAddGuide(event)">
@@ -1138,8 +1352,177 @@ select:focus {
             guideProfiles: JSON.parse(localStorage.getItem('admin_guideProfiles') || '[]')
         };
 
+        // 选中的项目
+        let selectedItems = new Set();
+
         function saveMockData() {
             localStorage.setItem('admin_guideProfiles', JSON.stringify(mockData.guideProfiles));
+        }
+
+        // 全选/取消全选
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            
+            if (selectAllCheckbox.checked) {
+                checkboxes.forEach(cb => {
+                    selectedItems.add(cb.dataset.id);
+                    cb.checked = true;
+                });
+            } else {
+                selectedItems.clear();
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+            updateBatchBar();
+        }
+
+        // 切换单个选中
+        function toggleSelect(id) {
+            if (selectedItems.has(id)) {
+                selectedItems.delete(id);
+            } else {
+                selectedItems.add(id);
+            }
+            updateBatchBar();
+            
+            // 更新全选状态
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            document.getElementById('selectAll').checked = allChecked;
+        }
+
+        // 更新批量操作栏
+        function updateBatchBar() {
+            const batchBar = document.getElementById('batchActionsBar');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            if (selectedItems.size > 0) {
+                batchBar.classList.add('active');
+                selectedCount.textContent = selectedItems.size;
+            } else {
+                batchBar.classList.remove('active');
+            }
+        }
+
+        // 清空选择
+        function clearSelection() {
+            selectedItems.clear();
+            document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            updateBatchBar();
+        }
+
+        // 批量通过
+        function batchApprove() {
+            if (selectedItems.size === 0) {
+                showToast('请先选择要通过的导游', 'warning');
+                return;
+            }
+            
+            selectedItems.forEach(id => {
+                const guide = mockData.guideProfiles.find(g => g.id === id);
+                if (guide) guide.status = 'approved';
+            });
+            
+            saveMockData();
+            showToast(`已通过 ${selectedItems.size} 个导游申请`, 'success');
+            clearSelection();
+            loadCounts();
+            loadGuides();
+        }
+
+        // 批量设为待审核
+        function batchSetPending() {
+            if (selectedItems.size === 0) {
+                showToast('请先选择要修改的导游', 'warning');
+                return;
+            }
+            
+            selectedItems.forEach(id => {
+                const guide = mockData.guideProfiles.find(g => g.id === id);
+                if (guide) guide.status = 'pending';
+            });
+            
+            saveMockData();
+            showToast(`已将 ${selectedItems.size} 个导游设为待审核`, 'success');
+            clearSelection();
+            loadCounts();
+            loadGuides();
+        }
+
+        // 批量删除
+        function batchDelete() {
+            if (selectedItems.size === 0) {
+                showToast('请先选择要删除的导游', 'warning');
+                return;
+            }
+            
+            if (!confirm(`确定要删除选中的 ${selectedItems.size} 个导游吗？此操作不可恢复。`)) {
+                return;
+            }
+            
+            mockData.guideProfiles = mockData.guideProfiles.filter(g => !selectedItems.has(g.id));
+            saveMockData();
+            showToast(`已删除 ${selectedItems.size} 个导游`, 'success');
+            clearSelection();
+            loadCounts();
+            loadGuides();
+        }
+
+        // 导出导游数据为CSV
+        function exportGuides() {
+            const guides = mockData.guideProfiles;
+            if (guides.length === 0) {
+                showToast('暂无导游数据可导出', 'warning');
+                return;
+            }
+            
+            const csvData = [];
+            csvData.push(['ID', '昵称', '头像', '专业领域', '语言', '状态', '注册时间']);
+            
+            guides.forEach(guide => {
+                const statusMap = {
+                    'pending': '待审核',
+                    'approved': '已通过',
+                    'rejected': '已拒绝'
+                };
+                csvData.push([
+                    guide.id,
+                    guide.nickname || '',
+                    guide.avatar || '',
+                    guide.expertise || '',
+                    guide.languages || '',
+                    statusMap[guide.status] || '',
+                    new Date(guide.created_at).toLocaleDateString('zh-CN')
+                ]);
+            });
+            
+            const csvString = csvData.map(row => 
+                row.map(cell => {
+                    if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"') || cell.includes('\n'))) {
+                        return '"' + cell.replace(/"/g, '""') + '"';
+                    }
+                    return cell;
+                }).join(',')
+            ).join('\n');
+            
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + csvString], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `导游列表_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            showToast('导游数据已导出为CSV', 'success');
+        }
+
+        // 重置搜索
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('expertiseFilter').value = '';
+            currentPage = 1;
+            loadGuides();
         }
 
         // 检查登录
@@ -1212,7 +1595,7 @@ select:focus {
             const tbody = document.getElementById('guidesTable');
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="6" class="loading">
+                    <td colspan="7" class="loading">
                         <div class="spinner"></div>
                         加载中...
                     </td>
@@ -1247,11 +1630,14 @@ select:focus {
             const start = (currentPage - 1) * pageSize;
             const paged = filtered.slice(start, start + pageSize);
 
+            // 更新总数显示
+            document.getElementById('totalGuides').textContent = total;
+
             // 渲染表格
             if (paged.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="6" class="empty-state">
+                        <td colspan="7" class="empty-state">
                             <div class="icon">🔍</div>
                             <p>暂无导游数据</p>
                         </td>
@@ -1287,6 +1673,11 @@ select:focus {
 
                 return `
                     <tr>
+                        <td>
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" class="item-checkbox" data-id="${guide.id}" onchange="toggleSelect('${guide.id}')">
+                            </label>
+                        </td>
                         <td>
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span style="font-size: 24px;">${guide.avatar || '🎤'}</span>
