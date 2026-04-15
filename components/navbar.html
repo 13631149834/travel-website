@@ -1,0 +1,95 @@
+<!-- 统一导航栏组件 - 移动端优化版 -->
+<!-- 使用方法: 将此内容复制到页面<body>标签后，或使用JavaScript动态加载 -->
+
+<!-- 导航栏 -->
+<nav class="navbar">
+  <div class="container nav-container">
+    <a href="index.html" class="logo">
+      <span style="font-size: 1.8rem;">🧭</span>
+      <span>游导旅游</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-i18n="nav.home">首页</a>
+      <a href="guides.html" data-i18n="nav.guides">找导游</a>
+      <a href="routes.html" data-i18n="nav.routes">精品路线</a>
+      <a href="visa.html" data-i18n="nav.visa">签证服务</a>
+      <a href="knowledge.html" data-i18n="nav.knowledge">旅行知识</a>
+      <a href="tools.html" data-i18n="nav.tools">实用工具</a>
+      <a href="about.html" data-i18n="nav.about">关于我们</a>
+      <!-- 语言切换 -->
+      <div class="lang-switcher">
+        <button class="lang-btn active" data-lang="zh" data-lang-btn>中文</button>
+        <button class="lang-btn" data-lang="en" data-lang-btn>EN</button>
+      </div>
+    </div>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="菜单" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<script>
+// 移动端导航切换
+function toggleNav() {
+  const navLinks = document.querySelector('.nav-links');
+  const navToggle = document.querySelector('.nav-toggle');
+  if (navLinks && navToggle) {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.classList.toggle('active');
+    navToggle.setAttribute('aria-expanded', isOpen);
+    
+    // 防止背景滚动
+    document.body.classList.toggle('menu-open', isOpen);
+    
+    // 无障碍 - 聚焦第一个链接
+    if (isOpen) {
+      const firstLink = navLinks.querySelector('a');
+      if (firstLink) setTimeout(() => firstLink.focus(), 300);
+    }
+  }
+}
+
+// 点击菜单外关闭
+document.addEventListener('click', function(e) {
+  const navLinks = document.querySelector('.nav-links');
+  const navToggle = document.querySelector('.nav-toggle');
+  if (navLinks && navToggle && navLinks.classList.contains('open')) {
+    if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+      navLinks.classList.remove('open');
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+    }
+  }
+});
+
+// ESC键关闭菜单
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const navLinks = document.querySelector('.nav-links');
+    const navToggle = document.querySelector('.nav-toggle');
+    if (navLinks && navToggle && navLinks.classList.contains('open')) {
+      navLinks.classList.remove('open');
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+      navToggle.focus();
+    }
+  }
+});
+
+// 菜单打开时禁止背景滚动
+document.body.classList.add('menu-scroll-lock');
+</script>
+
+<style>
+/* 菜单滚动锁定 */
+body.menu-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+</style>
