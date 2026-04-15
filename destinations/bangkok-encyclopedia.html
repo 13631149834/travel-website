@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>曼谷旅游百科 - 游导旅游</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f7fa; color: #333; line-height: 1.8; }
+        .navbar { background: linear-gradient(135deg, #f59e0b, #d97706); padding: 15px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 20px rgba(245,158,11,0.3); }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { color: white; font-size: 24px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+        .nav-links a { color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #fff; }
+        .hero-section { position: relative; height: 70vh; min-height: 500px; overflow: hidden; }
+        .hero-image { width: 100%; height: 100%; object-fit: cover; }
+        .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%); }
+        .hero-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 60px; color: white; }
+        .city-badge { display: inline-block; background: linear-gradient(135deg, #ff6b6b, #ff8e53); padding: 8px 20px; border-radius: 30px; font-size: 14px; font-weight: 500; margin-bottom: 20px; }
+        .hero-title { font-size: 56px; font-weight: 700; margin-bottom: 15px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .hero-subtitle { font-size: 20px; opacity: 0.95; max-width: 700px; }
+        .share-buttons { position: absolute; top: 100px; right: 30px; display: flex; flex-direction: column; gap: 10px; }
+        .share-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; cursor: pointer; transition: transform 0.3s; border: none; }
+        .share-btn:hover { transform: scale(1.1); }
+        .share-wechat { background: #07c160; } .share-weibo { background: #e6162d; } .share-qq { background: #12b7f5; } .share-copy { background: #f59e0b; }
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 50px 20px; }
+        .quick-nav { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; padding: 25px; background: white; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .quick-nav a { padding: 10px 20px; background: #fef3c7; color: #f59e0b; text-decoration: none; font-weight: 500; transition: all 0.3s; display: flex; align-items: center; gap: 8px; border-radius: 25px; }
+        .quick-nav a:hover { background: #f59e0b; color: white; }
+        .section { background: white; border-radius: 20px; padding: 40px; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .section-title { font-size: 28px; margin-bottom: 25px; color: #333; display: flex; align-items: center; gap: 12px; }
+        .section-title .icon { width: 50px; height: 50px; background: linear-gradient(135deg, #f59e0b, #d97706); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 25px; }
+        .info-card { background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 16px; padding: 25px; transition: transform 0.3s; }
+        .info-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(245,158,11,0.15); }
+        .info-card h4 { font-size: 18px; margin-bottom: 12px; color: #333; display: flex; align-items: center; gap: 8px; }
+        .info-card p { color: #666; font-size: 14px; line-height: 1.8; }
+        .attraction-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+        .attraction-card { border-radius: 20px; overflow: hidden; background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: transform 0.3s; }
+        .attraction-card:hover { transform: translateY(-8px); }
+        .attraction-img { width: 100%; height: 220px; object-fit: cover; }
+        .attraction-content { padding: 25px; }
+        .attraction-content h4 { font-size: 20px; margin-bottom: 10px; color: #333; }
+        .attraction-content p { color: #666; font-size: 14px; line-height: 1.8; }
+        .attraction-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .attraction-tag { padding: 5px 12px; background: #fef3c7; color: #f59e0b; border-radius: 20px; font-size: 12px; }
+        .food-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .food-card { display: flex; gap: 15px; padding: 20px; background: linear-gradient(135deg, #fff9f0, #fff5e6); border-radius: 16px; transition: transform 0.3s; }
+        .food-card:hover { transform: scale(1.02); }
+        .food-emoji { font-size: 40px; flex-shrink: 0; }
+        .food-info h4 { font-size: 16px; margin-bottom: 8px; color: #333; }
+        .food-info p { font-size: 13px; color: #666; line-height: 1.6; }
+        .timeline { position: relative; padding-left: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, #f59e0b, #d97706); border-radius: 2px; }
+        .timeline-item { position: relative; margin-bottom: 25px; padding: 20px 25px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; }
+        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 25px; width: 14px; height: 14px; background: #f59e0b; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(245,158,11,0.3); }
+        .timeline-item h4 { font-size: 16px; margin-bottom: 8px; color: #333; }
+        .timeline-item p { font-size: 14px; color: #666; }
+        .budget-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .budget-table th, .budget-table td { padding: 15px 20px; text-align: left; border-bottom: 1px solid #eee; }
+        .budget-table th { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 500; }
+        .budget-table tr:hover td { background: #fef3c7; }
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .guide-card { background: linear-gradient(135deg, #fef3c7, #e8ecff); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.3s; }
+        .guide-card:hover { transform: translateY(-5px); }
+        .guide-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #f59e0b, #d97706); display: flex; align-items: center; justify-content: center; font-size: 32px; color: white; margin-bottom: 15px; }
+        .guide-name { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 5px; }
+        .guide-title { font-size: 13px; color: #f59e0b; margin-bottom: 10px; }
+        .guide-desc { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 15px; }
+        .guide-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .guide-tag { padding: 5px 12px; background: white; color: #f59e0b; border-radius: 20px; font-size: 12px; }
+        .tips-list { list-style: none; }
+        .tips-list li { padding: 15px 20px; background: linear-gradient(135deg, #fff9f0, #fff5e6); border-radius: 12px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 12px; }
+        .tips-list .tip-icon { font-size: 20px; flex-shrink: 0; }
+        .highlight-box { background: linear-gradient(135deg, #fff9f0, #fff); border-left: 4px solid #f59e0b; padding: 20px 25px; border-radius: 0 12px 12px 0; margin: 20px 0; }
+        .highlight-box h4 { color: #ff6b6b; margin-bottom: 10px; }
+        .night-market-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .night-market-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .night-market-img { width: 100%; height: 160px; object-fit: cover; }
+        .night-market-content { padding: 20px; }
+        .night-market-content h4 { font-size: 16px; margin-bottom: 8px; color: #333; }
+        .night-market-content p { font-size: 13px; color: #666; }
+        @media (max-width: 768px) { .hero-title { font-size: 36px; } .hero-content { padding: 30px 20px; } .section { padding: 25px; } .attraction-grid { grid-template-columns: 1fr; } .share-buttons { top: 80px; right: 15px; } }
+        .footer { background: #1a1a2e; color: white; padding: 50px 20px 30px; margin-top: 50px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+        .footer-section h4 { font-size: 18px; margin-bottom: 20px; color: #f59e0b; }
+        .footer-section a { display: block; color: rgba(255,255,255,0.7); text-decoration: none; margin-bottom: 10px; transition: color 0.3s; }
+        .footer-section a:hover { color: white; }
+        .footer-bottom { max-width: 1200px; margin: 30px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; color: rgba(255,255,255,0.5); font-size: 14px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">✈️ 游导旅游</a>
+            <ul class="nav-links">
+                <li><a href="#">首页</a></li>
+                <li><a href="#">目的地</a></li>
+                <li><a href="#">导游</a></li>
+                <li><a href="#">攻略</a></li>
+                <li><a href="#">联系我们</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <img src="https://s.coze.cn/image/GlSK98GN0aU/" alt="曼谷郑王庙夜景" class="hero-image">
+        <div class="hero-overlay"></div>
+        <div class="share-buttons">
+            <button class="share-btn share-wechat" title="分享到微信">💬</button>
+            <button class="share-btn share-weibo" title="分享到微博">📱</button>
+            <button class="share-btn share-qq" title="分享到QQ">💭</button>
+            <button class="share-btn share-copy" title="复制链接">🔗</button>
+        </div>
+        <div class="hero-content">
+            <span class="city-badge">泰国 · 微笑国度</span>
+            <h1 class="hero-title">曼谷旅游百科</h1>
+            <p class="hero-subtitle">"佛教之都"的金碧辉煌、夜市的烟火气息、水市场的异域风情、泰式按摩的放松体验——曼谷是一座永远充满惊喜的城市</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <nav class="quick-nav">
+            <a href="#overview">🏛️ 城市特色</a>
+            <a href="#temples">🛕 寺庙景点</a>
+            <a href="#food">🍜 美食夜市</a>
+            <a href="#shopping">🛍️ 购物娱乐</a>
+            <a href="#guide">👨‍🏫 相关导游</a>
+        </nav>
+
+        <!-- 城市特色 -->
+        <section id="overview" class="section">
+            <h2 class="section-title"><span class="icon">🏛️</span>城市特色</h2>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>🛕 佛教之都</h4>
+                    <p>曼谷拥有400多座佛教寺庙，金碧辉煌的大皇宫、庄严肃穆的玉佛寺、香火鼎盛的黎明寺……佛教文化渗透在这座城市的每个角落。清晨布施是当地独特的风景线。</p>
+                </div>
+                <div class="info-card">
+                    <h4>🌆 东方威尼斯</h4>
+                    <p>曼谷曾被称为"东方威尼斯"，至今仍有发达的水上交通。丹嫩沙多水上市场、安帕瓦水上市场保留着传统的水上交易方式，是体验泰国文化的绝佳去处。</p>
+                </div>
+                <div class="info-card">
+                    <h4>🍜 美食天堂</h4>
+                    <p>泰国菜以酸辣闻名，曼谷街头美食更是世界知名。从米其林星级泰菜到路边的泰式炒粉、芒果糯米饭，美食是曼谷最吸引人的元素之一。</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>💡 游导小贴士</h4>
+                <p>曼谷是全球热门旅游城市，全年适宜旅行。11月-2月是最佳季节，凉爽少雨。曼谷堵车严重，建议乘坐BTS（轻轨）或MRT（地铁）出行。街边美食虽然美味，但要注意选择干净卫生的店铺。</p>
+            </div>
+        </section>
+
+        <!-- 寺庙景点 -->
+        <section id="temples" class="section">
+            <h2 class="section-title"><span class="icon">🛕</span>寺庙景点</h2>
+            
+            <div class="attraction-grid">
+                <div class="attraction-card">
+                    <img src="https://s.coze.cn/image/fSVFiV2c9vY/" alt="大皇宫" class="attraction-img">
+                    <div class="attraction-content">
+                        <h4>大皇宫 & 玉佛寺</h4>
+                        <p>曼谷最著名的地标，1782年由拉玛一世下令建造。金碧辉煌的宫殿群、镶嵌贝壳的尖塔、翡翠雕刻的玉佛，每一处都彰显着皇室的尊贵与艺术的精妙。</p>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">必游景点</span>
+                            <span class="attraction-tag">皇室文化</span>
+                            <span class="attraction-tag">着装要求</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="attraction-card">
+                    <img src="https://s.coze.cn/image/1fpxBnB5AD0/" alt="郑王庙" class="attraction-img">
+                    <div class="attraction-content">
+                        <h4>郑王庙（黎明寺）</h4>
+                        <p>湄南河畔最醒目的地标，纪念华裔英雄郑昭而建。主塔高约79米，塔身镶嵌中国风陶瓷，攀登陡峭的台阶可俯瞰河岸风光。最佳拍摄角度在对岸码头。</p>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">河畔风光</span>
+                            <span class="attraction-tag">日落绝美</span>
+                            <span class="attraction-tag">拍照圣地</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="attraction-card">
+                    <img src="https://s.coze.cn/image/tnmDQuOsXEg/" alt="卧佛寺" class="attraction-img">
+                    <div class="attraction-content">
+                        <h4>卧佛寺（帕抱寺）</h4>
+                        <p>曼谷最古老的寺庙，拥有泰国最大的卧佛像，长46米、高15米。寺庙还是泰式按摩的发源地，可以体验正宗的泰式古法按摩。</p>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">按摩体验</span>
+                            <span class="attraction-tag">历史古迹</span>
+                            <span class="attraction-tag">佛教文化</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="attraction-card">
+                    <img src="https://s.coze.cn/image/hbkJz1y1R5Q/" alt="四面佛" class="attraction-img">
+                    <div class="attraction-content">
+                        <h4>四面佛 & 暹罗广场</h4>
+                        <p>位于暹罗商圈中心的四面佛是曼谷最灵验的佛寺之一，香火鼎盛。附近的暹罗广场是购物天堂，暹罗海洋世界是东南亚最大的水族馆。</p>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">灵验佛寺</span>
+                            <span class="attraction-tag">购物中心</span>
+                            <span class="attraction-tag">水族馆</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="attraction-card">
+                    <img src="https://s.coze.cn/image/SbIiTvIaI6Y/" alt="金佛寺" class="attraction-img">
+                    <div class="attraction-content">
+                        <h4>金佛寺</h4>
+                        <p>供奉着世界最大金佛，高近4米，重约5.5吨。这座金佛在罗勇府的发现过程充满传奇色彩，因担心被入侵者盗取曾被封在灰泥中长达200多年。</p>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">黄金佛像</span>
+                            <span class="attraction-tag">传奇故事</span>
+                            <span class="attraction-tag">免费入场</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="attraction-card">
+                    <img src="https://s.coze.cn/image/jGKYwVVjwxQ/" alt="郑王庙黄昏" class="attraction-img">
+                    <div class="attraction-content">
+                        <h4>黎明寺黄昏游船</h4>
+                        <p>乘坐长尾船游览湄南河，在夕阳西下时分欣赏两岸风光。郑王庙在夕阳的映照下金光璀璨，是曼谷最浪漫的体验之一。</p>
+                        <div class="attraction-tags">
+                            <span class="attraction-tag">浪漫体验</span>
+                            <span class="attraction-tag">日落游船</span>
+                            <span class="attraction-tag">拍照出片</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 美食夜市 -->
+        <section id="food" class="section">
+            <h2 class="section-title"><span class="icon">🍜</span>美食 & 夜市</h2>
+            
+            <div class="food-grid">
+                <div class="food-card">
+                    <div class="food-emoji">🍲</div>
+                    <div class="food-info">
+                        <h4>冬阴功汤 & 泰式咖喱</h4>
+                        <p>冬阴功汤是泰国菜的代表，酸辣鲜香。还有绿咖喱、红咖喱配鸡肉、牛肉，配合泰国香米让人欲罢不能。推荐Thip Samai的招牌菜。</p>
+                    </div>
+                </div>
+                <div class="food-card">
+                    <div class="food-emoji">🥭</div>
+                    <div class="food-info">
+                        <h4>芒果糯米饭</h4>
+                        <p>泰国最经典的甜品，咸香的椰浆浇在软糯的糯米饭上，配上新鲜的芒果肉，甜而不腻。街边小摊做的反而更正宗。</p>
+                    </div>
+                </div>
+                <div class="food-card">
+                    <div class="food-emoji">🦐</div>
+                    <div class="food-info">
+                        <h4>泰式海鲜</h4>
+                        <p>靠海的优势让泰国的海鲜新鲜又便宜。烤大虾、柠檬鱼、泰式生虾都是必点。Savoey是曼谷老字号海鲜餐厅，品质有保障。</p>
+                    </div>
+                </div>
+                <div class="food-card">
+                    <div class="food-emoji">🍢</div>
+                    <div class="food-info">
+                        <h4>泰式烧烤</h4>
+                        <p>泰式烤肉串、沙爹牛肉、烤鱼配特制酱料，都是街头常见的美味。逛夜市时来几串，配上chang啤酒，太惬意了。</p>
+                    </div>
+                </div>
+                <div class="food-card">
+                    <div class="food-emoji">🧋</div>
+                    <div class="food-info">
+                        <h4>泰式饮品</h4>
+                        <p>泰式奶茶是必喝的饮品，橙黄色的茶汤配上炼乳，甜香浓郁。还有椰子水、水果冰沙、街边的泰式咖啡都是消暑圣品。</p>
+                    </div>
+                </div>
+                <div class="food-card">
+                    <div class="food-emoji">🥘</div>
+                    <div class="food-info">
+                        <h4>Pad Thai（泰式炒粉）</h4>
+                        <p>泰国国民美食，大街小巷都能看到。酸甜咸辣四味平衡，配上豆芽、花生碎、柠檬角，简单却美味。Thip Samai被誉为"最好吃的泰式炒粉"。</p>
+                    </div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 30px; font-size: 22px; color: #333; display: flex; align-items: center; gap: 10px;">🌙 夜市推荐</h3>
+            <div class="night-market-grid">
+                <div class="night-market-card">
+                    <img src="https://s.coze.cn/image/hbkJz1y1R5Q/" alt="火车夜市" class="night-market-img">
+                    <div class="night-market-content">
+                        <h4>拉差达火车夜市</h4>
+                        <p>曼谷最知名的夜市之一，帐篷顶是标志性的彩色玻璃。美食、购物、酒吧应有尽有。火山排骨、烤海鲜是必吃。</p>
+                    </div>
+                </div>
+                <div class="night-market-card">
+                    <img src="https://s.coze.cn/image/GlSK98GN0aU/" alt="河畔夜市" class="night-market-img">
+                    <div class="night-market-content">
+                        <h4>ASIATIQUE 河畔夜市</h4>
+                        <p>位于湄南河畔的摩天轮夜市，改造自旧仓库，氛围浪漫。适合拍照，有旋转摩天轮，是情侣约会的热门地点。</p>
+                    </div>
+                </div>
+                <div class="night-market-card">
+                    <img src="https://s.coze.cn/image/jGKYwVVjwxQ/" alt="乔德夜市" class="night-market-img">
+                    <div class="night-market-content">
+                        <h4>乔德夜市（Jodd Fairs）</h4>
+                        <p>近年来新兴的网红夜市，以网红火山排骨闻名。设计感强，ins风格装饰，是年轻人打卡拍照的新据点。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 购物娱乐 -->
+        <section id="shopping" class="section">
+            <h2 class="section-title"><span class="icon">🛍️</span>购物 & 娱乐</h2>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>🛒 大型商场</h4>
+                    <p>暹罗商圈是曼谷最大的购物中心区。暹罗百丽宫（Siam Paragon）、暹罗中心（Siam Center）、MBK应有尽有。Terminal 21每层楼都是一个国家的装修风格，非常有趣。</p>
+                </div>
+                <div class="info-card">
+                    <h4>🛍️ 王权免税店</h4>
+                    <p>King Power王权免税店是购买泰国特产、化妆品的绝佳地点。欧莱雅、Snail White等品牌价格优势明显。使用优惠券还能享受折上折。</p>
+                </div>
+                <div class="info-card">
+                    <h4>🎭 人妖秀 & 泰拳</h4>
+                    <p>金东尼人妖秀、克里普索人妖秀是曼谷经典表演。兰甘亭体育馆可观看正宗泰拳比赛，感受泰国国粹的激情与力量。</p>
+                </div>
+                <div class="info-card">
+                    <h4>💆 泰式按摩</h4>
+                    <p>曼谷的按摩店遍地开花，从高端 spa到街边小店。Let's Relax、Health Land是连锁品牌，环境服务都不错。200泰铢/小时的Foot Massage超划算。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 最佳时间 -->
+        <section id="best-time" class="section">
+            <h2 class="section-title"><span class="icon">📅</span>最佳旅游时间</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>🌤️ 11月-2月 · 凉季</h4>
+                    <p>曼谷最佳旅游季节，天气凉爽干燥，日均温度20-30°C。适合户外活动、寺庙游览、水上市场。酒店价格最高，建议提前2-3个月预订。</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>☀️ 3月-5月 · 热季</h4>
+                    <p>曼谷最热的季节，气温常达40°C以上。4月有宋干节（泼水节），是泰国新年，也是最热闹的旅游旺季。避开中午时段户外活动。</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>🌧️ 6月-10月 · 雨季</h4>
+                    <p>曼谷雨季，但多为阵雨，不会整天阴沉。酒店价格较低，是错峰旅游的好时机。建议携带雨具，暴雨来得快去得也快。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 预算参考 -->
+        <section id="budget" class="section">
+            <h2 class="section-title"><span class="icon">💰</span>预算参考</h2>
+            
+            <table class="budget-table">
+                <thead>
+                    <tr>
+                        <th>预算类型</th>
+                        <th>每日预算</th>
+                        <th>包含内容</th>
+                        <th>适合人群</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>💰 经济型</td>
+                        <td>¥200-400</td>
+                        <td>Guesthouse/青旅、街边美食、公共交通</td>
+                        <td>背包客、预算有限者</td>
+                    </tr>
+                    <tr>
+                        <td>💰💰 舒适型</td>
+                        <td>¥500-1000</td>
+                        <td>三星酒店、餐厅用餐、部分门票、按摩体验</td>
+                        <td>普通游客</td>
+                    </tr>
+                    <tr>
+                        <td>💰💰💰 豪华型</td>
+                        <td>¥2000+</td>
+                        <td>五星酒店、米其林餐厅、包车出行、SPA体验</td>
+                        <td>蜜月游、度假</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 注意事项 -->
+        <section id="tips" class="section">
+            <h2 class="section-title"><span class="icon">⚠️</span>注意事项</h2>
+            
+            <ul class="tips-list">
+                <li><span class="tip-icon">👗</span><div><strong>着装要求：</strong>进入寺庙必须穿长裤/长裙（过膝）和有袖上衣。大皇宫要求更严格，建议穿浅色系衣物。短裤、露肩、露背服装会被拒绝入场。</div></li>
+                <li><span class="tip-icon">🙏</span><div><div><strong>礼仪禁忌：</strong>不可用脚指向佛像或僧人，不要摸泰国人的头（那是尊贵的位置）。递东西用右手或双手合十表示尊重。</div></li>
+                <li><span class="tip-icon">💴</span><div><strong>货币与支付：</strong>泰国货币为泰铢，1人民币约5泰铢。支付宝、微信支付在大型商场、夜市均可使用。街边小店建议使用现金。</div></li>
+                <li><span class="tip-icon">🚕</span><div><strong>交通出行：</strong>曼谷堵车严重，建议使用BTS（轻轨）和MRT（地铁）。打车建议用Grab（类似滴滴），避免被宰。双条车、嘟嘟车体验当地风情但要砍价。</div></li>
+                <li><span class="tip-icon">🛒</span><div><strong>购物退税：</strong>在有"Tax Free"标志的商店购物满5000泰铢可申请退税。护照、购物小票、退税单在机场办理，商品需随身携带。</div></li>
+            </ul>
+        </section>
+
+        <!-- 相关导游 -->
+        <section id="guide" class="section">
+            <h2 class="section-title"><span class="icon">👨‍🏫</span>相关导游</h2>
+            
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <div class="guide-avatar">🛕</div>
+                    <div class="guide-name">陈小明</div>
+                    <div class="guide-title">泰华文化专家</div>
+                    <div class="guide-desc">在曼谷生活了15年的华人，精通泰语和中文，深谙佛教文化。讲解寺庙背后的故事生动有趣，带你避开游客陷阱。</div>
+                    <div class="guide-tags">
+                        <span class="guide-tag">中文</span>
+                        <span class="guide-tag">佛教文化</span>
+                        <span class="guide-tag">历史讲解</span>
+                    </div>
+                </div>
+                <div class="guide-card">
+                    <div class="guide-avatar">🍜</div>
+                    <div class="guide-name">阿楠</div>
+                    <div class="guide-title">美食向导</div>
+                    <div class="guide-desc">曼谷土生土长的美食博主，探访过曼谷大街小巷的每一处美食。知道哪些是给游客开的，哪些是本地人才知道的宝藏店。</div>
+                    <div class="guide-tags">
+                        <span class="guide-tag">中文</span>
+                        <span class="guide-tag">街头美食</span>
+                        <span class="guide-tag">夜市攻略</span>
+                    </div>
+                </div>
+                <div class="guide-card">
+                    <div class="guide-avatar">🏍️</div>
+                    <div class="guide-name">Somchai</div>
+                    <div class="guide-title">包车导游</div>
+                    <div class="guide-desc">拥有15年经验的专业司机导游，熟悉曼谷及周边所有路线。可安排大皇宫、丹嫩沙多、安帕瓦等一日游行程。</div>
+                    <div class="guide-tags">
+                        <span class="guide-tag">泰语</span>
+                        <span class="guide-tag">包车服务</span>
+                        <span class="guide-tag">周边游</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>关于游导</h4>
+                <a href="#">关于我们</a>
+                <a href="#">加入我们</a>
+                <a href="#">合作伙伴</a>
+            </div>
+            <div class="footer-section">
+                <h4>旅游服务</h4>
+                <a href="#">当地导游</a>
+                <a href="#">私人定制</a>
+                <a href="#">签证办理</a>
+            </div>
+            <div class="footer-section">
+                <h4>帮助中心</h4>
+                <a href="#">常见问题</a>
+                <a href="#">用户指南</a>
+                <a href="#">联系客服</a>
+            </div>
+            <div class="footer-section">
+                <h4>关注我们</h4>
+                <a href="#">微信公众号</a>
+                <a href="#">微博</a>
+                <a href="#">小红书</a>
+            </div>
+        </div>
+        <div class="footer-bottom">© 2024 游导旅游 youdao-travel.com 版权所有</div>
+    </footer>
+</body>
+</html>

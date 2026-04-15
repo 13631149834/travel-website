@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行日记 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+            warm: '#f59e0b',
+            soft: '#fef3c7',
+            blush: '#fecaca',
+            mint: '#d1fae5'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .gradient-warm { background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    .mood-btn { transition: all 0.2s ease; }
+    .mood-btn:hover { transform: scale(1.15); }
+    .mood-btn.selected { box-shadow: 0 0 0 3px currentColor; }
+    .diary-card { background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); }
+    .calendar-day:hover { background: #e0f2fe; }
+    .calendar-day.has-diary { background: #fef3c7; }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .slide-up { animation: slideUp 0.4s ease; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .mood-bubble {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .tag-pill {
+      background: linear-gradient(135deg, #e0f2fe 0%, #dbeafe 100%);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: #0369a1;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg backdrop-blur-md bg-opacity-95">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="../destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="../routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="index.html" class="font-semibold border-b-2 border-white pb-1 flex items-center gap-1">
+            📔 旅行日记
+          </a>
+          <a href="statistics.html" class="hover:opacity-80 transition flex items-center gap-1">
+            📊 我的统计
+          </a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="../destinations.html" class="block py-2">目的地</a>
+        <a href="../routes.html" class="block py-2">路线</a>
+        <a href="index.html" class="block py-2 font-semibold">📔 旅行日记</a>
+        <a href="statistics.html" class="block py-2">📊 我的统计</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <div class="bg-gradient-to-r from-amber-100 via-orange-50 to-pink-100 py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center fade-in">
+      <div class="inline-block px-4 py-1.5 bg-white/60 rounded-full text-sm mb-4 shadow-sm">✨ 记录每一次旅行的美好瞬间</div>
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-800 mb-4">📔 旅行日记</h1>
+      <p class="text-lg text-gray-600 max-w-2xl mx-auto">用文字和照片记录旅途中的点点滴滴，让回忆永远鲜活</p>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="max-w-7xl mx-auto px-4 -mt-6 mb-8">
+    <div class="bg-white rounded-2xl shadow-xl p-6 flex flex-wrap gap-4 justify-center md:justify-start">
+      <a href="write.html" class="gradient-warm text-white px-6 py-3 rounded-full font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition">
+        ✍️ 写日记
+      </a>
+      <button onclick="switchView('list')" id="listViewBtn" class="bg-blue-100 text-blue-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-blue-200 transition">
+        📋 列表视图
+      </button>
+      <button onclick="switchView('calendar')" id="calendarViewBtn" class="bg-gray-100 text-gray-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-gray-200 transition">
+        📅 日历视图
+      </button>
+      <a href="statistics.html" class="bg-purple-100 text-purple-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-purple-200 transition">
+        📊 心情统计
+      </a>
+      <a href="export.html" class="bg-green-100 text-green-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-green-200 transition">
+        📤 导出日记
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 pb-16">
+    <!-- Mood Summary -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 slide-up">
+      <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <span class="text-2xl">🌟</span> 今日心情
+      </h2>
+      <div id="moodSummary" class="flex flex-wrap gap-6">
+        <!-- Dynamically populated -->
+      </div>
+    </div>
+
+    <!-- List View -->
+    <div id="listView" class="block">
+      <!-- Filter Bar -->
+      <div class="bg-white rounded-2xl shadow-lg p-4 mb-6 flex flex-wrap gap-4 items-center">
+        <div class="flex items-center gap-2">
+          <label class="text-gray-600 font-medium">心情筛选:</label>
+          <div id="moodFilters" class="flex flex-wrap gap-2">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+        <div class="flex-1"></div>
+        <select id="sortSelect" onchange="sortDiaries()" class="px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+          <option value="newest">最新在前</option>
+          <option value="oldest">最早在前</option>
+          <option value="mood">按心情</option>
+        </select>
+      </div>
+
+      <!-- Diary Grid -->
+      <div id="diaryList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Dynamically populated -->
+      </div>
+
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden text-center py-16">
+        <div class="text-8xl mb-6">📔</div>
+        <h3 class="text-2xl font-bold text-gray-600 mb-4">还没有旅行日记</h3>
+        <p class="text-gray-500 mb-8 max-w-md mx-auto">开始记录你的第一次旅行吧！每一段旅程都值得被珍藏。</p>
+        <a href="write.html" class="inline-flex items-center gap-2 gradient-warm text-white px-8 py-4 rounded-full font-bold shadow-lg hover:shadow-xl transition">
+          ✍️ 开始写日记
+        </a>
+      </div>
+    </div>
+
+    <!-- Calendar View -->
+    <div id="calendarView" class="hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Calendar -->
+        <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
+          <div class="flex items-center justify-between mb-6">
+            <button onclick="changeMonth(-1)" class="p-2 hover:bg-gray-100 rounded-full transition">
+              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+              </svg>
+            </button>
+            <h3 id="currentMonth" class="text-xl font-bold text-gray-800">2024年3月</h3>
+            <button onclick="changeMonth(1)" class="p-2 hover:bg-gray-100 rounded-full transition">
+              <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+          <div class="grid grid-cols-7 gap-2 text-center">
+            <div class="text-gray-500 font-medium py-2">日</div>
+            <div class="text-gray-500 font-medium py-2">一</div>
+            <div class="text-gray-500 font-medium py-2">二</div>
+            <div class="text-gray-500 font-medium py-2">三</div>
+            <div class="text-gray-500 font-medium py-2">四</div>
+            <div class="text-gray-500 font-medium py-2">五</div>
+            <div class="text-gray-500 font-medium py-2">六</div>
+          </div>
+          <div id="calendarDays" class="grid grid-cols-7 gap-2">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Selected Day Diaries -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h3 id="selectedDateTitle" class="text-lg font-bold text-gray-800 mb-4">选择日期查看日记</h3>
+          <div id="selectedDateDiaries" class="space-y-4">
+            <div class="text-center text-gray-400 py-8">
+              <div class="text-4xl mb-2">📅</div>
+              <p>点击日历上的日期<br/>查看当天写的日记</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12 mt-auto">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="text-2xl">🧭</span> 游导旅游
+          </h3>
+          <p class="text-gray-400">您的贴心旅行助手，让每一次出行都轻松愉快。</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">快速链接</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="../destinations.html" class="hover:text-white transition">目的地</a></li>
+            <li><a href="../routes.html" class="hover:text-white transition">旅行路线</a></li>
+            <li><a href="index.html" class="hover:text-white transition">旅行日记</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">工具</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="../tools/index.html" class="hover:text-white transition">旅行工具箱</a></li>
+            <li><a href="statistics.html" class="hover:text-white transition">心情统计</a></li>
+            <li><a href="export.html" class="hover:text-white transition">导出日记</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">联系我们</h4>
+          <p class="text-gray-400">service@youdao-travel.com</p>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <p>&copy; 2024 游导旅游. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Data management
+    const STORAGE_KEY = 'travelDiaries';
+    let diaryData = [];
+    let configData = null;
+    let currentView = 'list';
+    let currentMonth = new Date();
+    let selectedMoodFilter = null;
+
+    // Load data
+    async function loadData() {
+      try {
+        const response = await fetch('data/diary.json');
+        configData = await response.json();
+        loadDiariesFromStorage();
+        renderMoodFilters();
+        renderMoodSummary();
+        renderDiaryList();
+        renderCalendar();
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        renderMoodFilters();
+        renderMoodSummary();
+        renderDiaryList();
+        renderCalendar();
+      }
+    }
+
+    function loadDiariesFromStorage() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        diaryData = JSON.parse(stored);
+      } else if (configData && configData.sampleDiaries) {
+        diaryData = [...configData.sampleDiaries];
+        saveDiariesToStorage();
+      }
+    }
+
+    function saveDiariesToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(diaryData));
+    }
+
+    function getMoodInfo(moodId) {
+      return configData?.moods?.find(m => m.id === moodId) || { emoji: '😊', label: '未知', color: '#94a3b8', bgColor: '#e2e8f0' };
+    }
+
+    function getWeatherInfo(weatherId) {
+      return configData?.weathers?.find(w => w.id === weatherId) || { emoji: '☀️', label: '未知' };
+    }
+
+    // View switching
+    function switchView(view) {
+      currentView = view;
+      const listView = document.getElementById('listView');
+      const calendarView = document.getElementById('calendarView');
+      const listBtn = document.getElementById('listViewBtn');
+      const calendarBtn = document.getElementById('calendarViewBtn');
+
+      if (view === 'list') {
+        listView.classList.remove('hidden');
+        calendarView.classList.add('hidden');
+        listBtn.className = 'bg-blue-100 text-blue-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-blue-200 transition';
+        calendarBtn.className = 'bg-gray-100 text-gray-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-gray-200 transition';
+      } else {
+        listView.classList.add('hidden');
+        calendarView.classList.remove('hidden');
+        listBtn.className = 'bg-gray-100 text-gray-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-gray-200 transition';
+        calendarBtn.className = 'bg-blue-100 text-blue-700 px-6 py-3 rounded-full font-semibold flex items-center gap-2 hover:bg-blue-200 transition';
+      }
+    }
+
+    // Mood filters
+    function renderMoodFilters() {
+      const container = document.getElementById('moodFilters');
+      const moods = configData?.moods || [];
+      
+      container.innerHTML = `
+        <button onclick="setMoodFilter(null)" 
+                class="px-3 py-1 rounded-full text-sm font-medium transition ${!selectedMoodFilter ? 'bg-primary text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}">
+          全部
+        </button>
+        ${moods.map(mood => `
+          <button onclick="setMoodFilter('${mood.id}')" 
+                  class="px-3 py-1 rounded-full text-sm font-medium transition flex items-center gap-1 ${selectedMoodFilter === mood.id ? 'ring-2 ring-offset-1' : 'hover:scale-105'}"
+                  style="${selectedMoodFilter === mood.id ? `background-color: ${mood.bgColor}; color: ${mood.color}; ring-color: ${mood.color}` : 'background-color: #f3f4f6; color: #6b7280'}">
+            <span>${mood.emoji}</span>
+            <span>${mood.label}</span>
+          </button>
+        `).join('')}
+      `;
+    }
+
+    function setMoodFilter(moodId) {
+      selectedMoodFilter = moodId;
+      renderMoodFilters();
+      renderDiaryList();
+    }
+
+    // Mood summary
+    function renderMoodSummary() {
+      const container = document.getElementById('moodSummary');
+      const today = new Date().toDateString();
+      const todayDiaries = diaryData.filter(d => new Date(d.createdAt).toDateString() === today);
+      const totalDiaries = diaryData.length;
+      const todayMood = todayDiaries.length > 0 ? todayDiaries[0].mood : null;
+      const moodInfo = todayMood ? getMoodInfo(todayMood) : null;
+
+      const moodCounts = {};
+      diaryData.forEach(d => {
+        moodCounts[d.mood] = (moodCounts[d.mood] || 0) + 1;
+      });
+      const topMood = Object.entries(moodCounts).sort((a, b) => b[1] - a[1])[0];
+      const topMoodInfo = topMood ? getMoodInfo(topMood[0]) : null;
+
+      container.innerHTML = `
+        <div class="flex items-center gap-4">
+          <div class="mood-bubble" style="background: linear-gradient(135deg, ${moodInfo ? moodInfo.bgColor : '#f3f4f6'}, ${moodInfo ? moodInfo.color + '40' : '#e5e7eb'})">
+            ${moodInfo ? moodInfo.emoji : '✨'}
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm">今日心情</p>
+            <p class="font-bold text-gray-800">${moodInfo ? moodInfo.label : '还没有记录'}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="mood-bubble" style="background: linear-gradient(135deg, #fef3c7, #fcd34d)">
+            📔
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm">日记总数</p>
+            <p class="font-bold text-gray-800">${totalDiaries} 篇</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="mood-bubble" style="background: linear-gradient(135deg, ${topMoodInfo ? topMoodInfo.bgColor : '#e0f2fe'}, ${topMoodInfo ? topMoodInfo.color + '60' : '#38bdf8'})">
+            ${topMoodInfo ? topMoodInfo.emoji : '🏆'}
+          </div>
+          <div>
+            <p class="text-gray-500 text-sm">最常心情</p>
+            <p class="font-bold text-gray-800">${topMoodInfo ? topMoodInfo.label : '暂无数据'}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    // Diary list
+    function renderDiaryList() {
+      const container = document.getElementById('diaryList');
+      const emptyState = document.getElementById('emptyState');
+      
+      let filteredDiaries = [...diaryData];
+      if (selectedMoodFilter) {
+        filteredDiaries = filteredDiaries.filter(d => d.mood === selectedMoodFilter);
+      }
+
+      if (filteredDiaries.length === 0) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      container.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+
+      container.innerHTML = filteredDiaries.map(diary => {
+        const moodInfo = getMoodInfo(diary.mood);
+        const weatherInfo = getWeatherInfo(diary.weather);
+        const date = new Date(diary.createdAt);
+        const dateStr = `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+        const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+        
+        return `
+          <div class="diary-card rounded-2xl shadow-lg overflow-hidden card-hover cursor-pointer" onclick="viewDiary('${diary.id}')">
+            ${diary.photos && diary.photos.length > 0 ? `
+              <div class="h-48 bg-gray-100 overflow-hidden">
+                <img src="${diary.photos[0]}" alt="日记照片" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<div class=\\'flex items-center justify-center h-full text-6xl\\'>${moodInfo.emoji}</div>'">
+              </div>
+            ` : `
+              <div class="h-32 bg-gradient-to-br from-${moodInfo.bgColor} to-white flex items-center justify-center">
+                <span class="text-6xl">${moodInfo.emoji}</span>
+              </div>
+            `}
+            <div class="p-5">
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-sm text-gray-500">${dateStr}</span>
+                <div class="flex items-center gap-2">
+                  <span class="text-lg">${weatherInfo.emoji}</span>
+                  <span class="text-lg mood-btn">${moodInfo.emoji}</span>
+                </div>
+              </div>
+              <h3 class="font-bold text-lg text-gray-800 mb-2 line-clamp-1">${diary.title || '无标题'}</h3>
+              <p class="text-gray-600 text-sm line-clamp-2 mb-3">${diary.content}</p>
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                  <span>📍</span>
+                  <span class="truncate max-w-32">${diary.location || '未知地点'}</span>
+                </div>
+                <span class="text-xs text-gray-400">${diary.wordCount || 0}字</span>
+              </div>
+              ${diary.tags && diary.tags.length > 0 ? `
+                <div class="flex flex-wrap gap-1 mt-3">
+                  ${diary.tags.slice(0, 3).map(tag => `<span class="tag-pill">${tag}</span>`).join('')}
+                  ${diary.tags.length > 3 ? `<span class="text-xs text-gray-400">+${diary.tags.length - 3}</span>` : ''}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Calendar
+    function renderCalendar() {
+      const container = document.getElementById('calendarDays');
+      const monthLabel = document.getElementById('currentMonth');
+      
+      const year = currentMonth.getFullYear();
+      const month = currentMonth.getMonth();
+      monthLabel.textContent = `${year}年${month + 1}月`;
+
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+      const startDay = firstDay.getDay();
+      const daysInMonth = lastDay.getDate();
+
+      const diaryDates = {};
+      diaryData.forEach(d => {
+        const date = new Date(d.createdAt);
+        if (date.getFullYear() === year && date.getMonth() === month) {
+          const day = date.getDate();
+          diaryDates[day] = diaryDates[day] || [];
+          diaryDates[day].push(d);
+        }
+      });
+
+      let html = '';
+      for (let i = 0; i < startDay; i++) {
+        html += '<div class="py-3"></div>';
+      }
+      
+      for (let day = 1; day <= daysInMonth; day++) {
+        const hasDiary = diaryDates[day] && diaryDates[day].length > 0;
+        const diaries = diaryDates[day] || [];
+        const firstMood = diaries.length > 0 ? getMoodInfo(diaries[0].mood) : null;
+        
+        html += `
+          <div class="calendar-day py-3 rounded-lg cursor-pointer hover:bg-blue-50 transition ${hasDiary ? 'has-diary bg-amber-50' : ''}" 
+               onclick="selectDate(${year}, ${month}, ${day})">
+            <div class="text-center">
+              <div class="text-sm font-medium ${hasDiary ? 'text-amber-700' : 'text-gray-700'}">${day}</div>
+              ${firstMood ? `<div class="text-lg mt-1">${firstMood.emoji}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }
+      
+      container.innerHTML = html;
+    }
+
+    function changeMonth(delta) {
+      currentMonth.setMonth(currentMonth.getMonth() + delta);
+      renderCalendar();
+    }
+
+    function selectDate(year, month, day) {
+      const diaries = diaryData.filter(d => {
+        const date = new Date(d.createdAt);
+        return date.getFullYear() === year && date.getMonth() === month && date.getDate() === day;
+      });
+
+      const titleEl = document.getElementById('selectedDateTitle');
+      const diariesEl = document.getElementById('selectedDateDiaries');
+      
+      titleEl.textContent = `${year}年${month + 1}月${day}日的日记`;
+
+      if (diaries.length === 0) {
+        diariesEl.innerHTML = `
+          <div class="text-center text-gray-400 py-8">
+            <div class="text-4xl mb-2">📝</div>
+            <p>这一天没有写日记<br/><a href="write.html" class="text-primary hover:underline">去写一篇</a></p>
+          </div>
+        `;
+      } else {
+        diariesEl.innerHTML = diaries.map(diary => {
+          const moodInfo = getMoodInfo(diary.mood);
+          return `
+            <div class="p-4 bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-100 cursor-pointer hover:shadow-md transition" onclick="viewDiary('${diary.id}')">
+              <div class="flex items-start gap-3">
+                <span class="text-2xl">${moodInfo.emoji}</span>
+                <div class="flex-1">
+                  <h4 class="font-semibold text-gray-800">${diary.title || '无标题'}</h4>
+                  <p class="text-sm text-gray-500 mt-1 line-clamp-2">${diary.content}</p>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+    }
+
+    // Sort
+    function sortDiaries() {
+      const sortBy = document.getElementById('sortSelect').value;
+      
+      switch (sortBy) {
+        case 'newest':
+          diaryData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          break;
+        case 'oldest':
+          diaryData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+          break;
+        case 'mood':
+          diaryData.sort((a, b) => (b.mood || '').localeCompare(a.mood || ''));
+          break;
+      }
+      
+      renderDiaryList();
+    }
+
+    // Navigation
+    function viewDiary(id) {
+      window.location.href = `detail.html?id=${id}`;
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Initialize
+    loadData();
+  </script>
+</body>
+</html>

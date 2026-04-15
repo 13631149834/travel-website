@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{TITLE}}旅游百科 - 游导旅游</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.8;
+        }
+
+        /* 导航栏 */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            color: white;
+            font-size: 24px;
+            font-weight: 700;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+        }
+
+        /* 页面头部大图 */
+        .hero-section {
+            position: relative;
+            height: 70vh;
+            min-height: 500px;
+            overflow: hidden;
+        }
+
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .hero-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+        }
+
+        .hero-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 60px;
+            color: white;
+        }
+
+        .city-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+        }
+
+        .hero-title {
+            font-size: 56px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            opacity: 0.95;
+            max-width: 700px;
+        }
+
+        /* 分享按钮 */
+        .share-buttons {
+            position: absolute;
+            top: 100px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .share-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+        }
+
+        .share-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .share-wechat { background: #07c160; }
+        .share-weibo { background: #e6162d; }
+        .share-qq { background: #12b7f5; }
+        .share-copy { background: #667eea; }
+
+        /* 主内容区 */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 50px 20px;
+        }
+
+        /* 快速导航 */
+        .quick-nav {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            padding: 25px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .quick-nav a {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border-radius: 25px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-nav a:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* 目录导航 */
+        .table-of-contents {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .toc-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toc-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            list-style: none;
+        }
+
+        .toc-list a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 18px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            color: #495057;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .toc-list a:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .toc-icon {
+            font-size: 18px;
+        }
+
+        /* 通用章节样式 */
+        .section {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+        }
+
+        .section-title {
+            font-size: 28px;
+            margin-bottom: 25px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title .icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        /* 信息卡片网格 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 16px;
+            padding: 25px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .info-card h4 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-card p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* 景点卡片 */
+        .attraction-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .attraction-card {
+            border-radius: 20px;
+            overflow: hidden;
+            background: white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+        }
+
+        .attraction-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .attraction-img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+        }
+
+        .attraction-content {
+            padding: 25px;
+        }
+
+        .attraction-content h4 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .attraction-content p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .attraction-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .attraction-tag {
+            padding: 5px 12px;
+            background: #f0f0ff;
+            color: #667eea;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        /* 美食卡片 */
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .food-card {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff9f0, #fff5e6);
+            border-radius: 16px;
+            transition: transform 0.3s;
+        }
+
+        .food-card:hover {
+            transform: scale(1.02);
+        }
+
+        .food-emoji {
+            font-size: 40px;
+            flex-shrink: 0;
+        }
+
+        .food-info h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .food-info p {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 时间轴 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding: 20px 25px;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 25px;
+            width: 14px;
+            height: 14px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .timeline-item h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .timeline-item p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 预算表格 */
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .budget-table th,
+        .budget-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .budget-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 500;
+        }
+
+        .budget-table tr:hover td {
+            background: #f8f9fa;
+        }
+
+        /* 导游卡片 */
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .guide-card {
+            background: linear-gradient(135deg, #f0f4ff, #e8ecff);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .guide-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .guide-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .guide-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .guide-title {
+            font-size: 13px;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .guide-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .guide-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .guide-tag {
+            padding: 5px 12px;
+            background: white;
+            color: #667eea;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        /* 注意事项 */
+        .tips-list {
+            list-style: none;
+        }
+
+        .tips-list li {
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #fff9f0, #fff5e6);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .tips-list .tip-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 36px;
+            }
+
+            .hero-content {
+                padding: 30px 20px;
+            }
+
+            .section {
+                padding: 25px;
+            }
+
+            .attraction-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .share-buttons {
+                top: 80px;
+                right: 15px;
+            }
+        }
+
+        /* 页脚 */
+        .footer {
+            background: #1a1a2e;
+            color: white;
+            padding: 50px 20px 30px;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-section h4 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .footer-section a {
+            display: block;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            margin-bottom: 10px;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 30px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">✈️ 游导旅游</a>
+            <ul class="nav-links">
+                <li><a href="#">首页</a></li>
+                <li><a href="#">目的地</a></li>
+                <li><a href="#">导游</a></li>
+                <li><a href="#">攻略</a></li>
+                <li><a href="#">联系我们</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 页面头部 -->
+    <section class="hero-section">
+        <img src="{{HERO_IMAGE}}" alt="{{CITY_NAME}}" class="hero-image">
+        <div class="hero-overlay"></div>
+        
+        <!-- 分享按钮 -->
+        <div class="share-buttons">
+            <button class="share-btn share-wechat" title="分享到微信">💬</button>
+            <button class="share-btn share-weibo" title="分享到微博">📱</button>
+            <button class="share-btn share-qq" title="分享到QQ">💭</button>
+            <button class="share-btn share-copy" title="复制链接">🔗</button>
+        </div>
+
+        <div class="hero-content">
+            <span class="city-badge">{{COUNTRY}} · {{CITY_TYPE}}</span>
+            <h1 class="hero-title">{{TITLE}}</h1>
+            <p class="hero-subtitle">{{SUBTITLE}}</p>
+        </div>
+    </section>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+        <!-- 快速导航 -->
+        <nav class="quick-nav">
+            <a href="#overview">🏛️ 城市概况</a>
+            <a href="#attractions">🗼 必游景点</a>
+            <a href="#food">🍜 美食地图</a>
+            <a href="#shopping">🛍️ 购物指南</a>
+            <a href="#transport">🚇 交通指南</a>
+            <a href="#guide">👨‍🏫 相关导游</a>
+        </nav>
+
+        <!-- 城市概况 -->
+        <section id="overview" class="section">
+            <h2 class="section-title">
+                <span class="icon">🏛️</span>
+                城市概况
+            </h2>
+            {{OVERVIEW_CONTENT}}
+        </section>
+
+        <!-- 必游景点 -->
+        <section id="attractions" class="section">
+            <h2 class="section-title">
+                <span class="icon">🗼</span>
+                必游景点
+            </h2>
+            {{ATTRACTIONS_CONTENT}}
+        </section>
+
+        <!-- 美食地图 -->
+        <section id="food" class="section">
+            <h2 class="section-title">
+                <span class="icon">🍜</span>
+                美食地图
+            </h2>
+            {{FOOD_CONTENT}}
+        </section>
+
+        <!-- 购物指南 -->
+        <section id="shopping" class="section">
+            <h2 class="section-title">
+                <span class="icon">🛍️</span>
+                购物指南
+            </h2>
+            {{SHOPPING_CONTENT}}
+        </section>
+
+        <!-- 交通指南 -->
+        <section id="transport" class="section">
+            <h2 class="section-title">
+                <span class="icon">🚇</span>
+                交通指南
+            </h2>
+            {{TRANSPORT_CONTENT}}
+        </section>
+
+        {{ADDITIONAL_SECTIONS}}
+
+        <!-- 相关导游 -->
+        <section id="guide" class="section">
+            <h2 class="section-title">
+                <span class="icon">👨‍🏫</span>
+                相关导游
+            </h2>
+            {{GUIDE_CONTENT}}
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>关于游导</h4>
+                <a href="#">关于我们</a>
+                <a href="#">加入我们</a>
+                <a href="#">合作伙伴</a>
+            </div>
+            <div class="footer-section">
+                <h4>旅游服务</h4>
+                <a href="#">当地导游</a>
+                <a href="#">私人定制</a>
+                <a href="#">签证办理</a>
+            </div>
+            <div class="footer-section">
+                <h4>帮助中心</h4>
+                <a href="#">常见问题</a>
+                <a href="#">用户指南</a>
+                <a href="#">联系客服</a>
+            </div>
+            <div class="footer-section">
+                <h4>关注我们</h4>
+                <a href="#">微信公众号</a>
+                <a href="#">微博</a>
+                <a href="#">小红书</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2024 游导旅游 youdao-travel.com 版权所有
+        </div>
+    </footer>
+</body>
+</html>
