@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>热门搜索 - 游导旅游</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <style>
+    :root {
+      --primary: #ff6b35;
+      --primary-dark: #e55a2b;
+      --secondary: #1e3a5f;
+      --accent: #ffd23f;
+      --bg-light: #f8f9fa;
+      --bg-white: #ffffff;
+      --text-dark: #2d3436;
+      --text-gray: #636e72;
+      --text-light: #b2bec3;
+      --border: #e9ecef;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    .page-hero {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: #fff;
+      padding: 60px 0;
+      text-align: center;
+    }
+
+    .page-hero h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .page-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .content-wrapper {
+      margin-top: -40px;
+      padding: 0 20px 60px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .section-card {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-badge {
+      padding: 4px 10px;
+      background: rgba(245, 87, 108, 0.1);
+      color: #f5576c;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: normal;
+    }
+
+    .time-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .time-tab {
+      padding: 8px 16px;
+      background: var(--bg-light);
+      border: none;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-gray);
+    }
+
+    .time-tab:hover {
+      background: #f5576c;
+      color: #fff;
+    }
+
+    .time-tab.active {
+      background: #f5576c;
+      color: #fff;
+    }
+
+    .hot-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .hot-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg-light);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .hot-item:hover {
+      background: rgba(245, 87, 108, 0.1);
+      transform: translateX(4px);
+    }
+
+    .hot-rank {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-radius: 8px;
+      margin-right: 16px;
+      flex-shrink: 0;
+    }
+
+    .rank-1 { background: linear-gradient(135deg, #ffd700, #ffb347); color: #fff; }
+    .rank-2 { background: linear-gradient(135deg, #c0c0c0, #a8a8a8); color: #fff; }
+    .rank-3 { background: linear-gradient(135deg, #cd7f32, #b87333); color: #fff; }
+    .rank-default { background: var(--bg-white); color: var(--text-gray); }
+
+    .hot-info {
+      flex: 1;
+    }
+
+    .hot-keyword {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .hot-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .hot-trend {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .trend-hot {
+      background: rgba(245, 87, 108, 0.1);
+      color: #f5576c;
+    }
+
+    .trend-up {
+      background: rgba(52, 211, 153, 0.1);
+      color: #34d399;
+    }
+
+    .trend-new {
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+    }
+
+    .hot-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: 12px;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-white);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-light);
+    }
+
+    .action-btn:hover {
+      background: #f5576c;
+      color: #fff;
+    }
+
+    .trend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .trend-card {
+      padding: 20px;
+      background: linear-gradient(135deg, rgba(240, 147, 251, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .trend-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .trend-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .trend-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .trend-increase {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #34d399;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .trend-keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .trend-keyword {
+      padding: 6px 12px;
+      background: var(--bg-white);
+      border-radius: 6px;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+    }
+
+    .season-section {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .season-card {
+      padding: 24px;
+      background: var(--bg-light);
+      border-radius: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .season-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .season-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    .season-name {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .season-keywords {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .season-keyword {
+      padding: 4px 10px;
+      background: var(--bg-white);
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: var(--text-gray);
+    }
+
+    .category-section {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 16px;
+      background: var(--bg-light);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .category-item:hover {
+      background: linear-gradient(135deg, rgba(240, 147, 251, 0.15) 0%, rgba(245, 87, 108, 0.15) 100%);
+      transform: translateY(-2px);
+    }
+
+    .category-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .category-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .category-count {
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    .rankings-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+
+    .ranking-card {
+      background: var(--bg-light);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .ranking-header {
+      padding: 16px;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .ranking-list {
+      padding: 12px;
+    }
+
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .ranking-item:hover {
+      background: var(--bg-white);
+    }
+
+    .ranking-pos {
+      width: 24px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-right: 12px;
+    }
+
+    .ranking-pos.top { color: #f5576c; font-weight: 700; }
+
+    .ranking-text {
+      flex: 1;
+      font-size: 0.9rem;
+      color: var(--text-dark);
+    }
+
+    .ranking-trend {
+      font-size: 0.75rem;
+      color: #34d399;
+    }
+
+    @media (max-width: 900px) {
+      .season-section {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .season-section {
+        grid-template-columns: 1fr;
+      }
+
+      .section-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+      }
+
+      .time-tabs {
+        width: 100%;
+        overflow-x: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="index.html" class="logo">
+          <span class="logo-icon">🧭</span>
+          <span>游导旅游</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="destinations.html">目的地</a></li>
+          <li><a href="routes.html">路线</a></li>
+          <li><a href="travel-notes.html">游记</a></li>
+          <li><a href="activities.html">活动</a></li>
+          <li><a href="guides.html">导游</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="btn-icon" title="搜索">🔍</button>
+          <button class="btn-icon" title="消息">💬</button>
+          <a href="login.html" class="btn btn-primary">登录</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>🔥 热门搜索</h1>
+      <p>发现当下最受欢迎的旅行目的地和话题</p>
+    </div>
+  </section>
+
+  <div class="content-wrapper">
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          📊 热搜排行榜
+          <span class="section-badge">实时更新</span>
+        </h2>
+        <div class="time-tabs">
+          <button class="time-tab active">今日</button>
+          <button class="time-tab" onclick="switchTimeRange(this)">本周</button>
+          <button class="time-tab" onclick="switchTimeRange(this)">本月</button>
+        </div>
+      </div>
+
+      <div class="hot-list">
+        <div class="hot-item" onclick="searchKeyword('云南丽江古城')">
+          <div class="hot-rank rank-1">1</div>
+          <div class="hot-info">
+            <div class="hot-keyword">云南丽江古城</div>
+            <div class="hot-meta">
+              <span>搜索量 125.6万</span>
+              <span>⬆️ 156%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-hot">🔥 爆</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+
+        <div class="hot-item" onclick="searchKeyword('西藏拉萨自驾')">
+          <div class="hot-rank rank-2">2</div>
+          <div class="hot-info">
+            <div class="hot-keyword">西藏拉萨自驾</div>
+            <div class="hot-meta">
+              <span>搜索量 98.7万</span>
+              <span>⬆️ 142%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-hot">🔥 爆</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+
+        <div class="hot-item" onclick="searchKeyword('海南三亚免税店')">
+          <div class="hot-rank rank-3">3</div>
+          <div class="hot-info">
+            <div class="hot-keyword">海南三亚免税店</div>
+            <div class="hot-meta">
+              <span>搜索量 87.5万</span>
+              <span>⬆️ 138%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-hot">🔥 爆</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+
+        <div class="hot-item" onclick="searchKeyword('张家界天门山')">
+          <div class="hot-rank rank-default">4</div>
+          <div class="hot-info">
+            <div class="hot-keyword">张家界天门山</div>
+            <div class="hot-meta">
+              <span>搜索量 76.3万</span>
+              <span>⬆️ 125%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-up">📈</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+
+        <div class="hot-item" onclick="searchKeyword('青海湖环湖')">
+          <div class="hot-rank rank-default">5</div>
+          <div class="hot-info">
+            <div class="hot-keyword">青海湖环湖</div>
+            <div class="hot-meta">
+              <span>搜索量 68.9万</span>
+              <span>⬆️ 118%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-up">📈</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+
+        <div class="hot-item" onclick="searchKeyword('四川九寨沟')">
+          <div class="hot-rank rank-default">6</div>
+          <div class="hot-info">
+            <div class="hot-keyword">四川九寨沟</div>
+            <div class="hot-meta">
+              <span>搜索量 65.2万</span>
+              <span>⬆️ 105%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-up">📈</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+
+        <div class="hot-item" onclick="searchKeyword('杭州西湖十景')">
+          <div class="hot-rank rank-default">7</div>
+          <div class="hot-info">
+            <div class="hot-keyword">杭州西湖十景</div>
+            <div class="hot-meta">
+              <span>搜索量 58.7万</span>
+              <span>⬆️ 98%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-up">📈</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+
+        <div class="hot-item" onclick="searchKeyword('桂林阳朔')">
+          <div class="hot-rank rank-default">8</div>
+          <div class="hot-info">
+            <div class="hot-keyword">桂林阳朔</div>
+            <div class="hot-meta">
+              <span>搜索量 54.3万</span>
+              <span>⬆️ 92%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-up">📈</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+
+        <div class="hot-item" onclick="searchKeyword('厦门鼓浪屿')">
+          <div class="hot-rank rank-default">9</div>
+          <div class="hot-info">
+            <div class="hot-keyword">厦门鼓浪屿</div>
+            <div class="hot-meta">
+              <span>搜索量 51.8万</span>
+              <span>⬆️ 87%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-new">新</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+
+        <div class="hot-item" onclick="searchKeyword('青岛崂山')">
+          <div class="hot-rank rank-default">10</div>
+          <div class="hot-info">
+            <div class="hot-keyword">青岛崂山</div>
+            <div class="hot-meta">
+              <span>搜索量 48.7万</span>
+              <span>⬆️ 85%</span>
+            </div>
+          </div>
+          <div class="hot-trend trend-new">新</div>
+          <div class="hot-actions">
+            <button class="action-btn" title="收藏">⭐</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          🚀 上升最快
+          <span class="section-badge" style="background: rgba(52, 211, 153, 0.1); color: #34d399;">涨势迅猛</span>
+        </h2>
+      </div>
+
+      <div class="trend-grid">
+        <div class="trend-card" onclick="searchKeyword('新疆独库公路')">
+          <div class="trend-header">
+            <span class="trend-title">🚗 自驾游</span>
+            <span class="trend-increase">↑ 320%</span>
+          </div>
+          <div class="trend-keywords">
+            <span class="trend-keyword">新疆独库公路</span>
+            <span class="trend-keyword">川藏线</span>
+            <span class="trend-keyword">318国道</span>
+          </div>
+        </div>
+
+        <div class="trend-card" onclick="searchKeyword('贵州村超')">
+          <div class="trend-header">
+            <span class="trend-title">⚽ 赛事</span>
+            <span class="trend-increase">↑ 285%</span>
+          </div>
+          <div class="trend-keywords">
+            <span class="trend-keyword">贵州村超</span>
+            <span class="trend-keyword">足球</span>
+            <span class="trend-keyword">民俗</span>
+          </div>
+        </div>
+
+        <div class="trend-card" onclick="searchKeyword('淄博烧烤')">
+          <div class="trend-header">
+            <span class="trend-title">🍖 美食</span>
+            <span class="trend-increase">↑ 256%</span>
+          </div>
+          <div class="trend-keywords">
+            <span class="trend-keyword">淄博烧烤</span>
+            <span class="trend-keyword">网红美食</span>
+            <span class="trend-keyword">周末游</span>
+          </div>
+        </div>
+
+        <div class="trend-card" onclick="searchKeyword('哈尔滨冰雪大世界')">
+          <div class="trend-header">
+            <span class="trend-title">❄️ 冰雪</span>
+            <span class="trend-increase">↑ 234%</span>
+          </div>
+          <div class="trend-keywords">
+            <span class="trend-keyword">冰雪大世界</span>
+            <span class="trend-keyword">滑雪</span>
+            <span class="trend-keyword">雾凇</span>
+          </div>
+        </div>
+
+        <div class="trend-card" onclick="searchKeyword('露营装备推荐')">
+          <div class="trend-header">
+            <span class="trend-title">⛺ 户外</span>
+            <span class="trend-increase">↑ 198%</span>
+          </div>
+          <div class="trend-keywords">
+            <span class="trend-keyword">露营装备</span>
+            <span class="trend-keyword">Glamping</span>
+            <span class="trend-keyword">帐篷</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          🌸 季节推荐
+          <span class="section-badge" style="background: rgba(240, 147, 251, 0.1); color: #f093fb;">应季出行</span>
+        </h2>
+      </div>
+
+      <div class="season-section">
+        <div class="season-card" onclick="searchSeason('spring')">
+          <div class="season-icon">🌸</div>
+          <div class="season-name">春季</div>
+          <div class="season-keywords">
+            <span class="season-keyword">婺源油菜花</span>
+            <span class="season-keyword">武汉樱花</span>
+            <span class="season-keyword">林芝桃花</span>
+          </div>
+        </div>
+
+        <div class="season-card" onclick="searchSeason('summer')">
+          <div class="season-icon">☀️</div>
+          <div class="season-name">夏季</div>
+          <div class="season-keywords">
+            <span class="season-keyword">青海湖</span>
+            <span class="season-keyword">承德避暑</span>
+            <span class="season-keyword">长白山</span>
+          </div>
+        </div>
+
+        <div class="season-card" onclick="searchSeason('autumn')">
+          <div class="season-icon">🍂</div>
+          <div class="season-name">秋季</div>
+          <div class="season-keywords">
+            <span class="season-keyword">额济纳胡杨林</span>
+            <span class="season-keyword">香山红叶</span>
+            <span class="season-keyword">稻城亚丁</span>
+          </div>
+        </div>
+
+        <div class="season-card" onclick="searchSeason('winter')">
+          <div class="season-icon">❄️</div>
+          <div class="season-name">冬季</div>
+          <div class="season-keywords">
+            <span class="season-keyword">雾凇岛</span>
+            <span class="season-keyword">漠河找北</span>
+            <span class="season-keyword">三亚避寒</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          📂 分类热搜
+        </h2>
+      </div>
+
+      <div class="category-section">
+        <div class="category-item" onclick="searchKeyword('云南旅游')">
+          <span class="category-icon">📍</span>
+          <span class="category-name">目的地</span>
+          <span class="category-count">12.6万次搜索</span>
+        </div>
+        <div class="category-item" onclick="searchKeyword('自驾游路线')">
+          <span class="category-icon">🛤️</span>
+          <span class="category-name">路线</span>
+          <span class="category-count">8.9万次搜索</span>
+        </div>
+        <div class="category-item" onclick="searchKeyword('旅游攻略')">
+          <span class="category-icon">📖</span>
+          <span class="category-name">攻略</span>
+          <span class="category-count">15.2万次搜索</span>
+        </div>
+        <div class="category-item" onclick="searchKeyword('旅行游记')">
+          <span class="category-icon">✍️</span>
+          <span class="category-name">游记</span>
+          <span class="category-count">10.8万次搜索</span>
+        </div>
+        <div class="category-item" onclick="searchKeyword('特色美食')">
+          <span class="category-icon">🍜</span>
+          <span class="category-name">美食</span>
+          <span class="category-count">9.5万次搜索</span>
+        </div>
+        <div class="category-item" onclick="searchKeyword('酒店推荐')">
+          <span class="category-icon">🏨</span>
+          <span class="category-name">住宿</span>
+          <span class="category-count">7.3万次搜索</span>
+        </div>
+        <div class="category-item" onclick="searchKeyword('当地导游')">
+          <span class="category-icon">👨‍🏫</span>
+          <span class="category-name">导游</span>
+          <span class="category-count">5.6万次搜索</span>
+        </div>
+        <div class="category-item" onclick="searchKeyword('热门活动')">
+          <span class="category-icon">🎉</span>
+          <span class="category-name">活动</span>
+          <span class="category-count">4.2万次搜索</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-header">
+        <h2 class="section-title">
+          🏆 各类别TOP10
+        </h2>
+      </div>
+
+      <div class="rankings-grid">
+        <div class="ranking-card">
+          <div class="ranking-header">📍 热门目的地</div>
+          <div class="ranking-list">
+            <div class="ranking-item" onclick="searchKeyword('云南')"><span class="ranking-pos top">1</span><span class="ranking-text">云南</span></div>
+            <div class="ranking-item" onclick="searchKeyword('西藏')"><span class="ranking-pos top">2</span><span class="ranking-text">西藏</span></div>
+            <div class="ranking-item" onclick="searchKeyword('海南')"><span class="ranking-pos top">3</span><span class="ranking-text">海南</span></div>
+            <div class="ranking-item" onclick="searchKeyword('四川')"><span class="ranking-pos">4</span><span class="ranking-text">四川</span></div>
+            <div class="ranking-item" onclick="searchKeyword('浙江')"><span class="ranking-pos">5</span><span class="ranking-text">浙江</span></div>
+            <div class="ranking-item" onclick="searchKeyword('江苏')"><span class="ranking-pos">6</span><span class="ranking-text">江苏</span></div>
+            <div class="ranking-item" onclick="searchKeyword('福建')"><span class="ranking-pos">7</span><span class="ranking-text">福建</span></div>
+            <div class="ranking-item" onclick="searchKeyword('广东')"><span class="ranking-pos">8</span><span class="ranking-text">广东</span></div>
+            <div class="ranking-item" onclick="searchKeyword('新疆')"><span class="ranking-pos">9</span><span class="ranking-text">新疆</span></div>
+            <div class="ranking-item" onclick="searchKeyword('青海')"><span class="ranking-pos">10</span><span class="ranking-text">青海</span></div>
+          </div>
+        </div>
+
+        <div class="ranking-card">
+          <div class="ranking-header">🛤️ 热门路线</div>
+          <div class="ranking-list">
+            <div class="ranking-item" onclick="searchKeyword('云南7日游')"><span class="ranking-pos top">1</span><span class="ranking-text">云南7日游</span></div>
+            <div class="ranking-item" onclick="searchKeyword('西藏自驾')"><span class="ranking-pos top">2</span><span class="ranking-text">西藏自驾</span></div>
+            <div class="ranking-item" onclick="searchKeyword('川西环线')"><span class="ranking-pos top">3</span><span class="ranking-text">川西环线</span></div>
+            <div class="ranking-item" onclick="searchKeyword('西北大环线')"><span class="ranking-pos">4</span><span class="ranking-text">西北大环线</span></div>
+            <div class="ranking-item" onclick="searchKeyword('海南5日')"><span class="ranking-pos">5</span><span class="ranking-text">海南5日</span></div>
+            <div class="ranking-item" onclick="searchKeyword('江南水乡')"><span class="ranking-pos">6</span><span class="ranking-text">江南水乡</span></div>
+            <div class="ranking-item" onclick="searchKeyword('海边度假')"><span class="ranking-pos">7</span><span class="ranking-text">海边度假</span></div>
+            <div class="ranking-item" onclick="searchKeyword('古镇漫游')"><span class="ranking-pos">8</span><span class="ranking-text">古镇漫游</span></div>
+            <div class="ranking-item" onclick="searchKeyword('亲子游')"><span class="ranking-pos">9</span><span class="ranking-text">亲子游</span></div>
+            <div class="ranking-item" onclick="searchKeyword('蜜月旅行')"><span class="ranking-pos">10</span><span class="ranking-text">蜜月旅行</span></div>
+          </div>
+        </div>
+
+        <div class="ranking-card">
+          <div class="ranking-header">🍜 热门美食</div>
+          <div class="ranking-list">
+            <div class="ranking-item" onclick="searchKeyword('云南米线')"><span class="ranking-pos top">1</span><span class="ranking-text">云南米线</span></div>
+            <div class="ranking-item" onclick="searchKeyword('四川火锅')"><span class="ranking-pos top">2</span><span class="ranking-text">四川火锅</span></div>
+            <div class="ranking-item" onclick="searchKeyword('广东早茶')"><span class="ranking-pos top">3</span><span class="ranking-text">广东早茶</span></div>
+            <div class="ranking-item" onclick="searchKeyword('北京烤鸭')"><span class="ranking-pos">4</span><span class="ranking-text">北京烤鸭</span></div>
+            <div class="ranking-item" onclick="searchKeyword('西安肉夹馍')"><span class="ranking-pos">5</span><span class="ranking-text">西安肉夹馍</span></div>
+            <div class="ranking-item" onclick="searchKeyword('重庆小面')"><span class="ranking-pos">6</span><span class="ranking-text">重庆小面</span></div>
+            <div class="ranking-item" onclick="searchKeyword('长沙臭豆腐')"><span class="ranking-pos">7</span><span class="ranking-text">长沙臭豆腐</span></div>
+            <div class="ranking-item" onclick="searchKeyword('新疆大盘鸡')"><span class="ranking-pos">8</span><span class="ranking-text">新疆大盘鸡</span></div>
+            <div class="ranking-item" onclick="searchKeyword('福建沙县')"><span class="ranking-pos">9</span><span class="ranking-text">福建沙县</span></div>
+            <div class="ranking-item" onclick="searchKeyword('贵州酸汤鱼')"><span class="ranking-pos">10</span><span class="ranking-text">贵州酸汤鱼</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="background: var(--secondary); color: #fff; padding: 40px 0; margin-top: 60px;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;">
+        <div>
+          <h4 style="margin-bottom: 16px;">关于游导</h4>
+          <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.8;">
+            游导旅游是专业的旅行信息平台，为您提供全面的旅游攻略、路线规划和导游服务。
+          </p>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 16px;">快速链接</h4>
+          <ul style="list-style: none; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            <li style="margin-bottom: 8px;"><a href="destinations.html" style="color: inherit;">目的地</a></li>
+            <li style="margin-bottom: 8px;"><a href="routes.html" style="color: inherit;">热门路线</a></li>
+            <li style="margin-bottom: 8px;"><a href="guides.html" style="color: inherit;">导游服务</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 16px;">帮助与支持</h4>
+          <ul style="list-style: none; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            <li style="margin-bottom: 8px;"><a href="help.html" style="color: inherit;">帮助中心</a></li>
+            <li style="margin-bottom: 8px;"><a href="contact.html" style="color: inherit;">联系我们</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 16px;">联系我们</h4>
+          <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            📧 contact@youdao-travel.com<br>
+            📞 13631149834
+          </p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">
+          © 2024 游导旅游 youdao-travel.com 版权所有
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function searchKeyword(keyword) {
+      window.location.href = `search-results.html?q=${encodeURIComponent(keyword)}`;
+    }
+
+    function searchSeason(season) {
+      const keywords = {
+        spring: '春季旅行',
+        summer: '夏季避暑',
+        autumn: '秋季赏枫',
+        winter: '冬季温泉'
+      };
+      searchKeyword(keywords[season]);
+    }
+
+    function switchTimeRange(el) {
+      document.querySelectorAll('.time-tab').forEach(tab => tab.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    // Favorite button handler
+    document.querySelectorAll('.action-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.style.color = this.style.color === 'rgb(245, 87, 108)' ? '' : '#f5576c';
+      });
+    });
+  </script>
+</body>
+</html>

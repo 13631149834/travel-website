@@ -1,63 +1,203 @@
-# robots.txt for youdao-travel.com
-# 游导旅游网站搜索引擎爬虫配置文件
-# 更新时间: 2026-04-15
+# ============================================
+# 游导旅游网站 - robots.txt
+# 最后更新: 2026-04-15
+# ============================================
 
+# 允许所有搜索引擎访问
 User-agent: *
-# 允许所有主流搜索引擎爬虫访问
 
+# 网站地图位置
+Sitemap: https://youdao-travel.com/sitemap.xml
+Sitemap: https://youdao-travel.com/sitemap-images.xml
+
+# ============================================
+# 允许访问的路径
+# ============================================
 Allow: /
-# 允许访问所有公开页面
+Allow: /index.html$
+Allow: /guides.html
+Allow: /routes.html
+Allow: /destinations.html
+Allow: /services.html
+Allow: /visa.html
+Allow: /knowledge-base.html
+Allow: /about.html
+Allow: /contact.html
+Allow: /help.html
+Allow: /faq.html
 
-# ============ 禁止爬取的页面 ============
-# 管理后台
-Disallow: /admin
+# ============================================
+# 禁止访问的后台管理
+# ============================================
+Disallow: /admin/
+Disallow: /admin$
+Disallow: /admin-*
 Disallow: /admin.html
+
+# ============================================
+# 禁止访问的组件和模板
+# ============================================
+Disallow: /components/
+Disallow: /templates/
+
+# ============================================
+# 禁止访问的脚本和样式
+# ============================================
+Disallow: /scripts/
+Disallow: /js/
+Disallow: /css/
+
+# ============================================
+# 禁止访问的数据文件
+# ============================================
+Disallow: /data/
+Disallow: /*.json$
+Disallow: /*.sql$
+Disallow: /miniprogram/
+Disallow: /docs/
+
+# ============================================
+# 禁止访问的用户私人页面
+# ============================================
+Disallow: /guide-dashboard.html
+Disallow: /guide-calendar.html
+Disallow: /guide-bookings.html
+Disallow: /guide-stats.html
+Disallow: /guide-content.html
+Disallow: /guide-tools.html
+Disallow: /guide-dashboard$
 Disallow: /admin-guides.html
 Disallow: /admin-reviews.html
+Disallow: /admin-stats.html
 Disallow: /admin-users.html
-
-# 用户个人页面
+Disallow: /admin-marketing.html
+Disallow: /admin/
 Disallow: /my-orders.html
-Disallow: /my-trips.html
 Disallow: /my-favorites.html
 Disallow: /my-reviews.html
+Disallow: /my-trips.html
+Disallow: /my-exchanges.html
+Disallow: /my-coupons.html
+Disallow: /profile-edit.html
+Disallow: /notification-settings.html
+Disallow: /messages.html
+Disallow: /travel-stats.html
 Disallow: /user-center.html
 Disallow: /tourist-center.html
 Disallow: /profile-preview.html
 Disallow: /profile.html
-Disallow: /review-submit.html
-
-# 登录注册
 Disallow: /login.html
 Disallow: /register.html
 Disallow: /register-success.html
+Disallow: /payment.html
+Disallow: /payment-result.html
+Disallow: /order-confirm.html
 
-# ============ 网站地图 ============
-Sitemap: https://youdao-travel.com/sitemap.xml
+# ============================================
+# API接口
+# ============================================
+Disallow: /api/
+Disallow: /*.json$
 
-# ============ 爬虫抓取设置 ============
+# ============================================
+# 内部页面和调试页面
+# ============================================
+Disallow: /*_source=*
+Disallow: /*?debug=*
+Disallow: /error.html
+Disallow: /offline.html
+Disallow: /network-error.html
+Disallow: /loading.html
+Disallow: /maintenance.html
+
+# ============================================
+# SEO相关页面(内部使用)
+# ============================================
+Disallow: /seo-*
+Disallow: /*-monitor.html$
+
+# ============================================
+# 爬虫延迟设置(保护服务器)
+# ============================================
 Crawl-delay: 1
-# 两次抓取间隔1秒，避免对服务器造成压力
 
-# ============ 特殊搜索引擎配置 ============
+# ============================================
+# Google特定规则
+# ============================================
 User-agent: Googlebot
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$
 Crawl-delay: 1
 
 User-agent: Googlebot-Image
 Allow: /images/
-Crawl-delay: 5
+Allow: /*.jpg$
+Allow: /*.png$
+Allow: /*.webp$
+Disallow: /*
 
+User-agent: Googlebot-Video
+Allow: /videos/
+Allow: /*.mp4$
+Disallow: /*
+
+# ============================================
+# 百度特定规则
+# ============================================
 User-agent: Baiduspider
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$
+Crawl-delay: 2
+
+User-agent: Baiduspider-image
+Allow: /images/
+Disallow: /*
+
+# ============================================
+# Bing特定规则
+# ============================================
+User-agent: bingbot
+Allow: /
+Disallow: /admin/
+Disallow: /api/
 Crawl-delay: 1
 
-User-agent: Bingbot
+# ============================================
+# 其他搜索引擎
+# ============================================
+User-agent: YandexBot
 Allow: /
-Crawl-delay: 1
+Disallow: /admin/
+Disallow: /api/
 
-User-agent: Sogou News Spider
+User-agent: Sogou
 Allow: /
+Disallow: /admin/
+Disallow: /api/
 
-User-agent: DuckDuckBot
+User-agent: 360spider
 Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+# ============================================
+# 社交媒体爬虫
+# ============================================
+User-agent: Twitterbot
+Allow: /
+Disallow: /admin/
+Disallow: /my-*
+
+User-agent: facebookexternalhit
+Allow: /
+Disallow: /admin/
+Disallow: /my-*
+
+# ============================================
+# 落地域名
+# ============================================
+Host: https://youdao-travel.com

@@ -56,7 +56,8 @@ select:focus {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preload" href="css/style.css" as="style">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="stylesheet" href="css/accessibility.css">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/customer-service.css">
   <link rel="stylesheet" href="css/enhanced.css">
@@ -65,9 +66,9 @@ select:focus {
   <link rel="stylesheet" href="css/guide/guide-tools.css">
   <link rel="stylesheet" href="css/guide/reviews.css">
   <!-- SEO Meta Tags -->
-  <title>游客评价 - 游导旅游 | 真实服务评价</title>
-  <meta name="description" content="查看其他游客对导游服务的真实评价，了解服务质量，选择最合适的导游。">
-  <meta name="keywords" content="游客评价,服务评价,导游评价">
+  <title>游导旅游 - 专业导游预约平台</title>
+  <meta name="description" content="游导旅游是专业的导游预约平台，严选认证导游，让旅行更简单。">
+  <meta name="keywords" content="游导旅游,导游预约,旅游平台,金牌导游">>
   <meta name="author" content="游导旅游">
   <meta name="robots" content="index, follow">
   <meta name="googlebot" content="index, follow">
@@ -106,7 +107,7 @@ select:focus {
     ],
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+86-400-888-8888",
+      "telephone": "+86-13631149834",
       "contactType": "customer service",
       "availableLanguage": ["Chinese", "English"]
     }
@@ -192,8 +193,7 @@ select:focus {
   <nav class="navbar" aria-label="主导航">
     <div class="container">
       <a href="index.html" class="logo">🌍 游导旅游</a>
-      <div class="nav-toggle" onclick="toggleNav()">
-        <span></span><span></span><span></span>
+      <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单" aria-expanded="false" tabindex="0"><span></span>
       </div>
       <div class="nav-links">
         <a href="index.html">首页</a>
@@ -254,6 +254,61 @@ select:focus {
       <button class="filter-tab" data-filter="good">好评</button>
       <button class="filter-tab" data-filter="medium">中评</button>
       <button class="filter-tab" data-filter="bad">差评</button>
+    </div>
+
+    <!-- 高级筛选区域 -->
+    <div class="advanced-filters">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label>按评分筛选</label>
+          <select id="filterRating">
+            <option value="all">全部评分</option>
+            <option value="5">5星</option>
+            <option value="4">4星</option>
+            <option value="3">3星及以下</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>排序方式</label>
+          <select id="filterSort">
+            <option value="newest">最新优先</option>
+            <option value="oldest">最早优先</option>
+            <option value="highest">评分最高</option>
+            <option value="lowest">评分最低</option>
+            <option value="mostLiked">最多点赞</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>图片筛选</label>
+          <select id="filterImage">
+            <option value="all">全部</option>
+            <option value="withImage">有图评价</option>
+            <option value="noImage">无图评价</option>
+          </select>
+        </div>
+        <button class="btn btn-sm btn-secondary" onclick="resetFilters()">重置筛选</button>
+      </div>
+    </div>
+
+    <!-- 评分分布可视化 -->
+    <div class="rating-distribution-card">
+      <h3>📊 评分分布</h3>
+      <div class="rating-bars" id="ratingBars">
+        <!-- 动态渲染 -->
+      </div>
+      <div class="rating-summary">
+        <span class="summary-score" id="summaryScore">0.0</span>
+        <div class="summary-stars" id="summaryStars">☆☆☆☆☆</div>
+        <span class="summary-count">共 <span id="summaryCount">0</span> 条评价</span>
+      </div>
+    </div>
+
+    <!-- 评价标签云 -->
+    <div class="tags-cloud-card">
+      <h3>🏷️ 热门标签</h3>
+      <div class="tags-cloud" id="tagsCloud">
+        <!-- 动态渲染 -->
+      </div>
     </div>
 
     <!-- 评价表单 -->
@@ -335,21 +390,19 @@ select:focus {
 
     <!-- 评价列表 -->
     <section class="content-card">
-      <h3>📋 评价列表</h3>
+      <div class="reviews-header-row">
+        <h3>📋 评价列表 <span id="filteredCount"></span></h3>
+      </div>
       <div class="review-list" id="reviewsList">
         <!-- 评价卡片将在这里渲染 -->
       </div>
     </section>
 
-    <!-- 统计图表 -->
+    <!-- 统计图表 - 保留趋势图 -->
     <section class="charts-grid" style="margin-top: 24px;">
-      <div class="chart-container">
+      <div class="chart-container" style="grid-column: 1 / -1;">
         <h3>📈 评分趋势</h3>
         <canvas id="trendChart" height="200"></canvas>
-      </div>
-      <div class="chart-container">
-        <h3>📊 评分分布</h3>
-        <canvas id="distributionChart" height="200"></canvas>
       </div>
     </section>
 
@@ -369,7 +422,7 @@ select:focus {
     <div class="modal-content">
       <div class="modal-header">
         <h3>回复评价</h3>
-        <button class="modal-close" onclick="closeModal('replyModal')">&times;</button>
+        <button class="modal-close" onclick="closeModal('replyModal')" aria-label="关闭">&times;</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -412,7 +465,7 @@ select:focus {
         </div>
       <div><h4>帮助支持</h4><a href="help.html">帮助中心</a>
           <a href="faq.html">常见问题</a><a href="contact.html">联系我们</a></div>
-        <div><h4>联系我们</h4><p>📧 2173381363@qq.com</p><p>💬 微信：ximao101</p><p>🌐 youdao-travel.com</p></div></div>
+        <div><h4>联系我们</h4><p>📧 service@youdao-travel.com</p><p>💬 微信：ximao101</p><p>🌐 youdao-travel.com</p></div></div>
       <div class="footer-bottom">
         <p>© 2024 游导Travel (youdao-travel.com) 版权所有</p>
       </div>

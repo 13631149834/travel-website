@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>高级搜索 - 游导旅游</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <style>
+    :root {
+      --primary: #ff6b35;
+      --primary-dark: #e55a2b;
+      --secondary: #1e3a5f;
+      --accent: #ffd23f;
+      --bg-light: #f8f9fa;
+      --bg-white: #ffffff;
+      --text-dark: #2d3436;
+      --text-gray: #636e72;
+      --text-light: #b2bec3;
+      --border: #e9ecef;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    .search-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 60px 0;
+      text-align: center;
+    }
+
+    .page-title {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .search-container {
+      max-width: 900px;
+      margin: -40px auto 40px;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .search-box {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow-hover);
+    }
+
+    .search-input-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .search-input-row input {
+      flex: 1;
+      padding: 16px 20px;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      font-size: 1.1rem;
+      transition: all 0.3s ease;
+    }
+
+    .search-input-row input:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    .btn-search {
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-search:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    }
+
+    .quick-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .quick-tag {
+      padding: 6px 14px;
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-tag:hover {
+      background: #667eea;
+      color: #fff;
+      border-color: #667eea;
+    }
+
+    .filters-section {
+      background: var(--bg-light);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 16px;
+    }
+
+    .filter-section {
+      margin-bottom: 20px;
+    }
+
+    .filter-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .filter-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-chip {
+      padding: 8px 16px;
+      background: var(--bg-white);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-chip:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .filter-chip.active {
+      background: #667eea;
+      color: #fff;
+      border-color: #667eea;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-group label {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .filter-group select,
+    .filter-group input {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: var(--bg-white);
+    }
+
+    .filter-group select:focus,
+    .filter-group input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .date-range {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .date-range input {
+      flex: 1;
+    }
+
+    .btn-clear {
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-clear:hover {
+      border-color: #f44336;
+      color: #f44336;
+    }
+
+    .section-card {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .search-types {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+    }
+
+    .search-type-btn {
+      padding: 16px;
+      background: var(--bg-light);
+      border: 2px solid transparent;
+      border-radius: 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .search-type-btn:hover {
+      border-color: #667eea;
+      background: #fff;
+    }
+
+    .search-type-btn.active {
+      border-color: #667eea;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+    }
+
+    .search-type-icon {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .search-type-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .search-type-count {
+      font-size: 0.75rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    .saved-searches {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .saved-search-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: var(--bg-light);
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .saved-search-item:hover {
+      background: #667eea;
+      color: #fff;
+    }
+
+    .saved-search-item .icon {
+      font-size: 1rem;
+    }
+
+    .search-tips {
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .search-tips h4 {
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      margin-bottom: 12px;
+    }
+
+    .tips-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .tip-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+    }
+
+    .tip-item code {
+      background: rgba(102, 126, 234, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: #667eea;
+    }
+
+    @media (max-width: 768px) {
+      .search-input-row {
+        flex-direction: column;
+      }
+
+      .filter-row {
+        grid-template-columns: 1fr;
+      }
+
+      .search-types {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="index.html" class="logo">
+          <span class="logo-icon">🧭</span>
+          <span>游导旅游</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="destinations.html">目的地</a></li>
+          <li><a href="routes.html">路线</a></li>
+          <li><a href="travel-notes.html">游记</a></li>
+          <li><a href="activities.html">活动</a></li>
+          <li><a href="guides.html">导游</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="btn-icon" title="搜索">🔍</button>
+          <button class="btn-icon" title="消息">💬</button>
+          <a href="login.html" class="btn btn-primary">登录</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="search-hero">
+    <div class="container">
+      <h1 class="page-title">高级搜索</h1>
+      <p class="page-subtitle">多维度精准筛选，快速找到理想旅行内容</p>
+    </div>
+  </section>
+
+  <div class="search-container">
+    <div class="search-box">
+      <div class="search-input-row">
+        <input type="text" id="searchInput" placeholder="输入关键词，如：云南、丽江、自驾..." autocomplete="off">
+        <button class="btn-search" onclick="performSearch()">
+          <span>🔍</span>
+          <span>搜索</span>
+        </button>
+      </div>
+
+      <div class="quick-tags">
+        <span class="quick-tag" onclick="quickSearch('云南')">云南</span>
+        <span class="quick-tag" onclick="quickSearch('西藏')">西藏</span>
+        <span class="quick-tag" onclick="quickSearch('自驾')">自驾</span>
+        <span class="quick-tag" onclick="quickSearch('美食')">美食</span>
+        <span class="quick-tag" onclick="quickSearch('海岛')">海岛</span>
+        <span class="quick-tag" onclick="quickSearch('古镇')">古镇</span>
+        <span class="quick-tag" onclick="quickSearch('亲子')">亲子</span>
+        <span class="quick-tag" onclick="quickSearch('蜜月')">蜜月</span>
+      </div>
+
+      <div class="filters-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <h3 style="font-size: 1rem; font-weight: 600;">筛选条件</h3>
+          <button class="btn-clear" onclick="clearFilters()">清除筛选</button>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">
+            <span>📂</span> 内容类型
+          </div>
+          <div class="search-types">
+            <div class="search-type-btn active" data-type="all" onclick="selectSearchType(this)">
+              <div class="search-type-icon">🌐</div>
+              <div class="search-type-name">全部</div>
+              <div class="search-type-count">18,296 条</div>
+            </div>
+            <div class="search-type-btn" data-type="destinations" onclick="selectSearchType(this)">
+              <div class="search-type-icon">📍</div>
+              <div class="search-type-name">目的地</div>
+              <div class="search-type-count">2,856 条</div>
+            </div>
+            <div class="search-type-btn" data-type="routes" onclick="selectSearchType(this)">
+              <div class="search-type-icon">🛤️</div>
+              <div class="search-type-name">路线</div>
+              <div class="search-type-count">1,542 条</div>
+            </div>
+            <div class="search-type-btn" data-type="guides" onclick="selectSearchType(this)">
+              <div class="search-type-icon">📖</div>
+              <div class="search-type-name">攻略</div>
+              <div class="search-type-count">3,241 条</div>
+            </div>
+            <div class="search-type-btn" data-type="notes" onclick="selectSearchType(this)">
+              <div class="search-type-icon">✍️</div>
+              <div class="search-type-name">游记</div>
+              <div class="search-type-count">5,623 条</div>
+            </div>
+            <div class="search-type-btn" data-type="activities" onclick="selectSearchType(this)">
+              <div class="search-type-icon">🎉</div>
+              <div class="search-type-name">活动</div>
+              <div class="search-type-count">486 条</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">
+            <span>🏷️</span> 目的地
+          </div>
+          <div class="filter-options">
+            <span class="filter-chip" onclick="toggleChip(this)">云南</span>
+            <span class="filter-chip" onclick="toggleChip(this)">四川</span>
+            <span class="filter-chip" onclick="toggleChip(this)">西藏</span>
+            <span class="filter-chip" onclick="toggleChip(this)">海南</span>
+            <span class="filter-chip" onclick="toggleChip(this)">浙江</span>
+            <span class="filter-chip" onclick="toggleChip(this)">江苏</span>
+            <span class="filter-chip" onclick="toggleChip(this)">福建</span>
+            <span class="filter-chip" onclick="toggleChip(this)">广东</span>
+            <span class="filter-chip" onclick="toggleChip(this)">山东</span>
+            <span class="filter-chip" onclick="toggleChip(this)">辽宁</span>
+            <span class="filter-chip" onclick="toggleChip(this)">新疆</span>
+            <span class="filter-chip" onclick="toggleChip(this)">青海</span>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">
+            <span>🏃</span> 旅行主题
+          </div>
+          <div class="filter-options">
+            <span class="filter-chip" onclick="toggleChip(this)">自然风光</span>
+            <span class="filter-chip" onclick="toggleChip(this)">人文历史</span>
+            <span class="filter-chip" onclick="toggleChip(this)">海滨度假</span>
+            <span class="filter-chip" onclick="toggleChip(this)">探险徒步</span>
+            <span class="filter-chip" onclick="toggleChip(this)">美食之旅</span>
+            <span class="filter-chip" onclick="toggleChip(this)">亲子游</span>
+            <span class="filter-chip" onclick="toggleChip(this)">蜜月旅行</span>
+            <span class="filter-chip" onclick="toggleChip(this)">自驾游</span>
+            <span class="filter-chip" onclick="toggleChip(this)">摄影之旅</span>
+            <span class="filter-chip" onclick="toggleChip(this)">康养休闲</span>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">
+            <span>📅</span> 旅行时间
+          </div>
+          <div class="filter-options">
+            <span class="filter-chip" onclick="toggleChip(this)">1-3天</span>
+            <span class="filter-chip" onclick="toggleChip(this)">4-7天</span>
+            <span class="filter-chip" onclick="toggleChip(this)">8-14天</span>
+            <span class="filter-chip" onclick="toggleChip(this)">15天以上</span>
+          </div>
+          <div class="filter-row" style="margin-top: 12px;">
+            <div class="filter-group">
+              <label>出发月份</label>
+              <select id="monthFilter">
+                <option value="">不限月份</option>
+                <option value="1">1月</option>
+                <option value="2">2月</option>
+                <option value="3">3月</option>
+                <option value="4">4月</option>
+                <option value="5">5月</option>
+                <option value="6">6月</option>
+                <option value="7">7月</option>
+                <option value="8">8月</option>
+                <option value="9">9月</option>
+                <option value="10">10月</option>
+                <option value="11">11月</option>
+                <option value="12">12月</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>最佳季节</label>
+              <select id="seasonFilter">
+                <option value="">不限季节</option>
+                <option value="spring">春季</option>
+                <option value="summer">夏季</option>
+                <option value="autumn">秋季</option>
+                <option value="winter">冬季</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">
+            <span>💰</span> 预算范围
+          </div>
+          <div class="filter-row">
+            <div class="filter-group">
+              <label>最低预算（元）</label>
+              <input type="number" id="minBudget" placeholder="如：1000">
+            </div>
+            <div class="filter-group">
+              <label>最高预算（元）</label>
+              <input type="number" id="maxBudget" placeholder="如：10000">
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-title">
+            <span>⭐</span> 评分筛选
+          </div>
+          <div class="filter-options">
+            <span class="filter-chip" onclick="toggleChip(this)">4.5分以上</span>
+            <span class="filter-chip" onclick="toggleChip(this)">4.0分以上</span>
+            <span class="filter-chip" onclick="toggleChip(this)">3.5分以上</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card" style="margin-top: 24px;">
+      <div class="section-title">
+        <span>💾</span> 保存的搜索条件
+      </div>
+      <div class="saved-searches">
+        <div class="saved-search-item" onclick="loadSearch('云南7日游')">
+          <span class="icon">🔍</span>
+          <span>云南7日游</span>
+        </div>
+        <div class="saved-search-item" onclick="loadSearch('西藏自驾攻略')">
+          <span class="icon">🔍</span>
+          <span>西藏自驾攻略</span>
+        </div>
+        <div class="saved-search-item" onclick="loadSearch('亲子海边度假')">
+          <span class="icon">🔍</span>
+          <span>亲子海边度假</span>
+        </div>
+        <div class="saved-search-item" onclick="saveCurrentSearch()">
+          <span class="icon">➕</span>
+          <span>保存当前搜索</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-card">
+      <div class="section-title">
+        <span>💡</span> 搜索技巧
+      </div>
+      <div class="search-tips">
+        <h4>快速找到想要的内容</h4>
+        <div class="tips-list">
+          <div class="tip-item">
+            <span>📌</span>
+            <span>使用 <code>双引号</code> 精确匹配</span>
+          </div>
+          <div class="tip-item">
+            <span>📌</span>
+            <span>用 <code>空格</code> 组合多个关键词</span>
+          </div>
+          <div class="tip-item">
+            <span>📌</span>
+            <span>搜索作者 <code>@用户名</code></span>
+          </div>
+          <div class="tip-item">
+            <span>📌</span>
+            <span>查看专题 <code>#标签名</code></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="background: var(--secondary); color: #fff; padding: 40px 0; margin-top: 60px;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;">
+        <div>
+          <h4 style="margin-bottom: 16px;">关于游导</h4>
+          <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.8;">
+            游导旅游是专业的旅行信息平台，为您提供全面的旅游攻略、路线规划和导游服务。
+          </p>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 16px;">快速链接</h4>
+          <ul style="list-style: none; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            <li style="margin-bottom: 8px;"><a href="destinations.html" style="color: inherit;">目的地</a></li>
+            <li style="margin-bottom: 8px;"><a href="routes.html" style="color: inherit;">热门路线</a></li>
+            <li style="margin-bottom: 8px;"><a href="guides.html" style="color: inherit;">导游服务</a></li>
+            <li style="margin-bottom: 8px;"><a href="about.html" style="color: inherit;">关于我们</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 16px;">帮助与支持</h4>
+          <ul style="list-style: none; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            <li style="margin-bottom: 8px;"><a href="help.html" style="color: inherit;">帮助中心</a></li>
+            <li style="margin-bottom: 8px;"><a href="contact.html" style="color: inherit;">联系我们</a></li>
+            <li style="margin-bottom: 8px;"><a href="faq.html" style="color: inherit;">常见问题</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 16px;">联系我们</h4>
+          <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            📧 contact@youdao-travel.com<br>
+            📞 13631149834<br>
+            🕐 工作时间：9:00 - 21:00
+          </p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">
+          © 2024 游导旅游 youdao-travel.com 版权所有
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let currentSearchType = 'all';
+    let selectedChips = [];
+
+    function performSearch() {
+      const keyword = document.getElementById('searchInput').value.trim();
+      if (keyword) {
+        window.location.href = `search-results.html?q=${encodeURIComponent(keyword)}&type=${currentSearchType}`;
+      }
+    }
+
+    function quickSearch(keyword) {
+      document.getElementById('searchInput').value = keyword;
+      performSearch();
+    }
+
+    function selectSearchType(btn) {
+      document.querySelectorAll('.search-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentSearchType = btn.dataset.type;
+    }
+
+    function toggleChip(chip) {
+      chip.classList.toggle('active');
+      const text = chip.textContent;
+      const index = selectedChips.indexOf(text);
+      if (index > -1) {
+        selectedChips.splice(index, 1);
+      } else {
+        selectedChips.push(text);
+      }
+    }
+
+    function clearFilters() {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('.search-type-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('[data-type="all"]').classList.add('active');
+      document.getElementById('searchInput').value = '';
+      document.getElementById('monthFilter').value = '';
+      document.getElementById('seasonFilter').value = '';
+      document.getElementById('minBudget').value = '';
+      document.getElementById('maxBudget').value = '';
+      currentSearchType = 'all';
+      selectedChips = [];
+    }
+
+    function saveCurrentSearch() {
+      const keyword = document.getElementById('searchInput').value.trim();
+      if (keyword) {
+        const saved = JSON.parse(localStorage.getItem('savedSearches') || '[]');
+        if (!saved.includes(keyword)) {
+          saved.unshift(keyword);
+          if (saved.length > 10) saved.pop();
+          localStorage.setItem('savedSearches', JSON.stringify(saved));
+          alert('搜索条件已保存！');
+          location.reload();
+        } else {
+          alert('该搜索条件已保存过');
+        }
+      }
+    }
+
+    function loadSearch(keyword) {
+      document.getElementById('searchInput').value = keyword;
+      performSearch();
+    }
+
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        performSearch();
+      }
+    });
+  </script>
+</body>
+</html>

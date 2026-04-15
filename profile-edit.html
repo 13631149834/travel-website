@@ -3,18 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>账号设置 - 游导旅游 | 个人资料管理</title>
-    <meta name="description" content="管理您的游导旅游账号，设置个人信息、上传头像、修改密码、绑定手机和邮箱。">
-    <meta name="keywords" content="账号设置,个人资料,修改密码,头像上传">
+    <title>游导旅游 - 专业导游预约平台</title>
+    <meta name="description" content="游导旅游是专业的导游预约平台，严选认证导游，让旅行更简单。">
+    <meta name="keywords" content="游导旅游,导游预约,旅游平台,金牌导游">>>
     <meta name="robots" content="noindex, follow">
     <link rel="canonical" href="https://youdao-travel.com/profile-edit.html">
     <link rel="preload" href="css/style.css" as="style">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="stylesheet" href="css/accessibility.css">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/customer-service.css">
   <link rel="stylesheet" href="css/enhanced.css">
   <link rel="stylesheet" href="css/mobile.css">
   <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+	  <link rel="stylesheet" href="css/form/form-components.css">
+	  <link rel="stylesheet" href="css/ux-enhancement.css">
     <style>
         .profile-edit-page {
             max-width: 700px;
@@ -142,7 +145,7 @@
         }
         .emoji-picker-title {
             font-size: 14px;
-            color: #6b7280;
+            color: #D1D5DB;
             margin-bottom: 12px;
             text-align: center;
         }
@@ -507,7 +510,7 @@ select:focus {
 </nav>
 <main id="main-content" role="main">
             <a href="index.html" class="logo">🌍 游导旅游</a>
-            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单" aria-expanded="false" tabindex="0"><span></span></div>
             <div class="nav-links">
                 <a href="index.html">首页</a>
                 <a href="guides.html">🎤 找导游</a>
@@ -517,6 +520,16 @@ select:focus {
             </div>
         </div>
     
+
+    <nav class="breadcrumb" aria-label="面包屑导航">
+        <a href="index.html">首页</a>
+        <span>/</span>
+        <a href="user-center.html">用户中心</a>
+        <span>/</span>
+        <a href="settings.html">个性化设置</a>
+        <span>/</span>
+        <span class="current">编辑资料</span>
+    </nav>
 
     <div class="profile-edit-page">
         <div class="page-header">
@@ -531,7 +544,7 @@ select:focus {
             <div class="avatar-section">
                 <div class="avatar-wrapper">
                     <div class="avatar-display" id="avatarDisplay" onclick="toggleEmojiPicker()">
-                        <span id="avatarEmoji">👤</span>
+                        <span id="avatarEmoji" aria-hidden="true">👤</span>
                     </div>
                     <label class="avatar-upload-btn">
                         📷
@@ -541,7 +554,7 @@ select:focus {
                 
                 <!-- Emoji选择器 -->
                 <div class="emoji-picker" id="emojiPicker">
-                    <span class="emoji-close" onclick="toggleEmojiPicker()">✕</span>
+                    <span class="emoji-close" onclick="toggleEmojiPicker()" aria-hidden="true">✕</span>
                     <div class="emoji-picker-title">选择头像</div>
                     <div class="emoji-grid" id="emojiGrid"></div>
                 </div>
@@ -769,7 +782,7 @@ select:focus {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const avatarDisplay = document.getElementById('avatarDisplay');
-                    avatarDisplay.innerHTML = `<img src="${e.target.result}" alt="头像">`;
+                    avatarDisplay.innerHTML = `<img src="${e.target.result}" alt="头像" loading="lazy">`;
                     localStorage.setItem('userAvatarUrl', e.target.result);
                 };
                 reader.readAsDataURL(file);
@@ -886,5 +899,32 @@ select:focus {
   <script src="js/pwa.js" defer></script>
   <script src="js/mobile.js" defer></script>
   <script src="js/customer-service.js" defer></script>
+  <script src="js/xss-filter.js" defer></script>
+  <script src="js/security/xss-protection.js" defer></script>
+  <script src="js/security/csrf-protection.js" defer></script>
+  <script src="js/security/input-validator.js" defer></script>
+  <script src="js/form/smart-form.js"></script>
+  <script src="js/form/form-init.js"></script>
+  <script>
+    // 个人资料编辑表单智能增强
+    document.addEventListener('DOMContentLoaded', function() {
+      const profileForm = document.getElementById('profileForm') || document.querySelector('form');
+      if (profileForm && window.SmartForm) {
+        new SmartForm(profileForm, {
+          autoSave: { enabled: true },
+          autofill: { enabled: true },
+          history: { enabled: true }
+        });
+      }
+    });
+  </script>
+  
+  <!-- 跳转到个性化设置 -->
+  <div style="text-align: center; padding: 30px; background: #f8fafc; margin-top: 20px;">
+    <p style="color: #64748b; margin-bottom: 12px;">想要更多个性化体验？</p>
+    <a href="settings.html" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #4F86F7 0%, #3B82F6 100%); color: white; border-radius: 10px; text-decoration: none; font-weight: 500;">
+      🎨 前往个性化设置中心
+    </a>
+  </div>
 </body>
 </html>

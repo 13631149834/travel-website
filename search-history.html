@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>搜索历史 - 游导旅游</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <style>
+    :root {
+      --primary: #ff6b35;
+      --primary-dark: #e55a2b;
+      --secondary: #1e3a5f;
+      --accent: #ffd23f;
+      --bg-light: #f8f9fa;
+      --bg-white: #ffffff;
+      --text-dark: #2d3436;
+      --text-gray: #636e72;
+      --text-light: #b2bec3;
+      --border: #e9ecef;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    .page-hero {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: #fff;
+      padding: 60px 0;
+      text-align: center;
+    }
+
+    .page-hero h1 {
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
+    .page-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .content-wrapper {
+      margin-top: -40px;
+      padding: 0 20px 60px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .section-card {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-text {
+      background: none;
+      border: none;
+      color: var(--text-gray);
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-text:hover {
+      background: var(--bg-light);
+      color: #f44336;
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .history-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--bg-light);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .history-item:hover {
+      background: rgba(79, 172, 254, 0.1);
+    }
+
+    .history-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-white);
+      border-radius: 8px;
+      margin-right: 14px;
+      font-size: 1rem;
+      color: var(--text-light);
+    }
+
+    .history-content {
+      flex: 1;
+    }
+
+    .history-keyword {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-dark);
+      margin-bottom: 2px;
+    }
+
+    .history-meta {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .history-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-white);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-light);
+    }
+
+    .action-btn:hover {
+      background: #4facfe;
+      color: #fff;
+    }
+
+    .action-btn.delete:hover {
+      background: #f44336;
+    }
+
+    .time-group {
+      margin-bottom: 20px;
+    }
+
+    .time-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .time-label {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 10px;
+      padding-left: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 8px;
+    }
+
+    .empty-desc {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+      margin-bottom: 20px;
+    }
+
+    .quick-search-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .quick-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--bg-light);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .quick-item:hover {
+      background: rgba(79, 172, 254, 0.1);
+      transform: translateX(4px);
+    }
+
+    .quick-icon {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      border-radius: 10px;
+      margin-right: 12px;
+      font-size: 1.2rem;
+    }
+
+    .quick-info {
+      flex: 1;
+    }
+
+    .quick-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .quick-count {
+      font-size: 0.75rem;
+      color: var(--text-light);
+    }
+
+    .favorite-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .favorite-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      background: var(--bg-light);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .favorite-item:hover {
+      background: rgba(255, 193, 7, 0.1);
+    }
+
+    .favorite-icon {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ffd23f 0%, #ffb347 100%);
+      border-radius: 10px;
+      margin-right: 14px;
+      font-size: 1.2rem;
+    }
+
+    .favorite-content {
+      flex: 1;
+    }
+
+    .favorite-keyword {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin-bottom: 4px;
+    }
+
+    .favorite-meta {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+
+    .favorite-badge {
+      padding: 4px 10px;
+      background: rgba(255, 193, 7, 0.15);
+      color: #ffb347;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background: none;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-gray);
+      transition: all 0.2s;
+    }
+
+    .tab:hover {
+      background: var(--bg-light);
+    }
+
+    .tab.active {
+      background: #4facfe;
+      color: #fff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .modal-btn {
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-btn-cancel {
+      background: var(--bg-light);
+      border: none;
+      color: var(--text-gray);
+    }
+
+    .modal-btn-confirm {
+      background: #f44336;
+      border: none;
+      color: #fff;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--text-dark);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 1001;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 600px) {
+      .history-actions {
+        display: none;
+      }
+
+      .history-item:hover .history-actions {
+        display: flex;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="index.html" class="logo">
+          <span class="logo-icon">🧭</span>
+          <span>游导旅游</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="destinations.html">目的地</a></li>
+          <li><a href="routes.html">路线</a></li>
+          <li><a href="travel-notes.html">游记</a></li>
+          <li><a href="activities.html">活动</a></li>
+          <li><a href="guides.html">导游</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="btn-icon" title="搜索">🔍</button>
+          <button class="btn-icon" title="消息">💬</button>
+          <a href="login.html" class="btn btn-primary">登录</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <div class="container">
+      <h1>📜 搜索历史</h1>
+      <p>管理您的搜索记录，快速回顾感兴趣的旅行内容</p>
+    </div>
+  </section>
+
+  <div class="content-wrapper">
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab(this, 'history')">历史记录</button>
+      <button class="tab" onclick="switchTab(this, 'favorites')">收藏搜索</button>
+      <button class="tab" onclick="switchTab(this, 'quick')">快速搜索</button>
+    </div>
+
+    <div id="history-tab" class="tab-content active">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">🕐 最近搜索</h2>
+          <button class="btn-text" onclick="clearAllHistory()">清空全部</button>
+        </div>
+
+        <div class="time-group">
+          <div class="time-label">今天</div>
+          <div class="history-list">
+            <div class="history-item" onclick="searchKeyword('云南旅游攻略')">
+              <div class="history-icon">🔍</div>
+              <div class="history-content">
+                <div class="history-keyword">云南旅游攻略</div>
+                <div class="history-meta">今天 14:32 · 目的地</div>
+              </div>
+              <div class="history-actions">
+                <button class="action-btn" onclick="addToFavorite(event, '云南旅游攻略')" title="收藏">⭐</button>
+                <button class="action-btn delete" onclick="deleteHistory(event)" title="删除">✕</button>
+              </div>
+            </div>
+            <div class="history-item" onclick="searchKeyword('三亚免税店购物')">
+              <div class="history-icon">🔍</div>
+              <div class="history-content">
+                <div class="history-keyword">三亚免税店购物</div>
+                <div class="history-meta">今天 11:20 · 攻略</div>
+              </div>
+              <div class="history-actions">
+                <button class="action-btn" onclick="addToFavorite(event, '三亚免税店购物')" title="收藏">⭐</button>
+                <button class="action-btn delete" onclick="deleteHistory(event)" title="删除">✕</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-group">
+          <div class="time-label">昨天</div>
+          <div class="history-list">
+            <div class="history-item" onclick="searchKeyword('西藏自驾路线')">
+              <div class="history-icon">🔍</div>
+              <div class="history-content">
+                <div class="history-keyword">西藏自驾路线</div>
+                <div class="history-meta">昨天 22:15 · 路线</div>
+              </div>
+              <div class="history-actions">
+                <button class="action-btn" onclick="addToFavorite(event, '西藏自驾路线')" title="收藏">⭐</button>
+                <button class="action-btn delete" onclick="deleteHistory(event)" title="删除">✕</button>
+              </div>
+            </div>
+            <div class="history-item" onclick="searchKeyword('丽江古城美食')">
+              <div class="history-icon">🔍</div>
+              <div class="history-content">
+                <div class="history-keyword">丽江古城美食</div>
+                <div class="history-meta">昨天 18:45 · 美食</div>
+              </div>
+              <div class="history-actions">
+                <button class="action-btn" onclick="addToFavorite(event, '丽江古城美食')" title="收藏">⭐</button>
+                <button class="action-btn delete" onclick="deleteHistory(event)" title="删除">✕</button>
+              </div>
+            </div>
+            <div class="history-item" onclick="searchKeyword('青海湖住宿推荐')">
+              <div class="history-icon">🔍</div>
+              <div class="history-content">
+                <div class="history-keyword">青海湖住宿推荐</div>
+                <div class="history-meta">昨天 15:30 · 住宿</div>
+              </div>
+              <div class="history-actions">
+                <button class="action-btn" onclick="addToFavorite(event, '青海湖住宿推荐')" title="收藏">⭐</button>
+                <button class="action-btn delete" onclick="deleteHistory(event)" title="删除">✕</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="time-group">
+          <div class="time-label">更早</div>
+          <div class="history-list">
+            <div class="history-item" onclick="searchKeyword('杭州西湖游记')">
+              <div class="history-icon">🔍</div>
+              <div class="history-content">
+                <div class="history-keyword">杭州西湖游记</div>
+                <div class="history-meta">3天前 · 游记</div>
+              </div>
+              <div class="history-actions">
+                <button class="action-btn" onclick="addToFavorite(event, '杭州西湖游记')" title="收藏">⭐</button>
+                <button class="action-btn delete" onclick="deleteHistory(event)" title="删除">✕</button>
+              </div>
+            </div>
+            <div class="history-item" onclick="searchKeyword('川西稻城亚丁')">
+              <div class="history-icon">🔍</div>
+              <div class="history-content">
+                <div class="history-keyword">川西稻城亚丁</div>
+                <div class="history-meta">上周 · 目的地</div>
+              </div>
+              <div class="history-actions">
+                <button class="action-btn" onclick="addToFavorite(event, '川西稻城亚丁')" title="收藏">⭐</button>
+                <button class="action-btn delete" onclick="deleteHistory(event)" title="删除">✕</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="favorites-tab" class="tab-content">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">⭐ 收藏的搜索</h2>
+          <button class="btn-text">清空全部</button>
+        </div>
+
+        <div class="favorite-list">
+          <div class="favorite-item" onclick="searchKeyword('云南丽江古城')">
+            <div class="favorite-icon">⭐</div>
+            <div class="favorite-content">
+              <div class="favorite-keyword">云南丽江古城</div>
+              <div class="favorite-meta">收藏于 2024-01-15</div>
+            </div>
+            <span class="favorite-badge">热门</span>
+            <button class="action-btn delete" style="margin-left: 8px;" onclick="event.stopPropagation()">✕</button>
+          </div>
+
+          <div class="favorite-item" onclick="searchKeyword('西藏自驾游攻略')">
+            <div class="favorite-icon">⭐</div>
+            <div class="favorite-content">
+              <div class="favorite-keyword">西藏自驾游攻略</div>
+              <div class="favorite-meta">收藏于 2024-01-10</div>
+            </div>
+            <span class="favorite-badge">推荐</span>
+            <button class="action-btn delete" style="margin-left: 8px;" onclick="event.stopPropagation()">✕</button>
+          </div>
+
+          <div class="favorite-item" onclick="searchKeyword('三亚亚特兰蒂斯酒店')">
+            <div class="favorite-icon">⭐</div>
+            <div class="favorite-content">
+              <div class="favorite-keyword">三亚亚特兰蒂斯酒店</div>
+              <div class="favorite-meta">收藏于 2024-01-05</div>
+            </div>
+            <button class="action-btn delete" style="margin-left: 8px;" onclick="event.stopPropagation()">✕</button>
+          </div>
+
+          <div class="favorite-item" onclick="searchKeyword('张家界玻璃桥')">
+            <div class="favorite-icon">⭐</div>
+            <div class="favorite-content">
+              <div class="favorite-keyword">张家界玻璃桥</div>
+              <div class="favorite-meta">收藏于 2023-12-28</div>
+            </div>
+            <button class="action-btn delete" style="margin-left: 8px;" onclick="event.stopPropagation()">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="quick-tab" class="tab-content">
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">⚡ 快速搜索</h2>
+        </div>
+        <p style="color: var(--text-gray); font-size: 0.9rem; margin-bottom: 20px;">
+          点击即可快速搜索您感兴趣的内容
+        </p>
+
+        <div class="quick-search-grid">
+          <div class="quick-item" onclick="searchKeyword('云南')">
+            <div class="quick-icon">📍</div>
+            <div class="quick-info">
+              <div class="quick-name">热门目的地</div>
+              <div class="quick-count">云南、西藏、海南...</div>
+            </div>
+          </div>
+
+          <div class="quick-item" onclick="searchKeyword('自驾游')">
+            <div class="quick-icon">🚗</div>
+            <div class="quick-info">
+              <div class="quick-name">自驾路线</div>
+              <div class="quick-count">川藏线、独库公路...</div>
+            </div>
+          </div>
+
+          <div class="quick-item" onclick="searchKeyword('亲子游')">
+            <div class="quick-icon">👨‍👩‍👧</div>
+            <div class="quick-info">
+              <div class="quick-name">亲子旅行</div>
+              <div class="quick-count">适合带孩子的目的地</div>
+            </div>
+          </div>
+
+          <div class="quick-item" onclick="searchKeyword('海岛度假')">
+            <div class="quick-icon">🏝️</div>
+            <div class="quick-info">
+              <div class="quick-name">海岛度假</div>
+              <div class="quick-count">三亚、厦门、青岛...</div>
+            </div>
+          </div>
+
+          <div class="quick-item" onclick="searchKeyword('古镇水乡')">
+            <div class="quick-icon">🏘️</div>
+            <div class="quick-info">
+              <div class="quick-name">古镇水乡</div>
+              <div class="quick-count">乌镇、周村、丽江...</div>
+            </div>
+          </div>
+
+          <div class="quick-item" onclick="searchKeyword('美食之旅')">
+            <div class="quick-icon">🍜</div>
+            <div class="quick-info">
+              <div class="quick-name">美食之旅</div>
+              <div class="quick-count">各地特色美食推荐</div>
+            </div>
+          </div>
+
+          <div class="quick-item" onclick="searchKeyword('避暑圣地')">
+            <div class="quick-icon">🌲</div>
+            <div class="quick-info">
+              <div class="quick-name">避暑圣地</div>
+              <div class="quick-count">夏季清凉好去处</div>
+            </div>
+          </div>
+
+          <div class="quick-item" onclick="searchKeyword('摄影天堂')">
+            <div class="quick-icon">📷</div>
+            <div class="quick-info">
+              <div class="quick-name">摄影天堂</div>
+              <div class="quick-count">最佳拍照地点推荐</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">🏷️ 热门标签</h2>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+          <span onclick="searchKeyword('自由行')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">自由行</span>
+          <span onclick="searchKeyword('跟团游')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">跟团游</span>
+          <span onclick="searchKeyword('定制游')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">定制游</span>
+          <span onclick="searchKeyword('穷游')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">穷游</span>
+          <span onclick="searchKeyword('奢华游')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">奢华游</span>
+          <span onclick="searchKeyword('周末游')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">周末游</span>
+          <span onclick="searchKeyword('小长假')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">小长假</span>
+          <span onclick="searchKeyword('出境游')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">出境游</span>
+          <span onclick="searchKeyword('境内游')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">境内游</span>
+          <span onclick="searchKeyword('徒步')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">徒步</span>
+          <span onclick="searchKeyword('露营')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">露营</span>
+          <span onclick="searchKeyword('滑雪')" style="padding: 8px 16px; background: var(--bg-light); border-radius: 20px; font-size: 0.9rem; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background='#4facfe';this.style.color='#fff'" onmouseout="this.style.background='var(--bg-light)';this.style.color='var(--text-dark)'">滑雪</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="clearModal">
+    <div class="modal">
+      <div class="modal-title">确定清空所有搜索历史？</div>
+      <p style="color: var(--text-gray); font-size: 0.9rem;">
+        清空后无法恢复，您确定要继续吗？
+      </p>
+      <div class="modal-actions">
+        <button class="modal-btn modal-btn-cancel" onclick="closeModal()">取消</button>
+        <button class="modal-btn modal-btn-confirm" onclick="confirmClear()">确定清空</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">操作成功</div>
+
+  <footer style="background: var(--secondary); color: #fff; padding: 40px 0; margin-top: 60px;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px;">
+        <div>
+          <h4 style="margin-bottom: 16px;">关于游导</h4>
+          <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem; line-height: 1.8;">
+            游导旅游是专业的旅行信息平台，为您提供全面的旅游攻略、路线规划和导游服务。
+          </p>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 16px;">快速链接</h4>
+          <ul style="list-style: none; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            <li style="margin-bottom: 8px;"><a href="destinations.html" style="color: inherit;">目的地</a></li>
+            <li style="margin-bottom: 8px;"><a href="routes.html" style="color: inherit;">热门路线</a></li>
+            <li style="margin-bottom: 8px;"><a href="guides.html" style="color: inherit;">导游服务</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 16px;">帮助与支持</h4>
+          <ul style="list-style: none; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            <li style="margin-bottom: 8px;"><a href="help.html" style="color: inherit;">帮助中心</a></li>
+            <li style="margin-bottom: 8px;"><a href="contact.html" style="color: inherit;">联系我们</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="margin-bottom: 16px;">联系我们</h4>
+          <p style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+            📧 contact@youdao-travel.com<br>
+            📞 13631149834
+          </p>
+        </div>
+      </div>
+      <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+        <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem;">
+          © 2024 游导旅游 youdao-travel.com 版权所有
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function searchKeyword(keyword) {
+      window.location.href = `search-results.html?q=${encodeURIComponent(keyword)}`;
+    }
+
+    function switchTab(btn, tabId) {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(tabId + '-tab').classList.add('active');
+    }
+
+    function clearAllHistory() {
+      document.getElementById('clearModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('clearModal').classList.remove('show');
+    }
+
+    function confirmClear() {
+      closeModal();
+      showToast('已清空全部搜索历史');
+      // In real app, would clear the data here
+    }
+
+    function deleteHistory(event) {
+      event.stopPropagation();
+      const item = event.target.closest('.history-item');
+      item.style.opacity = '0';
+      item.style.transform = 'translateX(20px)';
+      setTimeout(() => {
+        item.remove();
+      }, 200);
+      showToast('已删除');
+    }
+
+    function addToFavorite(event, keyword) {
+      event.stopPropagation();
+      showToast(`已将"${keyword}"添加到收藏`);
+      event.target.style.color = '#ffd23f';
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

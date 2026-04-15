@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preload" href="css/style.css" as="style">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="stylesheet" href="css/accessibility.css">
+  <link rel="stylesheet" href="css/quick-actions.css">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/enhanced.css">
   <link rel="stylesheet" href="css/mobile.css">
@@ -84,6 +86,87 @@
       color: #fff;
     }
     
+    /* 高级过滤器 */
+    .advanced-filters {
+      margin-top: 16px;
+      padding: 16px 20px;
+      background: #f9fafb;
+      border-radius: 12px;
+      display: none;
+    }
+    .advanced-filters.show {
+      display: block;
+    }
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #667eea;
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 8px 0;
+    }
+    .filter-toggle:hover {
+      text-decoration: underline;
+    }
+    .filter-toggle .arrow {
+      transition: transform 0.3s;
+    }
+    .filter-toggle.active .arrow {
+      transform: rotate(180deg);
+    }
+    
+    .filter-group {
+      margin-bottom: 12px;
+    }
+    .filter-group:last-child {
+      margin-bottom: 0;
+    }
+    .filter-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: #D1D5DB;
+      margin-bottom: 6px;
+    }
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .filter-option {
+      padding: 6px 12px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-option:hover {
+      border-color: #667eea;
+    }
+    .filter-option.active {
+      background: #667eea;
+      color: #fff;
+      border-color: #667eea;
+    }
+    .price-range-inputs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .price-range-inputs input {
+      width: 80px;
+      padding: 6px 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.85rem;
+    }
+    .price-range-inputs input:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+    
     /* 热门搜索 */
     .hot-searches {
       margin-top: 30px;
@@ -94,7 +177,7 @@
     .hot-searches h3 {
       font-size: 1rem;
       margin-bottom: 12px;
-      color: #6b7280;
+      color: #D1D5DB;
     }
     .hot-tags {
       display: flex;
@@ -135,7 +218,7 @@
       font-size: 1.2rem;
     }
     .results-count {
-      color: #6b7280;
+      color: #D1D5DB;
       font-size: 0.9rem;
     }
     
@@ -190,7 +273,7 @@
     }
     .result-info p {
       font-size: 0.85rem;
-      color: #6b7280;
+      color: #D1D5DB;
     }
     .result-tag {
       padding: 4px 10px;
@@ -203,11 +286,50 @@
     .no-results {
       text-align: center;
       padding: 60px 20px;
-      color: #6b7280;
+      color: #D1D5DB;
     }
     .no-results .icon {
       font-size: 4rem;
       margin-bottom: 16px;
+    }
+    .no-results h3 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      color: #374151;
+    }
+    .no-results p {
+      margin-bottom: 20px;
+    }
+    .no-results .suggestions {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f9fafb;
+      border-radius: 12px;
+      text-align: left;
+    }
+    .no-results .suggestions h4 {
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+      color: #D1D5DB;
+    }
+    .no-results .suggestion-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .no-results .suggestion-item {
+      padding: 8px 14px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .no-results .suggestion-item:hover {
+      background: #667eea;
+      color: #fff;
+      border-color: #667eea;
     }
     
     /* 搜索建议 */
@@ -224,6 +346,21 @@
       overflow-y: auto;
     }
     .search-suggestions.show { display: block; }
+    .suggestion-group {
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .suggestion-group:last-child {
+      border-bottom: none;
+    }
+    .suggestion-group-title {
+      padding: 8px 16px;
+      font-size: 0.75rem;
+      color: #9ca3af;
+      background: #f9fafb;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
     .suggestion-item {
       padding: 12px 16px;
       cursor: pointer;
@@ -233,7 +370,7 @@
       align-items: center;
       gap: 10px;
     }
-    .suggestion-item:hover {
+    .suggestion-item:hover, .suggestion-item.active {
       background: #f3f4f6;
     }
     .suggestion-item .highlight {
@@ -253,6 +390,12 @@
       padding: 2px 8px;
       border-radius: 10px;
     }
+    .suggestion-empty {
+      padding: 20px;
+      text-align: center;
+      color: #9ca3af;
+      font-size: 0.9rem;
+    }
     
     /* 搜索历史 */
     .search-history {
@@ -264,7 +407,7 @@
     }
     .search-history h4 {
       font-size: 0.95rem;
-      color: #6b7280;
+      color: #D1D5DB;
       margin-bottom: 12px;
       display: flex;
       align-items: center;
@@ -342,7 +485,7 @@
     .search-loading {
       text-align: center;
       padding: 40px;
-      color: #6b7280;
+      color: #9ca3af;
     }
     .search-loading .spinner {
       width: 40px;
@@ -353,8 +496,295 @@
       animation: spin 0.8s linear infinite;
       margin: 0 auto 16px;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    
+    /* 搜索纠错提示 */
+    .search-correction {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border: 1px solid #fbbf24;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: #92400e;
+    }
+    .search-correction .icon { font-size: 1.2rem; }
+    .search-correction .corrected {
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .search-correction .corrected:hover {
+      color: #d97706;
+    }
+    
+    /* 隐私模式切换 */
+    .privacy-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+      font-size: 0.8rem;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 6px 12px;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+    .privacy-toggle:hover {
+      background: #f3f4f6;
+    }
+    .privacy-toggle.active {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+    .privacy-toggle .toggle-switch {
+      width: 36px;
+      height: 20px;
+      background: #d1d5db;
+      border-radius: 10px;
+      position: relative;
+      transition: all 0.2s;
+    }
+    .privacy-toggle.active .toggle-switch {
+      background: #ef4444;
+    }
+    .privacy-toggle .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      background: #fff;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: all 0.2s;
+    }
+    .privacy-toggle.active .toggle-switch::after {
+      left: 18px;
+    }
+    
+    /* 搜索分析面板样式 */
+    .analytics-panel {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-top: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .analytics-panel h3 {
+      font-size: 1.1rem;
+      color: #374151;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .analytics-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 16px;
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      border-radius: 12px;
+    }
+    .stat-value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #667eea;
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .analytics-section {
+      margin-bottom: 16px;
+    }
+    .analytics-section h4 {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    .top-searches {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .top-search-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 12px;
+      background: #f9fafb;
+      border-radius: 8px;
+    }
+    .top-search-item .rank {
+      width: 20px;
+      height: 20px;
+      background: #667eea;
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .top-search-item .keyword {
+      flex: 1;
+      font-size: 0.9rem;
+    }
+    .top-search-item .count {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    .no-result-words {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .no-result-tag {
+      padding: 4px 12px;
+      background: #fef2f2;
+      color: #dc2626;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+    .suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .suggestion-item {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+    }
+    .suggestion-item.warning {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .suggestion-item.info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    .suggestion-item.tip {
+      background: #d1fae5;
+      color: #065f46;
+    }
+    
+    /* 排序选项 */
+    .sort-options {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: auto;
+    }
+    .sort-select {
+      padding: 6px 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      background: #fff;
+      cursor: pointer;
+    }
+    .sort-select:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+    
+    /* 热门搜索排行样式 */
+    .hot-tag.rank-1 { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+    .hot-tag.rank-2 { background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%); }
+    .hot-tag.rank-3 { background: linear-gradient(135deg, #fef3c7 0%, #fecaca 100%); }
+    .hot-tag .rank { margin-right: 4px; }
+    .hot-tag .trend { font-size: 0.7rem; margin-left: 4px; }
+    
+    /* 结果卡片优化 */
+    .result-item {
+      position: relative;
+    }
+    .result-item .match-score {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 0.7rem;
+      color: #10b981;
+      background: #d1fae5;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .result-item .result-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .result-item .meta-tag {
+      padding: 2px 8px;
+      background: #f3f4f6;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+    
+    /* 结果分类导航优化 */
+    .result-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 2px solid #f3f4f6;
+      padding-bottom: 12px;
+    }
+    .result-tab {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: transparent;
+      color: #6b7280;
+    }
+    .result-tab:hover {
+      background: #f3f4f6;
+    }
+    .result-tab.active {
+      background: #667eea;
+      color: #fff;
+    }
+    .result-tab .count {
+      margin-left: 4px;
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+    
+    /* 移动端优化 */
+    @media (max-width: 768px) {
+      .analytics-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .privacy-toggle {
+        margin-left: 0;
+        margin-top: 12px;
+      }
+      .sort-options {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      .result-tabs {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+      .result-tab {
+        white-space: nowrap;
+      }
     }
     
     /* 相关搜索 */
@@ -363,7 +793,7 @@
     }
     .related-searches h4 {
       font-size: 0.9rem;
-      color: #6b7280;
+      color: #9ca3af;
       margin-bottom: 8px;
     }
     .related-tags {
@@ -391,6 +821,28 @@
       }
       .search-input-group button {
         width: 100%;
+      }
+      .advanced-filters {
+        padding: 12px;
+      }
+      .filter-group label {
+        font-size: 0.8rem;
+      }
+      .filter-options {
+        gap: 6px;
+      }
+      .filter-option {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+      }
+      .no-results {
+        padding: 40px 16px;
+      }
+      .no-results .icon {
+        font-size: 3rem;
+      }
+      .suggestion-item .suggestion-type {
+        display: none;
       }
     }
   
@@ -447,9 +899,9 @@ select:focus {
 
 </style>
   <!-- SEO Meta Tags -->
-  <title>搜索 - 游导旅游 | 搜索目的地、导游、线路</title>
-  <meta name="description" content="搜索游导旅游平台上的目的地、导游、线路等内容，快速找到您需要的信息。">
-  <meta name="keywords" content="搜索,目的地搜索,导游搜索,线路搜索">
+  <title>游导旅游 - 专业导游预约平台</title>
+  <meta name="description" content="游导旅游是专业的导游预约平台，严选认证导游，让旅行更简单。">
+  <meta name="keywords" content="游导旅游,导游预约,旅游平台,金牌导游">>
   <meta name="author" content="游导旅游">
   <meta name="robots" content="index, follow">
   <meta name="googlebot" content="index, follow">
@@ -488,7 +940,7 @@ select:focus {
     ],
     "contactPoint": {
       "@type": "ContactPoint",
-      "telephone": "+86-400-888-8888",
+      "telephone": "+86-13631149834",
       "contactType": "customer service",
       "availableLanguage": ["Chinese", "English"]
     }
@@ -574,7 +1026,7 @@ select:focus {
   <nav class="navbar" aria-label="主导航">
     <div class="container nav-container">
       <a href="index.html" class="logo">🌍 游导旅游</a>
-      <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+      <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单" aria-expanded="false" tabindex="0"><span></span></div>
       <div class="nav-links">
         <div class="nav-dropdown">
           <a href="javascript:void(0)" class="nav-dropdown-toggle">🌍 发现旅行 ▾</a>
@@ -628,6 +1080,40 @@ select:focus {
         <button class="filter-btn" data-filter="article">📖 攻略</button>
       </div>
       
+      <!-- 高级过滤器切换 -->
+      <div class="filter-toggle" id="filterToggle" onclick="toggleAdvancedFilters()">
+        <span class="arrow">▼</span> 高级筛选
+      </div>
+      
+      <!-- 高级过滤器 -->
+      <div class="advanced-filters" id="advancedFilters">
+        <!-- 价格范围 -->
+        <div class="filter-group" id="priceFilter">
+          <label>💰 价格范围</label>
+          <div class="filter-options" id="priceOptions">
+            <span class="filter-option" data-min="0" data-max="5000">5000以下</span>
+            <span class="filter-option" data-min="5000" data-max="10000">5000-10000</span>
+            <span class="filter-option" data-min="10000" data-max="20000">10000-20000</span>
+            <span class="filter-option" data-min="20000" data-max="50000">20000-50000</span>
+            <span class="filter-option" data-min="50000" data-max="999999">50000以上</span>
+          </div>
+        </div>
+        
+        <!-- 评分过滤 -->
+        <div class="filter-group" id="ratingFilter">
+          <label>⭐ 评分要求</label>
+          <div class="filter-options" id="ratingOptions">
+            <span class="filter-option" data-rating="4.5">4.5分以上</span>
+            <span class="filter-option" data-rating="4.0">4.0分以上</span>
+            <span class="filter-option" data-rating="3.5">3.5分以上</span>
+            <span class="filter-option" data-rating="0">不限</span>
+          </div>
+        </div>
+        
+        <!-- 重置筛选 -->
+        <button class="filter-reset" onclick="resetFilters()" style="margin-top: 12px; padding: 8px 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; cursor: pointer;">🔄 重置筛选</button>
+      </div>
+      
       <div class="hot-searches">
         <h3>🔥 热门搜索</h3>
         <div class="hot-tags" id="hotTags">
@@ -644,18 +1130,47 @@ select:focus {
       
       <!-- 搜索历史 -->
       <div class="search-history" id="searchHistory" style="display:none;">
-        <h4>🕐 搜索历史 <span class="clear-btn" onclick="clearHistory()">清除全部</span></h4>
+        <h4>
+          🕐 搜索历史 
+          <span class="clear-btn" onclick="clearHistory()">清除全部</span>
+          <span class="privacy-toggle" id="privacyToggle" onclick="togglePrivacyMode()">
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">隐私模式</span>
+          </span>
+        </h4>
         <div class="history-tags" id="historyTags"></div>
       </div>
+      
+      <!-- 搜索分析入口 -->
+      <div class="search-history" id="searchAnalyticsEntry" style="display:none;">
+        <h4>📊 搜索分析 <span class="clear-btn" onclick="showAnalyticsPanel()">查看详情</span></h4>
+        <div id="analyticsPreview"></div>
+      </div>
     </div>
+  </div>
+
+  <!-- 搜索分析面板 -->
+  <div class="search-results">
+    <div id="analyticsPanel" style="display:none;"></div>
   </div>
 
   <!-- 搜索结果 -->
   <div class="search-results" id="searchResults">
     <div class="no-results" id="noResults" style="display:none">
       <div class="icon">🔍</div>
-      <h3>未找到相关结果</h3>
+      <h3>未找到" <span id="noResultsKeyword"></span> "的相关结果</h3>
       <p>换个关键词试试，或浏览以下推荐内容</p>
+      <div class="suggestions">
+        <h4>💡 您可以尝试：</h4>
+        <div class="suggestion-list">
+          <span class="suggestion-item" onclick="searchHot('日本')">日本</span>
+          <span class="suggestion-item" onclick="searchHot('泰国')">泰国</span>
+          <span class="suggestion-item" onclick="searchHot('欧洲')">欧洲</span>
+          <span class="suggestion-item" onclick="searchHot('签证')">签证办理</span>
+          <span class="suggestion-item" onclick="searchHot('导游')">寻找导游</span>
+          <span class="suggestion-item" onclick="searchHot('海岛')">海岛度假</span>
+        </div>
+      </div>
     </div>
   </div>
   </main>
@@ -677,12 +1192,71 @@ select:focus {
           <a href="contact.html">联系我们</a>
           <a href="wechat-contact.html">微信咨询</a>
         </div>
-      <div><h4>联系我们</h4><p>📧 2173381363@qq.com</p><p>💬 微信：ximao101</p><p>🌐 youdao-travel.com</p></div></div>
+      <div><h4>联系我们</h4><p>📧 service@youdao-travel.com</p><p>💬 微信：ximao101</p><p>🌐 youdao-travel.com</p></div></div>
       <div class="footer-bottom">
         <p>© 2024 游导旅游 · 让旅行更简单</p>
       </div>
     </div>
   </footer>
+
+
+  <!-- ===== 悬浮快捷按钮 ===== -->
+  <div class="quick-float-actions" aria-label="快捷操作">
+    <div class="float-menu-expand">
+      <button class="float-action-btn float-expand-trigger" aria-label="更多操作">
+        <span class="expand-icon">+</span>
+      </button>
+      <div class="float-expand-menu">
+        <a href="guide-apply.html" class="expand-menu-item"><span>🎤</span><span>成为导游</span></a>
+        <a href="promotions.html" class="expand-menu-item"><span>🎁</span><span>领取优惠</span></a>
+        <a href="help.html" class="expand-menu-item"><span>❓</span><span>帮助中心</span></a>
+      </div>
+    </div>
+    <button class="float-action-btn float-btn-customer" onclick="QuickActions.openCustomerService()"><span class="service-pulse"></span><span>💬</span></button>
+    <button class="float-action-btn float-btn-booking" onclick="QuickActions.openQuickBooking()"><span>📅</span></button>
+    <button class="float-action-btn float-btn-feedback" onclick="window.location.href='feedback.html'"><span>📝</span></button>
+    <button class="float-action-btn float-btn-backtop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><span>↑</span></button>
+  </div>
+
+  <!-- ===== 快速预约弹窗 ===== -->
+  <div class="quick-booking-popup" role="dialog" aria-labelledby="bookingTitle">
+    <div class="quick-booking-header">
+      <h3 class="quick-booking-title" id="bookingTitle">快速预约导游</h3>
+      <button class="quick-booking-close" onclick="QuickActions.closeBooking()">×</button>
+    </div>
+    <div class="quick-booking-body">
+      <form class="quick-booking-form" onsubmit="QuickActions.submitBooking(event)">
+        <div class="form-group"><input type="text" name="name" placeholder="您的姓名" required></div>
+        <div class="form-group"><input type="tel" name="phone" placeholder="手机号码" required></div>
+        <div class="form-group">
+          <select name="destination" required>
+            <option value="">选择目的地</option>
+            <option value="japan">日本</option><option value="korea">韩国</option>
+            <option value="europe">欧洲</option><option value="southeast">东南亚</option>
+            <option value="australia">澳洲</option><option value="usa">美国</option>
+            <option value="other">其他</option>
+          </select>
+        </div>
+        <div class="form-group"><input type="date" name="date" required></div>
+        <div class="form-group"><input type="number" name="people" placeholder="出行人数" min="1" max="20" value="1" required></div>
+        <button type="submit" class="quick-booking-submit">立即预约</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== 移动端底部导航 ===== -->
+  <nav class="mobile-bottom-nav" aria-label="底部导航">
+    <div class="bottom-nav-items">
+      <a href="index.html" class="bottom-nav-item"><span class="nav-icon">🏠</span><span class="nav-label">首页</span></a>
+      <a href="guides.html" class="bottom-nav-item"><span class="nav-icon">🎤</span><span class="nav-label">找导游</span></a>
+      <a href="javascript:;" class="bottom-nav-item bottom-nav-quick-btn" onclick="QuickActions.openQuickBooking()"><span class="nav-icon">📅</span><span class="nav-label">预约</span></a>
+      <a href="promotions.html" class="bottom-nav-item"><span class="nav-icon">🎁</span><span class="nav-label">优惠</span></a>
+      <a href="user-center.html" class="bottom-nav-item"><span class="nav-icon">👤</span><span class="nav-label">我的</span></a>
+    </div>
+  </nav>
+
+  <!-- ===== Toast提示 ===== -->
+  <div class="quick-action-toast" role="alert" aria-live="polite"></div>
 
   <script src="js/common.js" defer></script>
   <script src="js/chatbot.js" defer></script>
@@ -703,53 +1277,56 @@ select:focus {
     </div>
   </div>
 
+  <!-- 智能搜索模块 -->
+  <script src="js/search/smart-search.js"></script>
+  
   <script>
     // 搜索数据
     const searchData = {
       guides: [
-        { name: '张明导游', country: '日本', lang: '日语/中文', rating: 4.9, link: 'guide-detail.html?id=1' },
-        { name: '小林导游', country: '日本', lang: '日语/中文', rating: 4.8, link: 'guide-detail.html?id=2' },
-        { name: '阿勇导游', country: '泰国', lang: '泰语/中文', rating: 4.9, link: 'guide-detail.html?id=3' },
-        { name: 'Marie导游', country: '法国', lang: '法语/中文', rating: 4.7, link: 'guide-detail.html?id=4' },
-        { name: 'Carlos导游', country: '西班牙', lang: '西语/英语', rating: 4.8, link: 'guide-detail.html?id=5' },
-        { name: '李导游', country: '澳大利亚', lang: '英语/中文', rating: 4.6, link: 'guide-detail.html?id=6' },
-        { name: '王导', country: '美国', lang: '中文/英语', rating: 4.9, link: 'guide-detail.html?id=7' },
-        { name: '韩导游', country: '韩国', lang: '韩语/中文', rating: 4.8, link: 'guide-detail.html?id=8' },
+        { name: '张明导游', country: '日本', lang: '日语/中文', rating: 4.9, price: 800, link: 'guide-detail.html?id=1' },
+        { name: '小林导游', country: '日本', lang: '日语/中文', rating: 4.8, price: 700, link: 'guide-detail.html?id=2' },
+        { name: '阿勇导游', country: '泰国', lang: '泰语/中文', rating: 4.9, price: 600, link: 'guide-detail.html?id=3' },
+        { name: 'Marie导游', country: '法国', lang: '法语/中文', rating: 4.7, price: 900, link: 'guide-detail.html?id=4' },
+        { name: 'Carlos导游', country: '西班牙', lang: '西语/英语', rating: 4.8, price: 850, link: 'guide-detail.html?id=5' },
+        { name: '李导游', country: '澳大利亚', lang: '英语/中文', rating: 4.6, price: 750, link: 'guide-detail.html?id=6' },
+        { name: '王导', country: '美国', lang: '中文/英语', rating: 4.9, price: 1000, link: 'guide-detail.html?id=7' },
+        { name: '韩导游', country: '韩国', lang: '韩语/中文', rating: 4.8, price: 650, link: 'guide-detail.html?id=8' },
       ],
       attractions: [
-        { name: '富士山', country: '日本', desc: '日本最高峰，世界文化遗产', link: 'wonders.html?id=fuji' },
-        { name: '大皇宫', country: '泰国', desc: '曼谷标志性建筑，泰王室居住地', link: 'wonders.html?id=grand-palace' },
-        { name: '埃菲尔铁塔', country: '法国', desc: '巴黎地标，世界著名铁塔', link: 'wonders.html?id=eiffel' },
-        { name: '金字塔', country: '埃及', desc: '古代世界七大奇迹之一', link: 'wonders.html?id=pyramid' },
-        { name: '马尔代夫', country: '马尔代夫', desc: '度假胜地，海岛天堂', link: 'wonders.html?id=maldives' },
-        { name: '悉尼歌剧院', country: '澳大利亚', desc: '澳大利亚地标建筑', link: 'wonders.html?id=sydney-opera' },
-        { name: '自由女神像', country: '美国', desc: '纽约标志性雕像', link: 'wonders.html?id=liberty' },
-        { name: '长城', country: '中国', desc: '世界七大奇迹之一', link: 'wonders.html?id=greatwall' },
+        { name: '富士山', country: '日本', desc: '日本最高峰，世界文化遗产', rating: 4.8, price: 0, link: 'wonders.html?id=fuji' },
+        { name: '大皇宫', country: '泰国', desc: '曼谷标志性建筑，泰王室居住地', rating: 4.7, price: 0, link: 'wonders.html?id=grand-palace' },
+        { name: '埃菲尔铁塔', country: '法国', desc: '巴黎地标，世界著名铁塔', rating: 4.9, price: 0, link: 'wonders.html?id=eiffel' },
+        { name: '金字塔', country: '埃及', desc: '古代世界七大奇迹之一', rating: 4.8, price: 0, link: 'wonders.html?id=pyramid' },
+        { name: '马尔代夫', country: '马尔代夫', desc: '度假胜地，海岛天堂', rating: 4.9, price: 0, link: 'wonders.html?id=maldives' },
+        { name: '悉尼歌剧院', country: '澳大利亚', desc: '澳大利亚地标建筑', rating: 4.7, price: 0, link: 'wonders.html?id=sydney-opera' },
+        { name: '自由女神像', country: '美国', desc: '纽约标志性雕像', rating: 4.8, price: 0, link: 'wonders.html?id=liberty' },
+        { name: '长城', country: '中国', desc: '世界七大奇迹之一', rating: 4.9, price: 0, link: 'wonders.html?id=greatwall' },
       ],
       routes: [
-        { name: '日本7日深度游', desc: '东京-京都-大阪经典线路', price: '¥12,800起', link: 'route-detail.html?id=jp7' },
-        { name: '泰国6日游', desc: '曼谷-清迈-普吉岛精选', price: '¥5,800起', link: 'route-detail.html?id=th6' },
-        { name: '欧洲10日经典', desc: '法德意瑞四国连线', price: '¥22,800起', link: 'route-detail.html?id=eu10' },
-        { name: '马尔代夫5日度假', desc: '岛屿酒店全包', price: '¥18,800起', link: 'route-detail.html?id=maldives5' },
-        { name: '韩国5日首尔游', desc: '首尔购物美食之旅', price: '¥4,500起', link: 'route-detail.html?id=korea5' },
-        { name: '美国东西海岸14日', desc: '纽约-华盛顿-洛杉矶-旧金山', price: '¥28,800起', link: 'route-detail.html?id=usa14' },
+        { name: '日本7日深度游', desc: '东京-京都-大阪经典线路', price: '¥12,800起', priceNum: 12800, rating: 4.8, link: 'route-detail.html?id=jp7' },
+        { name: '泰国6日游', desc: '曼谷-清迈-普吉岛精选', price: '¥5,800起', priceNum: 5800, rating: 4.7, link: 'route-detail.html?id=th6' },
+        { name: '欧洲10日经典', desc: '法德意瑞四国连线', price: '¥22,800起', priceNum: 22800, rating: 4.9, link: 'route-detail.html?id=eu10' },
+        { name: '马尔代夫5日度假', desc: '岛屿酒店全包', price: '¥18,800起', priceNum: 18800, rating: 4.9, link: 'route-detail.html?id=maldives5' },
+        { name: '韩国5日首尔游', desc: '首尔购物美食之旅', price: '¥4,500起', priceNum: 4500, rating: 4.6, link: 'route-detail.html?id=korea5' },
+        { name: '美国东西海岸14日', desc: '纽约-华盛顿-洛杉矶-旧金山', price: '¥28,800起', priceNum: 28800, rating: 4.8, link: 'route-detail.html?id=usa14' },
       ],
       visas: [
-        { name: '日本签证', type: '贴纸签/电子签', duration: '7-10工作日', link: 'visa.html' },
-        { name: '泰国签证', type: '落地签/贴纸签', duration: '落地即办', link: 'visa.html' },
-        { name: '申根签证', type: '法国/德国/意大利', duration: '10-15工作日', link: 'visa.html' },
-        { name: '美国签证', type: 'B1/B2旅游签', duration: '面签后5-7日', link: 'visa.html' },
-        { name: '澳大利亚签证', type: '访客签证600', duration: '20-30工作日', link: 'visa.html' },
-        { name: '韩国签证', type: '单次/多次', duration: '5-7工作日', link: 'visa.html' },
-        { name: '英国签证', type: '标准访客签', duration: '15-21工作日', link: 'visa.html' },
+        { name: '日本签证', type: '贴纸签/电子签', duration: '7-10工作日', rating: 4.7, price: 200, link: 'visa.html' },
+        { name: '泰国签证', type: '落地签/贴纸签', duration: '落地即办', rating: 4.5, price: 250, link: 'visa.html' },
+        { name: '申根签证', type: '法国/德国/意大利', duration: '10-15工作日', rating: 4.8, price: 800, link: 'visa.html' },
+        { name: '美国签证', type: 'B1/B2旅游签', duration: '面签后5-7日', rating: 4.6, price: 1200, link: 'visa.html' },
+        { name: '澳大利亚签证', type: '访客签证600', duration: '20-30工作日', rating: 4.4, price: 700, link: 'visa.html' },
+        { name: '韩国签证', type: '单次/多次', duration: '5-7工作日', rating: 4.5, price: 180, link: 'visa.html' },
+        { name: '英国签证', type: '标准访客签', duration: '15-21工作日', rating: 4.3, price: 900, link: 'visa.html' },
       ],
       articles: [
-        { name: '日本旅行全攻略', desc: '行前准备/景点推荐/美食攻略', link: 'tips.html' },
-        { name: '泰国旅游避坑指南', desc: '常见骗局/防坑技巧', link: 'pitfall.html' },
-        { name: '欧洲申根签证详解', desc: '申请流程/材料准备', link: 'visa.html' },
-        { name: '海岛度假攻略', desc: '马尔代夫/普吉岛/塞班岛', link: 'tips.html' },
-        { name: '美国签证申请指南', desc: 'DS160填写/面签技巧', link: 'visa.html' },
-        { name: '旅行打包技巧', desc: '行李收纳/必备物品清单', link: 'tips.html' },
+        { name: '日本旅行全攻略', desc: '行前准备/景点推荐/美食攻略', rating: 4.9, price: 0, link: 'tips.html' },
+        { name: '泰国旅游避坑指南', desc: '常见骗局/防坑技巧', rating: 4.8, price: 0, link: 'pitfall.html' },
+        { name: '欧洲申根签证详解', desc: '申请流程/材料准备', rating: 4.7, price: 0, link: 'visa.html' },
+        { name: '海岛度假攻略', desc: '马尔代夫/普吉岛/塞班岛', rating: 4.9, price: 0, link: 'tips.html' },
+        { name: '美国签证申请指南', desc: 'DS160填写/面签技巧', rating: 4.6, price: 0, link: 'visa.html' },
+        { name: '旅行打包技巧', desc: '行李收纳/必备物品清单', rating: 4.5, price: 0, link: 'tips.html' },
       ]
     };
     
@@ -785,6 +1362,10 @@ select:focus {
     // 当前筛选
     let currentFilter = 'all';
     let currentKeyword = '';
+    let currentPriceMin = 0;
+    let currentPriceMax = 999999;
+    let currentRating = 0;
+    let currentSuggestionIndex = -1;
     
     // 搜索历史管理
     const HISTORY_KEY = 'search_history';
@@ -835,7 +1416,7 @@ select:focus {
         tagsContainer.innerHTML = history.map(h => `
           <span class="history-tag" onclick="selectSuggestion('${h}')">
             ${h}
-            <span class="del-icon" onclick="event.stopPropagation(); deleteHistory('${h}')">✕</span>
+            <span class="del-icon" onclick="event.stopPropagation(); deleteHistory('${h}')" aria-hidden="true">✕</span>
           </span>
         `).join('');
       } else {
@@ -851,12 +1432,37 @@ select:focus {
       // 渲染搜索历史
       renderHistory();
       
+      // 初始化隐私模式
+      initPrivacyMode();
+      
+      // 更新分析预览
+      updateAnalyticsPreview();
+      
+      // 初始化智能搜索模块
+      if (typeof SmartSearch !== 'undefined' && searchData) {
+        // 转换数据格式以适配智能搜索
+        const smartSearchData = {
+          guide: searchData.guides,
+          attraction: searchData.attractions,
+          route: searchData.routes,
+          visa: searchData.visas,
+          article: searchData.articles
+        };
+        SmartSearch.init(smartSearchData);
+        
+        // 初始化热门搜索
+        if (typeof HotSearches !== 'undefined') {
+          HotSearches.render('hotTags', (keyword) => searchHot(keyword));
+        }
+      }
+      
       // 自动补全
       let debounceTimer;
       input.addEventListener('input', (e) => {
         clearTimeout(debounceTimer);
         debounceTimer = setTimeout(() => {
           const keyword = e.target.value.trim();
+          currentSuggestionIndex = -1;
           if (keyword.length > 0) {
             showSuggestions(keyword);
           } else {
@@ -870,7 +1476,24 @@ select:focus {
         if (e.key === 'Enter') {
           e.preventDefault();
           suggestions.classList.remove('show');
+          // 如果有选中的建议，使用建议
+          if (currentSuggestionIndex >= 0) {
+            const activeItem = suggestions.querySelector('.suggestion-item.active');
+            if (activeItem) {
+              selectSuggestion(activeItem.textContent.trim());
+              return;
+            }
+          }
           performSearch();
+        }
+        // 上下箭头导航建议
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          navigateSuggestions(1);
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          navigateSuggestions(-1);
         }
       });
       
@@ -878,6 +1501,7 @@ select:focus {
       document.addEventListener('click', (e) => {
         if (!e.target.closest('.search-box')) {
           suggestions.classList.remove('show');
+          currentSuggestionIndex = -1;
         }
       });
       
@@ -887,6 +1511,27 @@ select:focus {
           document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
           currentFilter = btn.dataset.filter;
+          if (currentKeyword) performSearch();
+        });
+      });
+      
+      // 价格筛选
+      document.querySelectorAll('#priceOptions .filter-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('#priceOptions .filter-option').forEach(o => o.classList.remove('active'));
+          opt.classList.add('active');
+          currentPriceMin = parseInt(opt.dataset.min) || 0;
+          currentPriceMax = parseInt(opt.dataset.max) || 999999;
+          if (currentKeyword) performSearch();
+        });
+      });
+      
+      // 评分筛选
+      document.querySelectorAll('#ratingOptions .filter-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('#ratingOptions .filter-option').forEach(o => o.classList.remove('active'));
+          opt.classList.add('active');
+          currentRating = parseFloat(opt.dataset.rating) || 0;
           if (currentKeyword) performSearch();
         });
       });
@@ -911,82 +1556,184 @@ select:focus {
       return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
     
-    // 显示搜索建议（分类建议）
+    // 切换高级过滤器
+    function toggleAdvancedFilters() {
+      const filters = document.getElementById('advancedFilters');
+      const toggle = document.getElementById('filterToggle');
+      filters.classList.toggle('show');
+      toggle.classList.toggle('active');
+    }
+    
+    // 重置所有筛选
+    function resetFilters() {
+      currentFilter = 'all';
+      currentPriceMin = 0;
+      currentPriceMax = 999999;
+      currentRating = 0;
+      
+      // 重置类型筛选
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+      
+      // 重置价格筛选
+      document.querySelectorAll('#priceOptions .filter-option').forEach(o => o.classList.remove('active'));
+      document.querySelector('#priceOptions .filter-option[data-min="0"]').classList.add('active');
+      
+      // 重置评分筛选
+      document.querySelectorAll('#ratingOptions .filter-option').forEach(o => o.classList.remove('active'));
+      document.querySelector('#ratingOptions .filter-option[data-rating="0"]').classList.add('active');
+      
+      if (currentKeyword) performSearch();
+    }
+    
+    // 键盘导航建议
+    function navigateSuggestions(direction) {
+      const suggestions = document.getElementById('searchSuggestions');
+      const items = suggestions.querySelectorAll('.suggestion-item');
+      if (items.length === 0) return;
+      
+      // 移除当前激活
+      items.forEach(item => item.classList.remove('active'));
+      
+      // 更新索引
+      currentSuggestionIndex += direction;
+      if (currentSuggestionIndex < 0) currentSuggestionIndex = items.length - 1;
+      if (currentSuggestionIndex >= items.length) currentSuggestionIndex = 0;
+      
+      // 激活新项
+      items[currentSuggestionIndex].classList.add('active');
+      items[currentSuggestionIndex].scrollIntoView({ block: 'nearest' });
+    }
+    
+    // 显示搜索建议（分组显示，支持拼音搜索）
     function showSuggestions(keyword) {
       const suggestions = document.getElementById('searchSuggestions');
-      const results = [];
+      
+      // 优先使用智能搜索模块
+      if (typeof SmartSearch !== 'undefined') {
+        const smartResults = SmartSearch.getSuggestions(keyword, 15);
+        
+        if (smartResults.length > 0) {
+          const regex = new RegExp(`(${escapeRegex(keyword)})`, 'gi');
+          const html = smartResults.map(item => {
+            const highlighted = item.text.replace(regex, '<span class="highlight">$1</span>');
+            const pinyinHint = item.type === 'related' ? '' : `<span class="pinyin-match">拼音</span>`;
+            return `<div class="suggestion-item" onclick="selectSuggestion('${item.text.replace(/'/g, "\\'")}')">
+              <span class="suggestion-icon">${item.icon}</span>
+              <span>${highlighted}</span>
+              ${pinyinHint}
+              <span class="suggestion-type">${item.label}</span>
+            </div>`;
+          }).join('');
+          
+          suggestions.innerHTML = html;
+          suggestions.classList.add('show');
+          return;
+        }
+      }
+      
+      // 传统搜索逻辑（作为备用）
+      const groups = {
+        guide: { items: [], title: '🎤 导游' },
+        attraction: { items: [], title: '🏛️ 景点' },
+        route: { items: [], title: '🗺️ 线路' },
+        visa: { items: [], title: '📋 签证' },
+        article: { items: [], title: '📖 攻略' },
+        hot: { items: [], title: '🔥 热门搜索' }
+      };
+      
+      const lowerKeyword = keyword.toLowerCase();
       
       // 搜索导游
       searchData.guides.forEach(item => {
-        if (item.name.toLowerCase().includes(keyword.toLowerCase()) || 
-            item.country.toLowerCase().includes(keyword.toLowerCase())) {
-          results.push({ text: item.name, type: 'guide', typeName: '导游', icon: '🎤' });
+        if (item.name.toLowerCase().includes(lowerKeyword) || 
+            item.country.toLowerCase().includes(lowerKeyword)) {
+          groups.guide.items.push({ text: item.name, type: 'guide', typeName: '导游', icon: '🎤' });
         }
       });
       
       // 搜索景点
       searchData.attractions.forEach(item => {
-        if (item.name.toLowerCase().includes(keyword.toLowerCase()) || 
-            item.country.toLowerCase().includes(keyword.toLowerCase())) {
-          results.push({ text: item.name, type: 'attraction', typeName: '景点', icon: '🏛️' });
+        if (item.name.toLowerCase().includes(lowerKeyword) || 
+            item.country.toLowerCase().includes(lowerKeyword)) {
+          groups.attraction.items.push({ text: item.name, type: 'attraction', typeName: '景点', icon: '🏛️' });
         }
       });
       
       // 搜索线路
       searchData.routes.forEach(item => {
-        if (item.name.toLowerCase().includes(keyword.toLowerCase()) || 
-            item.desc.toLowerCase().includes(keyword.toLowerCase())) {
-          results.push({ text: item.name, type: 'route', typeName: '线路', icon: '🗺️' });
+        if (item.name.toLowerCase().includes(lowerKeyword) || 
+            item.desc.toLowerCase().includes(lowerKeyword)) {
+          groups.route.items.push({ text: item.name, type: 'route', typeName: '线路', icon: '🗺️' });
         }
       });
       
       // 搜索签证
       searchData.visas.forEach(item => {
-        if (item.name.toLowerCase().includes(keyword.toLowerCase()) || 
-            item.type.toLowerCase().includes(keyword.toLowerCase())) {
-          results.push({ text: item.name, type: 'visa', typeName: '签证', icon: '📋' });
+        if (item.name.toLowerCase().includes(lowerKeyword) || 
+            item.type.toLowerCase().includes(lowerKeyword)) {
+          groups.visa.items.push({ text: item.name, type: 'visa', typeName: '签证', icon: '📋' });
         }
       });
       
       // 搜索文章
       searchData.articles.forEach(item => {
-        if (item.name.toLowerCase().includes(keyword.toLowerCase()) || 
-            item.desc.toLowerCase().includes(keyword.toLowerCase())) {
-          results.push({ text: item.name, type: 'article', typeName: '攻略', icon: '📖' });
+        if (item.name.toLowerCase().includes(lowerKeyword) || 
+            item.desc.toLowerCase().includes(lowerKeyword)) {
+          groups.article.items.push({ text: item.name, type: 'article', typeName: '攻略', icon: '📖' });
         }
       });
       
       // 热门搜索匹配
       hotKeywords.forEach(item => {
-        if (item.text.toLowerCase().includes(keyword.toLowerCase()) && 
-            !results.find(r => r.text === item.text)) {
-          results.push({ text: item.text, type: 'hot', typeName: '热门', icon: '🔥' });
+        if (item.text.toLowerCase().includes(lowerKeyword)) {
+          groups.hot.items.push({ text: item.text, type: 'hot', typeName: '热门', icon: '🔥' });
         }
       });
       
-      // 去重并限制数量
-      const uniqueResults = [];
+      // 去重并限制每个分组数量
       const seen = new Set();
-      results.slice(0, 10).forEach(r => {
-        if (!seen.has(r.text)) {
-          seen.add(r.text);
-          uniqueResults.push(r);
+      Object.keys(groups).forEach(type => {
+        const filtered = [];
+        groups[type].items.forEach(r => {
+          if (!seen.has(r.text)) {
+            seen.add(r.text);
+            filtered.push(r);
+          }
+        });
+        groups[type].items = filtered.slice(0, 3); // 每组最多3条
+      });
+      
+      // 构建分组HTML
+      const regex = new RegExp(`(${escapeRegex(keyword)})`, 'gi');
+      let html = '';
+      let hasResults = false;
+      
+      Object.keys(groups).forEach(type => {
+        if (groups[type].items.length > 0) {
+          hasResults = true;
+          html += `
+            <div class="suggestion-group">
+              <div class="suggestion-group-title">${groups[type].title}</div>
+              ${groups[type].items.map(item => {
+                const highlighted = item.text.replace(regex, '<span class="highlight">$1</span>');
+                return `<div class="suggestion-item" onclick="selectSuggestion('${item.text.replace(/'/g, "\\'")}')">
+                  <span class="suggestion-icon">${item.icon}</span>
+                  <span>${highlighted}</span>
+                  <span class="suggestion-type">${item.typeName}</span>
+                </div>`;
+              }).join('')}
+            </div>
+          `;
         }
       });
       
-      if (uniqueResults.length > 0) {
-        suggestions.innerHTML = uniqueResults.map(item => {
-          const regex = new RegExp(`(${escapeRegex(keyword)})`, 'gi');
-          const highlighted = item.text.replace(regex, '<span class="highlight">$1</span>');
-          return `<div class="suggestion-item" onclick="selectSuggestion('${item.text}')">
-            <span class="suggestion-icon">${item.icon}</span>
-            <span>${highlighted}</span>
-            <span class="suggestion-type">${item.typeName}</span>
-          </div>`;
-        }).join('');
+      if (hasResults) {
+        suggestions.innerHTML = html;
         suggestions.classList.add('show');
       } else {
-        suggestions.classList.remove('show');
+        suggestions.innerHTML = '<div class="suggestion-empty">未找到相关建议，试试其他关键词</div>';
+        suggestions.classList.add('show');
       }
     }
     
@@ -1033,13 +1780,27 @@ select:focus {
         article: []
       };
       
+      // 过滤条件检查函数
+      const checkPrice = (item) => {
+        if (item.price === undefined || item.price === 0) return true; // 免费项目不受价格限制
+        const priceNum = item.priceNum || item.price;
+        return priceNum >= currentPriceMin && priceNum <= currentPriceMax;
+      };
+      
+      const checkRating = (item) => {
+        if (!item.rating) return true;
+        return item.rating >= currentRating;
+      };
+      
       // 搜索导游
       if (currentFilter === 'all' || currentFilter === 'guide') {
         searchData.guides.forEach(item => {
           if (item.name.toLowerCase().includes(lowerKeyword) || 
               item.country.toLowerCase().includes(lowerKeyword) || 
               item.lang.toLowerCase().includes(lowerKeyword)) {
-            results.guide.push(item);
+            if (checkPrice(item) && checkRating(item)) {
+              results.guide.push(item);
+            }
           }
         });
       }
@@ -1050,7 +1811,9 @@ select:focus {
           if (item.name.toLowerCase().includes(lowerKeyword) || 
               item.country.toLowerCase().includes(lowerKeyword) || 
               item.desc.toLowerCase().includes(lowerKeyword)) {
-            results.attraction.push(item);
+            if (checkPrice(item) && checkRating(item)) {
+              results.attraction.push(item);
+            }
           }
         });
       }
@@ -1060,7 +1823,9 @@ select:focus {
         searchData.routes.forEach(item => {
           if (item.name.toLowerCase().includes(lowerKeyword) || 
               item.desc.toLowerCase().includes(lowerKeyword)) {
-            results.route.push(item);
+            if (checkPrice(item) && checkRating(item)) {
+              results.route.push(item);
+            }
           }
         });
       }
@@ -1070,7 +1835,9 @@ select:focus {
         searchData.visas.forEach(item => {
           if (item.name.toLowerCase().includes(lowerKeyword) || 
               item.type.toLowerCase().includes(lowerKeyword)) {
-            results.visa.push(item);
+            if (checkPrice(item) && checkRating(item)) {
+              results.visa.push(item);
+            }
           }
         });
       }
@@ -1080,7 +1847,9 @@ select:focus {
         searchData.articles.forEach(item => {
           if (item.name.toLowerCase().includes(lowerKeyword) || 
               item.desc.toLowerCase().includes(lowerKeyword)) {
-            results.article.push(item);
+            if (checkPrice(item) && checkRating(item)) {
+              results.article.push(item);
+            }
           }
         });
       }
@@ -1114,18 +1883,49 @@ select:focus {
     }
     
     // 渲染结果（带高亮）
-    function renderResults(results, keyword) {
+    function renderResults(results, keyword, correction = null) {
       const container = document.getElementById('searchResults');
       const noResults = document.getElementById('noResults');
       
       let totalCount = 0;
       let html = '';
       
+      // 计算每个类别的数量
+      const counts = {
+        guide: results.guide.length,
+        attraction: results.attraction.length,
+        route: results.route.length,
+        visa: results.visa.length,
+        article: results.article.length
+      };
+      
+      // 添加结果分类Tab
+      html += `
+        <div class="result-tabs">
+          <button class="result-tab ${currentFilter === 'all' ? 'active' : ''}" onclick="switchResultTab('all')">
+            全部<span class="count">${totalCount}</span>
+          </button>
+          ${counts.guide > 0 ? `<button class="result-tab" onclick="switchResultTab('guide')">🎤 导游<span class="count">${counts.guide}</span></button>` : ''}
+          ${counts.attraction > 0 ? `<button class="result-tab" onclick="switchResultTab('attraction')">🏛️ 景点<span class="count">${counts.attraction}</span></button>` : ''}
+          ${counts.route > 0 ? `<button class="result-tab" onclick="switchResultTab('route')">🗺️ 线路<span class="count">${counts.route}</span></button>` : ''}
+          ${counts.visa > 0 ? `<button class="result-tab" onclick="switchResultTab('visa')">📋 签证<span class="count">${counts.visa}</span></button>` : ''}
+          ${counts.article > 0 ? `<button class="result-tab" onclick="switchResultTab('article')">📖 攻略<span class="count">${counts.article}</span></button>` : ''}
+        </div>
+        <div class="sort-options">
+          <select class="sort-select" onchange="changeSortOrder(this.value)">
+            <option value="default">默认排序</option>
+            <option value="rating">按评分</option>
+            <option value="price-asc">价格升序</option>
+            <option value="price-desc">价格降序</option>
+          </select>
+        </div>
+      `;
+      
       // 导游结果
       if (results.guide.length > 0) {
         totalCount += results.guide.length;
         html += `
-          <div class="result-section">
+          <div class="result-section" data-type="guide">
             <h3>🎤 导游 (${results.guide.length})</h3>
             <div class="result-list">
               ${results.guide.map(item => `
@@ -1133,7 +1933,7 @@ select:focus {
                   <div class="result-icon">🎤</div>
                   <div class="result-info">
                     <h4>${highlightKeyword(item.name, keyword)}</h4>
-                    <p>${highlightKeyword(item.country, keyword)} · ${item.lang} · 评分 ${item.rating}</p>
+                    <p>${highlightKeyword(item.country, keyword)} · ${item.lang} · ⭐ ${item.rating}</p>
                   </div>
                   <span class="result-tag">导游</span>
                 </a>
@@ -1147,7 +1947,7 @@ select:focus {
       if (results.attraction.length > 0) {
         totalCount += results.attraction.length;
         html += `
-          <div class="result-section">
+          <div class="result-section" data-type="attraction">
             <h3>🏛️ 景点 (${results.attraction.length})</h3>
             <div class="result-list">
               ${results.attraction.map(item => `
@@ -1155,7 +1955,7 @@ select:focus {
                   <div class="result-icon">🏛️</div>
                   <div class="result-info">
                     <h4>${highlightKeyword(item.name, keyword)}</h4>
-                    <p>${highlightKeyword(item.country, keyword)} · ${item.desc}</p>
+                    <p>${highlightKeyword(item.country, keyword)} · ${item.desc} · ⭐ ${item.rating}</p>
                   </div>
                   <span class="result-tag">景点</span>
                 </a>
@@ -1169,7 +1969,7 @@ select:focus {
       if (results.route.length > 0) {
         totalCount += results.route.length;
         html += `
-          <div class="result-section">
+          <div class="result-section" data-type="route">
             <h3>🗺️ 线路 (${results.route.length})</h3>
             <div class="result-list">
               ${results.route.map(item => `
@@ -1177,7 +1977,7 @@ select:focus {
                   <div class="result-icon">🗺️</div>
                   <div class="result-info">
                     <h4>${highlightKeyword(item.name, keyword)}</h4>
-                    <p>${highlightKeyword(item.desc, keyword)} · ${item.price}</p>
+                    <p>${highlightKeyword(item.desc, keyword)} · ${item.price} · ⭐ ${item.rating}</p>
                   </div>
                   <span class="result-tag">线路</span>
                 </a>
@@ -1191,7 +1991,7 @@ select:focus {
       if (results.visa.length > 0) {
         totalCount += results.visa.length;
         html += `
-          <div class="result-section">
+          <div class="result-section" data-type="visa">
             <h3>📋 签证 (${results.visa.length})</h3>
             <div class="result-list">
               ${results.visa.map(item => `
@@ -1199,7 +1999,7 @@ select:focus {
                   <div class="result-icon">📋</div>
                   <div class="result-info">
                     <h4>${highlightKeyword(item.name, keyword)}</h4>
-                    <p>${highlightKeyword(item.type, keyword)} · ${item.duration}</p>
+                    <p>${highlightKeyword(item.type, keyword)} · ${item.duration} · ⭐ ${item.rating}</p>
                   </div>
                   <span class="result-tag">签证</span>
                 </a>
@@ -1213,7 +2013,7 @@ select:focus {
       if (results.article.length > 0) {
         totalCount += results.article.length;
         html += `
-          <div class="result-section">
+          <div class="result-section" data-type="article">
             <h3>📖 攻略 (${results.article.length})</h3>
             <div class="result-list">
               ${results.article.map(item => `
@@ -1221,7 +2021,7 @@ select:focus {
                   <div class="result-icon">📖</div>
                   <div class="result-info">
                     <h4>${highlightKeyword(item.name, keyword)}</h4>
-                    <p>${highlightKeyword(item.desc, keyword)}</p>
+                    <p>${highlightKeyword(item.desc, keyword)} · ⭐ ${item.rating}</p>
                   </div>
                   <span class="result-tag">攻略</span>
                 </a>
@@ -1242,19 +2042,161 @@ select:focus {
         </div>
       ` : '';
       
+      // 搜索纠错提示
+      const correctionHtml = correction && correction.isCorrected ? `
+        <div class="search-correction">
+          <span class="icon">💡</span>
+          <span>您是不是要找：</span>
+          <span class="corrected" onclick="selectSuggestion('${correction.corrected}')">${correction.corrected}</span>
+        </div>
+      ` : '';
+      
       if (totalCount === 0) {
         noResults.style.display = 'block';
+        document.getElementById('noResultsKeyword').textContent = keyword;
         container.innerHTML = '';
+        
+        // 跟踪无结果搜索
+        if (typeof SearchAnalytics !== 'undefined') {
+          SearchAnalytics.track(keyword, 0);
+        }
       } else {
         noResults.style.display = 'none';
+        // 构建当前筛选条件描述
+        let filterDesc = [];
+        if (currentFilter !== 'all') filterDesc.push(typeNames[currentFilter]);
+        if (currentRating > 0) filterDesc.push(`评分${currentRating}+`);
+        if (currentPriceMax < 999999) filterDesc.push(`¥${currentPriceMin}-¥${currentPriceMax}`);
+        
+        const filterText = filterDesc.length > 0 ? ` · ${filterDesc.join(' · ')}` : '';
+        
         container.innerHTML = `
+          ${correctionHtml}
           <div class="results-header">
             <h2>搜索结果</h2>
-            <span class="results-count">共找到 ${totalCount} 个结果</span>
+            <span class="results-count">共找到 <strong>${totalCount}</strong> 个结果${filterText}</span>
           </div>
           ${html}
           ${relatedHtml}
         `;
+        
+        // 更新Tab计数
+        updateResultTabsCount(totalCount, counts);
+        
+        // 跟踪搜索
+        if (typeof SearchAnalytics !== 'undefined') {
+          SearchAnalytics.track(keyword, totalCount);
+        }
+        
+        // 记录分析入口显示
+        updateAnalyticsPreview();
+      }
+    }
+    
+    // 更新结果Tab计数
+    function updateResultTabsCount(total, counts) {
+      const tabs = document.querySelectorAll('.result-tab');
+      if (tabs.length > 0) {
+        tabs[0].querySelector('.count').textContent = total;
+      }
+    }
+    
+    // 切换结果Tab
+    function switchResultTab(type) {
+      currentFilter = type;
+      
+      // 更新Tab激活状态
+      document.querySelectorAll('.result-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.textContent.includes(typeNames[type] || '全部'));
+      });
+      
+      // 显示/隐藏对应类型的结果
+      document.querySelectorAll('.result-section').forEach(section => {
+        if (type === 'all') {
+          section.style.display = '';
+        } else {
+          section.style.display = section.dataset.type === type ? '' : 'none';
+        }
+      });
+      
+      // 更新筛选按钮状态
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filter === type);
+      });
+    }
+    
+    // 排序选项
+    function changeSortOrder(order) {
+      const list = document.querySelector('.result-list');
+      if (!list) return;
+      
+      const items = Array.from(list.children);
+      items.sort((a, b) => {
+        if (order === 'rating') {
+          const ratingA = parseFloat(a.querySelector('p').textContent.match(/⭐ ([\d.]+)/)?.[1] || 0);
+          const ratingB = parseFloat(b.querySelector('p').textContent.match(/⭐ ([\d.]+)/)?.[1] || 0);
+          return ratingB - ratingA;
+        }
+        if (order === 'price-asc' || order === 'price-desc') {
+          const priceA = parseFloat(a.querySelector('p').textContent.match(/¥([\d,]+)/)?.[1].replace(',', '') || 0);
+          const priceB = parseFloat(b.querySelector('p').textContent.match(/¥([\d,]+)/)?.[1].replace(',', '') || 0);
+          return order === 'price-asc' ? priceA - priceB : priceB - priceA;
+        }
+        return 0;
+      });
+      
+      items.forEach(item => list.appendChild(item));
+    }
+    
+    // 隐私模式切换
+    function togglePrivacyMode() {
+      if (typeof SearchHistory !== 'undefined') {
+        const newMode = SearchHistory.togglePrivacyMode();
+        const toggle = document.getElementById('privacyToggle');
+        toggle.classList.toggle('active', newMode);
+        
+        // 清除历史记录显示
+        if (newMode) {
+          clearHistory();
+        }
+        renderHistory();
+      }
+    }
+    
+    // 显示分析面板
+    function showAnalyticsPanel() {
+      const panel = document.getElementById('analyticsPanel');
+      if (typeof SearchAnalyticsPanel !== 'undefined') {
+        SearchAnalyticsPanel.render('analyticsPanel');
+        panel.style.display = 'block';
+        panel.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    
+    // 更新分析预览
+    function updateAnalyticsPreview() {
+      if (typeof SearchAnalytics === 'undefined') return;
+      
+      const entry = document.getElementById('searchAnalyticsEntry');
+      const preview = document.getElementById('analyticsPreview');
+      const analytics = SearchAnalytics.get();
+      
+      if (analytics.totalSearches > 0) {
+        entry.style.display = 'block';
+        preview.innerHTML = `
+          <div style="display: flex; gap: 20px; font-size: 0.85rem; color: #6b7280;">
+            <span>总搜索: ${analytics.totalSearches}</span>
+            <span>转化率: ${SearchAnalytics.getConversionRate()}%</span>
+          </div>
+        `;
+      }
+    }
+    
+    // 初始化隐私模式状态
+    function initPrivacyMode() {
+      if (typeof SearchHistory !== 'undefined' && SearchHistory.isPrivacyMode()) {
+        const toggle = document.getElementById('privacyToggle');
+        toggle.classList.add('active');
       }
     }
     
@@ -1271,5 +2213,6 @@ select:focus {
   <script src="js/pwa.js" defer></script>
   <script src="js/mobile.js" defer></script>
   <script src="js/customer-service.js" defer></script>
+  <script src="js/quick-actions.js" defer></script>
 </body>
 </html>
