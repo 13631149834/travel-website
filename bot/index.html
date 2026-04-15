@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智能问答 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    
+    /* 聊天区域样式 */
+    .chat-container {
+      height: calc(100vh - 200px);
+      min-height: 500px;
+    }
+    
+    .messages-container {
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+    }
+    .messages-container::-webkit-scrollbar {
+      width: 6px;
+    }
+    .messages-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .messages-container::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 3px;
+    }
+    
+    /* 消息气泡动画 */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .message-animate {
+      animation: fadeInUp 0.3s ease forwards;
+    }
+    
+    /* 打字动画 */
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    .typing-dot {
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    
+    /* 分类按钮悬停效果 */
+    .category-card {
+      transition: all 0.3s ease;
+    }
+    .category-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(14, 165, 233, 0.15);
+    }
+    
+    /* 输入框聚焦效果 */
+    .input-focus:focus {
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+    }
+    
+    /* 快捷按钮 */
+    .quick-chip {
+      transition: all 0.2s ease;
+    }
+    .quick-chip:hover {
+      background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+      color: white;
+      border-color: transparent;
+      transform: scale(1.02);
+    }
+    
+    /* 气泡样式 */
+    .bubble-user {
+      background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+      border-radius: 20px 20px 4px 20px;
+    }
+    .bubble-bot {
+      background: white;
+      border-radius: 20px 20px 20px 4px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- 导航栏 -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="knowledge.html" class="hover:opacity-80 transition font-medium border-b-2 border-white pb-1">智能问答</a>
+          <a href="settings.html" class="hover:opacity-80 transition">设置</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <!-- 移动端菜单 -->
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="index.html" class="block py-2">首页</a>
+        <a href="destinations.html" class="block py-2">目的地</a>
+        <a href="routes.html" class="block py-2">路线</a>
+        <a href="knowledge.html" class="block py-2 font-semibold">智能问答</a>
+        <a href="settings.html" class="block py-2">设置</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <!-- 页面标题 -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 text-primary rounded-full text-sm mb-4">
+        <span>🤖</span>
+        <span>AI智能助手</span>
+      </div>
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">智能旅游问答</h1>
+      <p class="text-gray-600 max-w-2xl mx-auto">24小时在线，随时为您解答签证、交通、住宿、美食、景点、购物等各类旅行问题</p>
+    </div>
+
+    <!-- 分类快捷入口 -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+      <button onclick="sendCategory('visa')" class="category-card bg-white rounded-2xl p-4 text-center border border-gray-100">
+        <div class="text-4xl mb-2">📋</div>
+        <h3 class="font-semibold text-gray-800">签证问题</h3>
+        <p class="text-xs text-gray-500 mt-1">签证办理指南</p>
+      </button>
+      <button onclick="sendCategory('transport')" class="category-card bg-white rounded-2xl p-4 text-center border border-gray-100">
+        <div class="text-4xl mb-2">✈️</div>
+        <h3 class="font-semibold text-gray-800">交通问题</h3>
+        <p class="text-xs text-gray-500 mt-1">出行交通指南</p>
+      </button>
+      <button onclick="sendCategory('accommodation')" class="category-card bg-white rounded-2xl p-4 text-center border border-gray-100">
+        <div class="text-4xl mb-2">🏨</div>
+        <h3 class="font-semibold text-gray-800">住宿问题</h3>
+        <p class="text-xs text-gray-500 mt-1">酒店民宿推荐</p>
+      </button>
+      <button onclick="sendCategory('food')" class="category-card bg-white rounded-2xl p-4 text-center border border-gray-100">
+        <div class="text-4xl mb-2">🍜</div>
+        <h3 class="font-semibold text-gray-800">美食问题</h3>
+        <p class="text-xs text-gray-500 mt-1">美食餐厅推荐</p>
+      </button>
+      <button onclick="sendCategory('attractions')" class="category-card bg-white rounded-2xl p-4 text-center border border-gray-100">
+        <div class="text-4xl mb-2">🏛️</div>
+        <h3 class="font-semibold text-gray-800">景点问题</h3>
+        <p class="text-xs text-gray-500 mt-1">景点游览攻略</p>
+      </button>
+      <button onclick="sendCategory('shopping')" class="category-card bg-white rounded-2xl p-4 text-center border border-gray-100">
+        <div class="text-4xl mb-2">🛍️</div>
+        <h3 class="font-semibold text-gray-800">购物问题</h3>
+        <p class="text-xs text-gray-500 mt-1">购物退税指南</p>
+      </button>
+    </div>
+
+    <!-- 聊天区域 -->
+    <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+      <!-- 聊天头部 -->
+      <div class="gradient-hero text-white px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-2xl shadow-lg">
+            🧭
+          </div>
+          <div>
+            <h2 class="font-bold text-lg">游导小助手</h2>
+            <p class="text-sm text-white/80 flex items-center gap-1">
+              <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+              在线服务中
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="history.html" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            历史记录
+          </a>
+          <button onclick="clearChat()" class="px-4 py-2 bg-white/20 hover:bg-white/30 rounded-lg text-sm transition flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            清空对话
+          </button>
+        </div>
+      </div>
+
+      <!-- 消息区域 -->
+      <div class="chat-container messages-container p-6 overflow-y-auto bg-gradient-to-b from-gray-50 to-white" id="messagesContainer">
+        <!-- 欢迎消息 -->
+        <div class="flex items-start gap-3 mb-6 message-animate">
+          <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-lg flex-shrink-0">
+            🧭
+          </div>
+          <div class="bubble-bot px-5 py-3 max-w-xl">
+            <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">👋 你好！欢迎来到游导旅游！</p>
+            <p class="text-gray-800 leading-relaxed whitespace-pre-wrap mt-2">我是您的智能旅行助手，可以帮您解答以下问题：</p>
+            <div class="mt-3 space-y-2">
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span>📋</span><span>签证办理与要求</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span>✈️</span><span>交通出行指南</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span>🏨</span><span>酒店民宿推荐</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span>🍜</span><span>特色美食攻略</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span>🏛️</span><span>景点游览建议</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-gray-600">
+                <span>🛍️</span><span>购物退税流程</span>
+              </div>
+            </div>
+            <p class="text-gray-800 leading-relaxed mt-3">请告诉我您想去哪里旅行，或者有什么问题想咨询呢？😊</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 快捷问题 -->
+      <div class="px-6 py-3 bg-gray-50 border-t border-gray-100">
+        <p class="text-xs text-gray-500 mb-2">💡 快捷问题</p>
+        <div class="flex flex-wrap gap-2">
+          <button onclick="sendQuickQuestion('日本签证怎么办理')" class="quick-chip px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700">
+            日本签证怎么办理
+          </button>
+          <button onclick="sendQuickQuestion('东京必去景点有哪些')" class="quick-chip px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700">
+            东京必去景点
+          </button>
+          <button onclick="sendQuickQuestion('日本JR Pass怎么买')" class="quick-chip px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700">
+            日本JR Pass
+          </button>
+          <button onclick="sendQuickQuestion('日本必吃美食推荐')" class="quick-chip px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700">
+            日本必吃美食
+          </button>
+          <button onclick="sendQuickQuestion('泰国落地签怎么办')" class="quick-chip px-4 py-2 bg-white border border-gray-200 rounded-full text-sm text-gray-700">
+            泰国落地签
+          </button>
+        </div>
+      </div>
+
+      <!-- 输入区域 -->
+      <div class="p-4 border-t border-gray-100 bg-white">
+        <div class="flex items-end gap-3">
+          <div class="flex-1 relative">
+            <textarea 
+              id="messageInput" 
+              class="w-full px-5 py-3 pr-12 border-2 border-gray-200 rounded-2xl resize-none focus:outline-none input-focus transition"
+              placeholder="输入您的问题..."
+              rows="1"
+              onkeydown="handleKeyDown(event)"
+              oninput="autoResize(this)"
+            ></textarea>
+            <button onclick="clearInput()" class="absolute right-3 bottom-3 text-gray-400 hover:text-gray-600 transition" title="清空输入">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+          </div>
+          <button onclick="sendMessage()" class="w-12 h-12 gradient-hero text-white rounded-full flex items-center justify-center hover:shadow-lg hover:scale-105 transition flex-shrink-0">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部功能链接 -->
+    <div class="mt-8 flex flex-wrap justify-center gap-4">
+      <a href="knowledge.html" class="flex items-center gap-2 px-5 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition">
+        <span class="text-xl">📚</span>
+        <span class="text-gray-700">了解机器人能力</span>
+      </a>
+      <a href="settings.html" class="flex items-center gap-2 px-5 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition">
+        <span class="text-xl">⚙️</span>
+        <span class="text-gray-700">问答设置</span>
+      </a>
+      <a href="history.html" class="flex items-center gap-2 px-5 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition">
+        <span class="text-xl">📋</span>
+        <span class="text-gray-700">对话历史</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-gray-400">© 2024 游导旅游 · 让旅行更简单</p>
+    </div>
+  </footer>
+
+  <script>
+    // 问答数据
+    const botResponses = {
+      categories: {
+        visa: {
+          name: "签证问题",
+          icon: "📋",
+          response: `📋 **签证相关问题**
+
+我可以帮您解答：
+• 日本签证怎么办理
+• 泰国落地签流程
+• 韩国签证要求
+• 新加坡、马来西亚签证
+• 欧洲申根签证
+• 各国签证材料准备
+
+请告诉我您想去哪个国家？`
+        },
+        transport: {
+          name: "交通问题",
+          icon: "✈️",
+          response: `✈️ **交通相关问题**
+
+我可以帮您解答：
+• 日本JR Pass购买和使用
+• 东京地铁乘坐指南
+• 廉价机票抢购技巧
+• 机场接送服务
+• 包车和租车建议
+
+请告诉我您的目的地？`
+        },
+        accommodation: {
+          name: "住宿问题",
+          icon: "🏨",
+          response: `🏨 **住宿相关问题**
+
+我可以帮您解答：
+• 各城市酒店推荐
+• 民宿vs酒店对比
+• 如何选择住宿位置
+• 预订平台推荐
+• 取消政策解读
+
+请告诉我您的出行目的地？`
+        },
+        food: {
+          name: "美食问题",
+          icon: "🍜",
+          response: `🍜 **美食相关问题**
+
+我可以帮您解答：
+• 各国必吃美食推荐
+• 米其林餐厅预约
+• 街头美食攻略
+• 餐厅预订技巧
+• 素食/特殊饮食选择
+
+请告诉我您想去哪里品尝美食？`
+        },
+        attractions: {
+          name: "景点问题",
+          icon: "🏛️",
+          response: `🏛️ **景点相关问题**
+
+我可以帮您解答：
+• 必去景点推荐
+• 门票预订和优惠
+• 开放时间和游览建议
+• 一日游/半日游规划
+• 景点游览顺序优化
+
+请告诉我您的目的地？`
+        },
+        shopping: {
+          name: "购物问题",
+          icon: "🛍️",
+          response: `🛍️ **购物相关问题**
+
+我可以帮您解答：
+• 免税店购物攻略
+• 退税流程详解
+• 伴手礼推荐
+• 购物区域推荐
+• 品牌比价技巧
+
+请告诉我您想去哪里购物？`
+        }
+      },
+      responses: [
+        {
+          keywords: ["日本签证", "签证办理"],
+          answer: `📋 **日本签证办理指南**
+
+**签证类型**：
+• 单次旅游签证（停留15天）
+• 三年多次签证（停留30天）
+• 五年多次签证（停留90天）
+
+**基本材料**：
+1. 护照原件（有效期6个月以上）
+2. 签证申请表
+3. 2寸白底照片2张
+4. 身份证、户口本复印件
+5. 在职证明/学生证明
+6. 资产证明（流水/房产/车产）
+
+**办理时间**：通常5-7个工作日
+**建议**：通过正规旅行社代办更省心！`
+        },
+        {
+          keywords: ["泰国落地签", "落地签"],
+          answer: `🇹🇭 **泰国落地签办理指南**
+
+**最新政策**：
+• 中国公民可享受免签入境待遇
+• 停留期限不超过30天
+
+**落地签所需材料**：
+1. 护照原件（有效期6个月以上）
+2. 往返机票行程单
+3. 酒店预订单
+4. 2寸白底照片1张
+5. 落地签申请表
+6. 随身现金（建议20000泰铢或等值人民币）
+
+**落地签费用**：2000泰铢
+**小贴士**：提前准备好材料可以加快通关速度！`
+        },
+        {
+          keywords: ["JR Pass", "JR通票", "日本火车"],
+          answer: `🚄 **日本JR Pass全攻略**
+
+**什么是JR Pass？**
+日本铁路周游券，可无限次乘坐JR集团全线列车、巴士、渡轮。
+
+**票价参考**：
+• 7日普通车厢：约50,000日元
+• 14日普通车厢：约80,000日元
+• 21日普通车厢：约100,000日元
+
+**适用范围**：
+✅ 新干线（不可乘坐Nozomi号）
+✅ 特急、急行、普通列车
+✅ JR巴士
+
+**购买方式**：
+1. 国内提前购买换票证
+2. 日本机场/车站购买
+3. 官网在线购买`
+        },
+        {
+          keywords: ["东京地铁", "地铁乘坐", "东京交通"],
+          answer: `🚇 **东京地铁乘坐指南**
+
+**两大地铁系统**：
+• Tokyo Metro（9条线）
+• 都营地铁（4条线）
+
+**购票方式**：
+1. **单程票**：按距离计价，170-320日元
+2. **Suica/PASMO卡**：刷卡进站超方便！
+3. **一日券**：600-1000日元
+
+**推荐App**：
+• 换乘案内 - 精确换乘
+• Google Maps - 导航首选
+
+💡 **小贴士**：买张Suica卡，地铁、电车、便利店都能用！`
+        },
+        {
+          keywords: ["日本美食", "必吃", "美食推荐"],
+          answer: `🍜 **日本必吃美食清单**
+
+**东京**：
+• 筑地市场：新鲜寿司、海鲜丼
+• 拉面：一兰、九州豚骨
+• 甜品：Harbs水果千层
+
+**大阪**：
+• 道顿堀章鱼烧
+• 蟹道乐：螃蟹料理
+• 串炸：元祖串炸
+
+**京都**：
+• 汤豆腐：南禅寺汤豆腐
+• 抹茶甜品：茶寮都路里
+
+**觅食技巧**：
+• 参考Tabelog评分（4.0+必吃）
+• 避开车站内的店，往巷子里走`
+        },
+        {
+          keywords: ["东京景点", "必去景点", "东京旅游"],
+          answer: `🏯 **东京必去景点盘点**
+
+**经典景点**：
+• 🗼 东京塔/晴空塔 - 地标建筑
+• ⛩️ 浅草寺 - 雷门、仲见世街
+• 🏛️ 皇居 - 日本皇室居所
+• 🛍️ 新宿、涩谷、银座 - 购物天堂
+
+**特色体验**：
+• 🎮 秋叶原 - 动漫、游戏
+• 🐱 猫咪咖啡馆
+• 🏯 明治神宫 - 祈福参拜
+
+**近郊推荐**：
+• 🏮 川越小江户 - 江户风情
+• 🎢 迪士尼乐园`
+        },
+        {
+          keywords: ["购物", "退税", "免税"],
+          answer: `🛍️ **日本购物退税指南**
+
+**免税条件**：
+• 一般商品：同一天同一家店消费满5,000日元
+• 消耗品：同一天同一家店消费满5,000日元
+
+**退税流程**：
+1. 购物时出示护照，说明TAX FREE
+2. 店员办理免税手续
+3. 护照上会贴免税购物清单
+4. 出境时海关可能会抽查
+
+**注意事项**：
+• 一般商品需在30天内带出日本
+• 消耗品不可在日本境内使用`
+        }
+      ]
+    };
+
+    // DOM 元素
+    const messagesContainer = document.getElementById('messagesContainer');
+    const messageInput = document.getElementById('messageInput');
+
+    // 初始化
+    function init() {
+      loadChatHistory();
+      messageInput.focus();
+    }
+
+    // 加载聊天历史
+    function loadChatHistory() {
+      const history = JSON.parse(localStorage.getItem('botChatHistory') || '[]');
+      history.forEach(msg => {
+        addMessage(msg.content, msg.role, false);
+      });
+    }
+
+    // 保存聊天历史
+    function saveChatHistory() {
+      const messages = [];
+      messagesContainer.querySelectorAll('.message-animate').forEach(el => {
+        const role = el.classList.contains('flex-row-reverse') ? 'user' : 'bot';
+        const content = el.querySelector('.bubble-bot, .bubble-user').textContent;
+        messages.push({ role, content });
+      });
+      localStorage.setItem('botChatHistory', JSON.stringify(messages.slice(-50)));
+    }
+
+    // 发送消息
+    function sendMessage() {
+      const message = messageInput.value.trim();
+      if (!message) return;
+
+      addMessage(message, 'user');
+      messageInput.value = '';
+      autoResize(messageInput);
+
+      // 保存到历史
+      const history = JSON.parse(localStorage.getItem('botChatHistory') || '[]');
+      history.push({ role: 'user', content: message });
+      localStorage.setItem('botChatHistory', JSON.stringify(history));
+
+      // 显示打字动画
+      showTyping();
+
+      // 模拟延迟回复
+      setTimeout(() => {
+        hideTyping();
+        const response = getBotResponse(message);
+        addMessage(response, 'bot');
+        
+        const updatedHistory = JSON.parse(localStorage.getItem('botChatHistory') || '[]');
+        updatedHistory.push({ role: 'bot', content: response });
+        localStorage.setItem('botChatHistory', JSON.stringify(updatedHistory));
+      }, 800 + Math.random() * 800);
+    }
+
+    // 获取机器人回复
+    function getBotResponse(message) {
+      const lowerMsg = message.toLowerCase();
+
+      // 遍历所有响应
+      for (const resp of botResponses.responses) {
+        for (const keyword of resp.keywords) {
+          if (lowerMsg.includes(keyword.toLowerCase())) {
+            return resp.answer;
+          }
+        }
+      }
+
+      // 检查是否包含招呼
+      if (/^[嗨嗨?|hi|hello|你好|嗨]$/i.test(message.trim())) {
+        return `👋 你好呀！欢迎来到游导旅游！
+
+我是您的智能旅行助手，可以帮您解答：
+📋 签证问题
+✈️ 交通出行
+🏨 酒店住宿
+🍜 美食推荐
+🏛️ 景点攻略
+🛍️ 购物退税
+
+请告诉我您想去哪里旅行，或者有什么问题想咨询呢？`;
+      }
+
+      // 检查是否感谢
+      if (/^[谢谢|感谢|谢啦|多谢]$/i.test(message.trim())) {
+        return `😊 不客气！
+
+如果您还有其他问题，随时问我哦～
+
+祝您旅途愉快！🌍✨`;
+      }
+
+      // 默认回复
+      return `🤔 抱歉，我没能完全理解您的问题。
+
+您可以尝试这样问我：
+• "日本签证怎么办理"
+• "东京有什么好吃的"
+• "大阪环球影城攻略"
+• "日本JR Pass怎么买"
+
+或者点击上方的分类按钮，我会为您详细解答！`;
+    }
+
+    // 添加消息
+    function addMessage(content, role, animate = true) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `flex items-start gap-3 mb-6 ${animate ? 'message-animate' : ''} ${role === 'user' ? 'flex-row-reverse' : ''}`;
+      
+      const avatar = role === 'bot' ? '🧭' : '👤';
+      const bubbleClass = role === 'bot' ? 'bubble-bot' : 'bubble-user';
+      const textColor = role === 'bot' ? 'text-gray-800' : 'text-white';
+      
+      messageDiv.innerHTML = `
+        <div class="w-10 h-10 bg-gradient-to-br ${role === 'bot' ? 'from-primary to-secondary' : 'from-green-400 to-green-500'} rounded-full flex items-center justify-center text-lg flex-shrink-0">
+          ${avatar}
+        </div>
+        <div class="${bubbleClass} px-5 py-3 max-w-xl">
+          <p class="${textColor} leading-relaxed whitespace-pre-wrap">${content.replace(/\n/g, '<br>')}</p>
+        </div>
+      `;
+      
+      messagesContainer.appendChild(messageDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // 显示打字动画
+    function showTyping() {
+      const typingDiv = document.createElement('div');
+      typingDiv.id = 'typingIndicator';
+      typingDiv.className = 'flex items-start gap-3 mb-6 message-animate';
+      typingDiv.innerHTML = `
+        <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-lg flex-shrink-0">
+          🧭
+        </div>
+        <div class="bubble-bot px-5 py-3 flex items-center gap-1">
+          <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+          <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+          <div class="w-2 h-2 bg-gray-400 rounded-full typing-dot"></div>
+        </div>
+      `;
+      messagesContainer.appendChild(typingDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // 隐藏打字动画
+    function hideTyping() {
+      const typing = document.getElementById('typingIndicator');
+      if (typing) typing.remove();
+    }
+
+    // 自动调整输入框高度
+    function autoResize(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+
+    // 发送快捷问题
+    function sendQuickQuestion(question) {
+      messageInput.value = question;
+      sendMessage();
+    }
+
+    // 发送分类
+    function sendCategory(category) {
+      const cat = botResponses.categories[category];
+      if (cat) {
+        addMessage(cat.response, 'bot');
+        const history = JSON.parse(localStorage.getItem('botChatHistory') || '[]');
+        history.push({ role: 'bot', content: cat.response });
+        localStorage.setItem('botChatHistory', JSON.stringify(history));
+      }
+    }
+
+    // 清空输入
+    function clearInput() {
+      messageInput.value = '';
+      autoResize(messageInput);
+      messageInput.focus();
+    }
+
+    // 清空对话
+    function clearChat() {
+      if (confirm('确定要清空所有对话记录吗？')) {
+        messagesContainer.innerHTML = '';
+        localStorage.removeItem('botChatHistory');
+        
+        // 添加欢迎消息
+        const welcomeDiv = document.createElement('div');
+        welcomeDiv.className = 'flex items-start gap-3 mb-6 message-animate';
+        welcomeDiv.innerHTML = `
+          <div class="w-10 h-10 bg-gradient-to-br from-primary to-secondary rounded-full flex items-center justify-center text-lg flex-shrink-0">
+            🧭
+          </div>
+          <div class="bubble-bot px-5 py-3 max-w-xl">
+            <p class="text-gray-800 leading-relaxed whitespace-pre-wrap">👋 聊天记录已清空！</p>
+            <p class="text-gray-800 leading-relaxed whitespace-pre-wrap mt-2">我是您的智能旅行助手，有什么可以帮您的吗？😊</p>
+          </div>
+        `;
+        messagesContainer.appendChild(welcomeDiv);
+      }
+    }
+
+    // 处理键盘事件
+    function handleKeyDown(event) {
+      if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+      }
+    }
+
+    // 移动端菜单切换
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    // 初始化
+    init();
+  </script>
+</body>
+</html>

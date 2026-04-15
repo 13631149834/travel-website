@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>有声导览 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#667eea',
+            secondary: '#764ba2',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="css/audio-guide.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="audio-guide/index.html" class="font-semibold border-b-2 border-white pb-1">🎧 有声导览</a>
+          <a href="destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="my-guides.html" class="hover:opacity-80 transition">我的导览</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="index.html" class="block py-2">首页</a>
+        <a href="audio-guide/index.html" class="block py-2 font-semibold">🎧 有声导览</a>
+        <a href="destinations.html" class="block py-2">目的地</a>
+        <a href="my-guides.html" class="block py-2">我的导览</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="gradient-hero text-white py-12 md:py-16">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <div class="inline-block px-4 py-1.5 bg-white/20 rounded-full text-sm mb-4">🎧 专业音频讲解</div>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">有声导览</h1>
+      <p class="text-lg opacity-90 max-w-2xl mx-auto">随身携带专业导游，深入了解每一个景点的历史文化</p>
+      
+      <!-- Search -->
+      <div class="mt-8 max-w-2xl mx-auto">
+        <div class="guide-search">
+          <span class="guide-search-icon text-xl">🔍</span>
+          <input type="text" id="searchInput" placeholder="搜索景点或城市..." class="bg-white text-gray-800" oninput="handleSearch(this.value)">
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="mt-8 grid grid-cols-3 gap-4 max-w-lg mx-auto">
+        <div class="text-center">
+          <div class="text-2xl md:text-3xl font-bold" id="guideCount">26</div>
+          <div class="text-sm opacity-80">导览景点</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl md:text-3xl font-bold" id="cityCount">4</div>
+          <div class="text-sm opacity-80">覆盖城市</div>
+        </div>
+        <div class="text-center">
+          <div class="text-2xl md:text-3xl font-bold" id="langCount">5</div>
+          <div class="text-sm opacity-80">支持语言</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Hot Guides Section -->
+    <section class="mb-12">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">🔥 热门导览</h2>
+        <a href="#" class="text-primary hover:underline text-sm font-medium">查看更多 →</a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="hotGuides">
+        <!-- Hot guides will be loaded here -->
+      </div>
+    </section>
+
+    <!-- City Filter -->
+    <section class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">🗺️ 按城市浏览</h2>
+      <div class="flex flex-wrap gap-3" id="cityFilters">
+        <button class="city-tag active" data-city="all" onclick="filterByCity('all')">
+          🌍 全部城市
+        </button>
+      </div>
+    </section>
+
+    <!-- All Guides by City -->
+    <section id="cityGuides">
+      <!-- City sections will be loaded here -->
+    </section>
+  </main>
+
+  <!-- Floating Player -->
+  <div class="floating-player" id="floatingPlayer">
+    <button class="text-white text-2xl hover:scale-110 transition" onclick="togglePlay()">▶️</button>
+    <div class="floating-player-info">
+      <div class="floating-player-cover">
+        <img src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=100" alt="Cover" id="floatingCover">
+      </div>
+      <div>
+        <div class="floating-player-title" id="floatingTitle">浅草寺</div>
+        <div class="text-xs opacity-80" id="floatingProgress">00:00 / 14:05</div>
+      </div>
+    </div>
+    <button class="text-white hover:scale-110 transition" onclick="closePlayer()">✕</button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12 mt-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-2xl">🧭</span>
+            <span class="text-xl font-bold">游导旅游</span>
+          </div>
+          <p class="text-gray-400 text-sm">专业的导游与游客一站式旅行平台</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-3">快速链接</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="index.html" class="hover:text-white">首页</a></li>
+            <li><a href="destinations.html" class="hover:text-white">目的地</a></li>
+            <li><a href="routes.html" class="hover:text-white">精品路线</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-3">导览服务</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="index.html" class="hover:text-white">东京导览</a></li>
+            <li><a href="index.html" class="hover:text-white">大阪导览</a></li>
+            <li><a href="index.html" class="hover:text-white">首尔导览</a></li>
+            <li><a href="download.html" class="hover:text-white">离线下载</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-3">帮助支持</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="faq.html" class="hover:text-white">常见问题</a></li>
+            <li><a href="contact.html" class="hover:text-white">联系我们</a></li>
+            <li><a href="feedback.html" class="hover:text-white">意见反馈</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
+        <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Audio Guide Data -->
+  <script src="data/audio-guide.js"></script>
+  <script>
+    let currentCity = 'all';
+    let currentLang = 'zh';
+    let currentGuide = null;
+    let isPlaying = false;
+
+    // Load data
+    let guideData = null;
+    let cities = [];
+    let guides = [];
+
+    function loadData() {
+      // Inline data for demo
+      guideData = {
+        cities: [
+          { id: 'tokyo', name: '东京', flag: '🇯🇵', coverImage: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600', guideCount: 3, description: '传统与现代完美融合的国际大都会' },
+          { id: 'osaka', name: '大阪', flag: '🇯🇵', coverImage: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=600', guideCount: 3, description: '美食天堂与活力城市的完美结合' },
+          { id: 'seoul', name: '首尔', flag: '🇰🇷', coverImage: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=600', guideCount: 3, description: '韩流文化与历史古迹交相辉映' },
+          { id: 'bangkok', name: '曼谷', flag: '🇹🇭', coverImage: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600', guideCount: 3, description: '佛教圣殿与热带风情的完美交融' }
+        ],
+        guides: [
+          { id: 'tokyo-asakusa', cityId: 'tokyo', title: '浅草寺', title_en: 'Senso-ji Temple', coverImage: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=600', duration: 845, durationText: '14分05秒', rating: 4.9, playCount: 12580, isHot: true, languages: ['zh', 'ja', 'en'], description: '东京最古老的佛教寺庙，是了解日本传统文化的必访之地。' },
+          { id: 'tokyo-tower', cityId: 'tokyo', title: '东京塔', title_en: 'Tokyo Tower', coverImage: 'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=600', duration: 720, durationText: '12分00秒', rating: 4.8, playCount: 10230, isHot: true, languages: ['zh', 'ja', 'en'], description: '东京标志性建筑，以埃菲尔铁塔为蓝本建造，是观赏东京全景的最佳地点。' },
+          { id: 'tokyo-meiji', cityId: 'tokyo', title: '明治神宫', title_en: 'Meiji Shrine', coverImage: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=600', duration: 680, durationText: '11分20秒', rating: 4.9, playCount: 8960, isHot: false, languages: ['zh', 'ja', 'en'], description: '供奉明治天皇和昭宪皇太后神灵的神社，是东京最重要的神社之一。' },
+          { id: 'osaka-castle', cityId: 'osaka', title: '大阪城', title_en: 'Osaka Castle', coverImage: 'https://images.unsplash.com/photo-1589452271712-64b8a66c7b71?w=600', duration: 780, durationText: '13分00秒', rating: 4.9, playCount: 15340, isHot: true, languages: ['zh', 'ja', 'en', 'ko'], description: '丰臣秀吉建造的传奇城堡，是大阪的象征。' },
+          { id: 'osaka-dotonbori', cityId: 'osaka', title: '道顿堀', title_en: 'Dotonbori', coverImage: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=600', duration: 650, durationText: '10分50秒', rating: 4.7, playCount: 11890, isHot: true, languages: ['zh', 'ja', 'en', 'ko'], description: '大阪最繁华的商业娱乐区，以霓虹灯和巨大广告牌闻名。' },
+          { id: 'osaka-usj', cityId: 'osaka', title: '日本环球影城', title_en: 'Universal Studios Japan', coverImage: 'https://images.unsplash.com/photo-1624811533746-8ff22b2b4d2e?w=600', duration: 920, durationText: '15分20秒', rating: 4.8, playCount: 8920, isHot: true, languages: ['zh', 'ja', 'en', 'ko'], description: '日本最受欢迎的主题乐园之一，拥有哈利波特的魔法世界。' },
+          { id: 'seoul-gyeongbokgung', cityId: 'seoul', title: '景福宫', title_en: 'Gyeongbokgung Palace', coverImage: 'https://images.unsplash.com/photo-1587132137056-bfbf0166836e?w=600', duration: 850, durationText: '14分10秒', rating: 4.9, playCount: 13250, isHot: true, languages: ['zh', 'en', 'ko'], description: '朝鲜王朝的正宫，是首尔规模最大、保存最完整的宫殿。' },
+          { id: 'seoul-myengdong', cityId: 'seoul', title: '明洞', title_en: 'Myeongdong', coverImage: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=600', duration: 580, durationText: '09分40秒', rating: 4.6, playCount: 9670, isHot: false, languages: ['zh', 'en', 'ko'], description: '首尔最繁华的购物天堂，汇聚了韩国本土品牌和国际大牌。' },
+          { id: 'seoul-bukchon', cityId: 'seoul', title: '北村韩屋村', title_en: 'Bukchon Hanok Village', coverImage: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=600', duration: 720, durationText: '12分00秒', rating: 4.8, playCount: 8140, isHot: false, languages: ['zh', 'en', 'ko'], description: '首尔保存最完整的韩屋传统村落，漫步其中仿佛穿越回600年前。' },
+          { id: 'bangkok-grand-palace', cityId: 'bangkok', title: '大皇宫', title_en: 'Grand Palace', coverImage: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600', duration: 880, durationText: '14分40秒', rating: 4.9, playCount: 14890, isHot: true, languages: ['zh', 'en', 'th'], description: '曼谷最神圣的佛教圣地，曾是泰国国王的皇宫。' },
+          { id: 'bangkok-wat-pho', cityId: 'bangkok', title: '卧佛寺', title_en: 'Wat Pho', coverImage: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=600', duration: 760, durationText: '12分40秒', rating: 4.8, playCount: 11230, isHot: false, languages: ['zh', 'en', 'th'], description: '曼谷最古老的寺庙，拥有46米长的卧佛像。' },
+          { id: 'bangkok-khaosan', cityId: 'bangkok', title: '考山路', title_en: 'Khaosan Road', coverImage: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600', duration: 520, durationText: '08分40秒', rating: 4.5, playCount: 7680, isHot: false, languages: ['zh', 'en', 'th'], description: '曼谷最著名的背包客天堂，充满青春与活力的街道。' }
+        ]
+      };
+      cities = guideData.cities;
+      guides = guideData.guides;
+      
+      renderCityFilters();
+      renderHotGuides();
+      renderAllGuides();
+    }
+
+    function renderCityFilters() {
+      const container = document.getElementById('cityFilters');
+      container.innerHTML = `
+        <button class="city-tag ${currentCity === 'all' ? 'active' : ''}" data-city="all" onclick="filterByCity('all')">
+          🌍 全部城市
+        </button>
+      `;
+      cities.forEach(city => {
+        container.innerHTML += `
+          <button class="city-tag ${currentCity === city.id ? 'active' : ''}" data-city="${city.id}" onclick="filterByCity('${city.id}')">
+            ${city.flag} ${city.name}
+          </button>
+        `;
+      });
+    }
+
+    function renderHotGuides() {
+      const container = document.getElementById('hotGuides');
+      const hotGuides = guides.filter(g => g.isHot).slice(0, 4);
+      
+      container.innerHTML = hotGuides.map(guide => createGuideCard(guide)).join('');
+    }
+
+    function renderAllGuides() {
+      const container = document.getElementById('cityGuides');
+      container.innerHTML = '';
+      
+      const filteredGuides = currentCity === 'all' ? guides : guides.filter(g => g.cityId === currentCity);
+      
+      if (currentCity === 'all') {
+        cities.forEach(city => {
+          const cityGuides = guides.filter(g => g.cityId === city.id);
+          if (cityGuides.length > 0) {
+            container.innerHTML += `
+              <section class="mb-12">
+                <div class="flex items-center justify-between mb-6">
+                  <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                    ${city.flag} ${city.name}
+                  </h2>
+                  <a href="#" class="text-primary hover:underline text-sm font-medium">查看全部 →</a>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  ${cityGuides.map(guide => createGuideCard(guide)).join('')}
+                </div>
+              </section>
+            `;
+          }
+        });
+      } else {
+        const city = cities.find(c => c.id === currentCity);
+        container.innerHTML = `
+          <section class="mb-12">
+            <div class="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl p-6 mb-6">
+              <div class="flex items-center gap-4">
+                <img src="${city.coverImage}" alt="${city.name}" class="w-20 h-20 rounded-xl object-cover">
+                <div>
+                  <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                    ${city.flag} ${city.name}
+                  </h2>
+                  <p class="text-gray-600">${city.description}</p>
+                  <p class="text-sm text-gray-500 mt-1">${city.guideCount} 个导览景点</p>
+                </div>
+              </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              ${filteredGuides.map(guide => createGuideCard(guide)).join('')}
+            </div>
+          </section>
+        `;
+      }
+    }
+
+    function createGuideCard(guide) {
+      const city = cities.find(c => c.id === guide.cityId);
+      return `
+        <div class="guide-card" onclick="playGuide('${guide.id}')">
+          <div class="guide-card-image">
+            <img src="${guide.coverImage}" alt="${guide.title}" loading="lazy">
+            ${guide.isHot ? '<span class="guide-card-badge bg-red-500 text-white">热门</span>' : ''}
+            <button class="guide-card-favorite" onclick="event.stopPropagation(); toggleFavorite('${guide.id}')">
+              <span class="text-gray-400">♡</span>
+            </button>
+            <span class="guide-card-duration">⏱️ ${guide.durationText}</span>
+          </div>
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-sm">${city ? city.flag : ''} ${city ? city.name : ''}</span>
+              <div class="flex items-center gap-1 text-amber-500">
+                <span>⭐</span>
+                <span class="text-sm font-medium">${guide.rating}</span>
+              </div>
+            </div>
+            <h3 class="font-bold text-gray-800 mb-1">${guide.title}</h3>
+            <p class="text-sm text-gray-500 line-clamp-2">${guide.description}</p>
+            <div class="flex items-center gap-2 mt-3">
+              ${guide.languages.map(lang => `<span class="text-xs bg-gray-100 px-2 py-1 rounded">${getLangName(lang)}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function getLangName(code) {
+      const names = { zh: '中文', en: 'EN', ja: '日本語', ko: '한국어', th: 'TH' };
+      return names[code] || code;
+    }
+
+    function filterByCity(cityId) {
+      currentCity = cityId;
+      document.querySelectorAll('.city-tag').forEach(tag => {
+        tag.classList.toggle('active', tag.dataset.city === cityId);
+      });
+      renderAllGuides();
+    }
+
+    function handleSearch(query) {
+      const filteredGuides = guides.filter(g => 
+        g.title.toLowerCase().includes(query.toLowerCase()) ||
+        g.title_en.toLowerCase().includes(query.toLowerCase()) ||
+        g.description.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      const container = document.getElementById('hotGuides');
+      if (query.length > 0) {
+        container.innerHTML = filteredGuides.length > 0 
+          ? filteredGuides.map(guide => createGuideCard(guide)).join('')
+          : '<div class="col-span-full text-center py-12 text-gray-500">未找到相关导览</div>';
+      } else {
+        renderHotGuides();
+      }
+    }
+
+    function playGuide(guideId) {
+      const guide = guides.find(g => g.id === guideId);
+      if (guide) {
+        currentGuide = guide;
+        showFloatingPlayer();
+        // In real app, would start audio playback
+        document.getElementById('floatingTitle').textContent = guide.title;
+        document.getElementById('floatingCover').src = guide.coverImage;
+        document.getElementById('floatingProgress').textContent = `00:00 / ${guide.durationText}`;
+        
+        // Navigate to detail page
+        window.location.href = `spot.html?id=${guideId}`;
+      }
+    }
+
+    function toggleFavorite(guideId) {
+      const btn = event.currentTarget;
+      const isActive = btn.classList.contains('active');
+      btn.classList.toggle('active');
+      btn.querySelector('span').textContent = isActive ? '♡' : '♥';
+      btn.querySelector('span').className = isActive ? 'text-gray-400' : 'text-red-500';
+      
+      // Save to localStorage
+      let favorites = JSON.parse(localStorage.getItem('audioFavorites') || '[]');
+      if (isActive) {
+        favorites = favorites.filter(id => id !== guideId);
+      } else {
+        favorites.push(guideId);
+      }
+      localStorage.setItem('audioFavorites', JSON.stringify(favorites));
+    }
+
+    function showFloatingPlayer() {
+      document.getElementById('floatingPlayer').classList.add('visible');
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      const btn = document.querySelector('#floatingPlayer button:first-child');
+      btn.textContent = isPlaying ? '⏸️' : '▶️';
+    }
+
+    function closePlayer() {
+      document.getElementById('floatingPlayer').classList.remove('visible');
+      currentGuide = null;
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

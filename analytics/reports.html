@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报表中心 - 游导旅游</title>
+    <meta name="description" content="数据分析报表管理">
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f8fafc; }
+        .gradient-header { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: all 0.3s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .nav-link { transition: all 0.3s; }
+        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.2); border-radius: 8px; }
+        .time-filter { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 12px; font-size: 14px; cursor: pointer; }
+        .tab-btn { padding: 8px 16px; border-radius: 8px; transition: all 0.3s; }
+        .tab-btn:hover { background: #f1f5f9; }
+        .tab-btn.active { background: #0ea5e9; color: white; }
+        .report-card { padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; transition: all 0.2s; }
+        .report-card:hover { border-color: #0ea5e9; background: #f8fafc; }
+        .frequency-badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; font-size: 12px; }
+        .freq-daily { background: #dcfce7; color: #166534; }
+        .freq-weekly { background: #dbeafe; color: #1e40af; }
+        .freq-monthly { background: #fef3c7; color: #92400e; }
+        .export-format { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .export-format:hover { background: #f1f5f9; }
+        .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; border-radius: 16px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; }
+        .checkbox-custom { width: 20px; height: 20px; border: 2px solid #d1d5db; border-radius: 4px; cursor: pointer; transition: all 0.2s; }
+        .checkbox-custom:checked { background: #0ea5e9; border-color: #0ea5e9; }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0 !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="gradient-header text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button id="menuToggle" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+                    <a href="../index.html" class="flex items-center gap-2">
+                        <span class="text-3xl">🧭</span>
+                        <span class="text-xl font-bold">游导旅游</span>
+                    </a>
+                    <span class="hidden md:inline text-sm opacity-80 ml-2">| 报表中心</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar w-64 bg-white shadow-lg min-h-screen p-4 fixed left-0 top-16 overflow-y-auto">
+            <nav class="space-y-1">
+                <a href="index.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-chart-line w-5"></i>数据概览
+                </a>
+                <a href="users.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-users w-5"></i>用户分析
+                </a>
+                <a href="content.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-file-alt w-5"></i>内容分析
+                </a>
+                <a href="behavior.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-mouse-pointer w-5"></i>行为分析
+                </a>
+                <a href="trends.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-chart-area w-5"></i>趋势分析
+                </a>
+                <a href="reports.html" class="nav-link active flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-medium">
+                    <i class="fas fa-file-invoice w-5"></i>报表中心
+                </a>
+                <div class="my-4 border-t border-gray-200"></div>
+                <a href="traffic.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-route w-5"></i>流量来源
+                </a>
+                <a href="funnel.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-filter w-5"></i>转化漏斗
+                </a>
+                <a href="export.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-file-export w-5"></i>报表导出
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content flex-1 md:ml-64 p-6">
+            <!-- Page Title -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-bold text-gray-800">报表中心</h1>
+                    <p class="text-gray-500 mt-1">管理预设报表、自定义报表和定时任务</p>
+                </div>
+                <button onclick="openModal('createReport')" class="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                    <i class="fas fa-plus"></i>新建报表
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex gap-2 mb-6 border-b border-gray-200 pb-4">
+                <button class="tab-btn active" onclick="switchTab('presets')">预设报表</button>
+                <button class="tab-btn" onclick="switchTab('custom')">自定义报表</button>
+                <button class="tab-btn" onclick="switchTab('scheduled')">定时报表</button>
+                <button class="tab-btn" onclick="switchTab('export')">导出记录</button>
+            </div>
+
+            <!-- Preset Reports -->
+            <div id="presets" class="tab-content">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="report-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+                                <i class="fas fa-calendar-day text-xl"></i>
+                            </div>
+                            <span class="frequency-badge freq-daily"><i class="fas fa-clock"></i>每日</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">日度运营报告</h3>
+                        <p class="text-sm text-gray-500 mb-4">每日核心指标汇总，包括访问量、用户数、转化率等关键数据</p>
+                        <div class="text-xs text-gray-400 mb-4">最后运行: 2026-03-25 00:00</div>
+                        <div class="flex gap-2">
+                            <button onclick="runReport(1)" class="flex-1 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition text-sm">
+                                <i class="fas fa-play mr-1"></i>立即生成
+                            </button>
+                            <button onclick="viewReport(1)" class="py-2 px-4 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition text-sm">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600">
+                                <i class="fas fa-chart-bar text-xl"></i>
+                            </div>
+                            <span class="frequency-badge freq-weekly"><i class="fas fa-clock"></i>每周</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">周度分析报告</h3>
+                        <p class="text-sm text-gray-500 mb-4">本周数据回顾与下周预测，包含同比环比分析</p>
+                        <div class="text-xs text-gray-400 mb-4">最后运行: 2026-03-22 08:00</div>
+                        <div class="flex gap-2">
+                            <button onclick="runReport(2)" class="flex-1 py-2 bg-green-50 text-green-600 rounded-lg hover:bg-green-100 transition text-sm">
+                                <i class="fas fa-play mr-1"></i>立即生成
+                            </button>
+                            <button onclick="viewReport(2)" class="py-2 px-4 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition text-sm">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">
+                                <i class="fas fa-calendar-alt text-xl"></i>
+                            </div>
+                            <span class="frequency-badge freq-monthly"><i class="fas fa-clock"></i>每月</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">月度总结报告</h3>
+                        <p class="text-sm text-gray-500 mb-4">月度数据全面分析，涵盖用户、内容、行为等多维度</p>
+                        <div class="text-xs text-gray-400 mb-4">最后运行: 2026-03-01 00:00</div>
+                        <div class="flex gap-2">
+                            <button onclick="runReport(3)" class="flex-1 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition text-sm">
+                                <i class="fas fa-play mr-1"></i>立即生成
+                            </button>
+                            <button onclick="viewReport(3)" class="py-2 px-4 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition text-sm">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-amber-600">
+                                <i class="fas fa-user-plus text-xl"></i>
+                            </div>
+                            <span class="frequency-badge freq-weekly"><i class="fas fa-clock"></i>每周</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">用户增长报告</h3>
+                        <p class="text-sm text-gray-500 mb-4">新用户获取与留存分析，追踪用户生命周期</p>
+                        <div class="text-xs text-gray-400 mb-4">最后运行: 2026-03-23 08:00</div>
+                        <div class="flex gap-2">
+                            <button onclick="runReport(4)" class="flex-1 py-2 bg-amber-50 text-amber-600 rounded-lg hover:bg-amber-100 transition text-sm">
+                                <i class="fas fa-play mr-1"></i>立即生成
+                            </button>
+                            <button onclick="viewReport(4)" class="py-2 px-4 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition text-sm">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600">
+                                <i class="fas fa-file-alt text-xl"></i>
+                            </div>
+                            <span class="frequency-badge freq-daily"><i class="fas fa-clock"></i>每日</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">内容表现报告</h3>
+                        <p class="text-sm text-gray-500 mb-4">热门内容与互动分析，追踪阅读量、点赞、分享</p>
+                        <div class="text-xs text-gray-400 mb-4">最后运行: 2026-03-25 01:00</div>
+                        <div class="flex gap-2">
+                            <button onclick="runReport(5)" class="flex-1 py-2 bg-cyan-50 text-cyan-600 rounded-lg hover:bg-cyan-100 transition text-sm">
+                                <i class="fas fa-play mr-1"></i>立即生成
+                            </button>
+                            <button onclick="viewReport(5)" class="py-2 px-4 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition text-sm">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="report-card">
+                        <div class="flex items-start justify-between mb-4">
+                            <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center text-pink-600">
+                                <i class="fas fa-filter text-xl"></i>
+                            </div>
+                            <span class="frequency-badge freq-weekly"><i class="fas fa-clock"></i>每周</span>
+                        </div>
+                        <h3 class="font-semibold text-gray-800 mb-2">转化漏斗报告</h3>
+                        <p class="text-sm text-gray-500 mb-4">用户行为路径与转化分析，发现关键优化点</p>
+                        <div class="text-xs text-gray-400 mb-4">最后运行: 2026-03-20 08:00</div>
+                        <div class="flex gap-2">
+                            <button onclick="runReport(6)" class="flex-1 py-2 bg-pink-50 text-pink-600 rounded-lg hover:bg-pink-100 transition text-sm">
+                                <i class="fas fa-play mr-1"></i>立即生成
+                            </button>
+                            <button onclick="viewReport(6)" class="py-2 px-4 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition text-sm">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Custom Reports -->
+            <div id="custom" class="tab-content hidden">
+                <div class="card p-6 mb-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">创建自定义报表</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">报表名称</label>
+                            <input type="text" placeholder="请输入报表名称" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">时间范围</label>
+                            <select class="w-full px-4 py-2 border border-gray-200 rounded-lg">
+                                <option>近7天</option>
+                                <option>近30天</option>
+                                <option>近90天</option>
+                                <option>自定义</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">选择指标</label>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <input type="checkbox" checked class="checkbox-custom">
+                                <span class="text-sm">访问量</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <input type="checkbox" checked class="checkbox-custom">
+                                <span class="text-sm">浏览量</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <input type="checkbox" class="checkbox-custom">
+                                <span class="text-sm">新增用户</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <input type="checkbox" checked class="checkbox-custom">
+                                <span class="text-sm">跳出率</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <input type="checkbox" class="checkbox-custom">
+                                <span class="text-sm">转化率</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <input type="checkbox" class="checkbox-custom">
+                                <span class="text-sm">停留时长</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <input type="checkbox" checked class="checkbox-custom">
+                                <span class="text-sm">热门攻略</span>
+                            </label>
+                            <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
+                                <input type="checkbox" class="checkbox-custom">
+                                <span class="text-sm">用户路径</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="mt-6 flex gap-3">
+                        <button class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+                            <i class="fas fa-plus mr-2"></i>创建报表
+                        </button>
+                        <button class="px-6 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition">
+                            保存为模板
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scheduled Reports -->
+            <div id="scheduled" class="tab-content hidden">
+                <div class="card p-6 mb-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-gray-800">定时任务</h3>
+                        <button onclick="openModal('createSchedule')" class="text-sm text-blue-500 hover:underline">
+                            <i class="fas fa-plus mr-1"></i>新建定时任务
+                        </button>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                                    <i class="fas fa-envelope"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">每日报告邮件</div>
+                                    <div class="text-sm text-gray-500">发送至: admin@youdao-travel.com</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="frequency-badge freq-daily">每日 08:00</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                                    <i class="fas fa-bell"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">周报提醒</div>
+                                    <div class="text-sm text-gray-500">发送至: manager@youdao-travel.com</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="frequency-badge freq-weekly">每周一 09:00</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                                    <i class="fas fa-file-pdf"></i>
+                                </div>
+                                <div>
+                                    <div class="font-medium">月度报告存档</div>
+                                    <div class="text-sm text-gray-500">保存至: /reports/monthly/</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="frequency-badge freq-monthly">每月1日 00:00</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-500"></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Records -->
+            <div id="export" class="tab-content hidden">
+                <div class="card overflow-hidden">
+                    <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                        <h3 class="font-semibold text-gray-800">导出记录</h3>
+                        <div class="flex gap-2">
+                            <select class="text-sm border border-gray-200 rounded-lg px-3 py-1">
+                                <option>全部格式</option>
+                                <option>Excel</option>
+                                <option>PDF</option>
+                                <option>CSV</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">报表名称</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">格式</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">时间范围</th>
+                                    <th class="text-left py-3 px-4 text-sm font-medium text-gray-600">导出时间</th>
+                                    <th class="text-right py-3 px-4 text-sm font-medium text-gray-600">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium">日度运营报告</div>
+                                        <div class="text-xs text-gray-500">2026-03-24</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs">Excel</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">2026-03-18 ~ 2026-03-24</td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">2026-03-25 08:30</td>
+                                    <td class="py-3 px-4 text-right">
+                                        <button class="text-blue-500 hover:underline text-sm mr-3">下载</button>
+                                        <button class="text-gray-400 hover:text-gray-600"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium">周度分析报告</div>
+                                        <div class="text-xs text-gray-500">2026-03 第3周</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 bg-red-100 text-red-600 rounded text-xs">PDF</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">2026-03-15 ~ 2026-03-21</td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">2026-03-22 09:15</td>
+                                    <td class="py-3 px-4 text-right">
+                                        <button class="text-blue-500 hover:underline text-sm mr-3">下载</button>
+                                        <button class="text-gray-400 hover:text-gray-600"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium">用户增长报告</div>
+                                        <div class="text-xs text-gray-500">2026-03-23</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 bg-blue-100 text-blue-600 rounded text-xs">CSV</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">2026-03-17 ~ 2026-03-23</td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">2026-03-23 10:00</td>
+                                    <td class="py-3 px-4 text-right">
+                                        <button class="text-blue-500 hover:underline text-sm mr-3">下载</button>
+                                        <button class="text-gray-400 hover:text-gray-600"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="py-3 px-4">
+                                        <div class="font-medium">自定义报表</div>
+                                        <div class="text-xs text-gray-500">日本目的地分析</div>
+                                    </td>
+                                    <td class="py-3 px-4">
+                                        <span class="px-2 py-1 bg-green-100 text-green-600 rounded text-xs">Excel</span>
+                                    </td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">2026-02-01 ~ 2026-02-28</td>
+                                    <td class="py-3 px-4 text-sm text-gray-500">2026-03-20 14:22</td>
+                                    <td class="py-3 px-4 text-right">
+                                        <button class="text-blue-500 hover:underline text-sm mr-3">下载</button>
+                                        <button class="text-gray-400 hover:text-gray-600"><i class="fas fa-trash"></i></button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Formats -->
+            <div class="card p-6 mt-6">
+                <h3 class="font-semibold text-gray-800 mb-4">快速导出</h3>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="quickExport('csv')" class="export-format border border-gray-200">
+                        <i class="fas fa-file-csv text-green-600"></i>CSV
+                    </button>
+                    <button onclick="quickExport('excel')" class="export-format border border-gray-200">
+                        <i class="fas fa-file-excel text-blue-600"></i>Excel
+                    </button>
+                    <button onclick="quickExport('pdf')" class="export-format border border-gray-200">
+                        <i class="fas fa-file-pdf text-red-600"></i>PDF
+                    </button>
+                    <button onclick="quickExport('json')" class="export-format border border-gray-200">
+                        <i class="fas fa-code text-purple-600"></i>JSON
+                    </button>
+                    <button onclick="quickExport('png')" class="export-format border border-gray-200">
+                        <i class="fas fa-image text-orange-600"></i>PNG (图表)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-8 text-center text-sm text-gray-400">
+                <p>报表服务正常运行 | 最近备份: 2026-03-25 00:00:00</p>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Create Report Modal -->
+    <div id="createReportModal" class="modal">
+        <div class="modal-content p-6">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-lg font-semibold">新建报表</h3>
+                <button onclick="closeModal('createReport')" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">报表名称</label>
+                    <input type="text" placeholder="请输入报表名称" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">报表类型</label>
+                    <select class="w-full px-4 py-2 border border-gray-200 rounded-lg">
+                        <option>综合分析报告</option>
+                        <option>用户分析报告</option>
+                        <option>内容分析报告</option>
+                        <option>行为分析报告</option>
+                        <option>自定义报告</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">时间范围</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="date" class="px-4 py-2 border border-gray-200 rounded-lg">
+                        <input type="date" class="px-4 py-2 border border-gray-200 rounded-lg">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">导出格式</label>
+                    <div class="flex gap-4">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" checked> Excel
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox"> PDF
+                        </label>
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox"> CSV
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end gap-3 mt-6">
+                <button onclick="closeModal('createReport')" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200">取消</button>
+                <button onclick="createReport()" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">创建</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-4 right-4 px-6 py-3 bg-gray-800 text-white rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // Tab Switching
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.remove('hidden');
+            event.target.classList.add('active');
+        }
+
+        // Modal Functions
+        function openModal(modalId) {
+            document.getElementById(modalId + 'Modal').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId + 'Modal').classList.remove('active');
+        }
+
+        // Report Functions
+        function runReport(id) {
+            showToast('正在生成报表，请稍候...');
+            setTimeout(() => {
+                showToast('报表生成成功！');
+            }, 2000);
+        }
+
+        function viewReport(id) {
+            showToast('正在打开报表预览...');
+        }
+
+        function createReport() {
+            closeModal('createReport');
+            showToast('报表创建成功！');
+        }
+
+        // Export Functions
+        function quickExport(format) {
+            showToast(`正在导出 ${format.toUpperCase()} 文件...`);
+            setTimeout(() => {
+                showToast(`${format.toUpperCase()} 文件导出成功！`);
+            }, 1500);
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Toggle Mobile Menu
+        document.getElementById('menuToggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        });
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

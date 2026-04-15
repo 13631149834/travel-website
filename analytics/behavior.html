@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行为分析 - 游导旅游</title>
+    <meta name="description" content="用户行为数据分析">
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f8fafc; }
+        .gradient-header { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: all 0.3s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .metric-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .metric-card .icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .nav-link { transition: all 0.3s; }
+        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.2); border-radius: 8px; }
+        .time-filter { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 12px; font-size: 14px; cursor: pointer; }
+        .chart-container { position: relative; height: 280px; }
+        .funnel-step { position: relative; margin-bottom: 8px; }
+        .funnel-bar { height: 48px; border-radius: 8px; display: flex; align-items: center; padding: 0 16px; color: white; font-weight: 500; transition: all 0.3s; }
+        .funnel-bar:hover { transform: scaleX(1.02); }
+        .path-item { display: flex; align-items: center; padding: 12px 16px; border-radius: 8px; transition: all 0.2s; }
+        .path-item:hover { background: #f8fafc; }
+        .path-step { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: white; margin-right: 12px; }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0 !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="gradient-header text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button id="menuToggle" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+                    <a href="../index.html" class="flex items-center gap-2">
+                        <span class="text-3xl">🧭</span>
+                        <span class="text-xl font-bold">游导旅游</span>
+                    </a>
+                    <span class="hidden md:inline text-sm opacity-80 ml-2">| 行为分析</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <select class="time-filter bg-white/20 text-white border-white/30">
+                        <option value="7days" selected>近7天</option>
+                        <option value="30days">近30天</option>
+                        <option value="90days">近90天</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar w-64 bg-white shadow-lg min-h-screen p-4 fixed left-0 top-16 overflow-y-auto">
+            <nav class="space-y-1">
+                <a href="index.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-chart-line w-5"></i>数据概览
+                </a>
+                <a href="users.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-users w-5"></i>用户分析
+                </a>
+                <a href="content.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-file-alt w-5"></i>内容分析
+                </a>
+                <a href="behavior.html" class="nav-link active flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-medium">
+                    <i class="fas fa-mouse-pointer w-5"></i>行为分析
+                </a>
+                <a href="trends.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-chart-area w-5"></i>趋势分析
+                </a>
+                <a href="reports.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-file-invoice w-5"></i>报表中心
+                </a>
+                <div class="my-4 border-t border-gray-200"></div>
+                <a href="traffic.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-route w-5"></i>流量来源
+                </a>
+                <a href="funnel.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-filter w-5"></i>转化漏斗
+                </a>
+                <a href="export.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-file-export w-5"></i>报表导出
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content flex-1 md:ml-64 p-6">
+            <!-- Page Title -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">行为分析</h1>
+                <p class="text-gray-500 mt-1">追踪用户在平台上的行为轨迹</p>
+            </div>
+
+            <!-- Behavior Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="icon bg-blue-100 text-blue-600"><i class="fas fa-clock"></i></div>
+                        <span class="text-xs text-green-500 font-medium"><i class="fas fa-arrow-up mr-1"></i>5.2%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">3:06</h3>
+                    <p class="text-sm text-gray-500 mt-1">平均停留时长</p>
+                </div>
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="icon bg-amber-100 text-amber-600"><i class="fas fa-sign-out-alt"></i></div>
+                        <span class="text-xs text-green-500 font-medium"><i class="fas fa-arrow-down mr-1"></i>3.2%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">32.5%</h3>
+                    <p class="text-sm text-gray-500 mt-1">跳出率</p>
+                </div>
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="icon bg-green-100 text-green-600"><i class="fas fa-bullseye"></i></div>
+                        <span class="text-xs text-green-500 font-medium"><i class="fas fa-arrow-up mr-1"></i>0.8%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">4.2%</h3>
+                    <p class="text-sm text-gray-500 mt-1">转化率</p>
+                </div>
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="icon bg-purple-100 text-purple-600"><i class="fas fa-chart-line"></i></div>
+                        <span class="text-xs text-green-500 font-medium"><i class="fas fa-arrow-up mr-1"></i>3.5%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">77.6</h3>
+                    <p class="text-sm text-gray-500 mt-1">用户参与度</p>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Bounce Rate Trend -->
+                <div class="card p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-gray-800">跳出率趋势</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-amber-500"><i class="fas fa-circle mr-1"></i>当前: 32.5%</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="bounceRateChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Engagement Score -->
+                <div class="card p-6">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-semibold text-gray-800">用户参与度趋势</h3>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-green-500"><i class="fas fa-circle mr-1"></i>当前: 77.6</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="engagementChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Stay Duration -->
+            <div class="card p-6 mb-6">
+                <h3 class="font-semibold text-gray-800 mb-4">各页面平均停留时长</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🏠</span>
+                            <span class="text-sm text-blue-600 font-medium">首页</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">45秒</div>
+                        <div class="text-xs text-gray-500 mt-1">跳出率: 28.5%</div>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🗺️</span>
+                            <span class="text-sm text-green-600 font-medium">目的地</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">68秒</div>
+                        <div class="text-xs text-gray-500 mt-1">跳出率: 32.1%</div>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">📖</span>
+                            <span class="text-sm text-purple-600 font-medium">攻略详情</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">3:05</div>
+                        <div class="text-xs text-gray-500 mt-1">跳出率: 18.2%</div>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🛤️</span>
+                            <span class="text-sm text-amber-600 font-medium">路线规划</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">4:05</div>
+                        <div class="text-xs text-gray-500 mt-1">跳出率: 12.5%</div>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-cyan-50 to-teal-50 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🧰</span>
+                            <span class="text-sm text-cyan-600 font-medium">工具箱</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">2:36</div>
+                        <div class="text-xs text-gray-500 mt-1">跳出率: 22.8%</div>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">👥</span>
+                            <span class="text-sm text-pink-600 font-medium">社区</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">2:08</div>
+                        <div class="text-xs text-gray-500 mt-1">跳出率: 25.6%</div>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-gray-50 to-slate-50 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">🔍</span>
+                            <span class="text-sm text-gray-600 font-medium">搜索结果</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">52秒</div>
+                        <div class="text-xs text-gray-500 mt-1">跳出率: 45.2%</div>
+                    </div>
+                    <div class="p-4 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-xl">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-2xl">👤</span>
+                            <span class="text-sm text-indigo-600 font-medium">用户中心</span>
+                        </div>
+                        <div class="text-xl font-bold text-gray-800">1:38</div>
+                        <div class="text-xs text-gray-500 mt-1">跳出率: 15.8%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conversion Funnel -->
+            <div class="card p-6 mb-6">
+                <h3 class="font-semibold text-gray-800 mb-4">用户转化漏斗</h3>
+                <div class="funnel-container">
+                    <div class="funnel-step">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">访问</span>
+                            <span class="text-sm font-bold text-blue-600">100,000 (100%)</span>
+                        </div>
+                        <div class="funnel-bar bg-gradient-to-r from-blue-500 to-blue-400" style="width: 100%"></div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">浏览攻略</span>
+                            <span class="text-sm font-bold text-blue-500">68,500 (68.5%)</span>
+                        </div>
+                        <div class="funnel-bar bg-gradient-to-r from-cyan-500 to-cyan-400" style="width: 68.5%"></div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">查看路线</span>
+                            <span class="text-sm font-bold text-teal-600">42,800 (42.8%)</span>
+                        </div>
+                        <div class="funnel-bar bg-gradient-to-r from-teal-500 to-teal-400" style="width: 42.8%"></div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">使用工具</span>
+                            <span class="text-sm font-bold text-green-600">25,600 (25.6%)</span>
+                        </div>
+                        <div class="funnel-bar bg-gradient-to-r from-green-500 to-green-400" style="width: 25.6%"></div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">收藏/分享</span>
+                            <span class="text-sm font-bold text-emerald-600">12,800 (12.8%)</span>
+                        </div>
+                        <div class="funnel-bar bg-gradient-to-r from-emerald-500 to-emerald-400" style="width: 12.8%"></div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">注册</span>
+                            <span class="text-sm font-bold text-lime-600">5,200 (5.2%)</span>
+                        </div>
+                        <div class="funnel-bar bg-gradient-to-r from-lime-500 to-lime-400" style="width: 5.2%"></div>
+                    </div>
+                    <div class="funnel-step">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">完成目标</span>
+                            <span class="text-sm font-bold text-green-700">2,800 (2.8%)</span>
+                        </div>
+                        <div class="funnel-bar bg-gradient-to-r from-green-700 to-green-600" style="width: 2.8%"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- User Paths -->
+            <div class="card p-6 mb-6">
+                <h3 class="font-semibold text-gray-800 mb-4">热门用户路径</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="path-item bg-blue-50 rounded-xl">
+                        <div class="path-step bg-blue-500">1</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">首页 → 目的地 → 攻略 → 收藏</div>
+                            <div class="text-sm text-gray-500 mt-1">用户 25,860 人 | 占比 32.5%</div>
+                        </div>
+                        <div class="text-lg font-bold text-blue-600">32.5%</div>
+                    </div>
+                    <div class="path-item bg-green-50 rounded-xl">
+                        <div class="path-step bg-green-500">2</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">首页 → 搜索 → 攻略 → 收藏</div>
+                            <div class="text-sm text-gray-500 mt-1">用户 18,650 人 | 占比 23.5%</div>
+                        </div>
+                        <div class="text-lg font-bold text-green-600">23.5%</div>
+                    </div>
+                    <div class="path-item bg-amber-50 rounded-xl">
+                        <div class="path-step bg-amber-500">3</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">首页 → 工具箱 → 预算计算器</div>
+                            <div class="text-sm text-gray-500 mt-1">用户 12,580 人 | 占比 15.8%</div>
+                        </div>
+                        <div class="text-lg font-bold text-amber-600">15.8%</div>
+                    </div>
+                    <div class="path-item bg-purple-50 rounded-xl">
+                        <div class="path-step bg-purple-500">4</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">首页 → 社区 → 帖子</div>
+                            <div class="text-sm text-gray-500 mt-1">用户 9,860 人 | 占比 12.4%</div>
+                        </div>
+                        <div class="text-lg font-bold text-purple-600">12.4%</div>
+                    </div>
+                    <div class="path-item bg-cyan-50 rounded-xl">
+                        <div class="path-step bg-cyan-500">5</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">首页 → 路线 → 详情</div>
+                            <div class="text-sm text-gray-500 mt-1">用户 7,680 人 | 占比 9.7%</div>
+                        </div>
+                        <div class="text-lg font-bold text-cyan-600">9.7%</div>
+                    </div>
+                    <div class="path-item bg-pink-50 rounded-xl">
+                        <div class="path-step bg-pink-500">6</div>
+                        <div class="flex-1">
+                            <div class="font-medium text-gray-800">首页 → 活动 → 报名</div>
+                            <div class="text-sm text-gray-500 mt-1">用户 4,860 人 | 占比 6.1%</div>
+                        </div>
+                        <div class="text-lg font-bold text-pink-600">6.1%</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Behavior Insights -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="card p-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">用户活跃时段</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">08:00-10:00</span>
+                            <div class="flex items-center gap-2">
+                                <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-blue-500 rounded-full" style="width: 75%"></div>
+                                </div>
+                                <span class="text-sm font-medium">75%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">14:00-16:00</span>
+                            <div class="flex items-center gap-2">
+                                <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-green-500 rounded-full" style="width: 68%"></div>
+                                </div>
+                                <span class="text-sm font-medium">68%</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-sm text-gray-600">20:00-22:00</span>
+                            <div class="flex items-center gap-2">
+                                <div class="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                                    <div class="h-full bg-purple-500 rounded-full" style="width: 85%"></div>
+                                </div>
+                                <span class="text-sm font-medium">85%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-amber-50 rounded-lg">
+                        <p class="text-sm text-amber-800"><i class="fas fa-lightbulb mr-1"></i>晚间时段用户活跃度最高，建议此时段发布新内容</p>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">用户行为特征</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">搜索行为</div>
+                                <div class="text-xs text-gray-500">平均每次会话搜索 2.3 次</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                                <i class="fas fa-bookmark"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">收藏行为</div>
+                                <div class="text-xs text-gray-500">平均每次会话收藏 1.8 篇攻略</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center text-purple-600">
+                                <i class="fas fa-share"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">分享行为</div>
+                                <div class="text-xs text-gray-500">分享率 8.2%，高于行业均值</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+                                <i class="fas fa-comment"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-sm font-medium">评论行为</div>
+                                <div class="text-xs text-gray-500">评论率 12.5%，互动意愿强</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card p-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">设备行为差异</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm"><i class="fas fa-mobile-alt text-blue-500 mr-1"></i>手机用户</span>
+                                <span class="text-sm font-medium">58.7%</span>
+                            </div>
+                            <div class="text-xs text-gray-500">平均停留 2:45 | 跳出率 35.2%</div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm"><i class="fas fa-laptop text-green-500 mr-1"></i>电脑用户</span>
+                                <span class="text-sm font-medium">32.2%</span>
+                            </div>
+                            <div class="text-xs text-gray-500">平均停留 4:12 | 跳出率 28.5%</div>
+                        </div>
+                        <div>
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-sm"><i class="fas fa-tablet-alt text-amber-500 mr-1"></i>平板用户</span>
+                                <span class="text-sm font-medium">9.1%</span>
+                            </div>
+                            <div class="text-xs text-gray-500">平均停留 3:28 | 跳出率 30.1%</div>
+                        </div>
+                    </div>
+                    <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+                        <p class="text-sm text-blue-800"><i class="fas fa-info-circle mr-1"></i>电脑用户转化率更高，建议优化移动端体验</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-8 text-center text-sm text-gray-400">
+                <p>数据更新时间: 2026-03-25 14:30:00</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Bounce Rate Chart
+        function initBounceRateChart() {
+            const ctx = document.getElementById('bounceRateChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['03-18', '03-19', '03-20', '03-21', '03-22', '03-23', '03-24'],
+                    datasets: [{
+                        label: '跳出率',
+                        data: [34.2, 33.8, 35.1, 32.5, 31.2, 33.5, 32.5],
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#f59e0b'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 28,
+                            max: 38,
+                            grid: { color: '#f1f5f9' },
+                            ticks: { callback: value => value + '%' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Engagement Chart
+        function initEngagementChart() {
+            const ctx = document.getElementById('engagementChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['03-18', '03-19', '03-20', '03-21', '03-22', '03-23', '03-24'],
+                    datasets: [{
+                        label: '参与度',
+                        data: [72.5, 74.2, 71.8, 76.5, 78.2, 75.8, 77.6],
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#10b981'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 65,
+                            max: 85,
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Toggle Mobile Menu
+        document.getElementById('menuToggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initBounceRateChart();
+            initEngagementChart();
+        });
+    </script>
+</body>
+</html>

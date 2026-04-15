@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>内容分析 - 游导旅游</title>
+    <meta name="description" content="内容数据分析">
+    <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f8fafc; }
+        .gradient-header { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+        .card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: all 0.3s; }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.1); }
+        .metric-card { background: white; border-radius: 16px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); }
+        .metric-card .icon { width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .nav-link { transition: all 0.3s; }
+        .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.2); border-radius: 8px; }
+        .time-filter { background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 12px; font-size: 14px; cursor: pointer; }
+        .chart-container { position: relative; height: 280px; }
+        .guide-card { padding: 16px; border-radius: 12px; transition: all 0.2s; cursor: pointer; }
+        .guide-card:hover { background: #f8fafc; }
+        .heatmap-cell { width: 100%; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: white; transition: transform 0.2s; }
+        .heatmap-cell:hover { transform: scale(1.05); }
+        .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0 !important; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="gradient-header text-white sticky top-0 z-50 shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <button id="menuToggle" class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+                    <a href="../index.html" class="flex items-center gap-2">
+                        <span class="text-3xl">🧭</span>
+                        <span class="text-xl font-bold">游导旅游</span>
+                    </a>
+                    <span class="hidden md:inline text-sm opacity-80 ml-2">| 内容分析</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <select class="time-filter bg-white/20 text-white border-white/30">
+                        <option value="7days" selected>近7天</option>
+                        <option value="30days">近30天</option>
+                        <option value="90days">近90天</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar w-64 bg-white shadow-lg min-h-screen p-4 fixed left-0 top-16 overflow-y-auto">
+            <nav class="space-y-1">
+                <a href="index.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-chart-line w-5"></i>数据概览
+                </a>
+                <a href="users.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-users w-5"></i>用户分析
+                </a>
+                <a href="content.html" class="nav-link active flex items-center gap-3 px-4 py-3 rounded-lg text-primary font-medium">
+                    <i class="fas fa-file-alt w-5"></i>内容分析
+                </a>
+                <a href="behavior.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-mouse-pointer w-5"></i>行为分析
+                </a>
+                <a href="trends.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-chart-area w-5"></i>趋势分析
+                </a>
+                <a href="reports.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-file-invoice w-5"></i>报表中心
+                </a>
+                <div class="my-4 border-t border-gray-200"></div>
+                <a href="traffic.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-route w-5"></i>流量来源
+                </a>
+                <a href="funnel.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-filter w-5"></i>转化漏斗
+                </a>
+                <a href="export.html" class="nav-link flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50">
+                    <i class="fas fa-file-export w-5"></i>报表导出
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content flex-1 md:ml-64 p-6">
+            <!-- Page Title -->
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold text-gray-800">内容分析</h1>
+                <p class="text-gray-500 mt-1">追踪攻略、目的地与搜索热词表现</p>
+            </div>
+
+            <!-- Content Metrics -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="icon bg-blue-100 text-blue-600"><i class="fas fa-book-open"></i></div>
+                        <span class="text-xs text-green-500 font-medium"><i class="fas fa-arrow-up mr-1"></i>12.5%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">1,920</h3>
+                    <p class="text-sm text-gray-500 mt-1">本月新增攻略</p>
+                </div>
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="icon bg-green-100 text-green-600"><i class="fas fa-eye"></i></div>
+                        <span class="text-xs text-green-500 font-medium"><i class="fas fa-arrow-up mr-1"></i>18.3%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">1.85M</h3>
+                    <p class="text-sm text-gray-500 mt-1">总浏览量</p>
+                </div>
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="icon bg-amber-100 text-amber-600"><i class="fas fa-heart"></i></div>
+                        <span class="text-xs text-green-500 font-medium"><i class="fas fa-arrow-up mr-1"></i>15.8%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">86,580</h3>
+                    <p class="text-sm text-gray-500 mt-1">总点赞数</p>
+                </div>
+                <div class="metric-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="icon bg-purple-100 text-purple-600"><i class="fas fa-share-alt"></i></div>
+                        <span class="text-xs text-green-500 font-medium"><i class="fas fa-arrow-up mr-1"></i>22.1%</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800">28,650</h3>
+                    <p class="text-sm text-gray-500 mt-1">总分享数</p>
+                </div>
+            </div>
+
+            <!-- Top Guides -->
+            <div class="card p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">热门攻略排行</h3>
+                    <div class="flex gap-2">
+                        <select class="text-sm border border-gray-200 rounded-lg px-3 py-1">
+                            <option>浏览量</option>
+                            <option>点赞数</option>
+                            <option>分享数</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <div class="guide-card flex items-center gap-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">1</div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-800">东京深度游完全指南</h4>
+                            <p class="text-sm text-gray-500 mt-1">作者: 旅行达人小王</p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                                <span><i class="fas fa-eye mr-1"></i>258,960</span>
+                                <span><i class="fas fa-heart mr-1"></i>12,580</span>
+                                <span><i class="fas fa-share mr-1"></i>3,420</span>
+                                <span class="text-amber-500"><i class="fas fa-star mr-1"></i>4.9</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm text-green-500"><i class="fas fa-arrow-up mr-1"></i>12.5%</span>
+                            <span class="tag bg-blue-100 text-blue-600 mt-2 block">日本</span>
+                        </div>
+                    </div>
+                    <div class="guide-card flex items-center gap-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">2</div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-800">曼谷美食地图 | 当地人推荐</h4>
+                            <p class="text-sm text-gray-500 mt-1">作者: 美食探索家</p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                                <span><i class="fas fa-eye mr-1"></i>198,740</span>
+                                <span><i class="fas fa-heart mr-1"></i>9,860</span>
+                                <span><i class="fas fa-share mr-1"></i>2,890</span>
+                                <span class="text-amber-500"><i class="fas fa-star mr-1"></i>4.8</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm text-green-500"><i class="fas fa-arrow-up mr-1"></i>18.3%</span>
+                            <span class="tag bg-green-100 text-green-600 mt-2 block">泰国</span>
+                        </div>
+                    </div>
+                    <div class="guide-card flex items-center gap-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">3</div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-800">京都赏樱秘境大公开</h4>
+                            <p class="text-sm text-gray-500 mt-1">作者: 日本通</p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                                <span><i class="fas fa-eye mr-1"></i>187,650</span>
+                                <span><i class="fas fa-heart mr-1"></i>11,200</span>
+                                <span><i class="fas fa-share mr-1"></i>4,150</span>
+                                <span class="text-amber-500"><i class="fas fa-star mr-1"></i>4.9</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm text-green-500"><i class="fas fa-arrow-up mr-1"></i>15.6%</span>
+                            <span class="tag bg-blue-100 text-blue-600 mt-2 block">日本</span>
+                        </div>
+                    </div>
+                    <div class="guide-card flex items-center gap-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">4</div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-800">巴厘岛度假全攻略</h4>
+                            <p class="text-sm text-gray-500 mt-1">作者: 海岛爱好者</p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                                <span><i class="fas fa-eye mr-1"></i>165,420</span>
+                                <span><i class="fas fa-heart mr-1"></i>8,450</span>
+                                <span><i class="fas fa-share mr-1"></i>2,150</span>
+                                <span class="text-amber-500"><i class="fas fa-star mr-1"></i>4.7</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm text-green-500"><i class="fas fa-arrow-up mr-1"></i>25.3%</span>
+                            <span class="tag bg-cyan-100 text-cyan-600 mt-2 block">印尼</span>
+                        </div>
+                    </div>
+                    <div class="guide-card flex items-center gap-4">
+                        <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">5</div>
+                        <div class="flex-1">
+                            <h4 class="font-medium text-gray-800">欧洲背包客生存指南</h4>
+                            <p class="text-sm text-gray-500 mt-1">作者: 环球旅行者</p>
+                            <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                                <span><i class="fas fa-eye mr-1"></i>142,380</span>
+                                <span><i class="fas fa-heart mr-1"></i>7,680</span>
+                                <span><i class="fas fa-share mr-1"></i>3,260</span>
+                                <span class="text-amber-500"><i class="fas fa-star mr-1"></i>4.6</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-sm text-green-500"><i class="fas fa-arrow-up mr-1"></i>8.2%</span>
+                            <span class="tag bg-purple-100 text-purple-600 mt-2 block">欧洲</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <!-- Destination Heatmap -->
+                <div class="card p-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">目的地热度分布</h3>
+                    <div class="grid grid-cols-5 gap-2 mb-4">
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #dc2626, #ef4444);">东京</div>
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #ea580c, #f97316);">曼谷</div>
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #d97706, #f59e0b);">首尔</div>
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #ca8a04, #eab308);">新加坡</div>
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #16a34a, #22c55e);">巴黎</div>
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #0284c7, #0ea5e9);">悉尼</div>
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #0891b2, #06b6d4);">纽约</div>
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #7c3aed, #8b5cf6);">迪拜</div>
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #c026d3, #d946ef);">巴厘岛</div>
+                        <div class="heatmap-cell" style="background: linear-gradient(135deg, #6366f1, #818cf8);">伦敦</div>
+                    </div>
+                    <div class="chart-container" style="height: 200px;">
+                        <canvas id="heatmapChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Content Growth -->
+                <div class="card p-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">内容增长趋势</h3>
+                    <div class="chart-container">
+                        <canvas id="contentGrowthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Keywords -->
+            <div class="card p-6 mb-6">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-gray-800">热门搜索词</h3>
+                    <a href="#" class="text-sm text-blue-500 hover:underline">查看全部 →</a>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-blue-500 text-white rounded-lg flex items-center justify-center font-bold">1</span>
+                            <div class="flex-1">
+                                <span class="font-medium">日本旅游攻略</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 125,680 | <span class="text-green-500">+15.2%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-blue-100 rounded overflow-hidden">
+                                <div class="h-full bg-blue-500" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-green-500 text-white rounded-lg flex items-center justify-center font-bold">2</span>
+                            <div class="flex-1">
+                                <span class="font-medium">东京景点推荐</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 98,650 | <span class="text-green-500">+8.5%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-green-100 rounded overflow-hidden">
+                                <div class="h-full bg-green-500" style="width: 78%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-amber-500 text-white rounded-lg flex items-center justify-center font-bold">3</span>
+                            <div class="flex-1">
+                                <span class="font-medium">泰国签证办理</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 85,420 | <span class="text-green-500">+12.8%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-amber-100 rounded overflow-hidden">
+                                <div class="h-full bg-amber-500" style="width: 68%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-purple-500 text-white rounded-lg flex items-center justify-center font-bold">4</span>
+                            <div class="flex-1">
+                                <span class="font-medium">机票比价</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 76,890 | <span class="text-red-500">-2.3%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-purple-100 rounded overflow-hidden">
+                                <div class="h-full bg-purple-500" style="width: 61%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-cyan-500 text-white rounded-lg flex items-center justify-center font-bold">5</span>
+                            <div class="flex-1">
+                                <span class="font-medium">酒店预订</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 72,560 | <span class="text-green-500">+5.6%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-cyan-100 rounded overflow-hidden">
+                                <div class="h-full bg-cyan-500" style="width: 58%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-pink-500 text-white rounded-lg flex items-center justify-center font-bold">6</span>
+                            <div class="flex-1">
+                                <span class="font-medium">护照办理流程</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 65,890 | <span class="text-green-500">+18.5%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-pink-100 rounded overflow-hidden">
+                                <div class="h-full bg-pink-500" style="width: 52%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-indigo-500 text-white rounded-lg flex items-center justify-center font-bold">7</span>
+                            <div class="flex-1">
+                                <span class="font-medium">首尔购物指南</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 58,920 | <span class="text-green-500">+6.8%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-indigo-100 rounded overflow-hidden">
+                                <div class="h-full bg-indigo-500" style="width: 47%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-teal-500 text-white rounded-lg flex items-center justify-center font-bold">8</span>
+                            <div class="flex-1">
+                                <span class="font-medium">巴厘岛自由行</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 54,230 | <span class="text-green-500">+22.1%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-teal-100 rounded overflow-hidden">
+                                <div class="h-full bg-teal-500" style="width: 43%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-orange-500 text-white rounded-lg flex items-center justify-center font-bold">9</span>
+                            <div class="flex-1">
+                                <span class="font-medium">欧洲签证</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 48,960 | <span class="text-green-500">+4.2%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-orange-100 rounded overflow-hidden">
+                                <div class="h-full bg-orange-500" style="width: 39%"></div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <span class="w-8 h-8 bg-gray-500 text-white rounded-lg flex items-center justify-center font-bold">10</span>
+                            <div class="flex-1">
+                                <span class="font-medium">济州岛攻略</span>
+                                <div class="text-xs text-gray-500 mt-1">搜索量: 42,580 | <span class="text-red-500">-5.6%</span></div>
+                            </div>
+                            <div class="w-20 h-8 bg-gray-100 rounded overflow-hidden">
+                                <div class="h-full bg-gray-500" style="width: 34%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Distribution -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Category Chart -->
+                <div class="card p-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">内容类别分布</h3>
+                    <div class="chart-container" style="height: 260px;">
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Top Authors -->
+                <div class="card p-6">
+                    <h3 class="font-semibold text-gray-800 mb-4">优质创作者</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3 p-3 bg-gradient-to-r from-blue-50 to-transparent rounded-lg">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=author1" class="w-12 h-12 rounded-full bg-blue-100">
+                            <div class="flex-1">
+                                <div class="font-medium">旅行达人小王</div>
+                                <div class="text-xs text-gray-500">发布攻略 86 篇 | 粉丝 12.8万</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-blue-600">258,960</div>
+                                <div class="text-xs text-gray-500">总浏览</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gradient-to-r from-green-50 to-transparent rounded-lg">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=author2" class="w-12 h-12 rounded-full bg-green-100">
+                            <div class="flex-1">
+                                <div class="font-medium">美食探索家</div>
+                                <div class="text-xs text-gray-500">发布攻略 72 篇 | 粉丝 9.5万</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-green-600">198,740</div>
+                                <div class="text-xs text-gray-500">总浏览</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gradient-to-r from-purple-50 to-transparent rounded-lg">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=author3" class="w-12 h-12 rounded-full bg-purple-100">
+                            <div class="flex-1">
+                                <div class="font-medium">日本通</div>
+                                <div class="text-xs text-gray-500">发布攻略 95 篇 | 粉丝 15.2万</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-purple-600">187,650</div>
+                                <div class="text-xs text-gray-500">总浏览</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 p-3 bg-gradient-to-r from-amber-50 to-transparent rounded-lg">
+                            <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=author4" class="w-12 h-12 rounded-full bg-amber-100">
+                            <div class="flex-1">
+                                <div class="font-medium">海岛爱好者</div>
+                                <div class="text-xs text-gray-500">发布攻略 68 篇 | 粉丝 8.3万</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-lg font-bold text-amber-600">165,420</div>
+                                <div class="text-xs text-gray-500">总浏览</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="mt-8 text-center text-sm text-gray-400">
+                <p>数据更新时间: 2026-03-25 14:30:00</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+        // Heatmap Chart
+        function initHeatmapChart() {
+            const ctx = document.getElementById('heatmapChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['东京', '曼谷', '首尔', '新加坡', '巴黎', '悉尼', '纽约', '迪拜', '巴厘岛', '伦敦'],
+                    datasets: [{
+                        label: '热度指数',
+                        data: [98, 95, 88, 85, 78, 72, 68, 65, 82, 62],
+                        backgroundColor: [
+                            '#ef4444', '#f97316', '#f59e0b', '#eab308', '#22c55e',
+                            '#0ea5e9', '#06b6d4', '#8b5cf6', '#d946ef', '#6366f1'
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9' } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Content Growth Chart
+        function initContentGrowthChart() {
+            const ctx = document.getElementById('contentGrowthChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['2025-10', '2025-11', '2025-12', '2026-01', '2026-02', '2026-03'],
+                    datasets: [
+                        {
+                            label: '攻略数',
+                            data: [1250, 1380, 1520, 1650, 1780, 1920],
+                            borderColor: '#0ea5e9',
+                            backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '浏览量(万)',
+                            data: [12.6, 14.3, 16.8, 18.6, 20.6, 22.9],
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { intersect: false, mode: 'index' },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            title: { display: true, text: '攻略数' },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display: true, text: '浏览量(万)' },
+                            grid: { display: false }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+
+        // Category Chart
+        function initCategoryChart() {
+            const ctx = document.getElementById('categoryChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'polarArea',
+                data: {
+                    labels: ['亚洲旅游', '欧洲旅游', '海岛度假', '美洲旅游', '澳洲旅游', '非洲旅游'],
+                    datasets: [{
+                        data: [45.2, 22.8, 15.6, 8.4, 5.2, 2.8],
+                        backgroundColor: [
+                            'rgba(14, 165, 233, 0.8)',
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(139, 92, 246, 0.8)',
+                            'rgba(6, 182, 212, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right' }
+                    }
+                }
+            });
+        }
+
+        // Toggle Mobile Menu
+        document.getElementById('menuToggle')?.addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('hidden');
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initHeatmapChart();
+            initContentGrowthChart();
+            initCategoryChart();
+        });
+    </script>
+</body>
+</html>
