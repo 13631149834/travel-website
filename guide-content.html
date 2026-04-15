@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    .content-hero{background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:#fff;padding:50px 0;text-align:center}
+    .content-hero h1{font-size:2.2rem;margin-bottom:10px}
+    .content-container{max-width:1100px;margin:-30px auto 40px;padding:0 20px}
+    .content-tabs{background:#fff;border-radius:16px;padding:16px;box-shadow:0 10px 40px rgba(0,0,0,0.1);margin-bottom:30px}
+    .content-tab-btns{display:flex;gap:8px;flex-wrap:wrap}
+    .content-tab-btn{padding:12px 20px;border:2px solid #e5e7eb;background:#fff;border-radius:10px;cursor:pointer;transition:all .3s;font-size:.95rem}
+    .content-tab-btn:hover{border-color:#10b981}
+    .content-tab-btn.active{background:#10b981;border-color:#10b981;color:#fff}
+    .content-panel{display:none;background:#fff;border-radius:16px;padding:30px;box-shadow:0 4px 20px rgba(0,0,0,0.08)}
+    .content-panel.active{display:block}
+    .pitfall-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+    .pitfall-card{background:#fff;border:2px solid #e5e7eb;border-radius:12px;padding:24px;transition:all .3s}
+    .pitfall-card:hover{border-color:#ef4444;transform:translateY(-4px)}
+    .pitfall-icon{font-size:2rem;margin-bottom:12px}
+    .pitfall-card h3{font-size:1.1rem;margin-bottom:8px;color:#dc2626}
+    .pitfall-card p{color:#6b7280;font-size:.9rem;line-height:1.6}
+    .emergency-list{max-width:700px;margin:0 auto}
+    .emergency-item{background:#fef2f2;border:2px solid #fecaca;border-radius:12px;padding:20px;margin-bottom:16px}
+    .emergency-item h3{color:#dc2626;font-size:1.1rem;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+    .emergency-item p{color:#6b7280;font-size:.9rem;line-height:1.6}
+    .emergency-item .tel{color:#2563eb;font-weight:700;font-size:1.1rem}
+    .tip-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+    .tip-card{background:#fff;border:2px solid #e5e7eb;border-radius:12px;overflow:hidden}
+    .tip-header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);padding:20px;color:#fff}
+    .tip-header .icon{font-size:2rem;margin-bottom:8px}
+    .tip-header h3{font-size:1.1rem}
+    .tip-body{padding:20px}
+    .tip-body ul{list-style:disc;padding-left:20px;color:#6b7280;font-size:.9rem}
+    .tip-body li{margin-bottom:8px}
+    .story-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+    .story-card{background:#fff;border:2px solid #e5e7eb;border-radius:12px;overflow:hidden;transition:all .3s}
+    .story-card:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(0,0,0,0.1)}
+    .story-cover{height:150px;background:linear-gradient(135deg,#f59e0b 0%,#d97706 100%);display:flex;align-items:center;justify-content:center;font-size:3rem;color:#fff}
+    .story-content{padding:20px}
+    .story-content h3{font-size:1.1rem;margin-bottom:8px}
+    .story-content p{color:#6b7280;font-size:.9rem;margin-bottom:12px}
+    .story-meta{font-size:.8rem;color:#9ca3af}
+    .search-box{display:flex;gap:12px;margin-bottom:24px}
+    .search-box input{flex:1;padding:12px 16px;border:2px solid #e5e7eb;border-radius:10px;font-size:1rem}
+    .search-box button{padding:12px 24px;background:#10b981;color:#fff;border:none;border-radius:10px;cursor:pointer}
+    @media(max-width:768px){.content-tab-btn{padding:10px 14px;font-size:.85rem}}
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- SEO Meta Tags -->
+  <title>旅行攻略 - 游导旅游 | 实用旅行攻略分享</title>
+  <meta name="description" content="阅读实用的旅行攻略，涵盖目的地介绍、美食推荐、住宿建议等，让您的旅行更加完美。">
+  <meta name="keywords" content="旅行攻略,旅游攻略,目的地攻略,美食推荐,住宿推荐">
+  <meta name="author" content="游导旅游">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/guide-content.html">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="旅行攻略 - 游导旅游 | 实用旅行攻略分享">
+  <meta property="og:description" content="阅读实用的旅行攻略，涵盖目的地介绍、美食推荐、住宿建议等，让您的旅行更加完美。">
+  <meta property="og:url" content="https://youdao-travel.com/guide-content.html">
+  <meta property="og:site_name" content="游导旅游">
+  <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="images/og-image.png">
+  <meta property="article:published_time" content="2026-04-15T02:43:43+08:00">
+  <meta property="article:modified_time" content="2026-04-15T02:43:43+08:00">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="旅行攻略 - 游导旅游 | 实用旅行攻略分享">
+  <meta name="twitter:description" content="阅读实用的旅行攻略，涵盖目的地介绍、美食推荐、住宿建议等，让您的旅行更加完美。">
+  <meta name="twitter:image" content="https://youdao-travel.com/images/og-image.png">
+  
+  <!-- Structured Data - Article -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "旅行攻略 - 游导旅游 | 实用旅行攻略分享",
+    "description": "阅读实用的旅行攻略，涵盖目的地介绍、美食推荐、住宿建议等，让您的旅行更加完美。",
+    "image": "https://youdao-travel.com/images/og-image.png",
+    "author": {
+      "@type": "Organization",
+      "name": "游导旅游"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "游导旅游",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://youdao-travel.com/images/logo.png"
+      }
+    },
+    "datePublished": "2026-04-15T02:43:43+08:00",
+    "dateModified": "2026-04-15T02:43:43+08:00"
+  }
+  </script>
+  
+  <!-- Performance Optimization -->
+  <meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <nav class="navbar" aria-label="主导航">
+    <div class="container nav-container">
+    </div>
+  </nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+      <div class="nav-links">
+        <a href="index.html">🏠 首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="visa.html">📋 签证中心</a>
+        <a href="routes.html">🗺️ 线路</a>
+        <a href="knowledge.html">📚 知识</a>
+        <a href="guide-content.html" class="active" style="background:#10b981;color:#fff">📖 攻略</a>
+        <a href="tools.html">🛠️ 工具</a>
+        <a href="wechat-contact.html" style="color:#07c160;font-weight:600">💬 咨询</a>
+      </div>
+    </div>
+  
+
+  <section class="content-hero">
+    <div class="container">
+      <h1>📖 攻略中心</h1>
+      <p>避坑指南 · 应急资源 · 旅行经验 · 旅行故事</p>
+    </div>
+  </section>
+
+  <div class="content-container">
+    <div class="content-tabs">
+      <div class="content-tab-btns">
+        <button class="content-tab-btn active" onclick="switchContent('pitfall',this)">⚠️ 避坑指南</button>
+        <button class="content-tab-btn" onclick="switchContent('emergency',this)">🚨 应急资源</button>
+        <button class="content-tab-btn" onclick="switchContent('tips',this)">💡 旅行经验</button>
+        <button class="content-tab-btn" onclick="switchContent('stories',this)">✈️ 旅行故事</button>
+      </div>
+    </div>
+
+    <!-- 避坑指南 -->
+    <div id="pitfall" class="content-panel active">
+      <h2 style="margin-bottom:20px">⚠️ 旅行避坑指南</h2>
+      <div class="search-box">
+        <input type="text" placeholder="搜索避坑关键词..." id="input-8884">
+        <button>搜索</button>
+      </div>
+      <div class="pitfall-grid">
+        <div class="pitfall-card">
+          <div class="pitfall-icon">🚕</div>
+          <h3>出租车绕路</h3>
+          <p>在东南亚部分城市，出租车司机会故意绕路。建议使用正规打车软件（Grab、滴滴）或要求打表计价。上车前确认目的地。</p>
+        </div>
+        <div class="pitfall-card">
+          <div class="pitfall-icon">🍽️</div>
+          <h3>景区周边餐饮宰客</h3>
+          <p>景区附近的餐厅价格通常是市区的2-3倍。建议走出景区500米再用餐，价格更合理，味道更正宗。</p>
+        </div>
+        <div class="pitfall-card">
+          <div class="pitfall-icon">🎫</div>
+          <h3>景点门票加价</h3>
+          <p>在第三方平台购票时要警惕加价。建议在景点官网或官方售票处购票，价格透明有保障。</p>
+        </div>
+        <div class="pitfall-card">
+          <div class="pitfall-icon">🛍️</div>
+          <h3>购物店强制消费</h3>
+          <p>低价团往往带游客去购物店。警惕"0元团"或价格过低的旅行团，选择纯玩团更有保障。</p>
+        </div>
+        <div class="pitfall-card">
+          <div class="pitfall-icon">📸</div>
+          <h3>拍照收费陷阱</h3>
+          <p>在一些景点，与街头艺人或动物合影可能收费。拍照前先确认是否免费，避免被索要高价。</p>
+        </div>
+        <div class="pitfall-card">
+          <div class="pitfall-icon">💰</div>
+          <h3>货币兑换坑</h3>
+          <p>机场汇率通常较差。建议在市区正规兑换点或使用银行卡在ATM取现，汇率更划算。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 应急资源 -->
+    <div id="emergency" class="content-panel">
+      <h2 style="margin-bottom:20px">🚨 旅行应急资源</h2>
+      <div class="emergency-list">
+        <div class="emergency-item">
+          <h3>🆘 中国驻外使领馆</h3>
+          <p>护照丢失、被抢、突发事故等情况，请立即联系当地使领馆。</p>
+          <p style="margin-top:8px">查询方式：外交部领事保护中心网站 或 下载"领事直通车"APP</p>
+        </div>
+        <div class="emergency-item">
+          <h3>🏥 紧急医疗救援</h3>
+          <p>紧急情况拨打当地急救电话，并联系保险公司理赔。</p>
+          <p style="margin-top:8px">常用急救电话：日本 119 | 泰国 1669 | 欧洲 112 | 美国 911</p>
+        </div>
+        <div class="emergency-item">
+          <h3>👮‍♀️ 当地报警电话</h3>
+          <p>遭遇盗窃、抢劫等情况，立即报警并获取报案证明。</p>
+          <p style="margin-top:8px">常用报警电话：中国 110（全球可用）| 新加坡 999 | 马来西亚 999</p>
+        </div>
+        <div class="emergency-item">
+          <h3>📄 护照补办</h3>
+          <p>1. 立即向当地警方报案，获取报案证明</p>
+          <p>2. 前往中国驻当地使领馆</p>
+          <p>3. 办理旅行证（可快速取证）</p>
+          <p>4. 建议提前将护照首页拍照保存云端</p>
+        </div>
+        <div class="emergency-item">
+          <h3>💳 银行卡挂失</h3>
+          <p>银行卡丢失或被盗，立即拨打银行客服电话挂失。</p>
+          <p style="margin-top:8px" class="tel">银联：95516 |  Visa：001-800-847-2911</p>
+        </div>
+        <div class="emergency-item">
+          <h3>📱 常用应急APP</h3>
+          <p>• 外交部"领事直通车" - 实时安全提醒</p>
+          <p>• 有道翻译官 - 实时翻译</p>
+          <p>• Google Maps - 离线地图下载</p>
+          <p>• 旅行保险APP - 快速理赔</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 旅行经验 -->
+    <div id="tips" class="content-panel">
+      <h2 style="margin-bottom:20px">💡 实用旅行经验</h2>
+      <div class="tip-grid">
+        <div class="tip-card">
+          <div class="tip-header"><div class="icon">✈️</div><h3>行前准备</h3></div>
+          <div class="tip-body">
+            <ul>
+              <li>提前2-3个月准备签证</li>
+              <li>购买旅行保险（必备）</li>
+              <li>将护照首页拍照云端保存</li>
+              <li>开通手机国际漫游</li>
+              <li>提前下载离线地图</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-header"><div class="icon">💰</div><h3>省钱技巧</h3></div>
+          <div class="tip-body">
+            <ul>
+              <li>淡季出行机票酒店更便宜</li>
+              <li>提前1-2个月预订</li>
+              <li>使用比价网站货比三家</li>
+              <li>关注航空公司大促</li>
+              <li>善用信用卡返现和积分</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-header"><div class="icon">🎒</div><h3>行李打包</h3></div>
+          <div class="tip-body">
+            <ul>
+              <li>洗漱用品分装瓶装</li>
+              <li>带一套备用眼镜/隐形眼镜</li>
+              <li>常备药品（感冒药、创可贴）</li>
+              <li>折叠拖鞋（长途飞行必备）</li>
+              <li>充电宝不超过10000mAh</li>
+            </ul>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-header"><div class="icon">📱</div><h3>通讯上网</h3></div>
+          <div class="tip-body">
+            <ul>
+              <li>淘宝购买当地电话卡</li>
+              <li>或开通国际漫游套餐</li>
+              <li>租用移动WiFi（多人适用）</li>
+              <li>提前下载离线翻译包</li>
+              <li>重要文件云端备份</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 旅行故事 -->
+    <div id="stories" class="content-panel">
+      <h2 style="margin-bottom:20px">✈️ 真实旅行故事</h2>
+      <div class="story-list">
+        <div class="story-card">
+          <div class="story-cover">🗾</div>
+          <div class="story-content">
+            <h3>我的日本10日深度游</h3>
+            <p>从东京到京都再到大阪，深度体验日本文化。第一次用JR Pass省钱又方便...</p>
+            <div class="story-meta">作者：小明 | 阅读量 2.3万 | 2024年3月</div>
+          </div>
+        </div>
+        <div class="story-card">
+          <div class="story-cover">🇹🇭</div>
+          <div class="story-content">
+            <h3>曼谷+清迈7天自由行</h3>
+            <p>5000元玩转泰国！分享我的穷游攻略，包括如何找靠谱导游...</p>
+            <div class="story-meta">作者：背包客 | 阅读量 1.8万 | 2024年2月</div>
+          </div>
+        </div>
+        <div class="story-card">
+          <div class="story-cover">🇫🇷</div>
+          <div class="story-content">
+            <h3>欧洲三国15天打卡</h3>
+            <p>法国、德国、意大利三国连线，详细行程和花费清单分享...</p>
+            <div class="story-meta">作者：旅行者 | 阅读量 3.1万 | 2024年1月</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;padding:30px;background:#f9fafb;margin-top:40px">
+    <p style="color:#6b7280;margin-bottom:16px">需要专业帮助？联系旅行顾问</p>
+    <a href="wechat-contact.html" style="display:inline-block;padding:14px 32px;background:#07c160;color:#fff;border-radius:10px;text-decoration:none">💬 添加微信咨询</a>
+  </div>
+
+  
+</main>
+<footer id="main-footer" class="footer">
+    <div class="container">
+            <div style="text-align:center;margin-bottom:15px">
+                <p style="color:#6B7280;font-size:14px">📧 2173381363@qq.com  💬 微信：ximao101</p>
+            </div>
+            <div class="footer-bottom"><p>© 2024 游导旅游 · 让旅行更简单</p></div></div>
+  </footer>
+
+  <div class="chatbot-btn" onclick="toggleChatbot()">💬</div>
+  <div id="chatbotPopup" class="chatbot-popup">
+    <div class="chatbot-header"><span>🧳 旅行小助手</span><span class="chatbot-close" onclick="closeChatbot()">×</span></div>
+    <div id="chatbotBody" class="chatbot-body"></div>
+    <div id="quickReplies" class="quick-replies"></div>
+    <div class="chatbot-input">
+      <input id="chatbotInput" type="text" placeholder="输入问题..." onkeydown="handleEnter(event)">
+      <button onclick="sendMessage()">发送</button>
+    </div>
+  </div>
+
+  <script src="js/common.js" defer></script>
+  <script src="js/chatbot.js" defer></script>
+  <script>
+    function switchContent(panel,btn){document.querySelectorAll('.content-panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.content-tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById(panel).classList.add('active');btn.classList.add('active')}
+  </script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

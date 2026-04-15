@@ -3,14 +3,539 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>景点知识库 - 导游工具</title>
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
   <link rel="stylesheet" href="css/guide/guide-tools.css">
+  <style>
+    .kb-stats {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .kb-stat {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .kb-stat .num {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .filter-section {
+      background: #fff;
+      padding: 20px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+    .filter-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-group label {
+      font-weight: 600;
+      color: var(--gray-700);
+      font-size: 0.9rem;
+    }
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .filter-tab {
+      padding: 8px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: 20px;
+      background: #fff;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .filter-tab:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    .filter-tab.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-color: transparent;
+    }
+    .country-filter {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 12px;
+    }
+    .country-tab {
+      padding: 6px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 15px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: var(--transition);
+    }
+    .country-tab:hover {
+      background: var(--gray-50);
+    }
+    .country-tab.active {
+      background: #667eea;
+      color: #fff;
+      border-color: #667eea;
+    }
+    .results-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      color: var(--gray-600);
+    }
+    .sort-select {
+      padding: 8px 12px;
+      border: 1px solid var(--gray-200);
+      border-radius: 6px;
+      font-size: 0.9rem;
+    }
+    .attraction-card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .attraction-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    }
+    .attraction-card-header {
+      position: relative;
+      padding: 24px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      text-align: center;
+    }
+    .attraction-card-header .emoji {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+    }
+    .attraction-card-header h3 {
+      color: #fff;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+    .attraction-card-header .meta {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .attraction-card-header .meta span {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.85rem;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+    .favorite-btn {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      border: none;
+      cursor: pointer;
+      font-size: 1.2rem;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .favorite-btn:hover {
+      background: rgba(255,255,255,0.5);
+      transform: scale(1.1);
+    }
+    .favorite-btn.active {
+      background: #fff;
+    }
+    .attraction-card-body {
+      padding: 20px;
+    }
+    .attraction-card-body > p {
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      font-size: 0.95rem;
+    }
+    .style-toggle {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .style-btn {
+      flex: 1;
+      min-width: 80px;
+      padding: 8px 12px;
+      border: 2px solid var(--gray-200);
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .style-btn:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    .style-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-color: transparent;
+    }
+    .story-content {
+      background: var(--gray-50);
+      padding: 14px;
+      border-radius: 8px;
+      line-height: 1.8;
+      font-size: 0.9rem;
+      color: var(--gray-700);
+      margin-bottom: 16px;
+      max-height: 120px;
+      overflow: hidden;
+      position: relative;
+    }
+    .story-content::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(transparent, var(--gray-50));
+    }
+    .tips-section {
+      background: #FFF9E6;
+      padding: 14px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    .tips-section h4 {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: #B8860B;
+    }
+    .tips-section ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+    .tips-section li {
+      color: var(--gray-600);
+      font-size: 0.85rem;
+      margin-bottom: 6px;
+    }
+    .card-footer {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .card-footer span {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .view-detail-btn {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    .view-detail-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 32px;
+    }
+    .pagination button {
+      padding: 10px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+    }
+    .pagination button:hover:not(:disabled) {
+      border-color: #667eea;
+      color: #667eea;
+    }
+    .pagination button.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border-color: transparent;
+    }
+    .pagination button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .quick-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .quick-nav a {
+      padding: 6px 14px;
+      background: var(--gray-100);
+      border-radius: 15px;
+      font-size: 0.85rem;
+      color: var(--gray-700);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .quick-nav a:hover {
+      background: var(--primary);
+      color: #fff;
+    }
+    .quick-nav a.active {
+      background: var(--primary);
+      color: #fff;
+    }
+    @media (max-width: 768px) {
+      .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .style-toggle {
+        flex-direction: column;
+      }
+      .style-btn {
+        min-width: auto;
+      }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- SEO Meta Tags -->
+  <title>知识库 - 游导旅游 | 导游专业资源库</title>
+  <meta name="description" content="导游专业资源库，提供带团技巧、景点知识、应急处理等专业资源，帮助导游提升服务质量。">
+  <meta name="keywords" content="导游知识,导游资源,带团技巧,景点知识,导游培训">
+  <meta name="author" content="游导旅游">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  <meta name="baiduspider" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/knowledge-base.html">
+  
+  <!-- Open Graph / Social Media -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="知识库 - 游导旅游 | 导游专业资源库">
+  <meta property="og:description" content="导游专业资源库，提供带团技巧、景点知识、应急处理等专业资源，帮助导游提升服务质量。">
+  <meta property="og:url" content="https://youdao-travel.com/knowledge-base.html">
+  <meta property="og:site_name" content="游导旅游">
+  <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="images/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="知识库 - 游导旅游 | 导游专业资源库">
+  <meta name="twitter:description" content="导游专业资源库，提供带团技巧、景点知识、应急处理等专业资源，帮助导游提升服务质量。">
+  <meta name="twitter:image" content="https://youdao-travel.com/images/og-image.png">
+  
+  <!-- Structured Data - Organization -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "游导旅游",
+    "alternateName": "YouDao Travel",
+    "url": "https://youdao-travel.com",
+    "logo": "https://youdao-travel.com/images/logo.png",
+    "sameAs": [
+      "https://weibo.com/youdautravel",
+      "https://mp.weixin.qq.com/s/youdautravel"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+86-400-888-8888",
+      "contactType": "customer service",
+      "availableLanguage": ["Chinese", "English"]
+    }
+  }
+  </script>
+  
+  <!-- Structured Data - Website -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "游导旅游",
+    "url": "https://youdao-travel.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://youdao-travel.com/search.html?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
+  <!-- Performance Optimization -->
+  <meta name="theme-color" content="#4f46e5">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
   <!-- 导航栏 -->
-  <nav class="navbar">
+  <nav class="navbar" aria-label="主导航">
     <div class="container">
+</nav>
+<main id="main-content" role="main">
       <a href="index.html" class="logo">🌍 游导旅游</a>
       <div class="nav-toggle" onclick="toggleNav()">
         <span></span><span></span><span></span>
@@ -19,51 +544,110 @@
         <a href="index.html">首页</a>
         <a href="guide-tools.html">导游工具</a>
         <a href="knowledge-base.html" class="active">景点知识库</a>
+        <a href="quiz.html">旅行问答</a>
+        <a href="destinations.html">目的地百科</a>
         <a href="emergency.html">应急预案</a>
         <a href="route-planner.html">路线规划</a>
       </div>
     </div>
-  </nav>
+  
 
   <!-- 页面头部 -->
   <header class="tool-header">
     <div class="container">
       <h1>📚 景点知识库</h1>
-      <p>20个热门景点详细资料 · 三种讲解风格自由切换</p>
+      <p>收录全球100+热门景点 · 三种讲解风格自由切换 · 随时随地查看详情</p>
     </div>
   </header>
 
   <!-- 主内容区 -->
   <section class="tool-container">
-    <!-- 搜索和筛选 -->
-    <div class="search-bar">
-      <input type="text" class="search-input" id="searchInput" placeholder="搜索景点名称或城市...">
-      <select class="search-input" id="typeFilter" style="max-width: 180px;">
-        <option value="">全部类型</option>
-        <option value="历史古迹">历史古迹</option>
-        <option value="自然风光">自然风光</option>
-      </select>
-      <select class="search-input" id="favoritesFilter" style="max-width: 160px;">
-        <option value="">全部景点</option>
-        <option value="favorites">⭐ 我的收藏</option>
-      </select>
+    <!-- 统计信息 -->
+    <div class="kb-stats">
+      <div class="kb-stat">
+        <span class="num" id="totalCount">0</span>
+        <span>景点总数</span>
+      </div>
+      <div class="kb-stat">
+        <span class="num" id="filterCount">0</span>
+        <span>当前显示</span>
+      </div>
+      <div class="kb-stat">
+        <span class="num">3</span>
+        <span>讲解风格</span>
+      </div>
     </div>
 
-    <!-- 风格切换提示 -->
-    <div style="background: #fff; padding: 16px 20px; border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-      <span style="font-weight: 600; color: var(--gray-700);">讲解风格：</span>
-      <div class="style-toggle" style="margin: 0;">
-        <button class="style-btn active" data-style="literary" onclick="setGlobalStyle('literary')">
-          📝 文艺
+    <!-- 搜索和筛选 -->
+    <div class="filter-section">
+      <div class="filter-row">
+        <div class="filter-group" style="flex: 1;">
+          <span>🔍</span>
+          <input type="text" class="search-input" id="searchInput" placeholder="搜索景点名称、城市或描述..." style="flex: 1;">
+        </div>
+        <select class="search-input" id="typeFilter" style="max-width: 160px;">
+          <option value="">全部类型</option>
+          <option value="历史古迹">历史古迹</option>
+          <option value="自然风光">自然风光</option>
+          <option value="现代都市">现代都市</option>
+          <option value="主题乐园">主题乐园</option>
+          <option value="文化艺术">文化艺术</option>
+        </select>
+        <select class="search-input" id="levelFilter" style="max-width: 160px;">
+          <option value="">全部级别</option>
+          <option value="5A">5A级景区</option>
+          <option value="4A">4A级景区</option>
+          <option value="世界遗产">世界遗产</option>
+        </select>
+      </div>
+
+      <!-- 国家/地区筛选 -->
+      <div class="country-filter">
+        <span style="font-weight: 600; color: var(--gray-700); margin-right: 8px;">国家:</span>
+        <button class="country-tab active" data-country="">全部</button>
+        <button class="country-tab" data-country="中国">🇨🇳 中国</button>
+        <button class="country-tab" data-country="日本">🇯🇵 日本</button>
+        <button class="country-tab" data-country="泰国">🇹🇭 泰国</button>
+        <button class="country-tab" data-country="法国">🇫🇷 法国</button>
+        <button class="country-tab" data-country="意大利">🇮🇹 意大利</button>
+        <button class="country-tab" data-country="英国">🇬🇧 英国</button>
+        <button class="country-tab" data-country="瑞士">🇨🇭 瑞士</button>
+        <button class="country-tab" data-country="澳大利亚">🇦🇺 澳大利亚</button>
+        <button class="country-tab" data-country="新加坡">🇸🇬 新加坡</button>
+        <button class="country-tab" data-country="马尔代夫">🇲🇻 马尔代夫</button>
+      </div>
+
+      <!-- 收藏筛选 -->
+      <div class="filter-tabs" style="margin-top: 16px;">
+        <button class="filter-tab active" data-filter="" onclick="setFavoritesFilter('', this)">
+          📚 全部景点
         </button>
-        <button class="style-btn" data-style="humorous" onclick="setGlobalStyle('humorous')">
-          😄 幽默
-        </button>
-        <button class="style-btn" data-style="professional" onclick="setGlobalStyle('professional')">
-          🎓 专业
+        <button class="filter-tab" data-filter="favorites" onclick="setFavoritesFilter('favorites', this)">
+          ⭐ 我的收藏
         </button>
       </div>
-      <span style="color: var(--gray-500); font-size: 0.9rem; margin-left: auto;">切换后将应用到所有景点卡片</span>
+    </div>
+
+    <!-- 快速导航 -->
+    <div class="quick-nav">
+      <span style="font-weight: 600; color: var(--gray-700);">热门:</span>
+      <a href="#" onclick="quickSearch('故宫', this); return false;">故宫</a>
+      <a href="#" onclick="quickSearch('长城', this); return false;">长城</a>
+      <a href="#" onclick="quickSearch('迪士尼', this); return false;">迪士尼</a>
+      <a href="#" onclick="quickSearch('富士山', this); return false;">富士山</a>
+      <a href="#" onclick="quickSearch('马尔代夫', this); return false;">马尔代夫</a>
+      <a href="#" onclick="quickSearch('圣托里尼', this); return false;">圣托里尼</a>
+    </div>
+
+    <!-- 结果信息 -->
+    <div class="results-info">
+      <span>共找到 <strong id="resultCount">0</strong> 个景点</span>
+      <select class="sort-select" id="sortSelect">
+        <option value="default">默认排序</option>
+        <option value="name">按名称排序</option>
+        <option value="country">按国家排序</option>
+        <option value="type">按类型排序</option>
+      </select>
     </div>
 
     <!-- 景点列表 -->
@@ -76,28 +660,31 @@
       <div class="icon">🔍</div>
       <h3>没有找到匹配的景点</h3>
       <p>试试调整搜索条件或筛选条件</p>
+      <button class="btn btn-primary" onclick="resetFilters()" style="margin-top: 16px;">重置筛选</button>
+    </div>
+
+    <!-- 分页 -->
+    <div class="pagination" id="pagination" style="display: none;">
+      <button id="prevPage" onclick="changePage(-1)" disabled>← 上一页</button>
+      <span id="pageInfo" style="padding: 10px 16px; color: var(--gray-600);"></span>
+      <button id="nextPage" onclick="changePage(1)">下一页 →</button>
     </div>
   </section>
-
-  <!-- 景点详情模态框 -->
-  <div class="modal" id="detailModal">
-    <div class="modal-content" style="max-width: 700px;">
-      <div class="modal-header">
-        <h3 id="detailTitle">景点详情</h3>
-        <button class="modal-close" onclick="closeDetailModal()">&times;</button>
-      </div>
-      <div class="modal-body" id="detailBody">
-        <!-- 动态内容 -->
-      </div>
-    </div>
-  </div>
 
   <!-- Toast提示 -->
   <div class="toast" id="toast"></div>
 
-  <!-- 页脚 -->
-  <footer class="footer">
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
     <div class="container">
+      <div class="footer-grid">
+        <div><h4>快速导航</h4><a href="visa.html">签证中心</a><a href="pitfall.html">避坑指南</a><a href="emergency.html">应急资源</a></div>
+        <div><h4>帮助支持</h4><a href="help.html">帮助中心</a>
+          <a href="faq.html">常见问题</a><a href="contact.html">联系我们</a></div>
+        <div><h4>联系我们</h4><p>📧 2173381363@qq.com</p><p>💬 微信：ximao101</p><p>🌐 youdao-travel.com</p></div>
+      </div>
       <div class="footer-bottom">
         <p>© 2024 游导Travel (youdao-travel.com) 版权所有</p>
       </div>
@@ -109,14 +696,24 @@
     let attractions = [];
     let favorites = JSON.parse(localStorage.getItem('guide_favorites') || '[]');
     let currentStyle = localStorage.getItem('guide_story_style') || 'literary';
+    
+    // 筛选条件
     let currentSearch = '';
     let currentType = '';
+    let currentLevel = '';
+    let currentCountry = '';
     let currentFavoritesFilter = '';
+    let currentSort = 'default';
+    
+    // 分页
+    let currentPage = 1;
+    const itemsPerPage = 12;
 
     // 页面加载完成后获取数据
     document.addEventListener('DOMContentLoaded', async () => {
       await loadAttractions();
       setupEventListeners();
+      updateStats();
       renderAttractions();
       updateStyleButtons();
     });
@@ -126,6 +723,7 @@
       try {
         const response = await fetch('data/attractions.json');
         attractions = await response.json();
+        document.getElementById('totalCount').textContent = attractions.length;
       } catch (error) {
         console.error('加载景点数据失败:', error);
         attractions = [];
@@ -136,18 +734,82 @@
     function setupEventListeners() {
       document.getElementById('searchInput').addEventListener('input', (e) => {
         currentSearch = e.target.value.toLowerCase();
+        currentPage = 1;
         renderAttractions();
       });
 
       document.getElementById('typeFilter').addEventListener('change', (e) => {
         currentType = e.target.value;
+        currentPage = 1;
         renderAttractions();
       });
 
-      document.getElementById('favoritesFilter').addEventListener('change', (e) => {
-        currentFavoritesFilter = e.target.value;
+      document.getElementById('levelFilter').addEventListener('change', (e) => {
+        currentLevel = e.target.value;
+        currentPage = 1;
         renderAttractions();
       });
+
+      document.getElementById('sortSelect').addEventListener('change', (e) => {
+        currentSort = e.target.value;
+        currentPage = 1;
+        renderAttractions();
+      });
+
+      // 国家筛选
+      document.querySelectorAll('.country-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.country-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          currentCountry = tab.dataset.country;
+          currentPage = 1;
+          renderAttractions();
+        });
+      });
+    }
+
+    // 快速搜索
+    function quickSearch(keyword, el) {
+      document.getElementById('searchInput').value = keyword;
+      currentSearch = keyword.toLowerCase();
+      currentPage = 1;
+      renderAttractions();
+      if (el) {
+        document.querySelectorAll('.quick-nav a').forEach(a => a.classList.remove('active'));
+        el.classList.add('active');
+      }
+    }
+
+    // 收藏筛选
+    function setFavoritesFilter(filter, btn) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      btn.classList.add('active');
+      currentFavoritesFilter = filter;
+      currentPage = 1;
+      renderAttractions();
+    }
+
+    // 重置筛选
+    function resetFilters() {
+      currentSearch = '';
+      currentType = '';
+      currentLevel = '';
+      currentCountry = '';
+      currentFavoritesFilter = '';
+      currentSort = 'default';
+      currentPage = 1;
+      
+      document.getElementById('searchInput').value = '';
+      document.getElementById('typeFilter').value = '';
+      document.getElementById('levelFilter').value = '';
+      document.getElementById('sortSelect').value = 'default';
+      document.querySelectorAll('.country-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.country-tab[data-country=""]').classList.add('active');
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      document.querySelector('.filter-tab[data-filter=""]').classList.add('active');
+      document.querySelectorAll('.quick-nav a').forEach(a => a.classList.remove('active'));
+      
+      renderAttractions();
     }
 
     // 设置全局讲解风格
@@ -160,45 +822,90 @@
 
     // 更新风格按钮状态
     function updateStyleButtons() {
-      document.querySelectorAll('.style-toggle .style-btn').forEach(btn => {
+      document.querySelectorAll('.style-toggle-global .style-btn').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.style === currentStyle);
       });
     }
 
     // 筛选景点
     function filterAttractions() {
-      return attractions.filter(item => {
+      let filtered = attractions.filter(item => {
         // 搜索匹配
         const matchSearch = !currentSearch || 
           item.name.toLowerCase().includes(currentSearch) ||
           item.city.toLowerCase().includes(currentSearch) ||
-          item.description.toLowerCase().includes(currentSearch);
+          item.description.toLowerCase().includes(currentSearch) ||
+          (item.country && item.country.toLowerCase().includes(currentSearch));
         
         // 类型筛选
         const matchType = !currentType || item.type === currentType;
+        
+        // 级别筛选
+        const matchLevel = !currentLevel || item.level === currentLevel;
+        
+        // 国家筛选
+        const matchCountry = !currentCountry || item.country === currentCountry;
         
         // 收藏筛选
         const matchFavorites = !currentFavoritesFilter || 
           (currentFavoritesFilter === 'favorites' && favorites.includes(item.id));
         
-        return matchSearch && matchType && matchFavorites;
+        return matchSearch && matchType && matchLevel && matchCountry && matchFavorites;
       });
+
+      // 排序
+      if (currentSort === 'name') {
+        filtered.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+      } else if (currentSort === 'country') {
+        filtered.sort((a, b) => (a.country || '').localeCompare(b.country || '', 'zh-CN'));
+      } else if (currentSort === 'type') {
+        filtered.sort((a, b) => a.type.localeCompare(b.type, 'zh-CN'));
+      }
+
+      return filtered;
+    }
+
+    // 更新统计
+    function updateStats() {
+      const filtered = filterAttractions();
+      document.getElementById('resultCount').textContent = filtered.length;
+      document.getElementById('filterCount').textContent = filtered.length;
     }
 
     // 渲染景点列表
     function renderAttractions() {
       const list = document.getElementById('attractionsList');
       const emptyState = document.getElementById('emptyState');
+      const pagination = document.getElementById('pagination');
       const filtered = filterAttractions();
+      updateStats();
 
       if (filtered.length === 0) {
         list.innerHTML = '';
         emptyState.style.display = 'block';
+        pagination.style.display = 'none';
         return;
       }
 
       emptyState.style.display = 'none';
-      list.innerHTML = filtered.map(item => `
+      
+      // 分页计算
+      const totalPages = Math.ceil(filtered.length / itemsPerPage);
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = startIndex + itemsPerPage;
+      const pageItems = filtered.slice(startIndex, endIndex);
+
+      // 更新分页信息
+      if (totalPages > 1) {
+        pagination.style.display = 'flex';
+        document.getElementById('pageInfo').textContent = `第 ${currentPage} / ${totalPages} 页`;
+        document.getElementById('prevPage').disabled = currentPage === 1;
+        document.getElementById('nextPage').disabled = currentPage === totalPages;
+      } else {
+        pagination.style.display = 'none';
+      }
+
+      list.innerHTML = pageItems.map(item => `
         <div class="attraction-card">
           <div class="attraction-card-header">
             <button class="favorite-btn ${favorites.includes(item.id) ? 'active' : ''}" onclick="toggleFavorite('${item.id}', event)">
@@ -216,13 +923,13 @@
             <p>${item.description}</p>
             
             <div class="style-toggle">
-              <button class="style-btn ${currentStyle === 'literary' ? 'active' : ''}" onclick="setCardStyle('${item.id}', 'literary')">
+              <button class="style-btn ${currentStyle === 'literary' ? 'active' : ''}" onclick="setCardStyle('${item.id}', 'literary', this)">
                 📝 文艺
               </button>
-              <button class="style-btn ${currentStyle === 'humorous' ? 'active' : ''}" onclick="setCardStyle('${item.id}', 'humorous')">
+              <button class="style-btn ${currentStyle === 'humorous' ? 'active' : ''}" onclick="setCardStyle('${item.id}', 'humorous', this)">
                 😄 幽默
               </button>
-              <button class="style-btn ${currentStyle === 'professional' ? 'active' : ''}" onclick="setCardStyle('${item.id}', 'professional')">
+              <button class="style-btn ${currentStyle === 'professional' ? 'active' : ''}" onclick="setCardStyle('${item.id}', 'professional', this)">
                 🎓 专业
               </button>
             </div>
@@ -234,131 +941,67 @@
             <div class="tips-section">
               <h4>💡 游览贴士</h4>
               <ul>
-                ${item.tips.map(tip => `<li>${tip}</li>`).join('')}
+                ${item.tips.slice(0, 3).map(tip => `<li>${tip}</li>`).join('')}
               </ul>
             </div>
 
-            <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
-              <span style="font-size: 0.9rem; color: var(--gray-600);">
-                ⏰ 最佳时间: ${item.bestTime}
-              </span>
-              <span style="font-size: 0.9rem; color: var(--gray-600);">
-                🎫 ${item.ticket}
-              </span>
+            <div class="card-footer">
+              <span>⏰ ${item.bestTime || '全年适宜'}</span>
+              <span>🎫 ${item.ticket || '免费'}</span>
             </div>
 
-            <button class="btn btn-primary" style="width: 100%; margin-top: 16px;" onclick="showDetail('${item.id}')">
-              查看完整讲解词
-            </button>
+            <a href="knowledge-detail.html?id=${item.id}" class="view-detail-btn">
+              查看完整详情 →
+            </a>
           </div>
         </div>
       `).join('');
+
+      // 滚动到顶部
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // 切换收藏状态
     function toggleFavorite(id, event) {
       event.stopPropagation();
+      event.preventDefault();
       const index = favorites.indexOf(id);
       if (index > -1) {
         favorites.splice(index, 1);
         showToast('已取消收藏');
       } else {
         favorites.push(id);
-        showToast('已添加到收藏');
+        showToast('已添加到收藏', 'success');
       }
       localStorage.setItem('guide_favorites', JSON.stringify(favorites));
       renderAttractions();
     }
 
     // 设置单卡片风格
-    function setCardStyle(id, style) {
+    function setCardStyle(id, style, btn) {
       currentStyle = style;
       localStorage.setItem('guide_story_style', style);
-      updateStyleButtons();
-      renderAttractions();
-    }
-
-    // 显示详情
-    function showDetail(id) {
-      const item = attractions.find(a => a.id === id);
-      if (!item) return;
-
-      document.getElementById('detailTitle').textContent = item.name;
-      document.getElementById('detailBody').innerHTML = `
-        <div style="margin-bottom: 24px;">
-          <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
-            <span style="padding: 6px 14px; background: var(--gray-100); border-radius: 20px; font-size: 0.9rem;">📍 ${item.city}</span>
-            <span style="padding: 6px 14px; background: var(--gray-100); border-radius: 20px; font-size: 0.9rem;">🏷️ ${item.type}</span>
-            <span style="padding: 6px 14px; background: var(--gray-100); border-radius: 20px; font-size: 0.9rem;">⭐ ${item.level}</span>
-            <span style="padding: 6px 14px; background: var(--gray-100); border-radius: 20px; font-size: 0.9rem;">🎫 ${item.ticket}</span>
-          </div>
-          <p style="color: var(--gray-600); line-height: 1.8;">${item.description}</p>
-        </div>
-
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 16px; border-radius: 10px; color: #fff; margin-bottom: 16px;">
-          <h4 style="margin-bottom: 12px;">⏰ 最佳游览时间</h4>
-          <p>${item.bestTime}</p>
-        </div>
-
-        <h4 style="font-size: 1.1rem; margin-bottom: 16px;">📝 三种讲解风格</h4>
-        
-        <div class="tabs" style="margin-bottom: 20px;">
-          <button class="tab active" onclick="showTab('literary', '${item.id}')">📝 文艺版</button>
-          <button class="tab" onclick="showTab('humorous', '${item.id}')">😄 幽默版</button>
-          <button class="tab" onclick="showTab('professional', '${item.id}')">🎓 专业版</button>
-        </div>
-        
-        <div id="storyTabContent" class="story-content" style="min-height: 150px;">
-          ${item.stories.literary}
-        </div>
-
-        <div class="tips-section">
-          <h4>💡 游览贴士</h4>
-          <ul>
-            ${item.tips.map(tip => `<li>${tip}</li>`).join('')}
-          </ul>
-        </div>
-
-        <button class="btn btn-primary" style="width: 100%; margin-top: 20px;" onclick="copyStory('${item.id}')">
-          复制当前讲解词
-        </button>
-      `;
-
-      document.getElementById('detailModal').classList.add('open');
-    }
-
-    // 显示讲解风格标签页
-    function showTab(style, id) {
-      const item = attractions.find(a => a.id === id);
-      if (!item) return;
-
-      // 更新标签状态
-      document.querySelectorAll('#detailBody .tab').forEach(tab => {
-        tab.classList.remove('active');
-      });
-      event.target.classList.add('active');
-
-      // 更新内容
-      document.getElementById('storyTabContent').textContent = item.stories[style];
-    }
-
-    // 复制讲解词
-    function copyStory(id) {
-      const item = attractions.find(a => a.id === id);
-      if (!item) return;
-
-      const activeTab = document.querySelector('#detailBody .tab.active');
-      const style = activeTab ? activeTab.textContent.includes('文艺') ? 'literary' : 
-        activeTab.textContent.includes('幽默') ? 'humorous' : 'professional' : 'literary';
       
-      navigator.clipboard.writeText(item.stories[style]).then(() => {
-        showToast('讲解词已复制到剪贴板', 'success');
-      });
+      // 更新当前卡片的所有风格按钮
+      const card = btn.closest('.attraction-card-body');
+      card.querySelectorAll('.style-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // 更新故事内容
+      const item = attractions.find(a => a.id === id);
+      if (item) {
+        card.querySelector('.story-content').textContent = item.stories[style];
+      }
     }
 
-    // 关闭详情模态框
-    function closeDetailModal() {
-      document.getElementById('detailModal').classList.remove('open');
+    // 翻页
+    function changePage(delta) {
+      const filtered = filterAttractions();
+      const totalPages = Math.ceil(filtered.length / itemsPerPage);
+      currentPage += delta;
+      if (currentPage < 1) currentPage = 1;
+      if (currentPage > totalPages) currentPage = totalPages;
+      renderAttractions();
     }
 
     // 显示Toast
@@ -370,13 +1013,58 @@
         toast.className = 'toast';
       }, 3000);
     }
-
-    // 点击模态框外部关闭
-    document.getElementById('detailModal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeDetailModal();
-      }
-    });
   </script>
+
+  <style>
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #333;
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 25px;
+      font-size: 0.95rem;
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    .toast.success {
+      background: #10B981;
+    }
+  </style>
+
+  <!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div><h4>快速导航</h4><a href="visa.html">签证中心</a><a href="pitfall.html">避坑指南</a><a href="emergency.html">应急资源</a></div>
+        <div><h4>帮助支持</h4><a href="help.html">帮助中心</a>
+          <a href="faq.html">常见问题</a><a href="contact.html">联系我们</a></div>
+        <div><h4>联系我们</h4><p>📧 2173381363@qq.com</p><p>💬 微信：ximao101</p><p>🌐 youdao-travel.com</p></div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 游导旅游 · 旅行信息工具平台</p>
+        <div class="footer-links">
+          <a href="user-agreement.html">用户协议</a>
+          <a href="privacy-policy.html">隐私政策</a>
+          <a href="disclaimer.html">免责声明</a>
+          <a href="about.html">关于我们</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
 </body>
 </html>

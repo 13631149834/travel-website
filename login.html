@@ -8,7 +8,14 @@
     <meta name="keywords" content="登录,账号登录,导游登录,游客登录">
     <meta name="robots" content="noindex, follow">
     <link rel="canonical" href="https://youdao-travel.com/login.html">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+    <!-- i18n 语言配置 -->
+    <script src="js/i18n.js" defer></script>
     <style>
         * {
             margin: 0;
@@ -182,6 +189,18 @@
         body.guide-mode .form-group select:focus {
             border-color: #8B5CF6;
             box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+        
+        /* 密码输入框wrapper */
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .password-input-wrapper input {
+            width: 100%;
+            padding-right: 45px;
         }
         
         .input-with-btn {
@@ -419,21 +438,132 @@
                 font-size: 22px;
             }
         }
-    </style>
+    
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body class="tourist-mode">
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
     <div class="auth-container">
+<main id="main-content" role="main">
         <div class="auth-box">
             <!-- Tab切换 -->
             <div class="auth-tabs">
                 <button class="auth-tab tourist-tab active" onclick="switchTab('tourist')">
                     <span class="tab-icon">🎬</span>
-                    <span class="tab-text">我是游客</span>
+                    <span class="tab-text" data-i18n="login.touristTab">我是游客</span>
                 </button>
                 <button class="auth-tab guide-tab" onclick="switchTab('guide')">
                     <span class="tab-icon">🎒</span>
-                    <span class="tab-text">我是导游</span>
+                    <span class="tab-text" data-i18n="login.guideTab">我是导游</span>
                 </button>
+                <!-- 语言切换 -->
+                <div class="lang-switcher" style="margin-left: auto; margin-right: 10px;">
+                  <button class="lang-btn active" data-lang="zh" data-lang-btn>中文</button>
+                  <button class="lang-btn" data-lang="en" data-lang-btn>EN</button>
+                </div>
             </div>
             
             <div class="auth-form-wrap">
@@ -441,50 +571,37 @@
                 <div class="form-section tourist-section active" id="touristSection">
                     <div class="auth-header">
                         <div class="logo">🎬</div>
-                        <h1>欢迎游客登录</h1>
-                        <p>开启你的精彩旅程</p>
+                        <h1 data-i18n="login.title">欢迎游客登录</h1>
+                        <p data-i18n="login.subtitle">开启你的精彩旅程</p>
                     </div>
                     
                     <form id="touristLoginForm">
                         <div class="form-group">
-                            <label for="touristEmail">手机号 / 邮箱</label>
-                            <input type="text" id="touristEmail" placeholder="请输入手机号或邮箱" required>
-                            <div class="error-message" id="touristEmailError"></div>
+                            <label for="touristEmail" data-i18n="login.email">手机号 / 邮箱</label>
+                            <input type="text" id="touristEmail" data-type="phone" placeholder="请输入手机号" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="touristPassword">密码</label>
+                            <label for="touristPassword" data-i18n="login.password">密码</label>
                             <input type="password" id="touristPassword" placeholder="请输入密码" required>
-                            <div class="error-message" id="touristPasswordError"></div>
                         </div>
                         
                         <div style="text-align: right; margin-bottom: 20px;">
-                            <a href="#" style="color: #64748B; font-size: 14px; text-decoration: none;">忘记密码？</a>
+                            <a href="#" style="color: #64748B; font-size: 14px; text-decoration: none;" data-i18n="login.forgotPassword">忘记密码？</a>
                         </div>
                         
-                        <button type="submit" class="btn-primary" id="touristLoginBtn">游客登录</button>
+                        <button type="submit" class="btn-primary" id="touristLoginBtn" data-i18n="login.loginBtn">游客登录</button>
                     </form>
                     
                     <div class="social-login">
-                        <div class="social-login-title">其他登录方式</div>
+                        <div class="social-login-title" data-i18n="login.orContinue">其他登录方式</div>
                         <div class="social-btns">
-                            <button class="social-btn wechat" title="微信登录">💚</button>
-                        </div>
-                    </div>
-                    
-                    <!-- 礼包引导 -->
-                    <div class="login-gift-tip">
-                        <h4>🎁 新用户专享礼包</h4>
-                        <p>注册即送50元优惠券+专属服务</p>
-                        <div class="login-gift-preview">
-                            <span class="login-gift-item">🎫 50元券</span>
-                            <span class="login-gift-item">🗺️ 行程规划</span>
-                            <span class="login-gift-item">💬 专属客服</span>
+                            <button class="social-btn wechat" data-i18n-title="login.wechatLogin" title="微信登录"><span aria-hidden="true">💚</span><span class="sr-only">按钮</span></button>
                         </div>
                     </div>
                     
                     <div class="auth-footer">
-                        还没有账号？<a href="register.html">立即注册</a>
+                        <span data-i18n="login.noAccount">还没有账号？</span><a href="register.html" data-i18n="login.goRegister">立即注册</a>
                     </div>
                 </div>
                 
@@ -499,14 +616,12 @@
                     <form id="guideLoginForm">
                         <div class="form-group">
                             <label for="guidePhone">手机号</label>
-                            <input type="tel" id="guidePhone" placeholder="请输入手机号" required>
-                            <div class="error-message" id="guidePhoneError"></div>
+                            <input type="tel" id="guidePhone" data-type="phone" placeholder="请输入11位手机号" required>
                         </div>
                         
                         <div class="form-group">
                             <label for="guidePassword">密码</label>
                             <input type="password" id="guidePassword" placeholder="请输入密码" required>
-                            <div class="error-message" id="guidePasswordError"></div>
                         </div>
                         
                         <!-- 导游专属字段 -->
@@ -562,6 +677,10 @@
         </div>
     </div>
     
+    <!-- 加载 Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/supabase-config.js" defer></script>
+    
     <script>
         // 工具函数
         const Utils = {
@@ -577,7 +696,38 @@
         let currentMode = 'tourist';
 
         // 等待页面加载完成
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 初始化 Supabase
+            if (typeof initSupabase === 'function') {
+                initSupabase();
+            }
+            
+            // 检查是否已登录（使用 Supabase）
+            if (typeof Auth !== 'undefined') {
+                const isLoggedIn = await Auth.isLoggedIn();
+                if (isLoggedIn) {
+                    // 已登录，检查用户类型并跳转
+                    const session = await Auth.getSession();
+                    const userId = session?.user?.id;
+                    if (userId) {
+                        const { data: profile } = await DB.profiles.get(userId);
+                        if (profile?.user_type === 'guide') {
+                            window.location.href = 'guide-dashboard.html';
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                        return;
+                    }
+                }
+            } else {
+                // Supabase 未配置，回退到 localStorage 检查
+                const savedUser = localStorage.getItem('user');
+                if (savedUser) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+            }
+
             // Tab切换
             window.switchTab = function(tab) {
                 currentMode = tab;
@@ -588,10 +738,11 @@
                 document.getElementById(tab + 'Section').classList.add('active');
             };
 
-            // 检查是否已登录
-            const savedUser = localStorage.getItem('user');
-            if (savedUser) {
-                window.location.href = 'index.html';
+            // 监听 URL 参数中的 mode
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            if (mode === 'guide') {
+                switchTab('guide');
             }
         
         // 游客登录表单提交
@@ -609,7 +760,7 @@
             
             // 验证
             if (!email) {
-                document.getElementById('touristEmailError').textContent = '请输入手机号或邮箱';
+                document.getElementById('touristEmailError').textContent = '请输入邮箱';
                 document.getElementById('touristEmailError').style.display = 'block';
                 return;
             }
@@ -624,30 +775,49 @@
             loginBtn.textContent = '登录中...';
             
             try {
-                // 前端模拟登录（从localStorage验证）
-                await new Promise(r => setTimeout(r, 800));
-                
-                const users = JSON.parse(localStorage.getItem('users') || '[]');
-                const user = users.find(u => 
-                    (u.phone === email || u.email === email) && u.password === password
-                );
-                
-                if (!user) {
-                    throw new Error('手机号/邮箱或密码错误');
+                // 使用 Supabase 认证
+                if (typeof Auth !== 'undefined' && typeof supabaseClient !== 'undefined') {
+                    initSupabase();
+                    const { data, error } = await Auth.signIn(email, password);
+                    
+                    if (error) {
+                        throw new Error(error.message || '登录失败');
+                    }
+                    
+                    // 更新用户类型为游客
+                    if (data.user) {
+                        await DB.profiles.update(data.user.id, { user_type: 'tourist' });
+                    }
+                    
+                    Utils.showToast('登录成功！', 'success');
+                    
+                    const redirect = urlParams.get('redirect') || 'index.html';
+                    
+                    setTimeout(() => {
+                        window.location.href = redirect;
+                    }, 1000);
+                } else {
+                    // Supabase 未配置，回退到 localStorage
+                    console.warn('Supabase 未配置，使用 localStorage 验证');
+                    
+                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    const user = users.find(u => 
+                        (u.phone === email || u.email === email) && u.password === password
+                    );
+                    
+                    if (!user) {
+                        throw new Error('邮箱或密码错误');
+                    }
+                    
+                    localStorage.setItem('user', JSON.stringify(user));
+                    localStorage.setItem('userType', user.role || 'tourist');
+                    
+                    Utils.showToast('登录成功！', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
                 }
-                
-                // 保存登录状态
-                localStorage.setItem('user', JSON.stringify(user));
-                localStorage.setItem('userType', user.role || 'tourist');
-                
-                Utils.showToast('登录成功！', 'success');
-                
-                const urlParams = new URLSearchParams(window.location.search);
-                const redirect = urlParams.get('redirect') || 'index.html';
-                
-                setTimeout(() => {
-                    window.location.href = redirect;
-                }, 1000);
             } catch (error) {
                 loginBtn.disabled = false;
                 loginBtn.textContent = '游客登录';
@@ -691,9 +861,19 @@
             loginBtn.textContent = '登录中...';
             
             try {
-                // 前端模拟登录（从localStorage验证）
-                await new Promise(r => setTimeout(r, 800));
+                // Supabase 认证使用邮箱登录（手机号需要通过邮箱验证）
+                // 这里需要用户使用邮箱登录，然后关联手机号
+                Utils.showToast('请使用注册邮箱登录，导游账号将在个人中心关联手机号', 'info');
                 
+                // 如果 Supabase 已配置，提示用户使用邮箱登录
+                if (typeof Auth !== 'undefined') {
+                    // 暂时显示提示，不执行登录
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = '导游登录';
+                    return;
+                }
+                
+                // 回退到 localStorage
                 const users = JSON.parse(localStorage.getItem('users') || '[]');
                 const user = users.find(u => 
                     u.phone === phone && u.password === password && u.role === 'guide'
@@ -726,19 +906,38 @@
         }); // DOMContentLoaded 结束
     </script>
 
-    <!-- 页脚 -->
-    <footer class="footer" style="background: transparent; margin-top: 30px;">
+    
+</main>
+<!-- 页脚 -->
+    <footer id="main-footer" class="footer" style="background: transparent; margin-top: 30px;">
         <div class="container">
+            <div class="footer-contact" style="text-align: center; margin-bottom: 15px;">
+                <p style="color: #64748B; font-size: 14px;">📧 2173381363@qq.com  💬 微信：ximao101</p>
+            </div>
             <div class="footer-bottom" style="justify-content: center;">
                 <p style="color: #94A3B8;">© 2024 游导旅游 · 旅行信息工具平台</p>
             </div>
             <div class="footer-links" style="justify-content: center; margin-top: 15px;">
-                <a href="user-agreement.html" style="color: #94A3B8;">用户协议</a>
-                <a href="privacy-policy.html" style="color: #94A3B8;">隐私政策</a>
+                <a href="user-agreement.html" style="color: #94A3B8;">用户服务协议</a>
+                <a href="privacy.html" style="color: #94A3B8;">隐私政策</a>
                 <a href="disclaimer.html" style="color: #94A3B8;">免责声明</a>
+                <a href="guide-agreement.html" style="color: #94A3B8;">导游入驻协议</a>
                 <a href="about.html" style="color: #94A3B8;">关于我们</a>
+            </div>
+            <div class="footer-icp" style="justify-content: center; margin-top: 15px;">
+                <p>ICP备案号：【待填写】 | <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" style="color: #94A3B8;">查询备案</a></p>
+                <p style="margin-top:5px;">本平台仅为信息展示工具，不提供旅游服务，不对用户与导游间的交易负责</p>
             </div>
         </div>
     </footer>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- 表单增强脚本 -->
+  <script src="js/form-enhance.js" defer></script>
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
 </body>
 </html>

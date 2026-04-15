@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行美食指南 - 游导旅游</title>
+  <meta name="description" content="探索全球美食！亚洲日本、韩国、泰国、中国美食推荐，欧洲法国、意大利、西班牙美食指南，各地美食街与必吃清单。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    :root {
+      --food-primary: #e85d04;
+      --food-secondary: #dc2f02;
+      --food-accent: #ffba08;
+      --food-bg: #fffbf0;
+    }
+
+    /* Hero区域 */
+    .food-hero {
+      background: linear-gradient(135deg, #e85d04 0%, #dc2f02 50%, #9d0208 100%);
+      color: #fff;
+      padding: 60px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .food-hero::before {
+      content: '🍜';
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      font-size: 4rem;
+      opacity: 0.2;
+      animation: float 3s ease-in-out infinite;
+    }
+    .food-hero::after {
+      content: '🍕';
+      position: absolute;
+      bottom: 20px;
+      right: 10%;
+      font-size: 4rem;
+      opacity: 0.2;
+      animation: float 3s ease-in-out infinite 1s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .food-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .food-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .food-hero-icons {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 24px;
+      font-size: 2rem;
+    }
+
+    /* 内容区域 */
+    .food-content {
+      padding: 50px 0 80px;
+      background: var(--food-bg);
+    }
+
+    /* 分类标签 */
+    .category-tabs {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+      justify-content: center;
+    }
+    .category-tab {
+      padding: 12px 24px;
+      background: #fff;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .category-tab:hover, .category-tab.active {
+      background: var(--food-primary);
+      border-color: var(--food-primary);
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(232, 93, 4, 0.3);
+    }
+
+    /* 区域标题 */
+    .region-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 3px solid var(--food-accent);
+    }
+    .region-flag {
+      font-size: 3rem;
+    }
+    .region-title h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+    .region-title p {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+    }
+
+    /* 美食卡片网格 */
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+    .food-card {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: var(--transition);
+    }
+    .food-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px rgba(232, 93, 4, 0.2);
+    }
+    .food-card-img {
+      height: 200px;
+      background: linear-gradient(135deg, #ffba08 0%, #e85d04 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .food-card-img::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.1));
+    }
+    .food-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--food-primary);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .food-card-body {
+      padding: 24px;
+    }
+    .food-card-body h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    .food-card-body .food-location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--food-primary);
+      margin-bottom: 12px;
+    }
+    .food-card-body p {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .food-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .food-tag {
+      padding: 4px 10px;
+      background: var(--gray-100);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      color: var(--gray-600);
+    }
+
+    /* 必吃清单 */
+    .must-eat-section {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      margin-bottom: 50px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .must-eat-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .must-eat-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    .must-eat-header p {
+      color: var(--gray-500);
+    }
+    .must-eat-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .must-eat-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--food-bg);
+      border-radius: var(--radius-lg);
+      transition: var(--transition);
+    }
+    .must-eat-item:hover {
+      background: linear-gradient(135deg, #fffbf0 0%, #ffe8cc 100%);
+      transform: translateX(4px);
+    }
+    .must-eat-icon {
+      width: 50px;
+      height: 50px;
+      background: var(--food-accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+    .must-eat-info h4 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+    .must-eat-info p {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+
+    /* 美食街推荐 */
+    .food-street-section {
+      margin-bottom: 50px;
+    }
+    .food-street-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+      gap: 24px;
+    }
+    .food-street-card {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: var(--transition);
+    }
+    .food-street-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(232, 93, 4, 0.2);
+    }
+    .food-street-img {
+      height: 160px;
+      background: linear-gradient(135deg, #dc2f02 0%, #9d0208 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+    }
+    .food-street-body {
+      padding: 24px;
+    }
+    .food-street-body h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    .food-street-body .location {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--food-primary);
+      margin-bottom: 12px;
+    }
+    .food-street-body p {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .food-street-highlights {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .highlight-tag {
+      padding: 6px 12px;
+      background: linear-gradient(135deg, var(--food-accent) 0%, #f48c06 100%);
+      color: #fff;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* 美食地图 */
+    .food-map-section {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      margin-bottom: 50px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .food-map-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .food-map-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    .world-map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .map-region {
+      background: var(--food-bg);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      border-left: 4px solid var(--food-primary);
+      transition: var(--transition);
+    }
+    .map-region:hover {
+      background: linear-gradient(135deg, #fffbf0 0%, #ffe8cc 100%);
+      transform: translateX(4px);
+    }
+    .map-region-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .map-region-flag {
+      font-size: 2rem;
+    }
+    .map-region h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+    .map-foods {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .map-food-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: #fff;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      color: var(--gray-700);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+
+    /* 美食节庆 */
+    .festival-section {
+      margin-bottom: 50px;
+    }
+    .festival-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .festival-card {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: var(--transition);
+    }
+    .festival-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 40px rgba(232, 93, 4, 0.2);
+    }
+    .festival-img {
+      height: 140px;
+      background: linear-gradient(135deg, #ffba08 0%, #f48c06 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+    .festival-body {
+      padding: 24px;
+    }
+    .festival-date {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--food-primary);
+      color: #fff;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .festival-body h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    .festival-body p {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    /* 餐厅选择技巧 */
+    .tips-section {
+      background: #fff;
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      margin-bottom: 50px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .tips-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .tips-header h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .tip-card {
+      text-align: center;
+      padding: 32px 24px;
+      background: var(--food-bg);
+      border-radius: var(--radius-xl);
+      transition: var(--transition);
+    }
+    .tip-card:hover {
+      background: linear-gradient(135deg, #fffbf0 0%, #ffe8cc 100%);
+      transform: translateY(-4px);
+    }
+    .tip-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--food-primary) 0%, var(--food-secondary) 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 20px;
+    }
+    .tip-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+    }
+    .tip-card p {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.6;
+    }
+
+    /* CTA区域 */
+    .food-cta {
+      background: linear-gradient(135deg, var(--food-primary) 0%, var(--food-secondary) 100%);
+      color: #fff;
+      text-align: center;
+      padding: 60px 20px;
+      border-radius: var(--radius-xl);
+      margin-bottom: 50px;
+    }
+    .food-cta h2 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .food-cta p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+    .food-cta .btn {
+      background: #fff;
+      color: var(--food-primary);
+      padding: 14px 32px;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      transition: var(--transition);
+    }
+    .food-cta .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .food-hero h1 {
+        font-size: 1.8rem;
+      }
+      .food-hero-icons {
+        font-size: 1.5rem;
+      }
+      .food-grid, .food-street-grid, .festival-grid {
+        grid-template-columns: 1fr;
+      }
+      .must-eat-list, .tips-grid {
+        grid-template-columns: 1fr;
+      }
+      .must-eat-section, .food-map-section, .tips-section {
+        padding: 24px;
+      }
+    }
+
+    /* 隐藏/显示 */
+    .category-content {
+      display: none;
+    }
+    .category-content.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container">
+</nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html">签证</a>
+        <a href="routes.html">线路</a>
+        <a href="knowledge.html">知识</a>
+        <a href="tools.html">工具</a>
+      </div>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  
+
+  <!-- Hero区域 -->
+  <div class="food-hero">
+    <div class="container">
+      <h1>🍽️ 旅行美食指南</h1>
+      <p>探索全球美味，从街头小吃到米其林餐厅，开启一场舌尖上的环球之旅</p>
+      <div class="food-hero-icons">
+        <span>🍣</span><span>🥐</span><span>🍜</span><span>🍕</span><span>🥘</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 内容区域 -->
+  <div class="food-content">
+    <div class="container">
+      <!-- 分类标签 -->
+      <div class="category-tabs">
+        <button class="category-tab active" data-category="all">全部美食</button>
+        <button class="category-tab" data-category="asia">🇨🇳 亚洲美食</button>
+        <button class="category-tab" data-category="europe">🇪🇺 欧洲美食</button>
+        <button class="category-tab" data-category="street">🏮 美食街</button>
+        <button class="category-tab" data-category="festival">🎉 美食节庆</button>
+        <button class="category-tab" data-category="tips">💡 选餐厅技巧</button>
+      </div>
+
+      <!-- 全部内容 -->
+      <div class="category-content active" id="all">
+        <!-- 亚洲美食 -->
+        <div class="region-header">
+          <span class="region-flag">🌏</span>
+          <div class="region-title">
+            <h2>亚洲美食</h2>
+            <p>日本、韩国、泰国、中国——亚洲美食的多彩世界</p>
+          </div>
+        </div>
+        <div class="food-grid">
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);">
+              🍣
+              <span class="food-badge">必吃</span>
+            </div>
+            <div class="food-card-body">
+              <h3>日本寿司</h3>
+              <div class="food-location">📍 日本东京·筑地市场</div>
+              <p>新鲜的鱼生与醋饭完美融合，从平民化的握寿司到高级的江户前寿司，每一口都是对传统的致敬。</p>
+              <div class="food-tags">
+                <span class="food-tag">生鲜</span>
+                <span class="food-tag">传统</span>
+                <span class="food-tag">精致</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ffd93d 0%, #ff9500 100%);">
+              🍜
+              <span class="food-badge">人气</span>
+            </div>
+            <div class="food-card-body">
+              <h3>日本拉面</h3>
+              <div class="food-location">📍 日本札幌·博多·东京</div>
+              <p>浓郁汤底搭配劲道面条，从酱油、味噌到豚骨，每家店都有自己的独特配方，让人欲罢不能。</p>
+              <div class="food-tags">
+                <span class="food-tag">浓郁</span>
+                <span class="food-tag">暖心</span>
+                <span class="food-tag">平价</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);">
+              🥘
+              <span class="food-badge">特色</span>
+            </div>
+            <div class="food-card-body">
+              <h3>韩国烤肉</h3>
+              <div class="food-location">📍 韩国首尔·弘大·明洞</div>
+              <p>精选韩牛或五花肉在炭火上滋滋作响，搭配生菜、蒜片和酱料，每一口都是满足感爆棚的体验。</p>
+              <div class="food-tags">
+                <span class="food-tag">炭烤</span>
+                <span class="food-tag">社交</span>
+                <span class="food-tag">肉食</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ffd93d 0%, #f59e0b 100%);">
+              🍛
+              <span class="food-badge">辛辣</span>
+            </div>
+            <div class="food-card-body">
+              <h3>泰国冬阴功</h3>
+              <div class="food-location">📍 泰国曼谷·清迈·普吉</div>
+              <p>酸辣鲜香的泰式汤底融合香茅、南姜和椰奶，配上大虾或鸡肉，是泰国美食的灵魂代表。</p>
+              <div class="food-tags">
+                <span class="food-tag">酸辣</span>
+                <span class="food-tag">开胃</span>
+                <span class="food-tag">海鲜</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff8fab 0%, #ff6b6b 100%);">
+              🥟
+              <span class="food-badge">经典</span>
+            </div>
+            <div class="food-card-body">
+              <h3>中国小笼包</h3>
+              <div class="food-location">📍 中国上海·南翔·豫园</div>
+              <p>薄如蝉翼的面皮包裹鲜美汤汁，轻轻咬开，满口鲜香，这是上海人对美食的极致追求。</p>
+              <div class="food-tags">
+                <span class="food-tag">汤汁</span>
+                <span class="food-tag">精致</span>
+                <span class="food-tag">传统</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ffa94d 0%, #ff922b 100%);">
+              🍲
+              <span class="food-badge">滋补</span>
+            </div>
+            <div class="food-card-body">
+              <h3>四川火锅</h3>
+              <div class="food-location">📍 中国成都·重庆</div>
+              <p>麻辣鲜香的红油锅底翻滚着各种食材，从毛肚到鸭血，每一口都是对味蕾的极致挑战。</p>
+              <div class="food-tags">
+                <span class="food-tag">麻辣</span>
+                <span class="food-tag">热闹</span>
+                <span class="food-tag">聚餐</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 欧洲美食 -->
+        <div class="region-header">
+          <span class="region-flag">🏰</span>
+          <div class="region-title">
+            <h2>欧洲美食</h2>
+            <p>法国、意大利、西班牙——浪漫与味蕾的邂逅</p>
+          </div>
+        </div>
+        <div class="food-grid">
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);">
+              🥐
+              <span class="food-badge">经典</span>
+            </div>
+            <div class="food-card-body">
+              <h3>法式可颂</h3>
+              <div class="food-location">📍 法国巴黎·蒙马特</div>
+              <p>层层酥脆的黄油香气，外酥里软，这是法国人对早餐的仪式感，也是烘焙艺术的完美呈现。</p>
+              <div class="food-tags">
+                <span class="food-tag">酥脆</span>
+                <span class="food-tag">烘焙</span>
+                <span class="food-tag">早餐</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #8b0000 0%, #b22222 100%);">
+              🍷
+              <span class="food-badge">浪漫</span>
+            </div>
+            <div class="food-card-body">
+              <h3>法式鹅肝</h3>
+              <div class="food-location">📍 法国波尔多·斯特拉斯堡</div>
+              <p>绵密醇厚的口感在舌尖化开，搭配甜美的无花果酱，这是法国美食的奢华代表。</p>
+              <div class="food-tags">
+                <span class="food-tag">奢华</span>
+                <span class="food-tag">细腻</span>
+                <span class="food-tag">配酒</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #e85d04 0%, #dc2f02 100%);">
+              🍕
+              <span class="food-badge">正宗</span>
+            </div>
+            <div class="food-card-body">
+              <h3>意大利披萨</h3>
+              <div class="food-location">📍 意大利那不勒斯·罗马</div>
+              <p>薄脆的意式饼底搭配圣马扎诺番茄和 mozzarella，在石窑中高温烤制，简单的食材造就传奇。</p>
+              <div class="food-tags">
+                <span class="food-tag">薄脆</span>
+                <span class="food-tag">窑烤</span>
+                <span class="food-tag">经典</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ffd93d 0%, #f4d03f 100%);">
+              🍝
+              <span class="food-badge">主食</span>
+            </div>
+            <div class="food-card-body">
+              <h3>意式烩饭</h3>
+              <div class="food-location">📍 意大利米兰·维罗纳</div>
+              <p>Arborio米在高汤中慢慢炖煮，每粒米都裹满浓郁的汤汁，撒上帕玛森芝士， creamy的完美诠释。</p>
+              <div class="food-tags">
+                <span class="food-tag">奶油</span>
+                <span class="food-tag">芝士</span>
+                <span class="food-tag">暖心</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%);">
+              🥘
+              <span class="food-badge">热情</span>
+            </div>
+            <div class="food-card-body">
+              <h3>西班牙海鲜饭</h3>
+              <div class="food-location">📍 西班牙巴塞罗那·瓦伦西亚</div>
+              <p>藏红花染成金黄的米饭铺满大虾、青口和鱿鱼，锅底的焦香锅巴是整锅饭的灵魂所在。</p>
+              <div class="food-tags">
+                <span class="food-tag">海鲜</span>
+                <span class="food-tag">藏红花</span>
+                <span class="food-tag">分享</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff922b 0%, #e8590c 100%);">
+              🍖
+              <span class="food-badge">奔放</span>
+            </div>
+            <div class="food-card-body">
+              <h3>西班牙火腿</h3>
+              <div class="food-location">📍 西班牙马德里·安达卢西亚</div>
+              <p>伊比利亚火腿薄如蝉翼，油脂丰富，在口中化开，配上一口雪利酒，是西班牙的国粹美食。</p>
+              <div class="food-tags">
+                <span class="food-tag">腌制</span>
+                <span class="food-tag">配酒</span>
+                <span class="food-tag">珍贵</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 必吃清单 -->
+        <div class="must-eat-section">
+          <div class="must-eat-header">
+            <h2>⭐ 全球必吃清单</h2>
+            <p>一生必尝的经典美食，错过等于白去！</p>
+          </div>
+          <div class="must-eat-list">
+            <div class="must-eat-item">
+              <div class="must-eat-icon">🥟</div>
+              <div class="must-eat-info">
+                <h4>日本·神户牛排</h4>
+                <p>入口即化的顶级和牛</p>
+              </div>
+            </div>
+            <div class="must-eat-item">
+              <div class="must-eat-icon">🍦</div>
+              <div class="must-eat-info">
+                <h4>法国·马卡龙</h4>
+                <p>甜蜜酥脆的法式甜点</p>
+              </div>
+            </div>
+            <div class="must-eat-item">
+              <div class="must-eat-icon">🦐</div>
+              <div class="must-eat-info">
+                <h4>泰国·咖喱蟹</h4>
+                <p>浓香四溢的泰式风味</p>
+              </div>
+            </div>
+            <div class="must-eat-item">
+              <div class="must-eat-icon">🥩</div>
+              <div class="must-eat-info">
+                <h4>阿根廷·烤肉</h4>
+                <p>潘帕斯草原的馈赠</p>
+              </div>
+            </div>
+            <div class="must-eat-item">
+              <div class="must-eat-icon">🍜</div>
+              <div class="must-eat-info">
+                <h4>越南·牛肉河粉</h4>
+                <p>清爽鲜美的东南亚味道</p>
+              </div>
+            </div>
+            <div class="must-eat-item">
+              <div class="must-eat-icon">🧀</div>
+              <div class="must-eat-info">
+                <h4>瑞士·芝士火锅</h4>
+                <p>冬日里最暖心的选择</p>
+              </div>
+            </div>
+            <div class="must-eat-item">
+              <div class="must-eat-icon">🦪</div>
+              <div class="must-eat-info">
+                <h4>澳大利亚·牡蛎</h4>
+                <p>纯净海域的鲜美</p>
+              </div>
+            </div>
+            <div class="must-eat-item">
+              <div class="must-eat-icon">🍱</div>
+              <div class="must-eat-info">
+                <h4>土耳其·烤肉卷</h4>
+                <p>中东街头风味代表</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 美食地图 -->
+        <div class="food-map-section">
+          <div class="food-map-header">
+            <h2>🗺️ 世界美食地图</h2>
+            <p>按区域划分的特色美食指南</p>
+          </div>
+          <div class="world-map">
+            <div class="map-region">
+              <div class="map-region-header">
+                <span class="map-region-flag">🌏</span>
+                <h3>东亚</h3>
+              </div>
+              <div class="map-foods">
+                <span class="map-food-item">🍣 日本料理</span>
+                <span class="map-food-item">🥘 韩国烧烤</span>
+                <span class="map-food-item">🥟 中式点心</span>
+                <span class="map-food-item">🍜 越南河粉</span>
+              </div>
+            </div>
+            <div class="map-region">
+              <div class="map-region-header">
+                <span class="map-region-flag">🌴</span>
+                <h3>东南亚</h3>
+              </div>
+              <div class="map-foods">
+                <span class="map-food-item">🍛 泰式咖喱</span>
+                <span class="map-food-item">🥘 冬阴功</span>
+                <span class="map-food-item">🍲 叻沙</span>
+                <span class="map-food-item">🥜 沙爹</span>
+              </div>
+            </div>
+            <div class="map-region">
+              <div class="map-region-header">
+                <span class="map-region-flag">🏰</span>
+                <h3>西欧</h3>
+              </div>
+              <div class="map-foods">
+                <span class="map-food-item">🥐 法式烘焙</span>
+                <span class="map-food-item">🍝 意面</span>
+                <span class="map-food-item">🧀 芝士</span>
+                <span class="map-food-item">🍷 红酒</span>
+              </div>
+            </div>
+            <div class="map-region">
+              <div class="map-region-header">
+                <span class="map-region-flag">🌊</span>
+                <h3>地中海</h3>
+              </div>
+              <div class="map-foods">
+                <span class="map-food-item">🍕 意式披萨</span>
+                <span class="map-food-item">🥙 皮塔饼</span>
+                <span class="map-food-item">🫒 橄榄油</span>
+                <span class="map-food-item">🦐 海鲜</span>
+              </div>
+            </div>
+            <div class="map-region">
+              <div class="map-region-header">
+                <span class="map-region-flag">🌎</span>
+                <h3>美洲</h3>
+              </div>
+              <div class="map-foods">
+                <span class="map-food-item">🌮 墨西哥卷</span>
+                <span class="map-food-item">🥩 阿根廷烤肉</span>
+                <span class="map-food-item">🍔 汉堡</span>
+                <span class="map-food-item">🥧 美式派</span>
+              </div>
+            </div>
+            <div class="map-region">
+              <div class="map-region-header">
+                <span class="map-region-flag">☀️</span>
+                <h3>中东/南亚</h3>
+              </div>
+              <div class="map-foods">
+                <span class="map-food-item">🥙 烤肉卷</span>
+                <span class="map-food-item">🍚 手抓饭</span>
+                <span class="map-food-item">🫓 馕饼</span>
+                <span class="map-food-item">☕ 土耳其咖啡</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 美食街推荐 -->
+        <div class="food-street-section">
+          <div class="region-header">
+            <span class="region-flag">🏮</span>
+            <div class="region-title">
+              <h2>热门美食街</h2>
+              <p>全球最值得一去的美食朝圣地</p>
+            </div>
+          </div>
+          <div class="food-street-grid">
+            <div class="food-street-card">
+              <div class="food-street-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%);">🍜</div>
+              <div class="food-street-body">
+                <h3>大阪道顿堀</h3>
+                <div class="location">📍 日本大阪</div>
+                <p>霓虹闪烁的餐饮天堂，从章鱼小丸子到大阪烧，这里是日本平民美食的集大成者。</p>
+                <div class="food-street-highlights">
+                  <span class="highlight-tag">章鱼烧</span>
+                  <span class="highlight-tag">大阪烧</span>
+                  <span class="highlight-tag">拉面</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="food-street-card">
+              <div class="food-street-img" style="background: linear-gradient(135deg, #ffd93d 0%, #f39c12 100%);">🥟</div>
+              <div class="food-street-body">
+                <h3>香港庙街</h3>
+                <div class="location">📍 中国香港</div>
+                <p>大排档的烟火气息，鱼蛋、咖喱鱼片、炒蟹，夜晚的庙街是港式街头美食的灵魂。</p>
+                <div class="food-street-highlights">
+                  <span class="highlight-tag">咖喱鱼蛋</span>
+                  <span class="highlight-tag">炒蟹</span>
+                  <span class="highlight-tag">煲仔饭</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="food-street-card">
+              <div class="food-street-img" style="background: linear-gradient(135deg, #ff922b 0%, #e8590c 100%);">🥘</div>
+              <div class="food-street-body">
+                <h3>曼谷考山路</h3>
+                <div class="location">📍 泰国曼谷</div>
+                <p>背包客的天堂，泰式炒河粉、青木瓜沙拉、芒果糯米饭，平价又美味的东南亚风情。</p>
+                <div class="food-street-highlights">
+                  <span class="highlight-tag">炒河粉</span>
+                  <span class="highlight-tag">青木瓜沙拉</span>
+                  <span class="highlight-tag">芒果糯米饭</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="food-street-card">
+              <div class="food-street-img" style="background: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);">🥐</div>
+              <div class="food-street-body">
+                <h3>巴黎蒙马特</h3>
+                <div class="location">📍 法国巴黎</div>
+                <p>浪漫与美食的完美结合，法式可颂、蜗牛、红酒，在艺术气息中品尝法式生活美学。</p>
+                <div class="food-street-highlights">
+                  <span class="highlight-tag">可颂</span>
+                  <span class="highlight-tag">法式蜗牛</span>
+                  <span class="highlight-tag">红酒</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="food-street-card">
+              <div class="food-street-img" style="background: linear-gradient(135deg, #e85d04 0%, #9d0208 100%);">🍕</div>
+              <div class="food-street-body">
+                <h3>新加坡小印度</h3>
+                <div class="location">📍 新加坡</div>
+                <p>印度风味的饕餮盛宴，咖喱、甩饼、拉茶，多元文化的美食交融让人流连忘返。</p>
+                <div class="food-street-highlights">
+                  <span class="highlight-tag">印度咖喱</span>
+                  <span class="highlight-tag">甩饼</span>
+                  <span class="highlight-tag">拉茶</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="food-street-card">
+              <div class="food-street-img" style="background: linear-gradient(135deg, #c0392b 0%, #922b21 100%);">🥘</div>
+              <div class="food-street-body">
+                <h3>墨西哥城改革大道</h3>
+                <div class="location">📍 墨西哥</div>
+                <p>拉丁美洲的热情味道，墨西哥卷饼、塔可、辣味玉米，色彩斑斓的墨西哥风味之旅。</p>
+                <div class="food-street-highlights">
+                  <span class="highlight-tag">塔可</span>
+                  <span class="highlight-tag">墨西哥卷</span>
+                  <span class="highlight-tag">辣玉米</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 美食节庆 -->
+        <div class="festival-section">
+          <div class="region-header">
+            <span class="region-flag">🎉</span>
+            <div class="region-title">
+              <h2>美食节庆日历</h2>
+              <p>错过等一年的美食盛宴</p>
+            </div>
+          </div>
+          <div class="festival-grid">
+            <div class="festival-card">
+              <div class="festival-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);">🎏</div>
+              <div class="festival-body">
+                <span class="festival-date">每年10月</span>
+                <h3>德国慕尼黑啤酒节</h3>
+                <p>全球最大的啤酒节，香肠、烤猪肘配上一升装的啤酒，体验纯粹的德式狂欢。</p>
+              </div>
+            </div>
+
+            <div class="festival-card">
+              <div class="festival-img" style="background: linear-gradient(135deg, #ffd93d 0%, #f39c12 100%);">🦀</div>
+              <div class="festival-body">
+                <span class="festival-date">每年11月</span>
+                <h3>美国缅因州龙虾节</h3>
+                <p>新英格兰地区最盛大的海鲜庆典，龙虾派对、龙虾王比赛，吃到停不下来。</p>
+              </div>
+            </div>
+
+            <div class="festival-card">
+              <div class="festival-img" style="background: linear-gradient(135deg, #ff922b 0%, #e8590c 100%);">🍊</div>
+              <div class="festival-body">
+                <span class="festival-date">每年2月</span>
+                <h3>西班牙番茄节</h3>
+                <p>瓦伦西亚小镇的疯狂派对，数吨番茄在空中飞舞，尽情释放压力的绝佳机会。</p>
+              </div>
+            </div>
+
+            <div class="festival-card">
+              <div class="festival-img" style="background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);">🍇</div>
+              <div class="festival-body">
+                <span class="festival-date">每年9-10月</span>
+                <h3>法国波尔多葡萄酒节</h3>
+                <p>吉伦特河畔的葡萄酒盛会，品鉴顶级佳酿，体验法式酒文化的优雅与浪漫。</p>
+              </div>
+            </div>
+
+            <div class="festival-card">
+              <div class="festival-img" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">🍣</div>
+              <div class="festival-body">
+                <span class="festival-date">每年6月</span>
+                <h3>日本金枪鱼拍卖节</h3>
+                <p>筑地市场的年度盛事，观看金枪鱼拍卖，品尝最新鲜的寿司，感受日本的鱼文化。</p>
+              </div>
+            </div>
+
+            <div class="festival-card">
+              <div class="festival-img" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">🥘</div>
+              <div class="festival-body">
+                <span class="festival-date">每年11月</span>
+                <h3>中国成都国际美食节</h3>
+                <p>川菜的顶级盛宴，麻辣鲜香的终极体验，感受中国八大菜系之首的魅力。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 餐厅选择技巧 -->
+        <div class="tips-section">
+          <div class="tips-header">
+            <h2>💡 选餐厅实用技巧</h2>
+            <p>老司机的避坑经验，让你不再踩雷</p>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card">
+              <div class="tip-icon">🗺️</div>
+              <h3>避开景区陷阱</h3>
+              <p>景区周边餐厅多为游客专供，价格虚高且味道一般。建议步行10分钟进入居民区觅食，价格至少便宜一半。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">📱</div>
+              <h3>善用美食App</h3>
+              <p>TripAdvisor、Tabelog、Yelp等国际平台，结合当地人的点评，比单纯看中文攻略更靠谱。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">👴</div>
+              <h3>寻找本地人排队</h3>
+              <p>当地人排队的店一定不会太差！排队时间是检验美食的最简单标准，绝不会踩雷。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">📖</div>
+              <h3>看菜单辨别</h3>
+              <p>如果菜单有多种语言且带图片，说明主要做游客生意。没有图片、只有当地文字的店往往是本地人的真爱。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">🕐</div>
+              <h3>错峰用餐</h3>
+              <p>避开用餐高峰期，不仅不用排队，还可能获得更用心的服务。很多店黄昏时分的出品比正午更好。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">🤝</div>
+              <h3>询问当地人</h3>
+              <p>酒店前台、出租车司机、便利店店员，他们的推荐往往是最地道的，比网上的攻略更真实。</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="food-cta">
+          <h2>🍽️ 准备好开启美食之旅了吗？</h2>
+          <p>让专业导游带你探索当地最地道的美食体验</p>
+          <a href="guides.html" class="btn">寻找美食导游</a>
+        </div>
+      </div>
+
+      <!-- 亚洲美食内容 -->
+      <div class="category-content" id="asia">
+        <div class="region-header">
+          <span class="region-flag">🌏</span>
+          <div class="region-title">
+            <h2>亚洲美食</h2>
+            <p>从日本到泰国，舌尖上的东方魅力</p>
+          </div>
+        </div>
+        <div class="food-grid">
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);">🍣</div>
+            <div class="food-card-body">
+              <h3>日本寿司</h3>
+              <div class="food-location">📍 东京·筑地市场</div>
+              <p>新鲜的鱼生与醋饭完美融合，从平民化的握寿司到高级的江户前寿司。</p>
+              <div class="food-tags">
+                <span class="food-tag">生鲜</span>
+                <span class="food-tag">传统</span>
+                <span class="food-tag">精致</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ffd93d 0%, #ff9500 100%);">🍜</div>
+            <div class="food-card-body">
+              <h3>日本拉面</h3>
+              <div class="food-location">📍 札幌·博多·东京</div>
+              <p>浓郁汤底搭配劲道面条，从酱油、味噌到豚骨，每家店都有自己的独特配方。</p>
+              <div class="food-tags">
+                <span class="food-tag">浓郁</span>
+                <span class="food-tag">暖心</span>
+                <span class="food-tag">平价</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #c92a2a 100%);">🥘</div>
+            <div class="food-card-body">
+              <h3>韩国烤肉</h3>
+              <div class="food-location">📍 首尔·弘大·明洞</div>
+              <p>精选韩牛或五花肉在炭火上滋滋作响，搭配生菜、蒜片和酱料。</p>
+              <div class="food-tags">
+                <span class="food-tag">炭烤</span>
+                <span class="food-tag">社交</span>
+                <span class="food-tag">肉食</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ffd93d 0%, #f59e0b 100%);">🍛</div>
+            <div class="food-card-body">
+              <h3>泰国冬阴功</h3>
+              <div class="food-location">📍 曼谷·清迈·普吉</div>
+              <p>酸辣鲜香的泰式汤底融合香茅、南姜和椰奶，配上大虾或鸡肉。</p>
+              <div class="food-tags">
+                <span class="food-tag">酸辣</span>
+                <span class="food-tag">开胃</span>
+                <span class="food-tag">海鲜</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff8fab 0%, #ff6b6b 100%);">🥟</div>
+            <div class="food-card-body">
+              <h3>中国小笼包</h3>
+              <div class="food-location">📍 上海·南翔·豫园</div>
+              <p>薄如蝉翼的面皮包裹鲜美汤汁，轻轻咬开，满口鲜香。</p>
+              <div class="food-tags">
+                <span class="food-tag">汤汁</span>
+                <span class="food-tag">精致</span>
+                <span class="food-tag">传统</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ffa94d 0%, #ff922b 100%);">🍲</div>
+            <div class="food-card-body">
+              <h3>四川火锅</h3>
+              <div class="food-location">📍 成都·重庆</div>
+              <p>麻辣鲜香的红油锅底翻滚着各种食材，每一口都是对味蕾的极致挑战。</p>
+              <div class="food-tags">
+                <span class="food-tag">麻辣</span>
+                <span class="food-tag">热闹</span>
+                <span class="food-tag">聚餐</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 欧洲美食内容 -->
+      <div class="category-content" id="europe">
+        <div class="region-header">
+          <span class="region-flag">🏰</span>
+          <div class="region-title">
+            <h2>欧洲美食</h2>
+            <p>法国、意大利、西班牙——浪漫与味蕾的邂逅</p>
+          </div>
+        </div>
+        <div class="food-grid">
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);">🥐</div>
+            <div class="food-card-body">
+              <h3>法式可颂</h3>
+              <div class="food-location">📍 巴黎·蒙马特</div>
+              <p>层层酥脆的黄油香气，外酥里软，这是法国人对早餐的仪式感。</p>
+              <div class="food-tags">
+                <span class="food-tag">酥脆</span>
+                <span class="food-tag">烘焙</span>
+                <span class="food-tag">早餐</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #8b0000 0%, #b22222 100%);">🍷</div>
+            <div class="food-card-body">
+              <h3>法式鹅肝</h3>
+              <div class="food-location">📍 波尔多·斯特拉斯堡</div>
+              <p>绵密醇厚的口感在舌尖化开，搭配甜美的无花果酱。</p>
+              <div class="food-tags">
+                <span class="food-tag">奢华</span>
+                <span class="food-tag">细腻</span>
+                <span class="food-tag">配酒</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #e85d04 0%, #dc2f02 100%);">🍕</div>
+            <div class="food-card-body">
+              <h3>意大利披萨</h3>
+              <div class="food-location">📍 那不勒斯·罗马</div>
+              <p>薄脆的意式饼底搭配圣马扎诺番茄和 mozzarella，在石窑中高温烤制。</p>
+              <div class="food-tags">
+                <span class="food-tag">薄脆</span>
+                <span class="food-tag">窑烤</span>
+                <span class="food-tag">经典</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ffd93d 0%, #f4d03f 100%);">🍝</div>
+            <div class="food-card-body">
+              <h3>意式烩饭</h3>
+              <div class="food-location">📍 米兰·维罗纳</div>
+              <p>Arborio米在高汤中慢慢炖煮，每粒米都裹满浓郁的汤汁。</p>
+              <div class="food-tags">
+                <span class="food-tag">奶油</span>
+                <span class="food-tag">芝士</span>
+                <span class="food-tag">暖心</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%);">🥘</div>
+            <div class="food-card-body">
+              <h3>西班牙海鲜饭</h3>
+              <div class="food-location">📍 巴塞罗那·瓦伦西亚</div>
+              <p>藏红花染成金黄的米饭铺满大虾、青口和鱿鱼，锅底的焦香锅巴是灵魂。</p>
+              <div class="food-tags">
+                <span class="food-tag">海鲜</span>
+                <span class="food-tag">藏红花</span>
+                <span class="food-tag">分享</span>
+              </div>
+            </div>
+          </div>
+          <div class="food-card">
+            <div class="food-card-img" style="background: linear-gradient(135deg, #ff922b 0%, #e8590c 100%);">🍖</div>
+            <div class="food-card-body">
+              <h3>西班牙火腿</h3>
+              <div class="food-location">📍 马德里·安达卢西亚</div>
+              <p>伊比利亚火腿薄如蝉翼，油脂丰富，在口中化开，配上一口雪利酒。</p>
+              <div class="food-tags">
+                <span class="food-tag">腌制</span>
+                <span class="food-tag">配酒</span>
+                <span class="food-tag">珍贵</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 美食街内容 -->
+      <div class="category-content" id="street">
+        <div class="region-header">
+          <span class="region-flag">🏮</span>
+          <div class="region-title">
+            <h2>热门美食街</h2>
+            <p>全球最值得一去的美食朝圣地</p>
+          </div>
+        </div>
+        <div class="food-street-grid">
+          <div class="food-street-card">
+            <div class="food-street-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #c0392b 100%);">🍜</div>
+            <div class="food-street-body">
+              <h3>大阪道顿堀</h3>
+              <div class="location">📍 日本大阪</div>
+              <p>霓虹闪烁的餐饮天堂，从章鱼小丸子到大阪烧，这里是日本平民美食的集大成者。</p>
+              <div class="food-street-highlights">
+                <span class="highlight-tag">章鱼烧</span>
+                <span class="highlight-tag">大阪烧</span>
+                <span class="highlight-tag">拉面</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-street-card">
+            <div class="food-street-img" style="background: linear-gradient(135deg, #ffd93d 0%, #f39c12 100%);">🥟</div>
+            <div class="food-street-body">
+              <h3>香港庙街</h3>
+              <div class="location">📍 中国香港</div>
+              <p>大排档的烟火气息，鱼蛋、咖喱鱼片、炒蟹，夜晚的庙街是港式街头美食的灵魂。</p>
+              <div class="food-street-highlights">
+                <span class="highlight-tag">咖喱鱼蛋</span>
+                <span class="highlight-tag">炒蟹</span>
+                <span class="highlight-tag">煲仔饭</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-street-card">
+            <div class="food-street-img" style="background: linear-gradient(135deg, #ff922b 0%, #e8590c 100%);">🥘</div>
+            <div class="food-street-body">
+              <h3>曼谷考山路</h3>
+              <div class="location">📍 泰国曼谷</div>
+              <p>背包客的天堂，泰式炒河粉、青木瓜沙拉、芒果糯米饭，平价又美味的东南亚风情。</p>
+              <div class="food-street-highlights">
+                <span class="highlight-tag">炒河粉</span>
+                <span class="highlight-tag">青木瓜沙拉</span>
+                <span class="highlight-tag">芒果糯米饭</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-street-card">
+            <div class="food-street-img" style="background: linear-gradient(135deg, #b8860b 0%, #8b6914 100%);">🥐</div>
+            <div class="food-street-body">
+              <h3>巴黎蒙马特</h3>
+              <div class="location">📍 法国巴黎</div>
+              <p>浪漫与美食的完美结合，法式可颂、蜗牛、红酒，在艺术气息中品尝法式生活美学。</p>
+              <div class="food-street-highlights">
+                <span class="highlight-tag">可颂</span>
+                <span class="highlight-tag">法式蜗牛</span>
+                <span class="highlight-tag">红酒</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-street-card">
+            <div class="food-street-img" style="background: linear-gradient(135deg, #e85d04 0%, #9d0208 100%);">🍕</div>
+            <div class="food-street-body">
+              <h3>新加坡小印度</h3>
+              <div class="location">📍 新加坡</div>
+              <p>印度风味的饕餮盛宴，咖喱、甩饼、拉茶，多元文化的美食交融让人流连忘返。</p>
+              <div class="food-street-highlights">
+                <span class="highlight-tag">印度咖喱</span>
+                <span class="highlight-tag">甩饼</span>
+                <span class="highlight-tag">拉茶</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="food-street-card">
+            <div class="food-street-img" style="background: linear-gradient(135deg, #c0392b 0%, #922b21 100%);">🥘</div>
+            <div class="food-street-body">
+              <h3>墨西哥城改革大道</h3>
+              <div class="location">📍 墨西哥</div>
+              <p>拉丁美洲的热情味道，墨西哥卷饼、塔可、辣味玉米，色彩斑斓的墨西哥风味之旅。</p>
+              <div class="food-street-highlights">
+                <span class="highlight-tag">塔可</span>
+                <span class="highlight-tag">墨西哥卷</span>
+                <span class="highlight-tag">辣玉米</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 美食节庆内容 -->
+      <div class="category-content" id="festival">
+        <div class="region-header">
+          <span class="region-flag">🎉</span>
+          <div class="region-title">
+            <h2>美食节庆日历</h2>
+            <p>错过等一年的美食盛宴</p>
+          </div>
+        </div>
+        <div class="festival-grid">
+          <div class="festival-card">
+            <div class="festival-img" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);">🎏</div>
+            <div class="festival-body">
+              <span class="festival-date">每年10月</span>
+              <h3>德国慕尼黑啤酒节</h3>
+              <p>全球最大的啤酒节，香肠、烤猪肘配上一升装的啤酒，体验纯粹的德式狂欢。</p>
+            </div>
+          </div>
+
+          <div class="festival-card">
+            <div class="festival-img" style="background: linear-gradient(135deg, #ffd93d 0%, #f39c12 100%);">🦀</div>
+            <div class="festival-body">
+              <span class="festival-date">每年11月</span>
+              <h3>美国缅因州龙虾节</h3>
+              <p>新英格兰地区最盛大的海鲜庆典，龙虾派对、龙虾王比赛，吃到停不下来。</p>
+            </div>
+          </div>
+
+          <div class="festival-card">
+            <div class="festival-img" style="background: linear-gradient(135deg, #ff922b 0%, #e8590c 100%);">🍊</div>
+            <div class="festival-body">
+              <span class="festival-date">每年2月</span>
+              <h3>西班牙番茄节</h3>
+              <p>瓦伦西亚小镇的疯狂派对，数吨番茄在空中飞舞，尽情释放压力的绝佳机会。</p>
+            </div>
+          </div>
+
+          <div class="festival-card">
+            <div class="festival-img" style="background: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);">🍇</div>
+            <div class="festival-body">
+              <span class="festival-date">每年9-10月</span>
+              <h3>法国波尔多葡萄酒节</h3>
+              <p>吉伦特河畔的葡萄酒盛会，品鉴顶级佳酿，体验法式酒文化的优雅与浪漫。</p>
+            </div>
+          </div>
+
+          <div class="festival-card">
+            <div class="festival-img" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">🍣</div>
+            <div class="festival-body">
+              <span class="festival-date">每年6月</span>
+              <h3>日本金枪鱼拍卖节</h3>
+              <p>筑地市场的年度盛事，观看金枪鱼拍卖，品尝最新鲜的寿司，感受日本的鱼文化。</p>
+            </div>
+          </div>
+
+          <div class="festival-card">
+            <div class="festival-img" style="background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);">🥘</div>
+            <div class="festival-body">
+              <span class="festival-date">每年11月</span>
+              <h3>中国成都国际美食节</h3>
+              <p>川菜的顶级盛宴，麻辣鲜香的终极体验，感受中国八大菜系之首的魅力。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 选餐厅技巧内容 -->
+      <div class="category-content" id="tips">
+        <div class="tips-section" style="box-shadow: none; padding: 0;">
+          <div class="tips-header">
+            <h2>💡 选餐厅实用技巧</h2>
+            <p>老司机的避坑经验，让你不再踩雷</p>
+          </div>
+          <div class="tips-grid">
+            <div class="tip-card">
+              <div class="tip-icon">🗺️</div>
+              <h3>避开景区陷阱</h3>
+              <p>景区周边餐厅多为游客专供，价格虚高且味道一般。建议步行10分钟进入居民区觅食，价格至少便宜一半。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">📱</div>
+              <h3>善用美食App</h3>
+              <p>TripAdvisor、Tabelog、Yelp等国际平台，结合当地人的点评，比单纯看中文攻略更靠谱。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">👴</div>
+              <h3>寻找本地人排队</h3>
+              <p>当地人排队的店一定不会太差！排队时间是检验美食的最简单标准，绝不会踩雷。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">📖</div>
+              <h3>看菜单辨别</h3>
+              <p>如果菜单有多种语言且带图片，说明主要做游客生意。没有图片、只有当地文字的店往往是本地人的真爱。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">🕐</div>
+              <h3>错峰用餐</h3>
+              <p>避开用餐高峰期，不仅不用排队，还可能获得更用心的服务。很多店黄昏时分的出品比正午更好。</p>
+            </div>
+
+            <div class="tip-card">
+              <div class="tip-icon">🤝</div>
+              <h3>询问当地人</h3>
+              <p>酒店前台、出租车司机、便利店店员，他们的推荐往往是最地道的，比网上的攻略更真实。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="routes.html">线路</a>
+        <a href="visa.html">签证</a>
+        <a href="about.html">关于</a>
+      </div>
+      <p class="footer-copy">© 2024 游导旅游 · 探索世界，品味人生</p>
+    </div>
+  </footer>
+
+  <script>
+    // 分类切换
+    document.querySelectorAll('.category-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        // 更新标签状态
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+
+        // 更新内容显示
+        const category = this.dataset.category;
+        document.querySelectorAll('.category-content').forEach(content => {
+          content.classList.remove('active');
+        });
+        document.getElementById(category).classList.add('active');
+
+        // 滚动到顶部
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  </script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>
