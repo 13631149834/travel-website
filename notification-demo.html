@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <style>
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+/* 屏幕阅读器专用样式 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>通知系统 - 游导旅游</title>
+  <link rel="stylesheet" href="css/notification.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+  <!-- 导航栏 -->
+  <nav aria-label="主导航" class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <span style="font-size: 1.8rem;">🧭</span>
+        <span>游导旅游</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="routes.html">精品路线</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="container" style="padding: 60px 32px;">
+    <div class="page-header" style="text-align: center; margin-bottom: 48px;">
+      <h1 style="font-size: 2rem; margin-bottom: 12px;">🔔 通知系统</h1>
+      <p style="color: var(--gray-600);">支持浏览器通知、站内消息、通知设置和历史记录</p>
+    </div>
+
+    <!-- 功能演示 -->
+    <div style="max-width: 800px; margin: 0 auto;">
+      
+      <!-- 通知类型 -->
+      <div class="demo-section" style="background: white; padding: 24px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 24px;">
+        <h3 style="margin-bottom: 20px; font-size: 1.1rem;">📋 发送通知演示</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px;">
+          <button onclick="demoSystemNotify()" class="demo-btn" style="background: #F3F4F6; padding: 14px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s;">
+            <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">⚙️</span>
+            <span style="font-weight: 500;">系统通知</span>
+          </button>
+          
+          <button onclick="demoActivityNotify()" class="demo-btn" style="background: #FEF3C7; padding: 14px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s;">
+            <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">🎉</span>
+            <span style="font-weight: 500;">活动通知</span>
+          </button>
+          
+          <button onclick="demoOrderNotify()" class="demo-btn" style="background: #D1FAE5; padding: 14px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s;">
+            <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">📦</span>
+            <span style="font-weight: 500;">订单通知</span>
+          </button>
+          
+          <button onclick="demoReminderNotify()" class="demo-btn" style="background: #EDE9FE; padding: 14px; border-radius: 10px; border: none; cursor: pointer; transition: all 0.2s;">
+            <span style="font-size: 1.5rem; display: block; margin-bottom: 6px;">⏰</span>
+            <span style="font-weight: 500;">预约提醒</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 批量测试 -->
+      <div class="demo-section" style="background: white; padding: 24px; border-radius: 16px; box-shadow: var(--shadow); margin-bottom: 24px;">
+        <h3 style="margin-bottom: 20px; font-size: 1.1rem;">🧪 批量测试</h3>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 12px;">
+          <button onclick="demoMultipleNotifications()" class="demo-btn" style="background: var(--primary); color: white; padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer;">
+            发送5条随机通知
+          </button>
+          
+          <button onclick="demoClearAll()" style="background: #FEE2E2; color: #DC2626; padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer;">
+            清空所有通知
+          </button>
+          
+          <button onclick="demoRequestPermission()" id="permission-btn" style="background: #E0E7FF; color: #4338CA; padding: 12px 20px; border-radius: 8px; border: none; cursor: pointer;">
+            请求浏览器通知权限
+          </button>
+        </div>
+      </div>
+
+      <!-- 功能说明 -->
+      <div class="demo-section" style="background: white; padding: 24px; border-radius: 16px; box-shadow: var(--shadow);">
+        <h3 style="margin-bottom: 20px; font-size: 1.1rem;">📖 功能说明</h3>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+          <div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 8px; color: var(--gray-800);">🔔 通知类型</h4>
+            <ul style="font-size: 0.85rem; color: var(--gray-600); line-height: 1.8;">
+              <li>系统通知 - 网站更新、维护</li>
+              <li>活动通知 - 促销、优惠活动</li>
+              <li>订单通知 - 订单状态变更</li>
+              <li>预约提醒 - 行程、导游预约</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 8px; color: var(--gray-800);">⚙️ 设置选项</h4>
+            <ul style="font-size: 0.85rem; color: var(--gray-600); line-height: 1.8;">
+              <li>浏览器通知 - 桌面弹窗</li>
+              <li>站内消息 - Toast提示</li>
+              <li>声音提醒 - 提示音</li>
+              <li>角标提醒 - 未读数量</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h4 style="font-size: 0.95rem; margin-bottom: 8px; color: var(--gray-800);">💾 数据存储</h4>
+            <ul style="font-size: 0.85rem; color: var(--gray-600); line-height: 1.8;">
+              <li>本地存储 - localStorage</li>
+              <li>最多保存100条通知</li>
+              <li>自动清理过期数据</li>
+              <li>设置跨页面同步</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- API 使用说明 -->
+      <div class="demo-section" style="background: #1F2937; color: #E5E7EB; padding: 24px; border-radius: 16px; margin-top: 24px;">
+        <h3 style="margin-bottom: 16px; font-size: 1.1rem; color: white;">💻 API 调用示例</h3>
+        <pre style="font-family: 'Monaco', 'Menlo', monospace; font-size: 0.85rem; line-height: 1.6; overflow-x: auto;"><code>// 获取通知实例
+const notif = notificationSystem;
+
+// 系统通知
+notif.systemNotify('版本更新', '网站已更新至V2.0版本');
+
+// 活动通知
+notif.activityNotify('限时优惠', '新用户首单立减50元！');
+
+// 订单通知
+notif.orderNotify('订单已确认', '您的日本行程订单已确认');
+
+// 预约提醒
+notif.reminderNotify('明日行程', '明天9:00与导游张明的会面');
+
+// 获取未读数
+const count = notif.getUnreadCount();
+
+// 标记已读
+notif.markAsRead('notification_id');
+
+// 标记全部已读
+notif.markAllAsRead();
+
+// 清空通知
+notif.clearAll();</code></pre>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/notifications.js"></script>
+  <script>
+    // 演示：系统通知
+    function demoSystemNotify() {
+      notificationSystem.systemNotify(
+        '系统升级通知',
+        '游导旅游网站已完成V2.0版本升级，新增多项实用功能',
+        { url: 'index.html', duration: 8000 }
+      );
+    }
+
+    // 演示：活动通知
+    function demoActivityNotify() {
+      notificationSystem.activityNotify(
+        '🎉 限时优惠活动',
+        '暑期大促！所有路线8折优惠，还能叠加使用优惠券',
+        { url: 'promotion.html', duration: 8000 }
+      );
+    }
+
+    // 演示：订单通知
+    function demoOrderNotify() {
+      notificationSystem.orderNotify(
+        '📦 订单已确认',
+        '您预定的"京都深度游3日"行程已确认，导游将在出发日前联系您',
+        { url: 'my-orders.html', duration: 8000 }
+      );
+    }
+
+    // 演示：预约提醒
+    function demoReminderNotify() {
+      notificationSystem.reminderNotify(
+        '⏰ 行程提醒',
+        '明天上午9:00，与导游王明的富士山一日游即将开始',
+        { url: 'my-trips.html', duration: 10000 }
+      );
+    }
+
+    // 演示：多条随机通知
+    function demoMultipleNotifications() {
+      const types = ['system', 'activity', 'order', 'reminder'];
+      const messages = [
+        { type: 'system', title: '账号安全提醒', content: '检测到您的账号在新设备登录' },
+        { type: 'activity', title: '新品上线', content: '欧洲深度游路线全新上线' },
+        { type: 'order', title: '支付成功', content: '您的订单已支付成功' },
+        { type: 'reminder', title: '签证即将到期', content: '您的日本签证还有30天到期' },
+        { type: 'system', title: '积分到账', content: '恭喜获得100积分奖励' }
+      ];
+
+      messages.forEach((msg, i) => {
+        setTimeout(() => {
+          notificationSystem.createNotification(msg.type, msg.title, msg.content);
+        }, i * 500);
+      });
+    }
+
+    // 演示：清空所有
+    function demoClearAll() {
+      if (confirm('确定要清空所有通知吗？')) {
+        notificationSystem.clearAll();
+        notificationSystem.showToast({
+          type: 'system',
+          icon: '✅',
+          title: '已清空',
+          content: '所有通知已被清空'
+        });
+      }
+    }
+
+    // 演示：请求权限
+    async function demoRequestPermission() {
+      if (!('Notification' in window)) {
+        alert('您的浏览器不支持通知功能');
+        return;
+      }
+
+      const permission = await notificationSystem.requestPermission();
+      if (permission) {
+        document.getElementById('permission-btn').textContent = '✅ 权限已授予';
+        document.getElementById('permission-btn').style.background = '#D1FAE5';
+        document.getElementById('permission-btn').style.color = '#059669';
+        notificationSystem.showToast({
+          type: 'system',
+          icon: '✅',
+          title: '权限授予成功',
+          content: '您现在可以接收浏览器通知了'
+        });
+      } else {
+        document.getElementById('permission-btn').textContent = '❌ 权限被拒绝';
+        document.getElementById('permission-btn').style.background = '#FEE2E2';
+        document.getElementById('permission-btn').style.color = '#DC2626';
+      }
+    }
+
+    // 按钮悬停效果
+    document.querySelectorAll('.demo-btn').forEach(btn => {
+      btn.addEventListener('mouseenter', () => {
+        btn.style.transform = 'translateY(-2px)';
+        btn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+      });
+      btn.addEventListener('mouseleave', () => {
+        btn.style.transform = 'translateY(0)';
+        btn.style.boxShadow = 'none';
+      });
+    });
+
+    // 页面加载时显示欢迎通知
+    document.addEventListener('DOMContentLoaded', () => {
+      // 检查权限状态
+      if ('Notification' in window && Notification.permission === 'granted') {
+        document.getElementById('permission-btn').textContent = '✅ 浏览器通知已开启';
+        document.getElementById('permission-btn').style.background = '#D1FAE5';
+        document.getElementById('permission-btn').style.color = '#059669';
+      }
+    });
+  </script>
+
+  <style>
+    .demo-btn:hover {
+      transform: translateY(-2px);
+    }
+  </style>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

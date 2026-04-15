@@ -4,66 +4,376 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的收藏 - 游导旅游 | 收藏导游与线路</title>
-  <meta name="description" content="管理游导旅游收藏的导游、精品线路、旅行攻略，方便随时查看和规划下次旅行。">
-  <meta name="keywords" content="我的收藏,收藏导游,收藏线路,收藏攻略">
-  <meta name="robots" content="noindex, follow">
-  <link rel="canonical" href="https://youdao-travel.com/my-favorites.html">
-    <link rel="stylesheet" href="css/style.css">
+    <meta name="description" content="管理游导旅游收藏的导游、精品线路、旅行攻略，方便随时查看和规划下次旅行。">
+    <meta name="keywords" content="我的收藏,收藏导游,收藏线路,收藏攻略">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://youdao-travel.com/my-favorites.html">
+    <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
     <style>
         .favorites-page { max-width: 1000px; margin: 0 auto; padding: 20px; }
         
-        .favorites-header {
+        /* 用户信息卡片 */
+        .user-info-card {
             background: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
-            border-radius: 20px; padding: 30px; color: white;
+            border-radius: 20px;
+            padding: 25px 30px;
+            color: white;
             margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
         }
-        .favorites-header h1 { font-size: 28px; margin-bottom: 10px; }
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            border: 3px solid rgba(255,255,255,0.5);
+        }
+        .user-info-card h1 { font-size: 24px; margin-bottom: 5px; }
+        .user-info-card p { font-size: 14px; opacity: 0.9; }
         
-        .section-title { font-size: 20px; color: #333; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
-        .section-title .count { font-size: 14px; color: #999; font-weight: 400; }
+        /* 快速入口 */
+        .quick-links {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .quick-link {
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            font-size: 13px;
+            color: white;
+            transition: all 0.3s;
+        }
+        .quick-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
         
-        .favorites-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .section-title { 
+            font-size: 20px; 
+            color: #333; 
+            margin-bottom: 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        .section-title .count { 
+            font-size: 14px; 
+            color: #999; 
+            font-weight: 400; 
+        }
+        
+        .favorites-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 40px; 
+        }
         
         .favorite-card {
-            background: white; border-radius: 15px; overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08); transition: all 0.3s;
+            background: white; 
+            border-radius: 16px; 
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+            transition: all 0.3s;
             cursor: pointer;
         }
-        .favorite-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+        .favorite-card:hover { 
+            transform: translateY(-5px); 
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12); 
+        }
         
         .favorite-cover {
-            height: 100px;
+            height: 110px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 40px;
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
         }
+        .favorite-cover.route {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+        }
+        .favorite-type {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 4px 10px;
+            background: rgba(255,255,255,0.25);
+            border-radius: 12px;
+            font-size: 11px;
+            color: white;
+        }
+        
         .favorite-info { padding: 20px; }
-        .favorite-info h3 { font-size: 16px; color: #333; margin-bottom: 8px; }
-        .favorite-info p { font-size: 13px; color: #666; margin-bottom: 10px; }
-        .favorite-info .meta { font-size: 12px; color: #999; }
+        .favorite-info h3 { 
+            font-size: 17px; 
+            color: #333; 
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .favorite-info p { 
+            font-size: 14px; 
+            color: #666; 
+            margin-bottom: 10px;
+        }
+        .favorite-info .meta { 
+            font-size: 13px; 
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .favorite-info .meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
         
-        .favorite-actions { display: flex; gap: 10px; padding: 0 20px 20px; }
+        .favorite-actions { 
+            display: flex; 
+            gap: 10px; 
+            padding: 0 20px 20px; 
+        }
         .favorite-actions button {
-            flex: 1; padding: 10px; border: none; border-radius: 8px;
-            cursor: pointer; font-size: 14px; transition: all 0.3s;
+            flex: 1; 
+            padding: 12px; 
+            border: none; 
+            border-radius: 10px;
+            cursor: pointer; 
+            font-size: 14px; 
+            font-weight: 500;
+            transition: all 0.3s;
         }
-        .favorite-actions .btn-view { background: #F3F4F6; color: #333; }
-        .favorite-actions .btn-remove { background: #FEE2E2; color: #DC2626; }
-        .favorite-actions button:hover { transform: scale(1.02); }
+        .favorite-actions .btn-view { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+        }
+        .favorite-actions .btn-remove { 
+            background: #FEE2E2; 
+            color: #DC2626; 
+        }
+        .favorite-actions button:hover { 
+            transform: scale(1.02); 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
         
-        .empty-state { text-align: center; padding: 60px; }
-        .empty-state .icon { font-size: 60px; margin-bottom: 15px; }
-        .empty-state p { color: #666; margin-bottom: 20px; }
-        .btn-browse {
-            padding: 12px 30px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white; border: none; border-radius: 10px;
-            font-size: 16px; cursor: pointer;
+        .empty-state { 
+            text-align: center; 
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
         }
-    </style>
+        .empty-state .icon { font-size: 70px; margin-bottom: 20px; }
+        .empty-state h3 { font-size: 20px; color: #333; margin-bottom: 10px; }
+        .empty-state p { color: #666; margin-bottom: 25px; }
+        .btn-browse {
+            padding: 14px 35px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white; 
+            border: none; 
+            border-radius: 12px;
+            font-size: 16px; 
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-browse:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+        }
+
+        /* Toast样式 */
+        .toast {
+            position: fixed;
+            top: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            z-index: 9999;
+            animation: slideDown 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 1; transform: translateX(-50%) translateY(0); }
+            to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+        @keyframes fadeOut {
+            from { opacity: 1; transform: scale(1); }
+            to { opacity: 0; transform: scale(0.9); }
+        }
+
+        /* 统计卡片 */
+        .stats-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+        .stat-card .num {
+            font-size: 28px;
+            font-weight: 700;
+            color: #667EEA;
+        }
+        .stat-card .label {
+            font-size: 13px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .favorites-grid {
+                grid-template-columns: 1fr;
+            }
+            .user-info-card {
+                flex-direction: column;
+                text-align: center;
+            }
+            .stats-row {
+                flex-wrap: wrap;
+            }
+            .stat-card {
+                min-width: calc(50% - 8px);
+            }
+        }
+    
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-    <nav class="navbar">
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+    <nav class="navbar" aria-label="主导航">
         <div class="container">
+</nav>
+<main id="main-content" role="main">
             <a href="index.html" class="logo">🌍 游导旅游</a>
             <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
             <div class="nav-links">
@@ -71,15 +381,38 @@
                 <a href="guides.html">🎤 找导游</a>
                 <a href="routes.html">精品线路</a>
                 <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
-                <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+                <a href="user-center.html" id="authLink">👤 用户中心</a>
             </div>
         </div>
-    </nav>
+    
     
     <div class="favorites-page">
-        <div class="favorites-header">
-            <h1>❤️ 我的收藏</h1>
-            <p>收藏的导游和线路，一键查看</p>
+        <div class="user-info-card">
+            <div class="user-avatar" id="userAvatar">👤</div>
+            <div>
+                <h1 id="userName">旅行者</h1>
+                <p>收藏的导游和线路随时查看</p>
+                <div class="quick-links">
+                    <a href="user-center.html" class="quick-link">📊 用户中心</a>
+                    <a href="my-orders.html" class="quick-link">📋 我的订单</a>
+                    <a href="my-reviews.html" class="quick-link">⭐ 我的评价</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="num" id="guideNum">3</div>
+                <div class="label">收藏导游</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" id="routeNum">2</div>
+                <div class="label">收藏线路</div>
+            </div>
+            <div class="stat-card">
+                <div class="num">5</div>
+                <div class="label">总收藏数</div>
+            </div>
         </div>
         
         <h2 class="section-title">🎤 收藏的导游 <span class="count" id="guideCount">(3)</span></h2>
@@ -88,31 +421,26 @@
         <h2 class="section-title">🗺️ 收藏的线路 <span class="count" id="routeCount">(2)</span></h2>
         <div class="favorites-grid" id="routeFavorites"></div>
     </div>
-    
+
     <script>
         // Utils 工具函数
         const Utils = {
             showToast: function(message, type = 'info') {
                 const toast = document.createElement('div');
-                toast.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    left: 50%;
-                    transform: translateX(-50%);
-                    padding: 12px 24px;
-                    border-radius: 8px;
-                    color: white;
-                    font-size: 14px;
-                    z-index: 9999;
-                    animation: slideDown 0.3s ease;
-                    background-color: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : type === 'warning' ? '#F59E0B' : '#3B82F6'};
-                `;
+                toast.className = 'toast';
+                const colors = {
+                    success: '#10B981',
+                    error: '#EF4444',
+                    warning: '#F59E0B',
+                    info: '#3B82F6'
+                };
+                toast.style.backgroundColor = colors[type] || colors.info;
                 toast.textContent = message;
                 document.body.appendChild(toast);
                 setTimeout(() => {
                     toast.style.animation = 'slideUp 0.3s ease forwards';
                     setTimeout(() => toast.remove(), 300);
-                }, 3000);
+                }, 2500);
             }
         };
 
@@ -124,26 +452,40 @@
             }
         };
 
-        const sampleGuideFavorites = [
-            { id: 1, name: '张导', subtitle: '高级导游 | 北京、西安', rating: 4.9, reviews: 328 },
-            { id: 2, name: '李姐', subtitle: '金牌导游 | 广州、深圳', rating: 4.8, reviews: 256 },
-            { id: 3, name: '王哥', subtitle: '资深导游 | 成都、杭州', rating: 5.0, reviews: 512 }
+        // 模拟收藏数据
+        let guideFavorites = [
+            { id: 1, name: '张导', subtitle: '高级导游 | 北京、西安', rating: 4.9, reviews: 328, avatar: '👨‍💼', specialty: '历史古迹' },
+            { id: 2, name: '李姐', subtitle: '金牌导游 | 广州、深圳', rating: 4.8, reviews: 256, avatar: '👩‍💼', specialty: '美食之旅' },
+            { id: 3, name: '王哥', subtitle: '资深导游 | 成都、杭州', rating: 5.0, reviews: 512, avatar: '🧔', specialty: '自然风光' }
         ];
 
-        const sampleRouteFavorites = [
-            { id: 1, name: '川西小环线5日游', subtitle: '稻城亚丁 | 四姑娘山', price: '¥3,800起', duration: '5天4晚' },
-            { id: 2, name: '西安历史深度游', subtitle: '兵马俑 | 华清池 | 大雁塔', price: '¥2,200起', duration: '4天3晚' }
+        let routeFavorites = [
+            { id: 1, name: '川西小环线5日游', subtitle: '稻城亚丁 | 四姑娘山', price: '¥3,800起', duration: '5天4晚', cover: '🏔️' },
+            { id: 2, name: '西安历史深度游', subtitle: '兵马俑 | 华清池 | 大雁塔', price: '¥2,200起', duration: '4天3晚', cover: '🏯' }
         ];
 
         function init() {
+            loadUserInfo();
             checkAuth();
             renderFavorites();
+        }
+
+        function loadUserInfo() {
+            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            const avatar = profile.avatarEmoji || localStorage.getItem('userAvatar') || '👤';
+            document.getElementById('userAvatar').textContent = avatar;
+            
+            const nickname = profile.nickname || user.nickname || '旅行者';
+            document.getElementById('userName').textContent = nickname;
         }
 
         async function checkAuth() {
             const user = await Auth.getUser();
             if (!user) {
-                window.location.href = 'login.html?redirect=my-favorites.html';
+                // 使用本地存储的profile作为演示
+                loadUserInfo();
             }
         }
         
@@ -151,59 +493,141 @@
             const guideGrid = document.getElementById('guideFavorites');
             const routeGrid = document.getElementById('routeFavorites');
             
-            guideGrid.innerHTML = sampleGuideFavorites.map(g => `
-                <div class="favorite-card">
-                    <div class="favorite-cover">👨‍💼</div>
-                    <div class="favorite-info">
-                        <h3>${g.name}</h3>
-                        <p>${g.subtitle}</p>
-                        <div class="meta">⭐ ${g.rating} | ${g.reviews}评价</div>
+            if (guideFavorites.length === 0) {
+                guideGrid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="icon">🎤</div>
+                        <h3>暂无收藏导游</h3>
+                        <p>去发现心仪的导游吧</p>
+                        <a href="guides.html" class="btn-browse">去逛逛</a>
                     </div>
-                    <div class="favorite-actions">
-                        <button class="btn-view" onclick="location.href='guide-detail.html?id=${g.id}'">查看</button>
-                        <button class="btn-remove" onclick="removeFavorite(this, 'guide', ${g.id})">移除</button>
+                `;
+            } else {
+                guideGrid.innerHTML = guideFavorites.map(g => `
+                    <div class="favorite-card">
+                        <div class="favorite-cover" onclick="location.href='guide-detail.html?id=${g.id}'">
+                            <span>${g.avatar}</span>
+                            <span class="favorite-type">导游</span>
+                        </div>
+                        <div class="favorite-info">
+                            <h3>${g.name}</h3>
+                            <p>${g.subtitle}</p>
+                            <div class="meta">
+                                <span>⭐ ${g.rating}</span>
+                                <span>📝 ${g.reviews}评价</span>
+                                <span>🏷️ ${g.specialty}</span>
+                            </div>
+                        </div>
+                        <div class="favorite-actions">
+                            <button class="btn-view" onclick="location.href='guide-detail.html?id=${g.id}'">查看详情</button>
+                            <button class="btn-remove" onclick="removeGuideFavorite(this, ${g.id})">移除</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
             
-            routeGrid.innerHTML = sampleRouteFavorites.map(r => `
-                <div class="favorite-card">
-                    <div class="favorite-cover" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">🏔️</div>
-                    <div class="favorite-info">
-                        <h3>${r.name}</h3>
-                        <p>${r.subtitle}</p>
-                        <div class="meta">💰 ${r.price} | 📅 ${r.duration}</div>
+            if (routeFavorites.length === 0) {
+                routeGrid.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1/-1;">
+                        <div class="icon">🗺️</div>
+                        <h3>暂无收藏线路</h3>
+                        <p>探索精彩旅行线路</p>
+                        <a href="routes.html" class="btn-browse">去逛逛</a>
                     </div>
-                    <div class="favorite-actions">
-                        <button class="btn-view" onclick="location.href='routes.html'">查看</button>
-                        <button class="btn-remove" onclick="removeFavorite(this, 'route', ${r.id})">移除</button>
+                `;
+            } else {
+                routeGrid.innerHTML = routeFavorites.map(r => `
+                    <div class="favorite-card">
+                        <div class="favorite-cover route" onclick="location.href='routes.html'">
+                            <span>${r.cover}</span>
+                            <span class="favorite-type">线路</span>
+                        </div>
+                        <div class="favorite-info">
+                            <h3>${r.name}</h3>
+                            <p>${r.subtitle}</p>
+                            <div class="meta">
+                                <span>💰 ${r.price}</span>
+                                <span>📅 ${r.duration}</span>
+                            </div>
+                        </div>
+                        <div class="favorite-actions">
+                            <button class="btn-view" onclick="location.href='routes.html'">查看详情</button>
+                            <button class="btn-remove" onclick="removeRouteFavorite(this, ${r.id})">移除</button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            }
             
-            document.getElementById('guideCount').textContent = `(${sampleGuideFavorites.length})`;
-            document.getElementById('routeCount').textContent = `(${sampleRouteFavorites.length})`;
+            document.getElementById('guideCount').textContent = `(${guideFavorites.length})`;
+            document.getElementById('routeCount').textContent = `(${routeFavorites.length})`;
+            document.getElementById('guideNum').textContent = guideFavorites.length;
+            document.getElementById('routeNum').textContent = routeFavorites.length;
         }
         
-        function removeFavorite(btn, type, id) {
-            if (confirm('确定要移除收藏吗？')) {
+        function removeGuideFavorite(btn, id) {
+            if (confirm('确定要移除这个导游的收藏吗？')) {
                 const card = btn.closest('.favorite-card');
                 card.style.animation = 'fadeOut 0.3s ease forwards';
                 setTimeout(() => {
+                    guideFavorites = guideFavorites.filter(g => g.id !== id);
                     card.remove();
-                    if (type === 'guide') {
-                        const remaining = document.querySelectorAll('#guideFavorites .favorite-card');
-                        document.getElementById('guideCount').textContent = `(${remaining.length})`;
-                    } else {
-                        const remaining = document.querySelectorAll('#routeFavorites .favorite-card');
-                        document.getElementById('routeCount').textContent = `(${remaining.length})`;
+                    document.getElementById('guideCount').textContent = `(${guideFavorites.length})`;
+                    document.getElementById('guideNum').textContent = guideFavorites.length;
+                    
+                    // 检查是否为空
+                    const guideGrid = document.getElementById('guideFavorites');
+                    if (guideFavorites.length === 0) {
+                        guideGrid.innerHTML = `
+                            <div class="empty-state" style="grid-column: 1/-1;">
+                                <div class="icon">🎤</div>
+                                <h3>暂无收藏导游</h3>
+                                <p>去发现心仪的导游吧</p>
+                                <a href="guides.html" class="btn-browse">去逛逛</a>
+                            </div>
+                        `;
                     }
+                    
+                    Utils.showToast('已移除收藏', 'success');
                 }, 300);
-                Utils.showToast('已移除收藏', 'success');
+            }
+        }
+
+        function removeRouteFavorite(btn, id) {
+            if (confirm('确定要移除这条线路的收藏吗？')) {
+                const card = btn.closest('.favorite-card');
+                card.style.animation = 'fadeOut 0.3s ease forwards';
+                setTimeout(() => {
+                    routeFavorites = routeFavorites.filter(r => r.id !== id);
+                    card.remove();
+                    document.getElementById('routeCount').textContent = `(${routeFavorites.length})`;
+                    document.getElementById('routeNum').textContent = routeFavorites.length;
+                    
+                    // 检查是否为空
+                    const routeGrid = document.getElementById('routeFavorites');
+                    if (routeFavorites.length === 0) {
+                        routeGrid.innerHTML = `
+                            <div class="empty-state" style="grid-column: 1/-1;">
+                                <div class="icon">🗺️</div>
+                                <h3>暂无收藏线路</h3>
+                                <p>探索精彩旅行线路</p>
+                                <a href="routes.html" class="btn-browse">去逛逛</a>
+                            </div>
+                        `;
+                    }
+                    
+                    Utils.showToast('已移除收藏', 'success');
+                }, 300);
             }
         }
         
         document.addEventListener('DOMContentLoaded', init);
     </script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
 </body>
 </html>

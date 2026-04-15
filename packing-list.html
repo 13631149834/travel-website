@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>行李清单 - 游导旅游</title>
+  <meta name="description" content="出行行李清单工具，支持多种旅行类型，自动保存，告别遗漏。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    /* ========== 行李清单专用样式 ========== */
+    
+    /* 旅行类型选择 */
+    .trip-type-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .trip-type-card {
+      background: #fff;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .trip-type-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .trip-type-card.active {
+      border-color: var(--primary);
+      background: var(--primary-light);
+    }
+    .trip-type-card .icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+    .trip-type-card h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+    .trip-type-card p {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+    }
+
+    /* 清单容器 */
+    .checklist-container {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    
+    /* 清单头部 */
+    .checklist-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+    }
+    .checklist-progress {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .progress-text {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+    }
+    .progress-bar {
+      width: 120px;
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: var(--secondary);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+    .checklist-actions {
+      display: flex;
+      gap: 12px;
+    }
+    .checklist-actions .btn {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+    }
+
+    /* 分类区块 */
+    .category-section {
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .category-section:last-child {
+      border-bottom: none;
+    }
+    .category-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: var(--gray-50);
+      cursor: pointer;
+      user-select: none;
+    }
+    .category-header:hover {
+      background: var(--gray-100);
+    }
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .category-title .icon {
+      font-size: 1.5rem;
+    }
+    .category-title h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+    .category-title .count {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      font-weight: 400;
+    }
+    .category-toggle {
+      font-size: 1.25rem;
+      color: var(--gray-400);
+      transition: transform 0.2s ease;
+    }
+    .category-section.collapsed .category-toggle {
+      transform: rotate(-90deg);
+    }
+    .category-section.collapsed .category-items {
+      display: none;
+    }
+
+    /* 物品项 */
+    .category-items {
+      padding: 8px 24px 16px;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .checklist-item:last-child {
+      border-bottom: none;
+    }
+    .checklist-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-right: 12px;
+      cursor: pointer;
+      accent-color: var(--secondary);
+    }
+    .checklist-item label {
+      flex: 1;
+      font-size: 0.95rem;
+      color: var(--gray-700);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .checklist-item.checked label {
+      color: var(--gray-400);
+      text-decoration: line-through;
+    }
+    .checklist-item .delete-btn {
+      opacity: 0;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      color: var(--gray-400);
+      background: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .checklist-item:hover .delete-btn {
+      opacity: 1;
+    }
+    .checklist-item .delete-btn:hover {
+      color: #ef4444;
+    }
+    .checklist-item.custom-item .delete-btn {
+      opacity: 1;
+    }
+
+    /* 添加物品 */
+    .add-item-form {
+      display: flex;
+      gap: 12px;
+      padding: 16px 24px;
+      background: var(--gray-50);
+      border-top: 1px dashed var(--gray-200);
+    }
+    .add-item-form input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+    }
+    .add-item-form input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    .add-item-form select {
+      padding: 10px 14px;
+      border: 1px solid var(--gray-300);
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      background: #fff;
+      min-width: 140px;
+    }
+    .add-item-form button {
+      padding: 10px 20px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .add-item-form button:hover {
+      background: var(--primary-dark);
+    }
+
+    /* 统计摘要 */
+    .checklist-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 20px 24px;
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+    }
+    .summary-item {
+      text-align: center;
+    }
+    .summary-item .number {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .summary-item .label {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      margin-top: 4px;
+    }
+
+    /* 打印样式 */
+    @media print {
+      .navbar, .page-hero, .trip-type-selector, 
+      .checklist-header, .add-item-form, .checklist-actions,
+      .footer, .delete-btn {
+        display: none !important;
+      }
+      body {
+        background: #fff;
+      }
+      .checklist-container {
+        border: none;
+        box-shadow: none;
+      }
+      .category-section {
+        break-inside: avoid;
+      }
+      .category-section.collapsed .category-items {
+        display: block !important;
+      }
+      .checklist-item {
+        padding: 6px 0;
+      }
+      .checklist-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+      }
+      .checklist-summary {
+        display: none;
+      }
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .trip-type-selector {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .checklist-header {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .checklist-actions {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      .add-item-form {
+        flex-wrap: wrap;
+      }
+      .add-item-form select {
+        flex: 1;
+        min-width: 100px;
+      }
+      .add-item-form button {
+        flex: 1;
+      }
+      .checklist-summary {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container">
+</nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html">签证</a>
+        <a href="routes.html">线路</a>
+        <a href="knowledge.html">知识</a>
+        <a href="tools.html" class="active">工具</a>
+      </div>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  
+
+  <!-- 页面标题 -->
+  <div class="page-hero">
+    <h1>🧳 行李清单</h1>
+    <p>选择旅行类型，快速生成清单，告别丢三落四</p>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="container" style="padding: 48px 0 80px;">
+    
+    <!-- 旅行类型选择 -->
+    <div class="trip-type-selector" id="tripTypeSelector">
+      <div class="trip-type-card active" data-type="domestic">
+        <div class="icon">🏯</div>
+        <h3>国内短期游</h3>
+        <p>3-7天国内出行</p>
+      </div>
+      <div class="trip-type-card" data-type="overseas">
+        <div class="icon">✈️</div>
+        <h3>海外长途游</h3>
+        <p>出境长途旅行</p>
+      </div>
+      <div class="trip-type-card" data-type="island">
+        <div class="icon">🏝️</div>
+        <h3>海岛度假</h3>
+        <p>海边休闲度假</p>
+      </div>
+      <div class="trip-type-card" data-type="business">
+        <div class="icon">💼</div>
+        <h3>商务出差</h3>
+        <p>商务出行必备</p>
+      </div>
+      <div class="trip-type-card" data-type="family">
+        <div class="icon">👨‍👩‍👧</div>
+        <h3>亲子旅行</h3>
+        <p>带孩子出行</p>
+      </div>
+      <div class="trip-type-card" data-type="outdoor">
+        <div class="icon">🏔️</div>
+        <h3>户外探险</h3>
+        <p>徒步露营等</p>
+      </div>
+    </div>
+
+    <!-- 清单容器 -->
+    <div class="checklist-container">
+      <!-- 清单头部 -->
+      <div class="checklist-header">
+        <div class="checklist-progress">
+          <span class="progress-text">已完成 <strong id="checkedCount">0</strong>/<strong id="totalCount">0</strong> 项</span>
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="checklist-actions">
+          <button class="btn btn-secondary" onclick="resetChecklist()">🔄 重置清单</button>
+          <button class="btn btn-primary" onclick="printChecklist()">🖨️ 打印清单</button>
+        </div>
+      </div>
+
+      <!-- 清单内容 -->
+      <div id="checklistContent">
+        <!-- 由JS动态生成 -->
+      </div>
+
+      <!-- 添加自定义物品 -->
+      <div class="add-item-form">
+        <input type="text" id="customItemInput" placeholder="添加自定义物品..." maxlength="50">
+        <select id="customItemCategory">
+          <option value="documents">证件类</option>
+          <option value="clothing">衣物类</option>
+          <option value="electronics">电子产品</option>
+          <option value="toiletries">洗漱用品</option>
+          <option value="medicine">常用药品</option>
+          <option value="others">其他物品</option>
+        </select>
+        <button onclick="addCustomItem()">➕ 添加</button>
+      </div>
+
+      <!-- 统计摘要 -->
+      <div class="checklist-summary">
+        <div class="summary-item">
+          <div class="number" id="totalItems">0</div>
+          <div class="label">总物品数</div>
+        </div>
+        <div class="summary-item">
+          <div class="number" id="checkedItems">0</div>
+          <div class="label">已打包</div>
+        </div>
+        <div class="summary-item">
+          <div class="number" id="remainingItems">0</div>
+          <div class="label">待打包</div>
+        </div>
+        <div class="summary-item">
+          <div class="number" id="customItemsCount">0</div>
+          <div class="label">自定义</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>关于游导</h4>
+          <a href="about.html">关于我们</a>
+          <a href="join.html">加入我们</a>
+          <a href="contact.html">联系我们</a>
+        </div>
+        <div class="footer-col">
+          <h4>旅行服务</h4>
+          <a href="guides.html">寻找导游</a>
+          <a href="routes.html">精选线路</a>
+          <a href="visa.html">签证办理</a>
+        </div>
+        <div class="footer-col">
+          <h4>实用工具</h4>
+          <a href="packing-list.html">行李清单</a>
+          <a href="weather.html">天气预报</a>
+          <a href="world-clock.html">世界时钟</a>
+        </div>
+        <div class="footer-col">
+          <h4>帮助中心</h4>
+          <a href="faq.html">常见问题</a>
+          <a href="help.html">使用指南</a>
+          <a href="privacy.html">隐私政策</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 游导旅游 · 让旅行更简单</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ========== 清单数据 ==========
+    const categoryIcons = {
+      documents: '📇',
+      clothing: '👕',
+      electronics: '🔌',
+      toiletries: '🧴',
+      medicine: '💊',
+      others: '📦'
+    };
+
+    const categoryNames = {
+      documents: '证件类',
+      clothing: '衣物类',
+      electronics: '电子产品',
+      toiletries: '洗漱用品',
+      medicine: '常用药品',
+      others: '其他物品'
+    };
+
+    // 各类型清单模板
+    const checklistTemplates = {
+      domestic: {
+        documents: ['身份证', '手机', '钱包', '银行卡'],
+        clothing: ['换洗衣物 2-3套', '内衣袜子', '舒适鞋子', '外套/披肩'],
+        electronics: ['手机充电器', '充电宝', '耳机'],
+        toiletries: ['牙刷牙膏', '洗面奶', '护肤品', '毛巾'],
+        medicine: ['感冒药', '肠胃药', '创可贴'],
+        others: ['行李箱', '背包', '雨伞', '零食', '水杯']
+      },
+      overseas: {
+        documents: ['护照', '签证', '身份证', '机票/行程单', '酒店预订单', '驾照', '护照复印件'],
+        clothing: ['换洗衣物 5-7套', '内衣袜子', '睡衣', '正装/商务装', '外套', '拖鞋', '泳衣'],
+        electronics: ['手机+充电器', '充电宝', '转换插头', '耳机', '相机', '平板/电脑'],
+        toiletries: ['牙刷牙膏', '洗面奶', '护肤品', '防晒霜', '剃须刀', '梳子'],
+        medicine: ['感冒药', '肠胃药', '创可贴', '常用处方药', '晕车药'],
+        others: ['行李箱+背包', '防盗锁', '压缩袋', '雨伞', '零食', '水杯', '眼罩', '颈枕']
+      },
+      island: {
+        documents: ['身份证', '护照（如出境）', '手机', '钱包'],
+        clothing: ['短袖短裤', '泳衣 2套', '防晒衣', '墨镜', '帽子', '凉拖', '内衣袜子'],
+        electronics: ['手机+充电器', '防水袋', '防水手机壳', '充电宝', '水下相机', '耳机'],
+        toiletries: ['防晒霜 SPF50+', '晒后修复', '洗发水', '护发素', '护肤品', '驱蚊液'],
+        medicine: ['防晒伤药膏', '肠胃药', '晕船药', '创可贴', '藿香正气'],
+        others: ['行李箱', '沙滩包', '沙滩巾', '浮潜装备', '泳镜', '水杯', '零食']
+      },
+      business: {
+        documents: ['身份证', '护照（如需要）', '手机', '钱包', '名片', '工作证'],
+        clothing: ['西装/正装', '衬衫 2-3件', '领带', '皮鞋', '商务包', '内衣袜子'],
+        electronics: ['笔记本电脑', '充电器', '鼠标', 'U盘', '手机充电器', '耳机', '充电宝'],
+        toiletries: ['牙刷牙膏', '剃须刀', '定型喷雾', '护肤品'],
+        medicine: ['常用药', '创可贴'],
+        others: ['公文包', '笔记本', '笔', '名片夹', '领带夹', '西服刷']
+      },
+      family: {
+        documents: ['身份证/户口本', '孩子学生证', '手机', '钱包', '医保卡'],
+        clothing: ['一家换洗衣物各3-4套', '孩子睡衣', '舒适运动鞋', '外套', '孩子备用衣物'],
+        electronics: ['手机+充电器', '平板/绘本', '充电宝', '儿童耳机', '相机'],
+        toiletries: ['儿童牙刷牙膏', '儿童洗发水', '儿童护肤品', '湿巾', '纸巾', '毛巾'],
+        medicine: ['儿童感冒药', '退烧药', '肠胃药', '创可贴', '驱蚊液', '体温计', '防晒霜'],
+        others: ['儿童推车', '行李箱', '背包', '零食', '水杯', '玩具', '绘本', '垃圾袋']
+      },
+      outdoor: {
+        documents: ['身份证', '手机', '钱包'],
+        clothing: ['速干衣裤', '冲锋衣', '登山鞋', '徒步袜', '帽子', '墨镜', '保暖内衣'],
+        electronics: ['手机+充电器', '充电宝', '头灯/手电', '对讲机', 'GPS', '相机'],
+        toiletries: ['防晒霜', '洗漱用品', '湿巾', '纸巾'],
+        medicine: ['创可贴', '云南白药', '绷带', '常用药', '急救包', '蛇药'],
+        others: ['登山包', '睡袋', '帐篷', '防潮垫', '水袋', '指南针', '多功能刀', '护膝', '登山杖', '头巾', '垃圾袋']
+      }
+    };
+
+    // 当前状态
+    let currentType = 'domestic';
+    let checklistData = {};
+    let customItems = [];
+
+    // ========== 初始化 ==========
+    function init() {
+      // 加载保存的数据
+      loadFromStorage();
+      
+      // 绑定旅行类型选择事件
+      document.querySelectorAll('.trip-type-card').forEach(card => {
+        card.addEventListener('click', () => {
+          document.querySelectorAll('.trip-type-card').forEach(c => c.classList.remove('active'));
+          card.classList.add('active');
+          currentType = card.dataset.type;
+          resetChecklist();
+        });
+      });
+
+      // 回车添加物品
+      document.getElementById('customItemInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          addCustomItem();
+        }
+      });
+
+      // 渲染清单
+      renderChecklist();
+    }
+
+    // ========== 渲染清单 ==========
+    function renderChecklist() {
+      const container = document.getElementById('checklistContent');
+      const template = checklistTemplates[currentType];
+      
+      let html = '';
+      
+      for (const [category, items] of Object.entries(template)) {
+        const categoryItems = [...items];
+        const customInCategory = customItems.filter(item => item.category === category);
+        const allItems = [...categoryItems, ...customInCategory];
+        
+        const checkedInCategory = allItems.filter((item, idx) => {
+          if (idx < items.length) {
+            return checklistData[category] && checklistData[category][item];
+          } else {
+            return checklistData[category] && checklistData[category][`custom_${idx}`];
+          }
+        }).length;
+        
+        html += `
+          <div class="category-section" data-category="${category}">
+            <div class="category-header" onclick="toggleCategory('${category}')">
+              <div class="category-title">
+                <span class="icon">${categoryIcons[category]}</span>
+                <h3>${categoryNames[category]}</h3>
+                <span class="count">${checkedInCategory}/${allItems.length}</span>
+              </div>
+              <span class="category-toggle">▼</span>
+            </div>
+            <div class="category-items">
+              ${items.map((item, idx) => `
+                <div class="checklist-item ${checklistData[category] && checklistData[category][item] ? 'checked' : ''}">
+                  <input type="checkbox" id="${category}_${idx}" ${checklistData[category] && checklistData[category][item] ? 'checked' : ''} onchange="toggleItem('${category}', '${item}')">
+                  <label for="${category}_${idx}">${item}</label>
+                </div>
+              `).join('')}
+              ${customInCategory.map((item, cIdx) => {
+                const originalIdx = items.length + cIdx;
+                return `
+                  <div class="checklist-item custom-item ${checklistData[category] && checklistData[category][`custom_${originalIdx}`] ? 'checked' : ''}">
+                    <input type="checkbox" id="${category}_custom_${cIdx}" ${checklistData[category] && checklistData[category][`custom_${originalIdx}`] ? 'checked' : ''} onchange="toggleItem('${category}', 'custom_${originalIdx}')">
+                    <label for="${category}_custom_${cIdx}">${item.name}</label>
+                    <button class="delete-btn" onclick="deleteCustomItem('${category}', ${originalIdx})">删除</button>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }
+      
+      container.innerHTML = html;
+      updateStats();
+    }
+
+    // ========== 切换分类展开/收起 ==========
+    function toggleCategory(category) {
+      const section = document.querySelector(`.category-section[data-category="${category}"]`);
+      section.classList.toggle('collapsed');
+    }
+
+    // ========== 切换物品勾选状态 ==========
+    function toggleItem(category, itemKey) {
+      if (!checklistData[category]) {
+        checklistData[category] = {};
+      }
+      checklistData[category][itemKey] = !checklistData[category][itemKey];
+      
+      const item = document.querySelector(`input[onchange="toggleItem('${category}', '${itemKey}')"]`).closest('.checklist-item');
+      item.classList.toggle('checked');
+      
+      updateStats();
+      saveToStorage();
+    }
+
+    // ========== 添加自定义物品 ==========
+    function addCustomItem() {
+      const input = document.getElementById('customItemInput');
+      const category = document.getElementById('customItemCategory').value;
+      const name = input.value.trim();
+      
+      if (!name) {
+        input.focus();
+        return;
+      }
+      
+      customItems.push({ name, category });
+      input.value = '';
+      
+      renderChecklist();
+      saveToStorage();
+    }
+
+    // ========== 删除自定义物品 ==========
+    function deleteCustomItem(category, originalIdx) {
+      // 找到该自定义物品在customItems中的索引
+      const idx = customItems.findIndex((item, cIdx) => {
+        const cOriginalIdx = Object.keys(checklistTemplates[currentType][item.category] || {}).length + 
+          customItems.slice(0, cIdx).filter(ci => ci.category === item.category).length;
+        return item.category === category && cOriginalIdx === originalIdx;
+      });
+      
+      if (idx > -1) {
+        customItems.splice(idx, 1);
+        renderChecklist();
+        saveToStorage();
+      }
+    }
+
+    // ========== 更新统计 ==========
+    function updateStats() {
+      const template = checklistTemplates[currentType];
+      let total = 0;
+      let checked = 0;
+      
+      for (const [category, items] of Object.entries(template)) {
+        total += items.length;
+        const customInCategory = customItems.filter(item => item.category === category).length;
+        total += customInCategory;
+        
+        if (checklistData[category]) {
+          for (const item of items) {
+            if (checklistData[category][item]) checked++;
+          }
+          for (let i = 0; i < customInCategory; i++) {
+            if (checklistData[category][`custom_${items.length + i}`]) checked++;
+          }
+        }
+      }
+      
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('checkedCount').textContent = checked;
+      document.getElementById('progressFill').style.width = total > 0 ? `${(checked / total) * 100}%` : '0%';
+      document.getElementById('totalItems').textContent = total;
+      document.getElementById('checkedItems').textContent = checked;
+      document.getElementById('remainingItems').textContent = total - checked;
+      document.getElementById('customItemsCount').textContent = customItems.length;
+    }
+
+    // ========== 重置清单 ==========
+    function resetChecklist() {
+      if (confirm('确定要重置清单吗？这将清除所有勾选状态。')) {
+        checklistData = {};
+        customItems = [];
+        localStorage.removeItem(`packingList_${currentType}`);
+        renderChecklist();
+      }
+    }
+
+    // ========== 打印清单 ==========
+    function printChecklist() {
+      window.print();
+    }
+
+    // ========== 本地存储 ==========
+    function saveToStorage() {
+      const data = {
+        checklistData,
+        customItems,
+        currentType
+      };
+      localStorage.setItem(`packingList_${currentType}`, JSON.stringify(data));
+    }
+
+    function loadFromStorage() {
+      const saved = localStorage.getItem(`packingList_${currentType}`);
+      if (saved) {
+        try {
+          const data = JSON.parse(saved);
+          checklistData = data.checklistData || {};
+          customItems = data.customItems || [];
+        } catch (e) {
+          checklistData = {};
+          customItems = [];
+        }
+      } else {
+        checklistData = {};
+        customItems = [];
+      }
+    }
+
+    // ========== 导航切换 ==========
+    function toggleNav() {
+      document.querySelector('.nav-links').classList.toggle('open');
+    }
+
+    // 页面加载完成后初始化
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>
