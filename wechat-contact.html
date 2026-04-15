@@ -1,617 +1,209 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preload" href="css/style.css" as="style">
-  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/customer-service.css">
-  <link rel="stylesheet" href="css/enhanced.css">
-  <link rel="stylesheet" href="css/mobile.css">
-  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
-  <style>
-    .wechat-hero {
-      background: linear-gradient(135deg, #07c160 0%, #06ad56 100%);
-      color: #fff;
-      padding: 60px 0;
-      text-align: center;
-    }
-    .wechat-hero h1 { font-size: 2.5rem; margin-bottom: 10px; }
-    .wechat-hero p { font-size: 1.1rem; opacity: 0.9; }
-    
-    .wechat-content {
-      max-width: 600px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-    
-    .wechat-card {
-      background: #fff;
-      border-radius: 20px;
-      padding: 40px;
-      text-align: center;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-    }
-    
-    .wechat-qr {
-      width: 220px;
-      height: 220px;
-      margin: 0 auto 24px;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 8px 24px rgba(7, 193, 96, 0.2);
-    }
-    .wechat-qr img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    
-    .wechat-id {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin: 20px 0;
-      padding: 16px 24px;
-      background: #f0f9f4;
-      border-radius: 12px;
-    }
-    .wechat-id .label {
-      font-size: 0.9rem;
-      color: #666;
-    }
-    .wechat-id .id {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #07c160;
-      font-family: monospace;
-    }
-    .copy-btn {
-      padding: 8px 16px;
-      background: #07c160;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.9rem;
-      transition: all 0.3s ease;
-    }
-    .copy-btn:hover {
-      background: #06ad56;
-      transform: scale(1.05);
-    }
-    .copy-btn.copied {
-      background: #10b981;
-    }
-    
-    .wechat-hint {
-      margin-top: 16px;
-      padding: 12px 16px;
-      background: #fffbeb;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      color: #92400e;
-    }
-    
-    .services-section {
-      margin-top: 40px;
-      text-align: left;
-    }
-    .services-section h2 {
-      font-size: 1.3rem;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-    .service-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-      gap: 12px;
-    }
-    .service-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 16px;
-      background: #f9fafb;
-      border-radius: 12px;
-      font-size: 0.95rem;
-    }
-    .service-item .icon {
-      font-size: 1.5rem;
-    }
-    
-    .contact-info {
-      margin-top: 30px;
-      padding-top: 30px;
-      border-top: 1px solid #e5e7eb;
-    }
-    .contact-item {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 12px 0;
-      font-size: 1rem;
-    }
-    .contact-item .icon { font-size: 1.3rem; }
-    
-    .action-buttons {
-      display: flex;
-      gap: 12px;
-      margin-top: 30px;
-    }
-    .action-btn {
-      flex: 1;
-      padding: 16px;
-      border-radius: 12px;
-      text-align: center;
-      font-weight: 600;
-      transition: all 0.3s ease;
-    }
-    .action-btn.primary {
-      background: linear-gradient(135deg, #07c160 0%, #06ad56 100%);
-      color: #fff;
-    }
-    .action-btn.secondary {
-      background: #f3f4f6;
-      color: #374151;
-    }
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    
-    .wechat-qr-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.8);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .wechat-qr-modal.show { display: flex; }
-    .qr-modal-content {
-      background: #fff;
-      border-radius: 20px;
-      padding: 30px;
-      max-width: 320px;
-      text-align: center;
-    }
-    .qr-modal-content img {
-      width: 250px;
-      height: 250px;
-      margin: 0 auto 16px;
-      border-radius: 12px;
-    }
-    .qr-modal-content h3 {
-      font-size: 1.1rem;
-      margin-bottom: 8px;
-    }
-    .qr-modal-content p {
-      color: #666;
-      font-size: 0.9rem;
-    }
-    .qr-modal-close {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      font-size: 2rem;
-      color: #fff;
-      cursor: pointer;
-    }
-    
-    @media (max-width: 768px) {
-      .wechat-hero h1 { font-size: 1.8rem; }
-      .wechat-card { padding: 24px; }
-      .action-buttons { flex-direction: column; }
-    }
-  
-/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
-.skip-link {
-  position: absolute;
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--primary);
-  color: #fff !important;
-  padding: 12px 24px;
-  border-radius: 0 0 8px 8px;
-  z-index: 10000;
-  font-weight: 600;
-  transition: top 0.2s;
-}
-.skip-link:focus {
-  top: 0;
-  outline: 3px solid var(--primary-dark);
-  outline-offset: 2px;
-}
-
-/* 全局焦点样式 */
-:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-}
-:focus:not(:focus-visible) {
-  outline: none;
-}
-:focus-visible {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-}
-
-/* 链接焦点样式 */
-a:focus,
-button:focus,
-[tabindex]:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* 输入框焦点 */
-input:focus,
-textarea:focus,
-select:focus {
-  outline: 3px solid var(--primary);
-  outline-offset: 0;
-  border-color: var(--primary);
-}
-
-</style>
-  <!-- SEO Meta Tags -->
-  <title>微信咨询 - 游导旅游 | 添加客服微信</title>
-  <meta name="description" content="扫描二维码添加游导旅游客服微信，享受一对一咨询服务。">
-  <meta name="keywords" content="微信咨询,客服微信,在线咨询">
-  <meta name="author" content="游导旅游">
-  <meta name="robots" content="index, follow">
-  <meta name="googlebot" content="index, follow">
-  <meta name="baiduspider" content="index, follow">
-  <link rel="canonical" href="https://youdao-travel.com/wechat-contact.html">
-  
-  <!-- Open Graph / Social Media -->
-  <meta property="og:type" content="website">
-  <meta property="og:title" content="微信咨询 - 游导旅游 | 添加客服微信">
-  <meta property="og:description" content="扫描二维码添加游导旅游客服微信，享受一对一咨询服务。">
-  <meta property="og:url" content="https://youdao-travel.com/wechat-contact.html">
-  <meta property="og:site_name" content="游导旅游">
-  <meta property="og:locale" content="zh_CN">
-    <meta property="og:image" content="images/og-image.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-  
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="微信咨询 - 游导旅游 | 添加客服微信">
-  <meta name="twitter:description" content="扫描二维码添加游导旅游客服微信，享受一对一咨询服务。">
-  <meta name="twitter:image" content="https://youdao-travel.com/images/og-image.png">
-  
-  <!-- Structured Data - Organization -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "游导旅游",
-    "alternateName": "YouDao Travel",
-    "url": "https://youdao-travel.com",
-    "logo": "https://youdao-travel.com/images/logo.png",
-    "sameAs": [
-      "https://weibo.com/youdautravel",
-      "https://mp.weixin.qq.com/s/youdautravel"
-    ],
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+86-400-888-8888",
-      "contactType": "customer service",
-      "availableLanguage": ["Chinese", "English"]
-    }
-  }
-  </script>
-  
-  <!-- Structured Data - Website -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "游导旅游",
-    "url": "https://youdao-travel.com",
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": "https://youdao-travel.com/search.html?q={search_term_string}",
-      "query-input": "required name=search_term_string"
-    }
-  }
-  </script>
-  
-  <!-- Performance Optimization -->
-  <meta name="theme-color" content="#4f46e5">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="游导旅游">
-<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
-  <!-- PWA Meta Tags -->
-  <meta name="theme-color" content="#3b82f6">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="游导旅游">
-  <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon" href="images/icon-192.png">
-  <!-- Favicon & App Icons -->
-  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
-  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
-  <meta name="msapplication-TileImage" content="images/icon-192.png">
-  <meta name="msapplication-TileColor" content="#4F86F7">
-  <meta name="theme-color" content="#4F86F7">
-  <link rel="manifest" href="manifest.json">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="联系游导旅游微信客服，获取专业的旅行咨询服务。微信:ximao101">
+    <meta name="keywords" content="微信客服,游导旅游,旅行咨询,导游服务">
+    <title>微信客服 - 游导旅游</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #F9FAFB;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6366F1;
+            text-decoration: none;
+        }
+        .nav-links a {
+            color: #374151;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 15px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .contact-card {
+            background: white;
+            border-radius: 20px;
+            padding: 50px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(135deg, #07C160, #09BB07);
+            border-radius: 15px;
+            margin: 0 auto 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 100px;
+        }
+        .contact-card h1 {
+            font-size: 28px;
+            color: #111827;
+            margin-bottom: 15px;
+        }
+        .contact-card p {
+            color: #6B7280;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .wechat-id {
+            background: #F3F4F6;
+            padding: 15px 30px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+        .wechat-id span {
+            color: #6B7280;
+            font-size: 14px;
+        }
+        .wechat-id strong {
+            color: #111827;
+            font-size: 20px;
+            margin-left: 10px;
+        }
+        .tips {
+            background: #EEF2FF;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: left;
+        }
+        .tips h3 {
+            color: #6366F1;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        .tips ul {
+            list-style: none;
+        }
+        .tips li {
+            color: #374151;
+            font-size: 14px;
+            margin-bottom: 10px;
+            padding-left: 20px;
+            position: relative;
+        }
+        .tips li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10B981;
+        }
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #E5E7EB;
+        }
+        .contact-item {
+            text-align: center;
+        }
+        .contact-item .icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        .contact-item .label {
+            font-size: 12px;
+            color: #9CA3AF;
+            margin-bottom: 5px;
+        }
+        .contact-item .value {
+            font-size: 14px;
+            color: #374151;
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
-
-<!-- 无障碍 - 状态消息区域 -->
-<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
-
-<!-- 无障碍 - 屏幕阅读器专用样式 -->
-<style>
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-.sr-only-focusable:focus,
-.sr-only-focusable:active {
-  position: static;
-  width: auto;
-  height: auto;
-  margin: 0;
-  overflow: visible;
-  clip: auto;
-  white-space: normal;
-}
-</style>
-
-  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
-  <a href="#main-content" class="skip-link">跳转到主内容</a>
-  <a href="#main-nav" class="skip-link">跳转到导航</a>
-  <a href="#main-footer" class="skip-link">跳转到页脚</a>
-
-  <!-- 导航栏 -->
-  <nav class="navbar" aria-label="主导航">
-    <div class="container nav-container">
-    </div>
-  </nav>
-<main id="main-content" role="main">
-      <a href="index.html" class="logo">🌍 游导旅游</a>
-      <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
-      <div class="nav-links">
-        <div class="nav-dropdown">
-          <a href="javascript:void(0)" class="nav-dropdown-toggle">🌍 发现旅行 ▾</a>
-          <div class="nav-dropdown-menu">
-            <a href="routes.html">🗺️ 精品线路</a>
-            <a href="guides.html">🎤 导游列表</a>
-            <a href="tips.html">💡 旅行攻略</a>
-            <a href="wonders.html">✨ 世界奇趣</a>
-          </div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">游导旅游</a>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="destinations.html">目的地</a>
+                <a href="contact.html">联系我们</a>
+            </div>
         </div>
-        <a href="guides.html">🎤 找导游</a>
-        <a href="visa.html">📋 签证中心</a>
-        <div class="nav-dropdown">
-          <a href="javascript:void(0)" class="nav-dropdown-toggle">📚 知识库 ▾</a>
-          <div class="nav-dropdown-menu">
-            <a href="wonders.html">🏛️ 景点百科</a>
-            <a href="faq.html">❓ 旅行问答</a>
-            <a href="pitfall.html">⚠️ 避坑指南</a>
-          </div>
-        </div>
-        <a href="search.html" class="search-icon-link" title="搜索"><span aria-hidden="true">🔍</span><span class="sr-only">搜索</span></a>
-        <a href="wechat-contact.html" style="color: #07c160; font-weight: 600;">💬 咨询</a>
-      </div>
-    </div>
-  
+    </nav>
 
-  <!-- 页面标题 -->
-  <section class="wechat-hero">
     <div class="container">
-      <h1>💬 联系旅行顾问</h1>
-      <p>添加微信，专业顾问为您一对一服务</p>
-    </div>
-  </section>
+        <div class="contact-card">
+            <div class="qr-code">💬</div>
+            
+            <h1>微信在线客服</h1>
+            <p>扫描二维码或添加微信好友<br>获取专业的旅行咨询服务</p>
+            
+            <div class="wechat-id">
+                <span>微信号：</span>
+                <strong>ximao101</strong>
+            </div>
 
-  <!-- 微信联系内容 -->
-  <div class="wechat-content">
-    <div class="wechat-card">
-      <!-- 二维码 -->
-      <div class="wechat-qr" onclick="showQRModal()">
-        <img src="images/aman-wechat.jpg" alt="微信二维码" onerror="this.parentElement.innerHTML='<div style=\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#f0f9f4;font-size:3rem\'>💬</div>'">
-      </div>
-      
-      <!-- 微信号 -->
-      <div class="wechat-id">
-        <span class="label">微信号：</span>
-        <span class="id" id="wechatId">ximao101</span>
-        <button class="copy-btn" onclick="copyWechatId()">复制</button>
-      </div>
-      
-      <div class="wechat-hint">
-        💡 长按二维码保存图片，或搜索微信号添加
-      </div>
-      
-      <!-- 服务范围 -->
-      <div class="services-section">
-        <h2>🎯 服务范围</h2>
-        <div class="service-grid">
-          <div class="service-item">
-            <span class="icon">📋</span>
-            <span>签证代办咨询</span>
-          </div>
-          <div class="service-item">
-            <span class="icon">🗺️</span>
-            <span>行程定制规划</span>
-          </div>
-          <div class="service-item">
-            <span class="icon">🎤</span>
-            <span>导游推荐预约</span>
-          </div>
-          <div class="service-item">
-            <span class="icon">✈️</span>
-            <span>机票酒店预订</span>
-          </div>
-          <div class="service-item">
-            <span class="icon">⚠️</span>
-            <span>旅行避坑指导</span>
-          </div>
-          <div class="service-item">
-            <span class="icon">🏨</span>
-            <span>当地资源对接</span>
-          </div>
+            <div class="tips">
+                <h3>📋 添加微信后您可以获得：</h3>
+                <ul>
+                    <li>一对一旅行咨询服务</li>
+                    <li>个性化行程规划建议</li>
+                    <li>导游推荐与预约</li>
+                    <li>旅行问题即时解答</li>
+                    <li>专属优惠活动通知</li>
+                </ul>
+            </div>
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <div class="icon">📞</div>
+                    <div class="label">客服电话</div>
+                    <div class="value">13631149834</div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">📧</div>
+                    <div class="label">邮箱</div>
+                    <div class="value">service@youdao-travel.com</div>
+                </div>
+                <div class="contact-item">
+                    <div class="icon">⏰</div>
+                    <div class="label">服务时间</div>
+                    <div class="value">09:00-21:00</div>
+                </div>
+            </div>
         </div>
-      </div>
-      
-      <!-- 联系方式 -->
-      <div class="contact-info">
-        <div class="contact-item">
-          <span class="icon">💬</span>
-          <span>微信：游导旅游_2024</span>
-        </div>
-        <div class="contact-item">
-          <span class="icon">📧</span>
-          <span>邮箱：2173381363@qq.com</span>
-        </div>
-        <div class="contact-item">
-          <span class="icon">🕐</span>
-          <span>工作时间：周一至周五 9:00-18:00</span>
-        </div>
-      </div>
-      
-      <!-- 操作按钮 -->
-      <div class="action-buttons">
-        <a href="visa.html" class="action-btn primary">📋 签证代办</a>
-        <a href="routes.html" class="action-btn secondary">🗺️ 查看线路</a>
-      </div>
     </div>
-  </div>
-
-  <!-- 返回首页 -->
-  <div style="text-align:center;padding:20px 0 40px">
-    <a href="index.html" style="color:#667eea;font-size:0.95rem">← 返回首页</a>
-  </div>
-
-  <!-- 微信二维码弹窗 -->
-  <div class="wechat-qr-modal" id="qrModal">
-    <span class="qr-modal-close" onclick="hideQRModal()">×</span>
-    <div class="qr-modal-content">
-      <img src="images/aman-wechat.jpg" alt="微信二维码" onerror="this.style.display='none'">
-      <h3>💬 扫码添加顾问</h3>
-      <p>识别二维码，长按保存到相册</p>
-    </div>
-  </div>
-
-  
-</main>
-<!-- 页脚 -->
-  <footer id="main-footer" class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div>
-          <h4>快速导航</h4>
-          <a href="visa.html">签证中心</a>
-          <a href="pitfall.html">避坑指南</a>
-          <a href="emergency.html">应急资源</a>
-        </div>
-        <div>
-          <h4>帮助支持</h4>
-          <a href="help.html">帮助中心</a>
-          <a href="faq.html">常见问题</a>
-          <a href="contact.html">联系我们</a>
-          <a href="wechat-contact.html">微信咨询</a>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <p>© 2024 游导旅游 · 让旅行更简单</p>
-      </div>
-    </div>
-  </footer>
-
-  <!-- 智能客服 -->
-  <div class="chatbot-btn" onclick="toggleChatbot()">💬</div>
-  <div id="chatbotPopup" class="chatbot-popup">
-    <div class="chatbot-header">
-      <span>🧳 旅行小助手</span>
-      <span class="chatbot-close" onclick="closeChatbot()">×</span>
-    </div>
-    <div id="chatbotBody" class="chatbot-body"></div>
-    <div id="quickReplies" class="quick-replies"></div>
-    <div class="chatbot-input">
-      <input id="chatbotInput" type="text" placeholder="输入问题..." onkeydown="handleEnter(event)">
-      <button onclick="sendMessage()">发送</button>
-    </div>
-  </div>
-
-  <script src="js/common.js" defer></script>
-  <script src="js/chatbot.js" defer></script>
-  <script>
-    // 复制微信号
-    function copyWechatId() {
-      const wechatId = document.getElementById('wechatId').textContent;
-      navigator.clipboard.writeText(wechatId).then(() => {
-        const btn = document.querySelector('.copy-btn');
-        btn.textContent = '已复制!';
-        btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = '复制';
-          btn.classList.remove('copied');
-        }, 2000);
-      }).catch(() => {
-        // fallback for older browsers
-        const textarea = document.createElement('textarea');
-        textarea.value = wechatId;
-        document.body.appendChild(textarea);
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-        const btn = document.querySelector('.copy-btn');
-        btn.textContent = '已复制!';
-        btn.classList.add('copied');
-        setTimeout(() => {
-          btn.textContent = '复制';
-          btn.classList.remove('copied');
-        }, 2000);
-      });
-    }
-    
-    // 显示/隐藏二维码弹窗
-    function showQRModal() {
-      document.getElementById('qrModal').classList.add('show');
-    }
-    
-    function hideQRModal() {
-      document.getElementById('qrModal').classList.remove('show');
-    }
-    
-    // 点击背景关闭弹窗
-    document.getElementById('qrModal').addEventListener('click', function(e) {
-      if (e.target === this) hideQRModal();
-    });
-  </script>
-  <script src="js/performance.js" defer></script>
-  <script src="js/enhanced-common.js" defer></script>
-
-  <!-- PWA Service Worker -->
-  <script src="js/pwa.js" defer></script>
-  <script src="js/mobile.js" defer></script>
-  <script src="js/customer-service.js" defer></script>
 </body>
 </html>
