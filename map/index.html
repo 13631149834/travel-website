@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>地图导览 - 游导旅游</title>
+  <meta name="description" content="游导旅游地图服务，涵盖东京、大阪、首尔、曼谷等热门城市的景点地图、美食地图和交通指南。">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    :root {
+      --primary: #FF6B35;
+      --primary-dark: #E55A2B;
+      --secondary: #1E3A5F;
+      --accent: #FFD23F;
+      --bg-light: #F8F9FA;
+      --bg-white: #FFFFFF;
+      --text-dark: #2D3436;
+      --text-gray: #636E72;
+      --text-light: #B2BEC3;
+      --border: #E9ECEF;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+      --radius: 16px;
+      --radius-sm: 8px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    .header {
+      background: var(--bg-white);
+      box-shadow: var(--shadow);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-icon { font-size: 28px; }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    .nav-links a:hover { color: var(--primary); }
+    .nav-links a.active { color: var(--primary); }
+
+    .page-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #FF8F6B 100%);
+      color: white;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    .page-hero p {
+      font-size: 1.1rem;
+      opacity: 0.95;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+
+    .features-section { margin-bottom: 48px; }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-hover);
+    }
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      margin-bottom: 16px;
+    }
+    .feature-icon.orange { background: #FFF3ED; }
+    .feature-icon.blue { background: #E8F4FF; }
+    .feature-icon.yellow { background: #FFF8E6; }
+    .feature-icon.purple { background: #F3EEFF; }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+    }
+    .feature-card p {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+    }
+
+    .cities-section { margin-bottom: 48px; }
+    .cities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .city-card {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: all 0.3s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .city-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-hover);
+    }
+    .city-map-preview {
+      height: 180px;
+      background: linear-gradient(135deg, #E8F4FF 0%, #D4ECFF 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .city-map-preview .mini-map {
+      width: 100%;
+      height: 100%;
+    }
+    .city-map-preview .overlay-text {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      background: rgba(255,255,255,0.95);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .city-info {
+      padding: 20px;
+    }
+    .city-info h3 {
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+      color: var(--text-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .city-info p {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+      margin-bottom: 16px;
+    }
+    .city-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .city-tag {
+      padding: 4px 12px;
+      background: var(--bg-light);
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: var(--text-gray);
+    }
+
+    .map-preview-section { margin-bottom: 48px; }
+    .map-container {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    #worldMap {
+      height: 450px;
+      width: 100%;
+    }
+    .map-controls {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+    }
+    .map-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--text-gray);
+    }
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .btn {
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+      font-size: 14px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover { background: var(--primary-dark); }
+
+    .hot-spots-section { margin-bottom: 48px; }
+    .hot-spots-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .hot-spot-item {
+      background: var(--bg-white);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: all 0.2s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .hot-spot-item:hover {
+      background: #FFF8F5;
+      transform: translateX(4px);
+    }
+    .hot-spot-rank {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .hot-spot-rank.top1 { background: #FFD700; color: #7A5C00; }
+    .hot-spot-rank.top2 { background: #C0C0C0; color: #5A5A5A; }
+    .hot-spot-rank.top3 { background: #CD7F32; color: #5A3A1A; }
+    .hot-spot-rank.normal { background: var(--bg-light); color: var(--text-gray); }
+    .hot-spot-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--primary) 0%, #FF8F6B 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .hot-spot-content { flex: 1; min-width: 0; }
+    .hot-spot-content h4 {
+      font-size: 1rem;
+      margin-bottom: 4px;
+      color: var(--text-dark);
+    }
+    .hot-spot-content p {
+      font-size: 0.85rem;
+      color: var(--text-gray);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .hot-spot-content .city-badge {
+      padding: 2px 8px;
+      background: var(--bg-light);
+      border-radius: 4px;
+      font-size: 0.75rem;
+    }
+
+    .footer {
+      background: var(--secondary);
+      color: white;
+      padding: 40px 20px;
+      text-align: center;
+      margin-top: 60px;
+    }
+    .footer p {
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .page-hero { padding: 40px 20px; }
+      .page-hero h1 { font-size: 1.8rem; }
+      .map-controls { flex-direction: column; gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">🧭</span>
+        游导旅游
+      </a>
+      <ul class="nav-links">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../destinations.html">目的地</a></li>
+        <li><a href="../routes.html">路线</a></li>
+        <li><a href="../guides.html">导游</a></li>
+        <li><a href="index.html" class="active">地图</a></li>
+        <li><a href="../tools.html">工具</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="../login.html" class="btn btn-primary">登录</a>
+      </div>
+    </nav>
+  </header>
+
+  <section class="page-hero">
+    <h1>🗺️ 地图导览</h1>
+    <p>探索全球热门城市的每一个角落，景点、美食、购物、交通一网打尽</p>
+  </section>
+
+  <main class="main-content">
+    <section class="features-section">
+      <h2 class="section-title">✨ 地图功能</h2>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon orange">🏯</div>
+          <h3>景点标记</h3>
+          <p>覆盖热门城市的必去景点，详细介绍、开放时间、门票信息</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon blue">🍜</div>
+          <h3>美食地图</h3>
+          <p>地道美食推荐，网红餐厅与隐藏美食一网打尽</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon yellow">🛍️</div>
+          <h3>购物指南</h3>
+          <p>商场、市集、药妆店位置一目了然</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon purple">🚇</div>
+          <h3>交通枢纽</h3>
+          <p>火车站、地铁站、机场位置及换乘信息</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="map-preview-section">
+      <h2 class="section-title">🌍 世界地图预览</h2>
+      <div class="map-container">
+        <div id="worldMap"></div>
+        <div class="map-controls">
+          <div class="map-legend">
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#FF6B35"></span>
+              <span>景点</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#F59E0B"></span>
+              <span>美食</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#EC4899"></span>
+              <span>购物</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-dot" style="background:#3B82F6"></span>
+              <span>交通</span>
+            </div>
+          </div>
+          <a href="tokyo.html" class="btn btn-primary">进入完整地图 →</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="cities-section">
+      <h2 class="section-title">📍 热门城市地图</h2>
+      <div class="cities-grid">
+        <a href="tokyo.html" class="city-card">
+          <div class="city-map-preview">
+            <div class="mini-map" id="tokyoPreview"></div>
+            <span class="overlay-text">🇯🇵 日本</span>
+          </div>
+          <div class="city-info">
+            <h3>🗼 东京</h3>
+            <p>日本的首都，现代与传统完美融合的国际大都会</p>
+            <div class="city-tags">
+              <span class="city-tag">12个景点</span>
+              <span class="city-tag">4大类别</span>
+            </div>
+          </div>
+        </a>
+        <a href="osaka.html" class="city-card">
+          <div class="city-map-preview">
+            <div class="mini-map" id="osakaPreview"></div>
+            <span class="overlay-text">🇯🇵 日本</span>
+          </div>
+          <div class="city-info">
+            <h3>🏯 大阪</h3>
+            <p>日本的厨房，美食天堂与环球影城主题乐园</p>
+            <div class="city-tags">
+              <span class="city-tag">10个景点</span>
+              <span class="city-tag">4大类别</span>
+            </div>
+          </div>
+        </a>
+        <a href="seoul.html" class="city-card">
+          <div class="city-map-preview">
+            <div class="mini-map" id="seoulPreview"></div>
+            <span class="overlay-text">🇰🇷 韩国</span>
+          </div>
+          <div class="city-info">
+            <h3>🎎 首尔</h3>
+            <p>韩流文化的中心，传统韩屋与现代商圈交相辉映</p>
+            <div class="city-tags">
+              <span class="city-tag">10个景点</span>
+              <span class="city-tag">4大类别</span>
+            </div>
+          </div>
+        </a>
+        <a href="bangkok.html" class="city-card">
+          <div class="city-map-preview">
+            <div class="mini-map" id="bangkokPreview"></div>
+            <span class="overlay-text">🇹🇭 泰国</span>
+          </div>
+          <div class="city-info">
+            <h3>🛕 曼谷</h3>
+            <p>佛教之都，热带风情与繁华都市的完美结合</p>
+            <div class="city-tags">
+              <span class="city-tag">10个景点</span>
+              <span class="city-tag">4大类别</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="hot-spots-section">
+      <h2 class="section-title">🔥 热门打卡地点</h2>
+      <div class="hot-spots-list">
+        <a href="tokyo.html" class="hot-spot-item">
+          <span class="hot-spot-rank top1">1</span>
+          <div class="hot-spot-img">🗼</div>
+          <div class="hot-spot-content">
+            <h4>东京塔</h4>
+            <p><span class="city-badge">东京</span><span>⭐ 4.7</span><span>2.8万评价</span></p>
+          </div>
+        </a>
+        <a href="osaka.html" class="hot-spot-item">
+          <span class="hot-spot-rank top2">2</span>
+          <div class="hot-spot-img">🎢</div>
+          <div class="hot-spot-content">
+            <h4>大阪环球影城</h4>
+            <p><span class="city-badge">大阪</span><span>⭐ 4.8</span><span>5.2万评价</span></p>
+          </div>
+        </a>
+        <a href="bangkok.html" class="hot-spot-item">
+          <span class="hot-spot-rank top3">3</span>
+          <div class="hot-spot-img">🏛️</div>
+          <div class="hot-spot-content">
+            <h4>大皇宫</h4>
+            <p><span class="city-badge">曼谷</span><span>⭐ 4.6</span><span>4.5万评价</span></p>
+          </div>
+        </a>
+        <a href="seoul.html" class="hot-spot-item">
+          <span class="hot-spot-rank normal">4</span>
+          <div class="hot-spot-img">🗝️</div>
+          <div class="hot-spot-content">
+            <h4>景福宫</h4>
+            <p><span class="city-badge">首尔</span><span>⭐ 4.6</span><span>3.2万评价</span></p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <section class="features-section">
+      <h2 class="section-title">🔧 地图工具</h2>
+      <div class="features-grid">
+        <a href="search.html" class="feature-card" style="text-decoration:none">
+          <div class="feature-icon blue">🔍</div>
+          <h3>地点搜索</h3>
+          <p>搜索景点、餐厅、商场，定位想去的地方</p>
+        </a>
+        <a href="tools.html" class="feature-card" style="text-decoration:none">
+          <div class="feature-icon yellow">📏</div>
+          <h3>测距工具</h3>
+          <p>测量两点之间的距离，规划最佳路线</p>
+        </a>
+        <a href="tools.html" class="feature-card" style="text-decoration:none">
+          <div class="feature-icon orange">📐</div>
+          <h3>面积测量</h3>
+          <p>测量区域面积，了解目的地范围</p>
+        </a>
+        <a href="tools.html" class="feature-card" style="text-decoration:none">
+          <div class="feature-icon purple">🛣️</div>
+          <h3>路线规划</h3>
+          <p>串联多个景点，规划最优游览路线</p>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2024 游导旅游 YouDao Travel. 让旅行更简单</p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    const worldMap = L.map('worldMap').setView([25, 120], 3);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(worldMap);
+
+    const cities = {
+      tokyo: { name: '东京', lat: 35.6762, lng: 139.6503 },
+      osaka: { name: '大阪', lat: 34.6937, lng: 135.5023 },
+      seoul: { name: '首尔', lat: 37.5665, lng: 126.9780 },
+      bangkok: { name: '曼谷', lat: 13.7563, lng: 100.5018 }
+    };
+
+    Object.entries(cities).forEach(([key, city]) => {
+      const marker = L.marker([city.lat, city.lng]).addTo(worldMap);
+      marker.bindPopup('<div style="text-align:center;min-width:120px"><strong>' + city.name + '</strong><br><a href="' + key + '.html" style="color:#FF6B35">进入地图 →</a></div>');
+    });
+
+    function createMiniMap(elementId, lat, lng, zoom) {
+      zoom = zoom || 11;
+      const map = L.map(elementId, {
+        zoomControl: false,
+        attributionControl: false,
+        dragging: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false
+      }).setView([lat, lng], zoom);
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { opacity: 0.7 }).addTo(map);
+
+      const markerIcon = L.divIcon({
+        className: 'custom-marker',
+        html: '<div style="background:#FF6B35;width:24px;height:24px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3)"></div>',
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
+      });
+      L.marker([lat, lng], { icon: markerIcon }).addTo(map);
+      return map;
+    }
+
+    createMiniMap('tokyoPreview', 35.6762, 139.6503);
+    createMiniMap('osakaPreview', 34.6937, 135.5023);
+    createMiniMap('seoulPreview', 37.5665, 126.9780);
+    createMiniMap('bangkokPreview', 13.7563, 100.5018);
+  </script>
+</body>
+</html>

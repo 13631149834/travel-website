@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#ff6b35">
+  <title>我的 - 游导旅游</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ff6b35',
+            'primary-dark': '#e55a2b'
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- 移动端样式 -->
+  <link rel="stylesheet" href="../css/mobile.css">
+  
+  <style>
+    /* 用户中心头部 */
+    .profile-header {
+      background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%);
+      padding: 20px 16px 50px;
+      color: white;
+    }
+    
+    .profile-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    
+    .profile-back {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .profile-settings {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .profile-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .profile-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      border: 3px solid rgba(255,255,255,0.5);
+      overflow: hidden;
+    }
+    
+    .profile-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .profile-details {
+      flex: 1;
+    }
+    
+    .profile-name {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    
+    .profile-level {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 12px;
+      font-size: 12px;
+      margin-right: 8px;
+    }
+    
+    .profile-id {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    .profile-stats {
+      display: flex;
+      justify-content: space-around;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .profile-stat {
+      text-align: center;
+      cursor: pointer;
+    }
+    
+    .profile-stat:active {
+      opacity: 0.8;
+    }
+    
+    .profile-stat-value {
+      font-size: 22px;
+      font-weight: 700;
+    }
+    
+    .profile-stat-label {
+      font-size: 12px;
+      opacity: 0.85;
+      margin-top: 2px;
+    }
+    
+    /* 签到卡片 */
+    .checkin-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: -30px 16px 16px;
+      padding: 16px 20px;
+      background: linear-gradient(135deg, #ffd23f 0%, #ffb800 100%);
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(255, 210, 63, 0.4);
+    }
+    
+    .checkin-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .checkin-icon {
+      font-size: 36px;
+    }
+    
+    .checkin-text h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2d3436;
+    }
+    
+    .checkin-text p {
+      font-size: 12px;
+      color: #636e72;
+      margin-top: 2px;
+    }
+    
+    .checkin-btn {
+      padding: 10px 24px;
+      background: #2d3436;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .checkin-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .checkin-btn.signed {
+      background: #e0e0e0;
+      color: #999;
+    }
+    
+    /* 功能列表 */
+    .menu-section {
+      margin: 16px;
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    
+    .menu-section-title {
+      padding: 14px 16px;
+      font-size: 13px;
+      color: #999;
+      background: #fafafa;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      text-decoration: none;
+      color: #2d3436;
+      border-bottom: 1px solid #f5f5f5;
+      transition: background 0.2s ease;
+    }
+    
+    .menu-item:last-child {
+      border-bottom: none;
+    }
+    
+    .menu-item:active {
+      background: #f8f8f8;
+    }
+    
+    .menu-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-right: 14px;
+    }
+    
+    .menu-icon.orange { background: #fff5f2; }
+    .menu-icon.blue { background: #f0f7ff; }
+    .menu-icon.green { background: #f0fdf4; }
+    .menu-icon.purple { background: #faf5ff; }
+    .menu-icon.red { background: #fff1f0; }
+    
+    .menu-text {
+      flex: 1;
+      font-size: 15px;
+    }
+    
+    .menu-arrow {
+      font-size: 14px;
+      color: #ccc;
+    }
+    
+    .menu-badge {
+      padding: 2px 8px;
+      background: #ff3b30;
+      color: white;
+      font-size: 11px;
+      border-radius: 10px;
+      margin-right: 8px;
+    }
+    
+    .menu-count {
+      font-size: 13px;
+      color: #999;
+      margin-right: 4px;
+    }
+    
+    /* 会员卡片 */
+    .vip-card {
+      margin: 16px;
+      padding: 20px;
+      background: linear-gradient(135deg, #2d3436 0%, #1e3a5f 100%);
+      border-radius: 16px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .vip-card::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+    }
+    
+    .vip-card::after {
+      content: '';
+      position: absolute;
+      bottom: -30px;
+      left: -10px;
+      width: 80px;
+      height: 80px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 50%;
+    }
+    
+    .vip-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    
+    .vip-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .vip-btn {
+      padding: 6px 16px;
+      background: linear-gradient(135deg, #ffd23f 0%, #ffb800 100%);
+      color: #2d3436;
+      border: none;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    .vip-benefits {
+      display: flex;
+      gap: 20px;
+      font-size: 12px;
+      opacity: 0.85;
+    }
+    
+    .vip-benefit {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    /* 工具入口 */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      padding: 16px;
+      background: white;
+      border-radius: 16px;
+      margin: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    
+    .tool-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 8px;
+      border-radius: 12px;
+      transition: all 0.2s ease;
+    }
+    
+    .tool-item:active {
+      background: #f5f5f5;
+    }
+    
+    .tool-item .icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    
+    .tool-item .text {
+      font-size: 11px;
+      color: #666;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- 页面内容 -->
+  <div class="mobile-page">
+    <!-- 用户头部 -->
+    <div class="profile-header">
+      <div class="profile-top">
+        <a href="index.html" class="profile-back">←</a>
+        <button class="profile-settings" onclick="location.href='../settings.html'">⚙️</button>
+      </div>
+      
+      <div class="profile-info">
+        <div class="profile-avatar" id="avatar">
+          😊
+        </div>
+        <div class="profile-details">
+          <div class="profile-name" id="username">旅行爱好者</div>
+          <div>
+            <span class="profile-level">🌟 黄金会员</span>
+          </div>
+          <div class="profile-id">ID: 88888888</div>
+        </div>
+      </div>
+      
+      <div class="profile-stats">
+        <div class="profile-stat" onclick="location.href='../favorites.html'">
+          <div class="profile-stat-value" id="favoritesCount">12</div>
+          <div class="profile-stat-label">收藏</div>
+        </div>
+        <div class="profile-stat" onclick="location.href='../following.html'">
+          <div class="profile-stat-value">88</div>
+          <div class="profile-stat-label">关注</div>
+        </div>
+        <div class="profile-stat" onclick="location.href='../views.html'">
+          <div class="profile-stat-value" id="viewsCount">1.2k</div>
+          <div class="profile-stat-label">浏览</div>
+        </div>
+        <div class="profile-stat" onclick="location.href='../points.html'">
+          <div class="profile-stat-value" id="pointsCount">5,680</div>
+          <div class="profile-stat-label">积分</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- 签到卡片 -->
+    <div class="checkin-card" id="checkinCard">
+      <div class="checkin-info">
+        <span class="checkin-icon">🎁</span>
+        <div class="checkin-text">
+          <h4>每日签到</h4>
+          <p>已连续签到 <span id="checkinDays">7</span> 天</p>
+        </div>
+      </div>
+      <button class="checkin-btn" id="checkinBtn" onclick="doCheckin()">立即签到</button>
+    </div>
+    
+    <!-- 会员卡片 -->
+    <div class="vip-card">
+      <div class="vip-header">
+        <div class="vip-title">
+          👑 游导会员
+        </div>
+        <button class="vip-btn">立即开通</button>
+      </div>
+      <div class="vip-benefits">
+        <span class="vip-benefit">✓ 专属折扣</span>
+        <span class="vip-benefit">✓ 优先客服</span>
+        <span class="vip-benefit">✓ 免费礼品</span>
+      </div>
+    </div>
+    
+    <!-- 我的订单 -->
+    <div class="menu-section">
+      <div class="menu-section-title">我的订单</div>
+      <a href="../orders.html" class="menu-item">
+        <span class="menu-icon orange">📋</span>
+        <span class="menu-text">全部订单</span>
+        <span class="menu-count">3</span>
+        <span class="menu-arrow">›</span>
+      </a>
+      <div class="grid grid-cols-4 divide-x divide-gray-100">
+        <a href="../orders.html?status=pending" class="menu-item flex-col py-3">
+          <span class="menu-icon orange mb-2">⏰</span>
+          <span class="text-xs text-gray-600">待付款</span>
+        </a>
+        <a href="../orders.html?status=paid" class="menu-item flex-col py-3">
+          <span class="menu-icon blue mb-2">✅</span>
+          <span class="text-xs text-gray-600">待使用</span>
+        </a>
+        <a href="../orders.html?status=used" class="menu-item flex-col py-3">
+          <span class="menu-icon green mb-2">�的评价</span>
+          <span class="text-xs text-gray-600">待评价</span>
+        </a>
+        <a href="../refund.html" class="menu-item flex-col py-3">
+          <span class="menu-icon red mb-2">💰</span>
+          <span class="text-xs text-gray-600">退款/售后</span>
+        </a>
+      </div>
+    </div>
+    
+    <!-- 实用工具 -->
+    <div class="tools-grid">
+      <a href="../coupons.html" class="tool-item">
+        <span class="icon">🎟️</span>
+        <span class="text">优惠券</span>
+      </a>
+      <a href="../points.html" class="tool-item">
+        <span class="icon">💎</span>
+        <span class="text">积分商城</span>
+      </a>
+      <a href="../wallet.html" class="tool-item">
+        <span class="icon">💳</span>
+        <span class="text">钱包</span>
+      </a>
+      <a href="../invite.html" class="tool-item">
+        <span class="icon">👥</span>
+        <span class="text">邀请好友</span>
+      </a>
+    </div>
+    
+    <!-- 我的服务 -->
+    <div class="menu-section">
+      <div class="menu-section-title">我的服务</div>
+      <a href="../guides.html" class="menu-item">
+        <span class="menu-icon blue">🎫</span>
+        <span class="menu-text">我的导游</span>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="../diary/index.html" class="menu-item">
+        <span class="menu-icon purple">📔</span>
+        <span class="menu-text">旅行日记</span>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="../footprint.html" class="menu-item">
+        <span class="menu-icon green">🌍</span>
+        <span class="menu-text">我的足迹</span>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="../wishlist.html" class="menu-item">
+        <span class="menu-icon red">❤️</span>
+        <span class="menu-text">我的收藏</span>
+        <span class="menu-count" id="menuFavoritesCount">12</span>
+        <span class="menu-arrow">›</span>
+      </a>
+    </div>
+    
+    <!-- 客服与帮助 -->
+    <div class="menu-section">
+      <div class="menu-section-title">客服与帮助</div>
+      <a href="../notifications.html" class="menu-item">
+        <span class="menu-icon orange">🔔</span>
+        <span class="menu-text">消息通知</span>
+        <span class="menu-badge" id="messageBadge" style="display: none;">0</span>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="../help.html" class="menu-item">
+        <span class="menu-icon blue">❓</span>
+        <span class="menu-text">帮助中心</span>
+        <span class="menu-arrow">›</span>
+      </a>
+      <a href="../feedback.html" class="menu-item">
+        <span class="menu-icon purple">💬</span>
+        <span class="menu-text">意见反馈</span>
+        <span class="menu-arrow">›</span>
+      </a>
+    </div>
+    
+    <!-- 底部占位 -->
+    <div style="height: 80px;"></div>
+  </div>
+  
+  <!-- 底部导航 -->
+  <nav class="mobile-nav" role="navigation">
+    <a href="index.html" class="mobile-nav-item" data-nav="home">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-text">首页</span>
+    </a>
+    <a href="../destinations.html" class="mobile-nav-item" data-nav="destinations">
+      <span class="nav-icon">🌍</span>
+      <span class="nav-text">目的地</span>
+    </a>
+    <a href="../guides.html" class="mobile-nav-item" data-nav="guides">
+      <span class="nav-icon">📚</span>
+      <span class="nav-text">攻略</span>
+    </a>
+    <a href="../wishlist.html" class="mobile-nav-item" data-nav="favorites">
+      <span class="nav-icon">❤️</span>
+      <span class="nav-text">收藏</span>
+    </a>
+    <a href="profile.html" class="mobile-nav-item active" data-nav="profile">
+      <span class="nav-icon">👤</span>
+      <span class="nav-text">我的</span>
+    </a>
+  </nav>
+  
+  <style>
+    @media (min-width: 769px) {
+      .mobile-nav { display: none !important; }
+    }
+  </style>
+  
+  <script>
+    // 签到功能
+    const CHECKIN_KEY = 'checkinData';
+    
+    function getCheckinData() {
+      return JSON.parse(localStorage.getItem(CHECKIN_KEY) || JSON.stringify({
+        lastDate: null,
+        days: 0
+      }));
+    }
+    
+    function doCheckin() {
+      const today = new Date().toDateString();
+      const data = getCheckinData();
+      const btn = document.getElementById('checkinBtn');
+      
+      if (data.lastDate === today) {
+        alert('今日已签到，明天再来吧！');
+        return;
+      }
+      
+      // 计算连续签到
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      
+      if (data.lastDate === yesterday.toDateString()) {
+        data.days += 1;
+      } else {
+        data.days = 1;
+      }
+      
+      data.lastDate = today;
+      localStorage.setItem(CHECKIN_KEY, JSON.stringify(data));
+      
+      // 更新UI
+      document.getElementById('checkinDays').textContent = data.days;
+      btn.textContent = '已签到';
+      btn.classList.add('signed');
+      btn.disabled = true;
+      
+      // 添加积分
+      let points = parseInt(localStorage.getItem('userPoints') || '5680');
+      points += 10; // 签到获得10积分
+      localStorage.setItem('userPoints', points.toString());
+      document.getElementById('pointsCount').textContent = points.toLocaleString();
+      
+      alert(`签到成功！获得 10 积分，连续签到 ${data.days} 天！`);
+    }
+    
+    function initCheckin() {
+      const data = getCheckinData();
+      const today = new Date().toDateString();
+      const btn = document.getElementById('checkinBtn');
+      
+      document.getElementById('checkinDays').textContent = data.days;
+      
+      if (data.lastDate === today) {
+        btn.textContent = '已签到';
+        btn.classList.add('signed');
+        btn.disabled = true;
+      }
+    }
+    
+    // 加载用户数据
+    function loadUserData() {
+      // 收藏数量
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+      document.getElementById('favoritesCount').textContent = favorites.length;
+      document.getElementById('menuFavoritesCount').textContent = favorites.length;
+      
+      // 积分
+      const points = localStorage.getItem('userPoints') || '5680';
+      document.getElementById('pointsCount').textContent = parseInt(points).toLocaleString();
+      
+      // 消息数量
+      const unreadCount = localStorage.getItem('unreadMessages') || '0';
+      const badge = document.getElementById('messageBadge');
+      if (parseInt(unreadCount) > 0) {
+        badge.textContent = unreadCount;
+        badge.style.display = 'inline';
+      }
+    }
+    
+    // 触摸反馈
+    document.querySelectorAll('.menu-item, .tool-item, .profile-stat').forEach(item => {
+      item.addEventListener('touchstart', function() {
+        this.style.opacity = '0.7';
+      }, { passive: true });
+      
+      item.addEventListener('touchend', function() {
+        this.style.opacity = '1';
+      }, { passive: true });
+    });
+    
+    // 初始化
+    initCheckin();
+    loadUserData();
+  </script>
+</body>
+</html>

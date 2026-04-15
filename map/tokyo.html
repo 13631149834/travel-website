@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>东京地图 - 游导旅游</title>
+  <meta name="description" content="东京旅游地图，涵盖东京塔、浅草寺、涩谷等热门景点的位置信息、详细信息和路线规划。">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+  <style>
+    :root {
+      --primary: #FF6B35; --primary-light: #FFF3ED; --primary-dark: #E55A2B;
+      --secondary: #1E3A5F; --accent: #FFD23F; --bg-light: #F8F9FA;
+      --bg-white: #FFFFFF; --text-dark: #2D3436; --text-gray: #636E72;
+      --text-light: #B2BEC3; --border: #E9ECEF; --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --radius: 16px; --radius-sm: 8px;
+      --attraction: #FF6B35; --food: #F59E0B; --shopping: #EC4899; --transport: #3B82F6;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans SC', -apple-system, sans-serif;
+      background: var(--bg-light); color: var(--text-dark); line-height: 1.6;
+      height: 100vh; overflow: hidden;
+    }
+    .header { background: var(--bg-white); box-shadow: var(--shadow); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 60px; }
+    .header-content { max-width: 100%; height: 100%; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; }
+    .logo { font-size: 20px; font-weight: 700; color: var(--primary); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+    .logo-icon { font-size: 24px; }
+    .city-title { font-size: 18px; font-weight: 600; color: var(--text-dark); display: flex; align-items: center; gap: 8px; }
+    .header-actions { display: flex; gap: 12px; }
+    .btn { padding: 8px 16px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s; border: none; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text-gray); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .main-layout { display: flex; height: calc(100vh - 60px); margin-top: 60px; }
+    .sidebar { width: 360px; background: var(--bg-white); border-right: 1px solid var(--border); overflow-y: auto; flex-shrink: 0; display: flex; flex-direction: column; }
+    .sidebar-header { padding: 16px; border-bottom: 1px solid var(--border); background: var(--bg-white); position: sticky; top: 0; z-index: 10; }
+    .sidebar-title { font-size: 16px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .filter-section { display: flex; flex-wrap: wrap; gap: 8px; }
+    .filter-btn { padding: 6px 14px; border: 2px solid var(--border); background: var(--bg-white); border-radius: 20px; font-size: 13px; font-weight: 500; color: var(--text-gray); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 4px; }
+    .filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .filter-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+    .filter-btn .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .route-section { padding: 16px; border-bottom: 1px solid var(--border); }
+    .route-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--text-dark); }
+    .route-list { display: flex; flex-direction: column; gap: 8px; }
+    .route-item { padding: 12px; background: var(--bg-light); border-radius: var(--radius-sm); cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+    .route-item:hover, .route-item.active { background: var(--primary-light); border-color: var(--primary); }
+    .route-item h4 { font-size: 14px; margin-bottom: 4px; color: var(--text-dark); }
+    .route-item p { font-size: 12px; color: var(--text-gray); }
+    .spots-section { flex: 1; overflow-y: auto; padding: 16px; }
+    .spots-title { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text-dark); display: flex; align-items: center; justify-content: space-between; }
+    .spots-count { font-size: 12px; color: var(--text-gray); font-weight: 400; }
+    .spot-card { background: var(--bg-white); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); cursor: pointer; transition: all 0.2s; border: 2px solid transparent; }
+    .spot-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateX(4px); }
+    .spot-card.active { border-color: var(--primary); background: var(--primary-light); }
+    .spot-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 10px; }
+    .spot-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .spot-icon.attraction { background: #FFF3ED; }
+    .spot-icon.food { background: #FFF8E6; }
+    .spot-icon.shopping { background: #FFF0F5; }
+    .spot-icon.transport { background: #E8F4FF; }
+    .spot-info { flex: 1; min-width: 0; }
+    .spot-name { font-size: 15px; font-weight: 600; color: var(--text-dark); margin-bottom: 4px; }
+    .spot-meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--text-gray); }
+    .spot-rating { color: #FFB800; font-weight: 600; }
+    .spot-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .spot-tag { padding: 3px 10px; background: var(--bg-light); border-radius: 12px; font-size: 11px; color: var(--text-gray); }
+    .map-container { flex: 1; position: relative; }
+    #cityMap { width: 100%; height: 100%; }
+    .custom-marker { background: none; border: none; }
+    .marker-content { display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; font-size: 16px; font-weight: bold; box-shadow: 0 3px 10px rgba(0,0,0,0.3); border: 3px solid white; transition: all 0.2s; cursor: pointer; }
+    .marker-content:hover { transform: scale(1.2); }
+    .marker-content.attraction { background: var(--attraction); }
+    .marker-content.food { background: var(--food); }
+    .marker-content.shopping { background: var(--shopping); }
+    .marker-content.transport { background: var(--transport); }
+    .marker-label { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: white; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 500; color: var(--text-dark); white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.15); margin-top: 4px; opacity: 0; transition: opacity 0.2s; pointer-events: none; }
+    .marker-content:hover + .marker-label, .custom-marker:hover .marker-label { opacity: 1; }
+    .detail-popup { position: fixed; bottom: 20px; left: 380px; right: 20px; max-width: 480px; background: var(--bg-white); border-radius: var(--radius); box-shadow: 0 8px 40px rgba(0,0,0,0.15); z-index: 1000; transform: translateY(200%); transition: transform 0.3s ease; overflow: hidden; }
+    .detail-popup.show { transform: translateY(0); }
+    .detail-header { position: relative; }
+    .detail-banner { height: 160px; background: linear-gradient(135deg, var(--primary) 0%, #FF8F6B 100%); display: flex; align-items: center; justify-content: center; font-size: 64px; }
+    .detail-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; background: rgba(0,0,0,0.3); color: white; border: none; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .detail-close:hover { background: rgba(0,0,0,0.5); }
+    .detail-category { position: absolute; bottom: 12px; left: 16px; padding: 6px 14px; background: white; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+    .detail-body { padding: 20px; }
+    .detail-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--text-dark); }
+    .detail-meta { display: flex; gap: 16px; margin-bottom: 16px; font-size: 14px; color: var(--text-gray); }
+    .detail-meta-item { display: flex; align-items: center; gap: 4px; }
+    .detail-meta-item .star { color: #FFB800; }
+    .detail-description { font-size: 14px; color: var(--text-gray); margin-bottom: 16px; line-height: 1.7; }
+    .detail-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+    .detail-info-item { background: var(--bg-light); padding: 12px; border-radius: var(--radius-sm); }
+    .detail-info-item .label { font-size: 12px; color: var(--text-gray); margin-bottom: 4px; }
+    .detail-info-item .value { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+    .detail-highlights { margin-bottom: 16px; }
+    .detail-highlights h4 { font-size: 14px; font-weight: 600; margin-bottom: 10px; color: var(--text-dark); }
+    .highlights-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .highlight-tag { padding: 6px 12px; background: var(--primary-light); color: var(--primary); border-radius: 20px; font-size: 12px; font-weight: 500; }
+    .detail-actions { display: flex; gap: 12px; }
+    .detail-actions .btn { flex: 1; justify-content: center; }
+    .route-panel { position: fixed; top: 80px; right: 20px; width: 320px; background: var(--bg-white); border-radius: var(--radius); box-shadow: 0 8px 40px rgba(0,0,0,0.15); z-index: 999; transform: translateX(400px); transition: transform 0.3s ease; }
+    .route-panel.show { transform: translateX(0); }
+    .route-panel-header { padding: 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .route-panel-title { font-size: 16px; font-weight: 600; }
+    .route-panel-body { padding: 16px; max-height: 400px; overflow-y: auto; }
+    .route-step { display: flex; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--border); }
+    .route-step:last-child { border-bottom: none; }
+    .route-step-number { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+    .route-step-info { flex: 1; }
+    .route-step-name { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .route-step-time { font-size: 12px; color: var(--text-gray); }
+    .map-controls { position: absolute; top: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 999; }
+    .map-control-btn { width: 44px; height: 44px; background: var(--bg-white); border-radius: var(--radius-sm); box-shadow: var(--shadow); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; transition: all 0.2s; }
+    .map-control-btn:hover { background: var(--primary); color: white; }
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; left: 0; right: 0; bottom: 0; top: auto; width: 100%; height: 50vh; transform: translateY(100%); transition: transform 0.3s ease; z-index: 1001; border-right: none; border-top: 1px solid var(--border); border-radius: var(--radius) var(--radius) 0 0; }
+      .sidebar.show { transform: translateY(0); }
+      .map-container { height: calc(100vh - 60px); }
+      .detail-popup { left: 10px; right: 10px; bottom: 10px; }
+      .route-panel { left: 10px; right: 10px; width: auto; transform: translateY(-200%); }
+      .route-panel.show { transform: translateY(0); }
+    }
+    .leaflet-popup-content-wrapper { border-radius: var(--radius-sm); padding: 0; }
+    .leaflet-popup-content { margin: 0; min-width: 200px; }
+    .popup-content { padding: 16px; }
+    .popup-title { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+    .popup-meta { font-size: 12px; color: var(--text-gray); margin-bottom: 8px; }
+    .popup-btn { width: 100%; padding: 8px; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 13px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <a href="index.html" class="logo"><span class="logo-icon">🧭</span><span>游导</span></a>
+      <div class="city-title"><span>🗼</span><span>东京地图</span></div>
+      <div class="header-actions">
+        <button class="btn btn-outline btn-sm" onclick="toggleRoutePanel()">🛣️ 路线</button>
+        <a href="search.html" class="btn btn-primary btn-sm">🔍 搜索</a>
+      </div>
+    </div>
+  </header>
+  <div class="main-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">📍 筛选景点</h2>
+        <div class="filter-section">
+          <button class="filter-btn active" data-category="all" onclick="filterMarkers('all')">全部</button>
+          <button class="filter-btn" data-category="attraction" onclick="filterMarkers('attraction')"><span class="dot" style="background:var(--attraction)"></span>🏯 景点</button>
+          <button class="filter-btn" data-category="food" onclick="filterMarkers('food')"><span class="dot" style="background:var(--food)"></span>🍜 美食</button>
+          <button class="filter-btn" data-category="shopping" onclick="filterMarkers('shopping')"><span class="dot" style="background:var(--shopping)"></span>🛍️ 购物</button>
+          <button class="filter-btn" data-category="transport" onclick="filterMarkers('transport')"><span class="dot" style="background:var(--transport)"></span>🚇 交通</button>
+        </div>
+      </div>
+      <div class="route-section">
+        <h3 class="route-title">🗺️ 推荐路线</h3>
+        <div class="route-list">
+          <div class="route-item" onclick="selectRoute(0)"><h4>经典一日游</h4><p>东京塔 → 浅草寺 → 上野公园</p></div>
+          <div class="route-item" onclick="selectRoute(1)"><h4>购物狂欢</h4><p>银座 → 涩谷 → 原宿</p></div>
+          <div class="route-item" onclick="clearRoute()"><h4>清除路线</h4><p>显示所有景点</p></div>
+        </div>
+      </div>
+      <div class="spots-section">
+        <h3 class="spots-title">所有景点<span class="spots-count" id="spotsCount">12个</span></h3>
+        <div id="spotsList"></div>
+      </div>
+    </aside>
+    <div class="map-container">
+      <div id="cityMap"></div>
+      <div class="map-controls">
+        <button class="map-control-btn" onclick="toggleSidebar()" title="侧边栏">☰</button>
+        <button class="map-control-btn" onclick="map.zoomIn()" title="放大">+</button>
+        <button class="map-control-btn" onclick="map.zoomOut()" title="缩小">−</button>
+        <button class="map-control-btn" onclick="locateMe()" title="定位">📍</button>
+      </div>
+    </div>
+  </div>
+  <div class="detail-popup" id="detailPopup">
+    <div class="detail-header">
+      <div class="detail-banner" id="detailBanner">🏯</div>
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+      <span class="detail-category" id="detailCategory"><span>🏯</span><span>景点</span></span>
+    </div>
+    <div class="detail-body">
+      <h2 class="detail-title" id="detailTitle">景点名称</h2>
+      <div class="detail-meta"><span class="detail-meta-item"><span class="star">⭐</span><span id="detailRating">4.5</span></span><span class="detail-meta-item" id="detailReviews">1.2万评价</span></div>
+      <p class="detail-description" id="detailDesc">景点描述内容</p>
+      <div class="detail-info-grid"><div class="detail-info-item"><div class="label">🕐 开放时间</div><div class="value" id="detailHours">全天开放</div></div><div class="detail-info-item"><div class="label">💰 门票</div><div class="value" id="detailTicket">免费</div></div></div>
+      <div class="detail-highlights"><h4>✨ 亮点推荐</h4><div class="highlights-list" id="detailHighlights"></div></div>
+      <div class="detail-actions"><button class="btn btn-outline" onclick="closeDetail()">关闭</button><button class="btn btn-primary" onclick="addToRoute()">加入路线</button></div>
+    </div>
+  </div>
+  <div class="route-panel" id="routePanel">
+    <div class="route-panel-header"><span class="route-panel-title">🛣️ 我的路线</span><button class="detail-close" onclick="toggleRoutePanel()">✕</button></div>
+    <div class="route-panel-body" id="routePanelBody"><p style="text-align:center;color:var(--text-gray);padding:20px">暂无路线规划<br><small>点击景点添加到路线</small></p></div>
+  </div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script>
+    const cityData = { name: '东京', center: [35.6762, 139.6503], zoom: 13, spots: [
+      { id: 'tk001', name: '东京塔', category: 'attraction', lat: 35.6586, lng: 139.7454, icon: '🗼', description: '东京标志性铁塔，可俯瞰城市夜景', rating: 4.7, reviews: '2.8万', hours: '9:00-23:00', ticket: '成人1200日元', highlights: ['大展望台', '特别展望台', '海贼王主题乐园'] },
+      { id: 'tk002', name: '浅草寺', category: 'attraction', lat: 35.7148, lng: 139.7967, icon: '⛩️', description: '东京最古老的佛教寺庙，雷门是其标志性建筑', rating: 4.6, reviews: '4.5万', hours: '全天开放', ticket: '免费', highlights: ['雷门', '仲见世商店街', '五重塔'] },
+      { id: 'tk003', name: '涩谷十字路口', category: 'attraction', lat: 35.6595, lng: 139.7004, icon: '🚶', description: '世界最繁忙的交叉路口之一', rating: 4.5, reviews: '1.9万', hours: '全天开放', ticket: '免费', highlights: ['忠犬八公像', '周边商场'] },
+      { id: 'tk004', name: '新宿御苑', category: 'attraction', lat: 35.6852, lng: 139.7100, icon: '🌳', description: '横跨新宿与涩谷的大型公园，四季花景各异', rating: 4.7, reviews: '1.3万', hours: '9:00-16:30', ticket: '成人500日元', highlights: ['日式庭园', '法式庭园', '温室'] },
+      { id: 'tk005', name: '筑地市场', category: 'food', lat: 35.6654, lng: 139.7707, icon: '🍣', description: '世界最大的鱼市场，金枪鱼拍卖闻名', rating: 4.6, reviews: '3.2万', hours: '5:00-14:00', ticket: '免费参观', highlights: ['金枪鱼拍卖', '寿司店', '海鲜丼'] },
+      { id: 'tk006', name: '秋叶原', category: 'shopping', lat: 35.7023, lng: 139.7745, icon: '🎮', description: '世界著名的电器与动漫文化街区', rating: 4.5, reviews: '2.6万', hours: '10:00-20:00', ticket: '免费', highlights: ['电子产品', '动漫周边', '女仆咖啡厅'] },
+      { id: 'tk007', name: '东京站', category: 'transport', lat: 35.6812, lng: 139.7671, icon: '🚉', description: '东京最主要的火车站，丸之内站房是地标', rating: 4.4, reviews: '1.6万', hours: '全天开放', ticket: '免费', highlights: ['丸之内站房', '地下街', '伴手礼'] },
+      { id: 'tk008', name: '原宿表参道', category: 'shopping', lat: 35.6702, lng: 139.7027, icon: '🛍️', description: '东京最时尚的购物街区，汇聚顶级品牌', rating: 4.5, reviews: '2.2万', hours: '店铺各异', ticket: '免费', highlights: ['表参道Hills', '品牌旗舰店', '竹下通'] },
+      { id: 'tk009', name: '银座', category: 'shopping', lat: 35.6721, lng: 139.7636, icon: '💎', description: '东京最繁华的高级购物区', rating: 4.6, reviews: '3.0万', hours: '11:00-20:00', ticket: '免费', highlights: ['银座大街', '和光百货', '资生堂画廊'] },
+      { id: 'tk010', name: '六本木之丘', category: 'attraction', lat: 35.6605, lng: 139.7292, icon: '🏙️', description: '综合性商业设施，森大楼观景台可看夜景', rating: 4.6, reviews: '1.8万', hours: '10:00-23:00', ticket: '森大楼展望台1800日元', highlights: ['城市景观', '森美术馆', '毛利庭园'] },
+      { id: 'tk011', name: '一风堂拉面', category: 'food', lat: 35.6595, lng: 139.7012, icon: '🍜', description: '日本知名连锁拉面店，猪骨汤底是其招牌', rating: 4.5, reviews: '8765', hours: '11:00-次日3:00', ticket: '人均1000-1500日元', highlights: ['白丸元味', '赤丸新味', '溏心蛋'] },
+      { id: 'tk012', name: '上野公园', category: 'attraction', lat: 35.7146, lng: 139.7732, icon: '🌸', description: '东京最大的公园，赏樱胜地，多座博物馆聚集', rating: 4.6, reviews: '1.9万', hours: '5:00-23:00', ticket: '园内免费，部分场馆收费', highlights: ['上野动物园', '东京国立博物馆', '赏樱'] }
+    ], routes: [{ name: '经典一日游', spots: ['tk001', 'tk002', 'tk012'] }, { name: '购物狂欢', spots: ['tk009', 'tk003', 'tk008'] }] };
+    const categoryConfig = { attraction: { name: '景点', icon: '🏯', color: '#FF6B35' }, food: { name: '美食', icon: '🍜', color: '#F59E0B' }, shopping: { name: '购物', icon: '🛍️', color: '#EC4899' }, transport: { name: '交通', icon: '🚇', color: '#3B82F6' } };
+    let map, markers = {}, currentFilter = 'all', selectedSpot = null, myRoute = [];
+    function initMap() { map = L.map('cityMap').setView(cityData.center, cityData.zoom); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap contributors' }).addTo(map); cityData.spots.forEach(spot => addMarker(spot)); renderSpotsList(); }
+    function addMarker(spot) { const icon = L.divIcon({ className: 'custom-marker', html: '<div class="marker-content ' + spot.category + '">' + spot.icon + '</div><div class="marker-label">' + spot.name + '</div>', iconSize: [36, 44], iconAnchor: [18, 44] }); const marker = L.marker([spot.lat, spot.lng], { icon }).addTo(map); marker.bindPopup('<div class="popup-content"><div class="popup-title">' + spot.icon + ' ' + spot.name + '</div><div class="popup-meta">⭐ ' + spot.rating + ' · ' + categoryConfig[spot.category].name + '</div><button class="popup-btn" onclick="showDetail(\'' + spot.id + '\')">查看详情</button></div>'); marker.on('click', () => showDetail(spot.id)); markers[spot.id] = marker; }
+    function renderSpotsList() { const list = document.getElementById('spotsList'); const filtered = currentFilter === 'all' ? cityData.spots : cityData.spots.filter(s => s.category === currentFilter); document.getElementById('spotsCount').textContent = filtered.length + '个'; list.innerHTML = filtered.map(spot => '<div class="spot-card" data-id="' + spot.id + '" onclick="focusSpot(\'' + spot.id + '\')"><div class="spot-header"><div class="spot-icon ' + spot.category + '">' + spot.icon + '</div><div class="spot-info"><div class="spot-name">' + spot.name + '</div><div class="spot-meta"><span class="spot-rating">⭐ ' + spot.rating + '</span><span>' + spot.reviews + '评价</span></div></div></div><div class="spot-tags">' + spot.highlights.slice(0, 3).map(h => '<span class="spot-tag">' + h + '</span>').join('') + '</div></div>').join(''); }
+    function focusSpot(id) { const spot = cityData.spots.find(s => s.id === id); if (!spot) return; map.setView([spot.lat, spot.lng], 15); markers[id].openPopup(); showDetail(id); document.querySelectorAll('.spot-card').forEach(card => card.classList.toggle('active', card.dataset.id === id)); }
+    function filterMarkers(category) { currentFilter = category; document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.category === category)); cityData.spots.forEach(spot => { if (category === 'all' || spot.category === category) markers[spot.id].addTo(map); else markers[spot.id].remove(); }); renderSpotsList(); }
+    function showDetail(id) { const spot = cityData.spots.find(s => s.id === id); if (!spot) return; selectedSpot = spot; const config = categoryConfig[spot.category]; document.getElementById('detailBanner').textContent = spot.icon; document.getElementById('detailCategory').innerHTML = '<span>' + config.icon + '</span><span>' + config.name + '</span>'; document.getElementById('detailTitle').textContent = spot.name; document.getElementById('detailRating').textContent = spot.rating; document.getElementById('detailReviews').textContent = spot.reviews + '评价'; document.getElementById('detailDesc').textContent = spot.description; document.getElementById('detailHours').textContent = spot.hours; document.getElementById('detailTicket').textContent = spot.ticket; document.getElementById('detailHighlights').innerHTML = spot.highlights.map(h => '<span class="highlight-tag">' + h + '</span>').join(''); document.getElementById('detailPopup').classList.add('show'); document.querySelectorAll('.spot-card').forEach(card => card.classList.toggle('active', card.dataset.id === id)); }
+    function closeDetail() { document.getElementById('detailPopup').classList.remove('show'); document.querySelectorAll('.spot-card').forEach(card => card.classList.remove('active')); selectedSpot = null; }
+    function addToRoute() { if (!selectedSpot) return; if (!myRoute.find(s => s.id === selectedSpot.id)) { myRoute.push(selectedSpot); updateRoutePanel(); } closeDetail(); }
+    function updateRoutePanel() { const body = document.getElementById('routePanelBody'); if (myRoute.length === 0) { body.innerHTML = '<p style="text-align:center;color:var(--text-gray);padding:20px">暂无路线规划<br><small>点击景点添加到路线</small></p>'; return; } body.innerHTML = myRoute.map((spot, index) => '<div class="route-step"><span class="route-step-number">' + (index + 1) + '</span><div class="route-step-info"><div class="route-step-name">' + spot.icon + ' ' + spot.name + '</div><div class="route-step-time">约30分钟停留</div></div></div>').join(''); drawRoute(); }
+    function drawRoute() { map.eachLayer(layer => { if (layer instanceof L.Polyline) map.removeLayer(layer); }); if (myRoute.length < 2) return; const coords = myRoute.map(spot => [spot.lat, spot.lng]); L.polyline(coords, { color: '#FF6B35', weight: 4, opacity: 0.8, dashArray: '10, 10' }).addTo(map); }
+    function selectRoute(index) { const route = cityData.routes[index]; if (!route) return; myRoute = route.spots.map(id => cityData.spots.find(s => s.id === id)).filter(Boolean); updateRoutePanel(); document.querySelectorAll('.route-item').forEach((item, i) => item.classList.toggle('active', i === index)); if (myRoute.length > 0) { const bounds = L.latLngBounds(myRoute.map(s => [s.lat, s.lng])); map.fitBounds(bounds, { padding: [50, 50] }); } }
+    function clearRoute() { myRoute = []; updateRoutePanel(); document.querySelectorAll('.route-item').forEach(item => item.classList.remove('active')); map.eachLayer(layer => { if (layer instanceof L.Polyline) map.removeLayer(layer); }); }
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('show'); }
+    function toggleRoutePanel() { document.getElementById('routePanel').classList.toggle('show'); }
+    function locateMe() { if (navigator.geolocation) { navigator.geolocation.getCurrentPosition(position => { map.setView([position.coords.latitude, position.coords.longitude], 15); }, error => alert('无法获取位置')); } else { alert('您的浏览器不支持定位功能'); } }
+    document.addEventListener('DOMContentLoaded', initMap);
+  </script>
+</body>
+</html>
