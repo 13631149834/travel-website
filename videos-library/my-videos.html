@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的视频 - 游导旅游</title>
+  <meta name="description" content="管理你的视频，查看收藏和观看历史">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <style>
+    /* 页面布局 */
+    .my-videos-page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    /* 用户信息头部 */
+    .user-header {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 32px;
+      background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+      border-radius: 20px;
+      color: #fff;
+      margin-bottom: 32px;
+    }
+    .user-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.3);
+    }
+    .user-info {
+      flex: 1;
+    }
+    .user-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .user-bio {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    .user-stats {
+      display: flex;
+      gap: 32px;
+    }
+    .user-stat {
+      text-align: center;
+    }
+    .user-stat .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .user-stat .label {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+    
+    /* 标签导航 */
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #fff;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      color: #4b5563;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .tab-btn:hover {
+      border-color: #0ea5e9;
+      color: #0ea5e9;
+    }
+    .tab-btn.active {
+      background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+      border-color: transparent;
+      color: #fff;
+    }
+    .tab-btn .badge {
+      padding: 2px 8px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 10px;
+      font-size: 0.8rem;
+    }
+    .tab-btn.active .badge {
+      background: rgba(255,255,255,0.2);
+    }
+    
+    /* 内容区 */
+    .content-area {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    
+    /* 工具栏 */
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .search-input {
+      padding: 10px 16px;
+      padding-left: 40px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      width: 280px;
+      font-size: 0.9rem;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='%239ca3af' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E") no-repeat 12px center;
+    }
+    .sort-select {
+      padding: 10px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .toolbar-right {
+      display: flex;
+      gap: 12px;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 16px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      color: #4b5563;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .action-btn:hover {
+      background: #e5e7eb;
+      color: #1f2937;
+    }
+    .primary-btn {
+      background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+      color: #fff;
+    }
+    .primary-btn:hover {
+      background: linear-gradient(135deg, #0284c7 0%, #7c3aed 100%);
+      color: #fff;
+    }
+    
+    /* 视频网格 */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    
+    /* 视频卡片 */
+    .video-card {
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .video-card:hover {
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transform: translateY(-4px);
+    }
+    .video-thumbnail {
+      position: relative;
+      aspect-ratio: 16/9;
+      background: #f3f4f6;
+    }
+    .video-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .video-duration {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .video-status {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .status-published { background: #22c55e; color: #fff; }
+    .status-pending { background: #f59e0b; color: #fff; }
+    .status-draft { background: #6b7280; color: #fff; }
+    
+    .video-info {
+      padding: 16px;
+    }
+    .video-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .video-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    .video-stats {
+      display: flex;
+      gap: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #f3f4f6;
+    }
+    .video-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .video-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .video-action-btn {
+      flex: 1;
+      padding: 8px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: #4b5563;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .video-action-btn:hover {
+      background: #e5e7eb;
+      color: #1f2937;
+    }
+    .video-action-btn.danger:hover {
+      background: #fef2f2;
+      color: #ef4444;
+    }
+    
+    /* 历史记录项 */
+    .history-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .history-item:last-child {
+      border-bottom: none;
+    }
+    .history-thumb {
+      width: 160px;
+      height: 90px;
+      border-radius: 8px;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .history-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .history-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .history-title {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+    .history-meta {
+      font-size: 0.85rem;
+      color: #6b7280;
+      display: flex;
+      gap: 16px;
+    }
+    .history-progress {
+      margin-top: 8px;
+      height: 4px;
+      background: #e5e7eb;
+      border-radius: 2px;
+    }
+    .history-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+      border-radius: 2px;
+      width: 45%;
+    }
+    .history-time {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+    }
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    .empty-title {
+      font-size: 1.25rem;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    .empty-desc {
+      color: #6b7280;
+      margin-bottom: 24px;
+    }
+    
+    /* 分页 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 32px;
+    }
+    .page-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: #4b5563;
+      transition: all 0.2s ease;
+    }
+    .page-btn:hover {
+      border-color: #0ea5e9;
+      color: #0ea5e9;
+    }
+    .page-btn.active {
+      background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+      border-color: transparent;
+      color: #fff;
+    }
+    
+    @media (max-width: 768px) {
+      .user-header {
+        flex-direction: column;
+        text-align: center;
+      }
+      .user-stats {
+        justify-content: center;
+      }
+      .toolbar {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .toolbar-left {
+        flex-direction: column;
+        width: 100%;
+      }
+      .search-input {
+        width: 100%;
+      }
+      .toolbar-right {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body style="background: #f9fafb;">
+  <!-- 导航 -->
+  <header style="background: #fff; border-bottom: 1px solid #e5e7eb; padding: 12px 20px;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <a href="index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #1f2937;">
+          <span style="font-size: 1.5rem;">🧭</span>
+          <span style="font-weight: 600;">游导旅游</span>
+        </a>
+        <span style="color: #d1d5db;">/</span>
+        <a href="index.html" style="color: #6b7280; text-decoration: none;">视频</a>
+        <span style="color: #d1d5db;">/</span>
+        <span style="color: #1f2937;">我的视频</span>
+      </div>
+      <a href="upload.html" class="action-btn primary-btn" style="padding: 8px 16px;">
+        + 上传视频
+      </a>
+    </div>
+  </header>
+
+  <!-- 主内容 -->
+  <main class="my-videos-page">
+    <!-- 用户信息 -->
+    <div class="user-header">
+      <img src="https://i.pravatar.cc/200?img=33" alt="用户头像" class="user-avatar">
+      <div class="user-info">
+        <div class="user-name">旅行者小李</div>
+        <div class="user-bio">热爱旅行的90后，喜欢探索世界各地的美景美食</div>
+      </div>
+      <div class="user-stats">
+        <div class="user-stat">
+          <div class="value">12</div>
+          <div class="label">上传视频</div>
+        </div>
+        <div class="user-stat">
+          <div class="value">8.6万</div>
+          <div class="label">总观看</div>
+        </div>
+        <div class="user-stat">
+          <div class="value">1.2万</div>
+          <div class="label">获赞</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 标签导航 -->
+    <div class="tab-nav">
+      <button class="tab-btn active" data-tab="my-videos">
+        📹 我的视频
+        <span class="badge">12</span>
+      </button>
+      <button class="tab-btn" data-tab="favorites">
+        ⭐ 收藏
+        <span class="badge">28</span>
+      </button>
+      <button class="tab-btn" data-tab="history">
+        📜 观看历史
+        <span class="badge">156</span>
+      </button>
+      <button class="tab-btn" data-tab="watch-llater">
+        📌 稍后观看
+        <span class="badge">5</span>
+      </button>
+    </div>
+
+    <!-- 内容区 -->
+    <div class="content-area">
+      <!-- 我的视频 -->
+      <div id="myVideosSection">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <input type="text" class="search-input" placeholder="搜索我的视频...">
+            <select class="sort-select">
+              <option>按时间排序</option>
+              <option>按观看排序</option>
+              <option>按点赞排序</option>
+            </select>
+          </div>
+          <div class="toolbar-right">
+            <button class="action-btn">
+              📊 数据分析
+            </button>
+            <a href="upload.html" class="action-btn primary-btn">
+              + 上传
+            </a>
+          </div>
+        </div>
+        
+        <div class="video-grid">
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/myvideo1/640/360" alt="视频封面">
+              <span class="video-duration">15:32</span>
+              <span class="video-status status-published">已发布</span>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">东京深度游｜暴走6天5夜的东京攻略</h3>
+              <div class="video-meta">
+                <span>📅 2024-03-15</span>
+              </div>
+              <div class="video-stats">
+                <span class="video-stat">👁 12.5万</span>
+                <span class="video-stat">👍 8950</span>
+                <span class="video-stat">💬 423</span>
+              </div>
+              <div class="video-actions">
+                <button class="video-action-btn">✏ 编辑</button>
+                <button class="video-action-btn">📊 数据</button>
+                <button class="video-action-btn danger">🗑 删除</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/myvideo2/640/360" alt="视频封面">
+              <span class="video-duration">22:10</span>
+              <span class="video-status status-pending">审核中</span>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">首尔5日自由行完整记录</h3>
+              <div class="video-meta">
+                <span>📅 2024-03-20</span>
+              </div>
+              <div class="video-stats">
+                <span class="video-stat">👁 待发布</span>
+                <span class="video-stat">⏳ 审核中</span>
+              </div>
+              <div class="video-actions">
+                <button class="video-action-btn">✏ 编辑</button>
+                <button class="video-action-btn">👁 预览</button>
+                <button class="video-action-btn danger">🗑 删除</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/myvideo3/640/360" alt="视频封面">
+              <span class="video-duration">18:45</span>
+              <span class="video-status status-published">已发布</span>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">泰国清迈深度游｜探索泰北玫瑰</h3>
+              <div class="video-meta">
+                <span>📅 2024-03-10</span>
+              </div>
+              <div class="video-stats">
+                <span class="video-stat">👁 5.2万</span>
+                <span class="video-stat">👍 3200</span>
+                <span class="video-stat">💬 198</span>
+              </div>
+              <div class="video-actions">
+                <button class="video-action-btn">✏ 编辑</button>
+                <button class="video-action-btn">📊 数据</button>
+                <button class="video-action-btn danger">🗑 删除</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/myvideo4/640/360" alt="视频封面">
+              <span class="video-duration">12:30</span>
+              <span class="video-status status-draft">草稿</span>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">新加坡环球影城一日游（待完成）</h3>
+              <div class="video-meta">
+                <span>📅 2024-03-18</span>
+              </div>
+              <div class="video-stats">
+                <span class="video-stat">📝 未完成</span>
+              </div>
+              <div class="video-actions">
+                <button class="video-action-btn">✏ 继续编辑</button>
+                <button class="video-action-btn danger">🗑 删除</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 收藏 -->
+      <div id="favoritesSection" style="display: none;">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <input type="text" class="search-input" placeholder="搜索收藏...">
+          </div>
+        </div>
+        
+        <div class="video-grid">
+          <div class="video-card" onclick="location.href='player.html'">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/fav1/640/360" alt="视频封面">
+              <span class="video-duration">12:45</span>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">京都赏樱｜千年古都的春日浪漫</h3>
+              <div class="video-meta">
+                <span>👤 樱花物语</span>
+                <span>👁 9.8万</span>
+              </div>
+              <div class="video-actions">
+                <button class="video-action-btn" onclick="event.stopPropagation();">▶ 播放</button>
+                <button class="video-action-btn danger" onclick="event.stopPropagation();">💔 取消收藏</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="location.href='player.html'">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/fav2/640/360" alt="视频封面">
+              <span class="video-duration">08:45</span>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">富士山绝美航拍｜从空中看日本地标</h3>
+              <div class="video-meta">
+                <span>👤 航拍视界</span>
+                <span>👁 18.9万</span>
+              </div>
+              <div class="video-actions">
+                <button class="video-action-btn" onclick="event.stopPropagation();">▶ 播放</button>
+                <button class="video-action-btn danger" onclick="event.stopPropagation();">💔 取消收藏</button>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="location.href='player.html'">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/fav3/640/360" alt="视频封面">
+              <span class="video-duration">16:30</span>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">日本和服体验｜在京都穿和服逛寺庙</h3>
+              <div class="video-meta">
+                <span>👤 樱花物语</span>
+                <span>👁 11.2万</span>
+              </div>
+              <div class="video-actions">
+                <button class="video-action-btn" onclick="event.stopPropagation();">▶ 播放</button>
+                <button class="video-action-btn danger" onclick="event.stopPropagation();">💔 取消收藏</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 观看历史 -->
+      <div id="historySection" style="display: none;">
+        <div class="toolbar">
+          <div class="toolbar-left">
+            <input type="text" class="search-input" placeholder="搜索观看历史...">
+            <button class="action-btn">🗑 清空历史</button>
+          </div>
+        </div>
+        
+        <div class="history-list">
+          <div class="history-item" onclick="location.href='player.html'">
+            <div class="history-thumb">
+              <img src="https://picsum.photos/seed/hist1/640/360" alt="视频封面">
+              <span class="video-duration">15:32</span>
+            </div>
+            <div class="history-info">
+              <h4 class="history-title">东京深度游｜暴走6天5夜的东京攻略</h4>
+              <div class="history-meta">
+                <span>观看至 07:12</span>
+                <span>👤 旅行探险家小王</span>
+              </div>
+              <div class="history-progress">
+                <div class="history-progress-fill"></div>
+              </div>
+            </div>
+            <div class="history-time">
+              <span>10分钟前</span>
+            </div>
+          </div>
+          
+          <div class="history-item" onclick="location.href='player.html'">
+            <div class="history-thumb">
+              <img src="https://picsum.photos/seed/hist2/640/360" alt="视频封面">
+              <span class="video-duration">25:40</span>
+            </div>
+            <div class="history-info">
+              <h4 class="history-title">东京迪士尼Land攻略｜少排队高效率玩法</h4>
+              <div class="history-meta">
+                <span>观看至 25:40</span>
+                <span>👤 旅行探险家小王</span>
+              </div>
+              <div class="history-progress">
+                <div class="history-progress-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="history-time">
+              <span>昨天</span>
+            </div>
+          </div>
+          
+          <div class="history-item" onclick="location.href='player.html'">
+            <div class="history-thumb">
+              <img src="https://picsum.photos/seed/hist3/640/360" alt="视频封面">
+              <span class="video-duration">12:45</span>
+            </div>
+            <div class="history-info">
+              <h4 class="history-title">京都赏樱｜千年古都的春日浪漫</h4>
+              <div class="history-meta">
+                <span>观看至 03:20</span>
+                <span>👤 樱花物语</span>
+              </div>
+              <div class="history-progress">
+                <div class="history-progress-fill" style="width: 26%;"></div>
+              </div>
+            </div>
+            <div class="history-time">
+              <span>2天前</span>
+            </div>
+          </div>
+          
+          <div class="history-item" onclick="location.href='player.html'">
+            <div class="history-thumb">
+              <img src="https://picsum.photos/seed/hist4/640/360" alt="视频封面">
+              <span class="video-duration">18:20</span>
+            </div>
+            <div class="history-info">
+              <h4 class="history-title">首尔美食探店｜隐藏在小巷里的米其林</h4>
+              <div class="history-meta">
+                <span>观看至 18:20</span>
+                <span>👤 美食猎人阿明</span>
+              </div>
+              <div class="history-progress">
+                <div class="history-progress-fill" style="width: 100%;"></div>
+              </div>
+            </div>
+            <div class="history-time">
+              <span>3天前</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 稍后观看 -->
+      <div id="watchLaterSection" style="display: none;">
+        <div class="empty-state">
+          <div class="empty-icon">📌</div>
+          <h3 class="empty-title">暂无稍后观看内容</h3>
+          <p class="empty-desc">点击视频收藏按钮可以将视频添加到稍后观看列表</p>
+          <a href="index.html" class="action-btn primary-btn" style="display: inline-block;">浏览视频</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 分页 -->
+    <div class="pagination">
+      <button class="page-btn">‹</button>
+      <button class="page-btn active">1</button>
+      <button class="page-btn">2</button>
+      <button class="page-btn">3</button>
+      <button class="page-btn">›</button>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer style="background: #1f2937; color: #fff; padding: 32px 20px; margin-top: 40px;">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+      <p style="font-size: 0.85rem; color: #9ca3af;">© 2024 游导旅游 youdao-travel.com 版权所有</p>
+    </div>
+  </footer>
+
+  <script>
+    // 标签切换
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        const tab = this.dataset.tab;
+        
+        // 隐藏所有内容
+        document.getElementById('myVideosSection').style.display = 'none';
+        document.getElementById('favoritesSection').style.display = 'none';
+        document.getElementById('historySection').style.display = 'none';
+        document.getElementById('watchLaterSection').style.display = 'none';
+        
+        // 显示对应内容
+        document.getElementById(tab + 'Section').style.display = 'block';
+        
+        // 更新分页显示
+        const pagination = document.querySelector('.pagination');
+        pagination.style.display = (tab === 'watch-llater' || tab === 'favorites') ? 'none' : 'flex';
+      });
+    });
+
+    // 搜索功能
+    document.querySelector('.search-input').addEventListener('input', function(e) {
+      const query = e.target.value.toLowerCase();
+      const cards = document.querySelectorAll('.video-card');
+      
+      cards.forEach(card => {
+        const title = card.querySelector('.video-title').textContent.toLowerCase();
+        if (title.includes(query)) {
+          card.style.display = 'block';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+
+    // 分页
+    document.querySelectorAll('.page-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (this.classList.contains('active')) return;
+        document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        // 实际项目中会加载对应页面的数据
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>

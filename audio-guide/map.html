@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>导览地图 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#667eea',
+            secondary: '#764ba2',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../css/audio-guide.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    #map { height: calc(100vh - 280px); min-height: 500px; border-radius: 16px; }
+    .leaflet-popup-content-wrapper { border-radius: 12px; }
+    .custom-marker { background: white; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="index.html" class="font-semibold border-b-2 border-white pb-1">🎧 有声导览</a>
+          <a href="map.html" class="font-semibold border-b-2 border-white pb-1">📍 导览地图</a>
+          <a href="my-guides.html" class="hover:opacity-80 transition">我的导览</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="index.html" class="block py-2">首页</a>
+        <a href="index.html" class="block py-2 font-semibold">🎧 有声导览</a>
+        <a href="map.html" class="block py-2 font-semibold">📍 导览地图</a>
+        <a href="my-guides.html" class="block py-2">我的导览</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="gradient-hero text-white py-8">
+    <div class="max-w-7xl mx-auto px-4">
+      <h1 class="text-3xl font-bold mb-2">🗺️ 导览地图</h1>
+      <p class="opacity-90">点击地图标记，开始您的导览之旅</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-6">
+    <!-- City Tabs -->
+    <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+      <button class="city-tab active px-5 py-2.5 bg-primary text-white rounded-full font-medium whitespace-nowrap" data-city="tokyo" onclick="switchCity('tokyo')">
+        🇯🇵 东京
+      </button>
+      <button class="city-tab px-5 py-2.5 bg-white text-gray-700 rounded-full font-medium whitespace-nowrap hover:bg-gray-100" data-city="osaka" onclick="switchCity('osaka')">
+        🇯🇵 大阪
+      </button>
+      <button class="city-tab px-5 py-2.5 bg-white text-gray-700 rounded-full font-medium whitespace-nowrap hover:bg-gray-100" data-city="seoul" onclick="switchCity('seoul')">
+        🇰🇷 首尔
+      </button>
+      <button class="city-tab px-5 py-2.5 bg-white text-gray-700 rounded-full font-medium whitespace-nowrap hover:bg-gray-100" data-city="bangkok" onclick="switchCity('bangkok')">
+        🇹🇭 曼谷
+      </button>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- Map Container -->
+      <div class="lg:col-span-3">
+        <div id="map" class="shadow-lg"></div>
+        
+        <!-- Route Recommendations -->
+        <div class="mt-6 bg-white rounded-xl p-5">
+          <h3 class="font-bold text-gray-800 mb-4">🚶 推荐路线</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="routeRecommendations">
+            <!-- Routes will be loaded here -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="lg:col-span-1">
+        <!-- Selected Guide Panel -->
+        <div class="bg-white rounded-xl p-4 mb-6 shadow-sm" id="guidePanel">
+          <div class="text-center py-8 text-gray-500" id="guidePanelEmpty">
+            <div class="text-4xl mb-3">📍</div>
+            <p>点击地图上的标记</p>
+            <p class="text-sm">选择一个导览点开始</p>
+          </div>
+          <div class="hidden" id="guidePanelContent">
+            <img id="guidePanelImage" src="" alt="" class="w-full h-32 object-cover rounded-lg mb-3">
+            <h3 id="guidePanelTitle" class="font-bold text-gray-800 mb-1"></h3>
+            <p id="guidePanelCity" class="text-sm text-gray-500 mb-3"></p>
+            <div class="flex items-center gap-2 mb-4">
+              <span class="text-amber-500">⭐</span>
+              <span id="guidePanelRating" class="text-sm font-medium"></span>
+              <span class="text-gray-300">|</span>
+              <span id="guidePanelDuration" class="text-sm text-gray-500"></span>
+            </div>
+            <div class="flex gap-2">
+              <button class="flex-1 py-2.5 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition" onclick="startGuide()">
+                ▶️ 开始导览
+              </button>
+              <button class="w-10 h-10 bg-gray-100 rounded-lg flex items-center justify-center hover:bg-gray-200 transition" onclick="toggleGuideFavorite()">
+                <span id="guidePanelFavorite" class="text-gray-400">♡</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nearby Points -->
+        <div class="bg-white rounded-xl p-4 shadow-sm">
+          <h3 class="font-bold text-gray-800 mb-4">📌 周边导览点</h3>
+          <div class="space-y-3" id="nearbyPoints">
+            <!-- Nearby points will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Mini Player -->
+  <div class="floating-player visible" id="miniPlayer">
+    <button class="text-white text-xl hover:scale-110 transition" onclick="toggleMiniPlay()">▶️</button>
+    <div class="flex-1">
+      <div class="text-white font-medium text-sm truncate" id="miniPlayerTitle">浅草寺 - 导览中</div>
+      <div class="text-white/70 text-xs" id="miniPlayerProgress">00:00 / 14:05</div>
+    </div>
+    <button class="text-white/70 hover:text-white" onclick="closeMiniPlayer()">✕</button>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <div class="flex items-center justify-center gap-2 mb-4">
+        <span class="text-2xl">🧭</span>
+        <span class="text-xl font-bold">游导旅游</span>
+      </div>
+      <p class="text-gray-400 text-sm">&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+    </div>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    let map;
+    let currentCity = 'tokyo';
+    let selectedGuide = null;
+    let markers = [];
+    let isMiniPlaying = false;
+
+    // City data with coordinates
+    const cityData = {
+      tokyo: { center: [35.6762, 139.6503], zoom: 13 },
+      osaka: { center: [34.6937, 135.5023], zoom: 14 },
+      seoul: { center: [37.5665, 126.9780], zoom: 14 },
+      bangkok: { center: [13.7563, 100.5018], zoom: 14 }
+    };
+
+    // Guide markers data
+    const markersData = {
+      tokyo: [
+        { id: 'tokyo-asakusa', title: '浅草寺', lat: 35.7147, lng: 139.7966, image: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=200', duration: '14:05', rating: 4.9, city: '东京' },
+        { id: 'tokyo-tower', title: '东京塔', lat: 35.6586, lng: 139.7454, image: 'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=200', duration: '12:00', rating: 4.8, city: '东京' },
+        { id: 'tokyo-meiji', title: '明治神宫', lat: 35.6764, lng: 139.6993, image: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=200', duration: '11:20', rating: 4.9, city: '东京' },
+        { id: 'tokyo-shibuya', title: '涩谷十字路口', lat: 35.6595, lng: 139.7004, image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?w=200', duration: '08:30', rating: 4.6, city: '东京' }
+      ],
+      osaka: [
+        { id: 'osaka-castle', title: '大阪城', lat: 34.6873, lng: 135.5262, image: 'https://images.unsplash.com/photo-1589452271712-64b8a66c7b71?w=200', duration: '13:00', rating: 4.9, city: '大阪' },
+        { id: 'osaka-dotonbori', title: '道顿堀', lat: 34.6690, lng: 135.5012, image: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=200', duration: '10:50', rating: 4.7, city: '大阪' },
+        { id: 'osaka-usj', title: '环球影城', lat: 34.6654, lng: 135.4324, image: 'https://images.unsplash.com/photo-1624811533746-8ff22b2b4d2e?w=200', duration: '15:20', rating: 4.8, city: '大阪' },
+        { id: 'osaka-shinsaibashi', title: '心斋桥', lat: 34.6748, lng: 135.5014, image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=200', duration: '09:15', rating: 4.5, city: '大阪' }
+      ],
+      seoul: [
+        { id: 'seoul-gyeongbokgung', title: '景福宫', lat: 37.5796, lng: 126.9770, image: 'https://images.unsplash.com/photo-1587132137056-bfbf0166836e?w=200', duration: '14:10', rating: 4.9, city: '首尔' },
+        { id: 'seoul-myengdong', title: '明洞', lat: 37.5636, lng: 126.9869, image: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=200', duration: '09:40', rating: 4.6, city: '首尔' },
+        { id: 'seoul-bukchon', title: '北村韩屋村', lat: 37.5827, lng: 126.9830, image: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=200', duration: '12:00', rating: 4.8, city: '首尔' },
+        { id: 'seoul-namsan', title: 'N首尔塔', lat: 37.5512, lng: 126.9882, image: 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=200', duration: '10:30', rating: 4.7, city: '首尔' }
+      ],
+      bangkok: [
+        { id: 'bangkok-grand-palace', title: '大皇宫', lat: 13.7500, lng: 100.4914, image: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=200', duration: '14:40', rating: 4.9, city: '曼谷' },
+        { id: 'bangkok-wat-pho', title: '卧佛寺', lat: 13.7465, lng: 100.4930, image: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=200', duration: '12:40', rating: 4.8, city: '曼谷' },
+        { id: 'bangkok-khaosan', title: '考山路', lat: 13.7589, lng: 100.4974, image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=200', duration: '08:40', rating: 4.5, city: '曼谷' },
+        { id: 'bangkok-chatuchak', title: '恰图恰市场', lat: 13.7999, lng: 100.5505, image: 'https://images.unsplash.com/photo-1559592413-7cec4d0cae2b?w=200', duration: '11:20', rating: 4.6, city: '曼谷' }
+      ]
+    };
+
+    // Route recommendations
+    const routeData = {
+      tokyo: [
+        { name: '经典东京一日游', spots: ['浅草寺', '东京塔', '涩谷十字路口'], duration: '约6小时', image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=200' },
+        { name: '神社寺庙之旅', spots: ['浅草寺', '明治神宫'], duration: '约3小时', image: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=200' },
+        { name: '现代东京探索', spots: ['东京塔', '涩谷十字路口'], duration: '约4小时', image: 'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=200' }
+      ],
+      osaka: [
+        { name: '大阪城周边游', spots: ['大阪城', '心斋桥'], duration: '约4小时', image: 'https://images.unsplash.com/photo-1589452271712-64b8a66c7b71?w=200' },
+        { name: '美食探索之旅', spots: ['道顿堀', '心斋桥'], duration: '约3小时', image: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=200' },
+        { name: '环球影城深度游', spots: ['环球影城'], duration: '约8小时', image: 'https://images.unsplash.com/photo-1624811533746-8ff22b2b4d2e?w=200' }
+      ],
+      seoul: [
+        { name: '首尔历史之旅', spots: ['景福宫', '北村韩屋村'], duration: '约4小时', image: 'https://images.unsplash.com/photo-1587132137056-bfbf0166836e?w=200' },
+        { name: '购物美食之旅', spots: ['明洞', 'N首尔塔'], duration: '约5小时', image: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=200' }
+      ],
+      bangkok: [
+        { name: '曼谷经典之旅', spots: ['大皇宫', '卧佛寺', '考山路'], duration: '约5小时', image: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=200' },
+        { name: '佛教文化之旅', spots: ['大皇宫', '卧佛寺'], duration: '约3小时', image: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=200' }
+      ]
+    };
+
+    function initMap() {
+      map = L.map('map').setView(cityData[currentCity].center, cityData[currentCity].zoom);
+      
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+      }).addTo(map);
+
+      loadMarkers();
+    }
+
+    function loadMarkers() {
+      // Clear existing markers
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+
+      const cityMarkers = markersData[currentCity];
+      cityMarkers.forEach((spot, index) => {
+        const markerIcon = L.divIcon({
+          className: 'custom-marker',
+          html: `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea, #764ba2); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">${index + 1}</div>`,
+          iconSize: [40, 40],
+          iconAnchor: [20, 20]
+        });
+
+        const marker = L.marker([spot.lat, spot.lng], { icon: markerIcon })
+          .addTo(map)
+          .bindPopup(`
+            <div style="min-width: 200px;">
+              <img src="${spot.image}" alt="${spot.title}" style="width: 100%; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 8px;">
+              <h4 style="font-weight: bold; margin-bottom: 4px;">${spot.title}</h4>
+              <p style="color: #666; font-size: 12px; margin-bottom: 8px;">⭐ ${spot.rating} · ⏱️ ${spot.duration}</p>
+              <button onclick="selectGuide('${spot.id}')" style="width: 100%; padding: 8px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">开始导览</button>
+            </div>
+          `);
+
+        marker.on('click', () => selectGuide(spot.id));
+        markers.push(marker);
+      });
+
+      // Update nearby points
+      updateNearbyPoints();
+    }
+
+    function selectGuide(guideId) {
+      const cityMarkers = markersData[currentCity];
+      const guide = cityMarkers.find(m => m.id === guideId);
+      
+      if (guide) {
+        selectedGuide = guide;
+        
+        // Update panel
+        document.getElementById('guidePanelEmpty').classList.add('hidden');
+        document.getElementById('guidePanelContent').classList.remove('hidden');
+        document.getElementById('guidePanelImage').src = guide.image;
+        document.getElementById('guidePanelTitle').textContent = guide.title;
+        document.getElementById('guidePanelCity').textContent = `${guide.city}`;
+        document.getElementById('guidePanelRating').textContent = guide.rating;
+        document.getElementById('guidePanelDuration').textContent = guide.duration;
+
+        // Check if favorite
+        const favorites = JSON.parse(localStorage.getItem('audioFavorites') || '[]');
+        const favIcon = document.getElementById('guidePanelFavorite');
+        if (favorites.includes(guideId)) {
+          favIcon.textContent = '♥';
+          favIcon.className = 'text-red-500';
+        } else {
+          favIcon.textContent = '♡';
+          favIcon.className = 'text-gray-400';
+        }
+
+        // Pan to marker
+        map.panTo([guide.lat, guide.lng]);
+
+        // Update nearby points
+        updateNearbyPoints(guideId);
+      }
+    }
+
+    function updateNearbyPoints(excludeId = null) {
+      const cityMarkers = markersData[currentCity];
+      const nearby = cityMarkers.filter(m => m.id !== excludeId).slice(0, 4);
+      
+      document.getElementById('nearbyPoints').innerHTML = nearby.map(spot => `
+        <div class="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 cursor-pointer" onclick="selectGuide('${spot.id}')">
+          <img src="${spot.image}" alt="${spot.title}" class="w-12 h-12 rounded-lg object-cover">
+          <div class="flex-1">
+            <div class="font-medium text-gray-800 text-sm">${spot.title}</div>
+            <div class="text-xs text-gray-500">${spot.city} · ${spot.duration}</div>
+          </div>
+          <span class="text-primary">→</span>
+        </div>
+      `).join('');
+    }
+
+    function switchCity(city) {
+      currentCity = city;
+      
+      // Update tabs
+      document.querySelectorAll('.city-tab').forEach(tab => {
+        tab.classList.remove('active', 'bg-primary', 'text-white');
+        tab.classList.add('bg-white', 'text-gray-700');
+        if (tab.dataset.city === city) {
+          tab.classList.add('active', 'bg-primary', 'text-white');
+          tab.classList.remove('bg-white', 'text-gray-700');
+        }
+      });
+
+      // Update map
+      map.setView(cityData[city].center, cityData[city].zoom);
+      loadMarkers();
+
+      // Update routes
+      updateRoutes();
+    }
+
+    function updateRoutes() {
+      const routes = routeData[currentCity];
+      document.getElementById('routeRecommendations').innerHTML = routes.map(route => `
+        <div class="bg-gray-50 rounded-lg p-3 cursor-pointer hover:bg-gray-100 transition" onclick="followRoute('${route.name}')">
+          <div class="flex items-center gap-3 mb-2">
+            <img src="${route.image}" alt="${route.name}" class="w-12 h-12 rounded-lg object-cover">
+            <div class="flex-1">
+              <div class="font-medium text-gray-800 text-sm">${route.name}</div>
+              <div class="text-xs text-gray-500">⏱️ ${route.duration}</div>
+            </div>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            ${route.spots.map(spot => `<span class="text-xs bg-white px-2 py-1 rounded">${spot}</span>`).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function startGuide() {
+      if (selectedGuide) {
+        document.getElementById('miniPlayer').classList.add('visible');
+        document.getElementById('miniPlayerTitle').textContent = `${selectedGuide.title} - 导览中`;
+        document.getElementById('miniProgress').textContent = `00:00 / ${selectedGuide.duration}`;
+        
+        // Navigate to spot page
+        window.location.href = `spot.html?id=${selectedGuide.id}`;
+      }
+    }
+
+    function toggleMiniPlay() {
+      isMiniPlaying = !isMiniPlaying;
+      document.querySelector('#miniPlayer button').textContent = isMiniPlaying ? '⏸️' : '▶️';
+    }
+
+    function closeMiniPlayer() {
+      document.getElementById('miniPlayer').classList.remove('visible');
+    }
+
+    function toggleGuideFavorite() {
+      if (selectedGuide) {
+        const favorites = JSON.parse(localStorage.getItem('audioFavorites') || '[]');
+        const favIcon = document.getElementById('guidePanelFavorite');
+        
+        if (favorites.includes(selectedGuide.id)) {
+          const newFavorites = favorites.filter(id => id !== selectedGuide.id);
+          localStorage.setItem('audioFavorites', JSON.stringify(newFavorites));
+          favIcon.textContent = '♡';
+          favIcon.className = 'text-gray-400';
+        } else {
+          favorites.push(selectedGuide.id);
+          localStorage.setItem('audioFavorites', JSON.stringify(favorites));
+          favIcon.textContent = '♥';
+          favIcon.className = 'text-red-500';
+        }
+      }
+    }
+
+    function followRoute(routeName) {
+      alert(`开始导航路线: ${routeName}\n此功能将在正式版本中开放`);
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      initMap();
+      updateRoutes();
+    });
+  </script>
+</body>
+</html>

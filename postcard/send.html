@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>发送明信片 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); }
+    .postcard-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .step-active { background: #0ea5e9; color: white; }
+    .step-completed { background: #10b981; color: white; }
+    .step-inactive { background: #e5e7eb; color: #9ca3af; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <a href="create.html" class="hover:opacity-80 transition">返回编辑</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">✉️ 发送明信片</h1>
+      <p class="text-gray-500">填写收件人信息，设置发送选项</p>
+    </div>
+
+    <!-- Steps Indicator -->
+    <div class="flex items-center justify-center mb-10">
+      <div class="flex items-center gap-4">
+        <div class="flex items-center">
+          <div id="step1" class="w-10 h-10 rounded-full step-active flex items-center justify-center font-bold">1</div>
+          <span class="ml-2 font-medium text-gray-700">收件人</span>
+        </div>
+        <div class="w-12 h-1 bg-gray-200" id="line1"></div>
+        <div class="flex items-center">
+          <div id="step2" class="w-10 h-10 rounded-full step-inactive flex items-center justify-center font-bold">2</div>
+          <span class="ml-2 font-medium text-gray-400">发送设置</span>
+        </div>
+        <div class="w-12 h-1 bg-gray-200" id="line2"></div>
+        <div class="flex items-center">
+          <div id="step3" class="w-10 h-10 rounded-full step-inactive flex items-center justify-center font-bold">3</div>
+          <span class="ml-2 font-medium text-gray-400">确认发送</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 1: Recipient -->
+    <div id="step1Panel" class="bg-white rounded-3xl shadow-xl p-8 mb-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm">1</span>
+        填写收件人信息
+      </h2>
+      
+      <div class="space-y-6">
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">收件人姓名 *</label>
+            <input type="text" id="recipientName" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" placeholder="请输入收件人姓名">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">收件人邮箱 *</label>
+            <input type="email" id="recipientEmail" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" placeholder="friend@example.com">
+          </div>
+        </div>
+        
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">发送者署名</label>
+          <input type="text" id="senderName" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" placeholder="明信片上将显示的署名">
+        </div>
+
+        <!-- Recipient Preview -->
+        <div class="bg-gray-50 rounded-xl p-4">
+          <h4 class="font-medium text-gray-700 mb-3">📬 收件信息预览</h4>
+          <div class="flex items-start gap-3">
+            <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center text-xl">📧</div>
+            <div>
+              <p class="font-medium text-gray-800" id="previewRecipient">待填写</p>
+              <p class="text-gray-500 text-sm" id="previewEmail">请填写收件人信息</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex justify-end mt-8">
+        <button onclick="goToStep(2)" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-blue-600 transition flex items-center gap-2">
+          下一步 →
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 2: Send Settings -->
+    <div id="step2Panel" class="bg-white rounded-3xl shadow-xl p-8 mb-6 hidden">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm">2</span>
+        发送设置
+      </h2>
+      
+      <div class="space-y-6">
+        <!-- Send Time -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-3">发送时间</label>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <label class="cursor-pointer">
+              <input type="radio" name="sendTime" value="now" class="hidden peer" checked>
+              <div class="p-4 border-2 border-gray-200 rounded-xl text-center peer-checked:border-primary peer-checked:bg-blue-50 transition">
+                <div class="text-2xl mb-1">⚡</div>
+                <p class="font-medium">立即发送</p>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="sendTime" value="tomorrow" class="hidden peer">
+              <div class="p-4 border-2 border-gray-200 rounded-xl text-center peer-checked:border-primary peer-checked:bg-blue-50 transition">
+                <div class="text-2xl mb-1">🌅</div>
+                <p class="font-medium">明天</p>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="sendTime" value="week" class="hidden peer">
+              <div class="p-4 border-2 border-gray-200 rounded-xl text-center peer-checked:border-primary peer-checked:bg-blue-50 transition">
+                <div class="text-2xl mb-1">📅</div>
+                <p class="font-medium">一周后</p>
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="sendTime" value="custom" class="hidden peer">
+              <div class="p-4 border-2 border-gray-200 rounded-xl text-center peer-checked:border-primary peer-checked:bg-blue-50 transition">
+                <div class="text-2xl mb-1">🕐</div>
+                <p class="font-medium">自定义</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Custom Time -->
+        <div id="customTimeContainer" class="hidden">
+          <label class="block text-sm font-medium text-gray-700 mb-2">选择发送时间</label>
+          <input type="datetime-local" id="customTime" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none">
+        </div>
+
+        <!-- Password Protection -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <div class="flex items-start gap-3">
+            <div class="text-2xl">🔒</div>
+            <div class="flex-1">
+              <h4 class="font-medium text-gray-800 mb-1">密码保护</h4>
+              <p class="text-gray-600 text-sm mb-3">为明信片设置密码，收件人需要输入密码才能查看</p>
+              <label class="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" id="enablePassword" class="w-5 h-5 text-primary rounded" onchange="togglePassword()">
+                <span class="font-medium">启用密码保护</span>
+              </label>
+              <div id="passwordContainer" class="hidden mt-3">
+                <input type="password" id="postcardPassword" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" placeholder="设置4-6位数字密码">
+                <input type="password" id="confirmPassword" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none mt-2" placeholder="确认密码">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notification Settings -->
+        <div>
+          <label class="flex items-center gap-3 cursor-pointer">
+            <input type="checkbox" id="sendCopy" class="w-5 h-5 text-primary rounded" checked>
+            <div>
+              <span class="font-medium">发送副本给我</span>
+              <p class="text-gray-500 text-sm">您也会收到一份明信片副本</p>
+            </div>
+          </label>
+        </div>
+      </div>
+
+      <div class="flex justify-between mt-8">
+        <button onclick="goToStep(1)" class="px-8 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition flex items-center gap-2">
+          ← 上一步
+        </button>
+        <button onclick="goToStep(3)" class="px-8 py-3 bg-primary text-white rounded-xl font-bold hover:bg-blue-600 transition flex items-center gap-2">
+          下一步 →
+        </button>
+      </div>
+    </div>
+
+    <!-- Step 3: Confirm -->
+    <div id="step3Panel" class="bg-white rounded-3xl shadow-xl p-8 hidden">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span class="w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center text-sm">3</span>
+        确认发送
+      </h2>
+      
+      <!-- Postcard Preview -->
+      <div class="bg-gray-50 rounded-xl p-6 mb-6">
+        <h4 class="font-medium text-gray-700 mb-4">📬 明信片预览</h4>
+        <div class="max-w-md mx-auto rounded-xl overflow-hidden postcard-shadow">
+          <div id="confirmBg" class="w-full aspect-[3/2] bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600');">
+            <div class="w-full h-full flex items-center justify-center bg-black/30">
+              <div class="text-white text-center p-4">
+                <div class="text-4xl mb-2">📮</div>
+                <p id="confirmMessage" class="font-medium">在这里预览您的明信片</p>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white p-4">
+            <p id="confirmMessage2" class="text-gray-700 text-sm">明信片内容...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary -->
+      <div class="bg-blue-50 rounded-xl p-6 mb-6">
+        <h4 class="font-medium text-gray-800 mb-4">📋 发送信息确认</h4>
+        <div class="space-y-3">
+          <div class="flex items-center gap-3">
+            <span class="text-gray-400">收件人:</span>
+            <span id="summaryRecipient" class="font-medium">-</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-gray-400">邮箱:</span>
+            <span id="summaryEmail" class="font-medium">-</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-gray-400">发送时间:</span>
+            <span id="summaryTime" class="font-medium">-</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-gray-400">密码保护:</span>
+            <span id="summaryPassword" class="font-medium">-</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Terms -->
+      <div class="mb-6">
+        <label class="flex items-start gap-2 cursor-pointer">
+          <input type="checkbox" id="agreeTerms" class="w-5 h-5 text-primary rounded mt-0.5">
+          <span class="text-gray-600 text-sm">我已阅读并同意 <a href="#" class="text-primary hover:underline">服务条款</a> 和 <a href="#" class="text-primary hover:underline">隐私政策</a></span>
+        </label>
+      </div>
+
+      <div class="flex justify-between mt-8">
+        <button onclick="goToStep(2)" class="px-8 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition flex items-center gap-2">
+          ← 上一步
+        </button>
+        <button onclick="confirmSend()" class="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-bold hover:from-green-600 hover:to-emerald-600 transition flex items-center gap-2">
+          ✉️ 确认发送
+        </button>
+      </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-white rounded-3xl max-w-md w-full p-8 text-center">
+        <div class="w-20 h-20 mx-auto mb-4 bg-green-100 rounded-full flex items-center justify-center">
+          <span class="text-5xl">🎉</span>
+        </div>
+        <h3 class="text-2xl font-bold text-gray-800 mb-2">发送成功！</h3>
+        <p class="text-gray-500 mb-6">您的明信片已发送给收件人，请等待他们查收</p>
+        <div class="space-y-3">
+          <a href="my-cards.html" class="block w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-blue-600 transition">
+            查看我的明信片
+          </a>
+          <button onclick="closeSuccessModal()" class="block w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition">
+            继续创建
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentStep = 1;
+
+    // Go to step
+    function goToStep(step) {
+      currentStep = step;
+      updateUI();
+    }
+
+    // Update UI based on current step
+    function updateUI() {
+      // Hide all panels
+      document.getElementById('step1Panel').classList.add('hidden');
+      document.getElementById('step2Panel').classList.add('hidden');
+      document.getElementById('step3Panel').classList.add('hidden');
+      
+      // Show current panel
+      document.getElementById(`step${step}Panel`).classList.remove('hidden');
+      
+      // Update step indicators
+      for (let i = 1; i <= 3; i++) {
+        const stepEl = document.getElementById(`step${i}`);
+        const lineEl = document.getElementById(`line${i}`);
+        
+        if (i < currentStep) {
+          stepEl.className = 'w-10 h-10 rounded-full step-completed flex items-center justify-center font-bold';
+          stepEl.innerHTML = '✓';
+          if (lineEl) lineEl.className = 'w-12 h-1 bg-green-500';
+        } else if (i === currentStep) {
+          stepEl.className = 'w-10 h-10 rounded-full step-active flex items-center justify-center font-bold';
+          stepEl.innerHTML = i;
+          if (lineEl) lineEl.className = 'w-12 h-1 bg-gray-200';
+        } else {
+          stepEl.className = 'w-10 h-10 rounded-full step-inactive flex items-center justify-center font-bold';
+          stepEl.innerHTML = i;
+          if (lineEl) lineEl.className = 'w-12 h-1 bg-gray-200';
+        }
+      }
+      
+      // Update summary if on step 3
+      if (currentStep === 3) {
+        updateSummary();
+      }
+    }
+
+    // Toggle password
+    function togglePassword() {
+      const enabled = document.getElementById('enablePassword').checked;
+      document.getElementById('passwordContainer').classList.toggle('hidden', !enabled);
+    }
+
+    // Toggle custom time
+    document.querySelectorAll('input[name="sendTime"]').forEach(radio => {
+      radio.addEventListener('change', function() {
+        document.getElementById('customTimeContainer').classList.toggle('hidden', this.value !== 'custom');
+      });
+    });
+
+    // Update preview
+    document.getElementById('recipientName')?.addEventListener('input', function() {
+      document.getElementById('previewRecipient').textContent = this.value || '待填写';
+    });
+    
+    document.getElementById('recipientEmail')?.addEventListener('input', function() {
+      document.getElementById('previewEmail').textContent = this.value || '请填写收件人信息';
+    });
+
+    // Update summary
+    function updateSummary() {
+      const recipient = document.getElementById('recipientName').value || '-';
+      const email = document.getElementById('recipientEmail').value || '-';
+      const timeOption = document.querySelector('input[name="sendTime"]:checked')?.value || 'now';
+      const hasPassword = document.getElementById('enablePassword')?.checked;
+      
+      let timeText = '立即发送';
+      if (timeOption === 'tomorrow') timeText = '明天';
+      else if (timeOption === 'week') timeText = '一周后';
+      else if (timeOption === 'custom') {
+        const customTime = document.getElementById('customTime')?.value;
+        timeText = customTime ? new Date(customTime).toLocaleString('zh-CN') : '自定义';
+      }
+      
+      document.getElementById('summaryRecipient').textContent = recipient;
+      document.getElementById('summaryEmail').textContent = email;
+      document.getElementById('summaryTime').textContent = timeText;
+      document.getElementById('summaryPassword').textContent = hasPassword ? '已启用' : '未启用';
+      
+      // Get postcard data from localStorage or use defaults
+      const myCards = JSON.parse(localStorage.getItem('currentPostcard') || '{}');
+      const message = myCards.message || '旅行明信片';
+      document.getElementById('confirmMessage').textContent = message;
+      document.getElementById('confirmMessage2').textContent = message;
+      if (myCards.background) {
+        document.getElementById('confirmBg').style.backgroundImage = myCards.background;
+      }
+    }
+
+    // Confirm send
+    function confirmSend() {
+      const agreeTerms = document.getElementById('agreeTerms').checked;
+      
+      if (!agreeTerms) {
+        alert('请先阅读并同意服务条款');
+        return;
+      }
+      
+      const recipientName = document.getElementById('recipientName').value;
+      const recipientEmail = document.getElementById('recipientEmail').value;
+      
+      if (!recipientName || !recipientEmail) {
+        alert('请填写完整的收件人信息');
+        goToStep(1);
+        return;
+      }
+      
+      // Simulate sending
+      const postcard = {
+        id: `postcard-${Date.now()}`,
+        recipientName,
+        recipientEmail,
+        senderName: document.getElementById('senderName').value || '匿名',
+        sendTime: document.querySelector('input[name="sendTime"]:checked')?.value,
+        customTime: document.getElementById('customTime')?.value,
+        hasPassword: document.getElementById('enablePassword')?.checked,
+        password: document.getElementById('postcardPassword')?.value,
+        message: document.getElementById('confirmMessage')?.textContent,
+        createdAt: new Date().toISOString(),
+        status: 'sent'
+      };
+      
+      // Save to localStorage
+      const myCards = JSON.parse(localStorage.getItem('myPostcards') || '[]');
+      myCards.push(postcard);
+      localStorage.setItem('myPostcards', JSON.stringify(myCards));
+      
+      // Show success modal
+      document.getElementById('successModal').classList.remove('hidden');
+    }
+
+    // Close success modal
+    function closeSuccessModal() {
+      document.getElementById('successModal').classList.add('hidden');
+      window.location.href = 'index.html';
+    }
+
+    // Initialize
+    updateUI();
+  </script>
+</body>
+</html>

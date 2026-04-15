@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>更新日志 - 游导旅游</title>
+  <meta name="description" content="游导旅游版本更新日志，查看最新功能更新、Bug修复和改进内容。">
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧭</text></svg>">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  
+  <style>
+    :root {
+      --changelog-primary: #ff6b35;
+      --changelog-primary-dark: #e55a2b;
+      --changelog-secondary: #1e3a5f;
+      --changelog-accent: #ffd23f;
+      --changelog-success: #10b981;
+      --changelog-warning: #f59e0b;
+      --changelog-danger: #ef4444;
+      --changelog-info: #3b82f6;
+      --changelog-bg: #f8f9fa;
+      --changelog-card-bg: #ffffff;
+      --changelog-text-dark: #2d3436;
+      --changelog-text-gray: #636e72;
+      --changelog-text-light: #b2bec3;
+      --changelog-border: #e9ecef;
+      --changelog-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --changelog-shadow-hover: 0 8px 30px rgba(0,0,0,0.12);
+      --changelog-radius: 16px;
+      --changelog-radius-sm: 8px;
+      --changelog-transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      color: var(--changelog-text-dark);
+      line-height: 1.6;
+      background: var(--changelog-bg);
+    }
+
+    a {
+      color: var(--changelog-primary);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* 导航栏 */
+    .header {
+      background: var(--changelog-card-bg);
+      box-shadow: var(--changelog-shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--changelog-primary);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--changelog-text-dark);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--changelog-transition);
+    }
+
+    .nav-links a:hover {
+      color: var(--changelog-primary);
+      text-decoration: none;
+    }
+
+    /* 页面标题 */
+    .page-hero {
+      background: linear-gradient(135deg, var(--changelog-secondary) 0%, #2d5a87 100%);
+      color: white;
+      padding: 60px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.05)"/></svg>');
+      background-size: 100px;
+    }
+
+    .page-hero .container {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: var(--changelog-success);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 50px;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .page-title {
+      font-size: 48px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .page-desc {
+      font-size: 18px;
+      opacity: 0.9;
+      max-width: 600px;
+    }
+
+    /* 版本信息 */
+    .version-badges {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+
+    .version-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      font-size: 14px;
+    }
+
+    .version-badge.latest {
+      background: var(--changelog-accent);
+      color: var(--changelog-text-dark);
+    }
+
+    /* 主内容区 */
+    .main-content {
+      padding: 40px 0;
+    }
+
+    /* 版本选择器 */
+    .version-selector {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 32px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .version-btn {
+      padding: 10px 20px;
+      border: 2px solid var(--changelog-border);
+      border-radius: 50px;
+      background: white;
+      color: var(--changelog-text-gray);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--changelog-transition);
+      white-space: nowrap;
+    }
+
+    .version-btn:hover {
+      border-color: var(--changelog-primary);
+      color: var(--changelog-primary);
+    }
+
+    .version-btn.active {
+      background: var(--changelog-primary);
+      border-color: var(--changelog-primary);
+      color: white;
+    }
+
+    /* 时间线 */
+    .timeline {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--changelog-primary), var(--changelog-border));
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateX(-20px);
+      animation: slideIn 0.5s ease forwards;
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .timeline-marker {
+      position: absolute;
+      left: -40px;
+      top: 24px;
+      width: 32px;
+      height: 32px;
+      background: var(--changelog-card-bg);
+      border: 3px solid var(--changelog-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      z-index: 1;
+    }
+
+    .timeline-marker.latest {
+      background: var(--changelog-primary);
+      color: white;
+    }
+
+    .timeline-card {
+      background: var(--changelog-card-bg);
+      border-radius: var(--changelog-radius);
+      padding: 24px;
+      box-shadow: var(--changelog-shadow);
+      transition: var(--changelog-transition);
+    }
+
+    .timeline-card:hover {
+      box-shadow: var(--changelog-shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    .timeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .timeline-version {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--changelog-text-dark);
+    }
+
+    .timeline-date {
+      font-size: 14px;
+      color: var(--changelog-text-light);
+    }
+
+    .timeline-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tag-new {
+      background: #d1fae5;
+      color: var(--changelog-success);
+    }
+
+    .tag-improved {
+      background: #dbeafe;
+      color: var(--changelog-info);
+    }
+
+    .tag-fixed {
+      background: #fef3c7;
+      color: var(--changelog-warning);
+    }
+
+    .tag-security {
+      background: #fee2e2;
+      color: var(--changelog-danger);
+    }
+
+    /* 功能列表 */
+    .feature-section {
+      margin-bottom: 20px;
+    }
+
+    .feature-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--changelog-text-gray);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feature-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .feature-item {
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      color: var(--changelog-text-dark);
+      line-height: 1.6;
+    }
+
+    .feature-item::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: var(--changelog-primary);
+      font-weight: bold;
+    }
+
+    .feature-item.sub {
+      padding-left: 32px;
+      color: var(--changelog-text-gray);
+    }
+
+    .feature-item.sub::before {
+      content: '◦';
+    }
+
+    /* 统计卡片 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .stat-card {
+      background: var(--changelog-card-bg);
+      border-radius: var(--changelog-radius);
+      padding: 24px;
+      text-align: center;
+      box-shadow: var(--changelog-shadow);
+      transition: var(--changelog-transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--changelog-shadow-hover);
+    }
+
+    .stat-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    .stat-number {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--changelog-primary);
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--changelog-text-gray);
+    }
+
+    /* 订阅区域 */
+    .subscribe-section {
+      background: linear-gradient(135deg, var(--changelog-secondary) 0%, #2d5a87 100%);
+      border-radius: var(--changelog-radius);
+      padding: 40px;
+      color: white;
+      text-align: center;
+      margin-top: 60px;
+    }
+
+    .subscribe-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .subscribe-desc {
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+
+    .subscribe-form {
+      display: flex;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .subscribe-input {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 50px;
+      font-size: 14px;
+    }
+
+    .subscribe-btn {
+      padding: 14px 28px;
+      background: var(--changelog-primary);
+      border: none;
+      border-radius: 50px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--changelog-transition);
+    }
+
+    .subscribe-btn:hover {
+      background: var(--changelog-primary-dark);
+    }
+
+    /* 页脚 */
+    .footer {
+      background: var(--changelog-secondary);
+      color: white;
+      padding: 60px 0 30px;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+    }
+
+    .footer-logo {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-brand p {
+      opacity: 0.8;
+      line-height: 1.6;
+    }
+
+    .footer-links h4 {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .footer-links ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .footer-links li {
+      margin-bottom: 12px;
+    }
+
+    .footer-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+    }
+
+    .footer-bottom {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      text-align: center;
+      opacity: 0.7;
+      font-size: 14px;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .page-title {
+        font-size: 32px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .timeline {
+        padding-left: 30px;
+      }
+
+      .timeline::before {
+        left: 10px;
+      }
+
+      .timeline-marker {
+        left: -30px;
+        width: 24px;
+        height: 24px;
+        font-size: 12px;
+      }
+
+      .subscribe-form {
+        flex-direction: column;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .footer-brand {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+
+      .timeline-version {
+        font-size: 20px;
+      }
+    }
+
+    /* 导航移动端适配 */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        flex-direction: column;
+        padding: 20px;
+        gap: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      }
+
+      .nav-links.show {
+        display: flex;
+      }
+
+      .nav-toggle {
+        display: block;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+
+      .nav-toggle span {
+        display: block;
+        width: 24px;
+        height: 2px;
+        background: var(--changelog-text-dark);
+        margin: 5px 0;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .nav-toggle {
+        display: none;
+      }
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 360px;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      animation: toastSlideIn 0.3s ease;
+    }
+
+    @keyframes toastSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(100%);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .toast-icon {
+      font-size: 24px;
+    }
+
+    .toast-content {
+      flex: 1;
+    }
+
+    .toast-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--changelog-text-dark);
+    }
+
+    .toast-message {
+      font-size: 13px;
+      color: var(--changelog-text-gray);
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <header class="header">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">
+        <span>🧭</span>
+        <span>游导旅游</span>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="routes.html">精品路线</a>
+        <a href="knowledge.html">旅行知识</a>
+        <a href="announcements/index.html">公告中心</a>
+        <a href="about.html">关于我们</a>
+      </nav>
+      <button class="nav-toggle" aria-label="菜单">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 页面标题 -->
+  <section class="page-hero">
+    <div class="container">
+      <span class="hero-badge">📝 更新日志</span>
+      <h1 class="page-title">版本更新记录</h1>
+      <p class="page-desc">了解游导旅游的最新功能、改进和Bug修复，让您的旅行体验更美好</p>
+      
+      <div class="version-badges">
+        <span class="version-badge latest">
+          <span>✨</span> 当前版本 v2.5.0
+        </span>
+        <span class="version-badge">
+          <span>📅</span> 最近更新: 2024年1月12日
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 主内容区 -->
+  <main class="main-content">
+    <div class="container">
+      <!-- 统计卡片 -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">🚀</div>
+          <div class="stat-number" id="featureCount">-</div>
+          <div class="stat-label">新功能</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">⚡</div>
+          <div class="stat-number" id="improvementCount">-</div>
+          <div class="stat-label">功能优化</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">🐛</div>
+          <div class="stat-number" id="bugfixCount">-</div>
+          <div class="stat-label">Bug修复</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">📆</div>
+          <div class="stat-number" id="versionCount">-</div>
+          <div class="stat-label">历史版本</div>
+        </div>
+      </div>
+
+      <!-- 版本选择器 -->
+      <div class="version-selector" id="versionSelector">
+        <button class="version-btn active" data-version="all">全部版本</button>
+      </div>
+
+      <!-- 更新时间线 -->
+      <div class="timeline" id="timeline">
+        <div class="loading" style="padding: 60px; text-align: center;">
+          <div style="font-size: 48px; margin-bottom: 16px;">⏳</div>
+          <p style="color: var(--changelog-text-gray);">加载中...</p>
+        </div>
+      </div>
+
+      <!-- 订阅更新 -->
+      <section class="subscribe-section">
+        <h3 class="subscribe-title">📬 订阅更新通知</h3>
+        <p class="subscribe-desc">订阅我们的更新通知，第一时间获取新功能和优化内容</p>
+        <form class="subscribe-form" onsubmit="handleSubscribe(event)">
+          <input type="email" class="subscribe-input" placeholder="请输入您的邮箱地址" required>
+          <button type="submit" class="subscribe-btn">立即订阅</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span>🧭</span>
+            <span>游导旅游</span>
+          </div>
+          <p>专业的导游与游客一站式旅行平台<br>让旅行更简单，让体验更美好</p>
+        </div>
+        
+        <div class="footer-links">
+          <h4>快速链接</h4>
+          <ul>
+            <li><a href="guides.html">找导游</a></li>
+            <li><a href="routes.html">精品路线</a></li>
+            <li><a href="visa.html">签证服务</a></li>
+            <li><a href="knowledge.html">旅行知识</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-links">
+          <h4>帮助中心</h4>
+          <ul>
+            <li><a href="faq.html">常见问题</a></li>
+            <li><a href="contact.html">联系我们</a></li>
+            <li><a href="feedback.html">意见反馈</a></li>
+            <li><a href="announcements/index.html">公告中心</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-links">
+          <h4>关注我们</h4>
+          <ul>
+            <li><a href="wechat-contact.html">微信公众号</a></li>
+            <li><a href="#">官方微博</a></li>
+            <li><a href="#">小红书</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Toast容器 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script>
+    // 版本数据
+    const versions = [
+      {
+        version: 'v2.5.0',
+        date: '2024-01-12',
+        isLatest: true,
+        features: [
+          {
+            title: '🆕 新增功能',
+            type: 'new',
+            items: [
+              'AI智能旅行规划 - 支持语音输入目的地偏好，自动生成个性化行程方案',
+              '行程分享功能 - 一键生成分享卡片，支持多平台分享',
+              '离线地图 - 支持下载目的地图离线数据，无需网络即可查看',
+              '导游评价体系升级 - 新增标签化评价系统'
+            ]
+          },
+          {
+            title: '⚡ 功能优化',
+            type: 'improved',
+            items: [
+              '路线搜索性能提升 40%',
+              '页面加载速度优化',
+              '移动端适配优化',
+              '无障碍访问改进'
+            ]
+          },
+          {
+            title: '🐛 Bug修复',
+            type: 'fixed',
+            items: [
+              '修复日历选择器显示异常',
+              '修复部分图片加载失败问题',
+              '修复支付回调延迟问题',
+              '修复消息推送不稳定问题'
+            ]
+          }
+        ]
+      },
+      {
+        version: 'v2.4.0',
+        date: '2023-12-20',
+        isLatest: false,
+        features: [
+          {
+            title: '🆕 新增功能',
+            type: 'new',
+            items: [
+              '全新UI设计 - 采用最新设计语言，更清晰的视觉层次',
+              '实时天气插件 - 支持查看目的地未来7天天气',
+              'AI翻译助手 - 支持50+语言即时翻译',
+              '行程时间线 - 全新行程展示形式'
+            ]
+          },
+          {
+            title: '⚡ 功能优化',
+            type: 'improved',
+            items: [
+              '搜索算法升级，结果更精准',
+              '图片加载速度提升50%',
+              '弱网环境适配优化',
+              '手势操作优化'
+            ]
+          },
+          {
+            title: '🐛 Bug修复',
+            type: 'fixed',
+            items: [
+              '修复日历选择日期显示错误',
+              '修复搜索历史清除失败',
+              '修复部分安卓机型兼容问题'
+            ]
+          }
+        ]
+      },
+      {
+        version: 'v2.3.0',
+        date: '2023-12-05',
+        isLatest: false,
+        features: [
+          {
+            title: '🆕 新增功能',
+            type: 'new',
+            items: [
+              '团体游预订功能 - 支持30人以内团队一键预约',
+              '导游直播功能 - 支持导游在线直播讲解',
+              '旅行故事分享 - 支持发布图文和视频旅行故事'
+            ]
+          },
+          {
+            title: '⚡ 功能优化',
+            type: 'improved',
+            items: [
+              '注册流程简化',
+              '订单页面改版',
+              '支付流程优化'
+            ]
+          },
+          {
+            title: '🐛 Bug修复',
+            type: 'fixed',
+            items: [
+              '修复优惠券无法使用问题',
+              '修复积分扣除延迟问题',
+              '修复登录页面白屏问题'
+            ]
+          }
+        ]
+      },
+      {
+        version: 'v2.2.0',
+        date: '2023-11-18',
+        isLatest: false,
+        features: [
+          {
+            title: '🆕 新增功能',
+            type: 'new',
+            items: [
+              '会员等级体系 - 银卡/金卡/钻石卡多等级权益',
+              '积分商城上线 - 积分可兑换实物和虚拟商品',
+              '一键报警功能 - 紧急情况下快速联系当地警方'
+            ]
+          },
+          {
+            title: '⚡ 功能优化',
+            type: 'improved',
+            items: [
+              '首页推荐算法优化',
+              '导游筛选功能增强',
+              '消息通知体验改进'
+            ]
+          },
+          {
+            title: '🐛 Bug修复',
+            type: 'fixed',
+            items: [
+              '修复夜间模式显示异常',
+              '修复收藏功能失效问题',
+              '修复分享链接错误'
+            ]
+          }
+        ]
+      },
+      {
+        version: 'v2.1.0',
+        date: '2023-10-28',
+        isLatest: false,
+        features: [
+          {
+            title: '🆕 新增功能',
+            type: 'new',
+            items: [
+              '护照签证助手 - 智能识别护照信息，在线申请签证',
+              '行李清单生成 - 根据目的地和天数自动生成行李清单',
+              '旅行保险选购 - 一键选购合适的旅行保险'
+            ]
+          },
+          {
+            title: '⚡ 功能优化',
+            type: 'improved',
+            items: [
+              '地图加载速度提升',
+              '路线详情页改版',
+              '客服响应时间缩短'
+            ]
+          },
+          {
+            title: '🐛 Bug修复',
+            type: 'fixed',
+            items: [
+              '修复部分路线无法预订',
+              '修复支付页面卡顿',
+              '修复消息推送延迟'
+            ]
+          }
+        ]
+      },
+      {
+        version: 'v2.0.0',
+        date: '2023-10-01',
+        isLatest: false,
+        features: [
+          {
+            title: '🆕 新增功能',
+            type: 'new',
+            items: [
+              '全新品牌形象 - 游导旅游2.0重磅发布',
+              '智能行程规划 - AI驱动的个性化行程推荐',
+              '多语言支持 - 支持中英日韩等8种语言',
+              '深度定制服务 - 满足个性化旅行需求'
+            ]
+          },
+          {
+            title: '🔒 安全升级',
+            type: 'security',
+            items: [
+              '数据加密传输',
+              '隐私保护增强',
+              '账户安全加固'
+            ]
+          },
+          {
+            title: '⚡ 性能优化',
+            type: 'improved',
+            items: [
+              '整体性能提升50%',
+              '首屏加载时间缩短60%',
+              'App安装包体积减小30%'
+            ]
+          }
+        ]
+      }
+    ];
+
+    let currentFilter = 'all';
+
+    // 初始化
+    function init() {
+      renderVersionSelector();
+      renderTimeline();
+      updateStats();
+      
+      // 移动端菜单
+      document.querySelector('.nav-toggle').addEventListener('click', () => {
+        document.querySelector('.nav-links').classList.toggle('show');
+      });
+    }
+
+    // 渲染版本选择器
+    function renderVersionSelector() {
+      const container = document.getElementById('versionSelector');
+      const uniqueVersions = [...new Set(versions.map(v => v.version.split('.')[0]))];
+      
+      let html = '<button class="version-btn active" data-version="all">全部版本</button>';
+      
+      // 只添加大版本号
+      uniqueVersions.forEach(major => {
+        html += `<button class="version-btn" data-version="${major}">${major}.x</button>`;
+      });
+      
+      container.innerHTML = html;
+
+      // 绑定点击事件
+      container.querySelectorAll('.version-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          container.querySelectorAll('.version-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.version;
+          renderTimeline();
+        });
+      });
+    }
+
+    // 渲染时间线
+    function renderTimeline() {
+      const container = document.getElementById('timeline');
+      
+      const filtered = currentFilter === 'all' 
+        ? versions 
+        : versions.filter(v => v.version.startsWith(currentFilter));
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="text-align: center; padding: 60px;">
+            <div style="font-size: 48px; margin-bottom: 16px;">📭</div>
+            <p style="color: var(--changelog-text-gray);">暂无更新记录</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map((ver, index) => `
+        <div class="timeline-item" style="animation-delay: ${index * 0.1}s">
+          <div class="timeline-marker ${ver.isLatest ? 'latest' : ''}">
+            ${ver.isLatest ? '✨' : '📋'}
+          </div>
+          <div class="timeline-card">
+            <div class="timeline-header">
+              <div>
+                <h3 class="timeline-version">${ver.version}</h3>
+                <span class="timeline-date">${formatDate(ver.date)}</span>
+              </div>
+              <div class="timeline-tags">
+                ${ver.isLatest ? '<span class="tag tag-new">最新版本</span>' : ''}
+                ${ver.features.some(f => f.type === 'security') ? '<span class="tag tag-security">安全更新</span>' : ''}
+              </div>
+            </div>
+            
+            ${ver.features.map(feature => `
+              <div class="feature-section">
+                <h4 class="feature-title">
+                  ${feature.title}
+                </h4>
+                <ul class="feature-list">
+                  ${feature.items.map(item => `
+                    <li class="feature-item">${item}</li>
+                  `).join('')}
+                </ul>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 更新统计数据
+    function updateStats() {
+      let featureCount = 0;
+      let improvementCount = 0;
+      let bugfixCount = 0;
+
+      versions.forEach(ver => {
+        ver.features.forEach(f => {
+          if (f.type === 'new') featureCount += f.items.length;
+          else if (f.type === 'improved' || f.type === 'security') improvementCount += f.items.length;
+          else if (f.type === 'fixed') bugfixCount += f.items.length;
+        });
+      });
+
+      document.getElementById('featureCount').textContent = featureCount;
+      document.getElementById('improvementCount').textContent = improvementCount;
+      document.getElementById('bugfixCount').textContent = bugfixCount;
+      document.getElementById('versionCount').textContent = versions.length;
+    }
+
+    // 订阅处理
+    function handleSubscribe(e) {
+      e.preventDefault();
+      const email = e.target.querySelector('input').value;
+      
+      // 模拟订阅
+      showToast('订阅成功', `已成功订阅更新通知：${email}`, '📧');
+      e.target.reset();
+    }
+
+    // 显示Toast
+    function showToast(title, message, icon = '✓') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = `
+        <span class="toast-icon">${icon}</span>
+        <div class="toast-content">
+          <div class="toast-title">${title}</div>
+          <div class="toast-message">${message}</div>
+        </div>
+      `;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    // 格式化日期
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}年${month}月${day}日`;
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>目的地音乐 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+    .play-btn { transition: all 0.2s ease; }
+    .play-btn:hover { transform: scale(1.1); }
+    .country-tab.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .audio-card-img { transition: transform 0.3s ease; }
+    .audio-card:hover .audio-card-img { transform: scale(1.05); }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #667eea; border-radius: 4px; }
+    .progress-bar { background: linear-gradient(90deg, #667eea, #764ba2); }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- 顶部导航 -->
+  <header class="gradient-bg text-white sticky top-0 z-50 shadow-lg">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-4">
+          <a href="../index.html" class="text-xl font-bold flex items-center">
+            <i class="fas fa-compass mr-2"></i>游导
+          </a>
+          <span class="hidden md:inline text-sm opacity-90">目的地音乐</span>
+        </div>
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="index.html" class="text-white/80 hover:text-white transition">首页</a>
+          <a href="destinations.html" class="text-white font-medium">目的地音乐</a>
+          <a href="themes.html" class="text-white/80 hover:text-white transition">主题音频</a>
+          <a href="my-audio.html" class="text-white/80 hover:text-white transition">我的音频</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <input type="text" id="searchInput" placeholder="搜索目的地音乐..." class="bg-white/20 text-white placeholder-white/70 rounded-full px-4 py-2 pr-10 text-sm focus:outline-none focus:bg-white/30 w-48">
+            <i class="fas fa-search absolute right-3 top-1/2 -translate-y-1/2 text-white/70"></i>
+          </div>
+          <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center cursor-pointer">
+            <i class="fas fa-user text-sm"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 页面标题 -->
+  <div class="gradient-bg text-white py-8">
+    <div class="container mx-auto px-4">
+      <h1 class="text-3xl font-bold mb-2">🌍 目的地音乐</h1>
+      <p class="text-white/80">探索世界各地的特色音乐，感受不同文化的魅力</p>
+    </div>
+  </div>
+
+  <!-- 国家/地区切换 -->
+  <div class="bg-white shadow-sm sticky top-16 z-40">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center space-x-2 py-4 overflow-x-auto" id="countryTabs">
+        <button class="country-tab active px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap transition" data-country="all">
+          <i class="fas fa-globe mr-1"></i>全部
+        </button>
+        <button class="country-tab px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200 transition" data-country="japan">
+          🏯 日本
+        </button>
+        <button class="country-tab px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200 transition" data-country="korea">
+          🎌 韩国
+        </button>
+        <button class="country-tab px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200 transition" data-country="thailand">
+          🛕 泰国
+        </button>
+        <button class="country-tab px-6 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200 transition" data-country="singapore">
+          🏙️ 新加坡
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <main class="container mx-auto px-4 py-6">
+    <!-- 目的地特色介绍 -->
+    <section class="mb-8" id="destinationIntro">
+      <!-- 日本 -->
+      <div class="destination-section" data-country="japan">
+        <div class="bg-gradient-to-r from-red-100 to-red-50 rounded-2xl p-6 mb-6">
+          <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/3 mb-4 md:mb-0">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400&h=300&fit=crop" alt="日本" class="w-full h-48 object-cover rounded-xl">
+                <div class="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center">
+                  <span class="text-6xl">🏯</span>
+                </div>
+              </div>
+            </div>
+            <div class="md:w-2/3 md:pl-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-2">日本音乐 🇯🇵</h2>
+              <p class="text-gray-600 mb-4">日本音乐融合了传统与现代元素，从禅意十足的尺八、古筝演奏，到现代J-POP、动漫音乐，每一首曲子都诉说着这片土地独特的故事与情感。</p>
+              <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <span><i class="fas fa-music mr-1"></i>56首音乐</span>
+                <span><i class="fas fa-headphones mr-1"></i>12.5万播放</span>
+                <span><i class="fas fa-clock mr-1"></i>更新于2天前</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 韩国 -->
+      <div class="destination-section" data-country="korea" style="display: none;">
+        <div class="bg-gradient-to-r from-blue-100 to-blue-50 rounded-2xl p-6 mb-6">
+          <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/3 mb-4 md:mb-0">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=400&h=300&fit=crop" alt="韩国" class="w-full h-48 object-cover rounded-xl">
+                <div class="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center">
+                  <span class="text-6xl">🎌</span>
+                </div>
+              </div>
+            </div>
+            <div class="md:w-2/3 md:pl-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-2">韩国音乐 🇰🇷</h2>
+              <p class="text-gray-600 mb-4">韩国音乐以K-POP为代表，风靡全球。同时韩国也有丰富的传统音乐资源，从宫廷雅乐到民俗农乐，展现了韩半岛独特的文化魅力。</p>
+              <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <span><i class="fas fa-music mr-1"></i>42首音乐</span>
+                <span><i class="fas fa-headphones mr-1"></i>8.7万播放</span>
+                <span><i class="fas fa-clock mr-1"></i>更新于3天前</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 泰国 -->
+      <div class="destination-section" data-country="thailand" style="display: none;">
+        <div class="bg-gradient-to-r from-amber-100 to-amber-50 rounded-2xl p-6 mb-6">
+          <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/3 mb-4 md:mb-0">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&h=300&fit=crop" alt="泰国" class="w-full h-48 object-cover rounded-xl">
+                <div class="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center">
+                  <span class="text-6xl">🛕</span>
+                </div>
+              </div>
+            </div>
+            <div class="md:w-2/3 md:pl-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-2">泰国音乐 🇹🇭</h2>
+              <p class="text-gray-600 mb-4">泰国音乐融合了佛教文化、宫廷艺术与民间传统。古典音乐以皮帕特和玛拉琳见长，现代音乐则充满热带风情，让人仿佛置身于椰林海滩。</p>
+              <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <span><i class="fas fa-music mr-1"></i>38首音乐</span>
+                <span><i class="fas fa-headphones mr-1"></i>6.2万播放</span>
+                <span><i class="fas fa-clock mr-1"></i>更新于5天前</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 新加坡 -->
+      <div class="destination-section" data-country="singapore" style="display: none;">
+        <div class="bg-gradient-to-r from-emerald-100 to-emerald-50 rounded-2xl p-6 mb-6">
+          <div class="flex flex-col md:flex-row items-center">
+            <div class="md:w-1/3 mb-4 md:mb-0">
+              <div class="relative">
+                <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&h=300&fit=crop" alt="新加坡" class="w-full h-48 object-cover rounded-xl">
+                <div class="absolute inset-0 bg-black/20 rounded-xl flex items-center justify-center">
+                  <span class="text-6xl">🏙️</span>
+                </div>
+              </div>
+            </div>
+            <div class="md:w-2/3 md:pl-6">
+              <h2 class="text-2xl font-bold text-gray-800 mb-2">新加坡音乐 🇸🇬</h2>
+              <p class="text-gray-600 mb-4">新加坡是一个多元文化交汇的城市国家，音乐融合了华人、马来人、印度人等多种元素。现代都市音乐充满活力与传统韵味，展现了这座花园城市的独特魅力。</p>
+              <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <span><i class="fas fa-music mr-1"></i>28首音乐</span>
+                <span><i class="fas fa-headphones mr-1"></i>4.8万播放</span>
+                <span><i class="fas fa-clock mr-1"></i>更新于1周前</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 日本音乐列表 -->
+    <section class="mb-8 audio-section" data-country="japan">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+          <span class="text-2xl mr-2">🏯</span>日本音乐
+        </h2>
+        <button class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+          播放全部 <i class="fas fa-play ml-1"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-001'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">4:05</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">京都的樱花季</h3>
+            <p class="text-xs text-gray-500 truncate">日本轻音乐团</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>12,580</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-002'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">5:12</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">东京夜未眠</h3>
+            <p class="text-xs text-gray-500 truncate">城市漫游者</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>9,876</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-015'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">5:45</span>
+            <span class="absolute top-2 left-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded">热门</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">富士山的呼唤</h3>
+            <p class="text-xs text-gray-500 truncate">日本传统乐团</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>11,234</span>
+              <button class="text-red-500 transition"><i class="fas fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-jp-004'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1524413840807-0c3cb6fa808d?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">3:56</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">大阪城下的摇滚</h3>
+            <p class="text-xs text-gray-500 truncate">关西摇滚乐团</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>7,654</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-jp-005'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">4:28</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">北海道的雪夜</h3>
+            <p class="text-xs text-gray-500 truncate">北国旋律</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>8,901</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 韩国音乐列表 -->
+    <section class="mb-8 audio-section" data-country="korea">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+          <span class="text-2xl mr-2">🎌</span>韩国音乐
+        </h2>
+        <button class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+          播放全部 <i class="fas fa-play ml-1"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-003'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">3:18</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">首尔的早晨</h3>
+            <p class="text-xs text-gray-500 truncate">韩流音乐社</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>7,654</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-004'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">4:27</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">济州岛的海风</h3>
+            <p class="text-xs text-gray-500 truncate">海岛工作室</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>6,543</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-kr-003'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1517736996303-4b8c368cc064?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">3:45</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">江南Style的记忆</h3>
+            <p class="text-xs text-gray-500 truncate">首尔流行</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>5,678</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-kr-004'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">4:12</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">釜山的海港之夜</h3>
+            <p class="text-xs text-gray-500 truncate">港都旋律</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>4,321</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-kr-005'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1510832198440-a52376e28070?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">3:33</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">韩服之美</h3>
+            <p class="text-xs text-gray-500 truncate">传统与现代</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>3,456</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 泰国音乐列表 -->
+    <section class="mb-8 audio-section" data-country="thailand">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+          <span class="text-2xl mr-2">🛕</span>泰国音乐
+        </h2>
+        <button class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+          播放全部 <i class="fas fa-play ml-1"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-005'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1528181304800-259b08848526?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">4:49</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">曼谷的热带雨林</h3>
+            <p class="text-xs text-gray-500 truncate">泰国音乐人</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>5,432</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-006'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1512553483225-4b0c4b4a3e68?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">3:54</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">清迈的慢时光</h3>
+            <p class="text-xs text-gray-500 truncate">北部旋律</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>4,321</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-th-003'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">4:15</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">普吉岛的夕阳</h3>
+            <p class="text-xs text-gray-500 truncate">海岛风情</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>3,876</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-th-004'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">3:28</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">大皇宫的传说</h3>
+            <p class="text-xs text-gray-500 truncate">皇家乐团</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>2,654</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-th-005'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">4:36</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">泰北山谷的回响</h3>
+            <p class="text-xs text-gray-500 truncate">山地民族</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>1,987</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 新加坡音乐列表 -->
+    <section class="mb-8 audio-section" data-country="singapore">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+          <span class="text-2xl mr-2">🏙️</span>新加坡音乐
+        </h2>
+        <button class="text-purple-600 hover:text-purple-700 text-sm font-medium">
+          播放全部 <i class="fas fa-play ml-1"></i>
+        </button>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-007'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">3:43</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">新加坡天际线</h3>
+            <p class="text-xs text-gray-500 truncate">都市节拍</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>3,456</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-sg-002'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1524286678317-3a5ea681b380?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">4:05</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">鱼尾狮的传说</h3>
+            <p class="text-xs text-gray-500 truncate">狮城故事</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>2,876</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-sg-003'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1546975490-e8b92a360b24?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">3:22</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">克拉码头的夜晚</h3>
+            <p class="text-xs text-gray-500 truncate">河畔音乐</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>2,345</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-sg-004'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1516937941344-00b4e0337589?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">4:18</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">滨海湾的霓虹</h3>
+            <p class="text-xs text-gray-500 truncate">现代都市</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>1,987</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="audio-card bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?id=track-sg-005'">
+          <div class="relative">
+            <img src="https://images.unsplash.com/photo-1505262761756-5fe21a4e4f8a?w=300&h=300&fit=crop" alt="封面" class="w-full h-40 object-cover audio-card-img">
+            <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+              <button class="play-btn w-12 h-12 bg-purple-600 rounded-full flex items-center justify-center text-white">
+                <i class="fas fa-play ml-1"></i>
+              </button>
+            </div>
+            <span class="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded">3:55</span>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800 text-sm truncate">花园城市的清晨</h3>
+            <p class="text-xs text-gray-500 truncate">自然与都市</p>
+            <div class="flex items-center justify-between mt-2 text-xs text-gray-400">
+              <span><i class="fas fa-play mr-1"></i>1,654</span>
+              <button class="hover:text-red-500 transition"><i class="far fa-heart"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 推荐歌单 -->
+    <section class="mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-800 flex items-center">
+          <i class="fas fa-compact-disc text-purple-600 mr-2"></i>目的地精选歌单
+        </h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?playlist=playlist-001'">
+          <div class="relative h-36">
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=300&h=300&fit=crop" alt="歌单封面" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute bottom-3 left-3">
+              <span class="text-white/80 text-xs">🏯 日本</span>
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800">日本治愈之旅</h3>
+            <p class="text-xs text-gray-500 mt-1">5首 · 游导音乐</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?playlist=playlist-003'">
+          <div class="relative h-36">
+            <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=300&h=300&fit=crop" alt="歌单封面" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute bottom-3 left-3">
+              <span class="text-white/80 text-xs">🛕 泰国</span>
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800">东南亚风情</h3>
+            <p class="text-xs text-gray-500 mt-1">6首 · 亚洲音乐之旅</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?playlist=playlist-kr-001'">
+          <div class="relative h-36">
+            <img src="https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=300&h=300&fit=crop" alt="歌单封面" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute bottom-3 left-3">
+              <span class="text-white/80 text-xs">🎌 韩国</span>
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800">韩流夏日特辑</h3>
+            <p class="text-xs text-gray-500 mt-1">8首 · K-Travel</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?playlist=playlist-sg-001'">
+          <div class="relative h-36">
+            <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=300&h=300&fit=crop" alt="歌单封面" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute bottom-3 left-3">
+              <span class="text-white/80 text-xs">🏙️ 新加坡</span>
+            </div>
+          </div>
+          <div class="p-3">
+            <h3 class="font-medium text-gray-800">狮城漫步</h3>
+            <p class="text-xs text-gray-500 mt-1">7首 · 都市漫游</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 底部快捷播放器 -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+    <div class="h-1 bg-gray-200">
+      <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-600" style="width: 35%"></div>
+    </div>
+    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded-lg object-cover cursor-pointer" onclick="location.href='player.html'">
+        <div class="ml-3">
+          <h4 class="font-medium text-gray-800 text-sm cursor-pointer hover:text-purple-600" onclick="location.href='player.html'">京都的樱花季</h4>
+          <p class="text-xs text-gray-500">日本轻音乐团</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button class="p-2 text-gray-600 hover:text-purple-600 transition">
+          <i class="fas fa-backward"></i>
+        </button>
+        <button class="p-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition shadow-md" id="playPauseBtn">
+          <i class="fas fa-pause"></i>
+        </button>
+        <button class="p-2 text-gray-600 hover:text-purple-600 transition">
+          <i class="fas fa-forward"></i>
+        </button>
+      </div>
+      <div class="hidden md:flex items-center space-x-3">
+        <span class="text-xs text-gray-500">1:26 / 4:05</span>
+        <button class="p-2 text-red-500 transition">
+          <i class="fas fa-heart"></i>
+        </button>
+        <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+          <i class="fas fa-volume-up"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-8 pb-20">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="font-bold mb-4">关于游导</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="../about.html" class="hover:text-white transition">关于我们</a></li>
+            <li><a href="#" class="hover:text-white transition">加入我们</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold mb-4">快速链接</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="../destinations.html" class="hover:text-white transition">目的地</a></li>
+            <li><a href="index.html" class="hover:text-white transition">音频资源</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-2">
+          <h3 class="font-bold mb-4">关注我们</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+              <i class="fab fa-weibo"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+              <i class="fab fa-weixin"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+        <p>&copy; 2024 游导旅游 youdao-travel.com</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 国家切换
+    const tabs = document.querySelectorAll('.country-tab');
+    const sections = document.querySelectorAll('.destination-section');
+    const audioSections = document.querySelectorAll('.audio-section');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const country = this.dataset.country;
+        
+        // 更新标签状态
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          t.classList.add('bg-gray-100', 'text-gray-600');
+        });
+        this.classList.add('active');
+        this.classList.remove('bg-gray-100', 'text-gray-600');
+        
+        // 更新介绍区域
+        sections.forEach(section => {
+          if (country === 'all') {
+            section.style.display = 'block';
+          } else {
+            section.style.display = section.dataset.country === country ? 'block' : 'none';
+          }
+        });
+        
+        // 更新音频列表
+        audioSections.forEach(section => {
+          if (country === 'all') {
+            section.style.display = 'block';
+          } else {
+            section.style.display = section.dataset.country === country ? 'block' : 'none';
+          }
+        });
+      });
+    });
+
+    // 检查URL参数
+    const urlParams = new URLSearchParams(window.location.search);
+    const countryParam = urlParams.get('country');
+    if (countryParam) {
+      const targetTab = document.querySelector(`.country-tab[data-country="${countryParam}"]`);
+      if (targetTab) {
+        targetTab.click();
+      }
+    }
+
+    // 播放/暂停
+    document.getElementById('playPauseBtn').addEventListener('click', function() {
+      const icon = this.querySelector('i');
+      icon.classList.toggle('fa-pause');
+      icon.classList.toggle('fa-play');
+    });
+
+    // 收藏功能
+    document.querySelectorAll('.fa-heart, .far.fa-heart').forEach(heart => {
+      heart.parentElement.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const icon = this.querySelector('i');
+        icon.classList.toggle('far');
+        icon.classList.toggle('fas');
+        icon.classList.toggle('text-red-500');
+      });
+    });
+
+    // 搜索功能
+    document.getElementById('searchInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        const query = this.value.trim();
+        if (query) {
+          location.href = `search.html?q=${encodeURIComponent(query)}`;
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>网站地图生成器 - 游导旅游</title>
+  <meta name="description" content="游导旅游网站地图生成工具，包含XML网站地图创建、图片站点地图、视频站点地图的配置说明与提交指南。">
+  <meta name="keywords" content="网站地图,sitemap.xml,站点地图,SEO工具,图片站点地图">
+  <link rel="canonical" href="https://youdao-travel.com/seo/sitemap-generator.html">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.875em; }
+    pre { background: #1e293b !important; border-radius: 12px; padding: 20px; overflow-x: auto; }
+    pre code { background: transparent; color: #e2e8f0; padding: 0; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="seo/sitemap-generator.html" class="font-semibold border-b-2 border-white pb-1">网站地图</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="index.html" class="block py-2">首页</a>
+        <a href="destinations.html" class="block py-2">目的地</a>
+        <a href="seo/sitemap-generator.html" class="block py-2 font-semibold">网站地图</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <div class="inline-block px-4 py-1.5 bg-primary/10 text-primary rounded-full text-sm mb-4">🗺️ SEO优化工具</div>
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">网站地图生成器</h1>
+      <p class="text-gray-600 max-w-2xl mx-auto">了解XML网站地图的创建方法、格式规范、提交流程及更新策略，帮助搜索引擎更好地抓取您的网站</p>
+    </div>
+
+    <!-- Quick Navigation -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">📑 快速导航</h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <a href="#xml-sitemap" class="text-center p-3 rounded-xl bg-slate-50 hover:bg-primary/10 transition">
+          <div class="text-2xl mb-1">📄</div>
+          <div class="text-sm text-gray-700">XML网站地图</div>
+        </a>
+        <a href="#format-specs" class="text-center p-3 rounded-xl bg-slate-50 hover:bg-primary/10 transition">
+          <div class="text-2xl mb-1">📝</div>
+          <div class="text-sm text-gray-700">格式规范</div>
+        </a>
+        <a href="#image-sitemap" class="text-center p-3 rounded-xl bg-slate-50 hover:bg-primary/10 transition">
+          <div class="text-2xl mb-1">🖼️</div>
+          <div class="text-sm text-gray-700">图片站点地图</div>
+        </a>
+        <a href="#submit" class="text-center p-3 rounded-xl bg-slate-50 hover:bg-primary/10 transition">
+          <div class="text-2xl mb-1">🚀</div>
+          <div class="text-sm text-gray-700">提交到搜索引擎</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Introduction -->
+    <div class="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-4">🗺️ 什么是网站地图？</h2>
+      <p class="text-gray-700 mb-4">网站地图是一个XML文件，列出了网站上所有重要页面的URL，帮助搜索引擎蜘蛛更高效地抓取和索引您的网站内容。</p>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="bg-white/60 p-4 rounded-xl text-center">
+          <div class="text-3xl mb-2">🔍</div>
+          <h3 class="font-semibold text-gray-800">提升抓取效率</h3>
+          <p class="text-sm text-gray-600 mt-1">帮助搜索引擎发现新页面和更新内容</p>
+        </div>
+        <div class="bg-white/60 p-4 rounded-xl text-center">
+          <div class="text-3xl mb-2">📊</div>
+          <h3 class="font-semibold text-gray-800">结构化呈现</h3>
+          <p class="text-sm text-gray-600 mt-1">提供页面层级关系和重要性信息</p>
+        </div>
+        <div class="bg-white/60 p-4 rounded-xl text-center">
+          <div class="text-3xl mb-2">⚡</div>
+          <h3 class="font-semibold text-gray-800">加速索引</h3>
+          <p class="text-sm text-gray-600 mt-1">缩短页面被搜索收录的时间</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- XML Sitemap Section -->
+    <section id="xml-sitemap" class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+        <span class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">📄</span>
+        XML网站地图创建
+      </h2>
+
+      <!-- Basic Sitemap -->
+      <div class="bg-slate-50 rounded-xl p-6 mb-6">
+        <h3 class="font-bold text-gray-800 mb-4">📋 标准网站地图模板</h3>
+        <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://youdao-travel.com/&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+    &lt;changefreq&gt;daily&lt;/changefreq&gt;
+    &lt;priority&gt;1.0&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://youdao-travel.com/destinations.html&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+    &lt;priority&gt;0.9&lt;/priority&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://youdao-travel.com/guides.html&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+    &lt;changefreq&gt;daily&lt;/changefreq&gt;
+    &lt;priority&gt;0.9&lt;/priority&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;</code></pre>
+      </div>
+
+      <!-- Format Explanation -->
+      <div id="format-specs" class="bg-yellow-50 border-l-4 border-yellow-400 rounded-r-xl p-4 mb-6">
+        <h4 class="font-bold text-yellow-800 mb-2">📝 标签说明</h4>
+        <ul class="text-yellow-700 text-sm space-y-2">
+          <li><code>&lt;loc&gt;</code> - 页面URL地址（必需，绝对路径，必须以http/https开头）</li>
+          <li><code>&lt;lastmod&gt;</code> - 最后修改时间（可选，建议使用ISO 8601格式）</li>
+          <li><code>&lt;changefreq&gt;</code> - 更新频率（可选，用于提示搜索引擎）</li>
+          <li><code>&lt;priority&gt;</code> - 优先级（可选，0.0-1.0，相对值）</li>
+        </ul>
+      </div>
+
+      <!-- Changefreq Values -->
+      <div class="bg-slate-50 rounded-xl p-6 mb-6">
+        <h3 class="font-bold text-gray-800 mb-4">⏱️ changefreq 更新频率选项</h3>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <div class="text-center p-3 bg-white rounded-lg">
+            <div class="font-bold text-primary">always</div>
+            <div class="text-xs text-gray-500 mt-1">每次访问</div>
+          </div>
+          <div class="text-center p-3 bg-white rounded-lg">
+            <div class="font-bold text-green-600">hourly</div>
+            <div class="text-xs text-gray-500 mt-1">每小时</div>
+          </div>
+          <div class="text-center p-3 bg-white rounded-lg">
+            <div class="font-bold text-blue-600">daily</div>
+            <div class="text-xs text-gray-500 mt-1">每天</div>
+          </div>
+          <div class="text-center p-3 bg-white rounded-lg">
+            <div class="font-bold text-purple-600">weekly</div>
+            <div class="text-xs text-gray-500 mt-1">每周</div>
+          </div>
+          <div class="text-center p-3 bg-white rounded-lg">
+            <div class="font-bold text-gray-600">monthly</div>
+            <div class="text-xs text-gray-500 mt-1">每月</div>
+          </div>
+          <div class="text-center p-3 bg-white rounded-lg">
+            <div class="font-bold text-gray-600">yearly</div>
+            <div class="text-xs text-gray-500 mt-1">每年</div>
+          </div>
+          <div class="text-center p-3 bg-white rounded-lg">
+            <div class="font-bold text-gray-600">never</div>
+            <div class="text-xs text-gray-500 mt-1">归档内容</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Priority Guide -->
+      <div class="bg-slate-50 rounded-xl p-6 mb-6">
+        <h3 class="font-bold text-gray-800 mb-4">⭐ priority 优先级参考</h3>
+        <div class="space-y-3">
+          <div class="flex items-center gap-4">
+            <div class="w-20 text-right font-bold text-primary">1.0</div>
+            <div class="flex-1 bg-blue-100 rounded-full h-4 relative">
+              <div class="bg-blue-500 h-full rounded-full" style="width: 100%"></div>
+            </div>
+            <div class="w-32 text-sm text-gray-600">首页</div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-20 text-right font-bold text-green-600">0.9</div>
+            <div class="flex-1 bg-green-100 rounded-full h-4 relative">
+              <div class="bg-green-500 h-full rounded-full" style="width: 90%"></div>
+            </div>
+            <div class="w-32 text-sm text-gray-600">主要分类页</div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-20 text-right font-bold text-blue-600">0.8</div>
+            <div class="flex-1 bg-blue-100 rounded-full h-4 relative">
+              <div class="bg-blue-500 h-full rounded-full" style="width: 80%"></div>
+            </div>
+            <div class="w-32 text-sm text-gray-600">详情页面</div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-20 text-right font-bold text-purple-600">0.7</div>
+            <div class="flex-1 bg-purple-100 rounded-full h-4 relative">
+              <div class="bg-purple-500 h-full rounded-full" style="width: 70%"></div>
+            </div>
+            <div class="w-32 text-sm text-gray-600">文章/博客</div>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="w-20 text-right font-bold text-gray-500">0.5</div>
+            <div class="flex-1 bg-gray-100 rounded-full h-4 relative">
+              <div class="bg-gray-400 h-full rounded-full" style="width: 50%"></div>
+            </div>
+            <div class="w-32 text-sm text-gray-600">其他页面</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Image Sitemap Section -->
+    <section id="image-sitemap" class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+        <span class="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600">🖼️</span>
+        图片站点地图
+      </h2>
+      
+      <p class="text-gray-600 mb-6">如果您有大量图片内容，可以通过图片站点地图帮助搜索引擎发现和索引这些图片，提升图片搜索流量。</p>
+
+      <div class="bg-slate-50 rounded-xl p-6">
+        <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://youdao-travel.com/destinations/yunnan.html&lt;/loc&gt;
+    &lt;image:image&gt;
+      &lt;image:loc&gt;https://youdao-travel.com/images/yunnan-cover.jpg&lt;/image:loc&gt;
+      &lt;image:title&gt;云南旅游攻略 - 丽江大理香格里拉&lt;/image:title&gt;
+      &lt;image:caption&gt;云南最美风景 - 玉龙雪山&lt;/image:caption&gt;
+    &lt;/image:image&gt;
+    &lt;image:image&gt;
+      &lt;image:loc&gt;https://youdao-travel.com/images/yunnan-2.jpg&lt;/image:loc&gt;
+      &lt;image:title&gt;云南旅行 - 大理古城&lt;/image:title&gt;
+    &lt;/image:image&gt;
+  &lt;/url&gt;
+  &lt;url&gt;
+    &lt;loc&gt;https://youdao-travel.com/guides.html&lt;/loc&gt;
+    &lt;image:image&gt;
+      &lt;image:loc&gt;https://youdao-travel.com/images/guide-team.jpg&lt;/image:loc&gt;
+      &lt;image:title&gt;游导旅游 - 认证导游团队&lt;/image:title&gt;
+    &lt;/image:image&gt;
+  &lt;/url&gt;
+&lt;/urlset&gt;</code></pre>
+      </div>
+
+      <div class="mt-6 grid md:grid-cols-2 gap-4">
+        <div class="bg-blue-50 p-4 rounded-xl">
+          <h4 class="font-bold text-blue-700 mb-2">📋 图片标签说明</h4>
+          <ul class="text-sm text-blue-800 space-y-1">
+            <li><code>image:loc</code> - 图片URL（必需）</li>
+            <li><code>image:title</code> - 图片标题（可选）</li>
+            <li><code>image:caption</code> - 图片说明（可选）</li>
+            <li><code>image:geo_location</code> - 地理位置（可选）</li>
+            <li><code>image:license</code> - 许可证（可选）</li>
+          </ul>
+        </div>
+        <div class="bg-green-50 p-4 rounded-xl">
+          <h4 class="font-bold text-green-700 mb-2">💡 最佳实践</h4>
+          <ul class="text-sm text-green-800 space-y-1">
+            <li>• 为每张图片添加描述性alt文本</li>
+            <li>• 确保图片URL可公开访问</li>
+            <li>• 使用高分辨率图片</li>
+            <li>• 避免重复图片URL</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sitemap Index -->
+    <section class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+        <span class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-amber-600">📚</span>
+        网站地图索引 (Sitemap Index)
+      </h2>
+      
+      <p class="text-gray-600 mb-6">当网站规模较大时，建议将网站地图拆分为多个文件，然后创建索引文件。每个网站地图文件最多包含50,000个URL。</p>
+
+      <div class="bg-slate-50 rounded-xl p-6">
+        <h3 class="font-bold text-gray-800 mb-4">📄 sitemap_index.xml</h3>
+        <pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"&gt;
+  &lt;sitemap&gt;
+    &lt;loc&gt;https://youdao-travel.com/sitemap.xml&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+  &lt;/sitemap&gt;
+  &lt;sitemap&gt;
+    &lt;loc&gt;https://youdao-travel.com/sitemap-articles.xml&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+  &lt;/sitemap&gt;
+  &lt;sitemap&gt;
+    &lt;loc&gt;https://youdao-travel.com/sitemap-images.xml&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+  &lt;/sitemap&gt;
+  &lt;sitemap&gt;
+    &lt;loc&gt;https://youdao-travel.com/sitemap-guides.xml&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+  &lt;/sitemap&gt;
+&lt;/sitemapindex&gt;</code></pre>
+      </div>
+
+      <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-xl">
+        <h4 class="font-bold text-yellow-800 mb-2">⚠️ 重要限制</h4>
+        <ul class="text-yellow-700 text-sm space-y-1">
+          <li>• 单个网站地图文件最多 50,000 个URL</li>
+          <li>• 单个网站地图文件最大 50MB（未压缩）</li>
+          <li>• 如果需要超过限制，创建多个网站地图并使用索引</li>
+          <li>• 所有URL必须在同一个主机上</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Robots.txt -->
+    <section class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+        <span class="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center text-gray-600">🤖</span>
+        robots.txt 配置
+      </h2>
+      
+      <p class="text-gray-600 mb-6">在网站根目录创建 robots.txt 文件，告诉搜索引擎哪些页面可以抓取，以及网站地图的位置。</p>
+
+      <div class="bg-slate-50 rounded-xl p-6">
+        <h3 class="font-bold text-gray-800 mb-4">📄 robots.txt</h3>
+        <pre><code class="language-txt"># robots.txt for youdao-travel.com
+
+# 允许所有搜索引擎访问
+User-agent: *
+
+# 允许访问的路径
+Allow: /
+
+# 禁止访问的路径
+Disallow: /admin/
+Disallow: /api/
+Disallow: /private/
+Disallow: /checkout/
+Disallow: /*.json$
+Disallow: /search?q=
+
+# 网站地图位置
+Sitemap: https://youdao-travel.com/sitemap.xml
+Sitemap: https://youdao-travel.com/sitemap-images.xml
+
+# 其他搜索引擎特定规则
+User-agent: Googlebot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /</code></pre>
+      </div>
+    </section>
+
+    <!-- Submit to Search Engines -->
+    <section id="submit" class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+        <span class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center text-green-600">🚀</span>
+        提交到搜索引擎
+      </h2>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Google -->
+        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow">🔵</div>
+            <div>
+              <h3 class="font-bold text-gray-800">Google Search Console</h3>
+              <p class="text-sm text-gray-500">全球最大搜索引擎</p>
+            </div>
+          </div>
+          <ol class="text-sm text-gray-700 space-y-2 ml-4">
+            <li>1. 访问 <a href="https://search.google.com/search-console" target="_blank" class="text-blue-600 underline">Google Search Console</a></li>
+            <li>2. 添加并验证您的网站</li>
+            <li>3. 进入「网站地图」栏目</li>
+            <li>4. 输入 sitemap.xml 并提交</li>
+          </ol>
+          <div class="mt-4 bg-white/60 p-3 rounded-lg">
+            <code class="text-sm text-blue-700">https://youdao-travel.com/sitemap.xml</code>
+          </div>
+        </div>
+
+        <!-- Baidu -->
+        <div class="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow">🔴</div>
+            <div>
+              <h3 class="font-bold text-gray-800">百度搜索资源平台</h3>
+              <p class="text-sm text-gray-500">中国市场首选</p>
+            </div>
+          </div>
+          <ol class="text-sm text-gray-700 space-y-2 ml-4">
+            <li>1. 访问 <a href="https://ziyuan.baidu.com" target="_blank" class="text-red-600 underline">百度搜索资源平台</a></li>
+            <li>2. 完成站点验证（支持HTML标签验证）</li>
+            <li>3. 进入「数据提交」→「网站地图」</li>
+            <li>4. 提交网站地图文件</li>
+          </ol>
+          <div class="mt-4 bg-white/60 p-3 rounded-lg">
+            <code class="text-sm text-red-700">支持自动推送和主动推送</code>
+          </div>
+        </div>
+
+        <!-- Bing -->
+        <div class="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow">🟣</div>
+            <div>
+              <h3 class="font-bold text-gray-800">Bing Webmaster</h3>
+              <p class="text-sm text-gray-500">微软必应搜索</p>
+            </div>
+          </div>
+          <ol class="text-sm text-gray-700 space-y-2 ml-4">
+            <li>1. 访问 <a href="https://www.bing.com/webmasters" target="_blank" class="text-purple-600 underline">Bing Webmaster Tools</a></li>
+            <li>2. 添加并验证网站</li>
+            <li>3. 进入「配置我的网站」→「网站地图」</li>
+            <li>4. 提交网站地图URL</li>
+          </ol>
+        </div>
+
+        <!-- 360 -->
+        <div class="bg-gradient-to-br from-cyan-50 to-teal-50 rounded-xl p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl shadow">🟢</div>
+            <div>
+              <h3 class="font-bold text-gray-800">360搜索站长平台</h3>
+              <p class="text-sm text-gray-500">中国市场补充</p>
+            </div>
+          </div>
+          <ol class="text-sm text-gray-700 space-y-2 ml-4">
+            <li>1. 访问 <a href="https://zhanzhang.so.com" target="_blank" class="text-cyan-600 underline">360站长平台</a></li>
+            <li>2. 验证网站所有权</li>
+            <li>3. 在「网站管理」中添加网站</li>
+            <li>4. 提交网站地图</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- Update Frequency -->
+    <section class="bg-white rounded-2xl shadow-lg p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+        <span class="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600">⏰</span>
+        更新频率设置指南
+      </h2>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="bg-slate-100">
+              <th class="text-left p-4 rounded-tl-xl">页面类型</th>
+              <th class="text-left p-4">建议优先级</th>
+              <th class="text-left p-4">更新频率</th>
+              <th class="text-left p-4 rounded-tr-xl">说明</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr>
+              <td class="p-4 font-medium">首页</td>
+              <td class="p-4"><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded">1.0</span></td>
+              <td class="p-4">daily</td>
+              <td class="p-4 text-gray-600">网站核心入口</td>
+            </tr>
+            <tr>
+              <td class="p-4 font-medium">主要分类页</td>
+              <td class="p-4"><span class="px-2 py-1 bg-blue-100 text-blue-700 rounded">0.9</span></td>
+              <td class="p-4">daily / weekly</td>
+              <td class="p-4 text-gray-600">目的地、导游列表等</td>
+            </tr>
+            <tr>
+              <td class="p-4 font-medium">详情页面</td>
+              <td class="p-4"><span class="px-2 py-1 bg-green-100 text-green-700 rounded">0.8</span></td>
+              <td class="p-4">weekly / monthly</td>
+              <td class="p-4 text-gray-600">具体目的地、导游详情</td>
+            </tr>
+            <tr>
+              <td class="p-4 font-medium">博客/攻略</td>
+              <td class="p-4"><span class="px-2 py-1 bg-green-100 text-green-700 rounded">0.7</span></td>
+              <td class="p-4">weekly / monthly</td>
+              <td class="p-4 text-gray-600">定期更新的内容</td>
+            </tr>
+            <tr>
+              <td class="p-4 font-medium">静态页面</td>
+              <td class="p-4"><span class="px-2 py-1 bg-gray-100 text-gray-700 rounded">0.5</span></td>
+              <td class="p-4">monthly / yearly</td>
+              <td class="p-4 text-gray-600">关于我们、联系方式等</td>
+            </tr>
+            <tr>
+              <td class="p-4 font-medium">Tag标签页</td>
+              <td class="p-4"><span class="px-2 py-1 bg-gray-100 text-gray-700 rounded">0.4</span></td>
+              <td class="p-4">weekly</td>
+              <td class="p-4 text-gray-600">聚合页面</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Auto Generate Tool -->
+    <section class="bg-gradient-to-r from-green-50 to-emerald-50 rounded-2xl p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6">🔧 在线网站地图生成工具</h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl p-6">
+          <h3 class="font-bold text-gray-800 mb-4">推荐工具</h3>
+          <ul class="space-y-3">
+            <li>
+              <a href="https://www.xml-sitemaps.com" target="_blank" class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-primary/10 transition">
+                <span class="text-xl">🗺️</span>
+                <div>
+                  <div class="font-medium text-gray-800">XML Sitemaps Generator</div>
+                  <div class="text-xs text-gray-500">www.xml-sitemaps.com</div>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.seoptimer.com/xml-sitemap-generator" target="_blank" class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-primary/10 transition">
+                <span class="text-xl">⚡</span>
+                <div>
+                  <div class="font-medium text-gray-800">SEOptimer Sitemap Generator</div>
+                  <div class="text-xs text-gray-500">www.seoptimer.com</div>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="https://www.screamingfrog.co.uk/xml-sitemap-generator/" target="_blank" class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-primary/10 transition">
+                <span class="text-xl">🐸</span>
+                <div>
+                  <div class="font-medium text-gray-800">Screaming Frog</div>
+                  <div class="text-xs text-gray-500">桌面端专业工具（免费500页）</div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl p-6">
+          <h3 class="font-bold text-gray-800 mb-4">验证工具</h3>
+          <ul class="space-y-3">
+            <li>
+              <a href="https://www.xml-sitemaps.com/validate-xml-sitemap.html" target="_blank" class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-primary/10 transition">
+                <span class="text-xl">✅</span>
+                <div>
+                  <div class="font-medium text-gray-800">XML Sitemap Validator</div>
+                  <div class="text-xs text-gray-500">验证网站地图语法</div>
+                </div>
+              </a>
+            </li>
+            <li>
+              <a href="https://search.google.com/test/rich-results" target="_blank" class="flex items-center gap-3 p-3 bg-slate-50 rounded-lg hover:bg-primary/10 transition">
+                <span class="text-xl">🔍</span>
+                <div>
+                  <div class="font-medium text-gray-800">Google富媒体测试</div>
+                  <div class="text-xs text-gray-500">测试结构化数据</div>
+                </div>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Links -->
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h3 class="font-bold text-gray-800 mb-4">📚 更多SEO工具</h3>
+      <div class="grid md:grid-cols-5 gap-3">
+        <a href="config.html" class="p-4 bg-slate-50 rounded-xl hover:bg-primary/10 transition text-center">
+          <div class="text-2xl mb-2">⚙️</div>
+          <div class="text-sm font-medium text-gray-700">配置指南</div>
+        </a>
+        <a href="keywords.html" class="p-4 bg-slate-50 rounded-xl hover:bg-primary/10 transition text-center">
+          <div class="text-2xl mb-2">🔑</div>
+          <div class="text-sm font-medium text-gray-700">关键词分析</div>
+        </a>
+        <a href="backlinks.html" class="p-4 bg-slate-50 rounded-xl hover:bg-primary/10 transition text-center">
+          <div class="text-2xl mb-2">🔗</div>
+          <div class="text-sm font-medium text-gray-700">外链建设</div>
+        </a>
+        <a href="audit.html" class="p-4 bg-slate-50 rounded-xl hover:bg-primary/10 transition text-center">
+          <div class="text-2xl mb-2">🔍</div>
+          <div class="text-sm font-medium text-gray-700">SEO检查</div>
+        </a>
+        <a href="search-console.html" class="p-4 bg-slate-50 rounded-xl hover:bg-primary/10 transition text-center">
+          <div class="text-2xl mb-2">📊</div>
+          <div class="text-sm font-medium text-gray-700">搜索控制台</div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-3xl">🧭</span>
+            <span class="text-xl font-bold">游导旅游</span>
+          </div>
+          <p class="text-gray-400 text-sm">您的贴心旅行助手，让每一次出行都轻松愉快。</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">快速链接</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="index.html" class="hover:text-white transition">首页</a></li>
+            <li><a href="destinations.html" class="hover:text-white transition">目的地</a></li>
+            <li><a href="guides.html" class="hover:text-white transition">找导游</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">SEO工具</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="seo/config.html" class="hover:text-white transition">配置指南</a></li>
+            <li><a href="seo/sitemap-generator.html" class="hover:text-white transition">网站地图</a></li>
+            <li><a href="seo/audit.html" class="hover:text-white transition">SEO检查</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">联系我们</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li>📧 support@youdao-travel.com</li>
+            <li>📞 13631149834</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
+        © 2024 游导旅游 youdao-travel.com 版权所有
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

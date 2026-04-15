@@ -1,0 +1,479 @@
+<!-- 统一导航栏组件 - 移动端优化版 + 多语言支持 -->
+<!-- 使用方法: 将此内容复制到页面<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  
+标签后，或使用JavaScript动态加载 -->
+
+<!-- 导航栏 -->
+<nav class="navbar">
+  <div class="container nav-container">
+    <a href="index.html" class="logo">
+      <span style="font-size: 1.8rem;" aria-hidden="true">🧭</span>
+      <span>游导旅游</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-i18n="nav.home">首页</a>
+      <a href="guides.html" data-i18n="nav.guides">找导游</a>
+      <a href="routes.html" data-i18n="nav.routes">精品路线</a>
+      <a href="visa.html" data-i18n="nav.visa">签证服务</a>
+      <a href="knowledge.html" data-i18n="nav.knowledge">旅行知识</a>
+      <a href="tools.html" data-i18n="nav.tools">实用工具</a>
+      <a href="growth-center.html" data-i18n="nav.growth" style="color: #4F46E5;">🚀 成长</a>
+      <a href="about.html" data-i18n="nav.about">关于我们</a>
+      <a href="feedback.html" data-i18n="nav.feedback">意见反馈</a>
+      <a href="promotion-materials.html" class="nav-highlight" data-i18n="nav.promotion">推广素材</a>
+      
+      <!-- 语言切换下拉菜单 -->
+      <div class="lang-dropdown" id="langDropdown">
+        <button class="lang-trigger" onclick="toggleLangDropdown()" aria-label="切换语言">
+          <span class="lang-current">🌐 <span id="currentLangText">中文</span></span>
+          <span class="lang-arrow">▼</span>
+        </button>
+        <div class="lang-menu">
+          <button class="lang-option active" data-lang="zh" data-lang-btn>
+            <span class="lang-flag" aria-hidden="true">🇨🇳</span>
+            <span class="lang-name">中文</span>
+          </button>
+          <button class="lang-option" data-lang="en" data-lang-btn>
+            <span class="lang-flag" aria-hidden="true">🇺🇸</span>
+            <span class="lang-name">English</span>
+          </button>
+          <button class="lang-option" data-lang="ja" data-lang-btn>
+            <span class="lang-flag" aria-hidden="true">🇯🇵</span>
+            <span class="lang-name">日本語</span>
+          </button>
+          <button class="lang-option" data-lang="ko" data-lang-btn>
+            <span class="lang-flag" aria-hidden="true">🇰🇷</span>
+            <span class="lang-name">한국어</span>
+          </button>
+          <button class="lang-option" data-lang="fr" data-lang-btn>
+            <span class="lang-flag" aria-hidden="true">🇫🇷</span>
+            <span class="lang-name">Français</span>
+          </button>
+          <button class="lang-option" data-lang="de" data-lang-btn>
+            <span class="lang-flag" aria-hidden="true">🇩🇪</span>
+            <span class="lang-name">Deutsch</span>
+          </button>
+          <button class="lang-option" data-lang="es" data-lang-btn>
+            <span class="lang-flag" aria-hidden="true">🇪🇸</span>
+            <span class="lang-name">Español</span>
+          </button>
+          <button class="lang-option" data-lang="ru" data-lang-btn>
+            <span class="lang-flag" aria-hidden="true">🇷🇺</span>
+            <span class="lang-name">Русский</span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- 通知按钮 -->
+      <button class="nav-notification-btn" onclick="window.location.href='notifications.html'" aria-label="通知中心" title="通知中心">
+        <span>🔔</span>
+        <span class="notification-badge zero" id="nav-notification-badge">0</span>
+      </button>
+      
+      <!-- 主题切换 -->
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换深色模式" title="深色模式">🌙</button>
+    </div>
+    <button class="nav-toggle" onclick="toggleNav()" aria-label="菜单" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</nav>
+
+<script>
+// 语言名称映射
+const langNames = {
+  zh: '中文',
+  en: 'English',
+  ja: '日本語',
+  ko: '한국어',
+  fr: 'Français',
+  de: 'Deutsch',
+  es: 'Español',
+  ru: 'Русский'
+};
+
+// 语言切换标志映射
+const langFlags = {
+  zh: '🇨🇳',
+  en: '🇺🇸',
+  ja: '🇯🇵',
+  ko: '🇰🇷',
+  fr: '🇫🇷',
+  de: '🇩🇪',
+  es: '🇪🇸',
+  ru: '🇷🇺'
+};
+
+// 更新当前语言显示
+function updateLangDisplay() {
+  const currentLang = localStorage.getItem('youdao_lang') || 'zh';
+  const langText = document.getElementById('currentLangText');
+  if (langText) {
+    langText.textContent = langNames[currentLang] || '中文';
+  }
+  
+  // 更新下拉菜单选中状态
+  document.querySelectorAll('.lang-option').forEach(opt => {
+    if (opt.dataset.lang === currentLang) {
+      opt.classList.add('active');
+    } else {
+      opt.classList.remove('active');
+    }
+  });
+}
+
+// 语言切换下拉菜单
+function toggleLangDropdown() {
+  const dropdown = document.getElementById('langDropdown');
+  if (dropdown) {
+    dropdown.classList.toggle('open');
+  }
+}
+
+// 点击外部关闭下拉菜单
+document.addEventListener('click', function(e) {
+  const dropdown = document.getElementById('langDropdown');
+  if (dropdown && !dropdown.contains(e.target)) {
+    dropdown.classList.remove('open');
+  }
+  
+  // 导航菜单
+  const navLinks = document.querySelector('.nav-links');
+  const navToggle = document.querySelector('.nav-toggle');
+  if (navLinks && navToggle && navLinks.classList.contains('open')) {
+    if (!navLinks.contains(e.target) && !navToggle.contains(e.target)) {
+      navLinks.classList.remove('open');
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+    }
+  }
+});
+
+// 语言切换事件监听
+window.addEventListener('langChange', function(e) {
+  updateLangDisplay();
+});
+
+// ESC键关闭菜单
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    // 关闭语言下拉菜单
+    const dropdown = document.getElementById('langDropdown');
+    if (dropdown) {
+      dropdown.classList.remove('open');
+    }
+    
+    // 关闭导航菜单
+    const navLinks = document.querySelector('.nav-links');
+    const navToggle = document.querySelector('.nav-toggle');
+    if (navLinks && navToggle && navLinks.classList.contains('open')) {
+      navLinks.classList.remove('open');
+      navToggle.classList.remove('active');
+      navToggle.setAttribute('aria-expanded', 'false');
+      document.body.classList.remove('menu-open');
+      navToggle.focus();
+    }
+  }
+});
+
+// 移动端导航切换
+function toggleNav() {
+  const navLinks = document.querySelector('.nav-links');
+  const navToggle = document.querySelector('.nav-toggle');
+  if (navLinks && navToggle) {
+    const isOpen = navLinks.classList.toggle('open');
+    navToggle.classList.toggle('active');
+    navToggle.setAttribute('aria-expanded', isOpen);
+    
+    // 防止背景滚动
+    document.body.classList.toggle('menu-open', isOpen);
+    
+    // 无障碍 - 聚焦第一个链接
+    if (isOpen) {
+      const firstLink = navLinks.querySelector('a');
+      if (firstLink) setTimeout(() => firstLink.focus(), 300);
+    }
+  }
+}
+
+// 初始化语言显示
+document.addEventListener('DOMContentLoaded', updateLangDisplay);
+</script>
+
+<style>
+/* 语言下拉菜单样式 */
+.lang-dropdown {
+  position: relative;
+  margin-left: 8px;
+}
+
+.lang-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.lang-trigger:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.lang-arrow {
+  font-size: 10px;
+  transition: transform 0.3s ease;
+}
+
+.lang-dropdown.open .lang-arrow {
+  transform: rotate(180deg);
+}
+
+.lang-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 140px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1000;
+  overflow: hidden;
+  padding: 6px;
+}
+
+.lang-dropdown.open .lang-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.lang-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  color: #333;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.lang-option:hover {
+  background: #f5f5f5;
+}
+
+.lang-option.active {
+  background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+  color: #f97316;
+  font-weight: 500;
+}
+
+.lang-flag {
+  font-size: 18px;
+}
+
+.lang-name {
+  flex: 1;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+  .lang-dropdown {
+    margin: 10px 0;
+  }
+  
+  .lang-trigger {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+  }
+  
+  .lang-menu {
+    position: static;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    box-shadow: none;
+    background: rgba(255, 255, 255, 0.05);
+    margin-top: 8px;
+    padding: 0;
+  }
+  
+  .lang-option {
+    color: #fff;
+    padding: 12px 16px;
+  }
+  
+  .lang-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .lang-option.active {
+    background: linear-gradient(135deg, rgba(249, 115, 22, 0.3) 0%, rgba(234, 88, 12, 0.3) 100%);
+  }
+}
+
+/* 菜单滚动锁定 */
+body.menu-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+/* 语言切换动画 */
+@keyframes langFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lang-menu {
+  animation: langFadeIn 0.3s ease forwards;
+}
+
+/* 按钮点击涟漪效果 */
+.lang-option {
+  position: relative;
+  overflow: hidden;
+}
+
+.lang-option::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(249, 115, 22, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.lang-option:active::after {
+  width: 200px;
+  height: 200px;
+}
+
+/* 导航栏通知按钮样式 */
+.nav-notification-btn {
+  position: relative;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  margin-left: 8px;
+}
+
+.nav-notification-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.nav-notification-btn .notification-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 18px;
+  height: 18px;
+  background: #EF4444;
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 600;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.nav-notification-btn .notification-badge.zero {
+  display: none;
+}
+
+/* 深色主题适配 */
+[data-theme="dark"] .nav-notification-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+[data-theme="dark"] .nav-notification-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+</style>
+
+<script>
+// 初始化通知徽章
+function initNotificationBadge() {
+  // 如果页面已加载notification-center.js，使用其数据
+  if (typeof window.notificationCenter !== 'undefined') {
+    updateNavNotificationBadge();
+  } else {
+    // 否则尝试从localStorage读取
+    try {
+      const stored = localStorage.getItem('youdau_notifications');
+      if (stored) {
+        const notifications = JSON.parse(stored);
+        const unreadCount = notifications.filter(n => !n.read).length;
+        updateBadgeDisplay(unreadCount);
+      }
+    } catch (e) {
+      console.warn('读取通知数据失败:', e);
+    }
+  }
+}
+
+function updateNavNotificationBadge() {
+  const count = window.notificationCenter.getUnreadCount();
+  updateBadgeDisplay(count);
+}
+
+function updateBadgeDisplay(count) {
+  const badge = document.getElementById('nav-notification-badge');
+  if (badge) {
+    badge.textContent = count > 99 ? '99+' : count;
+    badge.classList.toggle('zero', count === 0);
+  }
+}
+
+// 页面加载完成后初始化徽章
+document.addEventListener('DOMContentLoaded', initNotificationBadge);
+
+// 监听通知变化事件
+window.addEventListener('notificationsUpdated', function() {
+  updateNavNotificationBadge();
+});
+</script>

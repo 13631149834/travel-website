@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>话题 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#f97316',
+            secondary: '#ea580c',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    }
+    
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    
+    .tab-active {
+      position: relative;
+    }
+    .tab-active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      border-radius: 2px;
+    }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Header -->
+  <header class="sticky top-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-4">
+          <a href="index.html" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+            <i class="fas fa-arrow-left text-gray-600"></i>
+          </a>
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 gradient-bg rounded-lg flex items-center justify-center">
+              <i class="fas fa-compass text-white text-sm"></i>
+            </div>
+            <span class="text-lg font-bold text-gray-800">游导</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-600">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Topic Header (shown when viewing specific topic) -->
+    <div id="topic-header" class="hidden bg-white rounded-2xl shadow-sm p-6 mb-6">
+      <div class="flex items-start gap-4">
+        <div id="topic-icon" class="w-16 h-16 gradient-bg rounded-2xl flex items-center justify-center text-3xl">
+          🏔️
+        </div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1">
+            <h1 id="topic-name" class="text-2xl font-bold text-gray-800">话题名称</h1>
+            <button id="follow-topic-btn" class="px-4 py-1.5 gradient-bg text-white text-sm rounded-full hover:opacity-90 transition">
+              + 关注
+            </button>
+          </div>
+          <p id="topic-desc" class="text-gray-500 mb-3">话题描述</p>
+          <div class="flex items-center gap-6 text-sm text-gray-400">
+            <span><span id="topic-posts" class="font-medium text-gray-600">0</span> 动态</span>
+            <span><span id="topic-followers" class="font-medium text-gray-600">0</span> 关注</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="bg-white rounded-2xl shadow-sm p-4 mb-6">
+      <div class="relative">
+        <input type="text" id="topic-search" placeholder="搜索话题..." class="w-full pl-12 pr-4 py-3 bg-gray-100 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50">
+        <i class="fas fa-search absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="bg-white rounded-2xl shadow-sm mb-6">
+      <div class="flex border-b">
+        <button class="flex-1 py-4 text-center font-medium text-primary tab-active" data-tab="hot">
+          🔥 热门
+        </button>
+        <button class="flex-1 py-4 text-center font-medium text-gray-400 hover:text-gray-600" data-tab="new">
+          ✨ 最新
+        </button>
+        <button class="flex-1 py-4 text-center font-medium text-gray-400 hover:text-gray-600" data-tab="following">
+          ❤️ 关注
+        </button>
+      </div>
+    </div>
+
+    <!-- Topics Grid -->
+    <div id="topics-grid" class="grid md:grid-cols-2 gap-4 mb-6">
+      <!-- Topics will be loaded here -->
+    </div>
+
+    <!-- Topic Detail Section (shown when viewing specific topic) -->
+    <div id="topic-detail" class="hidden">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg text-gray-800">相关动态</h3>
+        <a href="post.html" class="text-sm text-primary hover:underline">发起讨论</a>
+      </div>
+      
+      <div id="topic-posts-list" class="space-y-4">
+        <!-- Posts will be loaded here -->
+      </div>
+      
+      <div class="text-center py-8">
+        <button class="px-8 py-3 bg-white border border-gray-200 rounded-full text-gray-600 hover:border-primary hover:text-primary transition">
+          加载更多
+        </button>
+      </div>
+    </div>
+
+    <!-- All Topics (shown by default) -->
+    <div id="all-topics">
+      <!-- More Topics -->
+      <h3 class="font-bold text-lg text-gray-800 mb-4">发现更多话题</h3>
+      <div id="more-topics" class="grid md:grid-cols-2 gap-4">
+        <!-- More topics will be loaded here -->
+      </div>
+    </div>
+  </main>
+
+  <!-- Create Topic Modal -->
+  <div id="create-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-md slide-up">
+      <div class="p-4 border-b flex items-center justify-between">
+        <h3 class="font-bold text-lg">创建话题</h3>
+        <button onclick="closeCreateModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">话题名称</label>
+          <input type="text" id="new-topic-name" placeholder="例如：东南亚旅游" class="w-full px-4 py-3 border rounded-xl focus:outline-none focus:border-primary">
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium text-gray-700 mb-2">话题描述</label>
+          <textarea id="new-topic-desc" rows="3" placeholder="简要描述话题内容" class="w-full px-4 py-3 border rounded-xl resize-none focus:outline-none focus:border-primary"></textarea>
+        </div>
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">选择图标</label>
+          <div class="flex flex-wrap gap-2">
+            <button onclick="selectIcon('🏔️')" class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-2xl hover:bg-orange-100 transition border-2 border-transparent selected-icon">🏔️</button>
+            <button onclick="selectIcon('🌍')" class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-2xl hover:bg-orange-100 transition border-2 border-transparent">🌍</button>
+            <button onclick="selectIcon('🎌')" class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-2xl hover:bg-orange-100 transition border-2 border-transparent">🎌</button>
+            <button onclick="selectIcon('🍜')" class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-2xl hover:bg-orange-100 transition border-2 border-transparent">🍜</button>
+            <button onclick="selectIcon('📷')" class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-2xl hover:bg-orange-100 transition border-2 border-transparent">📷</button>
+            <button onclick="selectIcon('🏃')" class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center text-2xl hover:bg-orange-100 transition border-2 border-transparent">🏃</button>
+          </div>
+        </div>
+        <button onclick="createTopic()" class="w-full py-3 gradient-bg text-white rounded-full font-medium hover:opacity-90 transition">
+          创建话题
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let socialData = null;
+    let currentTopic = null;
+    let selectedIcon = '🏔️';
+    
+    // Check URL for topic parameter
+    function getTopicFromURL() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('topic');
+    }
+    
+    async function loadData() {
+      try {
+        const response = await fetch('../data/social.json');
+        socialData = await response.json();
+        
+        const topicName = getTopicFromURL();
+        if (topicName) {
+          // Viewing specific topic
+          currentTopic = socialData.topics.find(t => t.name === topicName);
+          if (currentTopic) {
+            showTopicDetail(currentTopic);
+          }
+        }
+        
+        renderTopics();
+        renderMoreTopics();
+        setupTabs();
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    }
+    
+    function renderTopics() {
+      const container = document.getElementById('topics-grid');
+      const topics = socialData.topics.slice(0, 6);
+      
+      container.innerHTML = topics.map(topic => `
+        <a href="topics.html?topic=${encodeURIComponent(topic.name)}" class="bg-white rounded-2xl shadow-sm p-5 card-hover">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 gradient-bg rounded-xl flex items-center justify-center text-2xl">
+              ${topic.icon}
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-gray-800 mb-1">#${topic.name}</h3>
+              <p class="text-sm text-gray-500 line-clamp-2 mb-3">${topic.description}</p>
+              <div class="flex items-center gap-4 text-sm text-gray-400">
+                <span>${formatNumber(topic.posts)} 动态</span>
+                <span>${formatNumber(topic['followers:'])} 关注</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+    
+    function renderMoreTopics() {
+      const container = document.getElementById('more-topics');
+      const topics = socialData.topics.slice(6);
+      
+      if (topics.length === 0) {
+        container.parentElement.style.display = 'none';
+        return;
+      }
+      
+      container.innerHTML = topics.map(topic => `
+        <a href="topics.html?topic=${encodeURIComponent(topic.name)}" class="bg-white rounded-2xl shadow-sm p-5 card-hover">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center text-2xl">
+              ${topic.icon}
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-gray-800 mb-1">#${topic.name}</h3>
+              <p class="text-sm text-gray-500 line-clamp-2 mb-3">${topic.description}</p>
+              <div class="flex items-center gap-4 text-sm text-gray-400">
+                <span>${formatNumber(topic.posts)} 动态</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+    
+    function showTopicDetail(topic) {
+      currentTopic = topic;
+      
+      // Show header
+      document.getElementById('topic-header').classList.remove('hidden');
+      document.getElementById('topic-icon').textContent = topic.icon;
+      document.getElementById('topic-name').textContent = '#' + topic.name;
+      document.getElementById('topic-desc').textContent = topic.description;
+      document.getElementById('topic-posts').textContent = formatNumber(topic.posts);
+      document.getElementById('topic-followers').textContent = formatNumber(topic['followers:']);
+      
+      // Update follow button
+      const followBtn = document.getElementById('follow-topic-btn');
+      if (topic.isFollowing) {
+        followBtn.textContent = '已关注';
+        followBtn.classList.remove('gradient-bg', 'text-white');
+        followBtn.classList.add('bg-gray-100', 'text-gray-700');
+      }
+      
+      // Hide grid, show detail
+      document.getElementById('topics-grid').classList.add('hidden');
+      document.getElementById('more-topics').parentElement.style.display = 'none';
+      document.getElementById('all-topics').classList.add('hidden');
+      document.getElementById('topic-detail').classList.remove('hidden');
+      
+      // Update page title
+      document.title = '#' + topic.name + ' - 游导旅游';
+      
+      // Render topic posts
+      renderTopicPosts();
+    }
+    
+    function renderTopicPosts() {
+      const container = document.getElementById('topic-posts-list');
+      const posts = socialData.posts.filter(p => 
+        p.topics && p.topics.some(t => t === currentTopic.name)
+      );
+      
+      if (posts.length === 0) {
+        // Show all posts if no match
+        container.innerHTML = socialData.posts.slice(0, 3).map(post => createPostCard(post)).join('');
+        return;
+      }
+      
+      container.innerHTML = posts.map(post => createPostCard(post)).join('');
+    }
+    
+    function createPostCard(post) {
+      return `
+        <article class="bg-white rounded-2xl shadow-sm overflow-hidden card-hover">
+          <div class="p-5">
+            <div class="flex items-center gap-3 mb-4">
+              <a href="profile.html?user=${post.userId}">
+                <img src="${post.userAvatar}" alt="${post.username}" class="w-10 h-10 rounded-full object-cover">
+              </a>
+              <div class="flex-1">
+                <a href="profile.html?user=${post.userId}" class="font-medium text-gray-800 hover:text-primary">${post.username}</a>
+                <p class="text-xs text-gray-400">${formatTime(post.createdAt)}</p>
+              </div>
+            </div>
+            <p class="text-gray-700 mb-4 line-clamp-3">${post.content}</p>
+            ${post.images && post.images.length > 0 ? `
+              <div class="grid grid-cols-3 gap-2 mb-4">
+                ${post.images.slice(0, 3).map((img, idx) => `
+                  <a href="detail.html?post=${post.id}" class="aspect-square rounded-lg overflow-hidden ${post.images.length === 1 ? 'col-span-3' : ''}">
+                    <img src="${img}" alt="" class="w-full h-full object-cover">
+                  </a>
+                `).join('')}
+              </div>
+            ` : ''}
+            <div class="flex items-center gap-6 text-sm text-gray-400">
+              <span class="flex items-center gap-1"><i class="far fa-heart"></i> ${formatNumber(post.likes)}</span>
+              <span class="flex items-center gap-1"><i class="far fa-comment"></i> ${post.comments}</span>
+              <span class="flex items-center gap-1"><i class="far fa-share-square"></i> ${formatNumber(post.shares)}</span>
+            </div>
+          </div>
+        </article>
+      `;
+    }
+    
+    function setupTabs() {
+      document.querySelectorAll('[data-tab]').forEach(tab => {
+        tab.addEventListener('click', function() {
+          const tabName = this.dataset.tab;
+          
+          // Update tab styles
+          document.querySelectorAll('[data-tab]').forEach(t => {
+            t.classList.remove('tab-active', 'text-primary');
+            t.classList.add('text-gray-400');
+          });
+          this.classList.add('tab-active', 'text-primary');
+          this.classList.remove('text-gray-400');
+          
+          // Sort topics based on tab
+          if (tabName === 'hot') {
+            renderTopics();
+          } else if (tabName === 'new') {
+            // Reverse for "newest"
+            const container = document.getElementById('topics-grid');
+            const reversed = [...socialData.topics].reverse().slice(0, 6);
+            renderTopicsFromArray(reversed, container);
+          }
+        });
+      });
+    }
+    
+    function renderTopicsFromArray(topics, container) {
+      container.innerHTML = topics.map(topic => `
+        <a href="topics.html?topic=${encodeURIComponent(topic.name)}" class="bg-white rounded-2xl shadow-sm p-5 card-hover">
+          <div class="flex items-start gap-4">
+            <div class="w-14 h-14 gradient-bg rounded-xl flex items-center justify-center text-2xl">
+              ${topic.icon}
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-bold text-gray-800 mb-1">#${topic.name}</h3>
+              <p class="text-sm text-gray-500 line-clamp-2 mb-3">${topic.description}</p>
+              <div class="flex items-center gap-4 text-sm text-gray-400">
+                <span>${formatNumber(topic.posts)} 动态</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+    
+    // Follow topic
+    document.getElementById('follow-topic-btn')?.addEventListener('click', function() {
+      if (currentTopic) {
+        const isFollowing = this.textContent.trim() === '已关注';
+        if (isFollowing) {
+          this.textContent = '+ 关注';
+          this.classList.add('gradient-bg', 'text-white');
+          this.classList.remove('bg-gray-100', 'text-gray-700');
+        } else {
+          this.textContent = '已关注';
+          this.classList.remove('gradient-bg', 'text-white');
+          this.classList.add('bg-gray-100', 'text-gray-700');
+        }
+        currentTopic.isFollowing = !isFollowing;
+      }
+    });
+    
+    // Search functionality
+    document.getElementById('topic-search').addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const cards = document.querySelectorAll('#topics-grid a, #more-topics a');
+      
+      cards.forEach(card => {
+        const name = card.querySelector('h3').textContent.toLowerCase();
+        const desc = card.querySelector('p').textContent.toLowerCase();
+        if (name.includes(query) || desc.includes(query)) {
+          card.style.display = '';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+    
+    // Create topic modal
+    function openCreateModal() {
+      document.getElementById('create-modal').classList.remove('hidden');
+      document.getElementById('create-modal').classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeCreateModal() {
+      document.getElementById('create-modal').classList.add('hidden');
+      document.getElementById('create-modal').classList.remove('flex');
+      document.body.style.overflow = '';
+    }
+    
+    document.getElementById('create-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeCreateModal();
+    });
+    
+    function selectIcon(icon) {
+      selectedIcon = icon;
+      document.querySelectorAll('.selected-icon, [onclick^="selectIcon"]').forEach(btn => {
+        btn.classList.remove('border-primary', 'selected-icon');
+      });
+      event.currentTarget.classList.add('border-primary', 'selected-icon');
+    }
+    
+    function createTopic() {
+      const name = document.getElementById('new-topic-name').value.trim();
+      const desc = document.getElementById('new-topic-desc').value.trim();
+      
+      if (!name) {
+        alert('请输入话题名称');
+        return;
+      }
+      
+      alert(`话题 #${name} 创建成功！`);
+      closeCreateModal();
+      
+      // Reset form
+      document.getElementById('new-topic-name').value = '';
+      document.getElementById('new-topic-desc').value = '';
+    }
+    
+    function formatNumber(num) {
+      if (num >= 10000) return (num / 10000).toFixed(1) + 'w';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+      return num.toString();
+    }
+    
+    function formatTime(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diff = (now - date) / 1000;
+      
+      if (diff < 60) return '刚刚';
+      if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+      if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+      if (diff < 604800) return Math.floor(diff / 86400) + '天前';
+      return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+    }
+    
+    // Initialize
+    loadData();
+  </script>
+  
+  <style>
+    .slide-up {
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .line-clamp-3 {
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>景点拼图 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+    .pulse { animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    .puzzle-piece { transition: all 0.2s ease; cursor: pointer; }
+    .puzzle-piece:hover:not(.placed) { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .puzzle-piece.selected { outline: 3px solid #0ea5e9; outline-offset: 2px; }
+    .puzzle-piece.placed { opacity: 0.5; cursor: not-allowed; }
+    .piece-slot { transition: all 0.3s ease; }
+    .piece-slot:hover:not(.filled) { background: rgba(14, 165, 233, 0.1); }
+    .piece-slot.highlight { background: rgba(14, 165, 233, 0.3) !important; }
+    .piece-slot.correct { animation: correctPulse 0.5s ease; }
+    @keyframes correctPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    .difficulty-btn { transition: all 0.3s ease; }
+    .difficulty-btn:hover { transform: translateY(-4px); }
+    .difficulty-btn.selected { transform: scale(1.05); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    .trophy-shine { animation: trophyShine 2s ease-in-out infinite; }
+    @keyframes trophyShine { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.3); } }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-2xl">←</span>
+          <span class="text-xl font-bold">返回游戏中心</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
+            <span>⭐</span>
+            <span id="navPoints">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Game Header -->
+  <div id="gameHeader" class="bg-white/80 backdrop-blur-sm shadow-sm hidden">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div class="flex items-center gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-primary" id="currentScore">0</div>
+            <div class="text-xs text-gray-500">当前得分</div>
+          </div>
+          <div class="w-px h-10 bg-gray-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-purple-500" id="moveCount">0</div>
+            <div class="text-xs text-gray-500">移动次数</div>
+          </div>
+          <div class="w-px h-10 bg-gray-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-500 flex items-center gap-1" id="timerDisplay">
+              <span>⏱️</span>
+              <span id="timer">00:00</span>
+            </div>
+            <div class="text-xs text-gray-500">用时</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="bg-purple-100 text-purple-700 px-4 py-2 rounded-full font-medium" id="difficultyBadge">
+            3×3 简单
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 py-8">
+    <!-- Start Screen -->
+    <div id="startScreen" class="fade-in">
+      <div class="text-center mb-8">
+        <div class="text-7xl mb-4 float-animation">🧩</div>
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">景点拼图</h1>
+        <p class="text-gray-500">将打乱的景点图片重新拼合，感受旅行的魅力</p>
+      </div>
+
+      <!-- Image Selection -->
+      <div class="mb-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">选择景点</h3>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="imageSelection">
+          <!-- Images will be loaded here -->
+        </div>
+      </div>
+
+      <!-- Difficulty Selection -->
+      <div class="mb-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">选择难度</h3>
+        <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto">
+          <button onclick="selectDifficulty('easy')" class="difficulty-btn bg-gradient-to-br from-green-400 to-emerald-500 text-white rounded-2xl p-6 text-center shadow-lg" data-difficulty="easy">
+            <div class="text-3xl mb-2">😊</div>
+            <div class="font-bold">简单</div>
+            <div class="text-sm opacity-80">3×3 方格</div>
+          </button>
+          <button onclick="selectDifficulty('medium')" class="difficulty-btn bg-gradient-to-br from-orange-400 to-amber-500 text-white rounded-2xl p-6 text-center shadow-lg" data-difficulty="medium">
+            <div class="text-3xl mb-2">🤔</div>
+            <div class="font-bold">中等</div>
+            <div class="text-sm opacity-80">4×4 方格</div>
+          </button>
+          <button onclick="selectDifficulty('hard')" class="difficulty-btn bg-gradient-to-br from-red-400 to-rose-500 text-white rounded-2xl p-6 text-center shadow-lg" data-difficulty="hard">
+            <div class="text-3xl mb-2">😰</div>
+            <div class="font-bold">困难</div>
+            <div class="text-sm opacity-80">5×5 方格</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Start Button -->
+      <div class="text-center">
+        <button onclick="startGame()" id="startBtn" class="px-12 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-bold text-xl hover:opacity-90 transition shadow-xl disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          开始游戏 🎮
+        </button>
+        <p class="text-gray-400 text-sm mt-2" id="selectHint">请先选择景点和难度</p>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="hidden">
+      <div class="grid md:grid-cols-3 gap-8">
+        <!-- Puzzle Area -->
+        <div class="md:col-span-2">
+          <div class="bg-white rounded-3xl p-6 shadow-xl">
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                <span>🖼️</span>
+                <span id="puzzleName">景点拼图</span>
+              </h3>
+              <button onclick="showPreview()" class="text-sm text-purple-600 hover:underline flex items-center gap-1">
+                <span>👁️</span> 预览原图
+              </button>
+            </div>
+            
+            <!-- Puzzle Grid -->
+            <div id="puzzleGrid" class="aspect-square bg-gray-100 rounded-2xl overflow-hidden">
+              <!-- Puzzle pieces will be rendered here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Pieces Tray -->
+        <div class="md:col-span-1">
+          <div class="bg-white rounded-3xl p-6 shadow-xl">
+            <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span>📦</span>
+              碎片区
+            </h3>
+            <p class="text-sm text-gray-500 mb-4">点击选择碎片，再点击空位放置</p>
+            
+            <div id="piecesTray" class="grid gap-2" style="grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));">
+              <!-- Available pieces will be rendered here -->
+            </div>
+
+            <div class="mt-6 pt-4 border-t">
+              <button onclick="shuffleAgain()" class="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition flex items-center justify-center gap-2">
+                <span>🔀</span> 重新打乱
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Modal -->
+      <div id="previewModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-lg w-full">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-gray-800">原图预览</h3>
+            <button onclick="hidePreview()" class="text-gray-500 hover:text-gray-700 text-2xl">×</button>
+          </div>
+          <img id="previewImage" src="" alt="原图" class="w-full rounded-xl">
+        </div>
+      </div>
+    </div>
+
+    <!-- Complete Screen -->
+    <div id="completeScreen" class="hidden fade-in">
+      <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl max-w-lg mx-auto text-center">
+        <div class="relative mb-6">
+          <div class="text-8xl trophy-shine">🏆</div>
+          <div class="absolute -top-2 -right-2 text-4xl animate-bounce">🎉</div>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">拼图完成！</h2>
+        <p class="text-gray-500 mb-6">太棒了！你成功完成了拼图</p>
+        
+        <div class="grid grid-cols-3 gap-4 mb-6">
+          <div class="bg-purple-50 rounded-xl p-4">
+            <div class="text-2xl font-bold text-purple-600" id="finalTime">00:00</div>
+            <div class="text-xs text-gray-500">用时</div>
+          </div>
+          <div class="bg-orange-50 rounded-xl p-4">
+            <div class="text-2xl font-bold text-orange-600" id="finalMoves">0</div>
+            <div class="text-xs text-gray-500">移动次数</div>
+          </div>
+          <div class="bg-green-50 rounded-xl p-4">
+            <div class="text-2xl font-bold text-green-600" id="finalPoints">0</div>
+            <div class="text-xs text-gray-500">获得积分</div>
+          </div>
+        </div>
+
+        <div id="newRecordBadge" class="hidden bg-amber-100 text-amber-700 px-4 py-2 rounded-full inline-block mb-4 font-bold">
+          🏆 创造新纪录！
+        </div>
+        
+        <div id="completeImage" class="mb-6">
+          <img src="" alt="完成的拼图" class="w-full rounded-xl shadow-lg">
+        </div>
+        
+        <div class="space-y-3">
+          <button onclick="playAgain()" class="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-bold text-lg hover:opacity-90 transition">
+            再玩一次 🔄
+          </button>
+          <button onclick="chooseNewImage()" class="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition">
+            选择其他图片
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Game State
+    let gameState = {
+      selectedImage: null,
+      difficulty: 'easy',
+      grid: [],
+      pieces: [],
+      selectedPiece: null,
+      moves: 0,
+      startTime: null,
+      timerInterval: null,
+      isComplete: false,
+      gridSize: 3
+    };
+
+    let gamesData = null;
+
+    async function loadGamesData() {
+      try {
+        const response = await fetch('../data/games.json');
+        gamesData = await response.json();
+        loadUserData();
+        renderImageSelection();
+      } catch (error) {
+        console.error('Failed to load games data:', error);
+      }
+    }
+
+    function loadUserData() {
+      const userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      document.getElementById('navPoints').textContent = userData.totalPoints || 0;
+    }
+
+    function renderImageSelection() {
+      const container = document.getElementById('imageSelection');
+      const images = gamesData?.puzzleImages || [
+        { id: 'p1', name: '日本富士山', url: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=600', difficulty: 2 },
+        { id: 'p2', name: '泰国大皇宫', url: 'https://images.unsplash.com/photo-1528181304800-259b08848526?w=600', difficulty: 2 },
+        { id: 'p3', name: '新加坡鱼尾狮', url: 'https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600', difficulty: 1 },
+        { id: 'p4', name: '韩国首尔塔', url: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=600', difficulty: 2 },
+        { id: 'p5', name: '北京故宫', url: 'https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?w=600', difficulty: 3 }
+      ];
+
+      container.innerHTML = images.map(img => `
+        <div onclick="selectImage('${img.id}')" 
+             class="image-card cursor-pointer rounded-2xl overflow-hidden shadow-lg card-hover transition-all ${gameState.selectedImage === img.id ? 'ring-4 ring-purple-500 scale-105' : ''}"
+             data-image-id="${img.id}">
+          <div class="aspect-video bg-gray-200 relative">
+            <img src="${img.url}" alt="${img.name}" class="w-full h-full object-cover" loading="lazy">
+            <div class="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded-full">
+              ${['', '简单', '中等', '困难'][img.difficulty]}
+            </div>
+          </div>
+          <div class="p-3 bg-white">
+            <div class="font-medium text-gray-800 text-sm">${img.name}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectImage(imageId) {
+      gameState.selectedImage = imageId;
+      renderImageSelection();
+      updateStartButton();
+    }
+
+    function selectDifficulty(difficulty) {
+      gameState.difficulty = difficulty;
+      
+      document.querySelectorAll('.difficulty-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.difficulty === difficulty);
+      });
+      
+      updateStartButton();
+    }
+
+    function updateStartButton() {
+      const btn = document.getElementById('startBtn');
+      const hint = document.getElementById('selectHint');
+      
+      if (gameState.selectedImage && gameState.difficulty) {
+        btn.disabled = false;
+        hint.textContent = '准备开始！';
+      } else {
+        btn.disabled = true;
+        if (!gameState.selectedImage && !gameState.difficulty) {
+          hint.textContent = '请先选择景点和难度';
+        } else if (!gameState.selectedImage) {
+          hint.textContent = '请选择景点';
+        } else {
+          hint.textContent = '请选择难度';
+        }
+      }
+    }
+
+    function startGame() {
+      // Get selected image
+      const images = gamesData?.puzzleImages || [];
+      const image = images.find(img => img.id === gameState.selectedImage);
+      
+      if (!image) return;
+      
+      // Set grid size based on difficulty
+      const difficultyMap = { easy: 3, medium: 4, hard: 5 };
+      gameState.gridSize = difficultyMap[gameState.difficulty];
+      
+      // Initialize game state
+      gameState.moves = 0;
+      gameState.isComplete = false;
+      gameState.startTime = Date.now();
+      gameState.selectedPiece = null;
+      
+      // Create pieces
+      const totalPieces = gameState.gridSize * gameState.gridSize - 1;
+      gameState.pieces = Array.from({ length: totalPieces }, (_, i) => i + 1);
+      gameState.pieces = shuffleArray(gameState.pieces);
+      
+      // Update UI
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      document.getElementById('gameHeader').classList.remove('hidden');
+      document.getElementById('puzzleName').textContent = image.name;
+      document.getElementById('difficultyBadge').textContent = `${gameState.gridSize}×${gameState.gridSize} ${['简单', '中等', '困难'][['easy', 'medium', 'hard'].indexOf(gameState.difficulty)]}`;
+      document.getElementById('previewImage').src = image.url;
+      document.getElementById('completeImage').querySelector('img').src = image.url;
+      
+      // Start timer
+      startTimer();
+      
+      // Render puzzle
+      renderPuzzle();
+      renderPiecesTray();
+      
+      updateDisplays();
+    }
+
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    function startTimer() {
+      clearInterval(gameState.timerInterval);
+      gameState.timerInterval = setInterval(updateTimer, 1000);
+    }
+
+    function updateTimer() {
+      if (gameState.isComplete) return;
+      
+      const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+      const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+      const seconds = (elapsed % 60).toString().padStart(2, '0');
+      document.getElementById('timer').textContent = `${minutes}:${seconds}`;
+    }
+
+    function renderPuzzle() {
+      const grid = document.getElementById('puzzleGrid');
+      const image = gamesData?.puzzleImages?.find(img => img.id === gameState.selectedImage);
+      
+      grid.style.gridTemplateColumns = `repeat(${gameState.gridSize}, 1fr)`;
+      
+      let html = '';
+      for (let i = 0; i < gameState.gridSize * gameState.gridSize; i++) {
+        const pieceIndex = Math.floor(i / gameState.gridSize);
+        const pieceNumber = i < gameState.pieces.length ? gameState.pieces[i] : null;
+        
+        html += `
+          <div class="piece-slot aspect-square border border-gray-200 flex items-center justify-center text-2xl font-bold cursor-pointer ${pieceNumber ? 'bg-gray-200' : 'bg-gray-100'}"
+               onclick="handleSlotClick(${i})"
+               data-slot="${i}">
+            ${pieceNumber ? `<span class="text-gray-400">${pieceNumber}</span>` : ''}
+          </div>
+        `;
+      }
+      
+      grid.innerHTML = html;
+    }
+
+    function renderPiecesTray() {
+      const tray = document.getElementById('piecesTray');
+      const image = gamesData?.puzzleImages?.find(img => img.id === gameState.selectedImage);
+      
+      tray.style.gridTemplateColumns = `repeat(${Math.min(gameState.gridSize, 4)}, 1fr)`;
+      
+      tray.innerHTML = gameState.pieces.map((piece, idx) => `
+        <div class="puzzle-piece aspect-square rounded-lg overflow-hidden cursor-pointer shadow-md ${gameState.selectedPiece === piece ? 'selected' : ''}"
+             onclick="selectPiece(${piece})"
+             data-piece="${piece}">
+          <img src="${image?.url}" alt="拼图碎片" class="w-full h-full object-cover" 
+               style="clip-path: inset(${(Math.floor((piece - 1) / gameState.gridSize)) * (100 / gameState.gridSize)}% ${100 - ((piece % gameState.gridSize || gameState.gridSize) * (100 / gameState.gridSize))}% ${100 - (((Math.floor((piece - 1) / gameState.gridSize) + 1)) * (100 / gameState.gridSize))}% ${(piece % gameState.gridSize || gameState.gridSize - 1) * (100 / gameState.gridSize)}%)">
+        </div>
+      `).join('');
+    }
+
+    function selectPiece(piece) {
+      if (gameState.isComplete) return;
+      
+      gameState.selectedPiece = gameState.selectedPiece === piece ? null : piece;
+      
+      // Update tray UI
+      document.querySelectorAll('.puzzle-piece').forEach(el => {
+        el.classList.toggle('selected', parseInt(el.dataset.piece) === gameState.selectedPiece);
+      });
+    }
+
+    function handleSlotClick(slotIndex) {
+      if (gameState.isComplete) return;
+      if (!gameState.selectedPiece) return;
+      
+      const currentPiece = gameState.pieces[slotIndex];
+      
+      // Swap pieces
+      if (currentPiece) {
+        // Find positions
+        const piece1Pos = gameState.pieces.indexOf(gameState.selectedPiece);
+        const piece2Pos = slotIndex;
+        
+        // Swap
+        [gameState.pieces[piece1Pos], gameState.pieces[piece2Pos]] = [gameState.pieces[piece2Pos], gameState.pieces[piece1Pos]];
+        
+        gameState.moves++;
+        gameState.selectedPiece = null;
+        
+        updateDisplays();
+        renderPuzzle();
+        renderPiecesTray();
+        
+        checkCompletion();
+      }
+    }
+
+    function updateDisplays() {
+      document.getElementById('moveCount').textContent = gameState.moves;
+      document.getElementById('currentScore').textContent = calculateScore();
+    }
+
+    function calculateScore() {
+      const baseScore = 30;
+      const difficultyMultiplier = { easy: 1, medium: 1.5, hard: 2 }[gameState.difficulty];
+      const timeBonus = Math.max(0, 60 - Math.floor((Date.now() - gameState.startTime) / 1000));
+      const moveBonus = Math.max(0, 50 - gameState.moves);
+      
+      return Math.floor((baseScore + timeBonus + moveBonus) * difficultyMultiplier);
+    }
+
+    function checkCompletion() {
+      // Check if pieces are in correct order
+      const isComplete = gameState.pieces.every((piece, idx) => {
+        return piece === idx + 1;
+      });
+      
+      if (isComplete) {
+        gameState.isComplete = true;
+        clearInterval(gameState.timerInterval);
+        showCompleteScreen();
+      }
+    }
+
+    function showCompleteScreen() {
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('completeScreen').classList.remove('hidden');
+      
+      const elapsed = Math.floor((Date.now() - gameState.startTime) / 1000);
+      const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+      const seconds = (elapsed % 60).toString().padStart(2, '0');
+      
+      document.getElementById('finalTime').textContent = `${minutes}:${seconds}`;
+      document.getElementById('finalMoves').textContent = gameState.moves;
+      document.getElementById('finalPoints').textContent = calculateScore();
+      
+      // Check for new record
+      const userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      const key = `puzzle_${gameState.difficulty}_${gameState.selectedImage}`;
+      const isNewRecord = !userData.puzzleRecords || !userData.puzzleRecords[key] || calculateScore() > userData.puzzleRecords[key];
+      
+      document.getElementById('newRecordBadge').classList.toggle('hidden', !isNewRecord);
+      
+      if (isNewRecord) {
+        userData.puzzleRecords = userData.puzzleRecords || {};
+        userData.puzzleRecords[key] = calculateScore();
+      }
+      
+      // Save progress
+      userData.totalPoints = (userData.totalPoints || 0) + calculateScore();
+      userData.puzzleGames = (userData.puzzleGames || 0) + 1;
+      userData.puzzlePoints = (userData.puzzlePoints || 0) + calculateScore();
+      
+      if (userData.puzzleGames >= 10) {
+        unlockAchievement('puzzle_master');
+      }
+      
+      localStorage.setItem('gameUserData', JSON.stringify(userData));
+      loadUserData();
+      updateLeaderboard(calculateScore());
+    }
+
+    function unlockAchievement(achievementId) {
+      const userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      userData.achievements = userData.achievements || [];
+      if (!userData.achievements.includes(achievementId)) {
+        userData.achievements.push(achievementId);
+        setTimeout(() => {
+          alert(`🏆 成就解锁！`);
+        }, 500);
+      }
+      localStorage.setItem('gameUserData', JSON.stringify(userData));
+    }
+
+    function updateLeaderboard(score) {
+      let leaderboard = JSON.parse(localStorage.getItem('gameLeaderboard') || '[]');
+      const existingIndex = leaderboard.findIndex(entry => entry.id === 'currentUser');
+      
+      if (existingIndex >= 0) {
+        leaderboard[existingIndex].points += score;
+        leaderboard[existingIndex].weeklyPoints += score;
+      } else {
+        leaderboard.push({
+          id: 'currentUser',
+          name: '你',
+          points: score,
+          weeklyPoints: score,
+          avatar: '😊'
+        });
+      }
+      
+      leaderboard.sort((a, b) => b.weeklyPoints - a.weeklyPoints);
+      leaderboard = leaderboard.slice(0, 20);
+      
+      localStorage.setItem('gameLeaderboard', JSON.stringify(leaderboard));
+    }
+
+    function showPreview() {
+      document.getElementById('previewModal').classList.remove('hidden');
+    }
+
+    function hidePreview() {
+      document.getElementById('previewModal').classList.add('hidden');
+    }
+
+    function shuffleAgain() {
+      gameState.pieces = shuffleArray(gameState.pieces);
+      gameState.moves = 0;
+      gameState.selectedPiece = null;
+      gameState.startTime = Date.now();
+      
+      updateDisplays();
+      renderPuzzle();
+      renderPiecesTray();
+    }
+
+    function playAgain() {
+      document.getElementById('completeScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      
+      gameState.pieces = shuffleArray(gameState.pieces);
+      gameState.moves = 0;
+      gameState.isComplete = false;
+      gameState.startTime = Date.now();
+      gameState.selectedPiece = null;
+      
+      updateDisplays();
+      renderPuzzle();
+      renderPiecesTray();
+      startTimer();
+    }
+
+    function chooseNewImage() {
+      document.getElementById('completeScreen').classList.add('hidden');
+      document.getElementById('gameHeader').classList.add('hidden');
+      document.getElementById('startScreen').classList.remove('hidden');
+      
+      gameState.selectedImage = null;
+      gameState.difficulty = null;
+      renderImageSelection();
+      document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('selected'));
+      updateStartButton();
+    }
+
+    // Initialize
+    loadGamesData();
+  </script>
+</body>
+</html>

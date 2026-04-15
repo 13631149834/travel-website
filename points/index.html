@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>积分商城 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/points/points.css">
+  <link rel="stylesheet" href="../css/footer.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+            points: '#f97316'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 text-gray-700 hover:text-primary transition">
+          <span class="text-2xl">🧭</span>
+          <span class="text-xl font-bold">游导旅游</span>
+        </a>
+        <div class="flex items-center gap-6">
+          <a href="index.html" class="text-points font-semibold border-b-2 border-points pb-1">积分商城</a>
+          <a href="products.html" class="text-gray-600 hover:text-primary transition">全部商品</a>
+          <a href="my-points.html" class="text-gray-600 hover:text-primary transition">我的积分</a>
+          <a href="tasks.html" class="text-gray-600 hover:text-primary transition">赚积分</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Points Banner -->
+    <div class="points-gradient rounded-3xl p-8 mb-8 text-white relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+      <div class="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2"></div>
+      
+      <div class="relative z-10">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+          <div>
+            <p class="text-white/80 text-sm mb-2">我的积分余额</p>
+            <div class="flex items-baseline gap-2">
+              <span id="pointsDisplay" class="text-5xl md:text-6xl font-black">0</span>
+              <span class="text-2xl">积分</span>
+            </div>
+            <p class="text-white/60 text-sm mt-2">有效期至 <span id="expiryDate">-</span></p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <a href="my-points.html" class="px-6 py-3 bg-white text-points font-bold rounded-full hover:bg-orange-50 transition flex items-center gap-2">
+              📊 我的积分
+            </a>
+            <a href="tasks.html" class="px-6 py-3 bg-white/20 backdrop-blur text-white font-bold rounded-full hover:bg-white/30 transition flex items-center gap-2">
+              ✨ 赚积分
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Sign In -->
+    <div id="signInCard" class="bg-white rounded-2xl p-6 mb-8 shadow-sm border border-orange-100">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center text-2xl">
+            📅
+          </div>
+          <div>
+            <h3 class="font-bold text-lg text-gray-800">每日签到</h3>
+            <p class="text-gray-500 text-sm">签到即得 <span class="text-points font-semibold">+10 积分</span></p>
+          </div>
+        </div>
+        <button id="signInBtn" onclick="handleSignIn()" class="px-8 py-3 points-gradient text-white font-bold rounded-full hover:opacity-90 transition">
+          立即签到
+        </button>
+      </div>
+    </div>
+
+    <!-- Category Navigation -->
+    <div class="mb-8">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">商品分类</h2>
+      <div class="grid grid-cols-3 md:grid-cols-6 gap-4" id="categoryNav">
+        <!-- Categories will be loaded here -->
+      </div>
+    </div>
+
+    <!-- Hot Products -->
+    <div class="mb-8">
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-xl font-bold text-gray-800">🔥 热门兑换</h2>
+        <a href="products.html" class="text-points font-medium hover:underline">查看全部 →</a>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="hotProducts">
+        <!-- Hot products will be loaded here -->
+      </div>
+    </div>
+
+    <!-- Quick Links -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <a href="my-points.html" class="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+        <div class="text-3xl mb-2">📈</div>
+        <h3 class="font-semibold text-gray-800">积分明细</h3>
+        <p class="text-sm text-gray-500">查看收支记录</p>
+      </a>
+      <a href="history.html" class="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+        <div class="text-3xl mb-2">📦</div>
+        <h3 class="font-semibold text-gray-800">兑换记录</h3>
+        <p class="text-sm text-gray-500">物流查询</p>
+      </a>
+      <a href="tasks.html" class="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+        <div class="text-3xl mb-2">🎯</div>
+        <h3 class="font-semibold text-gray-800">任务中心</h3>
+        <p class="text-sm text-gray-500">赚取更多积分</p>
+      </a>
+      <a href="products.html" class="bg-white rounded-2xl p-6 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+        <div class="text-3xl mb-2">🎁</div>
+        <h3 class="font-semibold text-gray-800">全部商品</h3>
+        <p class="text-sm text-gray-500">浏览更多好物</p>
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12 mt-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div>
+          <h4 class="font-bold mb-4">关于游导</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="../about.html" class="hover:text-white transition">关于我们</a></li>
+            <li><a href="../contact.html" class="hover:text-white transition">联系我们</a></li>
+            <li><a href="../jobs.html" class="hover:text-white transition">加入我们</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">旅行服务</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="../destinations.html" class="hover:text-white transition">目的地</a></li>
+            <li><a href="../routes.html" class="hover:text-white transition">旅行路线</a></li>
+            <li><a href="../guides.html" class="hover:text-white transition">导游预约</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">帮助中心</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="../help.html" class="hover:text-white transition">常见问题</a></li>
+            <li><a href="../privacy.html" class="hover:text-white transition">隐私政策</a></li>
+            <li><a href="../terms.html" class="hover:text-white transition">用户协议</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">关注我们</h4>
+          <div class="flex gap-4 text-2xl">
+            <span class="cursor-pointer hover:text-primary transition">📧</span>
+            <span class="cursor-pointer hover:text-primary transition">💬</span>
+            <span class="cursor-pointer hover:text-primary transition">📱</span>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-500 text-sm">
+        <p>© 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/points/points-system.js"></script>
+  <script>
+    // 加载数据
+    async function loadData() {
+      try {
+        const response = await fetch('../data/points.json');
+        const data = await response.json();
+        
+        // 显示积分
+        const userData = PointsSystem.getUserData();
+        document.getElementById('pointsDisplay').textContent = userData.points.toLocaleString();
+        
+        // 显示积分有效期
+        const expiry = PointsSystem.getPointsExpiry();
+        document.getElementById('expiryDate').textContent = new Date(expiry.expiryDate).toLocaleDateString('zh-CN');
+        
+        // 渲染分类
+        renderCategories(data.categories);
+        
+        // 渲染热门商品
+        renderHotProducts(data.products);
+        
+        // 检查签到状态
+        checkSignInStatus();
+        
+      } catch (error) {
+        console.error('加载数据失败:', error);
+      }
+    }
+
+    // 渲染分类
+    function renderCategories(categories) {
+      const container = document.getElementById('categoryNav');
+      container.innerHTML = categories.map(cat => `
+        <a href="products.html?category=${cat.id}" class="bg-white rounded-2xl p-4 text-center shadow-sm hover:shadow-md transition border border-gray-100">
+          <div class="text-3xl mb-2">${cat.icon}</div>
+          <h3 class="font-semibold text-gray-800 text-sm">${cat.name}</h3>
+        </a>
+      `).join('');
+    }
+
+    // 渲染热门商品
+    function renderHotProducts(products) {
+      const container = document.getElementById('hotProducts');
+      const hotProducts = products.slice(0, 4);
+      
+      container.innerHTML = hotProducts.map(product => `
+        <a href="detail.html?id=${product.id}" class="product-card fade-in">
+          <div class="product-image">${product.image}</div>
+          <div class="p-4">
+            <h3 class="font-semibold text-gray-800 mb-2 truncate">${product.name}</h3>
+            <div class="flex items-center justify-between">
+              <span class="points-badge text-sm">
+                🪙 ${product.points}积分
+              </span>
+              <span class="text-gray-400 text-xs">剩余 ${product.stock}</span>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+
+    // 检查签到状态
+    function checkSignInStatus() {
+      const data = PointsSystem.getUserData();
+      const today = new Date().toDateString();
+      const lastSignIn = data.tasks.daily.signin.lastTime;
+      
+      const btn = document.getElementById('signInBtn');
+      const card = document.getElementById('signInCard');
+      
+      if (lastSignIn === today) {
+        btn.textContent = '已签到 ✓';
+        btn.disabled = true;
+        btn.classList.remove('points-gradient', 'hover:opacity-90');
+        btn.classList.add('bg-gray-200', 'text-gray-500', 'cursor-not-allowed');
+        card.classList.add('opacity-75');
+      }
+    }
+
+    // 签到处理
+    function handleSignIn() {
+      const success = PointsSystem.dailySignIn();
+      if (success) {
+        const userData = PointsSystem.getUserData();
+        document.getElementById('pointsDisplay').textContent = userData.points.toLocaleString();
+        checkSignInStatus();
+      }
+    }
+
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

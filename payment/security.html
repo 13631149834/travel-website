@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>支付安全 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="payment/index.html" class="hover:opacity-80 transition flex items-center gap-1 border-b-2 border-white pb-1">
+            💳 支付帮助
+          </a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="index.html" class="block py-2">首页</a>
+        <a href="destinations.html" class="block py-2">目的地</a>
+        <a href="routes.html" class="block py-2">路线</a>
+        <a href="payment/index.html" class="block py-2 font-semibold">💳 支付帮助</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="gradient-hero text-white py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 fade-in">
+      <div class="flex items-center gap-3 text-sm opacity-80 mb-4">
+        <a href="index.html" class="hover:opacity-70">首页</a>
+        <span>/</span>
+        <a href="payment/index.html" class="hover:opacity-70">支付帮助</a>
+        <span>/</span>
+        <span>支付安全</span>
+      </div>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">支付安全</h1>
+      <p class="text-lg opacity-90 max-w-2xl">多重安全保障，让您放心支付</p>
+    </div>
+  </section>
+
+  <!-- Security Measures -->
+  <section class="max-w-7xl mx-auto px-4 py-12">
+    <h2 class="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
+      <span class="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center">
+        <span class="text-xl">🛡️</span>
+      </span>
+      安全技术保障
+    </h2>
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+      <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+        <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+          <span class="text-3xl">🔒</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-3">HTTPS加密传输</h3>
+        <p class="text-gray-600 text-sm mb-4">全站采用SSL/TLS加密传输，确保数据在传输过程中不被窃取或篡改</p>
+        <div class="bg-green-50 rounded-lg p-3">
+          <div class="flex items-center gap-2 text-green-700 text-sm">
+            <span class="font-bold">256位</span>
+            <span>SSL加密</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+        <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+          <span class="text-3xl">🔑</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-3">支付密码验证</h3>
+        <p class="text-gray-600 text-sm mb-4">独立支付密码保护，每次支付需输入支付密码验证身份</p>
+        <div class="bg-blue-50 rounded-lg p-3">
+          <div class="flex items-center gap-2 text-blue-700 text-sm">
+            <span>独立于登录密码</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+        <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center mb-4">
+          <span class="text-3xl">📱</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-3">短信验证码</h3>
+        <p class="text-gray-600 text-sm mb-4">大额交易或异常操作需短信验证码二次确认，保障账户安全</p>
+        <div class="bg-purple-50 rounded-lg p-3">
+          <div class="flex items-center gap-2 text-purple-700 text-sm">
+            <span>动态验证码</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+        <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+          <span class="text-3xl">🛡️</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-3">风险监测系统</h3>
+        <p class="text-gray-600 text-sm mb-4">7×24小时智能风控系统，实时监测异常交易行为并预警</p>
+        <div class="bg-orange-50 rounded-lg p-3">
+          <div class="flex items-center gap-2 text-orange-700 text-sm">
+            <span>7×24小时监控</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+        <div class="w-14 h-14 bg-teal-100 rounded-xl flex items-center justify-center mb-4">
+          <span class="text-3xl">✅</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-3">数据安全认证</h3>
+        <p class="text-gray-600 text-sm mb-4">通过PCI DSS国际支付安全认证，符合金融行业最高安全标准</p>
+        <div class="bg-teal-50 rounded-lg p-3">
+          <div class="flex items-center gap-2 text-teal-700 text-sm">
+            <span>PCI DSS认证</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+        <div class="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center mb-4">
+          <span class="text-3xl">🏦</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-3">资金保障险</h3>
+        <p class="text-gray-600 text-sm mb-4">为用户账户购买资金安全保险，发生损失可申请赔付</p>
+        <div class="bg-indigo-50 rounded-lg p-3">
+          <div class="flex items-center gap-2 text-indigo-700 text-sm">
+            <span>百万保障额度</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security Technology Details -->
+  <section class="bg-gradient-to-r from-green-50 to-emerald-50 py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
+        <span class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+          <span class="text-xl">🔬</span>
+        </span>
+        安全技术详解
+      </h2>
+      <div class="space-y-6">
+        <div class="bg-white rounded-2xl p-6 shadow-md">
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <span class="text-4xl">🔐</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-gray-800 text-xl mb-3">端到端加密</h3>
+              <p class="text-gray-600 mb-4">所有敏感数据在传输和存储过程中均采用端到端加密技术，确保即使数据被截获也无法被解读。</p>
+              <div class="flex flex-wrap gap-3">
+                <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm">AES-256加密</span>
+                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">RSA-2048密钥交换</span>
+                <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">TLS 1.3协议</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="bg-white rounded-2xl p-6 shadow-md">
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <span class="text-4xl">👁️</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-gray-800 text-xl mb-3">智能风控引擎</h3>
+              <p class="text-gray-600 mb-4">基于机器学习的安全风控系统，实时分析交易特征，智能识别并拦截可疑交易。</p>
+              <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-blue-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-blue-600">99.9%</div>
+                  <div class="text-sm text-gray-600">识别准确率</div>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-blue-600">&lt;100ms</div>
+                  <div class="text-sm text-gray-600">响应时间</div>
+                </div>
+                <div class="bg-blue-50 rounded-lg p-3 text-center">
+                  <div class="text-2xl font-bold text-blue-600">24/7</div>
+                  <div class="text-sm text-gray-600">全天候监控</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-md">
+          <div class="flex flex-col md:flex-row gap-6">
+            <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center flex-shrink-0">
+              <span class="text-4xl">🎯</span>
+            </div>
+            <div>
+              <h3 class="font-bold text-gray-800 text-xl mb-3">3D Secure验证</h3>
+              <p class="text-gray-600 mb-4">国际信用卡支付采用3D Secure安全认证协议，由发卡银行进行身份验证，大幅降低信用卡盗刷风险。</p>
+              <div class="flex flex-wrap gap-3">
+                <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">Visa Verified</span>
+                <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">Mastercard SecureCode</span>
+                <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm">3DS 2.0协议</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fraud Prevention -->
+  <section class="max-w-7xl mx-auto px-4 py-16">
+    <h2 class="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
+      <span class="w-10 h-10 bg-red-500/10 rounded-xl flex items-center justify-center">
+        <span class="text-xl">⚠️</span>
+      </span>
+      防诈骗提示
+    </h2>
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-red-500">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <span class="text-2xl">🎣</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800 text-lg mb-2">警惕钓鱼网站</h3>
+            <p class="text-gray-600 text-sm mb-4">认准官方域名youdao-travel.com，不要点击陌生链接输入账户信息</p>
+            <div class="bg-red-50 rounded-lg p-3 space-y-2">
+              <div class="flex items-center gap-2 text-sm text-red-700">
+                <span>✓</span>
+                <span>核对网址是否正确</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-red-700">
+                <span>✓</span>
+                <span>不轻信要求转账的来电</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-red-700">
+                <span>✓</span>
+                <span>官方不会索要完整密码</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-blue-500">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <span class="text-2xl">🔐</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800 text-lg mb-2">保护个人信息</h3>
+            <p class="text-gray-600 text-sm mb-4">妥善保管身份证、银行卡等信息，不要随意透露给他人</p>
+            <div class="bg-blue-50 rounded-lg p-3 space-y-2">
+              <div class="flex items-center gap-2 text-sm text-blue-700">
+                <span>✓</span>
+                <span>不向他人展示付款码</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-blue-700">
+                <span>✓</span>
+                <span>及时销毁含有个人信息的单据</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-blue-700">
+                <span>✓</span>
+                <span>定期更换账户密码</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-orange-500">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <span class="text-2xl">🎭</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800 text-lg mb-2">谨防虚假客服</h3>
+            <p class="text-gray-600 text-sm mb-4">警惕非官方客服以各种理由要求转账或提供验证码</p>
+            <div class="bg-orange-50 rounded-lg p-3 space-y-2">
+              <div class="flex items-center gap-2 text-sm text-orange-700">
+                <span>✓</span>
+                <span>官方客服不会要求转账</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-orange-700">
+                <span>✓</span>
+                <span>不向任何人提供验证码</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-orange-700">
+                <span>✓</span>
+                <span>遇到可疑情况立即报警</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-green-500">
+        <div class="flex items-start gap-4">
+          <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+            <span class="text-2xl">💡</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800 text-lg mb-2">安全支付习惯</h3>
+            <p class="text-gray-600 text-sm mb-4">养成良好的支付习惯，避免在不安全的网络环境下支付</p>
+            <div class="bg-green-50 rounded-lg p-3 space-y-2">
+              <div class="flex items-center gap-2 text-sm text-green-700">
+                <span>✓</span>
+                <span>使用官方APP或网站</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-green-700">
+                <span>✓</span>
+                <span>避免公共WiFi支付</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-green-700">
+                <span>✓</span>
+                <span>确认收款方身份</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Privacy Protection -->
+  <section class="bg-gradient-to-r from-purple-50 to-indigo-50 py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-gray-800 mb-8 flex items-center gap-3">
+        <span class="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center">
+          <span class="text-xl">🔒</span>
+        </span>
+        隐私保护
+      </h2>
+      <div class="bg-white rounded-2xl shadow-lg p-8">
+        <div class="grid md:grid-cols-2 gap-8">
+          <div>
+            <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span class="text-2xl">📋</span> 数据收集原则
+            </h3>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-3 text-gray-600">
+                <span class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-sm flex-shrink-0 mt-0.5">1</span>
+                <span>仅收集提供服务所必需的信息</span>
+              </li>
+              <li class="flex items-start gap-3 text-gray-600">
+                <span class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-sm flex-shrink-0 mt-0.5">2</span>
+                <span>明确告知用户数据收集的目的和范围</span>
+              </li>
+              <li class="flex items-start gap-3 text-gray-600">
+                <span class="w-6 h-6 bg-purple-100 rounded-full flex items-center justify-center text-purple-600 text-sm flex-shrink-0 mt-0.5">3</span>
+                <span>获得用户明确同意后再收集敏感信息</span>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <span class="text-2xl">🛡️</span> 数据保护措施
+            </h3>
+            <ul class="space-y-3">
+              <li class="flex items-start gap-3 text-gray-600">
+                <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm flex-shrink-0 mt-0.5">✓</span>
+                <span>数据存储采用金融级加密标准</span>
+              </li>
+              <li class="flex items-start gap-3 text-gray-600">
+                <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm flex-shrink-0 mt-0.5">✓</span>
+                <span>严格访问控制，仅授权人员可接触数据</span>
+              </li>
+              <li class="flex items-start gap-3 text-gray-600">
+                <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm flex-shrink-0 mt-0.5">✓</span>
+                <span>定期安全审计和漏洞扫描</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-8 pt-6 border-t">
+          <a href="privacy.html" class="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium transition">
+            查看完整隐私政策
+            <span>→</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security Tips -->
+  <section class="max-w-7xl mx-auto px-4 py-16">
+    <div class="bg-gradient-to-r from-primary to-secondary text-white rounded-3xl p-8 md:p-12">
+      <h2 class="text-2xl font-bold mb-8 text-center">安全支付小贴士</h2>
+      <div class="grid md:grid-cols-4 gap-6">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span class="text-4xl">🔐</span>
+          </div>
+          <h3 class="font-bold mb-2">设置强密码</h3>
+          <p class="text-sm opacity-80">使用字母、数字、符号组合的复杂密码</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span class="text-4xl">📱</span>
+          </div>
+          <h3 class="font-bold mb-2">开启通知</h3>
+          <p class="text-sm opacity-80">开启账户变动短信/推送通知</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span class="text-4xl">🕐</span>
+          </div>
+          <h3 class="font-bold mb-2">定期检查</h3>
+          <p class="text-sm opacity-80">定期查看账户交易记录</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span class="text-4xl">🚨</span>
+          </div>
+          <h3 class="font-bold mb-2">及时报告</h3>
+          <p class="text-sm opacity-80">发现异常立即联系客服</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Links -->
+  <section class="max-w-7xl mx-auto px-4 pb-16">
+    <div class="grid md:grid-cols-3 gap-6">
+      <a href="methods.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-blue-500">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+            <span class="text-3xl">💳</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800">支付方式</h3>
+            <p class="text-sm text-gray-500">查看支持的支付方式</p>
+          </div>
+        </div>
+      </a>
+      <a href="refund.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-orange-500">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center">
+            <span class="text-3xl">💰</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800">退款政策</h3>
+            <p class="text-sm text-gray-500">了解退款条件和流程</p>
+          </div>
+        </div>
+      </a>
+      <a href="invoice.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-purple-500">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+            <span class="text-3xl">📄</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800">发票服务</h3>
+            <p class="text-sm text-gray-500">申请电子/纸质发票</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-3xl">🧭</span>
+            <span class="text-xl font-bold">游导旅游</span>
+          </div>
+          <p class="text-gray-400 text-sm">您的贴心旅行助手，让每一次出行都轻松愉快</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">快速链接</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="index.html" class="hover:text-white transition">首页</a></li>
+            <li><a href="destinations.html" class="hover:text-white transition">目的地</a></li>
+            <li><a href="routes.html" class="hover:text-white transition">路线</a></li>
+            <li><a href="tools.html" class="hover:text-white transition">工具箱</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">支付帮助</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="payment/index.html" class="hover:text-white transition">支付帮助</a></li>
+            <li><a href="payment/methods.html" class="hover:text-white transition">支付方式</a></li>
+            <li><a href="payment/security.html" class="hover:text-white transition">支付安全</a></li>
+            <li><a href="payment/refund.html" class="hover:text-white transition">退款政策</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">联系我们</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li>📧 2173381363@qq.com</li>
+            <li>💬 微信：ximao101</li>
+            <li>📞 13631149834</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-6 text-center text-gray-400 text-sm">
+        <p>© 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

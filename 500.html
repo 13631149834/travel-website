@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>500 - 服务器打了个盹 | 游导旅游</title>
+  <meta name="description" content="抱歉，服务器好像累了正在休息，请稍后再试或联系我们的客服团队。">
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>😴</text></svg>">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 50%, #1a1a2e 100%);
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* 背景装饰 */
+    .bg-pattern {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .bg-circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.1;
+    }
+
+    .bg-circle-1 {
+      width: 400px; height: 400px;
+      background: #667eea;
+      top: -100px; right: -100px;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    .bg-circle-2 {
+      width: 300px; height: 300px;
+      background: #764ba2;
+      bottom: -50px; left: -50px;
+      animation: pulse 5s ease-in-out infinite 1s;
+    }
+
+    .bg-circle-3 {
+      width: 200px; height: 200px;
+      background: #f093fb;
+      top: 50%; left: 30%;
+      animation: pulse 6s ease-in-out infinite 2s;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.1; }
+      50% { transform: scale(1.1); opacity: 0.15; }
+    }
+
+    /* 脉冲波纹 */
+    .pulse-waves {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .pulse-wave {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px; height: 100px;
+      border: 2px solid rgba(102, 126, 234, 0.3);
+      border-radius: 50%;
+      animation: wave 3s ease-out infinite;
+    }
+
+    .pulse-wave:nth-child(2) { animation-delay: 1s; }
+    .pulse-wave:nth-child(3) { animation-delay: 2s; }
+
+    @keyframes wave {
+      0% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+      100% { transform: translate(-50%, -50%) scale(5); opacity: 0; }
+    }
+
+    /* 导航栏 */
+    .nav-bar {
+      position: relative;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      text-decoration: none;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .logo:hover { opacity: 0.9; }
+
+    .nav-actions {
+      display: flex;
+      gap: 16px;
+    }
+
+    .nav-btn {
+      padding: 10px 20px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 50px;
+      color: white;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav-btn:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-2px);
+    }
+
+    /* 主容器 */
+    .main-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .error-content {
+      text-align: center;
+      max-width: 650px;
+    }
+
+    /* 睡觉图标 */
+    .sleeping-icon-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      margin: 0 auto 40px;
+    }
+
+    .sleeping-icon {
+      font-size: 120px;
+      filter: drop-shadow(0 10px 40px rgba(102, 126, 234, 0.4));
+      animation: sleepBreathe 4s ease-in-out infinite;
+    }
+
+    @keyframes sleepBreathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* Z字符动画 */
+    .zzz-container {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+    }
+
+    .zzz {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #667eea;
+      animation: zzzFloat 2s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    .zzz:nth-child(1) { animation-delay: 0s; font-size: 1rem; }
+    .zzz:nth-child(2) { animation-delay: 0.5s; font-size: 1.3rem; }
+    .zzz:nth-child(3) { animation-delay: 1s; font-size: 1.6rem; }
+
+    @keyframes zzzFloat {
+      0% { opacity: 0; transform: translateY(0) scale(0.8); }
+      50% { opacity: 1; }
+      100% { opacity: 0; transform: translateY(-30px) scale(1); }
+    }
+
+    /* 错误代码 */
+    .error-code {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-size: 6rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      color: white;
+      margin-bottom: 16px;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .error-description {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.8);
+      margin-bottom: 16px;
+      line-height: 1.8;
+    }
+
+    .error-tip {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 40px;
+      padding: 16px 24px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* 操作按钮 */
+    .actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .btn {
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+    }
+
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-3px);
+    }
+
+    .btn-icon {
+      font-size: 1.2rem;
+    }
+
+    /* 联系卡片 */
+    .contact-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .contact-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,0.1);
+      color: white;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .contact-card:hover {
+      background: rgba(255,255,255,0.15);
+      transform: translateY(-3px);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .contact-icon {
+      font-size: 2rem;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(102, 126, 234, 0.2);
+      border-radius: 12px;
+    }
+
+    .contact-info {
+      text-align: left;
+    }
+
+    .contact-label {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 4px;
+    }
+
+    .contact-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .nav-bar {
+        padding: 15px 20px;
+      }
+
+      .logo { font-size: 1.2rem; }
+
+      .main-container {
+        padding: 20px;
+      }
+
+      .error-code {
+        font-size: 4rem;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .error-description {
+        font-size: 1rem;
+      }
+
+      .sleeping-icon {
+        font-size: 80px;
+      }
+
+      .sleeping-icon-container {
+        width: 140px;
+        height: 140px;
+      }
+
+      .actions {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+      }
+
+      .contact-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 背景装饰 -->
+  <div class="bg-pattern">
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+  </div>
+
+  <!-- 脉冲波纹 -->
+  <div class="pulse-waves">
+    <div class="pulse-wave"></div>
+    <div class="pulse-wave"></div>
+    <div class="pulse-wave"></div>
+  </div>
+
+  <!-- 导航栏 -->
+  <nav class="nav-bar">
+    <a href="index.html" class="logo">
+      <span>🧭</span>
+      <span>游导旅游</span>
+    </a>
+    <div class="nav-actions">
+      <a href="index.html" class="nav-btn">🏠 首页</a>
+      <a href="status.html" class="nav-btn">📊 状态</a>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="main-container">
+    <div class="error-content">
+      <!-- 睡觉图标 -->
+      <div class="sleeping-icon-container">
+        <div class="zzz-container">
+          <span class="zzz">Z</span>
+          <span class="zzz">Z</span>
+          <span class="zzz">Z</span>
+        </div>
+        <div class="sleeping-icon">😴</div>
+      </div>
+
+      <div class="error-code">500</div>
+      <h1>服务器打了个盹 😴</h1>
+      <p class="error-description">
+        哎呀，服务器好像累了需要休息一下~<br>
+        这不是您的错，请稍后重试，我们会尽快恢复服务！
+      </p>
+
+      <div class="error-tip">
+        💡 提示：如果问题持续存在，可能是服务器正在维护中，请查看我们的
+        <a href="status.html" style="color: #667eea; text-decoration: underline;">状态页面</a>
+        获取最新信息
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="actions">
+        <button class="btn btn-primary" onclick="location.reload()">
+          <span class="btn-icon">🔄</span>
+          刷新页面
+        </button>
+        <a href="index.html" class="btn btn-secondary">
+          <span class="btn-icon">🏠</span>
+          返回首页
+        </a>
+        <a href="contact.html" class="btn btn-secondary">
+          <span class="btn-icon">💬</span>
+          联系客服
+        </a>
+      </div>
+
+      <!-- 联系选项 -->
+      <div class="contact-cards">
+        <a href="contact.html" class="contact-card">
+          <div class="contact-icon">💬</div>
+          <div class="contact-info">
+            <div class="contact-label">在线客服</div>
+            <div class="contact-value">7x24 小时响应</div>
+          </div>
+        </a>
+        <a href="mailto:support@youdao-travel.com" class="contact-card">
+          <div class="contact-icon">📧</div>
+          <div class="contact-info">
+            <div class="contact-label">邮箱支持</div>
+            <div class="contact-value">support@youdao-travel.com</div>
+          </div>
+        </a>
+        <a href="tel:13631149834" class="contact-card">
+          <div class="contact-icon">📞</div>
+          <div class="contact-info">
+            <div class="contact-label">电话热线</div>
+            <div class="contact-value">13631149834</div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // 自动刷新功能 (可选)
+    let refreshCount = 0;
+    const maxRefresh = 3;
+
+    function autoRefresh() {
+      if (refreshCount < maxRefresh) {
+        refreshCount++;
+        console.log(`自动刷新尝试 ${refreshCount}/${maxRefresh}...`);
+        setTimeout(() => {
+          location.reload();
+        }, 10000); // 10秒后自动刷新
+      }
+    }
+
+    // 监听网络状态
+    window.addEventListener('online', function() {
+      console.log('网络已恢复');
+    });
+
+    window.addEventListener('offline', function() {
+      console.log('网络已断开');
+    });
+  </script>
+</body>
+</html>

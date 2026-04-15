@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>目的地视频 - 游导旅游</title>
+  <meta name="description" content="按目的地浏览旅行视频，探索日本、韩国、泰国、新加坡等热门目的地的精彩内容。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/gallery.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <style>
+    /* 页面特定样式 */
+    .page-hero {
+      background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 50%, #ec4899 100%);
+      padding: 48px 0 64px;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .page-hero p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.9);
+    }
+    
+    /* 目的地选择器 */
+    .destination-tabs {
+      background: #fff;
+      padding: 24px 0;
+      border-bottom: 1px solid #e5e7eb;
+      position: sticky;
+      top: 64px;
+      z-index: 40;
+    }
+    .tabs-container {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs-container::-webkit-scrollbar {
+      display: none;
+    }
+    .destination-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #f3f4f6;
+      border-radius: 50px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+      color: #4b5563;
+      border: 2px solid transparent;
+    }
+    .destination-tab:hover {
+      background: #e5e7eb;
+    }
+    .destination-tab.active {
+      background: #fff;
+      border-color: #0ea5e9;
+      color: #0ea5e9;
+      font-weight: 600;
+    }
+    .destination-tab .icon {
+      font-size: 1.25rem;
+    }
+    .destination-tab .count {
+      font-size: 0.75rem;
+      background: rgba(0,0,0,0.08);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .destination-tab.active .count {
+      background: rgba(14, 165, 233, 0.15);
+    }
+    
+    /* 内容区 */
+    .content-area {
+      padding: 40px 0;
+      background: #f9fafb;
+      min-height: 60vh;
+    }
+    
+    /* 目的地头部信息 */
+    .destination-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding: 24px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    }
+    .destination-flag {
+      font-size: 4rem;
+      line-height: 1;
+    }
+    .destination-info h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+    .destination-info p {
+      font-size: 0.9rem;
+      color: #6b7280;
+    }
+    .destination-stats {
+      margin-left: auto;
+      display: flex;
+      gap: 24px;
+    }
+    .dest-stat {
+      text-align: center;
+    }
+    .dest-stat .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #0ea5e9;
+    }
+    .dest-stat .label {
+      font-size: 0.75rem;
+      color: #9ca3af;
+    }
+    
+    /* 视频网格 */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    
+    /* 视频卡片 */
+    .video-card {
+      background: #fff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .video-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+    }
+    .video-thumbnail {
+      position: relative;
+      aspect-ratio: 16/9;
+      overflow: hidden;
+    }
+    .video-thumbnail img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .video-card:hover .video-thumbnail img {
+      transform: scale(1.05);
+    }
+    .video-duration {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      background: rgba(0,0,0,0.75);
+      color: #fff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .video-play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 56px;
+      height: 56px;
+      background: rgba(255,255,255,0.95);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .video-card:hover .video-play-btn {
+      opacity: 1;
+    }
+    .video-badges {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      display: flex;
+      gap: 6px;
+    }
+    .video-badge {
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .badge-hot { background: #ef4444; color: #fff; }
+    .badge-new { background: #22c55e; color: #fff; }
+    .badge-featured { background: #f59e0b; color: #fff; }
+    .video-info {
+      padding: 16px;
+    }
+    .video-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.4;
+    }
+    .video-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    .video-author {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .video-author img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+    }
+    .verified-icon { color: #0ea5e9; }
+    
+    /* 分类筛选 */
+    .filter-section {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .filter-chip {
+      padding: 8px 16px;
+      background: #fff;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: #4b5563;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .filter-chip:hover {
+      border-color: #0ea5e9;
+      color: #0ea5e9;
+    }
+    .filter-chip.active {
+      background: #0ea5e9;
+      border-color: #0ea5e9;
+      color: #fff;
+    }
+    
+    /* 加载更多 */
+    .load-more {
+      text-align: center;
+      margin-top: 40px;
+    }
+    .load-more-btn {
+      padding: 12px 48px;
+      background: #fff;
+      border: 2px solid #0ea5e9;
+      border-radius: 50px;
+      color: #0ea5e9;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .load-more-btn:hover {
+      background: #0ea5e9;
+      color: #fff;
+    }
+    
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: #9ca3af;
+    }
+    .empty-state .icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    .empty-state h3 {
+      font-size: 1.25rem;
+      color: #6b7280;
+      margin-bottom: 8px;
+    }
+    
+    @media (max-width: 768px) {
+      .destination-header {
+        flex-wrap: wrap;
+      }
+      .destination-stats {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-around;
+        margin-top: 16px;
+      }
+      .page-hero h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="../index.html" class="logo">
+          <span class="logo-icon">🧭</span>
+          <span>游导旅游</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../index.html">首页</a></li>
+          <li><a href="../destinations.html">目的地</a></li>
+          <li><a href="../routes.html">路线</a></li>
+          <li><a href="../guides.html">导游</a></li>
+          <li><a href="index.html" class="active">视频</a></li>
+        </ul>
+        <div class="nav-actions">
+          <a href="upload.html" class="btn btn-primary">上传视频</a>
+          <a href="../login.html" class="btn btn-outline">登录</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero区域 -->
+  <section class="page-hero">
+    <h1>🌍 目的地视频</h1>
+    <p>按目的地浏览精彩旅行视频，发现每个地方的独特魅力</p>
+  </section>
+
+  <!-- 目的地选择器 -->
+  <nav class="destination-tabs">
+    <div class="container">
+      <div class="tabs-container">
+        <div class="destination-tab active" data-country="all">
+          <span class="icon">🌍</span>
+          <span>全部目的地</span>
+          <span class="count">272</span>
+        </div>
+        <div class="destination-tab" data-country="japan">
+          <span class="icon">🗾</span>
+          <span>日本</span>
+          <span class="count">89</span>
+        </div>
+        <div class="destination-tab" data-country="korea">
+          <span class="icon">🇰🇷</span>
+          <span>韩国</span>
+          <span class="count">76</span>
+        </div>
+        <div class="destination-tab" data-country="thailand">
+          <span class="icon">🇹🇭</span>
+          <span>泰国</span>
+          <span class="count">65</span>
+        </div>
+        <div class="destination-tab" data-country="singapore">
+          <span class="icon">🇸🇬</span>
+          <span>新加坡</span>
+          <span class="count">42</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 内容区 -->
+  <main class="content-area">
+    <div class="container">
+      <!-- 日本 -->
+      <section class="destination-section" id="japan-section" style="margin-bottom: 48px;">
+        <div class="destination-header">
+          <span class="destination-flag">🗾</span>
+          <div class="destination-info">
+            <h2>日本 Japan</h2>
+            <p>传统与现代完美融合的国度，从东京的繁华到京都的古韵</p>
+          </div>
+          <div class="destination-stats">
+            <div class="dest-stat">
+              <div class="value">89</div>
+              <div class="label">视频数量</div>
+            </div>
+            <div class="dest-stat">
+              <div class="value">56.2万</div>
+              <div class="label">总观看</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="filter-section">
+          <span class="filter-chip active" data-filter="all">全部</span>
+          <span class="filter-chip" data-filter="guide">旅行攻略</span>
+          <span class="filter-chip" data-filter="food">美食探店</span>
+          <span class="filter-chip" data-filter="culture">文化体验</span>
+          <span class="filter-chip" data-filter="scenery">航拍风光</span>
+          <span class="filter-chip" data-filter="vlog">Vlog</span>
+        </div>
+        
+        <div class="video-grid">
+          <div class="video-card" onclick="playVideo('v001')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/tokyo/640/360" alt="东京深度游">
+              <span class="video-duration">15:32</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-hot">🔥 热门</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">东京深度游｜暴走6天5夜的东京攻略</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=1" alt="作者">
+                  <span>旅行探险家小王</span>
+                  <span class="verified-icon">✓</span>
+                </div>
+                <span>12.5万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v002')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/kyoto/640/360" alt="京都赏樱">
+              <span class="video-duration">12:45</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-featured">⭐ 精选</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">京都赏樱｜千年古都的春日浪漫</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=2" alt="作者">
+                  <span>樱花物语</span>
+                  <span class="verified-icon">✓</span>
+                </div>
+                <span>9.8万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v006')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/kimono/640/360" alt="和服体验">
+              <span class="video-duration">16:30</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-hot">🔥 热门</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">日本和服体验｜在京都穿和服逛寺庙</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=2" alt="作者">
+                  <span>樱花物语</span>
+                  <span class="verified-icon">✓</span>
+                </div>
+                <span>11.2万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v009')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/disneyland-tokyo/640/360" alt="迪士尼">
+              <span class="video-duration">25:40</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-hot">🔥 热门</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">东京迪士尼Land攻略｜少排队高效率玩法</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=1" alt="作者">
+                  <span>旅行探险家小王</span>
+                  <span class="verified-icon">✓</span>
+                </div>
+                <span>15.6万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v011')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/osaka-food/640/360" alt="大阪美食">
+              <span class="video-duration">17:30</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-new">🆕 新上架</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">大阪道顿堀美食之旅｜吃遍章鱼烧和拉面</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=3" alt="作者">
+                  <span>美食猎人阿明</span>
+                </div>
+                <span>8.9万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v013')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/fuji-drone/640/360" alt="富士山">
+              <span class="video-duration">08:45</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-hot">🔥 热门</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">富士山绝美航拍｜从空中看日本地标</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=8" alt="作者">
+                  <span>航拍视界</span>
+                  <span class="verified-icon">✓</span>
+                </div>
+                <span>18.9万观看</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="load-more">
+          <button class="load-more-btn">加载更多日本视频 →</button>
+        </div>
+      </section>
+
+      <!-- 韩国 -->
+      <section class="destination-section" id="korea-section" style="margin-bottom: 48px;">
+        <div class="destination-header">
+          <span class="destination-flag">🇰🇷</span>
+          <div class="destination-info">
+            <h2>韩国 Korea</h2>
+            <p>K-pop、美食与传统文化交织的魅力国度</p>
+          </div>
+          <div class="destination-stats">
+            <div class="dest-stat">
+              <div class="value">76</div>
+              <div class="label">视频数量</div>
+            </div>
+            <div class="dest-stat">
+              <div class="value">38.5万</div>
+              <div class="label">总观看</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="video-grid">
+          <div class="video-card" onclick="playVideo('v003')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/seoul-food/640/360" alt="首尔美食">
+              <span class="video-duration">18:20</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-new">🆕 新上架</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">首尔美食探店｜隐藏在小巷里的米其林</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=3" alt="作者">
+                  <span>美食猎人阿明</span>
+                </div>
+                <span>7.8万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v007')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/spa-korea/640/360" alt="汗蒸">
+              <span class="video-duration">11:25</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-new">🆕 新上架</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">韩国汗蒸幕初体验｜在地人的放松方式</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=6" alt="作者">
+                  <span>思密达日记</span>
+                </div>
+                <span>3.8万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v012')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/hongdae/640/360" alt="弘大">
+              <span class="video-duration">14:20</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-featured">⭐ 精选</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">首尔弘大街头文化｜韩国年轻人的艺术天堂</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=6" alt="作者">
+                  <span>思密达日记</span>
+                </div>
+                <span>3.4万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v015')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/jeju/640/360" alt="济州岛">
+              <span class="video-duration">26:30</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-hot">🔥 热门</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">济州岛环岛自驾｜韩国的夏威夷</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=10" alt="作者">
+                  <span>自驾游中国</span>
+                  <span class="verified-icon">✓</span>
+                </div>
+                <span>7.8万观看</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="load-more">
+          <button class="load-more-btn">加载更多韩国视频 →</button>
+        </div>
+      </section>
+
+      <!-- 泰国 -->
+      <section class="destination-section" id="thailand-section" style="margin-bottom: 48px;">
+        <div class="destination-header">
+          <span class="destination-flag">🇹🇭</span>
+          <div class="destination-info">
+            <h2>泰国 Thailand</h2>
+            <p>微笑佛国的热带风情，从曼谷繁华到清迈悠闲</p>
+          </div>
+          <div class="destination-stats">
+            <div class="dest-stat">
+              <div class="value">65</div>
+              <div class="label">视频数量</div>
+            </div>
+            <div class="dest-stat">
+              <div class="value">28.6万</div>
+              <div class="label">总观看</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="video-grid">
+          <div class="video-card" onclick="playVideo('v004')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/bangkok-night/640/360" alt="曼谷夜市">
+              <span class="video-duration">14:55</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-featured">⭐ 精选</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">曼谷夜市全攻略｜从火车夜市到霓虹夜市</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=4" alt="作者">
+                  <span>东南亚背包客</span>
+                  <span class="verified-icon">✓</span>
+                </div>
+                <span>6.7万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v008')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/chiangmai/640/360" alt="清迈">
+              <span class="video-duration">20:15</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-hot">🔥 热门</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">泰国清迈深度游｜探索泰北玫瑰</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=4" alt="作者">
+                  <span>东南亚背包客</span>
+                  <span class="verified-icon">✓</span>
+                </div>
+                <span>5.2万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v014')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/phuket/640/360" alt="普吉岛">
+              <span class="video-duration">23:15</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-featured">⭐ 精选</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">普吉岛自由行｜5天4夜海岛度假攻略</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=9" alt="作者">
+                  <span>海岛日记</span>
+                </div>
+                <span>5.6万观看</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="load-more">
+          <button class="load-more-btn">加载更多泰国视频 →</button>
+        </div>
+      </section>
+
+      <!-- 新加坡 -->
+      <section class="destination-section" id="singapore-section" style="margin-bottom: 48px;">
+        <div class="destination-header">
+          <span class="destination-flag">🇸🇬</span>
+          <div class="destination-info">
+            <h2>新加坡 Singapore</h2>
+            <p>花园城市的多元魅力，美食、建筑与文化的完美融合</p>
+          </div>
+          <div class="destination-stats">
+            <div class="dest-stat">
+              <div class="value">42</div>
+              <div class="label">视频数量</div>
+            </div>
+            <div class="dest-stat">
+              <div class="value">15.7万</div>
+              <div class="label">总观看</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="video-grid">
+          <div class="video-card" onclick="playVideo('v005')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/singapore-us/640/360" alt="环球影城">
+              <span class="video-duration">22:10</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-new">🆕 新上架</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">新加坡环球影城｜一日游完整攻略</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=5" alt="作者">
+                  <span>主题乐园控</span>
+                </div>
+                <span>4.5万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v010')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/changi-airport/640/360" alt="樟宜机场">
+              <span class="video-duration">13:50</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-new">🆕 新上架</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">新加坡樟宜机场｜全球最佳机场的秘密</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=7" alt="作者">
+                  <span>机场探索家</span>
+                  <span class="verified-icon">✓</span>
+                </div>
+                <span>6.7万观看</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="video-card" onclick="playVideo('v016')">
+            <div class="video-thumbnail">
+              <img src="https://picsum.photos/seed/little-india/640/360" alt="小印度">
+              <span class="video-duration">15:45</span>
+              <div class="video-play-btn">▶</div>
+              <div class="video-badges">
+                <span class="video-badge badge-featured">⭐ 精选</span>
+              </div>
+            </div>
+            <div class="video-info">
+              <h3 class="video-title">新加坡小印度深度游｜异域风情的宝莱坞世界</h3>
+              <div class="video-meta">
+                <div class="video-author">
+                  <img src="https://i.pravatar.cc/100?img=11" alt="作者">
+                  <span>城市探索者</span>
+                </div>
+                <span>4.1万观看</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="load-more">
+          <button class="load-more-btn">加载更多新加坡视频 →</button>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer style="background: #1f2937; color: #fff; padding: 48px 0 24px; margin-top: 0;">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 32px; margin-bottom: 32px;">
+        <div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+            <span style="font-size: 1.5rem;">🧭</span>
+            <span style="font-size: 1.25rem; font-weight: 600;">游导旅游</span>
+          </div>
+          <p style="font-size: 0.9rem; color: #9ca3af; line-height: 1.6;">您的贴心旅行助手，让每一次出行都轻松愉快。</p>
+        </div>
+        <div>
+          <h4 style="font-weight: 600; margin-bottom: 12px;">视频资源</h4>
+          <ul style="list-style: none; font-size: 0.85rem; color: #9ca3af;">
+            <li style="margin-bottom: 8px;"><a href="index.html" style="color: inherit; text-decoration: none;">全部视频</a></li>
+            <li style="margin-bottom: 8px;"><a href="destinations.html" style="color: inherit; text-decoration: none;">目的地视频</a></li>
+            <li style="margin-bottom: 8px;"><a href="themes.html" style="color: inherit; text-decoration: none;">主题视频</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 style="font-weight: 600; margin-bottom: 12px;">帮助与支持</h4>
+          <ul style="list-style: none; font-size: 0.85rem; color: #9ca3af;">
+            <li style="margin-bottom: 8px;"><a href="../help.html" style="color: inherit; text-decoration: none;">帮助中心</a></li>
+            <li style="margin-bottom: 8px;"><a href="../feedback.html" style="color: inherit; text-decoration: none;">意见反馈</a></li>
+          </ul>
+        </div>
+      </div>
+      <div style="border-top: 1px solid #374151; padding-top: 24px; text-align: center; font-size: 0.85rem; color: #9ca3af;">
+        <p>© 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 目的地切换
+    document.querySelectorAll('.destination-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.destination-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+        
+        const country = this.dataset.country;
+        
+        // 滚动到对应区域
+        if (country === 'all') {
+          document.querySelector('.content-area').scrollIntoView({ behavior: 'smooth' });
+        } else {
+          const section = document.getElementById(country + '-section');
+          if (section) {
+            section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+
+    // 筛选标签
+    document.querySelectorAll('.filter-chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        const parent = this.parentElement;
+        parent.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // 播放视频
+    function playVideo(videoId) {
+      window.location.href = 'player.html?id=' + videoId;
+    }
+
+    // URL参数处理
+    const urlParams = new URLSearchParams(window.location.search);
+    const country = urlParams.get('country');
+    if (country) {
+      const tab = document.querySelector(`.destination-tab[data-country="${country}"]`);
+      if (tab) {
+        tab.click();
+      }
+    }
+  </script>
+</body>
+</html>

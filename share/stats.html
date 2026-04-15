@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>分享统计 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .chart-bar { transition: width 1s ease-out; }
+    .count-up { font-variant-numeric: tabular-nums; }
+    .progress-bar { transition: width 0.5s ease; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="share/index.html" class="hover:opacity-80 transition font-semibold border-b-2 border-white pb-1 flex items-center gap-1">
+            📤 分享中心
+          </a>
+          <a href="tools/index.html" class="hover:opacity-80 transition">🧰 工具箱</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="index.html" class="block py-2">首页</a>
+        <a href="destinations.html" class="block py-2">目的地</a>
+        <a href="routes.html" class="block py-2">路线</a>
+        <a href="share/index.html" class="block py-2 font-semibold">📤 分享中心</a>
+        <a href="tools/index.html" class="block py-2">🧰 工具箱</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="gradient-hero text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 fade-in">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-5xl">📊</span>
+        <h1 class="text-3xl md:text-4xl font-bold">分享统计</h1>
+      </div>
+      <p class="text-lg opacity-90">实时追踪分享数据，了解内容传播效果</p>
+    </div>
+  </section>
+
+  <!-- Overview Stats -->
+  <section class="max-w-7xl mx-auto px-4 -mt-6 mb-8">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl p-5 shadow-lg">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center text-white text-2xl">
+            📤
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">今日分享</p>
+            <p class="text-2xl font-bold text-gray-800 count-up" data-target="1234">0</p>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center gap-1 text-sm">
+          <span class="text-green-500">↑ 12.5%</span>
+          <span class="text-gray-400">较昨日</span>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-2xl p-5 shadow-lg">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center text-white text-2xl">
+            📈
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">本周分享</p>
+            <p class="text-2xl font-bold text-gray-800 count-up" data-target="8765">0</p>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center gap-1 text-sm">
+          <span class="text-green-500">↑ 15.8%</span>
+          <span class="text-gray-400">较上周</span>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-2xl p-5 shadow-lg">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center text-white text-2xl">
+            🎯
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">总分享量</p>
+            <p class="text-2xl font-bold text-gray-800 count-up" data-target="128956">0</p>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center gap-1 text-sm">
+          <span class="text-gray-500">累计数据</span>
+        </div>
+      </div>
+      
+      <div class="bg-white rounded-2xl p-5 shadow-lg">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center text-white text-2xl">
+            👁️
+          </div>
+          <div>
+            <p class="text-sm text-gray-500">总曝光量</p>
+            <p class="text-2xl font-bold text-gray-800 count-up" data-target="456789">0</p>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center gap-1 text-sm">
+          <span class="text-green-500">↑ 23.2%</span>
+          <span class="text-gray-400">较上周</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Charts Row -->
+  <section class="max-w-7xl mx-auto px-4 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Platform Distribution -->
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+          <span>🔗</span> 平台分布
+        </h2>
+        
+        <div class="space-y-4">
+          <!-- WeChat -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">💬</span>
+                <span class="font-medium text-gray-800">微信</span>
+              </div>
+              <div class="text-right">
+                <span class="font-bold text-gray-800">45,678</span>
+                <span class="text-sm text-gray-500 ml-2">35.4%</span>
+              </div>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-3">
+              <div class="bg-gradient-to-r from-green-500 to-green-600 h-3 rounded-full progress-bar" style="width: 35.4%"></div>
+            </div>
+          </div>
+          
+          <!-- Weibo -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">📰</span>
+                <span class="font-medium text-gray-800">微博</span>
+              </div>
+              <div class="text-right">
+                <span class="font-bold text-gray-800">23,145</span>
+                <span class="text-sm text-gray-500 ml-2">17.9%</span>
+              </div>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-3">
+              <div class="bg-gradient-to-r from-red-500 to-orange-500 h-3 rounded-full progress-bar" style="width: 17.9%"></div>
+            </div>
+          </div>
+          
+          <!-- QQ -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🐧</span>
+                <span class="font-medium text-gray-800">QQ</span>
+              </div>
+              <div class="text-right">
+                <span class="font-bold text-gray-800">18,923</span>
+                <span class="text-sm text-gray-500 ml-2">14.7%</span>
+              </div>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-3">
+              <div class="bg-gradient-to-r from-blue-500 to-blue-600 h-3 rounded-full progress-bar" style="width: 14.7%"></div>
+            </div>
+          </div>
+          
+          <!-- QZone -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🌐</span>
+                <span class="font-medium text-gray-800">QQ空间</span>
+              </div>
+              <div class="text-right">
+                <span class="font-bold text-gray-800">15,234</span>
+                <span class="text-sm text-gray-500 ml-2">11.8%</span>
+              </div>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-3">
+              <div class="bg-gradient-to-r from-yellow-400 to-yellow-500 h-3 rounded-full progress-bar" style="width: 11.8%"></div>
+            </div>
+          </div>
+          
+          <!-- Others -->
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">🔗</span>
+                <span class="font-medium text-gray-800">其他平台</span>
+              </div>
+              <div class="text-right">
+                <span class="font-bold text-gray-800">25,976</span>
+                <span class="text-sm text-gray-500 ml-2">20.2%</span>
+              </div>
+            </div>
+            <div class="w-full bg-gray-100 rounded-full h-3">
+              <div class="bg-gradient-to-r from-purple-500 to-purple-600 h-3 rounded-full progress-bar" style="width: 20.2%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Type Distribution -->
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+          <span>📋</span> 内容类型分布
+        </h2>
+        
+        <div class="flex items-center justify-center mb-6">
+          <div class="relative w-48 h-48">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#f3f4f6" stroke-width="20"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#10b981" stroke-width="20" stroke-dasharray="88.4 251.3" stroke-dashoffset="0"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#0ea5e9" stroke-width="20" stroke-dasharray="62.2 251.3" stroke-dashoffset="-88.4"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#8b5cf6" stroke-width="20" stroke-dasharray="44.7 251.3" stroke-dashoffset="-150.6"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#f59e0b" stroke-width="20" stroke-dasharray="30.5 251.3" stroke-dashoffset="-195.3"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="#ec4899" stroke-width="20" stroke-dasharray="24 251.3" stroke-dashoffset="-225.8"/>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span class="text-3xl font-bold text-gray-800">128K</span>
+              <span class="text-sm text-gray-500">总分享</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+            <span class="text-sm text-gray-700">攻略 35.4%</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+            <span class="text-sm text-gray-700">目的地 24.9%</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-purple-500"></div>
+            <span class="text-sm text-gray-700">游记 17.9%</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+            <span class="text-sm text-gray-700">活动 12.2%</span>
+          </div>
+          <div class="flex items-center gap-2 col-span-2">
+            <div class="w-3 h-3 rounded-full bg-pink-500"></div>
+            <span class="text-sm text-gray-700">优惠券 9.6%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trend Chart -->
+  <section class="max-w-7xl mx-auto px-4 mb-8">
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-xl font-bold flex items-center gap-2">
+          <span>📈</span> 分享趋势
+        </h2>
+        <div class="flex gap-2">
+          <button class="px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium">本周</button>
+          <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition">本月</button>
+          <button class="px-4 py-2 bg-gray-100 text-gray-600 rounded-lg text-sm font-medium hover:bg-gray-200 transition">本年</button>
+        </div>
+      </div>
+      
+      <!-- Simple Bar Chart -->
+      <div class="h-64 flex items-end justify-around gap-4 px-4">
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-12 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg chart-bar" style="height: 40%">
+            <span class="text-xs text-white block text-center pt-1">1.2K</span>
+          </div>
+          <span class="text-xs text-gray-500">周一</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-12 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg chart-bar" style="height: 50%">
+            <span class="text-xs text-white block text-center pt-1">1.5K</span>
+          </div>
+          <span class="text-xs text-gray-500">周二</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-12 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg chart-bar" style="height: 60%">
+            <span class="text-xs text-white block text-center pt-1">1.7K</span>
+          </div>
+          <span class="text-xs text-gray-500">周三</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-12 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-lg chart-bar" style="height: 70%">
+            <span class="text-xs text-white block text-center pt-1">1.9K</span>
+          </div>
+          <span class="text-xs text-gray-500">周四</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-12 bg-gradient-to-t from-green-500 to-green-400 rounded-t-lg chart-bar" style="height: 85%">
+            <span class="text-xs text-white block text-center pt-1">2.1K</span>
+          </div>
+          <span class="text-xs text-gray-500">周五</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-12 bg-gradient-to-t from-green-500 to-green-400 rounded-t-lg chart-bar" style="height: 95%">
+            <span class="text-xs text-white block text-center pt-1">2.3K</span>
+          </div>
+          <span class="text-xs text-gray-500">周六</span>
+        </div>
+        <div class="flex flex-col items-center gap-2">
+          <div class="w-12 bg-gradient-to-t from-green-500 to-green-400 rounded-t-lg chart-bar" style="height: 100%">
+            <span class="text-xs text-white block text-center pt-1">2.6K</span>
+          </div>
+          <span class="text-xs text-primary font-medium">周日</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hot Content Ranking -->
+  <section class="max-w-7xl mx-auto px-4 mb-12">
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <span>🔥</span> 热门内容排行
+      </h2>
+      
+      <div class="space-y-4">
+        <!-- Rank 1 -->
+        <div class="card-hover flex items-center gap-4 p-4 bg-gradient-to-r from-yellow-50 to-orange-50 rounded-xl border border-yellow-100">
+          <div class="w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            1
+          </div>
+          <div class="w-16 h-16 bg-gradient-to-br from-red-100 to-orange-100 rounded-lg flex items-center justify-center text-3xl flex-shrink-0">
+            🏔️
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-gray-800 truncate">重庆三日游完整攻略</h4>
+            <p class="text-sm text-gray-500">攻略分享</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xl font-bold text-orange-500">5,678</p>
+            <p class="text-xs text-gray-400">分享次数</p>
+          </div>
+        </div>
+        
+        <!-- Rank 2 -->
+        <div class="card-hover flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div class="w-10 h-10 bg-gradient-to-br from-gray-300 to-gray-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            2
+          </div>
+          <div class="w-16 h-16 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-lg flex items-center justify-center text-3xl flex-shrink-0">
+            🏖️
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-gray-800 truncate">厦门鼓浪屿深度游</h4>
+            <p class="text-sm text-gray-500">目的地分享</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xl font-bold text-gray-600">4,321</p>
+            <p class="text-xs text-gray-400">分享次数</p>
+          </div>
+        </div>
+        
+        <!-- Rank 3 -->
+        <div class="card-hover flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div class="w-10 h-10 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            3
+          </div>
+          <div class="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-lg flex items-center justify-center text-3xl flex-shrink-0">
+            🌸
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-gray-800 truncate">我的云南之旅</h4>
+            <p class="text-sm text-gray-500">游记分享</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xl font-bold text-gray-600">3,890</p>
+            <p class="text-xs text-gray-400">分享次数</p>
+          </div>
+        </div>
+        
+        <!-- Rank 4 -->
+        <div class="card-hover flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            4
+          </div>
+          <div class="w-16 h-16 bg-gradient-to-br from-green-100 to-teal-100 rounded-lg flex items-center justify-center text-3xl flex-shrink-0">
+            🌍
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-gray-800 truncate">新马泰7日游全攻略</h4>
+            <p class="text-sm text-gray-500">攻略分享</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xl font-bold text-gray-600">3,567</p>
+            <p class="text-xs text-gray-400">分享次数</p>
+          </div>
+        </div>
+        
+        <!-- Rank 5 -->
+        <div class="card-hover flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100">
+          <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            5
+          </div>
+          <div class="w-16 h-16 bg-gradient-to-br from-yellow-100 to-amber-100 rounded-lg flex items-center justify-center text-3xl flex-shrink-0">
+            🍜
+          </div>
+          <div class="flex-1 min-w-0">
+            <h4 class="font-bold text-gray-800 truncate">成都美食地图</h4>
+            <p class="text-sm text-gray-500">目的地分享</p>
+          </div>
+          <div class="text-right">
+            <p class="text-xl font-bold text-gray-600">3,234</p>
+            <p class="text-xs text-gray-400">分享次数</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">
+      <p>&copy; 2024 游导旅游 youdao-travel.com. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Toggle mobile menu
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Count up animation
+    function animateCountUp() {
+      const counters = document.querySelectorAll('.count-up');
+      counters.forEach(counter => {
+        const target = parseInt(counter.getAttribute('data-target'));
+        const duration = 2000;
+        const step = target / (duration / 16);
+        let current = 0;
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) {
+            counter.textContent = target.toLocaleString();
+            clearInterval(timer);
+          } else {
+            counter.textContent = Math.floor(current).toLocaleString();
+          }
+        }, 16);
+      });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      animateCountUp();
+    });
+  </script>
+</body>
+</html>

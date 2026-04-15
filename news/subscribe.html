@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>资讯订阅 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#667eea',
+            secondary: '#764ba2',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../css/news/news.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="text-gray-600 hover:text-primary transition">首页</a>
+          <a href="index.html" class="text-primary font-semibold border-b-2 border-primary pb-1">资讯</a>
+          <a href="../tools/index.html" class="text-gray-600 hover:text-primary transition">工具箱</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 space-y-3 border-t pt-4">
+        <a href="../index.html" class="block py-2 text-gray-600">首页</a>
+        <a href="index.html" class="block py-2 text-primary font-semibold">资讯</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="bg-gradient-to-r from-primary to-secondary py-12">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <div class="text-5xl mb-4">📧</div>
+      <h1 class="text-2xl md:text-3xl font-bold text-white mb-3">订阅旅游资讯</h1>
+      <p class="text-white/80 max-w-xl mx-auto">选择你感兴趣的分类，我们将为你推送最新、最实用的旅游资讯</p>
+    </div>
+  </section>
+
+  <main class="max-w-4xl mx-auto px-4 py-12">
+    <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8 mb-8">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        选择订阅分类
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8" id="categoryList"></div>
+
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-2">
+          <span class="flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+            </svg>
+            邮箱地址
+          </span>
+        </label>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <input type="email" id="emailInput" placeholder="请输入你的邮箱地址" class="flex-1 px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+          <button onclick="handleSubscribe()" class="px-8 py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:opacity-90 transition whitespace-nowrap">立即订阅</button>
+        </div>
+        <p class="text-sm text-gray-500 mt-2">我们不会向第三方透露你的邮箱地址，你可以随时取消订阅</p>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8 mb-8">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
+        </svg>
+        订阅权益
+      </h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="text-center p-4">
+          <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-blue-100 flex items-center justify-center text-3xl">📰</div>
+          <h3 class="font-semibold text-gray-800 mb-2">精选内容</h3>
+          <p class="text-sm text-gray-500">每期精选最实用的旅游资讯</p>
+        </div>
+        <div class="text-center p-4">
+          <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center text-3xl">⏰</div>
+          <h3 class="font-semibold text-gray-800 mb-2">及时推送</h3>
+          <p class="text-sm text-gray-500">第一时间获取最新政策变化</p>
+        </div>
+        <div class="text-center p-4">
+          <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center text-3xl">🔕</div>
+          <h3 class="font-semibold text-gray-800 mb-2">自由退订</h3>
+          <p class="text-sm text-gray-500">随时可以取消订阅</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+        订阅管理
+      </h2>
+      
+      <div id="subscriptionStatus" class="mb-6 p-4 bg-gray-50 rounded-xl">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="font-medium text-gray-800" id="subStatusText">你还没有订阅任何分类</p>
+            <p class="text-sm text-gray-500" id="subEmailText">订阅后将收到邮件推送</p>
+          </div>
+          <span id="subStatusBadge" class="px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm">未订阅</span>
+        </div>
+      </div>
+
+      <div id="manageCategories" class="hidden mb-6">
+        <p class="text-sm text-gray-600 mb-3">已订阅的分类：</p>
+        <div class="flex flex-wrap gap-2" id="subscribedTags"></div>
+      </div>
+
+      <div class="flex flex-wrap gap-4">
+        <button onclick="editSubscription()" class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+          </svg>
+          修改订阅
+        </button>
+        <button onclick="unsubscribeAll()" class="flex items-center gap-2 px-4 py-2 border border-red-300 rounded-lg text-red-600 hover:bg-red-50 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+          取消全部订阅
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-3 bg-gray-900 text-white rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    <span id="toastMessage">操作成功</span>
+  </div>
+
+  <footer class="bg-gray-900 text-white py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+      <p>&copy; 2024 游导旅游 youdao-travel.com</p>
+    </div>
+  </footer>
+
+  <script>
+    let subscribedCategories = [];
+    let userEmail = '';
+
+    document.addEventListener('DOMContentLoaded', async function() {
+      await loadNewsData();
+      renderCategories();
+      loadSubscriptionStatus();
+    });
+
+    async function loadNewsData() {
+      try {
+        const response = await fetch('../data/news.json');
+        window.newsData = await response.json();
+      } catch (error) {
+        console.error('加载数据失败:', error);
+      }
+    }
+
+    function renderCategories() {
+      const container = document.getElementById('categoryList');
+      const categories = window.newsData?.categories || [];
+      
+      container.innerHTML = categories.map(cat => `
+        <label class="subscribe-category cursor-pointer ${subscribedCategories.includes(cat.id) ? 'selected' : ''}" data-category="${cat.id}">
+          <div class="flex items-start gap-4">
+            <input type="checkbox" 
+              ${subscribedCategories.includes(cat.id) ? 'checked' : ''} 
+              onchange="toggleCategory('${cat.id}')"
+              class="mt-1">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-2xl">${cat.icon}</span>
+                <span class="font-semibold text-gray-800">${cat.name}</span>
+              </div>
+              <p class="text-sm text-gray-500">${cat.description}</p>
+            </div>
+          </div>
+        </label>
+      `).join('');
+    }
+
+    function toggleCategory(categoryId) {
+      const index = subscribedCategories.indexOf(categoryId);
+      if (index > -1) {
+        subscribedCategories.splice(index, 1);
+      } else {
+        subscribedCategories.push(categoryId);
+      }
+      
+      const label = document.querySelector(`label[data-category="${categoryId}"]`);
+      if (label) {
+        label.classList.toggle('selected');
+      }
+    }
+
+    function handleSubscribe() {
+      const emailInput = document.getElementById('emailInput');
+      const email = emailInput.value.trim();
+      
+      if (!email) {
+        showToast('请输入邮箱地址');
+        return;
+      }
+      
+      if (!isValidEmail(email)) {
+        showToast('请输入有效的邮箱地址');
+        return;
+      }
+      
+      if (subscribedCategories.length === 0) {
+        showToast('请至少选择一个订阅分类');
+        return;
+      }
+      
+      userEmail = email;
+      localStorage.setItem('newsSubscription', JSON.stringify({
+        email: email,
+        categories: subscribedCategories,
+        subscribedAt: new Date().toISOString()
+      }));
+      
+      updateSubscriptionUI();
+      showToast('订阅成功！我们会定期向你推送最新资讯');
+      emailInput.value = '';
+    }
+
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function loadSubscriptionStatus() {
+      const saved = localStorage.getItem('newsSubscription');
+      if (saved) {
+        const data = JSON.parse(saved);
+        userEmail = data.email;
+        subscribedCategories = data.categories || [];
+        document.getElementById('emailInput').value = userEmail;
+        updateSubscriptionUI();
+      }
+      renderCategories();
+    }
+
+    function updateSubscriptionUI() {
+      const statusText = document.getElementById('subStatusText');
+      const emailText = document.getElementById('subEmailText');
+      const statusBadge = document.getElementById('subStatusBadge');
+      const manageCategories = document.getElementById('manageCategories');
+      const subscribedTags = document.getElementById('subscribedTags');
+      
+      if (subscribedCategories.length > 0) {
+        statusText.textContent = '已订阅';
+        emailText.textContent = userEmail;
+        statusBadge.className = 'px-3 py-1 bg-green-100 text-green-600 rounded-full text-sm';
+        statusBadge.textContent = '已订阅';
+        manageCategories.classList.remove('hidden');
+        
+        const categories = window.newsData?.categories || [];
+        subscribedTags.innerHTML = subscribedCategories.map(catId => {
+          const cat = categories.find(c => c.id === catId);
+          if (!cat) return '';
+          return `<span class="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm flex items-center gap-1">
+            ${cat.icon} ${cat.name}
+            <button onclick="toggleCategory('${cat.id}')" class="hover:text-red-500 ml-1">×</button>
+          </span>`;
+        }).join('');
+      } else {
+        statusText.textContent = '你还没有订阅任何分类';
+        emailText.textContent = '订阅后将收到邮件推送';
+        statusBadge.className = 'px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-sm';
+        statusBadge.textContent = '未订阅';
+        manageCategories.classList.add('hidden');
+      }
+    }
+
+    function editSubscription() {
+      if (subscribedCategories.length === 0) {
+        showToast('请先订阅至少一个分类');
+        return;
+      }
+      document.getElementById('emailInput').focus();
+      showToast('修改选择后点击"立即订阅"保存');
+    }
+
+    function unsubscribeAll() {
+      if (subscribedCategories.length === 0) {
+        showToast('你还没有订阅任何分类');
+        return;
+      }
+      
+      if (confirm('确定要取消全部订阅吗？')) {
+        subscribedCategories = [];
+        localStorage.removeItem('newsSubscription');
+        userEmail = '';
+        document.getElementById('emailInput').value = '';
+        updateSubscriptionUI();
+        renderCategories();
+        showToast('已取消全部订阅');
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      toastMessage.textContent = message;
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+      }, 2000);
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#ff6b35">
+  <title>搜索 - 游导旅游</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#ff6b35',
+            'primary-dark': '#e55a2b'
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- 移动端样式 -->
+  <link rel="stylesheet" href="../css/mobile.css">
+  
+  <style>
+    /* 搜索页面样式 */
+    .search-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: white;
+      padding: 12px 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .search-input-wrapper {
+      display: flex;
+      align-items: center;
+      background: #f5f5f5;
+      border-radius: 24px;
+      padding: 4px;
+      transition: all 0.2s ease;
+    }
+    
+    .search-input-wrapper:focus-within {
+      background: white;
+      box-shadow: 0 0 0 2px #ff6b35;
+    }
+    
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 12px 16px;
+      font-size: 16px;
+      background: transparent;
+    }
+    
+    .search-input::placeholder {
+      color: #999;
+    }
+    
+    .search-clear {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      border: none;
+      color: #666;
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .search-clear.show {
+      display: flex;
+    }
+    
+    .search-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%);
+      border: none;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .voice-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    /* 搜索建议 */
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      max-height: 300px;
+      overflow-y: auto;
+      display: none;
+      z-index: 99;
+    }
+    
+    .search-suggestions.show {
+      display: block;
+    }
+    
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 1px solid #f0f0f0;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+    
+    .suggestion-item:active {
+      background: #f8f8f8;
+    }
+    
+    .suggestion-icon {
+      font-size: 18px;
+      margin-right: 12px;
+      color: #999;
+    }
+    
+    .suggestion-text {
+      flex: 1;
+      font-size: 15px;
+      color: #333;
+    }
+    
+    .suggestion-hot {
+      font-size: 11px;
+      color: #ff6b35;
+      background: #fff5f2;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    
+    /* 热门搜索标签 */
+    .hot-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .hot-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      background: #f5f5f5;
+      border-radius: 20px;
+      font-size: 14px;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .hot-tag:active {
+      background: #ff6b35;
+      color: white;
+    }
+    
+    .hot-tag .rank {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      background: #ff6b35;
+      color: white;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 6px;
+    }
+    
+    .hot-tag .rank.top {
+      background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%);
+    }
+    
+    /* 搜索历史 */
+    .history-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #f5f5f5;
+    }
+    
+    .history-icon {
+      font-size: 16px;
+      margin-right: 12px;
+      color: #999;
+    }
+    
+    .history-text {
+      flex: 1;
+      font-size: 14px;
+      color: #333;
+    }
+    
+    .history-delete {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: transparent;
+      color: #ccc;
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    /* 搜索结果 */
+    .result-card {
+      display: flex;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+    }
+    
+    .result-card:active {
+      transform: scale(0.98);
+    }
+    
+    .result-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+    }
+    
+    .result-content {
+      flex: 1;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    
+    .result-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #333;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .result-title .highlight {
+      color: #ff6b35;
+    }
+    
+    .result-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      color: #999;
+    }
+    
+    .result-meta .rating {
+      color: #ff6b35;
+      font-weight: 600;
+    }
+    
+    .result-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      background: #fff5f2;
+      color: #ff6b35;
+      border-radius: 4px;
+      font-size: 11px;
+      margin-right: 8px;
+    }
+    
+    /* 空状态 */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    
+    .empty-state .icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    .empty-state .title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .empty-state .desc {
+      font-size: 14px;
+      color: #999;
+    }
+    
+    /* 分类筛选 */
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    
+    .filter-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .filter-tab {
+      padding: 8px 16px;
+      background: #f5f5f5;
+      border-radius: 20px;
+      font-size: 14px;
+      color: #666;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .filter-tab:active {
+      transform: scale(0.95);
+    }
+    
+    .filter-tab.active {
+      background: linear-gradient(135deg, #ff6b35 0%, #ff8c5a 100%);
+      color: white;
+    }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- 状态栏占位 -->
+  <div class="status-bar"></div>
+  
+  <!-- 搜索头部 -->
+  <div class="search-header">
+    <div class="flex items-center gap-3">
+      <a href="index.html" class="w-10 h-10 flex items-center justify-center text-xl">
+        ←
+      </a>
+      <div class="search-input-wrapper flex-1">
+        <span class="text-lg text-gray-400 ml-4">🔍</span>
+        <input 
+          type="text" 
+          class="search-input" 
+          id="searchInput"
+          placeholder="搜索目的地、攻略、导游..." 
+          autocomplete="off"
+        >
+        <button class="search-clear" id="clearBtn">✕</button>
+      </div>
+      <button class="voice-btn" id="voiceBtn">🎤</button>
+    </div>
+  </div>
+  
+  <!-- 搜索内容区 -->
+  <div id="searchContent" class="pb-20">
+    <!-- 搜索历史 -->
+    <div id="historySection" class="px-4 py-4">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-base font-semibold text-gray-800">搜索历史</h3>
+        <button class="text-sm text-gray-400" id="clearHistory">清空</button>
+      </div>
+      <div id="historyList" class="flex flex-wrap gap-2">
+        <!-- JS 动态填充 -->
+      </div>
+    </div>
+    
+    <!-- 热门搜索 -->
+    <div id="hotSection" class="px-4 py-4">
+      <h3 class="text-base font-semibold text-gray-800 mb-3">🔥 热门搜索</h3>
+      <div class="hot-tags" id="hotTags">
+        <span class="hot-tag" data-keyword="日本"><span class="rank top">1</span>日本</span>
+        <span class="hot-tag" data-keyword="泰国"><span class="rank top">2</span>泰国</span>
+        <span class="hot-tag" data-keyword="马尔代夫"><span class="rank">3</span>马尔代夫</span>
+        <span class="hot-tag" data-keyword="巴黎"><span class="rank">4</span>巴黎</span>
+        <span class="hot-tag" data-keyword="签证"><span class="rank">5</span>签证办理</span>
+        <span class="hot-tag" data-keyword="导游"><span class="rank">6</span>当地导游</span>
+        <span class="hot-tag" data-keyword="美食"><span class="rank">7</span>特色美食</span>
+        <span class="hot-tag" data-keyword="购物"><span class="rank">8</span>购物攻略</span>
+      </div>
+    </div>
+    
+    <!-- 搜索建议 -->
+    <div class="search-suggestions" id="suggestions">
+      <div class="suggestion-item" data-keyword="日本东京">
+        <span class="suggestion-icon">🔍</span>
+        <span class="suggestion-text">日本东京</span>
+        <span class="suggestion-hot">热门</span>
+      </div>
+      <div class="suggestion-item" data-keyword="日本大阪">
+        <span class="suggestion-icon">🔍</span>
+        <span class="suggestion-text">日本大阪</span>
+        <span class="suggestion-hot">热门</span>
+      </div>
+      <div class="suggestion-item" data-keyword="日本签证">
+        <span class="suggestion-icon">📋</span>
+        <span class="suggestion-text">日本签证</span>
+      </div>
+    </div>
+    
+    <!-- 搜索结果 -->
+    <div id="resultSection" class="px-4 py-4" style="display: none;">
+      <!-- 分类筛选 -->
+      <div class="filter-tabs">
+        <span class="filter-tab active">全部</span>
+        <span class="filter-tab">目的地</span>
+        <span class="filter-tab">攻略</span>
+        <span class="filter-tab">导游</span>
+        <span class="filter-tab">路线</span>
+      </div>
+      
+      <div id="resultList">
+        <!-- JS 动态填充 -->
+      </div>
+    </div>
+    
+    <!-- 空状态 -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <div class="icon">🔍</div>
+      <div class="title">未找到相关结果</div>
+      <div class="desc">换个关键词试试吧</div>
+    </div>
+  </div>
+  
+  <!-- 底部导航 -->
+  <nav class="mobile-nav" role="navigation">
+    <a href="index.html" class="mobile-nav-item" data-nav="home">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-text">首页</span>
+    </a>
+    <a href="../destinations.html" class="mobile-nav-item" data-nav="destinations">
+      <span class="nav-icon">🌍</span>
+      <span class="nav-text">目的地</span>
+    </a>
+    <a href="../guides.html" class="mobile-nav-item" data-nav="guides">
+      <span class="nav-icon">📚</span>
+      <span class="nav-text">攻略</span>
+    </a>
+    <a href="../wishlist.html" class="mobile-nav-item" data-nav="favorites">
+      <span class="nav-icon">❤️</span>
+      <span class="nav-text">收藏</span>
+    </a>
+    <a href="profile.html" class="mobile-nav-item" data-nav="profile">
+      <span class="nav-icon">👤</span>
+      <span class="nav-text">我的</span>
+    </a>
+  </nav>
+  
+  <style>
+    @media (min-width: 769px) {
+      .mobile-nav { display: none !important; }
+    }
+  </style>
+  
+  <script>
+    // 搜索历史管理
+    const SEARCH_HISTORY_KEY = 'searchHistory';
+    const MAX_HISTORY = 10;
+    
+    function getHistory() {
+      return JSON.parse(localStorage.getItem(SEARCH_HISTORY_KEY) || '[]');
+    }
+    
+    function addToHistory(keyword) {
+      let history = getHistory();
+      history = history.filter(item => item !== keyword);
+      history.unshift(keyword);
+      if (history.length > MAX_HISTORY) {
+        history = history.slice(0, MAX_HISTORY);
+      }
+      localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(history));
+      renderHistory();
+    }
+    
+    function clearHistory() {
+      localStorage.removeItem(SEARCH_HISTORY_KEY);
+      renderHistory();
+    }
+    
+    function renderHistory() {
+      const history = getHistory();
+      const historyList = document.getElementById('historyList');
+      const historySection = document.getElementById('historySection');
+      
+      if (history.length === 0) {
+        historySection.style.display = 'none';
+        return;
+      }
+      
+      historySection.style.display = 'block';
+      historyList.innerHTML = history.map(item => `
+        <span class="history-item-btn" data-keyword="${item}" 
+              style="display: inline-flex; align-items: center; padding: 8px 14px; background: #f5f5f5; border-radius: 16px; font-size: 14px; color: #666; cursor: pointer;">
+          ⏱️ ${item}
+        </span>
+      `).join('');
+      
+      // 绑定点击事件
+      historyList.querySelectorAll('.history-item-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const keyword = btn.dataset.keyword;
+          document.getElementById('searchInput').value = keyword;
+          doSearch(keyword);
+        });
+      });
+    }
+    
+    // 搜索功能
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearBtn');
+    const suggestions = document.getElementById('suggestions');
+    const resultSection = document.getElementById('resultSection');
+    const emptyState = document.getElementById('emptyState');
+    const historySection = document.getElementById('historySection');
+    const hotSection = document.getElementById('hotSection');
+    
+    searchInput.addEventListener('input', function() {
+      const value = this.value.trim();
+      clearBtn.classList.toggle('show', value.length > 0);
+      
+      if (value.length > 0) {
+        // 显示搜索建议
+        suggestions.classList.add('show');
+        historySection.style.display = 'none';
+        hotSection.style.display = 'none';
+      } else {
+        suggestions.classList.remove('show');
+        historySection.style.display = 'block';
+        hotSection.style.display = 'block';
+        resultSection.style.display = 'none';
+        emptyState.style.display = 'none';
+      }
+    });
+    
+    clearBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      clearBtn.classList.remove('show');
+      suggestions.classList.remove('show');
+      historySection.style.display = 'block';
+      hotSection.style.display = 'block';
+      resultSection.style.display = 'none';
+      emptyState.style.display = 'none';
+      searchInput.focus();
+    });
+    
+    document.getElementById('clearHistory').addEventListener('click', clearHistory);
+    
+    // 热门标签点击
+    document.querySelectorAll('.hot-tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        const keyword = tag.dataset.keyword;
+        searchInput.value = keyword;
+        doSearch(keyword);
+      });
+    });
+    
+    // 搜索建议点击
+    document.querySelectorAll('.suggestion-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const keyword = item.dataset.keyword;
+        searchInput.value = keyword;
+        doSearch(keyword);
+      });
+    });
+    
+    // 执行搜索
+    function doSearch(keyword) {
+      if (!keyword.trim()) return;
+      
+      addToHistory(keyword);
+      suggestions.classList.remove('show');
+      historySection.style.display = 'none';
+      hotSection.style.display = 'none';
+      resultSection.style.display = 'block';
+      
+      // 模拟搜索结果
+      const results = [
+        {
+          title: `${keyword}深度游攻略｜5天玩转${keyword}`,
+          image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=200&h=200&fit=crop',
+          rating: '4.9',
+          views: '12.8万',
+          type: '攻略'
+        },
+        {
+          title: `${keyword}必去的10个景点推荐`,
+          image: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=200&h=200&fit=crop',
+          rating: '4.8',
+          views: '9.6万',
+          type: '目的地'
+        },
+        {
+          title: `专业${keyword}当地导游，助你深度体验`,
+          image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=200&h=200&fit=crop',
+          rating: '4.9',
+          views: '5.2万',
+          type: '导游'
+        }
+      ];
+      
+      const resultList = document.getElementById('resultList');
+      
+      if (results.length > 0) {
+        emptyState.style.display = 'none';
+        resultList.innerHTML = results.map(item => `
+          <a href="#" class="result-card">
+            <img src="${item.image}" alt="${item.title}">
+            <div class="result-content">
+              <div class="result-title">
+                <span class="result-tag">${item.type}</span>
+                ${item.title.replace(keyword, `<span class="highlight">${keyword}</span>`)}
+              </div>
+              <div class="result-meta">
+                <span class="rating">⭐ ${item.rating}</span>
+                <span>👁️ ${item.views}</span>
+              </div>
+            </div>
+          </a>
+        `).join('');
+      } else {
+        emptyState.style.display = 'flex';
+        resultList.innerHTML = '';
+      }
+    }
+    
+    // 回车搜索
+    searchInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        doSearch(this.value);
+      }
+    });
+    
+    // 语音搜索提示
+    document.getElementById('voiceBtn').addEventListener('click', function() {
+      alert('语音搜索功能正在开发中，敬请期待！');
+    });
+    
+    // 分类标签切换
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+    
+    // 初始化
+    renderHistory();
+    searchInput.focus();
+  </script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全部商品 - 积分商城 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/points/points.css">
+  <link rel="stylesheet" href="../css/footer.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            points: '#f97316'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 text-gray-700 hover:text-primary transition">
+          <span class="text-2xl">🧭</span>
+          <span class="text-xl font-bold">游导旅游</span>
+        </a>
+        <div class="flex items-center gap-6">
+          <a href="index.html" class="text-gray-600 hover:text-primary transition">积分商城</a>
+          <a href="products.html" class="text-points font-semibold border-b-2 border-points pb-1">全部商品</a>
+          <a href="my-points.html" class="text-gray-600 hover:text-primary transition">我的积分</a>
+          <a href="tasks.html" class="text-gray-600 hover:text-primary transition">赚积分</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header with Points -->
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-gray-600">我的积分:</span>
+          <span id="pointsDisplay" class="text-2xl font-bold text-points">0</span>
+          <span class="text-gray-400 text-sm">积分</span>
+        </div>
+        <a href="my-points.html" class="text-points font-medium hover:underline">查看详情 →</a>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Search & Filters -->
+    <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm border border-orange-100">
+      <!-- Search -->
+      <div class="search-box mb-6">
+        <input type="text" id="searchInput" placeholder="搜索商品..." class="w-full">
+      </div>
+      
+      <!-- Category Filter -->
+      <div class="mb-4">
+        <h3 class="text-sm font-semibold text-gray-600 mb-3">商品分类</h3>
+        <div class="flex flex-wrap gap-2" id="categoryFilters">
+          <!-- Categories will be loaded here -->
+        </div>
+      </div>
+      
+      <!-- Points Range -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-semibold text-gray-600">积分范围</h3>
+          <span class="text-sm text-points font-medium"><span id="minPoints">0</span> - <span id="maxPoints">5000</span> 积分</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <input type="range" id="minRange" class="range-slider flex-1" min="0" max="3000" value="0">
+          <input type="range" id="maxRange" class="range-slider flex-1" min="0" max="3000" value="3000">
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Header -->
+    <div class="flex items-center justify-between mb-6">
+      <p class="text-gray-600">共找到 <span id="resultCount" class="font-semibold text-points">0</span> 件商品</p>
+      <div class="flex items-center gap-2">
+        <span class="text-gray-500 text-sm">排序:</span>
+        <select id="sortSelect" class="border rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-points">
+          <option value="default">默认</option>
+          <option value="points_asc">积分从低到高</option>
+          <option value="points_desc">积分从高到低</option>
+          <option value="stock">库存</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="productsGrid">
+      <!-- Products will be loaded here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state hidden">
+      <div class="empty-state-icon">🔍</div>
+      <h3 class="text-lg font-semibold mb-2">未找到相关商品</h3>
+      <p class="text-sm">试试调整筛选条件</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12 mt-16">
+    <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+      <p>© 2024 游导旅游 youdao-travel.com 版权所有</p>
+    </div>
+  </footer>
+
+  <script src="../js/points/points-system.js"></script>
+  <script>
+    let allProducts = [];
+    let categories = [];
+    let currentFilters = {
+      category: 'all',
+      minPoints: 0,
+      maxPoints: 5000,
+      search: ''
+    };
+
+    // 加载数据
+    async function loadData() {
+      try {
+        const response = await fetch('../data/points.json');
+        const data = await response.json();
+        
+        allProducts = data.products;
+        categories = data.categories;
+        
+        // 显示积分
+        const userData = PointsSystem.getUserData();
+        document.getElementById('pointsDisplay').textContent = userData.points.toLocaleString();
+        
+        // 渲染分类筛选
+        renderCategoryFilters();
+        
+        // 从URL获取筛选参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category');
+        if (category) {
+          currentFilters.category = category;
+        }
+        
+        // 渲染商品
+        renderProducts();
+        
+        // 绑定事件
+        bindEvents();
+        
+      } catch (error) {
+        console.error('加载数据失败:', error);
+      }
+    }
+
+    // 渲染分类筛选
+    function renderCategoryFilters() {
+      const container = document.getElementById('categoryFilters');
+      container.innerHTML = categories.map(cat => `
+        <button class="filter-btn ${currentFilters.category === cat.id ? 'active' : ''}" data-category="${cat.id}">
+          ${cat.icon} ${cat.name}
+        </button>
+      `).join('');
+    }
+
+    // 渲染商品
+    function renderProducts() {
+      const container = document.getElementById('productsGrid');
+      const emptyState = document.getElementById('emptyState');
+      
+      let filtered = allProducts.filter(product => {
+        // 分类筛选
+        if (currentFilters.category !== 'all' && product.category !== currentFilters.category) {
+          return false;
+        }
+        // 积分范围筛选
+        if (product.points < currentFilters.minPoints || product.points > currentFilters.maxPoints) {
+          return false;
+        }
+        // 搜索筛选
+        if (currentFilters.search && !product.name.includes(currentFilters.search) && !product.description.includes(currentFilters.search)) {
+          return false;
+        }
+        return true;
+      });
+
+      // 排序
+      const sortSelect = document.getElementById('sortSelect').value;
+      if (sortSelect === 'points_asc') {
+        filtered.sort((a, b) => a.points - b.points);
+      } else if (sortSelect === 'points_desc') {
+        filtered.sort((a, b) => b.points - a.points);
+      } else if (sortSelect === 'stock') {
+        filtered.sort((a, b) => b.stock - a.stock);
+      }
+
+      // 更新结果数量
+      document.getElementById('resultCount').textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.innerHTML = filtered.map(product => `
+        <a href="detail.html?id=${product.id}" class="product-card fade-in">
+          <div class="product-image">${product.image}</div>
+          <div class="p-4">
+            <h3 class="font-semibold text-gray-800 mb-2 truncate">${product.name}</h3>
+            <p class="text-sm text-gray-500 mb-3 line-clamp-2">${product.description}</p>
+            <div class="flex items-center justify-between mb-2">
+              <span class="points-badge text-sm">
+                🪙 ${product.points}积分
+              </span>
+              ${product.originalPrice ? `<span class="text-gray-400 text-xs line-through">¥${product.originalPrice}</span>` : ''}
+            </div>
+            <div class="product-tags">
+              ${product.tags.map(tag => {
+                let tagClass = 'bg-gray-100 text-gray-600';
+                if (tag === '热门') tagClass = 'tag-hot';
+                if (tag === '新品') tagClass = 'tag-new';
+                if (tag === '限量') tagClass = 'tag-limit';
+                return `<span class="product-tag ${tagClass}">${tag}</span>`;
+              }).join('')}
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+
+    // 绑定事件
+    function bindEvents() {
+      // 搜索
+      document.getElementById('searchInput').addEventListener('input', (e) => {
+        currentFilters.search = e.target.value;
+        renderProducts();
+      });
+
+      // 分类筛选
+      document.getElementById('categoryFilters').addEventListener('click', (e) => {
+        const btn = e.target.closest('.filter-btn');
+        if (btn) {
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilters.category = btn.dataset.category;
+          renderProducts();
+        }
+      });
+
+      // 积分范围
+      document.getElementById('minRange').addEventListener('input', (e) => {
+        const min = parseInt(e.target.value);
+        const max = parseInt(document.getElementById('maxRange').value);
+        if (min <= max) {
+          currentFilters.minPoints = min;
+          document.getElementById('minPoints').textContent = min;
+          renderProducts();
+        }
+      });
+
+      document.getElementById('maxRange').addEventListener('input', (e) => {
+        const max = parseInt(e.target.value);
+        const min = parseInt(document.getElementById('minRange').value);
+        if (max >= min) {
+          currentFilters.maxPoints = max;
+          document.getElementById('maxPoints').textContent = max;
+          renderProducts();
+        }
+      });
+
+      // 排序
+      document.getElementById('sortSelect').addEventListener('change', renderProducts);
+    }
+
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

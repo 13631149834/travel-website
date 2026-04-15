@@ -1,0 +1,697 @@
+<!-- 
+  网站公告横幅组件 - 可嵌入HTML的片段
+  功能：
+  1. 顶部公告横幅 - 显示最新公告概要
+  2. 紧急公告弹窗 - 重要通知弹窗提醒
+  3. 可关闭记忆 - 关闭后一段时间内不再显示
+  
+  使用方法：
+  1. 在页面 <head> 中引入样式：<link rel="stylesheet" href="css/announcement-banner.css">
+  2. 在页面底部 <body> 标签前引入脚本：<script src="js/announcement-banner.js"></script>
+  3. 在 <body> 开始处添加组件：<div id="announcement-banner-container"></div>
+  
+  配置选项（可在引入脚本前设置）：
+  window.announcementConfig = {
+    storageKey: 'announcement_closed',  // localStorage键名
+    expireHours: 24,                     // 关闭后多少小时不再显示
+    maxDisplay: 3,                       // 最多同时显示几条公告
+    showUrgent: true,                    // 是否显示紧急公告弹窗
+    position: 'top'                       // 横幅位置：'top'(顶部) 或 'bottom'(底部)
+  }
+-->
+
+<!-- 样式 -->
+<style>
+/* 公告横幅容器 */
+.announcement-banner-container {
+  position: relative;
+  z-index: 9998;
+}
+
+/* 顶部公告横幅 */
+.announcement-banner {
+  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+  color: white;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.announcement-banner::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+  animation: bannerShine 3s infinite;
+}
+
+@keyframes bannerShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.announcement-banner.urgent {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+}
+
+.announcement-banner.info {
+  background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+}
+
+.announcement-banner.activity {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.banner-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.banner-title {
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.banner-summary {
+  font-size: 12px;
+  opacity: 0.9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.banner-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.banner-link {
+  padding: 6px 14px;
+  background: rgba(255,255,255,0.2);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 12px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.banner-link:hover {
+  background: rgba(255,255,255,0.3);
+  text-decoration: none;
+}
+
+.banner-close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.banner-close:hover {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.1);
+}
+
+/* 多条公告切换 */
+.banner-carousel {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+  height: 40px;
+  overflow: hidden;
+}
+
+.banner-carousel-item {
+  position: absolute;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+}
+
+.banner-carousel-item.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.carousel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.carousel-dot.active {
+  background: white;
+  transform: scale(1.2);
+}
+
+/* 紧急公告弹窗 */
+.announcement-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.3s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.announcement-modal {
+  background: white;
+  border-radius: 16px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  animation: modalSlideUp 0.3s ease;
+}
+
+@keyframes modalSlideUp {
+  from { 
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-header.info {
+  background: linear-gradient(135deg, #ff6b35 0%, #e55a2b 100%);
+}
+
+.modal-header.activity {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+}
+
+.modal-icon {
+  font-size: 32px;
+}
+
+.modal-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-badge {
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 20px;
+  font-size: 12px;
+  margin-left: auto;
+}
+
+.modal-body {
+  padding: 24px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.modal-announcement-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #2d3436;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.modal-announcement-content {
+  font-size: 14px;
+  color: #636e72;
+  line-height: 1.7;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e9ecef;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.modal-btn-secondary {
+  background: #f1f5f9;
+  border: none;
+  color: #64748b;
+}
+
+.modal-btn-secondary:hover {
+  background: #e2e8f0;
+}
+
+.modal-btn-primary {
+  background: #ff6b35;
+  border: none;
+  color: white;
+}
+
+.modal-btn-primary:hover {
+  background: #e55a2b;
+}
+
+.modal-btn-close {
+  background: transparent;
+  border: 2px solid #e9ecef;
+  color: #636e72;
+}
+
+.modal-btn-close:hover {
+  border-color: #ff6b35;
+  color: #ff6b35;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255,255,255,0.2);
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255,255,255,0.3);
+  transform: scale(1.1);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+  .announcement-banner {
+    flex-wrap: wrap;
+    padding: 10px 16px;
+  }
+
+  .banner-content {
+    width: 100%;
+  }
+
+  .banner-carousel {
+    height: 50px;
+  }
+
+  .banner-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .announcement-modal {
+    max-width: 100%;
+    margin: 10px;
+  }
+
+  .modal-header {
+    padding: 16px 20px;
+  }
+
+  .modal-body {
+    padding: 16px 20px;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .modal-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* 无障碍 */
+@media (prefers-reduced-motion: reduce) {
+  .announcement-banner::before {
+    animation: none;
+  }
+  
+  .announcement-modal-overlay,
+  .announcement-modal {
+    animation: none;
+  }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+(function() {
+  // 配置
+  const config = window.announcementConfig || {};
+  const storageKey = config.storageKey || 'announcement_closed';
+  const expireHours = config.expireHours || 24;
+  const maxDisplay = config.maxDisplay || 3;
+  const showUrgent = config.showUrgent !== false;
+  const position = config.position || 'top';
+
+  // 获取已关闭的公告ID和关闭时间
+  function getClosedData() {
+    try {
+      const data = localStorage.getItem(storageKey);
+      return data ? JSON.parse(data) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  // 保存关闭记录
+  function saveClosedRecord(id) {
+    try {
+      const data = getClosedData();
+      data[id] = Date.now();
+      localStorage.setItem(storageKey, JSON.stringify(data));
+    } catch {}
+  }
+
+  // 检查公告是否应该显示
+  function shouldShow(id) {
+    const data = getClosedData();
+    if (!data[id]) return true;
+    
+    const expireTime = expireHours * 60 * 60 * 1000;
+    if (Date.now() - data[id] > expireTime) {
+      // 已过期，删除记录
+      try {
+        const newData = getClosedData();
+        delete newData[id];
+        localStorage.setItem(storageKey, JSON.stringify(newData));
+      } catch {}
+      return true;
+    }
+    return false;
+  }
+
+  // 格式化日期
+  function formatDate(dateStr) {
+    const date = new Date(dateStr);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  // 加载公告数据
+  async function loadAnnouncements() {
+    try {
+      const response = await fetch('data/announcements.json');
+      const data = await response.json();
+      return data.announcements || [];
+    } catch (error) {
+      console.error('加载公告失败:', error);
+      return [];
+    }
+  }
+
+  // 渲染横幅
+  function renderBanner(announcements) {
+    const container = document.getElementById('announcement-banner-container');
+    if (!container) return;
+
+    // 过滤需要显示的公告
+    const toShow = announcements
+      .filter(a => a.isPinned && shouldShow(a.id))
+      .slice(0, maxDisplay);
+
+    if (toShow.length === 0) return;
+
+    const isUrgent = toShow.some(a => a.isUrgent);
+    const bannerClass = isUrgent ? 'urgent' : (toShow[0].category === 'activity' ? 'activity' : '');
+    
+    let html = `
+      <div class="announcement-banner ${bannerClass}">
+        <div class="banner-content">
+          <span class="banner-icon">${isUrgent ? '🚨' : '📢'}</span>
+    `;
+
+    if (toShow.length === 1) {
+      // 单条公告
+      const ann = toShow[0];
+      html += `
+          <div class="banner-text">
+            <div class="banner-title">${ann.title}</div>
+            <div class="banner-summary">${ann.summary.substring(0, 60)}...</div>
+          </div>
+      `;
+    } else {
+      // 多条公告轮播
+      html += `
+          <div class="banner-carousel">
+            ${toShow.map((ann, i) => `
+              <div class="banner-carousel-item ${i === 0 ? 'active' : ''}" data-index="${i}">
+                <div class="banner-title">${ann.title}</div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="carousel-dots">
+            ${toShow.map((_, i) => `
+              <span class="carousel-dot ${i === 0 ? 'active' : ''}" data-index="${i}"></span>
+            `).join('')}
+          </div>
+      `;
+    }
+
+    html += `
+        </div>
+        <div class="banner-actions">
+          <a href="announcements/detail.html?id=${toShow[0].id}" class="banner-link">查看详情</a>
+          <button class="banner-close" aria-label="关闭公告" onclick="closeBanner()">×</button>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = html;
+
+    // 绑定轮播事件
+    if (toShow.length > 1) {
+      initCarousel(toShow);
+    }
+  }
+
+  // 初始化轮播
+  function initCarousel(announcements) {
+    let currentIndex = 0;
+    const items = document.querySelectorAll('.banner-carousel-item');
+    const dots = document.querySelectorAll('.carousel-dot');
+
+    function goTo(index) {
+      items.forEach((item, i) => {
+        item.classList.toggle('active', i === index);
+      });
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+      currentIndex = index;
+    }
+
+    // 点击指示点
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => goTo(i));
+    });
+
+    // 自动轮播
+    setInterval(() => {
+      const nextIndex = (currentIndex + 1) % announcements.length;
+      goTo(nextIndex);
+    }, 5000);
+  }
+
+  // 关闭横幅
+  function closeBanner() {
+    const container = document.getElementById('announcement-banner-container');
+    if (container) {
+      container.innerHTML = '';
+    }
+  }
+
+  // 渲染紧急公告弹窗
+  function renderUrgentModal(announcements) {
+    // 查找紧急公告
+    const urgentAnn = announcements.find(a => a.isUrgent && shouldShow(a.id));
+    if (!urgentAnn) return;
+
+    const overlay = document.createElement('div');
+    overlay.className = 'announcement-modal-overlay';
+    overlay.id = 'urgent-modal';
+    
+    const headerClass = urgentAnn.category === 'activity' ? 'activity' : '';
+    
+    overlay.innerHTML = `
+      <div class="announcement-modal" role="dialog" aria-labelledby="modal-title">
+        <header class="modal-header ${headerClass}">
+          <span class="modal-icon">🚨</span>
+          <h2 class="modal-title" id="modal-title">紧急通知</h2>
+          <span class="modal-badge">重要</span>
+          <button class="modal-close-btn" aria-label="关闭" onclick="closeUrgentModal()">×</button>
+        </header>
+        <div class="modal-body">
+          <h3 class="modal-announcement-title">${urgentAnn.title}</h3>
+          <div class="modal-announcement-content">
+            ${urgentAnn.summary}
+            <br><br>
+            <strong>发布时间：</strong>${formatDate(urgentAnn.publishedAt)}
+          </div>
+        </div>
+        <footer class="modal-footer">
+          <button class="modal-btn modal-btn-secondary" onclick="closeUrgentModal()">稍后再说</button>
+          <a href="announcements/detail.html?id=${urgentAnn.id}" class="modal-btn modal-btn-primary">查看详情</a>
+        </footer>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // 点击遮罩关闭
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        closeUrgentModal();
+      }
+    });
+
+    // ESC键关闭
+    document.addEventListener('keydown', function escHandler(e) {
+      if (e.key === 'Escape') {
+        closeUrgentModal();
+        document.removeEventListener('keydown', escHandler);
+      }
+    });
+  }
+
+  // 关闭紧急弹窗
+  function closeUrgentModal() {
+    const modal = document.getElementById('urgent-modal');
+    if (modal) {
+      modal.style.opacity = '0';
+      setTimeout(() => modal.remove(), 300);
+    }
+    // 标记为已关闭
+    const urgentAnn = window.__urgentAnnouncement;
+    if (urgentAnn) {
+      saveClosedRecord(urgentAnn.id);
+    }
+  }
+
+  // 初始化
+  async function init() {
+    const announcements = await loadAnnouncements();
+    
+    if (announcements.length === 0) return;
+
+    // 渲染横幅
+    renderBanner(announcements);
+
+    // 显示紧急弹窗
+    if (showUrgent) {
+      const urgentAnn = announcements.find(a => a.isUrgent && shouldShow(a.id));
+      if (urgentAnn) {
+        window.__urgentAnnouncement = urgentAnn;
+        // 延迟显示弹窗，避免与页面加载冲突
+        setTimeout(() => {
+          renderUrgentModal(announcements);
+        }, 1000);
+      }
+    }
+  }
+
+  // 将关闭函数暴露到全局
+  window.closeBanner = closeBanner;
+  window.closeUrgentModal = closeUrgentModal;
+
+  // DOM加载完成后初始化
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>

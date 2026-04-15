@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>游导旅游 - 专业导游预约平台</title>
+  <meta name="description" content="游导旅游是专业的导游预约平台，严选认证导游，让旅行更简单。">
+  <link rel="preload" href="css/style.css" as="style">
+    <link rel="stylesheet" href="css/accessibility.css">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    /* ===================================
+       画廊页面专用样式
+       =================================== */
+    
+    /* Hero区域 */
+    .gallery-hero {
+      background: linear-gradient(180deg, #F8FAFC 0%, #fff 100%);
+      padding: 64px 0 48px;
+      text-align: center;
+    }
+    .gallery-hero h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .gallery-hero p {
+      font-size: 1rem;
+      color: var(--gray-500);
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .gallery-hero .photo-count {
+      margin-top: 16px;
+      font-size: 0.85rem;
+      color: var(--gray-400);
+    }
+    
+    /* 筛选区域 */
+    .gallery-filters {
+      padding: 24px 0;
+      background: #fff;
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 64px;
+      z-index: 50;
+    }
+    .filter-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .filter-row:last-child {
+      margin-bottom: 0;
+    }
+    .filter-label {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      display: flex;
+      align-items: center;
+      margin-right: 8px;
+    }
+    .filter-btn {
+      padding: 8px 16px;
+      background: var(--gray-100);
+      border: 1px solid transparent;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .filter-btn:hover {
+      background: var(--gray-200);
+      color: var(--gray-800);
+    }
+    .filter-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+    
+    /* 瀑布流画廊 */
+    .gallery-content {
+      padding: 48px 0 80px;
+      background: #fff;
+    }
+    .masonry-grid {
+      column-count: 3;
+      column-gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .masonry-grid { column-count: 2; }
+    }
+    @media (max-width: 580px) {
+      .masonry-grid { column-count: 1; }
+    }
+    
+    /* 画廊卡片 */
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 20px;
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      cursor: pointer;
+      transition: var(--transition);
+      background: var(--gray-100);
+    }
+    .gallery-item:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+    }
+    .gallery-item img {
+      width: 100%;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover img {
+      transform: scale(1.03);
+    }
+    
+    /* 图片信息叠加层 */
+    .gallery-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 48px 16px 16px;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 100%);
+      opacity: 0;
+      transition: var(--transition);
+    }
+    .gallery-item:hover .gallery-overlay {
+      opacity: 1;
+    }
+    .gallery-overlay .photo-title {
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .gallery-overlay .photo-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.85);
+    }
+    .gallery-overlay .photo-destination {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .gallery-overlay .photo-author {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .gallery-overlay .author-avatar {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: #fff;
+      font-weight: 500;
+    }
+    
+    /* 分类标签 */
+    .photo-category {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 4px 10px;
+      background: rgba(255,255,255,0.95);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      color: var(--gray-700);
+      font-weight: 500;
+      backdrop-filter: blur(4px);
+    }
+    
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--gray-400);
+    }
+    .empty-state .empty-icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+    }
+    .empty-state h3 {
+      font-size: 1.1rem;
+      color: var(--gray-600);
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      font-size: 0.9rem;
+    }
+    
+    /* ===================================
+       灯箱弹窗
+       =================================== */
+    .lightbox {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.92);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+    }
+    .lightbox.active {
+      display: flex;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .lightbox-close:hover {
+      background: rgba(255,255,255,0.25);
+    }
+    .lightbox-content {
+      max-width: 90vw;
+      max-height: 85vh;
+      position: relative;
+    }
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .lightbox-info {
+      position: absolute;
+      bottom: -80px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: rgba(255,255,255,0.9);
+    }
+    .lightbox-info h3 {
+      font-size: 1.2rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .lightbox-info .info-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    .lightbox-info .info-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .lightbox-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      border: none;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 1.25rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .lightbox-nav:hover {
+      background: rgba(255,255,255,0.25);
+    }
+    .lightbox-nav.prev { left: 20px; }
+    .lightbox-nav.next { right: 20px; }
+    @media (max-width: 768px) {
+      .lightbox { padding: 20px; }
+      .lightbox-nav { display: none; }
+      .lightbox-info { bottom: -60px; }
+    }
+    
+    /* 隐藏的过滤元素 */
+    .gallery-item.hidden {
+      display: none;
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+  <meta name="keywords" content="游导旅游,导游预约,旅游平台,金牌导游">>>
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/gallery.html">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container">
+</nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">🧭 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="routes.html">路线</a>
+        <a href="destinations.html">目的地</a>
+        <a href="gallery.html" class="active">摄影</a>
+        <a href="stories.html">故事</a>
+        <a href="community.html">社区</a>
+      </div>
+      <button class="nav-toggle" onclick="toggleMobileNav()" aria-label="菜单"><span></span>
+      </button>
+    </div>
+  
+
+  <!-- Hero区域 -->
+  <section class="gallery-hero">
+    <div class="container">
+      <h1>旅行摄影集</h1>
+      <p>用镜头记录世界的美好，用光影讲述旅途的故事</p>
+      <p class="photo-count">共收录 <strong id="photoTotal">24</strong> 幅作品</p>
+    </div>
+  </section>
+
+  <!-- 筛选区域 -->
+  <section class="gallery-filters">
+    <div class="container">
+      <div class="filter-row">
+        <span class="filter-label">分类</span>
+        <button class="filter-btn active" data-filter="category" data-value="all">全部</button>
+        <button class="filter-btn" data-filter="category" data-value="风光">🌄 风光摄影</button>
+        <button class="filter-btn" data-filter="category" data-value="人文">👥 人文纪实</button>
+        <button class="filter-btn" data-filter="category" data-value="建筑">🏛️ 城市建筑</button>
+        <button class="filter-btn" data-filter="category" data-value="生态">🌿 自然生态</button>
+        <button class="filter-btn" data-filter="category" data-value="街拍">📷 街拍纪实</button>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">目的地</span>
+        <button class="filter-btn active" data-filter="destination" data-value="all">全部</button>
+        <button class="filter-btn" data-filter="destination" data-value="日本">🇯🇵 日本</button>
+        <button class="filter-btn" data-filter="destination" data-value="冰岛">🇮🇸 冰岛</button>
+        <button class="filter-btn" data-filter="destination" data-value="意大利">🇮🇹 意大利</button>
+        <button class="filter-btn" data-filter="destination" data-value="挪威">🇳🇴 挪威</button>
+        <button class="filter-btn" data-filter="destination" data-value="中国">🇨🇳 中国</button>
+        <button class="filter-btn" data-filter="destination" data-value="摩洛哥">🇲🇦 摩洛哥</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 画廊内容 -->
+  <section class="gallery-content">
+    <div class="container">
+      <div class="masonry-grid" id="galleryGrid">
+        <!-- 图片将通过JS动态渲染 -->
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="empty-icon">📷</div>
+        <h3>暂无符合条件的作品</h3>
+        <p>试试调整筛选条件</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 灯箱弹窗 -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" onclick="closeLightbox()" aria-label="关闭">×</button>
+    <button class="lightbox-nav prev" onclick="navigateLightbox(-1)" aria-label="关闭">‹</button>
+    <div class="lightbox-content">
+      <img src="" alt="旅行摄影大图预览" id="lightboxImage" loading="lazy">
+      <div class="lightbox-info">
+        <h3 id="lightboxTitle"></h3>
+        <div class="info-row">
+          <span class="info-item" id="lightboxDest" aria-hidden="true">📍</span>
+          <span class="info-item" id="lightboxAuthor" aria-hidden="true">📷</span>
+          <span class="info-item" id="lightboxCategory"></span>
+        </div>
+      </div>
+    </div>
+    <button class="lightbox-nav next" onclick="navigateLightbox(1)" aria-label="关闭">›</button>
+  </div>
+
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" style="background: var(--gray-100); padding: 40px 0; text-align: center; border-top: 1px solid var(--gray-200);">
+    <div class="container">
+      <p style="color: var(--gray-500); font-size: 0.9rem;">
+        © 2024 游导旅游 · 用镜头记录世界每一个角落
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // 摄影作品数据
+    const photos = [
+      {
+        id: 1,
+        title: "京都岚山竹林",
+        category: "风光",
+        categoryClass: "🌄",
+        destination: "日本",
+        author: "李明",
+        authorInitial: "李",
+        src: "https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=800&q=80",
+        height: 450
+      },
+      {
+        id: 2,
+        title: "冰岛极光",
+        category: "风光",
+        categoryClass: "🌄",
+        destination: "冰岛",
+        author: "张伟",
+        authorInitial: "张",
+        src: "https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80",
+        height: 350
+      },
+      {
+        id: 3,
+        title: "威尼斯运河",
+        category: "建筑",
+        categoryClass: "🏛️",
+        destination: "意大利",
+        author: "王芳",
+        authorInitial: "王",
+        src: "https://images.unsplash.com/photo-1514890547357-a9ee288728e0?w=800&q=80",
+        height: 400
+      },
+      {
+        id: 4,
+        title: "撒哈拉沙漠驼队",
+        category: "人文",
+        categoryClass: "👥",
+        destination: "摩洛哥",
+        author: "陈静",
+        authorInitial: "陈",
+        src: "https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=800&q=80",
+        height: 380
+      },
+      {
+        id: 5,
+        title: "挪威峡湾晨雾",
+        category: "风光",
+        categoryClass: "🌄",
+        destination: "挪威",
+        author: "刘洋",
+        authorInitial: "刘",
+        src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+        height: 420
+      },
+      {
+        id: 6,
+        title: "苏州园林漏窗",
+        category: "建筑",
+        categoryClass: "🏛️",
+        destination: "中国",
+        author: "周敏",
+        authorInitial: "周",
+        src: "https://images.unsplash.com/photo-1537531383496-f4749b8032cf?w=800&q=80",
+        height: 360
+      },
+      {
+        id: 7,
+        title: "东京街头",
+        category: "街拍",
+        categoryClass: "📷",
+        destination: "日本",
+        author: "吴昊",
+        authorInitial: "吴",
+        src: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&q=80",
+        height: 440
+      },
+      {
+        id: 8,
+        title: "冰岛黑沙滩",
+        category: "风光",
+        categoryClass: "🌄",
+        destination: "冰岛",
+        author: "李明",
+        authorInitial: "李",
+        src: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800&q=80",
+        height: 340
+      },
+      {
+        id: 9,
+        title: "托斯卡纳田园",
+        category: "生态",
+        categoryClass: "🌿",
+        destination: "意大利",
+        author: "张伟",
+        authorInitial: "张",
+        src: "https://images.unsplash.com/photo-1528114039693-754f6b37ab87?w=800&q=80",
+        height: 400
+      },
+      {
+        id: 10,
+        title: "摩洛哥蓝色小镇",
+        category: "人文",
+        categoryClass: "👥",
+        destination: "摩洛哥",
+        author: "王芳",
+        authorInitial: "王",
+        src: "https://images.unsplash.com/photo-1539020140153-e479b8c22e70?w=800&q=80",
+        height: 480
+      },
+      {
+        id: 11,
+        title: "布道石日落",
+        category: "风光",
+        categoryClass: "🌄",
+        destination: "挪威",
+        author: "陈静",
+        authorInitial: "陈",
+        src: "https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80",
+        height: 380
+      },
+      {
+        id: 12,
+        title: "富士山倒影",
+        category: "风光",
+        categoryClass: "🌄",
+        destination: "日本",
+        author: "刘洋",
+        authorInitial: "刘",
+        src: "https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=800&q=80",
+        height: 360
+      },
+      {
+        id: 13,
+        title: "罗马斗兽场",
+        category: "建筑",
+        categoryClass: "🏛️",
+        destination: "意大利",
+        author: "周敏",
+        authorInitial: "周",
+        src: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&q=80",
+        height: 420
+      },
+      {
+        id: 14,
+        title: "青海湖日出",
+        category: "风光",
+        categoryClass: "🌄",
+        destination: "中国",
+        author: "吴昊",
+        authorInitial: "吴",
+        src: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80",
+        height: 350
+      },
+      {
+        id: 15,
+        title: "冰岛瀑布彩虹",
+        category: "生态",
+        categoryClass: "🌿",
+        destination: "冰岛",
+        author: "李明",
+        authorInitial: "李",
+        src: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=800&q=80",
+        height: 460
+      },
+      {
+        id: 16,
+        title: "京都花见小路",
+        category: "街拍",
+        categoryClass: "📷",
+        destination: "日本",
+        author: "张伟",
+        authorInitial: "张",
+        src: "https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800&q=80",
+        height: 400
+      },
+      {
+        id: 17,
+        title: "撒哈拉星空",
+        category: "风光",
+        categoryClass: "🌄",
+        destination: "摩洛哥",
+        author: "王芳",
+        authorInitial: "王",
+        src: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80",
+        height: 380
+      },
+      {
+        id: 18,
+        title: "巴黎圣母院",
+        category: "建筑",
+        categoryClass: "🏛️",
+        destination: "意大利",
+        author: "陈静",
+        authorInitial: "陈",
+        src: "https://images.unsplash.com/photo-1478391679764-b2d8b3cd1e94?w=800&q=80",
+        height: 440
+      },
+      {
+        id: 19,
+        title: "挪威极光",
+        category: "风光",
+        categoryClass: "🌄",
+        destination: "挪威",
+        author: "刘洋",
+        authorInitial: "刘",
+        src: "https://images.unsplash.com/photo-1483347756197-71ef80e95f73?w=800&q=80",
+        height: 420
+      },
+      {
+        id: 20,
+        title: "新疆胡杨林",
+        category: "生态",
+        categoryClass: "🌿",
+        destination: "中国",
+        author: "周敏",
+        authorInitial: "周",
+        src: "https://images.unsplash.com/photo-1504701954957-2010ec3bcec1?w=800&q=80",
+        height: 360
+      },
+      {
+        id: 21,
+        title: "威尼斯面具店",
+        category: "人文",
+        categoryClass: "👥",
+        destination: "意大利",
+        author: "吴昊",
+        authorInitial: "吴",
+        src: "https://images.unsplash.com/photo-1514890547357-a9ee288728e0?w=800&q=80",
+        height: 400
+      },
+      {
+        id: 22,
+        title: "冰岛间歇泉",
+        category: "生态",
+        categoryClass: "🌿",
+        destination: "冰岛",
+        author: "李明",
+        authorInitial: "李",
+        src: "https://images.unsplash.com/photo-1476610182048-b716b8518aae?w=800&q=80",
+        height: 380
+      },
+      {
+        id: 23,
+        title: "东京夜生活",
+        category: "街拍",
+        categoryClass: "📷",
+        destination: "日本",
+        author: "张伟",
+        authorInitial: "张",
+        src: "https://images.unsplash.com/photo-1503899036084-c55cdd92da26?w=800&q=80",
+        height: 450
+      },
+      {
+        id: 24,
+        title: "马蹄寺石窟",
+        category: "人文",
+        categoryClass: "👥",
+        destination: "中国",
+        author: "王芳",
+        authorInitial: "王",
+        src: "https://images.unsplash.com/photo-1569839333583-7375336cde4b?w=800&q=80",
+        height: 400
+      }
+    ];
+
+    let currentFilter = { category: 'all', destination: 'all' };
+    let currentLightboxIndex = 0;
+    let filteredPhotos = [...photos];
+
+    // 渲染画廊
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      grid.innerHTML = '';
+      
+      filteredPhotos.forEach((photo, index) => {
+        const item = document.createElement('div');
+        item.className = 'gallery-item';
+        item.onclick = () => openLightbox(index);
+        item.innerHTML = `
+          <img src="${photo.src}" alt="${photo.title}" loading="lazy" style="aspect-ratio: auto; height: ${photo.height}px;">
+          <span class="photo-category">${photo.categoryClass} ${photo.category}</span>
+          <div class="gallery-overlay">
+            <div class="photo-title">${photo.title}</div>
+            <div class="photo-meta">
+              <span class="photo-destination">📍 ${photo.destination}</span>
+              <span class="photo-author">
+                <span class="author-avatar">${photo.authorInitial}</span>
+                ${photo.author}
+              </span>
+            </div>
+          </div>
+        `;
+        grid.appendChild(item);
+      });
+
+      // 更新计数
+      document.getElementById('photoTotal').textContent = filteredPhotos.length;
+      
+      // 显示空状态
+      const emptyState = document.getElementById('emptyState');
+      if (filteredPhotos.length === 0) {
+        emptyState.style.display = 'block';
+        grid.style.display = 'none';
+      } else {
+        emptyState.style.display = 'none';
+        grid.style.display = 'block';
+      }
+    }
+
+    // 筛选功能
+    function initFilters() {
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const filterType = btn.dataset.filter;
+          const value = btn.dataset.value;
+          
+          // 更新按钮状态
+          document.querySelectorAll(`.filter-btn[data-filter="${filterType}"]`).forEach(b => {
+            b.classList.remove('active');
+          });
+          btn.classList.add('active');
+          
+          // 更新筛选条件
+          currentFilter[filterType] = value;
+          
+          // 重新筛选
+          applyFilters();
+        });
+      });
+    }
+
+    function applyFilters() {
+      filteredPhotos = photos.filter(photo => {
+        const categoryMatch = currentFilter.category === 'all' || photo.category === currentFilter.category;
+        const destMatch = currentFilter.destination === 'all' || photo.destination === currentFilter.destination;
+        return categoryMatch && destMatch;
+      });
+      renderGallery();
+    }
+
+    // 灯箱功能
+    function openLightbox(index) {
+      currentLightboxIndex = index;
+      const photo = filteredPhotos[index];
+      
+      document.getElementById('lightboxImage').src = photo.src;
+      document.getElementById('lightboxImage').alt = photo.title;
+      document.getElementById('lightboxTitle').textContent = photo.title;
+      document.getElementById('lightboxDest').innerHTML = `📍 ${photo.destination}`;
+      document.getElementById('lightboxAuthor').innerHTML = `📷 ${photo.author}`;
+      document.getElementById('lightboxCategory').innerHTML = `${photo.categoryClass} ${photo.category}`;
+      
+      document.getElementById('lightbox').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function navigateLightbox(direction) {
+      currentLightboxIndex += direction;
+      if (currentLightboxIndex < 0) currentLightboxIndex = filteredPhotos.length - 1;
+      if (currentLightboxIndex >= filteredPhotos.length) currentLightboxIndex = 0;
+      
+      const photo = filteredPhotos[currentLightboxIndex];
+      document.getElementById('lightboxImage').src = photo.src;
+      document.getElementById('lightboxImage').alt = photo.title;
+      document.getElementById('lightboxTitle').textContent = photo.title;
+      document.getElementById('lightboxDest').innerHTML = `📍 ${photo.destination}`;
+      document.getElementById('lightboxAuthor').innerHTML = `📷 ${photo.author}`;
+      document.getElementById('lightboxCategory').innerHTML = `${photo.categoryClass} ${photo.category}`;
+    }
+
+    // 键盘导航
+    document.addEventListener('keydown', (e) => {
+      if (!document.getElementById('lightbox').classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') navigateLightbox(-1);
+      if (e.key === 'ArrowRight') navigateLightbox(1);
+    });
+
+    // 点击背景关闭
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') closeLightbox();
+    });
+
+    // 移动端导航
+    function toggleMobileNav() {
+      const nav = document.querySelector('.nav-links');
+      nav.style.display = nav.style.display === 'flex' ? '' : 'flex';
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      initFilters();
+      renderGallery();
+    });
+  </script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

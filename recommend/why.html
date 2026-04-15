@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>推荐原因 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .expand-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+    .expand-content.expanded { max-height: 500px; }
+    .progress-fill { transition: width 1s ease-in-out; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-bg text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="../destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="index.html" class="hover:opacity-80 transition">智能推荐</a>
+          <a href="why.html" class="font-semibold border-b-2 border-white pb-1">推荐原因</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="../destinations.html" class="block py-2">目的地</a>
+        <a href="index.html" class="block py-2">智能推荐</a>
+        <a href="why.html" class="block py-2 font-semibold">推荐原因</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <header class="gradient-bg text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 fade-in">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-5xl">🔍</span>
+        <div>
+          <h1 class="text-3xl font-bold">为什么推荐这些目的地</h1>
+          <p class="opacity-90">透明化的推荐逻辑，让您的每一次选择都有据可依</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-5xl mx-auto px-4 py-10">
+    <!-- How Recommendation Works -->
+    <section class="mb-12 fade-in">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span>⚙️</span> 推荐系统如何工作
+      </h2>
+      <div class="bg-white rounded-2xl shadow-lg p-6 mb-6">
+        <p class="text-gray-600 leading-relaxed mb-6">
+          我们的智能推荐系统通过分析您的浏览历史、搜索记录、收藏偏好等多个维度，结合当前季节和预算范围，
+          使用机器学习算法为您生成个性化的目的地推荐。每个推荐都基于真实数据和用户行为分析。
+        </p>
+        
+        <!-- Weight Distribution -->
+        <h3 class="font-semibold text-gray-800 mb-4">推荐因素权重分布</h3>
+        <div class="space-y-4">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-700 flex items-center gap-2">
+                <span>👀</span> 浏览历史
+              </span>
+              <span class="text-primary font-medium">25%</span>
+            </div>
+            <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-primary to-blue-500 rounded-full progress-fill" style="width: 25%;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-700 flex items-center gap-2">
+                <span>🔎</span> 搜索记录
+              </span>
+              <span class="text-blue-500 font-medium">20%</span>
+            </div>
+            <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full progress-fill" style="width: 20%;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-700 flex items-center gap-2">
+                <span>❤️</span> 收藏偏好
+              </span>
+              <span class="text-cyan-500 font-medium">20%</span>
+            </div>
+            <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-cyan-400 to-cyan-600 rounded-full progress-fill" style="width: 20%;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-700 flex items-center gap-2">
+                <span>🌤️</span> 季节因素
+              </span>
+              <span class="text-teal-500 font-medium">15%</span>
+            </div>
+            <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-teal-400 to-teal-600 rounded-full progress-fill" style="width: 15%;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-700 flex items-center gap-2">
+                <span>💰</span> 预算范围
+              </span>
+              <span class="text-green-500 font-medium">10%</span>
+            </div>
+            <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-green-400 to-green-600 rounded-full progress-fill" style="width: 10%;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-700 flex items-center gap-2">
+                <span>🎨</span> 旅行风格
+              </span>
+              <span class="text-emerald-500 font-medium">5%</span>
+            </div>
+            <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full progress-fill" style="width: 5%;"></div>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-gray-700 flex items-center gap-2">
+                <span>🏷️</span> 兴趣标签
+              </span>
+              <span class="text-lime-500 font-medium">5%</span>
+            </div>
+            <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-lime-400 to-lime-600 rounded-full progress-fill" style="width: 5%;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Example Recommendation Reasons -->
+    <section class="mb-12 fade-in" style="animation-delay: 0.2s;">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span>💡</span> 推荐理由示例
+      </h2>
+      <div class="space-y-4">
+        <!-- Reason 1 -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-5 cursor-pointer" onclick="toggleExpand(this)">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span class="text-2xl">🏯</span>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="font-bold text-gray-800">杭州</h3>
+                  <span class="px-2 py-1 bg-blue-50 text-blue-600 rounded text-xs">95%匹配</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                  <span>👀</span>
+                  <span>基于您浏览过的目的地</span>
+                </div>
+              </div>
+              <span class="text-gray-400 expand-icon">▼</span>
+            </div>
+            <div class="expand-content mt-4 pt-4 border-t border-gray-100">
+              <div class="space-y-3 text-sm text-gray-600">
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>您最近浏览过苏州，与杭州同属江南水乡风格</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>您搜索过"古镇"、"江南"等关键词</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>当前春季正是西湖最美时节</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>预算¥1500在杭州3日游完全足够</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>您收藏的大理、丽江与杭州风格相近</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 2 -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-5 cursor-pointer" onclick="toggleExpand(this)">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span class="text-2xl">🐼</span>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="font-bold text-gray-800">成都</h3>
+                  <span class="px-2 py-1 bg-orange-50 text-orange-600 rounded text-xs">92%匹配</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                  <span>🍜</span>
+                  <span>匹配您的美食偏好</span>
+                </div>
+              </div>
+              <span class="text-gray-400 expand-icon">▼</span>
+            </div>
+            <div class="expand-content mt-4 pt-4 border-t border-gray-100">
+              <div class="space-y-3 text-sm text-gray-600">
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>您搜索过"美食"、"火锅"等关键词</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>成都被称为"美食之都"，川菜种类丰富</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>与您浏览过的西安有相似的历史文化底蕴</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>大熊猫基地是摄影爱好者的热门打卡地</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reason 3 -->
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+          <div class="p-5 cursor-pointer" onclick="toggleExpand(this)">
+            <div class="flex items-start gap-4">
+              <div class="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                <span class="text-2xl">🏔️</span>
+              </div>
+              <div class="flex-1">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="font-bold text-gray-800">张家界</h3>
+                  <span class="px-2 py-1 bg-teal-50 text-teal-600 rounded text-xs">88%匹配</span>
+                </div>
+                <div class="flex items-center gap-2 text-sm text-gray-500">
+                  <span>📷</span>
+                  <span>基于您的摄影兴趣</span>
+                </div>
+              </div>
+              <span class="text-gray-400 expand-icon">▼</span>
+            </div>
+            <div class="expand-content mt-4 pt-4 border-t border-gray-100">
+              <div class="space-y-3 text-sm text-gray-600">
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>您选择过"摄影采风"作为兴趣标签</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>张家界的石英砂岩峰林是绝佳的摄影素材</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>与您收藏的自然风光目的地类型匹配</span>
+                </div>
+                <div class="flex items-start gap-2">
+                  <span class="text-green-500">✓</span>
+                  <span>春季是拍摄云海日出的最佳季节</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Sources -->
+    <section class="mb-12 fade-in" style="animation-delay: 0.4s;">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span>📊</span> 数据来源说明
+      </h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+              <span class="text-2xl">📍</span>
+            </div>
+            <h3 class="font-semibold text-gray-800">目的地数据库</h3>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2">
+              <span class="text-primary">•</span>
+              <span>覆盖全国 500+ 热门目的地</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-primary">•</span>
+              <span>实时更新的景点、美食、住宿信息</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-primary">•</span>
+              <span>用户真实评价与评分数据</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+              <span class="text-2xl">👥</span>
+            </div>
+            <h3 class="font-semibold text-gray-800">用户行为数据</h3>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">•</span>
+              <span>匿名化处理，保护用户隐私</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">•</span>
+              <span>基于用户授权的浏览和收藏记录</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">•</span>
+              <span>聚合分析，不涉及个人敏感信息</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+              <span class="text-2xl">🌐</span>
+            </div>
+            <h3 class="font-semibold text-gray-800">季节气候数据</h3>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2">
+              <span class="text-orange-500">•</span>
+              <span>实时天气与气温信息</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-orange-500">•</span>
+              <span>最佳旅行季节分析</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-orange-500">•</span>
+              <span>节假日与活动日历</span>
+            </li>
+          </ul>
+        </div>
+        <div class="bg-white rounded-xl shadow-md p-6">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+              <span class="text-2xl">🤖</span>
+            </div>
+            <h3 class="font-semibold text-gray-800">算法模型</h3>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2">
+              <span class="text-purple-500">•</span>
+              <span>协同过滤算法</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-purple-500">•</span>
+              <span>内容相似度匹配</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-purple-500">•</span>
+              <span>实时学习与优化</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Similar Cases -->
+    <section class="mb-12 fade-in" style="animation-delay: 0.6s;">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span>📝</span> 相似用户案例
+      </h2>
+      <div class="bg-white rounded-2xl shadow-lg p-6">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-gradient-to-br from-blue-200 to-cyan-300 rounded-full flex items-center justify-center">
+            <span>👤</span>
+          </div>
+          <div>
+            <div class="font-medium text-gray-800">相似用户 A</div>
+            <div class="text-xs text-gray-500">与您偏好相似度 93%</div>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4 mb-4">
+          <p class="text-gray-600 text-sm italic mb-4">"感谢推荐系统！我本来只想去杭州，但系统推荐了乌镇和西塘，
+            去了之后发现这些古镇比想象中更美！现在成了古镇爱好者。"</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-2 py-1 bg-white rounded text-xs text-gray-600">#杭州</span>
+            <span class="px-2 py-1 bg-white rounded text-xs text-gray-600">#乌镇</span>
+            <span class="px-2 py-1 bg-white rounded text-xs text-gray-600">#西塘</span>
+            <span class="px-2 py-1 bg-white rounded text-xs text-gray-600">#江南古镇</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-500">该用户的推荐旅程</span>
+          <span class="text-primary font-medium">杭州 → 乌镇 → 西塘 → 苏州</span>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-lg p-6 mt-4">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-10 h-10 bg-gradient-to-br from-orange-200 to-red-300 rounded-full flex items-center justify-center">
+            <span>👤</span>
+          </div>
+          <div>
+            <div class="font-medium text-gray-800">相似用户 B</div>
+            <div class="text-xs text-gray-500">与您偏好相似度 89%</div>
+          </div>
+        </div>
+        <div class="bg-gray-50 rounded-xl p-4 mb-4">
+          <p class="text-gray-600 text-sm italic mb-4">"作为一个美食爱好者，系统推荐成都简直是神来之笔！
+            每天吃到撑，但一点都不想走。下次还要去重庆继续吃！"</p>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-2 py-1 bg-white rounded text-xs text-gray-600">#成都</span>
+            <span class="px-2 py-1 bg-white rounded text-xs text-gray-600">#火锅</span>
+            <span class="px-2 py-1 bg-white rounded text-xs text-gray-600">#川菜</span>
+            <span class="px-2 py-1 bg-white rounded text-xs text-gray-600">#美食之旅</span>
+          </div>
+        </div>
+        <div class="flex items-center justify-between text-sm">
+          <span class="text-gray-500">该用户的推荐旅程</span>
+          <span class="text-primary font-medium">成都3日深度美食游</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy Note -->
+    <div class="bg-blue-50 rounded-xl p-6 text-center">
+      <p class="text-blue-800 text-sm">
+        <span class="text-xl mr-1">🔒</span>
+        我们承诺保护您的隐私安全。所有推荐算法仅使用匿名化数据，不会收集或共享您的个人信息。
+        <a href="../privacy.html" class="underline hover:no-underline">了解隐私政策</a>
+      </p>
+    </div>
+
+    <!-- Navigation -->
+    <div class="flex justify-center gap-4 mt-8">
+      <a href="index.html" class="px-6 py-3 bg-white text-primary border-2 border-primary rounded-full font-medium hover:bg-blue-50 transition flex items-center gap-2">
+        ← 返回推荐首页
+      </a>
+      <a href="settings.html" class="px-6 py-3 bg-primary text-white rounded-full font-medium hover:bg-primary/90 transition flex items-center gap-2">
+        调整我的偏好 →
+      </a>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-10 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-gray-400">&copy; 2024 游导旅游 youdao-travel.com</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    function toggleExpand(element) {
+      const content = element.querySelector('.expand-content');
+      const icon = element.querySelector('.expand-icon');
+      
+      content.classList.toggle('expanded');
+      icon.style.transform = content.classList.contains('expanded') ? 'rotate(180deg)' : 'rotate(0deg)';
+    }
+
+    // Animate progress bars on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const bars = entry.target.querySelectorAll('.progress-fill');
+          bars.forEach(bar => {
+            const width = bar.style.width;
+            bar.style.width = '0%';
+            setTimeout(() => {
+              bar.style.width = width;
+            }, 100);
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    document.querySelectorAll('.bg-white').forEach(el => {
+      if (el.querySelector('.progress-fill')) {
+        observer.observe(el);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>目的地购物指南 - 游导旅游</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🛍️</text></svg>">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #e85d04;
+      --primary-light: #f48c06;
+      --secondary: #dc2f02;
+      --accent: #ffba08;
+      --dark: #1a1a2e;
+      --light: #fff8f0;
+      --gray: #6c757d;
+      --light-gray: #f8f9fa;
+    }
+
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #fff8f0 0%, #fff0e6 100%);
+      color: var(--dark);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(232, 93, 4, 0.3);
+    }
+
+    nav {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.3; }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.95;
+      margin-bottom: 2rem;
+    }
+
+    .hero-icons {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      font-size: 3rem;
+      opacity: 0.9;
+    }
+
+    /* Main Content */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 3rem 2rem;
+    }
+
+    /* Section Title */
+    .section-title {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .section-title h2 {
+      font-size: 2.2rem;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-title p {
+      color: var(--gray);
+      font-size: 1.1rem;
+    }
+
+    .section-title .highlight {
+      color: var(--primary);
+    }
+
+    /* Destination Grid */
+    .destination-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .destination-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      cursor: pointer;
+    }
+
+    .destination-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 60px rgba(232, 93, 4, 0.2);
+    }
+
+    .destination-img {
+      height: 200px;
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .destination-img::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(transparent, rgba(255,255,255,0.3));
+    }
+
+    .destination-content {
+      padding: 1.5rem;
+    }
+
+    .destination-content h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+    }
+
+    .destination-content .currency {
+      color: var(--primary);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .destination-content .highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .highlight-tag {
+      background: var(--light);
+      color: var(--primary);
+      padding: 0.3rem 0.8rem;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .destination-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      color: var(--primary);
+      font-weight: 600;
+      text-decoration: none;
+      transition: gap 0.3s;
+    }
+
+    .destination-link:hover {
+      gap: 1rem;
+    }
+
+    /* Shopping Tips */
+    .tips-section {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      margin-bottom: 4rem;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .tip-card {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: var(--light);
+      border-radius: 15px;
+      transition: all 0.3s;
+    }
+
+    .tip-card:hover {
+      background: linear-gradient(135deg, #fff8f0 0%, #fff0e6 100%);
+      transform: translateX(5px);
+    }
+
+    .tip-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      flex-shrink: 0;
+    }
+
+    .tip-content h4 {
+      color: var(--dark);
+      margin-bottom: 0.3rem;
+    }
+
+    .tip-content p {
+      color: var(--gray);
+      font-size: 0.95rem;
+    }
+
+    /* Shopping List CTA */
+    .cta-section {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: 20px;
+      padding: 3rem;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: -100%;
+      left: -100%;
+      width: 300%;
+      height: 300%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+      animation: float 10s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(50px, 50px); }
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-section h3 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .cta-section p {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      opacity: 0.95;
+    }
+
+    .cta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: white;
+      color: var(--primary);
+      padding: 1rem 2rem;
+      border-radius: 50px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.1rem;
+      transition: all 0.3s;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+
+    .cta-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .feature-item {
+      background: rgba(255,255,255,0.15);
+      padding: 1.5rem;
+      border-radius: 15px;
+      backdrop-filter: blur(10px);
+    }
+
+    .feature-item .icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feature-item h4 {
+      font-size: 1rem;
+      margin-bottom: 0.3rem;
+    }
+
+    .feature-item p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    /* Tax Guide */
+    .tax-guide {
+      background: white;
+      border-radius: 20px;
+      padding: 3rem;
+      margin-top: 4rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+    }
+
+    .tax-guide h3 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      color: var(--dark);
+    }
+
+    .tax-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .tax-card {
+      background: var(--light);
+      padding: 1.5rem;
+      border-radius: 15px;
+      text-align: center;
+      border: 2px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tax-card:hover {
+      border-color: var(--primary);
+    }
+
+    .tax-card .flag {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .tax-card h4 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .tax-card .threshold {
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .tax-card .rate {
+      color: var(--gray);
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--dark);
+      color: white;
+      padding: 3rem 2rem;
+      margin-top: 4rem;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+    }
+
+    .footer-section h4 {
+      color: var(--accent);
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+
+    .footer-section a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      display: block;
+      padding: 0.3rem 0;
+      transition: color 0.3s;
+    }
+
+    .footer-section a:hover {
+      color: var(--accent);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6);
+      font-size: 0.9rem;
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--primary);
+        flex-direction: column;
+        padding: 1rem;
+        gap: 0.5rem;
+      }
+
+      .nav-links.active {
+        display: flex;
+      }
+
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .hero-icons {
+        font-size: 2rem;
+        gap: 1rem;
+      }
+
+      .features {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .destination-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .destination-card {
+      animation: fadeInUp 0.6s ease-out;
+    }
+
+    .destination-card:nth-child(2) { animation-delay: 0.1s; }
+    .destination-card:nth-child(3) { animation-delay: 0.2s; }
+    .destination-card:nth-child(4) { animation-delay: 0.3s; }
+    .destination-card:nth-child(5) { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <div class="logo">
+        <div class="logo-icon">🧳</div>
+        <span>游导旅游</span>
+      </div>
+      <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html">首页</a></li>
+        <li><a href="../destinations/index.html">目的地</a></li>
+        <li><a href="../guides/index.html">攻略</a></li>
+        <li><a href="index.html" class="active">购物</a></li>
+        <li><a href="../about.html">关于</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-icons">🛍️ 🗾 🏯</div>
+      <h1>目的地购物指南</h1>
+      <p>精选热门购物目的地，提供最新价格参考与退税攻略，让您的海外购物之旅更加轻松愉快</p>
+    </div>
+  </section>
+
+  <main class="container">
+    <!-- 热门目的地 -->
+    <div class="section-title">
+      <h2>🔥 <span class="highlight">热门购物目的地</span></h2>
+      <p>全球热门购物圣地，畅享免税购物乐趣</p>
+    </div>
+
+    <div class="destination-grid">
+      <article class="destination-card" onclick="location.href='japan-shopping.html'">
+        <div class="destination-img">🗾</div>
+        <div class="destination-content">
+          <h3>日本 Japan</h3>
+          <div class="currency">💴 日元 (JPY) | 汇率: 100 JPY ≈ 4.8 CNY</div>
+          <p>药妆天堂，电子产品乐园。数码产品、动漫周边、品质美妆享誉全球。</p>
+          <div class="highlights">
+            <span class="highlight-tag">药妆</span>
+            <span class="highlight-tag">电子产品</span>
+            <span class="highlight-tag">动漫周边</span>
+          </div>
+          <a href="japan-shopping.html" class="destination-link">
+            查看攻略 → 
+          </a>
+        </div>
+      </article>
+
+      <article class="destination-card" onclick="location.href='korea-shopping.html'">
+        <div class="destination-img">🇰🇷</div>
+        <div class="destination-content">
+          <h3>韩国 South Korea</h3>
+          <div class="currency">💹 韩元 (KRW) | 汇率: 1000 KRW ≈ 5.5 CNY</div>
+          <p>韩流时尚中心，美妆护肤圣地。K-beauty风靡全球，性价比超高。</p>
+          <div class="highlights">
+            <span class="highlight-tag">化妆品</span>
+            <span class="highlight-tag">医美产品</span>
+            <span class="highlight-tag">K-pop周边</span>
+          </div>
+          <a href="korea-shopping.html" class="destination-link">
+            查看攻略 → 
+          </a>
+        </div>
+      </article>
+
+      <article class="destination-card">
+        <div class="destination-img">🇹🇭</div>
+        <div class="destination-content">
+          <h3>泰国 Thailand</h3>
+          <div class="currency">฿ 泰铢 (THB) | 汇率: 100 THB ≈ 20 CNY</div>
+          <p>东南亚购物胜地，特色手工艺品与热带风情商品应有尽有。</p>
+          <div class="highlights">
+            <span class="highlight-tag">泰式特产</span>
+            <span class="highlight-tag">美妆护肤</span>
+            <span class="highlight-tag">佛牌饰品</span>
+          </div>
+          <a href="#" class="destination-link">即将上线 → </a>
+        </div>
+      </article>
+
+      <article class="destination-card">
+        <div class="destination-img">🇸🇬</div>
+        <div class="destination-content">
+          <h3>新加坡 Singapore</h3>
+          <div class="currency">S$ 新加坡元 (SGD) | 汇率: 1 SGD ≈ 5.4 CNY</div>
+          <p>亚洲购物天堂，汇聚国际名牌，珠宝手表奢侈品购物首选。</p>
+          <div class="highlights">
+            <span class="highlight-tag">珠宝首饰</span>
+            <span class="highlight-tag">名表</span>
+            <span class="highlight-tag">保健品</span>
+          </div>
+          <a href="#" class="destination-link">即将上线 → </a>
+        </div>
+      </article>
+
+      <article class="destination-card">
+        <div class="destination-img">🇪🇺</div>
+        <div class="destination-content">
+          <h3>欧洲 Europe</h3>
+          <div class="currency">€€ 欧元/英镑 (EUR/GBP)</div>
+          <p>奢侈品购物圣地，时尚名牌云集，退税政策优厚。</p>
+          <div class="highlights">
+            <span class="highlight-tag">奢侈品</span>
+            <span class="highlight-tag">名牌包</span>
+            <span class="highlight-tag">化妆品</span>
+          </div>
+          <a href="#" class="destination-link">即将上线 → </a>
+        </div>
+      </article>
+    </div>
+
+    <!-- 购物贴士 -->
+    <div class="tips-section">
+      <div class="section-title">
+        <h2>💡 <span class="highlight">实用购物贴士</span></h2>
+        <p>让您的购物之旅更加顺畅</p>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-icon">⏰</div>
+          <div class="tip-content">
+            <h4>购物时间</h4>
+            <p>日本大型商场通常10:00-21:00营业，百货周一至周日开放。韩国明洞等商圈营业至22:00左右。避开节假日购物高峰。</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">💳</div>
+          <div class="tip-content">
+            <h4>支付方式</h4>
+            <p>大型商场和免税店支持银联卡、支付宝、微信支付。药妆店和小店建议使用现金或刷信用卡。</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">🗣️</div>
+          <div class="tip-content">
+            <h4>语言沟通</h4>
+            <p>日本和韩国主要城市的大型店铺均有中文标识和中文店员。建议下载翻译APP以备不时之需。</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">🧳</div>
+          <div class="tip-content">
+            <h4>行李寄存</h4>
+            <p>购物后行李可寄存在酒店或商场。日本便利店和地铁站有投币寄存柜，韩国便利店也提供行李寄存服务。</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">🔍</div>
+          <div class="tip-content">
+            <h4>价比三家</h4>
+            <p>同一商品在不同店铺价格可能有差异。日本药妆店常有不同的折扣和促销活动，建议多逛几家比较。</p>
+          </div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon">✨</div>
+          <div class="tip-content">
+            <h4>正品鉴别</h4>
+            <p>建议在正规店铺购买，注意查看生产日期和保质期。保留购物小票，警惕价格过低的商品。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 购物清单工具 -->
+    <div class="cta-section">
+      <div class="cta-content">
+        <h3>📋 我的购物清单</h3>
+        <p>创建专属购物清单，管理预算，不错过任何心爱好物</p>
+        <a href="shopping-list.html" class="cta-btn">
+          🛒 立即创建购物清单
+        </a>
+        <div class="features">
+          <div class="feature-item">
+            <div class="icon">✏️</div>
+            <h4>自定义清单</h4>
+            <p>添加心仪商品</p>
+          </div>
+          <div class="feature-item">
+            <div class="icon">💰</div>
+            <h4>预算管理</h4>
+            <p>控制购物支出</p>
+          </div>
+          <div class="feature-item">
+            <div class="icon">📱</div>
+            <h4>随身携带</h4>
+            <p>手机随时查看</p>
+          </div>
+          <div class="feature-item">
+            <div class="icon">🔗</div>
+            <h4>分享好友</h4>
+            <p>一起买买买</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 退税指南 -->
+    <div class="tax-guide">
+      <h3>🌍 热门目的地退税政策</h3>
+      <div class="tax-grid">
+        <div class="tax-card">
+          <div class="flag">🗾</div>
+          <h4>日本</h4>
+          <div class="threshold">购物满 ¥5,000</div>
+          <div class="rate">消费税 10%</div>
+        </div>
+        <div class="tax-card">
+          <div class="flag">🇰🇷</div>
+          <h4>韩国</h4>
+          <div class="threshold">购物满 ₩50,000</div>
+          <div class="rate">附加税 10%</div>
+        </div>
+        <div class="tax-card">
+          <div class="flag">🇹🇭</div>
+          <h4>泰国</h4>
+          <div class="threshold">购物满 ฿2,000</div>
+          <div class="rate">增值税 7%</div>
+        </div>
+        <div class="tax-card">
+          <div class="flag">🇸🇬</div>
+          <h4>新加坡</h4>
+          <div class="threshold">购物满 S$100</div>
+          <div class="rate">消费税 9%</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>关于游导</h4>
+        <a href="../about.html">关于我们</a>
+        <a href="#">联系我们</a>
+        <a href="#">加入团队</a>
+        <a href="#">商务合作</a>
+      </div>
+      <div class="footer-section">
+        <h4>旅行服务</h4>
+        <a href="#">目的地指南</a>
+        <a href="#">旅行攻略</a>
+        <a href="#">购物推荐</a>
+        <a href="#">当地体验</a>
+      </div>
+      <div class="footer-section">
+        <h4>帮助中心</h4>
+        <a href="#">常见问题</a>
+        <a href="#">使用指南</a>
+        <a href="#">意见反馈</a>
+        <a href="#">隐私政策</a>
+      </div>
+      <div class="footer-section">
+        <h4>关注我们</h4>
+        <a href="#">微信公众号</a>
+        <a href="#">微博</a>
+        <a href="#">小红书</a>
+        <a href="#">抖音</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 游导旅游 youdao-travel.com | 让每一次旅行更精彩</p>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('navLinks').classList.toggle('active');
+    }
+
+    // 滚动动画
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.destination-card, .tip-card, .tax-card').forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(30px)';
+      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(card);
+    });
+  </script>
+</body>
+</html>

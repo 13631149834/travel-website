@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户管理 - 游导旅游</title>
+  <meta name="description" content="用户管理 - 游导旅游">
+  <meta name="robots" content="noindex, nofollow">
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="stylesheet" href="css/accessibility.css">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #F3F4F6;
+            min-height: 100vh;
+        }
+
+        /* 顶部导航 */
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .admin-header .logo {
+            font-size: 1.4rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-header .logo a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .admin-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .admin-nav a {
+            padding: 8px 16px;
+            border-radius: 8px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+        }
+
+        .admin-nav a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .admin-nav a.active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .admin-nav .logout-btn {
+            background: rgba(239, 68, 68, 0.9);
+            margin-left: 20px;
+        }
+
+        .admin-nav .logout-btn:hover {
+            background: #EF4444;
+        }
+
+        /* 主容器 */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* 页面标题 */
+        .page-title {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .stat-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .stat-card .label {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        /* 内容卡片 */
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .content-card h2 {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #F3F4F6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 搜索框 */
+        .search-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+            cursor: pointer;
+        }
+
+        /* 表格样式 */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #F3F4F6;
+        }
+
+        th {
+            background: #F9FAFB;
+            color: #666;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        tr:hover {
+            background: #F9FAFB;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-success {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        .btn-danger {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #DC2626;
+        }
+
+        .btn-secondary {
+            background: #E5E7EB;
+            color: #666;
+        }
+
+        .btn-secondary:hover {
+            background: #D1D5DB;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: 0.85rem;
+        }
+
+        /* 徽章 */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .badge-guide {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .badge-tourist {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+
+        .badge-active {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+
+        .badge-disabled {
+            background: rgba(239, 68, 68, 0.1);
+            color: #EF4444;
+        }
+
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #E5E7EB;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* 分页 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 30px;
+        }
+
+        .pagination button {
+            padding: 8px 14px;
+            border: 1px solid #E5E7EB;
+            background: #fff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .pagination button:hover,
+        .pagination button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 9999;
+            animation: slideDown 0.3s ease;
+        }
+
+        .toast-success { background-color: #10B981; }
+        .toast-error { background-color: #EF4444; }
+        .toast-warning { background-color: #F59E0B; }
+        .toast-info { background-color: #3B82F6; }
+
+        @keyframes slideDown {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            .admin-nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .admin-container {
+                padding: 15px;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .search-bar {
+                flex-direction: column;
+            }
+        }
+
+        /* 登录模态框 */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        /* 表格样式优化 */
+        table tbody tr:nth-child(odd) {
+            background-color: #FAFBFC;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #FFFFFF;
+        }
+
+        table tbody tr:hover {
+            background-color: rgba(102, 126, 234, 0.08);
+            transform: scale(1.005);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        /* 复选框样式 */
+        .checkbox-wrapper {
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        /* 批量操作栏 */
+        .batch-actions-bar {
+            display: none;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .batch-actions-bar.active {
+            display: flex;
+        }
+
+        .batch-actions-bar .selected-info {
+            flex: 1;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .batch-actions-bar .batch-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-batch {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+            color: #667eea;
+            border: 1px solid #667eea;
+        }
+
+        .btn-batch:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-batch.danger {
+            border-color: #EF4444;
+            color: #EF4444;
+        }
+
+        .btn-batch.danger:hover {
+            background: #EF4444;
+            color: white;
+        }
+
+        .btn-batch.success {
+            border-color: #10B981;
+            color: #10B981;
+        }
+
+        .btn-batch.success:hover {
+            background: #10B981;
+            color: white;
+        }
+
+        /* 空状态优化 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+            background: #FAFBFC;
+            border-radius: 12px;
+            margin: 10px 0;
+        }
+
+        .empty-state .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        /* 表格工具栏 */
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .table-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-box .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-box label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .login-box input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .login-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-box .btn {
+            width: 100%;
+            justify-content: center;
+            padding: 14px;
+            font-size: 1rem;
+        }
+    
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+  <meta name="keywords" content="游导旅游,admin-users">
+  <link rel="canonical" href="https://youdao-travel.com/admin-users.html">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+    <!-- 登录模态框 -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-box">
+            <h2>🔐 管理后台登录</h2>
+            <div class="form-group">
+                <label>管理员密码</label>
+                <input type="password" id="adminPassword" placeholder="请输入管理员密码">
+            </div>
+            <button class="btn btn-primary" onclick="handleLogin()">
+                登录
+            </button>
+        </div>
+    </div>
+
+    <!-- 顶部导航 -->
+    <header class="admin-header">
+        <div class="logo">
+            <a href="admin.html">⚙️ 游导旅游管理后台</a>
+        </div>
+        <nav class="admin-nav" aria-label="主导航">
+            <a href="admin.html">📊 仪表盘</a>
+            <a href="admin-stats.html">📈 数据报表</a>
+            <a href="admin-guides.html">🎤 导游管理</a>
+            <a href="admin-users.html" class="active">👥 用户管理</a>
+            <a href="admin-reviews.html">⭐ 评价管理</a>
+            <a href="index.html" class="logout-btn">🚪 退出</a>
+        </nav>
+    </header>
+
+    <!-- 主容器 -->
+    <main class="admin-container">
+        <h1 class="page-title">👥 用户管理</h1>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="icon">👥</div>
+                <div class="value" id="statTotal">-</div>
+                <div class="label">总用户数</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🎤</div>
+                <div class="value" id="statGuides">-</div>
+                <div class="label">导游用户</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">🎒</div>
+                <div class="value" id="statTourists">-</div>
+                <div class="label">游客用户</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon">📅</div>
+                <div class="value" id="statToday">-</div>
+                <div class="label">今日新增</div>
+            </div>
+        </div>
+
+        <!-- 用户列表 -->
+        <div class="content-card">
+            <h2>📋 用户列表</h2>
+            <div class="search-bar">
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索用户名或邮箱...">
+                <select class="filter-select" id="roleFilter">
+                    <option value="">全部角色</option>
+                    <option value="guide">导游</option>
+                    <option value="tourist">游客</option>
+                </select>
+                <select class="filter-select" id="statusFilter">
+                    <option value="">全部状态</option>
+                    <option value="active">正常</option>
+                    <option value="disabled">已禁用</option>
+                </select>
+                <button class="btn btn-primary" onclick="loadUsers()">🔍 搜索</button>
+                <button class="btn btn-secondary" onclick="resetSearch()">🔄 重置</button>
+            </div>
+
+            <!-- 表格工具栏 -->
+            <div class="table-toolbar">
+                <div class="table-info">
+                    共 <strong id="totalUsers">0</strong> 条记录
+                </div>
+                <div class="table-actions">
+                    <button class="btn btn-secondary" onclick="exportUsers()">
+                        📥 导出CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- 批量操作栏 -->
+            <div class="batch-actions-bar" id="batchActionsBar">
+                <span class="selected-info">✅ 已选择 <strong id="selectedCount">0</strong> 项</span>
+                <div class="batch-buttons">
+                    <button class="btn-batch success" onclick="batchEnable()">
+                        ✅ 批量启用
+                    </button>
+                    <button class="btn-batch danger" onclick="batchDisable()">
+                        ⛔ 批量禁用
+                    </button>
+                    <button class="btn-batch danger" onclick="batchDelete()">
+                        🗑️ 批量删除
+                    </button>
+                    <button class="btn-batch" onclick="clearSelection()">
+                        ❌ 取消选择
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">
+                                <label class="checkbox-wrapper">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                </label>
+                            </th>
+                            <th>用户信息</th>
+                            <th>角色</th>
+                            <th>状态</th>
+                            <th>注册时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTable">
+                        <tr>
+                            <td colspan="6" class="loading">
+                                <div class="spinner"></div>
+                                加载中...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 分页 -->
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </main>
+
+    <script>
+        const ADMIN_PASSWORD = 'admin123';
+        let currentPage = 1;
+        const pageSize = 10;
+
+        // Utils 工具函数
+        const Utils = {
+            showToast: function(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.className = `toast toast-${type}`;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
+        // 模拟数据
+        const mockData = {
+            users: JSON.parse(localStorage.getItem('admin_users') || '[{"id":"u1","nickname":"张三","email":"zhangsan@example.com","role":"tourist","status":"active","created_at":"2024-01-15T08:00:00Z"},{"id":"u2","nickname":"李四导游","email":"lisi@example.com","role":"guide","status":"active","created_at":"2024-02-20T10:30:00Z"},{"id":"u3","nickname":"王五","email":"wangwu@example.com","role":"tourist","status":"active","created_at":"2024-03-10T14:20:00Z"},{"id":"u4","nickname":"赵六","email":"zhaoliu@example.com","role":"tourist","status":"disabled","created_at":"2024-03-15T09:00:00Z"},{"id":"u5","nickname":"钱七","email":"qianqi@example.com","role":"tourist","status":"active","created_at":"2024-04-01T11:00:00Z"}]')
+        };
+
+        // 选中的项目
+        let selectedItems = new Set();
+
+        function saveMockData() {
+            localStorage.setItem('admin_users', JSON.stringify(mockData.users));
+        }
+
+        // 全选/取消全选
+        function toggleSelectAll() {
+            const selectAllCheckbox = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            
+            if (selectAllCheckbox.checked) {
+                checkboxes.forEach(cb => {
+                    selectedItems.add(cb.dataset.id);
+                    cb.checked = true;
+                });
+            } else {
+                selectedItems.clear();
+                checkboxes.forEach(cb => cb.checked = false);
+            }
+            updateBatchBar();
+        }
+
+        // 切换单个选中
+        function toggleSelect(id) {
+            if (selectedItems.has(id)) {
+                selectedItems.delete(id);
+            } else {
+                selectedItems.add(id);
+            }
+            updateBatchBar();
+            
+            const checkboxes = document.querySelectorAll('.item-checkbox');
+            const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+            document.getElementById('selectAll').checked = allChecked;
+        }
+
+        // 更新批量操作栏
+        function updateBatchBar() {
+            const batchBar = document.getElementById('batchActionsBar');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            if (selectedItems.size > 0) {
+                batchBar.classList.add('active');
+                selectedCount.textContent = selectedItems.size;
+            } else {
+                batchBar.classList.remove('active');
+            }
+        }
+
+        // 清空选择
+        function clearSelection() {
+            selectedItems.clear();
+            document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('selectAll').checked = false;
+            updateBatchBar();
+        }
+
+        // 批量启用
+        function batchEnable() {
+            if (selectedItems.size === 0) {
+                showToast('请先选择要启用的用户', 'warning');
+                return;
+            }
+            
+            selectedItems.forEach(id => {
+                const user = mockData.users.find(u => u.id === id);
+                if (user) user.status = 'active';
+            });
+            
+            saveMockData();
+            showToast(`已启用 ${selectedItems.size} 个用户`, 'success');
+            clearSelection();
+            loadStats();
+            loadUsers();
+        }
+
+        // 批量禁用
+        function batchDisable() {
+            if (selectedItems.size === 0) {
+                showToast('请先选择要禁用的用户', 'warning');
+                return;
+            }
+            
+            selectedItems.forEach(id => {
+                const user = mockData.users.find(u => u.id === id);
+                if (user) user.status = 'disabled';
+            });
+            
+            saveMockData();
+            showToast(`已禁用 ${selectedItems.size} 个用户`, 'success');
+            clearSelection();
+            loadStats();
+            loadUsers();
+        }
+
+        // 批量删除
+        function batchDelete() {
+            if (selectedItems.size === 0) {
+                showToast('请先选择要删除的用户', 'warning');
+                return;
+            }
+            
+            if (!confirm(`确定要删除选中的 ${selectedItems.size} 个用户吗？此操作不可恢复。`)) {
+                return;
+            }
+            
+            mockData.users = mockData.users.filter(u => !selectedItems.has(u.id));
+            saveMockData();
+            showToast(`已删除 ${selectedItems.size} 个用户`, 'success');
+            clearSelection();
+            loadStats();
+            loadUsers();
+        }
+
+        // 导出用户数据为CSV
+        function exportUsers() {
+            const users = mockData.users;
+            if (users.length === 0) {
+                showToast('暂无用户数据可导出', 'warning');
+                return;
+            }
+            
+            const csvData = [];
+            csvData.push(['ID', '昵称', '邮箱', '角色', '状态', '注册时间']);
+            
+            users.forEach(user => {
+                const roleMap = { 'guide': '导游', 'tourist': '游客' };
+                const statusMap = { 'active': '正常', 'disabled': '已禁用' };
+                csvData.push([
+                    user.id,
+                    user.nickname || '',
+                    user.email || '',
+                    roleMap[user.role] || '',
+                    statusMap[user.status] || '',
+                    new Date(user.created_at).toLocaleDateString('zh-CN')
+                ]);
+            });
+            
+            const csvString = csvData.map(row => 
+                row.map(cell => {
+                    if (typeof cell === 'string' && (cell.includes(',') || cell.includes('"') || cell.includes('\n'))) {
+                        return '"' + cell.replace(/"/g, '""') + '"';
+                    }
+                    return cell;
+                }).join(',')
+            ).join('\n');
+            
+            const BOM = '\uFEFF';
+            const blob = new Blob([BOM + csvString], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `用户列表_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            
+            showToast('用户数据已导出为CSV', 'success');
+        }
+
+        // 重置搜索
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('roleFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            currentPage = 1;
+            loadUsers();
+        }
+
+        // 检查登录
+        function checkLogin() {
+            const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+            if (!isLoggedIn) {
+                document.getElementById('loginModal').style.display = 'flex';
+                return false;
+            }
+            document.getElementById('loginModal').style.display = 'none';
+            return true;
+        }
+
+        // 处理登录
+        function handleLogin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                document.getElementById('loginModal').style.display = 'none';
+                init();
+            } else {
+                Utils.showToast('密码错误，请重试！', 'error');
+            }
+        }
+
+        // 回车登录
+        document.getElementById('adminPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleLogin();
+        });
+
+        // 显示提示
+        function showToast(message, type = 'info') {
+            Utils.showToast(message, type);
+        }
+
+        // 加载统计数据
+        function loadStats() {
+            const total = mockData.users.length;
+            const guides = mockData.users.filter(u => u.role === 'guide').length;
+            const tourists = total - guides;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const todayNew = mockData.users.filter(u => new Date(u.created_at) >= today).length;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statGuides').textContent = guides;
+            document.getElementById('statTourists').textContent = tourists;
+            document.getElementById('statToday').textContent = todayNew;
+        }
+
+        // 加载用户列表
+        function loadUsers() {
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="loading">
+                        <div class="spinner"></div>
+                        加载中...
+                    </td>
+                </tr>
+            `;
+
+            // 筛选
+            let filtered = mockData.users;
+
+            // 搜索筛选
+            const search = document.getElementById('searchInput').value.trim().toLowerCase();
+            const role = document.getElementById('roleFilter').value;
+            const status = document.getElementById('statusFilter').value;
+
+            if (search) {
+                filtered = filtered.filter(u => 
+                    (u.nickname && u.nickname.toLowerCase().includes(search)) ||
+                    (u.email && u.email.toLowerCase().includes(search))
+                );
+            }
+            if (role) {
+                filtered = filtered.filter(u => u.role === role);
+            }
+            if (status) {
+                filtered = filtered.filter(u => u.status === status);
+            }
+
+            // 排序
+            filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            // 分页
+            const total = filtered.length;
+            const start = (currentPage - 1) * pageSize;
+            const paged = filtered.slice(start, start + pageSize);
+
+            // 更新总数显示
+            document.getElementById('totalUsers').textContent = total;
+
+            if (paged.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <div class="icon">🔍</div>
+                            <p>暂无用户数据</p>
+                        </td>
+                    </tr>
+                `;
+                renderPagination(0);
+                return;
+            }
+
+            tbody.innerHTML = paged.map(user => {
+                const roleBadge = user.role === 'guide' 
+                    ? '<span class="badge badge-guide">🎤 导游</span>'
+                    : '<span class="badge badge-tourist">🎒 游客</span>';
+                
+                const statusBadge = user.status === 'disabled'
+                    ? '<span class="badge badge-disabled">已禁用</span>'
+                    : '<span class="badge badge-active">正常</span>';
+
+                const actions = user.status === 'disabled'
+                    ? `<button class="btn btn-success btn-sm" onclick="enableUser('${user.id}')">启用</button>`
+                    : `<button class="btn btn-danger btn-sm" onclick="disableUser('${user.id}')">禁用</button>`;
+
+                return `
+                    <tr>
+                        <td>
+                            <label class="checkbox-wrapper">
+                                <input type="checkbox" class="item-checkbox" data-id="${user.id}" onchange="toggleSelect('${user.id}')">
+                            </label>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 24px;" aria-hidden="true">👤</span>
+                                <div>
+                                    <div style="font-weight: 600;">${user.nickname || '未设置昵称'}</div>
+                                    <div style="font-size: 12px; color: #666;">${user.email || ''}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${roleBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>${new Date(user.created_at).toLocaleDateString('zh-CN')}</td>
+                        <td>
+                            ${actions}
+                            <button class="btn btn-secondary btn-sm" onclick="viewUser('${user.id}')">详情</button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            renderPagination(total);
+        }
+
+        // 渲染分页
+        function renderPagination(total) {
+            const totalPages = Math.ceil(total / pageSize);
+            const pagination = document.getElementById('pagination');
+            
+            if (totalPages <= 1) {
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            html += `<button ${currentPage === 1 ? 'disabled' : ''} onclick="goPage(${currentPage - 1})">←</button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span style="padding: 8px;">...</span>`;
+                }
+            }
+            
+            html += `<button ${currentPage === totalPages ? 'disabled' : ''} onclick="goPage(${currentPage + 1})">→</button>`;
+            
+            pagination.innerHTML = html;
+        }
+
+        // 跳转页面
+        function goPage(page) {
+            currentPage = page;
+            loadUsers();
+        }
+
+        // 禁用用户
+        function disableUser(userId) {
+            if (!confirm('确定要禁用该用户吗？')) return;
+            
+            const user = mockData.users.find(u => u.id === userId);
+            if (user) {
+                user.status = 'disabled';
+                saveMockData();
+                showToast('用户已禁用', 'success');
+                loadUsers();
+            }
+        }
+
+        // 启用用户
+        function enableUser(userId) {
+            const user = mockData.users.find(u => u.id === userId);
+            if (user) {
+                user.status = 'active';
+                saveMockData();
+                showToast('用户已启用', 'success');
+                loadUsers();
+            }
+        }
+
+        // 查看用户详情
+        function viewUser(userId) {
+            showToast('用户详情功能开发中', 'info');
+        }
+
+        function init() {
+            if (!checkLogin()) return;
+            loadStats();
+            loadUsers();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

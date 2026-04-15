@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>动态详情 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#f97316',
+            secondary: '#ea580c',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    
+    .gradient-bg {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    }
+    
+    .like-animation {
+      animation: likeAnim 0.3s ease;
+    }
+    @keyframes likeAnim {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    
+    .comment-slide {
+      animation: commentSlide 0.3s ease;
+    }
+    @keyframes commentSlide {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+    
+    .line-clamp-2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-20">
+  <!-- Header -->
+  <header class="sticky top-0 bg-white/95 backdrop-blur-sm shadow-sm z-50">
+    <div class="max-w-2xl mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <button onclick="goBack()" class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+          <i class="fas fa-arrow-left text-gray-600"></i>
+        </button>
+        <h1 class="text-lg font-bold text-gray-800">动态详情</h1>
+        <button class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition">
+          <i class="fas fa-ellipsis-v text-gray-600"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-2xl mx-auto px-4 py-6">
+    <!-- Post Content -->
+    <article id="post-container" class="bg-white rounded-2xl shadow-sm overflow-hidden mb-6">
+      <!-- Post Header -->
+      <div class="p-5 pb-0">
+        <div class="flex items-center justify-between mb-4">
+          <div class="flex items-center gap-3">
+            <a href="profile.html">
+              <img id="post-avatar" src="" alt="头像" class="w-12 h-12 rounded-full object-cover">
+            </a>
+            <div>
+              <a href="profile.html" id="post-username" class="font-semibold text-gray-800 hover:text-primary">加载中...</a>
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <span id="post-time">-</span>
+                <span>·</span>
+                <span id="post-privacy" class="text-primary">🌍 公开</span>
+              </div>
+            </div>
+          </div>
+          <button onclick="toggleFollow()" id="follow-btn" class="px-4 py-1.5 gradient-bg text-white text-sm rounded-full hover:opacity-90 transition">
+            + 关注
+          </button>
+        </div>
+      </div>
+      
+      <!-- Post Body -->
+      <div class="p-5">
+        <p id="post-content" class="text-gray-700 whitespace-pre-line leading-relaxed mb-4">-</p>
+        
+        <!-- Topics -->
+        <div id="post-topics" class="flex flex-wrap gap-2 mb-4">
+          <!-- Will be populated by JS -->
+        </div>
+        
+        <!-- Images -->
+        <div id="post-images" class="mb-4">
+          <!-- Will be populated by JS -->
+        </div>
+        
+        <!-- Location -->
+        <div id="post-location" class="flex items-center gap-2 text-gray-500 mb-4">
+          <!-- Will be populated by JS -->
+        </div>
+      </div>
+      
+      <!-- Post Actions -->
+      <div class="px-5 py-4 border-t flex items-center justify-between">
+        <div class="flex items-center gap-6">
+          <button onclick="toggleLike()" id="like-btn" class="flex items-center gap-2 text-gray-500 hover:text-red-500 transition">
+            <i class="far fa-heart text-xl"></i>
+            <span id="like-count">0</span>
+          </button>
+          <button onclick="scrollToComments()" class="flex items-center gap-2 text-gray-500 hover:text-primary transition">
+            <i class="far fa-comment text-xl"></i>
+            <span id="comment-count">0</span>
+          </button>
+          <button onclick="sharePost()" class="flex items-center gap-2 text-gray-500 hover:text-green-500 transition">
+            <i class="far fa-share-square text-xl"></i>
+            <span id="share-count">0</span>
+          </button>
+        </div>
+        <button onclick="bookmarkPost()" class="w-10 h-10 rounded-full hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-yellow-500 transition">
+          <i class="far fa-bookmark text-xl"></i>
+        </button>
+      </div>
+    </article>
+    
+    <!-- Related Posts -->
+    <div class="bg-white rounded-2xl shadow-sm p-5 mb-6">
+      <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+        <i class="fas fa-fire text-orange-500"></i>
+        相关推荐
+      </h3>
+      <div id="related-posts" class="space-y-4">
+        <!-- Will be populated by JS -->
+      </div>
+    </div>
+    
+    <!-- Comments Section -->
+    <div id="comments-section" class="bg-white rounded-2xl shadow-sm">
+      <div class="p-5 border-b">
+        <h3 class="font-bold text-gray-800 flex items-center gap-2">
+          <i class="fas fa-comments text-primary"></i>
+          评论 (<span id="comments-total">0</span>)
+        </h3>
+      </div>
+      
+      <!-- Comment Input -->
+      <div class="p-5 border-b">
+        <div class="flex gap-3">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop" alt="我的头像" class="w-10 h-10 rounded-full">
+          <div class="flex-1">
+            <textarea id="comment-input" rows="2" placeholder="写下你的评论..." class="w-full resize-none border border-gray-200 rounded-xl p-3 focus:outline-none focus:border-primary"></textarea>
+            <div class="flex items-center justify-between mt-3">
+              <div class="flex gap-2">
+                <button class="w-9 h-9 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-gray-200 transition">
+                  <i class="fas fa-smile"></i>
+                </button>
+              </div>
+              <button onclick="submitComment()" class="px-4 py-2 gradient-bg text-white rounded-full text-sm font-medium hover:opacity-90 transition">
+                发布评论
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Comments List -->
+      <div id="comments-list" class="divide-y">
+        <!-- Will be populated by JS -->
+      </div>
+      
+      <!-- Load More -->
+      <div class="p-4 text-center border-t">
+        <button class="px-6 py-2 text-primary hover:underline">
+          加载更多评论
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Share Modal -->
+  <div id="share-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-sm slide-up">
+      <div class="p-4 border-b">
+        <h3 class="font-bold text-lg text-center">分享到</h3>
+      </div>
+      <div class="p-6">
+        <div class="grid grid-cols-4 gap-4">
+          <button onclick="shareTo('wechat')" class="flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-green-500 rounded-full flex items-center justify-center">
+              <i class="fab fa-weixin text-white text-2xl"></i>
+            </div>
+            <span class="text-sm text-gray-600">微信</span>
+          </button>
+          <button onclick="shareTo('weibo')" class="flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-red-500 rounded-full flex items-center justify-center">
+              <i class="fab fa-weibo text-white text-2xl"></i>
+            </div>
+            <span class="text-sm text-gray-600">微博</span>
+          </button>
+          <button onclick="shareTo('qq')" class="flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-blue-500 rounded-full flex items-center justify-center">
+              <i class="fab fa-qq text-white text-2xl"></i>
+            </div>
+            <span class="text-sm text-gray-600">QQ</span>
+          </button>
+          <button onclick="copyLink()" class="flex flex-col items-center gap-2">
+            <div class="w-14 h-14 bg-gray-500 rounded-full flex items-center justify-center">
+              <i class="fas fa-link text-white text-2xl"></i>
+            </div>
+            <span class="text-sm text-gray-600">复制链接</span>
+          </button>
+        </div>
+      </div>
+      <div class="p-4 border-t">
+        <button onclick="closeShareModal()" class="w-full py-3 bg-gray-100 rounded-full text-gray-600 hover:bg-gray-200 transition">
+          取消
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Report Modal -->
+  <div id="report-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl w-full max-w-sm slide-up">
+      <div class="p-4 border-b flex items-center justify-between">
+        <h3 class="font-bold text-lg">举报此动态</h3>
+        <button onclick="closeReportModal()" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="p-6">
+        <div class="space-y-3">
+          <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <input type="radio" name="report" value="spam" class="text-primary">
+            <span>垃圾广告</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <input type="radio" name="report" value="harassment" class="text-primary">
+            <span>骚扰/人身攻击</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <input type="radio" name="report" value="fake" class="text-primary">
+            <span>虚假信息</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <input type="radio" name="report" value="inappropriate" class="text-primary">
+            <span>内容违规</span>
+          </label>
+          <label class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer">
+            <input type="radio" name="report" value="other" class="text-primary">
+            <span>其他</span>
+          </label>
+        </div>
+        <textarea id="report-reason" rows="2" placeholder="详细说明（选填）" class="w-full mt-4 p-3 border rounded-xl resize-none focus:outline-none focus:border-primary"></textarea>
+        <button onclick="submitReport()" class="w-full mt-4 py-3 gradient-bg text-white rounded-full font-medium hover:opacity-90 transition">
+          提交举报
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let socialData = null;
+    let currentPost = null;
+    let isLiked = false;
+    let comments = [];
+    
+    function getPostId() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('post') || 'post_001';
+    }
+    
+    async function loadData() {
+      try {
+        const response = await fetch('../data/social.json');
+        socialData = await response.json();
+        
+        const postId = getPostId();
+        currentPost = socialData.posts.find(p => p.id === postId) || socialData.posts[0];
+        
+        // Get comments for this post
+        comments = socialData.comments.filter(c => c.postId === postId);
+        
+        renderPost();
+        renderRelatedPosts();
+        renderComments();
+      } catch (error) {
+        console.error('Failed to load data:', error);
+      }
+    }
+    
+    function renderPost() {
+      document.getElementById('post-avatar').src = currentPost.userAvatar;
+      document.getElementById('post-username').textContent = currentPost.username;
+      document.getElementById('post-time').textContent = formatTime(currentPost.createdAt);
+      document.getElementById('post-content').textContent = currentPost.content;
+      document.getElementById('like-count').textContent = formatNumber(currentPost.likes);
+      document.getElementById('comment-count').textContent = currentPost.comments;
+      document.getElementById('share-count').textContent = formatNumber(currentPost.shares);
+      document.getElementById('comments-total').textContent = currentPost.comments;
+      
+      isLiked = currentPost.isLiked;
+      updateLikeButton();
+      
+      // Topics
+      const topicsContainer = document.getElementById('post-topics');
+      if (currentPost.topics && currentPost.topics.length > 0) {
+        topicsContainer.innerHTML = currentPost.topics.map(topic => `
+          <a href="topics.html?topic=${encodeURIComponent(topic)}" class="text-primary hover:underline text-sm">#${topic}</a>
+        `).join('');
+      } else {
+        topicsContainer.classList.add('hidden');
+      }
+      
+      // Images
+      const imagesContainer = document.getElementById('post-images');
+      if (currentPost.images && currentPost.images.length > 0) {
+        if (currentPost.images.length === 1) {
+          imagesContainer.innerHTML = `
+            <div class="rounded-xl overflow-hidden cursor-pointer" onclick="openImageViewer(0)">
+              <img src="${currentPost.images[0]}" alt="图片" class="w-full max-h-96 object-cover">
+            </div>
+          `;
+        } else {
+          imagesContainer.innerHTML = `
+            <div class="grid grid-cols-2 gap-2">
+              ${currentPost.images.map((img, idx) => `
+                <div class="rounded-xl overflow-hidden cursor-pointer aspect-square" onclick="openImageViewer(${idx})">
+                  <img src="${img}" alt="图片${idx + 1}" class="w-full h-full object-cover">
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+      } else {
+        imagesContainer.classList.add('hidden');
+      }
+      
+      // Location
+      const locationContainer = document.getElementById('post-location');
+      if (currentPost.location) {
+        locationContainer.innerHTML = `
+          <i class="fas fa-map-marker-alt text-primary"></i>
+          <span class="text-sm">${currentPost.location}</span>
+        `;
+      } else {
+        locationContainer.classList.add('hidden');
+      }
+      
+      // Privacy
+      const privacyMap = {
+        'public': '🌍 公开',
+        'friends': '👥 关注者可见',
+        'private': '🔒 仅自己可见'
+      };
+      document.getElementById('post-privacy').textContent = privacyMap[currentPost.privacy] || '🌍 公开';
+    }
+    
+    function updateLikeButton() {
+      const btn = document.getElementById('like-btn');
+      const icon = btn.querySelector('i');
+      
+      if (isLiked) {
+        btn.classList.add('text-red-500');
+        btn.classList.remove('text-gray-500');
+        icon.classList.remove('far');
+        icon.classList.add('fas');
+      } else {
+        btn.classList.remove('text-red-500');
+        btn.classList.add('text-gray-500');
+        icon.classList.remove('fas');
+        icon.classList.add('far');
+      }
+    }
+    
+    function toggleLike() {
+      isLiked = !isLiked;
+      const count = parseInt(document.getElementById('like-count').textContent);
+      document.getElementById('like-count').textContent = formatNumber(isLiked ? count + 1 : count - 1);
+      updateLikeButton();
+      
+      const icon = document.querySelector('#like-btn i');
+      icon.classList.add('like-animation');
+      setTimeout(() => icon.classList.remove('like-animation'), 300);
+    }
+    
+    function toggleFollow() {
+      const btn = document.getElementById('follow-btn');
+      if (btn.textContent.trim() === '+ 关注') {
+        btn.textContent = '已关注';
+        btn.classList.add('bg-gray-200', 'text-gray-700');
+        btn.classList.remove('gradient-bg', 'text-white');
+      } else {
+        btn.textContent = '+ 关注';
+        btn.classList.remove('bg-gray-200', 'text-gray-700');
+        btn.classList.add('gradient-bg', 'text-white');
+      }
+    }
+    
+    function bookmarkPost() {
+      const btn = event.currentTarget;
+      const icon = btn.querySelector('i');
+      icon.classList.toggle('far');
+      icon.classList.toggle('fas');
+      icon.classList.toggle('text-yellow-500');
+    }
+    
+    function scrollToComments() {
+      document.getElementById('comments-section').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('comment-input').focus();
+    }
+    
+    function renderRelatedPosts() {
+      const container = document.getElementById('related-posts');
+      const relatedPosts = socialData.posts.filter(p => p.id !== currentPost.id).slice(0, 3);
+      
+      container.innerHTML = relatedPosts.map(post => `
+        <a href="detail.html?post=${post.id}" class="flex gap-3 p-3 rounded-xl hover:bg-gray-50 transition">
+          ${post.images && post.images[0] ? `
+            <img src="${post.images[0]}" alt="" class="w-20 h-20 rounded-lg object-cover">
+          ` : `
+            <div class="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center">
+              <i class="fas fa-image text-gray-400"></i>
+            </div>
+          `}
+          <div class="flex-1 min-w-0">
+            <p class="text-sm text-gray-800 line-clamp-2 mb-2">${post.content}</p>
+            <div class="flex items-center gap-4 text-xs text-gray-400">
+              <span>${post.username}</span>
+              <span><i class="fas fa-heart mr-1"></i>${formatNumber(post.likes)}</span>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+    
+    function renderComments() {
+      const container = document.getElementById('comments-list');
+      
+      if (comments.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center">
+            <i class="fas fa-comment-dots text-4xl text-gray-300 mb-3"></i>
+            <p class="text-gray-500">还没有评论，快来抢沙发~</p>
+          </div>
+        `;
+        return;
+      }
+      
+      container.innerHTML = comments.map(comment => `
+        <div class="p-5 comment-slide">
+          <div class="flex gap-3">
+            <a href="profile.html?user=${comment.userId}">
+              <img src="${comment.userAvatar}" alt="${comment.username}" class="w-10 h-10 rounded-full">
+            </a>
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <a href="profile.html?user=${comment.userId}" class="font-medium text-gray-800 hover:text-primary">${comment.username}</a>
+                <span class="text-xs text-gray-400">${formatTime(comment.createdAt)}</span>
+              </div>
+              <p class="text-gray-600 mb-2">${comment.content}</p>
+              <div class="flex items-center gap-4">
+                <button onclick="toggleCommentLike('${comment.id}')" class="flex items-center gap-1 text-sm text-gray-400 hover:text-red-500 transition">
+                  <i class="far fa-heart"></i>
+                  <span>${comment.likes}</span>
+                </button>
+                <button onclick="replyTo('${comment.username}')" class="text-sm text-gray-400 hover:text-primary transition">回复</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function toggleCommentLike(commentId) {
+      const btn = event.currentTarget;
+      const icon = btn.querySelector('i');
+      const countSpan = btn.querySelector('span');
+      let count = parseInt(countSpan.textContent);
+      
+      if (icon.classList.contains('far')) {
+        icon.classList.remove('far', 'text-gray-400');
+        icon.classList.add('fas', 'text-red-500');
+        countSpan.textContent = count + 1;
+      } else {
+        icon.classList.add('far', 'text-gray-400');
+        icon.classList.remove('fas', 'text-red-500');
+        countSpan.textContent = count - 1;
+      }
+    }
+    
+    function replyTo(username) {
+      const input = document.getElementById('comment-input');
+      input.placeholder = `回复 @${username}...`;
+      input.focus();
+    }
+    
+    function submitComment() {
+      const input = document.getElementById('comment-input');
+      const content = input.value.trim();
+      
+      if (!content) {
+        alert('请输入评论内容');
+        return;
+      }
+      
+      // Add new comment
+      const newComment = {
+        id: 'comment_' + Date.now(),
+        postId: currentPost.id,
+        userId: 'user_001',
+        username: '旅行摄影师小王',
+        userAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop',
+        content: content,
+        likes: 0,
+        createdAt: new Date().toISOString()
+      };
+      
+      comments.unshift(newComment);
+      renderComments();
+      input.value = '';
+      input.placeholder = '写下你的评论...';
+      
+      // Update count
+      const count = parseInt(document.getElementById('comment-count').textContent);
+      document.getElementById('comment-count').textContent = count + 1;
+      document.getElementById('comments-total').textContent = count + 1;
+    }
+    
+    // Share functions
+    function sharePost() {
+      document.getElementById('share-modal').classList.remove('hidden');
+      document.getElementById('share-modal').classList.add('flex');
+    }
+    
+    function closeShareModal() {
+      document.getElementById('share-modal').classList.add('hidden');
+      document.getElementById('share-modal').classList.remove('flex');
+    }
+    
+    function shareTo(platform) {
+      alert(`分享到 ${platform} 功能开发中`);
+      closeShareModal();
+    }
+    
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href);
+      alert('链接已复制到剪贴板！');
+      closeShareModal();
+    }
+    
+    // Report functions
+    function openReportModal() {
+      document.getElementById('report-modal').classList.remove('hidden');
+      document.getElementById('report-modal').classList.add('flex');
+    }
+    
+    function closeReportModal() {
+      document.getElementById('report-modal').classList.add('hidden');
+      document.getElementById('report-modal').classList.remove('flex');
+    }
+    
+    function submitReport() {
+      const reason = document.querySelector('input[name="report"]:checked');
+      if (!reason) {
+        alert('请选择举报原因');
+        return;
+      }
+      alert('举报已提交，我们会尽快处理！');
+      closeReportModal();
+    }
+    
+    document.getElementById('share-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeShareModal();
+    });
+    
+    document.getElementById('report-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeReportModal();
+    });
+    
+    function openImageViewer(index) {
+      // Simple image viewer could be implemented here
+      alert('图片查看功能');
+    }
+    
+    function goBack() {
+      window.location.href = 'index.html';
+    }
+    
+    function formatTime(dateString) {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diff = (now - date) / 1000;
+      
+      if (diff < 60) return '刚刚';
+      if (diff < 3600) return Math.floor(diff / 60) + '分钟前';
+      if (diff < 86400) return Math.floor(diff / 3600) + '小时前';
+      if (diff < 604800) return Math.floor(diff / 86400) + '天前';
+      return date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+    }
+    
+    function formatNumber(num) {
+      if (num >= 10000) return (num / 10000).toFixed(1) + 'w';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+      return num.toString();
+    }
+    
+    // Initialize
+    loadData();
+  </script>
+  
+  <style>
+    .slide-up {
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+  </style>
+</body>
+</html>

@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="stylesheet" href="css/accessibility.css">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/customer-service.css">
+    <link rel="stylesheet" href="css/enhanced.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+    <title>旅游预算计算器 - 游导旅游</title>
+    <meta name="description" content="智能旅行预算计算器，输入目的地、人数、天数，精准估算旅行费用，支持详细预算分解与费用对比。">
+    
+    <style>
+        :root {
+            --primary: #10B981;
+            --primary-dark: #059669;
+            --primary-light: rgba(16, 185, 129, 0.1);
+            --secondary: #4F86F7;
+            --secondary-light: rgba(79, 134, 247, 0.1);
+            --warning: #F59E0B;
+            --warning-light: rgba(245, 158, 11, 0.1);
+            --danger: #EF4444;
+            --danger-light: rgba(239, 68, 68, 0.1);
+            --purple: #8B5CF6;
+            --purple-light: rgba(139, 92, 246, 0.1);
+            --pink: #EC4899;
+            --pink-light: rgba(236, 72, 153, 0.1);
+            --teal: #14B8A6;
+            --teal-light: rgba(20, 184, 166, 0.1);
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-200: #E5E7EB;
+            --gray-300: #D1D5DB;
+            --gray-400: #9CA3AF;
+            --gray-500: #6B7280;
+            --gray-600: #4B5563;
+            --gray-700: #374151;
+            --gray-800: #1F2937;
+            --gray-900: #111827;
+            --radius: 12px;
+            --radius-lg: 20px;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #10B981 0%, #047857 50%, #065F46 100%);
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .navbar .logo {
+            font-size: 24px;
+            color: #10B981;
+            text-decoration: none;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .navbar .logo-icon { font-size: 28px; }
+        
+        .navbar .back-link {
+            color: #10B981;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .navbar .back-link:hover { background: rgba(16, 185, 129, 0.2); }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* 页面头部 */
+        .page-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .page-header .icon {
+            font-size: 70px;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .page-header h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .page-header p {
+            font-size: 18px;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* 卡片样式 */
+        .budget-card {
+            background: white;
+            border-radius: 24px;
+            padding: 35px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+        
+        .card-title {
+            font-size: 22px;
+            color: #1F2937;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .card-title .icon { font-size: 28px; }
+        
+        /* 表单网格 */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+        }
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+            background: white;
+        }
+        
+        .form-input:focus, .form-select:focus {
+            border-color: #10B981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
+            outline: none;
+        }
+        
+        /* 滑块样式 */
+        .slider-group {
+            margin-top: 10px;
+        }
+        
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .slider-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #10B981;
+        }
+        
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #E5E7EB;
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #10B981;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+        }
+        
+        /* 费用项卡片 */
+        .cost-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 0;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .cost-item:last-child { border-bottom: none; }
+        
+        .cost-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .cost-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        
+        .cost-info .name {
+            font-weight: 600;
+            color: #1F2937;
+        }
+        
+        .cost-info .desc {
+            font-size: 13px;
+            color: #6B7280;
+        }
+        
+        .cost-value {
+            text-align: right;
+        }
+        
+        .cost-value .amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: #10B981;
+        }
+        
+        .cost-value .per {
+            font-size: 12px;
+            color: #6B7280;
+        }
+        
+        /* 滑块控制 */
+        .slider-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .slider-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 2px solid #E5E7EB;
+            background: white;
+            cursor: pointer;
+            font-size: 18px;
+            color: #6B7280;
+            transition: all 0.2s;
+        }
+        
+        .slider-btn:hover {
+            border-color: #10B981;
+            color: #10B981;
+        }
+        
+        /* 总计卡片 */
+        .total-card {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin-top: 25px;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+        }
+        
+        .total-row.main {
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+            padding-bottom: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .total-label {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .total-value {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        
+        .total-row:not(.main) .total-value {
+            font-size: 20px;
+        }
+        
+        /* 按钮 */
+        .btn-primary {
+            width: 100%;
+            padding: 18px 32px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 25px;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+        }
+        
+        /* 对比表格 */
+        .comparison-section {
+            margin-top: 40px;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .comparison-card {
+            background: #F9FAFB;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .comparison-card.recommended {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+        
+        .comparison-card .badge {
+            background: #10B981;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        
+        .comparison-card .level {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1F2937;
+            margin-bottom: 20px;
+        }
+        
+        .comparison-card .price {
+            font-size: 28px;
+            font-weight: bold;
+            color: #10B981;
+        }
+        
+        .comparison-card .price-label {
+            font-size: 14px;
+            color: #6B7280;
+        }
+        
+        /* 饼图 */
+        .chart-container {
+            margin-top: 30px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .pie-chart {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: conic-gradient(
+                #10B981 0deg 144deg,
+                #4F86F7 144deg 252deg,
+                #F59E0B 252deg 324deg,
+                #EC4899 324deg 360deg
+            );
+            position: relative;
+        }
+        
+        .pie-chart::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .chart-legend {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        .legend-text {
+            flex: 1;
+            font-size: 14px;
+            color: #374151;
+        }
+        
+        .legend-value {
+            font-weight: 600;
+            color: #10B981;
+        }
+        
+        /* 提示消息 */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1F2937;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-size: 14px;
+            z-index: 1001;
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .page-header h1 { font-size: 28px; }
+            .page-header p { font-size: 15px; }
+            .budget-card { padding: 20px; }
+            .form-grid { grid-template-columns: 1fr; }
+            .comparison-grid { grid-template-columns: 1fr; }
+            .chart-container { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">🌍</span>
+                游导旅游
+            </a>
+            <a href="index.html" class="back-link">
+                ← 返回首页
+            </a>
+        </div>
+    </nav>
+    
+    <!-- 主内容 -->
+    <main class="container">
+        <div class="page-header">
+            <div class="icon">💰</div>
+            <h1>旅游预算计算器</h1>
+            <p>智能估算旅行费用，输入目的地、人数和天数，精准计算各项开支</p>
+        </div>
+        
+        <!-- 基础设置 -->
+        <div class="budget-card">
+            <h2 class="card-title">
+                <span class="icon">⚙️</span>
+                旅行基本信息
+            </h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>目的地</label>
+                    <select id="destination" class="form-select" onchange="updateBudget()">
+                        <option value="tokyo">🇯🇵 东京 / 大阪</option>
+                        <option value="paris">🇫🇷 巴黎</option>
+                        <option value="bangkok">🇹🇭 曼谷</option>
+                        <option value="singapore">🇸🇬 新加坡</option>
+                        <option value="seoul">🇰🇷 首尔</option>
+                        <option value="london">🇬🇧 伦敦</option>
+                        <option value="newyork">🇺🇸 纽约</option>
+                        <option value="sydney">🇦🇺 悉尼</option>
+                        <option value="beijing">🇨🇳 北京</option>
+                        <option value="shanghai">🇨🇳 上海</option>
+                        <option value="chengdu">🇨🇳 成都</option>
+                        <option value="sanya">🇨🇳 三亚</option>
+                        <option value="lijiang">🇨🇳 丽江</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>出行人数</label>
+                    <div class="slider-control">
+                        <button class="slider-btn" onclick="changeCount('travelers', -1)">−</button>
+                        <input type="number" id="travelers" class="form-input" value="2" min="1" max="20" onchange="updateBudget()">
+                        <button class="slider-btn" onclick="changeCount('travelers', 1)">+</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>旅行天数</label>
+                    <div class="slider-control">
+                        <button class="slider-btn" onclick="changeCount('days', -1)">−</button>
+                        <input type="number" id="days" class="form-input" value="5" min="1" max="30" onchange="updateBudget()">
+                        <button class="slider-btn" onclick="changeCount('days', 1)">+</button>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>出行季节</label>
+                    <select id="season" class="form-select" onchange="updateBudget()">
+                        <option value="normal">普通季节</option>
+                        <option value="peak">旺季/节假日</option>
+                        <option value="off">淡季</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 费用明细 -->
+        <div class="budget-card">
+            <h2 class="card-title">
+                <span class="icon">📊</span>
+                费用明细调整
+            </h2>
+            
+            <div id="costItems">
+                <div class="cost-item">
+                    <div class="cost-label">
+                        <div class="cost-icon" style="background: #ECFDF5;">🏨</div>
+                        <div class="cost-info">
+                            <div class="name">住宿</div>
+                            <div class="desc">酒店/民宿每晚价格</div>
+                        </div>
+                    </div>
+                    <div class="slider-control">
+                        <input type="range" id="accommodation" class="slider" min="100" max="2000" value="500" step="50" oninput="updateBudget()">
+                        <div class="cost-value">
+                            <div class="amount" id="accommodationValue">¥500</div>
+                            <div class="per">/晚/间</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cost-item">
+                    <div class="cost-label">
+                        <div class="cost-icon" style="background: #FEF3C7;">🍜</div>
+                        <div class="cost-info">
+                            <div class="name">餐饮</div>
+                            <div class="desc">每日餐饮预算</div>
+                        </div>
+                    </div>
+                    <div class="slider-control">
+                        <input type="range" id="food" class="slider" min="50" max="1000" value="200" step="25" oninput="updateBudget()">
+                        <div class="cost-value">
+                            <div class="amount" id="foodValue">¥200</div>
+                            <div class="per">/天/人</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cost-item">
+                    <div class="cost-label">
+                        <div class="cost-icon" style="background: #DBEAFE;">🚗</div>
+                        <div class="cost-info">
+                            <div class="name">交通</div>
+                            <div class="desc">市内交通与城际交通</div>
+                        </div>
+                    </div>
+                    <div class="slider-control">
+                        <input type="range" id="transport" class="slider" min="30" max="500" value="100" step="10" oninput="updateBudget()">
+                        <div class="cost-value">
+                            <div class="amount" id="transportValue">¥100</div>
+                            <div class="per">/天</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cost-item">
+                    <div class="cost-label">
+                        <div class="cost-icon" style="background: #FCE7F3;">🎫</div>
+                        <div class="cost-info">
+                            <div class="name">门票/娱乐</div>
+                            <div class="desc">景点门票与娱乐活动</div>
+                        </div>
+                    </div>
+                    <div class="slider-control">
+                        <input type="range" id="tickets" class="slider" min="50" max="800" value="200" step="25" oninput="updateBudget()">
+                        <div class="cost-value">
+                            <div class="amount" id="ticketsValue">¥200</div>
+                            <div class="per">/天</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cost-item">
+                    <div class="cost-label">
+                        <div class="cost-icon" style="background: #F3E8FF;">🛍️</div>
+                        <div class="cost-info">
+                            <div class="name">购物</div>
+                            <div class="desc">纪念品与当地特产</div>
+                        </div>
+                    </div>
+                    <div class="slider-control">
+                        <input type="range" id="shopping" class="slider" min="0" max="2000" value="300" step="50" oninput="updateBudget()">
+                        <div class="cost-value">
+                            <div class="amount" id="shoppingValue">¥300</div>
+                            <div class="per">/天</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 总计 -->
+            <div class="total-card">
+                <div class="total-row main">
+                    <div class="total-label">💰 预计总费用</div>
+                    <div class="total-value" id="totalAmount">¥8,500</div>
+                </div>
+                <div class="total-row">
+                    <div class="total-label">👥 人均费用</div>
+                    <div class="total-value" id="perPerson">¥4,250</div>
+                </div>
+            </div>
+            
+            <button class="btn-primary" onclick="saveBudget()">
+                💾 保存预算方案
+            </button>
+        </div>
+        
+        <!-- 费用对比 -->
+        <div class="budget-card comparison-section">
+            <h2 class="card-title">
+                <span class="icon">📈</span>
+                预算档次对比
+            </h2>
+            
+            <div class="comparison-grid">
+                <div class="comparison-card">
+                    <div class="level">💚 经济型</div>
+                    <div class="price">¥2,500</div>
+                    <div class="price-label">/人</div>
+                    <div style="margin-top: 15px; font-size: 13px; color: #6B7280; text-align: left;">
+                        • 青旅/经济酒店<br>
+                        • 街头小吃/快餐<br>
+                        • 公交地铁为主<br>
+                        • 免费景点为主
+                    </div>
+                </div>
+                
+                <div class="comparison-card recommended">
+                    <div class="badge">推荐</div>
+                    <div class="level">💙 舒适型</div>
+                    <div class="price">¥5,500</div>
+                    <div class="price-label">/人</div>
+                    <div style="margin-top: 15px; font-size: 13px; color: #6B7280; text-align: left;">
+                        • 三星/四星酒店<br>
+                        • 特色餐厅为主<br>
+                        • 打车+地铁<br>
+                        • 主要景点门票
+                    </div>
+                </div>
+                
+                <div class="comparison-card">
+                    <div class="level">💜 品质型</div>
+                    <div class="price">¥12,000</div>
+                    <div class="price-label">/人</div>
+                    <div style="margin-top: 15px; font-size: 13px; color: #6B7280; text-align: left;">
+                        • 五星/精品酒店<br>
+                        • 高端餐厅<br>
+                        • 包车/专车<br>
+                        • 全部景点+体验
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 费用分布图 -->
+        <div class="budget-card">
+            <h2 class="card-title">
+                <span class="icon">🥧</span>
+                费用构成分析
+            </h2>
+            
+            <div class="chart-container">
+                <div class="pie-chart" id="pieChart"></div>
+                <div class="chart-legend" id="chartLegend">
+                    <!-- JS填充 -->
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- 提示消息 -->
+    <div class="toast" id="toast">
+        <span>✓</span>
+        <span id="toastMessage"></span>
+    </div>
+    
+    <script>
+        // 费用类型
+        const costTypes = [
+            { id: 'accommodation', name: '住宿', color: '#10B981' },
+            { id: 'food', name: '餐饮', color: '#4F86F7' },
+            { id: 'transport', name: '交通', color: '#F59E0B' },
+            { id: 'shopping', name: '购物', color: '#EC4899' }
+        ];
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateBudget();
+        });
+        
+        // 数量调整
+        function changeCount(type, delta) {
+            const input = document.getElementById(type);
+            const newValue = parseInt(input.value) + delta;
+            if (newValue >= parseInt(input.min) && newValue <= parseInt(input.max)) {
+                input.value = newValue;
+                updateBudget();
+            }
+        }
+        
+        // 更新预算
+        function updateBudget() {
+            // 获取值
+            const travelers = parseInt(document.getElementById('travelers').value);
+            const days = parseInt(document.getElementById('days').value);
+            const accommodation = parseInt(document.getElementById('accommodation').value);
+            const food = parseInt(document.getElementById('food').value);
+            const transport = parseInt(document.getElementById('transport').value);
+            const tickets = parseInt(document.getElementById('tickets').value);
+            const shopping = parseInt(document.getElementById('shopping').value);
+            
+            // 更新滑块显示值
+            document.getElementById('accommodationValue').textContent = '¥' + accommodation;
+            document.getElementById('foodValue').textContent = '¥' + food;
+            document.getElementById('transportValue').textContent = '¥' + transport;
+            document.getElementById('ticketsValue').textContent = '¥' + tickets;
+            document.getElementById('shoppingValue').textContent = '¥' + shopping;
+            
+            // 计算总计
+            const rooms = Math.ceil(travelers / 2);
+            const total = 
+                accommodation * days * rooms +
+                food * days * travelers +
+                transport * days +
+                tickets * days * travelers +
+                shopping * days * travelers;
+            
+            const perPerson = Math.round(total / travelers);
+            
+            // 更新显示
+            document.getElementById('totalAmount').textContent = '¥' + total.toLocaleString();
+            document.getElementById('perPerson').textContent = '¥' + perPerson.toLocaleString();
+            
+            // 更新图表
+            updateChart(total, accommodation * days * rooms, food * days * travelers, transport * days, tickets * days * travelers, shopping * days * travelers);
+        }
+        
+        // 更新图表
+        function updateChart(total, accommodation, food, transport, tickets, shopping) {
+            const legend = document.getElementById('chartLegend');
+            const data = [
+                { name: '住宿', value: accommodation, color: '#10B981' },
+                { name: '餐饮', value: food, color: '#4F86F7' },
+                { name: '交通', value: transport, color: '#F59E0B' },
+                { name: '门票', value: tickets, color: '#8B5CF6' },
+                { name: '购物', value: shopping, color: '#EC4899' }
+            ];
+            
+            // 计算角度
+            let currentAngle = 0;
+            const angles = data.map(item => {
+                const angle = (item.value / total) * 360;
+                const result = { ...item, start: currentAngle, end: currentAngle + angle };
+                currentAngle += angle;
+                return result;
+            });
+            
+            // 更新饼图
+            const pieChart = document.getElementById('pieChart');
+            pieChart.style.background = `conic-gradient(
+                ${angles.map((a, i) => `${a.color} ${a.start}deg ${a.end}deg`).join(', ')}
+            )`;
+            
+            // 更新图例
+            legend.innerHTML = angles.map(a => `
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${a.color}"></div>
+                    <div class="legend-text">${a.name}</div>
+                    <div class="legend-value">¥${a.value.toLocaleString()} (${Math.round((a.value/total)*100)}%)</div>
+                </div>
+            `).join('');
+        }
+        
+        // 保存预算
+        function saveBudget() {
+            showToast('预算方案已保存');
+        }
+        
+        // 显示提示
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小费计算器 - 游导旅游</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .tip-percentage-btn {
+            transition: all 0.3s ease;
+        }
+        .tip-percentage-btn.active {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+        .country-card {
+            transition: all 0.3s ease;
+        }
+        .country-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        .custom-range {
+            -webkit-appearance: none;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+        }
+        .custom-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                        <i class="fas fa-paper-plane text-pink-600 text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold">游导旅游</span>
+                </a>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="hover:text-pink-200 transition">首页</a>
+                    <a href="index.html" class="text-white font-semibold border-b-2 border-white pb-1">货币工具</a>
+                    <a href="#" class="hover:text-pink-200 transition">目的地</a>
+                    <a href="#" class="hover:text-pink-200 transition">攻略</a>
+                </nav>
+                <button class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page Title -->
+    <section class="gradient-bg text-white py-12">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">
+                <i class="fas fa-receipt mr-3"></i>小费计算器
+            </h1>
+            <p class="text-pink-100 text-lg">快速计算各国小费，避免尴尬</p>
+        </div>
+    </section>
+
+    <!-- Tip Calculator -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-3xl shadow-2xl p-8">
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Left: Calculator -->
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">计算小费</h3>
+                            
+                            <!-- Bill Amount -->
+                            <div class="mb-6">
+                                <label class="block text-gray-600 font-medium mb-2">账单金额</label>
+                                <div class="relative">
+                                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xl">$</span>
+                                    <input type="number" id="billAmount" value="100" 
+                                        class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 pl-10 text-2xl font-bold focus:ring-2 focus:ring-pink-500 focus:border-transparent"
+                                        placeholder="0">
+                                </div>
+                            </div>
+
+                            <!-- Country Selection -->
+                            <div class="mb-6">
+                                <label class="block text-gray-600 font-medium mb-2">选择国家/地区</label>
+                                <select id="countrySelect" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 focus:ring-2 focus:ring-pink-500 focus:border-transparent text-lg">
+                                    <option value="usa" data-percent="18">🇺🇸 美国 (18%)</option>
+                                    <option value="canada" data-percent="15">🇨🇦 加拿大 (15%)</option>
+                                    <option value="thailand" data-percent="10">🇹🇭 泰国 (10%)</option>
+                                    <option value="singapore" data-percent="0">🇸🇬 新加坡 (0%)</option>
+                                    <option value="japan" data-percent="0">🇯🇵 日本 (0%)</option>
+                                    <option value="korea" data-percent="0">🇰🇷 韩国 (0%)</option>
+                                    <option value="europe" data-percent="10">🇪🇺 欧洲 (10%)</option>
+                                    <option value="australia" data-percent="10">🇦🇺 澳大利亚 (10%)</option>
+                                    <option value="brazil" data-percent="10">🇧🇷 巴西 (10%)</option>
+                                </select>
+                            </div>
+
+                            <!-- Tip Percentage -->
+                            <div class="mb-6">
+                                <label class="block text-gray-600 font-medium mb-3">小费比例</label>
+                                <div class="flex flex-wrap gap-2 mb-4">
+                                    <button class="tip-percentage-btn px-4 py-2 bg-gray-100 rounded-lg font-medium" data-percent="10">10%</button>
+                                    <button class="tip-percentage-btn px-4 py-2 bg-gray-100 rounded-lg font-medium" data-percent="12">12%</button>
+                                    <button class="tip-percentage-btn active px-4 py-2 bg-gray-100 rounded-lg font-medium" data-percent="15">15%</button>
+                                    <button class="tip-percentage-btn px-4 py-2 bg-gray-100 rounded-lg font-medium" data-percent="18">18%</button>
+                                    <button class="tip-percentage-btn px-4 py-2 bg-gray-100 rounded-lg font-medium" data-percent="20">20%</button>
+                                    <button class="tip-percentage-btn px-4 py-2 bg-gray-100 rounded-lg font-medium" data-percent="custom">自定义</button>
+                                </div>
+                                <div id="customPercentDiv" class="hidden">
+                                    <div class="flex items-center gap-4">
+                                        <input type="range" id="customPercentSlider" min="0" max="30" value="15" class="flex-1 custom-range">
+                                        <input type="number" id="customPercentInput" value="15" 
+                                            class="w-20 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-center font-bold"
+                                            min="0" max="100">
+                                        <span class="text-gray-500">%</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Split Bill -->
+                            <div class="mb-6">
+                                <label class="block text-gray-600 font-medium mb-3">分摊人数</label>
+                                <div class="flex items-center gap-4">
+                                    <button class="split-btn w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition" data-action="minus">
+                                        <i class="fas fa-minus text-gray-600"></i>
+                                    </button>
+                                    <input type="number" id="splitCount" value="1" 
+                                        class="w-20 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-center font-bold text-xl">
+                                    <button class="split-btn w-10 h-10 bg-gray-200 hover:bg-gray-300 rounded-full flex items-center justify-center transition" data-action="plus">
+                                        <i class="fas fa-plus text-gray-600"></i>
+                                    </button>
+                                    <span class="text-gray-500">人</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Results -->
+                        <div class="bg-gradient-to-br from-pink-50 to-red-50 rounded-2xl p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-6">计算结果</h3>
+                            
+                            <div class="space-y-4">
+                                <div class="bg-white rounded-xl p-4 flex justify-between items-center">
+                                    <span class="text-gray-600">账单金额</span>
+                                    <span id="resultBill" class="text-2xl font-bold text-gray-800">$100.00</span>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-4 flex justify-between items-center">
+                                    <span class="text-gray-600">小费金额</span>
+                                    <span id="resultTip" class="text-2xl font-bold text-pink-600">$15.00</span>
+                                </div>
+                                
+                                <div class="h-px bg-gray-200"></div>
+                                
+                                <div class="bg-gradient-to-r from-pink-500 to-red-500 rounded-xl p-4 flex justify-between items-center text-white">
+                                    <span class="font-medium">总计</span>
+                                    <span id="resultTotal" class="text-3xl font-bold">$115.00</span>
+                                </div>
+                                
+                                <div class="bg-white rounded-xl p-4 flex justify-between items-center" id="splitResult">
+                                    <span class="text-gray-600">每人应付</span>
+                                    <span class="text-2xl font-bold text-purple-600">$115.00</span>
+                                </div>
+                            </div>
+
+                            <!-- Tips -->
+                            <div id="countryTips" class="mt-6 bg-white rounded-xl p-4">
+                                <h4 class="font-bold text-gray-800 mb-2 flex items-center">
+                                    <i class="fas fa-lightbulb text-yellow-500 mr-2"></i>
+                                    <span id="tipsTitle">美国小费贴士</span>
+                                </h4>
+                                <ul id="tipsList" class="space-y-1 text-sm text-gray-600">
+                                    <li>• 餐厅：15-20%</li>
+                                    <li>• 外卖：10-15%</li>
+                                    <li>• 酒吧：15-20% per drink</li>
+                                    <li>• 酒店客房服务：$2-5/天</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Country Tip Habits -->
+    <section class="py-12 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">
+                <i class="fas fa-globe text-pink-500 mr-2"></i>各国小费习惯
+            </h2>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                <!-- USA -->
+                <div class="country-card bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🇺🇸</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">美国</h3>
+                            <p class="text-sm text-gray-500">必须给小费</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-red-100 text-red-600 px-3 py-1 rounded-full text-sm font-medium">15-20%</span>
+                        </div>
+                        <p class="text-sm text-gray-600">服务员基本工资低，小费是主要收入来源</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 mb-2 font-medium">应用场景</p>
+                        <p class="text-sm text-gray-600">餐厅、酒店、出租车、酒吧</p>
+                    </div>
+                </div>
+
+                <!-- Japan -->
+                <div class="country-card bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🇯🇵</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">日本</h3>
+                            <p class="text-sm text-gray-500">不建议给小费</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-medium">0%</span>
+                        </div>
+                        <p class="text-sm text-gray-600">给小费可能被视为侮辱，服务费已包含</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 mb-2 font-medium">礼仪提示</p>
+                        <p class="text-sm text-gray-600">礼貌和感谢是最好的回报</p>
+                    </div>
+                </div>
+
+                <!-- Korea -->
+                <div class="country-card bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🇰🇷</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">韩国</h3>
+                            <p class="text-sm text-gray-500">不建议给小费</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full text-sm font-medium">0%</span>
+                        </div>
+                        <p class="text-sm text-gray-600">韩国没有小费文化，高档餐厅已收服务费</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 mb-2 font-medium">礼仪提示</p>
+                        <p class="text-sm text-gray-600">直接付账单金额即可</p>
+                    </div>
+                </div>
+
+                <!-- Thailand -->
+                <div class="country-card bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🇹🇭</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">泰国</h3>
+                            <p class="text-sm text-gray-500">普遍接受小费</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-yellow-100 text-yellow-600 px-3 py-1 rounded-full text-sm font-medium">10%</span>
+                        </div>
+                        <p class="text-sm text-gray-600">小费是对优质服务的感谢，但非强制</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 mb-2 font-medium">注意事项</p>
+                        <p class="text-sm text-gray-600">用纸币，不要给硬币</p>
+                    </div>
+                </div>
+
+                <!-- Singapore -->
+                <div class="country-card bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🇸🇬</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">新加坡</h3>
+                            <p class="text-sm text-gray-500">可选小费</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">可选</span>
+                        </div>
+                        <p class="text-sm text-gray-600">大部分餐厅已加收服务费</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 mb-2 font-medium">礼仪提示</p>
+                        <p class="text-sm text-gray-600">如有服务费则无需额外小费</p>
+                    </div>
+                </div>
+
+                <!-- Europe -->
+                <div class="country-card bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-4xl">🇪🇺</span>
+                        <div>
+                            <h3 class="text-xl font-bold text-gray-800">欧洲</h3>
+                            <p class="text-sm text-gray-500">四舍五入即可</p>
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="bg-purple-100 text-purple-600 px-3 py-1 rounded-full text-sm font-medium">5-10%</span>
+                        </div>
+                        <p class="text-sm text-gray-600">大多数国家价格已含服务费</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-3">
+                        <p class="text-xs text-gray-500 mb-2 font-medium">礼仪提示</p>
+                        <p class="text-sm text-gray-600">无需强迫，给整数即可</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Reference -->
+    <section class="py-12">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">
+                <i class="fas fa-book text-pink-500 mr-2"></i>快速参考
+            </h2>
+
+            <div class="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
+                <table class="w-full">
+                    <thead class="bg-gradient-to-r from-pink-500 to-red-500 text-white">
+                        <tr>
+                            <th class="py-4 px-6 text-left font-medium">国家/地区</th>
+                            <th class="py-4 px-6 text-left font-medium">小费习惯</th>
+                            <th class="py-4 px-6 text-center font-medium">比例</th>
+                            <th class="py-4 px-6 text-left font-medium">说明</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span>🇺🇸</span>
+                                    <span class="font-medium">美国</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6"><span class="text-red-500 font-medium">必须</span></td>
+                            <td class="py-4 px-6 text-center font-bold">15-20%</td>
+                            <td class="py-4 px-6 text-sm text-gray-600">餐厅、酒店、出租车</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span>🇯🇵</span>
+                                    <span class="font-medium">日本</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6"><span class="text-green-500 font-medium">不建议</span></td>
+                            <td class="py-4 px-6 text-center font-bold">0%</td>
+                            <td class="py-4 px-6 text-sm text-gray-600">服务费已含</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span>🇰🇷</span>
+                                    <span class="font-medium">韩国</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6"><span class="text-green-500 font-medium">不建议</span></td>
+                            <td class="py-4 px-6 text-center font-bold">0%</td>
+                            <td class="py-4 px-6 text-sm text-gray-600">没有小费文化</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span>🇹🇭</span>
+                                    <span class="font-medium">泰国</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6"><span class="text-yellow-500 font-medium">接受</span></td>
+                            <td class="py-4 px-6 text-center font-bold">10%</td>
+                            <td class="py-4 px-6 text-sm text-gray-600">给纸币不给硬币</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span>🇪🇺</span>
+                                    <span class="font-medium">欧洲</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6"><span class="text-blue-500 font-medium">可选</span></td>
+                            <td class="py-4 px-6 text-center font-bold">5-10%</td>
+                            <td class="py-4 px-6 text-sm text-gray-600">服务费已含</td>
+                        </tr>
+                        <tr class="hover:bg-gray-50">
+                            <td class="py-4 px-6">
+                                <div class="flex items-center gap-2">
+                                    <span>🇸🇬</span>
+                                    <span class="font-medium">新加坡</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-6"><span class="text-blue-500 font-medium">可选</span></td>
+                            <td class="py-4 px-6 text-center font-bold">0%</td>
+                            <td class="py-4 px-6 text-sm text-gray-600">服务费已含</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-pink-500 to-red-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-paper-plane text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold">游导旅游</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">您的出境旅行好帮手</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">工具</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="index.html" class="hover:text-white transition">汇率换算</a></li>
+                        <li><a href="guide.html" class="hover:text-white transition">货币图鉴</a></li>
+                        <li><a href="tip-calculator.html" class="hover:text-white transition">小费计算</a></li>
+                        <li><a href="exchange.html" class="hover:text-white transition">换汇指南</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">热门目的地</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-white transition">日本</a></li>
+                        <li><a href="#" class="hover:text-white transition">韩国</a></li>
+                        <li><a href="#" class="hover:text-white transition">泰国</a></li>
+                        <li><a href="#" class="hover:text-white transition">新加坡</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">联系我们</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-pink-600 transition">
+                            <i class="fab fa-weixin"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-pink-600 transition">
+                            <i class="fab fa-weibo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-pink-600 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const billAmountInput = document.getElementById('billAmount');
+        const countrySelect = document.getElementById('countrySelect');
+        const splitCountInput = document.getElementById('splitCount');
+        const resultBill = document.getElementById('resultBill');
+        const resultTip = document.getElementById('resultTip');
+        const resultTotal = document.getElementById('resultTotal');
+        const splitResult = document.getElementById('splitResult');
+        const customPercentDiv = document.getElementById('customPercentDiv');
+        const customPercentSlider = document.getElementById('customPercentSlider');
+        const customPercentInput = document.getElementById('customPercentInput');
+        const tipsTitle = document.getElementById('tipsTitle');
+        const tipsList = document.getElementById('tipsList');
+
+        let currentTipPercent = 18;
+
+        const countryTips = {
+            usa: {
+                title: '美国小费贴士',
+                tips: ['餐厅：15-20%', '外卖：10-15%', '酒吧：15-20% per drink', '酒店客房服务：$2-5/天', '导游：15-20%']
+            },
+            canada: {
+                title: '加拿大小费贴士',
+                tips: ['餐厅：15-18%', '酒店：$2-5/天', '出租车：10-15%', '发廊：10-15%']
+            },
+            thailand: {
+                title: '泰国小费贴士',
+                tips: ['餐厅：10%或找零', '按摩师：50-100铢', '导游：200-500铢/天', '酒店：20-50铢']
+            },
+            singapore: {
+                title: '新加坡小费贴士',
+                tips: ['大部分餐厅已含服务费', '高档场所可选给', '导游可选']
+            },
+            japan: {
+                title: '日本小费贴士',
+                tips: ['餐厅：无需小费', '酒店：无需小费', '导游：无需小费', '礼貌和感谢即可']
+            },
+            korea: {
+                title: '韩国小费贴士',
+                tips: ['餐厅：无需小费', '酒店：无需小费', '高档餐厅已收服务费']
+            },
+            europe: {
+                title: '欧洲小费贴士',
+                tips: ['餐厅：已含服务费', '酒店：€1-2/天', '导游：€5-10/天', '无需强迫']
+            },
+            australia: {
+                title: '澳大利亚小费贴士',
+                tips: ['餐厅：可选', '出租车：可选', '酒店：可选']
+            },
+            brazil: {
+                title: '巴西小费贴士',
+                tips: ['餐厅：10%', '酒店：R$2-5/天', '出租车：可选']
+            }
+        };
+
+        function calculate() {
+            const bill = parseFloat(billAmountInput.value) || 0;
+            const split = parseInt(splitCountInput.value) || 1;
+            const tipAmount = bill * (currentTipPercent / 100);
+            const total = bill + tipAmount;
+            const perPerson = total / split;
+
+            resultBill.textContent = `$${bill.toFixed(2)}`;
+            resultTip.textContent = `$${tipAmount.toFixed(2)}`;
+            resultTotal.textContent = `$${total.toFixed(2)}`;
+            
+            if (split > 1) {
+                splitResult.innerHTML = `<span class="text-gray-600">每人应付</span><span class="text-2xl font-bold text-purple-600">$${perPerson.toFixed(2)}</span>`;
+            } else {
+                splitResult.innerHTML = `<span class="text-gray-600">总计</span><span class="text-2xl font-bold text-purple-600">$${total.toFixed(2)}</span>`;
+            }
+        }
+
+        billAmountInput.addEventListener('input', calculate);
+        splitCountInput.addEventListener('input', calculate);
+
+        // Split buttons
+        document.querySelectorAll('.split-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const action = btn.dataset.action;
+                let count = parseInt(splitCountInput.value);
+                
+                if (action === 'plus') {
+                    count++;
+                } else if (action === 'minus' && count > 1) {
+                    count--;
+                }
+                
+                splitCountInput.value = count;
+                calculate();
+            });
+        });
+
+        // Tip percentage buttons
+        document.querySelectorAll('.tip-percentage-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tip-percentage-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const percent = btn.dataset.percent;
+                
+                if (percent === 'custom') {
+                    customPercentDiv.classList.remove('hidden');
+                    currentTipPercent = parseInt(customPercentInput.value);
+                } else {
+                    customPercentDiv.classList.add('hidden');
+                    currentTipPercent = parseInt(percent);
+                }
+                
+                calculate();
+            });
+        });
+
+        // Custom percentage slider and input
+        customPercentSlider.addEventListener('input', (e) => {
+            customPercentInput.value = e.target.value;
+            currentTipPercent = parseInt(e.target.value);
+            calculate();
+        });
+
+        customPercentInput.addEventListener('input', (e) => {
+            let val = parseInt(e.target.value);
+            if (val < 0) val = 0;
+            if (val > 100) val = 100;
+            customPercentInput.value = val;
+            customPercentSlider.value = val;
+            currentTipPercent = val;
+            calculate();
+        });
+
+        // Country selection
+        countrySelect.addEventListener('change', (e) => {
+            const country = e.target.value;
+            const tipData = countryTips[country];
+            
+            if (tipData) {
+                tipsTitle.textContent = tipData.title;
+                tipsList.innerHTML = tipData.tips.map(tip => `<li>• ${tip}</li>`).join('');
+            }
+        });
+
+        // Initialize
+        calculate();
+    </script>
+</body>
+</html>

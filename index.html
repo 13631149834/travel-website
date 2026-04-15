@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游导旅游 - 发现精彩世界</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        * { font-family: 'Noto Sans SC', sans-serif; }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #7c3aed 100%);
+        }
+        
+        .float-animation {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .destination-card {
+            transition: all 0.4s ease;
+        }
+        .destination-card:hover {
+            transform: scale(1.05);
+        }
+        .destination-card:hover .overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 100%);
+        }
+        
+        .nav-link { position: relative; }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #3b82f6, #8b5cf6); border-radius: 4px; }
+        
+        .text-gradient {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                        <i class="fas fa-compass text-white text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">游导旅游</span>
+                </a>
+                
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="nav-link text-blue-600 font-medium">首页</a>
+                    <a href="photos/destinations.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">目的地</a>
+                    <a href="photos/themes.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">主题</a>
+                    <a href="photos/index.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">图片库</a>
+                    <a href="photos/my-photos.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium">我的图库</a>
+                </nav>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="hidden sm:flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all">
+                        <i class="fas fa-cloud-upload-alt mr-2"></i>
+                        上传图片
+                    </button>
+                    <button class="md:hidden p-2 text-gray-500">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero-gradient text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
+                        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
+                    </pattern>
+                </defs>
+                <rect width="100" height="100" fill="url(#grid)"/>
+            </svg>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-32 relative">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm mb-6">
+                        <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
+                        2,800+ 精选旅游图片
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+                        发现旅途中的
+                        <span class="text-yellow-300">美好瞬间</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-white/80 mb-8 leading-relaxed">
+                        汇聚日本、韩国、泰国、新加坡等热门目的地的精美图片<br>
+                        为您的旅行灵感提供视觉支持，免费下载商用
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="photos/index.html" class="px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-gray-100 hover:shadow-xl transition-all text-center flex items-center justify-center">
+                            <i class="fas fa-images mr-2"></i>
+                            浏览图片库
+                        </a>
+                        <a href="photos/upload.html" class="px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-bold rounded-xl border-2 border-white/30 hover:bg-white/30 transition-all text-center flex items-center justify-center">
+                            <i class="fas fa-cloud-upload-alt mr-2"></i>
+                            分享照片
+                        </a>
+                    </div>
+                </div>
+                <div class="relative hidden md:block">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="space-y-4">
+                            <img src="https://s.coze.cn/image/KaaYhpVazoU/" alt="富士山" class="rounded-2xl shadow-2xl float-animation w-full h-48 object-cover">
+                            <img src="https://s.coze.cn/image/LfW5Q5FBSqA/" alt="郑王庙" class="rounded-2xl shadow-2xl float-animation w-full h-32 object-cover" style="animation-delay: 1s;">
+                        </div>
+                        <div class="space-y-4 pt-8">
+                            <img src="https://s.coze.cn/image/I-IhDT3bsbY/" alt="滨海湾" class="rounded-2xl shadow-2xl float-animation w-full h-32 object-cover" style="animation-delay: 0.5s;">
+                            <img src="https://s.coze.cn/image/EPXzoGx_VsU/" alt="首尔塔" class="rounded-2xl shadow-2xl float-animation w-full h-48 object-cover" style="animation-delay: 1.5s;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-50 to-transparent"></div>
+    </section>
+    
+    <!-- Destinations -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">热门目的地</h2>
+                    <p class="text-gray-500 mt-2">探索不同国家的独特魅力</p>
+                </div>
+                <a href="photos/destinations.html" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                    查看全部 <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <a href="photos/destinations.html?country=japan" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group">
+                    <img src="https://s.coze.cn/image/iM7WdiKlrcQ/" alt="日本" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-4xl mb-3">🗾</div>
+                        <h3 class="text-white text-2xl font-bold mb-1">日本</h3>
+                        <p class="text-white/80 text-sm mb-3">传统与现代的完美融合</p>
+                        <div class="flex items-center text-white/60 text-sm">
+                            <i class="fas fa-images mr-2"></i>
+                            <span>1,267 张图片</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="photos/destinations.html?country=korea" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group">
+                    <img src="https://s.coze.cn/image/EPXzoGx_VsU/" alt="韩国" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-4xl mb-3">🇰🇷</div>
+                        <h3 class="text-white text-2xl font-bold mb-1">韩国</h3>
+                        <p class="text-white/80 text-sm mb-3">K-pop与韩剧的浪漫国度</p>
+                        <div class="flex items-center text-white/60 text-sm">
+                            <i class="fas fa-images mr-2"></i>
+                            <span>856 张图片</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="photos/destinations.html?country=thailand" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group">
+                    <img src="https://s.coze.cn/image/LfW5Q5FBSqA/" alt="泰国" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-4xl mb-3">🇹🇭</div>
+                        <h3 class="text-white text-2xl font-bold mb-1">泰国</h3>
+                        <p class="text-white/80 text-sm mb-3">微笑佛国的热带风情</p>
+                        <div class="flex items-center text-white/60 text-sm">
+                            <i class="fas fa-images mr-2"></i>
+                            <span>1,023 张图片</span>
+                        </div>
+                    </div>
+                </a>
+                <a href="photos/destinations.html?country=singapore" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group">
+                    <img src="https://s.coze.cn/image/I-IhDT3bsbY/" alt="新加坡" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="overlay absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent transition-all"></div>
+                    <div class="absolute bottom-0 left-0 right-0 p-6">
+                        <div class="text-4xl mb-3">🇸🇬</div>
+                        <h3 class="text-white text-2xl font-bold mb-1">新加坡</h3>
+                        <p class="text-white/80 text-sm mb-3">花园城市的现代魅力</p>
+                        <div class="flex items-center text-white/60 text-sm">
+                            <i class="fas fa-images mr-2"></i>
+                            <span>523 张图片</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Themes -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">图片主题</h2>
+                    <p class="text-gray-500 mt-2">按主题发现精彩内容</p>
+                </div>
+                <a href="photos/themes.html" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                    查看全部 <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <a href="photos/themes.html?theme=landscape" class="card-hover bg-gradient-to-br from-green-50 to-emerald-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🏔️</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">风景</h3>
+                    <p class="text-gray-500 text-sm">1,245 张</p>
+                </a>
+                <a href="photos/themes.html?theme=food" class="card-hover bg-gradient-to-br from-orange-50 to-amber-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🍜</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">美食</h3>
+                    <p class="text-gray-500 text-sm">876 张</p>
+                </a>
+                <a href="photos/themes.html?theme=architecture" class="card-hover bg-gradient-to-br from-purple-50 to-violet-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🏛️</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">建筑</h3>
+                    <p class="text-gray-500 text-sm">654 张</p>
+                </a>
+                <a href="photos/themes.html?theme=culture" class="card-hover bg-gradient-to-br from-pink-50 to-rose-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🎎</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">人文</h3>
+                    <p class="text-gray-500 text-sm">523 张</p>
+                </a>
+                <a href="photos/themes.html?theme=night" class="card-hover bg-gradient-to-br from-indigo-50 to-blue-100 rounded-2xl p-6 text-center">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-2xl flex items-center justify-center shadow-md">
+                        <span class="text-3xl">🌃</span>
+                    </div>
+                    <h3 class="font-bold text-gray-900 mb-1">夜景</h3>
+                    <p class="text-gray-500 text-sm">432 张</p>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Featured Photos -->
+    <section class="py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h2 class="text-3xl font-bold text-gray-900">精选图片</h2>
+                    <p class="text-gray-500 mt-2">最受用户喜爱的精彩作品</p>
+                </div>
+                <a href="photos/index.html" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
+                    查看全部 <i class="fas fa-arrow-right ml-2"></i>
+                </a>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="photos/detail.html?id=jp002" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/KaaYhpVazoU/" alt="富士山倒影" class="w-full aspect-[3/4] object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=sg002" class="card-hover rounded-2xl overflow-hidden shadow-md md:row-span-2">
+                    <img src="https://s.coze.cn/image/9VjLGxp12S4/" alt="鱼尾狮夜景" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=kr001" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/fLEgZXey2nw/" alt="首尔塔日落" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=th004" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/7iZF3qPwKBw/" alt="普吉岛日落" class="w-full aspect-[3/4] object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=jp001" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/SYPKIL_J_bs/" alt="京都竹林" class="w-full aspect-[4/3] object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=th001" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/sYsNEWgjmW4/" alt="大皇宫" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+                <a href="photos/detail.html?id=jp003" class="card-hover rounded-2xl overflow-hidden shadow-md">
+                    <img src="https://s.coze.cn/image/wOncysDHV5M/" alt="东京樱花" class="w-full aspect-[4/3] object-cover hover:scale-105 transition-transform duration-500">
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features -->
+    <section class="py-16 bg-gradient-to-br from-blue-600 via-purple-600 to-pink-500 text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold mb-4">为什么选择游导图片库?</h2>
+                <p class="text-white/80 text-lg">为旅行者和创作者打造的优质图片资源平台</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="text-center p-8">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-high-definition text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">高清图片资源</h3>
+                    <p class="text-white/70">所有图片均为高清原图，支持多尺寸下载，满足各种场景需求</p>
+                </div>
+                <div class="text-center p-8">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-copyright text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">免费商用授权</h3>
+                    <p class="text-white/70">用户上传图片采用CC0协议，免费用于个人和商业用途</p>
+                </div>
+                <div class="text-center p-8">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                        <i class="fas fa-share-alt text-4xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">便捷分享收藏</h3>
+                    <p class="text-white/70">一键收藏喜欢的图片，建立个人图集，方便管理和分享</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">准备好分享您的旅行故事了吗?</h2>
+            <p class="text-gray-500 text-lg mb-8">上传您的旅游照片，让更多人看到世界的美好</p>
+            <a href="photos/upload.html" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold rounded-xl hover:shadow-xl transition-all">
+                <i class="fas fa-cloud-upload-alt mr-3"></i>
+                立即上传
+            </a>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-compass text-white text-lg"></i>
+                        </div>
+                        <span class="text-xl font-bold text-white">游导旅游</span>
+                    </div>
+                    <p class="text-sm">您的专业旅游伴侣，提供目的地攻略、旅行规划、图片资源等全方位服务。</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">图片库</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="photos/destinations.html" class="hover:text-white transition-colors">目的地图库</a></li>
+                        <li><a href="photos/themes.html" class="hover:text-white transition-colors">主题图库</a></li>
+                        <li><a href="photos/upload.html" class="hover:text-white transition-colors">上传图片</a></li>
+                        <li><a href="photos/my-photos.html" class="hover:text-white transition-colors">我的图库</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">热门目的地</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="photos/destinations.html?country=japan" class="hover:text-white transition-colors">日本旅游</a></li>
+                        <li><a href="photos/destinations.html?country=korea" class="hover:text-white transition-colors">韩国旅游</a></li>
+                        <li><a href="photos/destinations.html?country=thailand" class="hover:text-white transition-colors">泰国旅游</a></li>
+                        <li><a href="photos/destinations.html?country=singapore" class="hover:text-white transition-colors">新加坡旅游</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-4">联系我们</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><i class="fas fa-envelope mr-2"></i>support@youdao-travel.com</li>
+                        <li><i class="fas fa-phone mr-2"></i>13631149834</li>
+                    </ul>
+                    <div class="flex space-x-4 mt-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-blue-600 transition-colors">
+                            <i class="fab fa-weibo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-green-600 transition-colors">
+                            <i class="fab fa-weixin"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-pink-600 transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-8 text-center text-sm">
+                <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

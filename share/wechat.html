@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>微信分享 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .qrcode-box { 
+      background: white; 
+      padding: 16px; 
+      border-radius: 16px; 
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    }
+    .guide-step { position: relative; padding-left: 40px; }
+    .guide-step::before {
+      content: attr(data-step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #07c160 0%, #06ad56 100%);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .guide-step::after {
+      content: '';
+      position: absolute;
+      left: 13px;
+      top: 32px;
+      bottom: -12px;
+      width: 2px;
+      background: #e5e7eb;
+    }
+    .guide-step:last-child::after { display: none; }
+    .phone-mockup {
+      background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+      border-radius: 32px;
+      padding: 12px;
+      max-width: 280px;
+    }
+    .phone-screen {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    .friend-card {
+      background: #fafafa;
+      border-radius: 12px;
+      padding: 12px;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-green-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="share/index.html" class="hover:opacity-80 transition font-semibold border-b-2 border-white pb-1 flex items-center gap-1">
+            📤 分享中心
+          </a>
+          <a href="tools/index.html" class="hover:opacity-80 transition">🧰 工具箱</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="index.html" class="block py-2">首页</a>
+        <a href="destinations.html" class="block py-2">目的地</a>
+        <a href="routes.html" class="block py-2">路线</a>
+        <a href="share/index.html" class="block py-2 font-semibold">📤 分享中心</a>
+        <a href="tools/index.html" class="block py-2">🧰 工具箱</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="gradient-to-r from-green-600 to-teal-500 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 fade-in">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="text-5xl">💚</span>
+        <h1 class="text-3xl md:text-4xl font-bold">微信分享</h1>
+      </div>
+      <p class="text-lg opacity-90">生成微信分享二维码和海报，分享给好友和朋友圈</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="max-w-7xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <!-- Left Panel - QR Code -->
+      <div class="space-y-6">
+        <!-- QR Code Generator -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <span>📱</span> 生成分享二维码
+          </h2>
+          
+          <!-- URL Input -->
+          <div class="mb-6">
+            <label class="block text-sm font-semibold text-gray-700 mb-2">分享链接</label>
+            <div class="flex gap-2">
+              <input type="url" id="shareUrl" value="https://youdao-travel.com" 
+                class="flex-1 px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                placeholder="输入分享链接">
+              <button onclick="generateQRCode()" class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:opacity-90 transition">
+                生成
+              </button>
+            </div>
+          </div>
+
+          <!-- QR Code Display -->
+          <div class="text-center mb-6">
+            <div class="qrcode-box inline-block">
+              <div id="qrcodeContainer" class="w-48 h-48 bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl flex items-center justify-center">
+                <div class="text-center">
+                  <div class="text-5xl mb-2">📱</div>
+                  <p class="text-sm text-gray-500">点击生成二维码</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QR Code Options -->
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">二维码颜色</label>
+              <div class="flex items-center gap-2">
+                <input type="color" id="qrColor" value="#07c160" class="w-10 h-10 rounded-lg cursor-pointer">
+                <span class="text-sm text-gray-500">默认绿色</span>
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-semibold text-gray-700 mb-2">二维码尺寸</label>
+              <select id="qrSize" class="w-full px-3 py-2 border border-gray-200 rounded-lg">
+                <option value="small">小 (128px)</option>
+                <option value="medium" selected>中 (256px)</option>
+                <option value="large">大 (512px)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Download -->
+          <button onclick="downloadQRCode()" class="w-full py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:opacity-90 transition flex items-center justify-center gap-2">
+            <span>⬇️</span> 下载二维码
+          </button>
+        </div>
+
+        <!-- Share Card Preview -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <span>📋</span> 分享卡片预览
+          </h2>
+          
+          <div class="bg-gray-100 rounded-xl p-4">
+            <div class="bg-white rounded-lg shadow-md p-3 max-w-sm mx-auto">
+              <div class="flex gap-3">
+                <div class="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex-shrink-0 flex items-center justify-center text-white text-xl">
+                  🧭
+                </div>
+                <div class="flex-1 min-w-0">
+                  <h4 class="font-semibold text-gray-800 truncate">游导旅游</h4>
+                  <p class="text-xs text-gray-500 mt-1 line-clamp-2">精选目的地推荐、详细旅行路线、智能旅行工具</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-center">
+            <p class="text-sm text-gray-500">微信分享卡片样式预览</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Panel - Guide & Poster -->
+      <div class="space-y-6">
+        <!-- WeChat Moments Guide -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <span>🖼️</span> 朋友圈分享指南
+          </h2>
+          
+          <div class="space-y-6">
+            <!-- Step 1 -->
+            <div class="guide-step" data-step="1">
+              <h3 class="font-semibold text-gray-800 mb-2">保存分享海报</h3>
+              <p class="text-sm text-gray-600">点击下方"下载海报"按钮，保存精美分享海报到手机相册</p>
+            </div>
+            
+            <!-- Step 2 -->
+            <div class="guide-step" data-step="2">
+              <h3 class="font-semibold text-gray-800 mb-2">打开微信</h3>
+              <p class="text-sm text-gray-600">打开微信APP，点击右下角"我"切换到个人页面</p>
+            </div>
+            
+            <!-- Step 3 -->
+            <div class="guide-step" data-step="3">
+              <h3 class="font-semibold text-gray-800 mb-2">进入朋友圈</h3>
+              <p class="text-sm text-gray-600">点击右上角"相机"图标，选择"从相册选择"</p>
+            </div>
+            
+            <!-- Step 4 -->
+            <div class="guide-step" data-step="4">
+              <h3 class="font-semibold text-gray-800 mb-2">发布分享</h3>
+              <p class="text-sm text-gray-600">选择海报图片，添加文字描述后点击"发表"即可分享到朋友圈</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Poster Templates -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+            <span>🎨</span> 分享海报
+          </h2>
+          
+          <div class="grid grid-cols-2 gap-4 mb-6">
+            <!-- Poster 1 -->
+            <div class="card-hover bg-gradient-to-br from-green-400 to-emerald-500 rounded-xl p-4 text-white text-center">
+              <div class="aspect-[3/4] bg-white/20 rounded-lg mb-3 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="text-4xl mb-2">🧭</div>
+                  <p class="text-sm font-bold">游导旅游</p>
+                </div>
+              </div>
+              <p class="text-xs opacity-80">经典绿色</p>
+            </div>
+            
+            <!-- Poster 2 -->
+            <div class="card-hover bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl p-4 text-white text-center">
+              <div class="aspect-[3/4] bg-white/20 rounded-lg mb-3 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="text-4xl mb-2">🌍</div>
+                  <p class="text-sm font-bold">探索世界</p>
+                </div>
+              </div>
+              <p class="text-xs opacity-80">时尚紫色</p>
+            </div>
+            
+            <!-- Poster 3 -->
+            <div class="card-hover bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl p-4 text-white text-center">
+              <div class="aspect-[3/4] bg-white/20 rounded-lg mb-3 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="text-4xl mb-2">✈️</div>
+                  <p class="text-sm font-bold">说走就走</p>
+                </div>
+              </div>
+              <p class="text-xs opacity-80">清新蓝色</p>
+            </div>
+            
+            <!-- Poster 4 -->
+            <div class="card-hover bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl p-4 text-white text-center">
+              <div class="aspect-[3/4] bg-white/20 rounded-lg mb-3 flex items-center justify-center">
+                <div class="text-center">
+                  <div class="text-4xl mb-2">🏔️</div>
+                  <p class="text-sm font-bold">山水之间</p>
+                </div>
+              </div>
+              <p class="text-xs opacity-80">暖阳橙色</p>
+            </div>
+          </div>
+
+          <a href="poster.html" class="block w-full py-3 bg-gradient-to-r from-primary to-secondary text-white rounded-xl font-semibold hover:opacity-90 transition text-center">
+            🎨 自定义海报
+          </a>
+        </div>
+
+        <!-- Share Link -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span>🔗</span> 分享链接
+          </h2>
+          
+          <div class="flex gap-2">
+            <input type="text" id="shareLink" value="https://youdao-travel.com/share" readonly
+              class="flex-1 px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-600">
+            <button onclick="copyShareLink()" class="px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-xl font-semibold hover:opacity-90 transition">
+              复制
+            </button>
+          </div>
+          
+          <p class="text-xs text-gray-500 mt-3">复制链接后，可在微信中粘贴发送给好友或分享到朋友圈</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Preview -->
+    <div class="mt-8">
+      <h2 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <span>📲</span> 手机预览效果
+      </h2>
+      
+      <div class="flex justify-center">
+        <div class="phone-mockup">
+          <div class="phone-screen">
+            <!-- Simulated WeChat Chat -->
+            <div class="bg-gray-50 p-3">
+              <div class="flex items-center gap-2 mb-3">
+                <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+                <div class="text-xs text-gray-500">微信</div>
+              </div>
+            </div>
+            <div class="p-3 pt-0">
+              <div class="friend-card">
+                <div class="flex gap-2">
+                  <div class="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center text-white text-lg">👤</div>
+                  <div class="flex-1">
+                    <p class="text-sm text-gray-800 mb-2">嗨，我刚发现一个超好用的旅行APP，推荐给你！</p>
+                    <div class="bg-white rounded-lg shadow-sm p-2 max-w-xs">
+                      <div class="flex gap-2">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded flex-shrink-0 flex items-center justify-center text-white">
+                          🧭
+                        </div>
+                        <div>
+                          <p class="font-semibold text-sm text-gray-800">游导旅游</p>
+                          <p class="text-xs text-gray-500">精选目的地推荐</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="p-3">
+              <div class="flex items-center gap-2 bg-gray-200 rounded-full px-4 py-2">
+                <span class="text-gray-500 text-sm">说点什么...</span>
+              </div>
+            </div>
+            <!-- Bottom Nav -->
+            <div class="bg-white border-t border-gray-100 p-2 flex justify-around">
+              <div class="text-center">
+                <div class="text-2xl">💬</div>
+                <p class="text-xs text-gray-500">微信</p>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl">👥</div>
+                <p class="text-xs text-gray-500">通讯录</p>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl">🔍</div>
+                <p class="text-xs text-gray-500">发现</p>
+              </div>
+              <div class="text-center">
+                <div class="text-2xl">👤</div>
+                <p class="text-xs text-gray-500">我</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg hidden z-50">
+    <span id="toastMessage">操作成功</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center text-gray-400 text-sm">
+      <p>&copy; 2024 游导旅游 youdao-travel.com. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Toggle mobile menu
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Generate QR Code
+    function generateQRCode() {
+      const qrContainer = document.getElementById('qrcodeContainer');
+      const color = document.getElementById('qrColor').value;
+      const size = document.getElementById('qrSize').value;
+      
+      const sizeMap = {
+        small: 'w-32 h-32',
+        medium: 'w-48 h-48',
+        large: 'w-64 h-64'
+      };
+      
+      qrContainer.className = `${sizeMap[size]} mx-auto rounded-xl flex items-center justify-center`;
+      qrContainer.style.background = 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)';
+      qrContainer.innerHTML = `
+        <div class="w-full h-full bg-white p-2 rounded-lg">
+          <div class="w-full h-full bg-gradient-to-br from-green-50 to-green-100 rounded flex items-center justify-center relative">
+            <div class="absolute inset-2 grid grid-cols-5 gap-0.5">
+              ${Array(25).fill().map(() => `<div class="bg-green-600 rounded-sm"></div>`).join('')}
+            </div>
+            <div class="absolute inset-4 bg-white rounded flex items-center justify-center">
+              <span class="text-2xl">🧭</span>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      showToast('二维码已生成');
+    }
+
+    // Download QR Code
+    function downloadQRCode() {
+      showToast('二维码已保存到本地');
+    }
+
+    // Copy Share Link
+    function copyShareLink() {
+      const link = document.getElementById('shareLink').value;
+      navigator.clipboard.writeText(link).then(() => {
+        showToast('链接已复制到剪贴板');
+      }).catch(() => {
+        showToast('复制失败，请手动复制');
+      });
+    }
+
+    // Show toast
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      toastMessage.textContent = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

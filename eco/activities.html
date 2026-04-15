@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>环保活动 - 游导旅游</title>
+  <meta name="description" content="参与海滩清洁、植树活动、环保志愿等环保活动，为地球贡献力量。">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#10b981',
+            secondary: '#059669',
+            accent: '#34d399'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-eco { background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 16px 32px rgba(16, 185, 129, 0.15); }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .activity-card { transition: all 0.3s ease; }
+    .activity-card:hover { transform: scale(1.02); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-emerald-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-eco text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="index.html" class="hover:opacity-80 transition">环保指南</a>
+          <a href="activities.html" class="font-semibold border-b-2 border-white pb-1">环保活动</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="index.html" class="block py-2">环保指南</a>
+        <a href="activities.html" class="block py-2 font-semibold">环保活动</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="gradient-eco text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 text-center fade-in">
+      <div class="inline-block px-4 py-1.5 bg-white/20 rounded-full text-sm mb-4">
+        🤝 一起行动
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">环保志愿活动</h1>
+      <p class="text-lg opacity-90 max-w-2xl mx-auto">加入环保志愿活动，为守护地球贡献一份力量。每一次参与都是改变的开始。</p>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="max-w-7xl mx-auto px-4 -mt-8 mb-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl p-5 text-center shadow-lg border border-green-100">
+        <div class="text-3xl font-bold text-primary mb-1">5,000+</div>
+        <div class="text-sm text-gray-600">志愿者参与</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 text-center shadow-lg border border-green-100">
+        <div class="text-3xl font-bold text-primary mb-1">200+</div>
+        <div class="text-sm text-gray-600">成功活动</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 text-center shadow-lg border border-green-100">
+        <div class="text-3xl font-bold text-primary mb-1">50吨</div>
+        <div class="text-sm text-gray-600">垃圾清理</div>
+      </div>
+      <div class="bg-white rounded-2xl p-5 text-center shadow-lg border border-green-100">
+        <div class="text-3xl font-bold text-primary mb-1">10万+</div>
+        <div class="text-sm text-gray-600">植树棵数</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Activity Categories -->
+  <section class="max-w-7xl mx-auto px-4 mb-12">
+    <div class="flex flex-wrap gap-3 justify-center mb-8">
+      <button onclick="filterActivities('all')" class="activity-filter active px-5 py-2.5 rounded-full font-medium transition" data-filter="all">
+        全部活动
+      </button>
+      <button onclick="filterActivities('beach')" class="activity-filter px-5 py-2.5 rounded-full font-medium transition" data-filter="beach">
+        🏖️ 海滩清洁
+      </button>
+      <button onclick="filterActivities('tree')" class="activity-filter px-5 py-2.5 rounded-full font-medium transition" data-filter="tree">
+        🌲 植树活动
+      </button>
+      <button onclick="filterActivities('wildlife')" class="activity-filter px-5 py-2.5 rounded-full font-medium transition" data-filter="wildlife">
+        🐼 野生动物保护
+      </button>
+    </div>
+  </section>
+
+  <!-- Beach Cleaning Activities -->
+  <section class="max-w-7xl mx-auto px-4 mb-16" id="beach-section">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-2xl">🏖️</div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">海滩清洁活动</h2>
+        <p class="text-gray-600 text-sm">守护海洋，从清洁海滩开始</p>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Activity 1 -->
+      <div class="activity-card bg-white rounded-2xl overflow-hidden shadow-lg border border-green-100" data-category="beach">
+        <div class="h-40 bg-gradient-to-br from-blue-400 to-cyan-500 flex items-center justify-center relative">
+          <span class="text-7xl">🏝️</span>
+          <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-medium text-blue-700">
+            定期活动
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">三亚海滩清洁行动</h3>
+          <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+            <span>📍 海南三亚</span>
+            <span>📅 每月第二个周六</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <span>⏱️ 3小时</span>
+            <span>👥 50人</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">组织志愿者在三亚湾、大东海等海滩进行垃圾清理，保护海洋生态环境。</p>
+          <div class="bg-blue-50 rounded-xl p-3 mb-4">
+            <span class="text-xs text-blue-800 font-medium">🌊 每次清理海滩垃圾约200kg</span>
+          </div>
+          <button onclick="openRegisterModal('三亚海滩清洁行动', 'beach')" class="w-full py-3 gradient-eco text-white rounded-xl font-medium hover:opacity-90 transition">
+            立即报名
+          </button>
+        </div>
+      </div>
+
+      <!-- Activity 2 -->
+      <div class="activity-card bg-white rounded-2xl overflow-hidden shadow-lg border border-green-100" data-category="beach">
+        <div class="h-40 bg-gradient-to-br from-teal-400 to-emerald-500 flex items-center justify-center relative">
+          <span class="text-7xl">🐚</span>
+          <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-medium text-teal-700">
+            周末活动
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">青岛金沙滩清洁</h3>
+          <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+            <span>📍 山东青岛</span>
+            <span>📅 每周日</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <span>⏱️ 2小时</span>
+            <span>👥 30人</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">在青岛金沙滩开展清洁活动，清理塑料垃圾，保护海洋生物。</p>
+          <div class="bg-blue-50 rounded-xl p-3 mb-4">
+            <span class="text-xs text-blue-800 font-medium">🌊 每次清理垃圾约100kg</span>
+          </div>
+          <button onclick="openRegisterModal('青岛金沙滩清洁', 'beach')" class="w-full py-3 gradient-eco text-white rounded-xl font-medium hover:opacity-90 transition">
+            立即报名
+          </button>
+        </div>
+      </div>
+
+      <!-- Activity 3 -->
+      <div class="activity-card bg-white rounded-2xl overflow-hidden shadow-lg border border-green-100" data-category="beach">
+        <div class="h-40 bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center relative">
+          <span class="text-7xl">🌊</span>
+          <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-medium text-cyan-700">
+            节假日
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">厦门环岛路清洁</h3>
+          <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+            <span>📍 福建厦门</span>
+            <span>📅 国庆/五一假期</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <span>⏱️ 4小时</span>
+            <span>👥 80人</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">节假日特别清洁行动，号召游客和本地居民共同参与海洋保护。</p>
+          <div class="bg-blue-50 rounded-xl p-3 mb-4">
+            <span class="text-xs text-blue-800 font-medium">🌊 清理海岸线约2公里</span>
+          </div>
+          <button onclick="openRegisterModal('厦门环岛路清洁', 'beach')" class="w-full py-3 gradient-eco text-white rounded-xl font-medium hover:opacity-90 transition">
+            立即报名
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tree Planting Activities -->
+  <section class="max-w-7xl mx-auto px-4 mb-16 hidden" id="tree-section">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-2xl">🌲</div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">植树活动</h2>
+        <p class="text-gray-600 text-sm">为地球添绿，共建绿色家园</p>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <!-- Tree Activity 1 -->
+      <div class="activity-card bg-white rounded-2xl overflow-hidden shadow-lg border border-green-100" data-category="tree">
+        <div class="h-40 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center relative">
+          <span class="text-7xl">🌳</span>
+          <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-medium text-green-700">
+            年度活动
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">春季植树节</h3>
+          <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+            <span>📍 北京延庆</span>
+            <span>📅 每年3月12日</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <span>🌱 油松、侧柏、刺槐</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">每年植树节举办的大型植树活动，面向公众开放，参与家庭众多。</p>
+          <div class="bg-green-50 rounded-xl p-3 mb-4">
+            <span class="text-xs text-green-800 font-medium">🎯 目标：10000棵</span>
+          </div>
+          <button onclick="openRegisterModal('春季植树节', 'tree')" class="w-full py-3 gradient-eco text-white rounded-xl font-medium hover:opacity-90 transition">
+            立即报名
+          </button>
+        </div>
+      </div>
+
+      <!-- Tree Activity 2 -->
+      <div class="activity-card bg-white rounded-2xl overflow-hidden shadow-lg border border-green-100" data-category="tree">
+        <div class="h-40 bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center relative">
+          <span class="text-7xl">🏜️</span>
+          <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-medium text-amber-700">
+            沙漠绿洲
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">沙漠绿洲计划</h3>
+          <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+            <span>📍 甘肃敦煌</span>
+            <span>📅 每年4-5月</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <span>🌱 梭梭、沙枣、胡杨</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">在敦煌周边沙漠地区种植耐旱植物，建设防风固沙林带。</p>
+          <div class="bg-green-50 rounded-xl p-3 mb-4">
+            <span class="text-xs text-green-800 font-medium">🎯 目标：50000棵</span>
+          </div>
+          <button onclick="openRegisterModal('沙漠绿洲计划', 'tree')" class="w-full py-3 gradient-eco text-white rounded-xl font-medium hover:opacity-90 transition">
+            立即报名
+          </button>
+        </div>
+      </div>
+
+      <!-- Tree Activity 3 -->
+      <div class="activity-card bg-white rounded-2xl overflow-hidden shadow-lg border border-green-100" data-category="tree">
+        <div class="h-40 bg-gradient-to-br from-teal-500 to-cyan-600 flex items-center justify-center relative">
+          <span class="text-7xl">🌿</span>
+          <div class="absolute top-3 right-3 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-medium text-teal-700">
+            海岸红树林
+          </div>
+        </div>
+        <div class="p-6">
+          <h3 class="font-bold text-lg text-gray-800 mb-2">海岸红树林种植</h3>
+          <div class="flex items-center gap-4 text-sm text-gray-500 mb-3">
+            <span>📍 广西北海</span>
+            <span>📅 每年6-8月</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm text-gray-500 mb-4">
+            <span>🌱 红树、秋茄、桐花树</span>
+          </div>
+          <p class="text-gray-600 text-sm mb-4">在广西沿海种植红树林，保护海岸生态系统，抵御台风侵蚀。</p>
+          <div class="bg-green-50 rounded-xl p-3 mb-4">
+            <span class="text-xs text-green-800 font-medium">🎯 目标：20000棵</span>
+          </div>
+          <button onclick="openRegisterModal('海岸红树林种植', 'tree')" class="w-full py-3 gradient-eco text-white rounded-xl font-medium hover:opacity-90 transition">
+            立即报名
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Wildlife Protection Activities -->
+  <section class="max-w-7xl mx-auto px-4 mb-16 hidden" id="wildlife-section">
+    <div class="flex items-center gap-3 mb-6">
+      <div class="w-12 h-12 bg-pink-100 rounded-full flex items-center justify-center text-2xl">🐼</div>
+      <div>
+        <h2 class="text-2xl font-bold text-gray-800">野生动物保护</h2>
+        <p class="text-gray-600 text-sm">守护濒危物种，维护生态平衡</p>
+      </div>
+    </div>
+    <div class="grid md:grid-cols-2 gap-6">
+      <!-- Wildlife Activity 1 -->
+      <div class="activity-card bg-white rounded-2xl overflow-hidden shadow-lg border border-green-100" data-category="wildlife">
+        <div class="md:flex">
+          <div class="md:w-1/3 h-48 md:h-auto bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+            <span class="text-7xl">🐼</span>
+          </div>
+          <div class="md:w-2/3 p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-2 py-1 bg-pink-100 text-pink-700 text-xs rounded-full">热门</span>
+              <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">1-3天</span>
+            </div>
+            <h3 class="font-bold text-xl text-gray-800 mb-2">大熊猫志愿者</h3>
+            <p class="text-sm text-gray-500 mb-2">📍 四川成都 | 成都大熊猫繁育研究基地</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">园区清洁</span>
+              <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">竹子准备</span>
+              <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">科普讲解</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">成为大熊猫志愿者，参与大熊猫的日常照护工作，近距离了解大熊猫保护工作。</p>
+            <button onclick="openRegisterModal('大熊猫志愿者', 'wildlife')" class="w-full py-3 gradient-eco text-white rounded-xl font-medium hover:opacity-90 transition">
+              立即报名
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Wildlife Activity 2 -->
+      <div class="activity-card bg-white rounded-2xl overflow-hidden shadow-lg border border-green-100" data-category="wildlife">
+        <div class="md:flex">
+          <div class="md:w-1/3 h-48 md:h-auto bg-gradient-to-br from-blue-400 to-cyan-600 flex items-center justify-center">
+            <span class="text-7xl">🐢</span>
+          </div>
+          <div class="md:w-2/3 p-6">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">珍惜名额</span>
+              <span class="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">3-7天</span>
+            </div>
+            <h3 class="font-bold text-xl text-gray-800 mb-2">海龟保护行动</h3>
+            <p class="text-sm text-gray-500 mb-2">📍 海南陵水 | 南海海洋研究所</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">海龟照护</span>
+              <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">沙滩巡护</span>
+              <span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">数据记录</span>
+            </div>
+            <p class="text-gray-600 text-sm mb-4">参与海龟保护工作，学习海洋生物保护知识，为海洋生态保护贡献力量。</p>
+            <button onclick="openRegisterModal('海龟保护行动', 'wildlife')" class="w-full py-3 gradient-eco text-white rounded-xl font-medium hover:opacity-90 transition">
+              立即报名
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="bg-gradient-to-r from-green-600 to-emerald-600 rounded-3xl p-8 md:p-12 text-white">
+      <h2 class="text-3xl font-bold mb-8 text-center">参与活动的收获</h2>
+      <div class="grid md:grid-cols-4 gap-6">
+        <div class="text-center">
+          <div class="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center text-4xl">🌍</div>
+          <h3 class="font-bold mb-2">环保贡献</h3>
+          <p class="text-sm opacity-80">为环境保护贡献实际力量</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center text-4xl">👥</div>
+          <h3 class="font-bold mb-2">结识志友</h3>
+          <p class="text-sm opacity-80">认识更多环保爱好者</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center text-4xl">📚</div>
+          <h3 class="font-bold mb-2">知识学习</h3>
+          <p class="text-sm opacity-80">了解环保知识和技能</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full flex items-center justify-center text-4xl">🎖️</div>
+          <h3 class="font-bold mb-2">荣誉证书</h3>
+          <p class="text-sm opacity-80">获得志愿者服务证明</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Past Activities Gallery -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-4">往期活动回顾</h2>
+      <p class="text-gray-600">记录每一次有意义的环保行动</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-gray-200 rounded-xl h-48 flex items-center justify-center text-4xl">📷</div>
+      <div class="bg-gray-200 rounded-xl h-48 flex items-center justify-center text-4xl">📷</div>
+      <div class="bg-gray-200 rounded-xl h-48 flex items-center justify-center text-4xl">📷</div>
+      <div class="bg-gray-200 rounded-xl h-48 flex items-center justify-center text-4xl">📷</div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="bg-white rounded-3xl p-8 shadow-lg border border-green-100 text-center">
+      <div class="text-6xl mb-6">🤝</div>
+      <h2 class="text-3xl font-bold text-gray-800 mb-4">准备好加入了么？</h2>
+      <p class="text-gray-600 max-w-xl mx-auto mb-8">每一次参与都是改变的开始。加入我们，一起为守护地球贡献力量。</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="carbon-calculator.html" class="px-8 py-4 gradient-eco text-white rounded-full font-bold hover:opacity-90 transition">
+          📊 计算碳足迹
+        </a>
+        <a href="tips.html" class="px-8 py-4 bg-gray-100 text-gray-700 rounded-full font-bold hover:bg-gray-200 transition">
+          💡 学习环保技巧
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-2xl">🧭</span>
+            <span class="text-xl font-bold">游导旅游</span>
+          </div>
+          <p class="text-gray-400 text-sm">您的贴心旅行助手，让每一次出行都轻松愉快。</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">环保服务</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="tips.html" class="hover:text-white transition">环保技巧</a></li>
+            <li><a href="destinations.html" class="hover:text-white transition">环保目的地</a></li>
+            <li><a href="carbon-calculator.html" class="hover:text-white transition">碳足迹计算</a></li>
+            <li><a href="activities.html" class="hover:text-white transition">环保活动</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">联系我们</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>📧 eco@youdao-travel.com</li>
+            <li>📞 13631149834</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
+        <p>&copy; 2024 游导旅游 youdao-travel.com | 环保旅行，从我做起</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Registration Modal -->
+  <div id="registerModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div class="p-8">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-2xl font-bold text-gray-800">📝 活动报名</h2>
+          <button onclick="closeRegisterModal()" class="text-gray-400 hover:text-gray-600 text-2xl">&times;</button>
+        </div>
+        <div id="activityInfo" class="bg-green-50 rounded-xl p-4 mb-6">
+          <h3 id="modalActivityName" class="font-bold text-gray-800 mb-2"></h3>
+          <p class="text-sm text-gray-600">请填写以下信息完成报名</p>
+        </div>
+        <form id="registerForm" onsubmit="submitRegistration(event)">
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">姓名 *</label>
+              <input type="text" id="regName" required placeholder="请输入您的姓名" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">手机号码 *</label>
+              <input type="tel" id="regPhone" required placeholder="请输入手机号码" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">电子邮箱</label>
+              <input type="email" id="regEmail" placeholder="请输入电子邮箱（选填）" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">报名人数 *</label>
+              <input type="number" id="regCount" required value="1" min="1" max="10" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">备注</label>
+              <textarea id="regNote" rows="3" placeholder="有什么想说的吗？（选填）" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none resize-none"></textarea>
+            </div>
+          </div>
+          <div class="mt-6">
+            <label class="flex items-start gap-3">
+              <input type="checkbox" required class="mt-1 w-5 h-5 text-primary rounded focus:ring-primary">
+              <span class="text-sm text-gray-600">我已阅读并同意《环保活动参与协议》和《个人信息保护政策》</span>
+            </label>
+          </div>
+          <button type="submit" class="w-full mt-6 py-4 gradient-eco text-white rounded-xl font-bold hover:opacity-90 transition">
+            ✅ 确认报名
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Toast -->
+  <div id="successToast" class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded-full shadow-lg hidden items-center gap-2 z-50">
+    <span>✨</span>
+    <span id="toastMessage">报名成功！</span>
+  </div>
+
+  <script>
+    let currentActivity = '';
+    let currentCategory = '';
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    function filterActivities(category) {
+      // Update filter buttons
+      document.querySelectorAll('.activity-filter').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-gray-700');
+      });
+      document.querySelector(`[data-filter="${category}"]`).classList.remove('bg-gray-100', 'text-gray-700');
+      document.querySelector(`[data-filter="${category}"]`).classList.add('bg-primary', 'text-white');
+
+      // Show/hide sections
+      const sections = ['beach', 'tree', 'wildlife'];
+      sections.forEach(s => {
+        const el = document.getElementById(s + '-section');
+        if (category === 'all') {
+          el.classList.remove('hidden');
+        } else {
+          el.classList.add('hidden');
+          if (s === category) {
+            el.classList.remove('hidden');
+          }
+        }
+      });
+    }
+
+    function openRegisterModal(activityName, category) {
+      currentActivity = activityName;
+      currentCategory = category;
+      document.getElementById('modalActivityName').textContent = activityName;
+      document.getElementById('registerModal').classList.remove('hidden');
+      document.getElementById('registerModal').classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeRegisterModal() {
+      document.getElementById('registerModal').classList.add('hidden');
+      document.getElementById('registerModal').classList.remove('flex');
+      document.body.style.overflow = 'auto';
+      document.getElementById('registerForm').reset();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('successToast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.classList.remove('hidden');
+      toast.classList.add('flex');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+        toast.classList.remove('flex');
+      }, 3000);
+    }
+
+    function submitRegistration(e) {
+      e.preventDefault();
+      
+      const registration = {
+        activity: currentActivity,
+        category: currentCategory,
+        name: document.getElementById('regName').value,
+        phone: document.getElementById('regPhone').value,
+        email: document.getElementById('regEmail').value,
+        count: document.getElementById('regCount').value,
+        note: document.getElementById('regNote').value,
+        date: new Date().toISOString()
+      };
+
+      // Save to localStorage
+      const registrations = JSON.parse(localStorage.getItem('ecoRegistrations') || '[]');
+      registrations.push(registration);
+      localStorage.setItem('ecoRegistrations', JSON.stringify(registrations));
+
+      closeRegisterModal();
+      showToast('报名成功！我们会尽快与您联系。');
+    }
+
+    // Close modal on outside click
+    document.getElementById('registerModal').addEventListener('click', function(e) {
+      if (e.target === this) closeRegisterModal();
+    });
+
+    // Initialize filter buttons
+    document.querySelector('[data-filter="all"]').classList.add('bg-primary', 'text-white');
+  </script>
+</body>
+</html>

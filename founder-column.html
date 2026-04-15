@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>创始人专栏 - 游导旅游</title>
+  <meta name="description" content="游导旅游创始人旅行心得、独家攻略与个人故事，探索旅行的真正意义。">
+  <link rel="canonical" href="https://youdao-travel.com/founder-column.html">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/trust.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <style>
+    /* 创始人专栏专属样式 */
+    .founder-hero {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 80px 0;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    .founder-hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></svg>');
+      background-size: 200px;
+      opacity: 0.5;
+    }
+    .founder-hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .founder-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      position: relative;
+    }
+    .founder-profile {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+      position: relative;
+    }
+    .founder-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      border: 3px solid rgba(255,255,255,0.3);
+    }
+    .founder-info h3 {
+      font-size: 1.3rem;
+      margin-bottom: 4px;
+    }
+    .founder-info p {
+      font-size: 0.95rem;
+      opacity: 0.85;
+    }
+    .founder-intro {
+      background: white;
+      padding: 60px 0;
+    }
+    .intro-quote {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 40px;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      border-radius: 20px;
+      position: relative;
+    }
+    .intro-quote::before {
+      content: '"';
+      font-size: 6rem;
+      color: var(--primary);
+      opacity: 0.2;
+      position: absolute;
+      top: -10px;
+      left: 20px;
+      font-family: serif;
+    }
+    .intro-quote p {
+      font-size: 1.25rem;
+      line-height: 1.8;
+      color: var(--gray-700);
+      font-style: italic;
+    }
+    .column-tabs {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    .column-tab {
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: none;
+      background: var(--gray-100);
+      color: var(--gray-700);
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .column-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+    .column-tab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79,134,247,0.3);
+    }
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 30px;
+    }
+    .article-card {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: all 0.3s;
+    }
+    .article-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+    .article-image {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .article-tag {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      background: var(--primary);
+      color: white;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+    }
+    .article-content {
+      padding: 24px;
+    }
+    .article-title {
+      font-size: 1.2rem;
+      margin-bottom: 12px;
+      color: var(--gray-900);
+      line-height: 1.5;
+    }
+    .article-excerpt {
+      color: var(--gray-600);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .article-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--gray-500);
+      font-size: 0.85rem;
+    }
+    .featured-article {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin-bottom: 60px;
+    }
+    .featured-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .featured-image {
+      height: 400px;
+      background-size: cover;
+      background-position: center;
+    }
+    .featured-text {
+      padding: 50px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .featured-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      margin-bottom: 16px;
+      width: fit-content;
+    }
+    .featured-title {
+      font-size: 1.8rem;
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+    .featured-excerpt {
+      color: var(--gray-600);
+      line-height: 1.8;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 768px) {
+      .featured-content {
+        grid-template-columns: 1fr;
+      }
+      .featured-image {
+        height: 250px;
+      }
+      .featured-text {
+        padding: 30px;
+      }
+      .founder-hero {
+        padding: 50px 20px;
+      }
+      .founder-hero h1 {
+        font-size: 1.8rem;
+      }
+      .articles-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <nav class="navbar" aria-label="主导航">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单"><span></span></div>
+      <div class="nav-links">
+        <a href="index.html">🏠 首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="routes.html">🗺️ 线路</a>
+        <a href="visa.html">📋 签证</a>
+        <a href="promotions.html">🎁 活动</a>
+        <a href="founder-column.html" class="active">✍️ 创始人专栏</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content" role="main">
+    <!-- 创始人介绍区 -->
+    <section class="founder-hero">
+      <div class="container">
+        <h1>✍️ 创始人专栏</h1>
+        <p>分享旅行的感悟，记录探索的故事</p>
+        <div class="founder-profile">
+          <div class="founder-avatar">👨‍💼</div>
+          <div class="founder-info">
+            <h3>陈明远</h3>
+            <p>游导旅游创始人 · 资深旅行家</p>
+            <p>走过47个国家，始终相信旅行是最好的投资</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 引言 -->
+    <section class="founder-intro">
+      <div class="container">
+        <div class="intro-quote">
+          <p>旅行不是为了赶路，而是为了感受路。每一个目的地都有它独特的故事，等待着有心人去发现。我创建游导旅游，就是想让更多人体验到这种深度旅行的乐趣，而不仅仅是打卡拍照。</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 精选文章 -->
+    <section class="section-block" style="background: var(--gray-50);">
+      <div class="container">
+        <h2 style="text-align: center; font-size: 1.8rem; margin-bottom: 30px;">📖 精选阅读</h2>
+        
+        <!-- 分类标签 -->
+        <div class="column-tabs">
+          <button class="column-tab active">全部文章</button>
+          <button class="column-tab">旅行心得</button>
+          <button class="column-tab">独家攻略</button>
+          <button class="column-tab">目的地推荐</button>
+          <button class="column-tab">个人故事</button>
+        </div>
+
+        <!-- 置顶文章 -->
+        <div class="featured-article">
+          <div class="featured-content">
+            <div class="featured-image" style="background-image: url('https://images.unsplash.com/photo-1488085061387-422e29b40080?w=800');"></div>
+            <div class="featured-text">
+              <span class="featured-badge">🔥 置顶推荐</span>
+              <h2 class="featured-title">为什么我放弃了米其林，选择了街边的大排档</h2>
+              <p class="featured-excerpt">在巴塞罗那的那一周，我每天都在同一个街角的大排档吃饭。老板娘叫Maria，60多岁，手脚麻利，她的海鲜饭是我这辈子吃过最好吃的。不是因为味道，而是因为那份人情味...</p>
+              <a href="#" class="btn btn-primary" style="width: fit-content;">阅读全文</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- 文章列表 -->
+        <div class="articles-grid">
+          <!-- 文章1 -->
+          <article class="article-card">
+            <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600');">
+              <span class="article-tag">🇯🇵 日本</span>
+            </div>
+            <div class="article-content">
+              <h3 class="article-title">在日本乡下住了一周，我找到了旅行的意义</h3>
+              <p class="article-excerpt">德岛县的一个小村庄，没有游客，没有网红店，只有蝉鸣和溪流。老奶奶的民宿每天早上都会准备手工味噌汤...</p>
+              <div class="article-meta">
+                <span>📅 2024年4月15日</span>
+                <span>⏱️ 8分钟阅读</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 文章2 -->
+          <article class="article-card">
+            <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1523517774468-083114f9c9dc?w=600');">
+              <span class="article-tag">🇫🇷 法国</span>
+            </div>
+            <div class="article-content">
+              <h3 class="article-title">巴黎人不会告诉你的10个秘密</h3>
+              <p class="article-excerpt">住了三个月后，我终于明白为什么巴黎是全世界最浪漫的城市。那些藏在巷子深处的小酒馆，凌晨两点的塞纳河畔...</p>
+              <div class="article-meta">
+                <span>📅 2024年4月10日</span>
+                <span>⏱️ 12分钟阅读</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 文章3 -->
+          <article class="article-card">
+            <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600');">
+              <span class="article-tag">🏔️ 尼泊尔</span>
+            </div>
+            <div class="article-content">
+              <h3 class="article-title">在珠峰大本营，我哭得像个孩子</h3>
+              <p class="article-excerpt">海拔5200米，每一步都是煎熬。但当你站在世界之巅的脚下，那种渺小感会让你重新审视自己的人生...</p>
+              <div class="article-meta">
+                <span>📅 2024年3月28日</span>
+                <span>⏱️ 15分钟阅读</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 文章4 -->
+          <article class="article-card">
+            <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b?w=600');">
+              <span class="article-tag">🌊 马尔代夫</span>
+            </div>
+            <div class="article-content">
+              <h3 class="article-title">有钱人为什么都爱去马尔代夫？</h3>
+              <p class="article-excerpt">不是为了炫耀，而是为了逃离。在这里，手机没有信号，会议无法参加，你只能面对大海和自己...</p>
+              <div class="article-meta">
+                <span>📅 2024年3月20日</span>
+                <span>⏱️ 10分钟阅读</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 文章5 -->
+          <article class="article-card">
+            <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600');">
+              <span class="article-tag">🍷 意大利</span>
+            </div>
+            <div class="article-content">
+              <h3 class="article-title">托斯卡纳的夕阳：一个创业者的心灵之旅</h3>
+              <p class="article-excerpt">在决定创业还是安稳工作的十字路口，我选择了去意大利找答案。葡萄园里的老爷爷教会了我...</p>
+              <div class="article-meta">
+                <span>📅 2024年3月15日</span>
+                <span>⏱️ 18分钟阅读</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- 文章6 -->
+          <article class="article-card">
+            <div class="article-image" style="background-image: url('https://images.unsplash.com/photo-1530789253388-582c481c54b0?w=600');">
+              <span class="article-tag">🌏 东南亚</span>
+            </div>
+            <div class="article-content">
+              <h3 class="article-title">背包客的终极目的地：老挝琅勃拉邦</h3>
+              <p class="article-excerpt">没有WiFi，没有热水澡，但有清晨的布施仪式和深夜的啤酒LAO。这是东南亚最被低估的目的地...</p>
+              <div class="article-meta">
+                <span>📅 2024年3月5日</span>
+                <span>⏱️ 11分钟阅读</span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- 加载更多 -->
+        <div style="text-align: center; margin-top: 40px;">
+          <button class="btn" style="background: var(--primary); color: white; padding: 14px 40px; border: none; border-radius: 25px; font-size: 1rem;">
+            加载更多文章 ↓
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 目的地推荐 -->
+    <section class="section-block" style="background: white;">
+      <div class="container">
+        <h2 style="text-align: center; font-size: 1.8rem; margin-bottom: 40px;">🌟 创始人私藏目的地</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+          <div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); padding: 30px; border-radius: 16px; color: #333;">
+            <div style="font-size: 2.5rem; margin-bottom: 16px;">🇯🇵</div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 8px;">日本 · 濑户内海</h3>
+            <p style="font-size: 0.95rem; line-height: 1.6;">艺术与大海的结合，每三年一次的濑户内艺术祭，让这片海域成为文艺青年的朝圣地。</p>
+          </div>
+          <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); padding: 30px; border-radius: 16px; color: #333;">
+            <div style="font-size: 2.5rem; margin-bottom: 16px;">🇵🇹</div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 8px;">葡萄牙 · 亚速尔群岛</h3>
+            <p style="font-size: 0.95rem; line-height: 1.6;">欧洲最偏远的天堂，九座火山岛组成的群岛，美国《国家地理》评为最值得去的地方。</p>
+          </div>
+          <div style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); padding: 30px; border-radius: 16px; color: #333;">
+            <div style="font-size: 2.5rem; margin-bottom: 16px;">🇳🇴</div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 8px;">挪威 · 罗弗敦群岛</h3>
+            <p style="font-size: 0.95rem; line-height: 1.6;">极光、峡湾、渔村，这里有世界上最美的冬日风景，也是《孤独星球》年度最佳旅行地。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 订阅区域 -->
+    <section style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 60px 0; text-align: center; color: white;">
+      <div class="container">
+        <h2 style="font-size: 1.8rem; margin-bottom: 12px;">📬 订阅创始人专栏</h2>
+        <p style="opacity: 0.9; margin-bottom: 30px;">第一时间获取独家旅行见解与最新文章</p>
+        <form style="display: flex; gap: 12px; max-width: 500px; margin: 0 auto; flex-wrap: wrap; justify-content: center;">
+          <input type="email" placeholder="请输入您的邮箱" style="flex: 1; min-width: 250px; padding: 14px 20px; border: none; border-radius: 25px; font-size: 1rem;">
+          <button type="submit" style="background: white; color: #667eea; padding: 14px 32px; border: none; border-radius: 25px; font-weight: 600; cursor: pointer;">订阅</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer-new">
+    <div class="container">
+      <div class="footer-main-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="footer-logo">🌍 游导旅游</a>
+          <p class="footer-brand-desc">专业的导游预约平台</p>
+        </div>
+        <div class="footer-links-group">
+          <h4>游客服务</h4>
+          <a href="guides.html">找导游</a>
+          <a href="visa.html">签证中心</a>
+          <a href="routes.html">精品线路</a>
+          <a href="founder-column.html">创始人专栏</a>
+        </div>
+        <div class="footer-links-group">
+          <h4>帮助中心</h4>
+          <a href="help.html">帮助中心</a>
+          <a href="faq.html">常见问题</a>
+          <a href="contact.html">联系我们</a>
+          <a href="about.html">关于我们</a>
+        </div>
+        <div class="footer-contact">
+          <h4>联系我们</h4>
+          <div class="contact-item">
+            <span>📧</span>
+            <span>service@youdao-travel.com</span>
+          </div>
+          <div class="contact-item">
+            <span>💬</span>
+            <span>微信：ximao101</span>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom-new">
+        <p class="footer-copyright">© 2024 游导旅游</p>
+        <div class="footer-legal-links">
+          <a href="user-agreement.html">用户协议</a>
+          <a href="privacy.html">隐私政策</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/theme.js"></script>
+</body>
+</html>

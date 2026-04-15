@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>上传视频 - 游导旅游</title>
+  <meta name="description" content="上传分享你的旅行视频，与更多旅行者分享精彩旅程">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <style>
+    /* 页面布局 */
+    .upload-page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    /* 页面标题 */
+    .page-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .page-header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      color: #6b7280;
+      font-size: 1rem;
+    }
+    
+    /* 上传卡片 */
+    .upload-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    
+    /* 上传区域 */
+    .upload-zone {
+      border: 2px dashed #e5e7eb;
+      border-radius: 16px;
+      padding: 60px 40px;
+      text-align: center;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      background: #fafafa;
+    }
+    .upload-zone:hover {
+      border-color: #0ea5e9;
+      background: #f0f9ff;
+    }
+    .upload-zone.dragover {
+      border-color: #0ea5e9;
+      background: #f0f9ff;
+      transform: scale(1.02);
+    }
+    .upload-zone.has-file {
+      border-style: solid;
+      border-color: #22c55e;
+      background: #f0fdf4;
+    }
+    .upload-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    .upload-zone h3 {
+      font-size: 1.25rem;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    .upload-zone p {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+    }
+    .upload-btn {
+      display: inline-block;
+      padding: 12px 32px;
+      background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+      color: #fff;
+      border-radius: 30px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .upload-btn:hover {
+      transform: scale(1.05);
+    }
+    .upload-hint {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 12px;
+    }
+    
+    /* 已上传文件预览 */
+    .file-preview {
+      display: none;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      margin-top: 20px;
+      border: 1px solid #e5e7eb;
+    }
+    .file-preview.show {
+      display: flex;
+    }
+    .preview-thumb {
+      width: 160px;
+      height: 90px;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 2rem;
+    }
+    .preview-info {
+      flex: 1;
+    }
+    .preview-name {
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 8px;
+    }
+    .preview-meta {
+      font-size: 0.85rem;
+      color: #6b7280;
+      display: flex;
+      gap: 16px;
+    }
+    .preview-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .remove-btn {
+      padding: 8px 16px;
+      background: #fef2f2;
+      color: #ef4444;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    
+    /* 表单样式 */
+    .form-section {
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .form-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 20px;
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-label {
+      display: block;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+    .form-label .required {
+      color: #ef4444;
+    }
+    .form-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: border-color 0.2s ease;
+    }
+    .form-input:focus {
+      outline: none;
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+    }
+    .form-textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .form-hint {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 6px;
+    }
+    
+    /* 分类选择 */
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 600px) {
+      .category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .category-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .category-option:hover {
+      border-color: #0ea5e9;
+      background: #f0f9ff;
+    }
+    .category-option.selected {
+      border-color: #0ea5e9;
+      background: #f0f9ff;
+    }
+    .category-option input {
+      display: none;
+    }
+    .category-check {
+      width: 22px;
+      height: 22px;
+      border: 2px solid #e5e7eb;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .category-option.selected .category-check {
+      background: #0ea5e9;
+      border-color: #0ea5e9;
+      color: #fff;
+    }
+    .category-icon {
+      font-size: 1.5rem;
+    }
+    .category-info {
+      flex: 1;
+    }
+    .category-name {
+      font-weight: 500;
+      color: #1f2937;
+      font-size: 0.95rem;
+    }
+    .category-count {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    
+    /* 目的地选择 */
+    .destination-select {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    @media (max-width: 700px) {
+      .destination-select {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .dest-option {
+      padding: 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+    .dest-option:hover {
+      border-color: #0ea5e9;
+    }
+    .dest-option.selected {
+      border-color: #0ea5e9;
+      background: #f0f9ff;
+      color: #0ea5e9;
+    }
+    .dest-option .flag {
+      font-size: 1.5rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+    
+    /* 标签输入 */
+    .tag-input-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      min-height: 50px;
+      align-items: center;
+    }
+    .tag-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 6px 12px;
+      background: #f3f4f6;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      color: #4b5563;
+    }
+    .tag-item .remove-tag {
+      cursor: pointer;
+      color: #9ca3af;
+    }
+    .tag-item .remove-tag:hover {
+      color: #ef4444;
+    }
+    .tag-input {
+      flex: 1;
+      min-width: 100px;
+      border: none;
+      outline: none;
+      font-size: 0.9rem;
+    }
+    
+    /* 协议 */
+    .agreement-section {
+      margin-top: 24px;
+      padding: 20px;
+      background: #f9fafb;
+      border-radius: 12px;
+    }
+    .agreement-checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      cursor: pointer;
+    }
+    .agreement-checkbox input {
+      margin-top: 4px;
+    }
+    .agreement-checkbox label {
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+    .agreement-checkbox a {
+      color: #0ea5e9;
+      text-decoration: none;
+    }
+    
+    /* 提交按钮 */
+    .submit-section {
+      margin-top: 32px;
+      display: flex;
+      gap: 16px;
+    }
+    .submit-btn {
+      flex: 1;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+    }
+    .submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .draft-btn {
+      padding: 16px 32px;
+      background: #fff;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      color: #4b5563;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .draft-btn:hover {
+      border-color: #0ea5e9;
+      color: #0ea5e9;
+    }
+    
+    /* 进度提示 */
+    .upload-progress {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+    }
+    .upload-progress.show {
+      display: block;
+    }
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .progress-status {
+      font-weight: 500;
+      color: #1f2937;
+    }
+    .progress-percent {
+      color: #0ea5e9;
+      font-weight: 600;
+    }
+    .progress-bar-container {
+      height: 8px;
+      background: #e5e7eb;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0ea5e9, #8b5cf6);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+  </style>
+</head>
+<body style="background: #f9fafb;">
+  <!-- 导航 -->
+  <header style="background: #fff; border-bottom: 1px solid #e5e7eb; padding: 12px 20px;">
+    <div style="max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between;">
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <a href="index.html" style="display: flex; align-items: center; gap: 8px; text-decoration: none; color: #1f2937;">
+          <span style="font-size: 1.5rem;">🧭</span>
+          <span style="font-weight: 600;">游导旅游</span>
+        </a>
+        <span style="color: #d1d5db;">/</span>
+        <a href="index.html" style="color: #6b7280; text-decoration: none;">视频</a>
+        <span style="color: #d1d5db;">/</span>
+        <span style="color: #1f2937;">上传视频</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主内容 -->
+  <main class="upload-page">
+    <div class="page-header">
+      <h1>📹 上传视频</h1>
+      <p>分享你的旅行精彩瞬间，让更多人感受旅途的魅力</p>
+    </div>
+
+    <div class="upload-card">
+      <!-- 上传区域 -->
+      <div class="upload-zone" id="uploadZone">
+        <div class="upload-icon">🎬</div>
+        <h3>拖拽视频文件到此处</h3>
+        <p>或点击下方按钮选择文件</p>
+        <span class="upload-btn" onclick="document.getElementById('fileInput').click()">选择视频文件</span>
+        <input type="file" id="fileInput" accept="video/*" style="display: none;" onchange="handleFileSelect(this)">
+        <p class="upload-hint">支持 MP4、MOV、AVI 格式，最大 2GB</p>
+      </div>
+
+      <!-- 文件预览 -->
+      <div class="file-preview" id="filePreview">
+        <div class="preview-thumb">🎬</div>
+        <div class="preview-info">
+          <div class="preview-name" id="fileName">tokyo-travel.mp4</div>
+          <div class="preview-meta">
+            <span>时长: 15:32</span>
+            <span>大小: 256 MB</span>
+          </div>
+        </div>
+        <div class="preview-actions">
+          <button class="remove-btn" onclick="removeFile()">🗑 删除</button>
+        </div>
+      </div>
+
+      <!-- 上传进度 -->
+      <div class="upload-progress" id="uploadProgress">
+        <div class="progress-header">
+          <span class="progress-status">正在上传...</span>
+          <span class="progress-percent" id="progressPercent">0%</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+      </div>
+
+      <!-- 视频信息 -->
+      <div class="form-section">
+        <h3 class="form-title">📝 视频信息</h3>
+        
+        <div class="form-group">
+          <label class="form-label">视频标题 <span class="required">*</span></label>
+          <input type="text" class="form-input" placeholder="给你的视频起个吸引人的标题" maxlength="60" id="videoTitle">
+          <p class="form-hint">建议包含目的地名称和视频亮点，30-50字最佳</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">视频描述 <span class="required">*</span></label>
+          <textarea class="form-input form-textarea" placeholder="介绍视频内容、亮点、实用信息等..." id="videoDesc"></textarea>
+          <p class="form-hint">详细的描述能让更多人对你的视频产生兴趣</p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">视频封面</label>
+          <div style="display: flex; gap: 16px; align-items: flex-start;">
+            <div style="width: 200px; height: 112px; background: #f3f4f6; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #9ca3af; font-size: 3rem; cursor: pointer;" onclick="alert('封面上传功能')">
+              🖼
+            </div>
+            <div style="flex: 1;">
+              <p style="font-size: 0.9rem; color: #6b7280; margin-bottom: 8px;">上传封面图片，建议尺寸 1280×720</p>
+              <span class="upload-btn" style="padding: 8px 20px; font-size: 0.85rem;" onclick="alert('封面上传功能')">选择封面</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 分类选择 -->
+      <div class="form-section">
+        <h3 class="form-title">🏷 分类标签</h3>
+        
+        <div class="form-group">
+          <label class="form-label">视频分类 <span class="required">*</span></label>
+          <div class="category-grid">
+            <label class="category-option" data-value="guide">
+              <input type="radio" name="category" value="guide">
+              <span class="category-check">✓</span>
+              <span class="category-icon">📝</span>
+              <div class="category-info">
+                <span class="category-name">旅行攻略</span>
+                <span class="category-count">234个视频</span>
+              </div>
+            </label>
+            <label class="category-option" data-value="food">
+              <input type="radio" name="category" value="food">
+              <span class="category-check">✓</span>
+              <span class="category-icon">🍜</span>
+              <div class="category-info">
+                <span class="category-name">美食探店</span>
+                <span class="category-count">189个视频</span>
+              </div>
+            </label>
+            <label class="category-option" data-value="culture">
+              <input type="radio" name="category" value="culture">
+              <span class="category-check">✓</span>
+              <span class="category-icon">🎭</span>
+              <div class="category-info">
+                <span class="category-name">文化体验</span>
+                <span class="category-count">145个视频</span>
+              </div>
+            </label>
+            <label class="category-option" data-value="scenery">
+              <input type="radio" name="category" value="scenery">
+              <span class="category-check">✓</span>
+              <span class="category-icon">📹</span>
+              <div class="category-info">
+                <span class="category-name">航拍风光</span>
+                <span class="category-count">98个视频</span>
+              </div>
+            </label>
+            <label class="category-option" data-value="vlog">
+              <input type="radio" name="category" value="vlog">
+              <span class="category-check">✓</span>
+              <span class="category-icon">🎒</span>
+              <div class="category-info">
+                <span class="category-name">旅行Vlog</span>
+                <span class="category-count">312个视频</span>
+              </div>
+            </label>
+            <label class="category-option" data-value="destination">
+              <input type="radio" name="category" value="destination">
+              <span class="category-check">✓</span>
+              <span class="category-icon">🌍</span>
+              <div class="category-info">
+                <span class="category-name">目的地介绍</span>
+                <span class="category-count">156个视频</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">目的地</label>
+          <div class="destination-select">
+            <div class="dest-option" data-value="japan"><span class="flag">🗾</span>日本</div>
+            <div class="dest-option" data-value="korea"><span class="flag">🇰🇷</span>韩国</div>
+            <div class="dest-option" data-value="thailand"><span class="flag">🇹🇭</span>泰国</div>
+            <div class="dest-option" data-value="singapore"><span class="flag">🇸🇬</span>新加坡</div>
+            <div class="dest-option" data-value="vietnam"><span class="flag">🇻🇳</span>越南</div>
+            <div class="dest-option" data-value="malaysia"><span class="flag">🇲🇾</span>马来西亚</div>
+            <div class="dest-option" data-value="indonesia"><span class="flag">🇮🇩</span>印尼</div>
+            <div class="dest-option" data-value="philippines"><span class="flag">🇵🇭</span>菲律宾</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">视频标签</label>
+          <div class="tag-input-wrapper" id="tagWrapper">
+            <input type="text" class="tag-input" placeholder="输入标签后按回车添加" id="tagInput">
+          </div>
+          <p class="form-hint">最多添加5个标签，使用标签能让更多人找到你的视频</p>
+        </div>
+      </div>
+
+      <!-- 协议 -->
+      <div class="agreement-section">
+        <label class="agreement-checkbox">
+          <input type="checkbox" id="agreeTerms">
+          <span>我已阅读并同意<a href="#">《视频上传协议》</a>和<a href="#">《社区规范》</a>，确认上传的内容不侵犯他人权益</span>
+        </label>
+      </div>
+
+      <!-- 提交按钮 -->
+      <div class="submit-section">
+        <button class="draft-btn">📁 保存草稿</button>
+        <button class="submit-btn" id="submitBtn" onclick="submitVideo()" disabled>🚀 发布视频</button>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer style="background: #1f2937; color: #fff; padding: 32px 20px; margin-top: 40px;">
+    <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+      <p style="font-size: 0.85rem; color: #9ca3af;">© 2024 游导旅游 youdao-travel.com 版权所有</p>
+    </div>
+  </footer>
+
+  <script>
+    // 文件拖拽
+    const uploadZone = document.getElementById('uploadZone');
+    
+    uploadZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadZone.classList.add('dragover');
+    });
+    
+    uploadZone.addEventListener('dragleave', () => {
+      uploadZone.classList.remove('dragover');
+    });
+    
+    uploadZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        handleFile(files[0]);
+      }
+    });
+
+    // 处理文件选择
+    function handleFileSelect(input) {
+      if (input.files.length > 0) {
+        handleFile(input.files[0]);
+      }
+    }
+
+    function handleFile(file) {
+      if (!file.type.startsWith('video/')) {
+        alert('请上传视频文件');
+        return;
+      }
+      
+      const maxSize = 2 * 1024 * 1024 * 1024; // 2GB
+      if (file.size > maxSize) {
+        alert('视频文件大小不能超过 2GB');
+        return;
+      }
+      
+      // 显示预览
+      document.getElementById('fileName').textContent = file.name;
+      document.getElementById('filePreview').classList.add('show');
+      uploadZone.classList.add('has-file');
+      
+      // 启用提交按钮
+      checkFormValid();
+    }
+
+    function removeFile() {
+      document.getElementById('fileInput').value = '';
+      document.getElementById('filePreview').classList.remove('show');
+      uploadZone.classList.remove('has-file');
+      checkFormValid();
+    }
+
+    // 分类选择
+    document.querySelectorAll('.category-option').forEach(option => {
+      option.addEventListener('click', function() {
+        document.querySelectorAll('.category-option').forEach(o => o.classList.remove('selected'));
+        this.classList.add('selected');
+        this.querySelector('input').checked = true;
+        checkFormValid();
+      });
+    });
+
+    // 目的地选择
+    document.querySelectorAll('.dest-option').forEach(option => {
+      option.addEventListener('click', function() {
+        this.classList.toggle('selected');
+      });
+    });
+
+    // 标签输入
+    const tagInput = document.getElementById('tagInput');
+    const tagWrapper = document.getElementById('tagWrapper');
+    let tags = [];
+
+    tagInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && tagInput.value.trim()) {
+        e.preventDefault();
+        if (tags.length < 5) {
+          addTag(tagInput.value.trim());
+          tagInput.value = '';
+        } else {
+          alert('最多只能添加5个标签');
+        }
+      }
+    });
+
+    function addTag(text) {
+      tags.push(text);
+      renderTags();
+    }
+
+    function removeTag(index) {
+      tags.splice(index, 1);
+      renderTags();
+    }
+
+    function renderTags() {
+      const tagItems = tags.map((tag, index) => 
+        `<span class="tag-item">${tag}<span class="remove-tag" onclick="removeTag(${index})">×</span></span>`
+      ).join('');
+      tagWrapper.innerHTML = tagItems + '<input type="text" class="tag-input" placeholder="输入标签后按回车添加" id="tagInput">';
+      
+      // 重新绑定事件
+      document.getElementById('tagInput').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+          e.preventDefault();
+          if (tags.length < 5) {
+            addTag(e.target.value.trim());
+            e.target.value = '';
+          }
+        }
+      });
+    }
+
+    // 表单验证
+    function checkFormValid() {
+      const hasFile = document.getElementById('filePreview').classList.contains('show');
+      const hasTitle = document.getElementById('videoTitle').value.trim().length > 0;
+      const hasCategory = document.querySelector('.category-option.selected') !== null;
+      const hasAgree = document.getElementById('agreeTerms').checked;
+      
+      document.getElementById('submitBtn').disabled = !(hasFile && hasTitle && hasCategory && hasAgree);
+    }
+
+    document.getElementById('videoTitle').addEventListener('input', checkFormValid);
+    document.getElementById('agreeTerms').addEventListener('change', checkFormValid);
+
+    // 提交视频
+    function submitVideo() {
+      const progress = document.getElementById('uploadProgress');
+      const progressBar = document.getElementById('progressBar');
+      const progressPercent = document.getElementById('progressPercent');
+      const submitBtn = document.getElementById('submitBtn');
+      
+      progress.classList.add('show');
+      submitBtn.disabled = true;
+      submitBtn.textContent = '上传中...';
+      
+      let percent = 0;
+      const interval = setInterval(() => {
+        percent += Math.random() * 15;
+        if (percent >= 100) {
+          percent = 100;
+          clearInterval(interval);
+          setTimeout(() => {
+            alert('视频上传成功！审核通过后即可展示。');
+            location.href = 'my-videos.html';
+          }, 500);
+        }
+        progressBar.style.width = percent + '%';
+        progressPercent.textContent = Math.round(percent) + '%';
+      }, 300);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,747 @@
+/**
+ * ===================================
+ * 专属加载动画样式
+ * 品牌Logo加载动画、进度条样式、骨架屏样式
+ * ===================================
+ */
+
+/* ===== 加载动画 CSS 变量 ===== */
+:root {
+  /* 品牌主题色 */
+  --loading-primary: #667eea;
+  --loading-secondary: #764ba2;
+  --loading-accent: #f093fb;
+  --loading-success: #10B981;
+  --loading-warning: #F59E0B;
+  
+  /* 加载动画尺寸 */
+  --loading-icon-size: 60px;
+  --loading-logo-size: 80px;
+  --loading-bar-height: 4px;
+  
+  /* 动画时长 */
+  --loading-duration-fast: 0.3s;
+  --loading-duration-normal: 0.6s;
+  --loading-duration-slow: 1s;
+}
+
+/* ===== 1. 全屏品牌Logo加载 ===== */
+.loading-splash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--loading-primary) 0%, var(--loading-secondary) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+  overflow: hidden;
+}
+
+.loading-splash.loading-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* 背景粒子效果 */
+.loading-splash::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 2px, transparent 2px);
+  background-size: 100px 100px, 150px 150px, 80px 80px;
+  animation: particleFloat 20s linear infinite;
+}
+
+@keyframes particleFloat {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100px); }
+}
+
+/* Logo容器 */
+.loading-logo-container {
+  position: relative;
+  margin-bottom: 40px;
+}
+
+/* Logo图标 */
+.loading-logo {
+  width: var(--loading-logo-size);
+  height: var(--loading-logo-size);
+  position: relative;
+  animation: logoFloat 2s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-10px) rotate(-3deg); }
+  75% { transform: translateY(-10px) rotate(3deg); }
+}
+
+/* Logo图标 - 指南针 */
+.loading-logo-icon {
+  font-size: var(--loading-logo-size);
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.2));
+  animation: logoIconPulse 2s ease-in-out infinite;
+}
+
+@keyframes logoIconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Logo光芒效果 */
+.loading-logo-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  animation: logoGlow 2s ease-in-out infinite;
+}
+
+@keyframes logoGlow {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+/* Logo文字 */
+.loading-logo-text {
+  font-size: 2rem;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+  letter-spacing: 4px;
+  opacity: 0;
+  animation: textFadeIn 0.8s ease forwards 0.3s;
+}
+
+@keyframes textFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== 2. 进度条样式 ===== */
+.loading-progress-wrapper {
+  width: 280px;
+  margin-top: 30px;
+}
+
+.loading-progress-text {
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.loading-progress-percentage {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.loading-progress-bar {
+  width: 100%;
+  height: var(--loading-bar-height);
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loading-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #fff, rgba(255, 255, 255, 0.8));
+  border-radius: 10px;
+  position: relative;
+  transition: width 0.3s ease;
+  overflow: hidden;
+}
+
+/* 进度条闪烁效果 */
+.loading-progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: progressShine 1.5s ease-in-out infinite;
+}
+
+@keyframes progressShine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* 渐变进度条 */
+.loading-progress-gradient {
+  background: linear-gradient(
+    90deg,
+    var(--loading-primary) 0%,
+    var(--loading-accent) 50%,
+    var(--loading-secondary) 100%
+  );
+  background-size: 200% 100%;
+  animation: gradientMove 2s linear infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 200% 50%; }
+}
+
+/* ===== 3. 加载动画类型 ===== */
+
+/* 类型A: 圆点跳动 */
+.loading-dots {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.loading-dots span {
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+  animation: dotBounce 1.4s ease-in-out infinite;
+}
+
+.loading-dots span:nth-child(1) { animation-delay: 0s; }
+.loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+.loading-dots span:nth-child(4) { animation-delay: 0.6s; }
+.loading-dots span:nth-child(5) { animation-delay: 0.8s; }
+
+@keyframes dotBounce {
+  0%, 80%, 100% { 
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  40% { 
+    transform: scale(1.4);
+    opacity: 1;
+  }
+}
+
+/* 类型B: 旋转圆环 */
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-top: 25px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 渐变旋转 */
+.loading-spinner-gradient {
+  border: none;
+  background: conic-gradient(
+    from 0deg,
+    var(--loading-primary),
+    var(--loading-accent),
+    var(--loading-secondary),
+    var(--loading-primary)
+  );
+  animation: spinGradient 1.5s linear infinite;
+}
+
+@keyframes spinGradient {
+  to { transform: rotate(360deg); }
+}
+
+/* 类型C: 脉冲圆点 */
+.loading-pulse {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin-top: 25px;
+}
+
+.loading-pulse-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: white;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulseDot 1.5s ease-in-out infinite;
+}
+
+.loading-pulse-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulseRing 1.5s ease-in-out infinite;
+}
+
+.loading-pulse-ring:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+@keyframes pulseDot {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  50% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.5; }
+}
+
+@keyframes pulseRing {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(2); opacity: 0; }
+}
+
+/* 类型D: 打字效果 */
+.loading-typing {
+  margin-top: 25px;
+}
+
+.loading-typing-text {
+  color: white;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.loading-typing-text::after {
+  content: '';
+  width: 3px;
+  height: 20px;
+  background: white;
+  margin-left: 5px;
+  animation: typingCursor 0.8s ease-in-out infinite;
+}
+
+@keyframes typingCursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ===== 4. 骨架屏样式 ===== */
+.skeleton-screen {
+  padding: 20px;
+}
+
+/* 骨架容器 */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 25%,
+    #e8e8e8 50%,
+    #f0f0f0 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 骨架导航栏 */
+.skeleton-nav {
+  height: 60px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 20px;
+}
+
+.skeleton-nav-logo {
+  width: 100px;
+  height: 30px;
+}
+
+.skeleton-nav-links {
+  flex: 1;
+  display: flex;
+  gap: 20px;
+}
+
+.skeleton-nav-link {
+  width: 60px;
+  height: 20px;
+}
+
+/* 骨架轮播图 */
+.skeleton-hero {
+  height: 400px;
+  margin: 20px;
+  border-radius: 16px;
+}
+
+/* 骨架卡片 */
+.skeleton-card {
+  background: white;
+  border-radius: 16px;
+  padding: 20px;
+  margin: 10px 0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.skeleton-card-image {
+  width: 100%;
+  height: 180px;
+  border-radius: 12px;
+  margin-bottom: 15px;
+}
+
+.skeleton-card-title {
+  width: 70%;
+  height: 24px;
+  margin-bottom: 10px;
+}
+
+.skeleton-card-text {
+  width: 100%;
+  height: 14px;
+  margin-bottom: 8px;
+}
+
+.skeleton-card-text:last-child {
+  width: 60%;
+}
+
+.skeleton-card-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.skeleton-card-price {
+  width: 80px;
+  height: 20px;
+}
+
+.skeleton-card-btn {
+  width: 100px;
+  height: 36px;
+  border-radius: 18px;
+}
+
+/* 骨架列表 */
+.skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.skeleton-list-item {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 12px;
+}
+
+.skeleton-list-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.skeleton-list-content {
+  flex: 1;
+}
+
+.skeleton-list-name {
+  width: 120px;
+  height: 20px;
+  margin-bottom: 8px;
+}
+
+.skeleton-list-desc {
+  width: 100%;
+  height: 14px;
+  margin-bottom: 5px;
+}
+
+.skeleton-list-desc:last-child {
+  width: 70%;
+}
+
+/* 骨架按钮 */
+.skeleton-button {
+  width: 150px;
+  height: 44px;
+  border-radius: 22px;
+  margin: 20px auto;
+  display: block;
+}
+
+/* ===== 5. 品牌主题骨架屏 ===== */
+.skeleton-brand {
+  background: linear-gradient(135deg, var(--loading-primary) 0%, var(--loading-secondary) 100%);
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.skeleton-brand-nav {
+  height: 60px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin-bottom: 20px;
+}
+
+.skeleton-brand-hero {
+  height: 300px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  margin-bottom: 20px;
+  animation: skeletonPulse 2s ease-in-out infinite;
+}
+
+.skeleton-brand-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.skeleton-brand-card-image {
+  height: 150px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.05) 25%,
+    rgba(0, 0, 0, 0.1) 50%,
+    rgba(0, 0, 0, 0.05) 75%
+  );
+  border-radius: 12px;
+  margin-bottom: 15px;
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* ===== 6. 加载提示文字 ===== */
+.loading-hint {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.85rem;
+  margin-top: 30px;
+  text-align: center;
+  animation: hintFade 2s ease-in-out infinite;
+}
+
+@keyframes hintFade {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* ===== 7. 按钮加载状态 ===== */
+.btn-loading {
+  position: relative;
+  pointer-events: none;
+  color: transparent !important;
+}
+
+.btn-loading::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  opacity: 0.8;
+}
+
+/* 按钮内加载 */
+.btn .btn-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-right: 8px;
+}
+
+/* ===== 8. 卡片加载占位 ===== */
+.card-skeleton {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.card-skeleton-image {
+  height: 200px;
+  position: relative;
+  overflow: hidden;
+}
+
+.card-skeleton-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  animation: skeleton 1.5s ease-in-out infinite;
+}
+
+.card-skeleton-body {
+  padding: 20px;
+}
+
+.card-skeleton-title {
+  height: 24px;
+  width: 80%;
+  margin-bottom: 12px;
+}
+
+.card-skeleton-text {
+  height: 14px;
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.card-skeleton-text:last-child {
+  width: 60%;
+}
+
+.card-skeleton-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.card-skeleton-price {
+  height: 28px;
+  width: 100px;
+}
+
+.card-skeleton-btn {
+  height: 36px;
+  width: 120px;
+  border-radius: 18px;
+}
+
+/* ===== 9. 渐入效果 ===== */
+.page-loading-fade-in {
+  animation: pageFadeIn 0.6s ease forwards;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 延迟加载 */
+.fade-in-delay-1 { animation-delay: 0.1s; opacity: 0; }
+.fade-in-delay-2 { animation-delay: 0.2s; opacity: 0; }
+.fade-in-delay-3 { animation-delay: 0.3s; opacity: 0; }
+.fade-in-delay-4 { animation-delay: 0.4s; opacity: 0; }
+.fade-in-delay-5 { animation-delay: 0.5s; opacity: 0; }
+
+/* ===== 10. 响应式适配 ===== */
+@media (max-width: 768px) {
+  .loading-logo-icon {
+    font-size: 60px;
+  }
+  
+  .loading-logo-text {
+    font-size: 1.5rem;
+  }
+  
+  .loading-progress-wrapper {
+    width: 240px;
+  }
+  
+  .skeleton-hero {
+    height: 250px;
+  }
+  
+  .skeleton-card-image {
+    height: 150px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loading-logo-icon {
+    font-size: 50px;
+  }
+  
+  .loading-logo-text {
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+  }
+  
+  .loading-progress-wrapper {
+    width: 200px;
+  }
+  
+  .skeleton-hero {
+    height: 200px;
+    margin: 10px;
+  }
+}
+
+/* ===== 11. 打印样式隐藏 ===== */
+@media print {
+  .loading-splash,
+  .skeleton {
+    display: none !important;
+  }
+}

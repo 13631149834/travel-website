@@ -1,0 +1,357 @@
+<!-- 音乐播放器组件 -->
+<div id="musicPlayer" class="music-player-bar">
+  <audio id="audioPlayer" preload="metadata"></audio>
+  
+  <div class="player-inner">
+    <!-- 当前播放 -->
+    <div class="current-track">
+      <div class="current-track-cover" id="playerCover">
+        <span>🎵</span>
+      </div>
+      <div class="current-track-info">
+        <h4 id="playerTitle">未选择歌曲</h4>
+        <p id="playerArtist">---</p>
+      </div>
+    </div>
+    
+    <!-- 播放控制 -->
+    <div class="player-controls">
+      <div class="control-buttons">
+        <button class="control-btn" id="shuffleBtn" title="随机播放" onclick="toggleShuffle()">🔀</button>
+        <button class="control-btn" id="prevBtn" title="上一曲" onclick="playPrev()">⏮️</button>
+        <button class="control-btn play-pause" id="playPauseBtn" title="播放/暂停" onclick="togglePlay()">▶</button>
+        <button class="control-btn" id="nextBtn" title="下一曲" onclick="playNext()">⏭️</button>
+        <button class="control-btn" id="repeatBtn" title="循环模式" onclick="toggleRepeat()">🔁</button>
+      </div>
+      
+      <div class="progress-container">
+        <span class="progress-time" id="currentTime">0:00</span>
+        <div class="progress-bar" id="progressBar" onclick="seekTo(event)">
+          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+        <span class="progress-time" id="totalTime">0:00</span>
+      </div>
+    </div>
+    
+    <!-- 音量和其他控制 -->
+    <div class="player-extras">
+      <button class="extra-btn" onclick="togglePlaylistDrawer()" title="播放列表">📋</button>
+      <div class="volume-control">
+        <button class="extra-btn" id="volumeBtn" onclick="toggleMute()">🔊</button>
+        <div class="volume-slider" id="volumeSlider" onclick="setVolume(event)">
+          <div class="volume-fill" id="volumeFill" style="width: 70%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 播放列表抽屉 -->
+<div class="playlist-drawer" id="playlistDrawer">
+  <div class="drawer-header">
+    <h3>播放列表</h3>
+    <button class="drawer-close" onclick="togglePlaylistDrawer()">✕</button>
+  </div>
+  <div class="drawer-list" id="drawerList">
+    <!-- 动态生成 -->
+  </div>
+</div>
+
+<script>
+// 播放器状态
+const playerState = {
+  isPlaying: false,
+  currentSong: null,
+  currentIndex: 0,
+  playlist: [],
+  volume: 0.7,
+  isMuted: false,
+  isShuffle: false,
+  repeatMode: 'none', // none, one, all
+  progress: 0
+};
+
+// DOM元素
+const audioPlayer = document.getElementById('audioPlayer');
+const musicPlayer = document.getElementById('musicPlayer');
+const playPauseBtn = document.getElementById('playPauseBtn');
+const progressFill = document.getElementById('progressFill');
+const progressBar = document.getElementById('progressBar');
+const currentTimeEl = document.getElementById('currentTime');
+const totalTimeEl = document.getElementById('totalTime');
+const volumeFill = document.getElementById('volumeFill');
+const playerTitle = document.getElementById('playerTitle');
+const playerArtist = document.getElementById('playerArtist');
+const playlistDrawer = document.getElementById('playlistDrawer');
+
+// 格式化时间
+function formatTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+}
+
+// 显示播放器
+function showPlayer() {
+  musicPlayer.classList.add('show');
+}
+
+// 播放歌曲
+function playSong(song, playlist = []) {
+  if (song) {
+    playerState.currentSong = song;
+    playerState.playlist = playlist;
+    
+    audioPlayer.src = song.src;
+    audioPlayer.volume = playerState.volume;
+    
+    playerTitle.textContent = song.title;
+    playerArtist.textContent = song.artist;
+    
+    showPlayer();
+    
+    audioPlayer.play().then(() => {
+      playerState.isPlaying = true;
+      updatePlayPauseBtn();
+    }).catch(err => {
+      console.log('播放失败:', err);
+    });
+    
+    // 保存到最近播放
+    saveToRecentPlays(song);
+    
+    // 更新播放列表UI
+    updatePlaylistDrawer();
+  }
+}
+
+// 更新播放/暂停按钮
+function updatePlayPauseBtn() {
+  playPauseBtn.textContent = playerState.isPlaying ? '⏸️' : '▶';
+}
+
+// 切换播放/暂停
+function togglePlay() {
+  if (!playerState.currentSong) return;
+  
+  if (playerState.isPlaying) {
+    audioPlayer.pause();
+  } else {
+    audioPlayer.play();
+  }
+  playerState.isPlaying = !playerState.isPlaying;
+  updatePlayPauseBtn();
+}
+
+// 上一曲
+function playPrev() {
+  if (!playerState.playlist.length) return;
+  
+  let prevIndex = playerState.currentIndex - 1;
+  if (prevIndex < 0) {
+    prevIndex = playerState.playlist.length - 1;
+  }
+  
+  playerState.currentIndex = prevIndex;
+  playSong(playerState.playlist[prevIndex], playerState.playlist);
+}
+
+// 下一曲
+function playNext() {
+  if (!playerState.playlist.length) return;
+  
+  let nextIndex;
+  if (playerState.isShuffle) {
+    nextIndex = Math.floor(Math.random() * playerState.playlist.length);
+  } else {
+    nextIndex = (playerState.currentIndex + 1) % playerState.playlist.length;
+  }
+  
+  playerState.currentIndex = nextIndex;
+  playSong(playerState.playlist[nextIndex], playerState.playlist);
+}
+
+// 进度更新
+audioPlayer.addEventListener('timeupdate', () => {
+  if (audioPlayer.duration) {
+    const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+    progressFill.style.width = progress + '%';
+    currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+  }
+});
+
+// 音频加载完成
+audioPlayer.addEventListener('loadedmetadata', () => {
+  totalTimeEl.textContent = formatTime(audioPlayer.duration);
+});
+
+// 播放结束
+audioPlayer.addEventListener('ended', () => {
+  handleSongEnd();
+});
+
+// 处理歌曲结束
+function handleSongEnd() {
+  switch (playerState.repeatMode) {
+    case 'one':
+      audioPlayer.currentTime = 0;
+      audioPlayer.play();
+      break;
+    case 'all':
+      playNext();
+      break;
+    case 'none':
+      if (playerState.currentIndex < playerState.playlist.length - 1) {
+        playNext();
+      } else {
+        playerState.isPlaying = false;
+        updatePlayPauseBtn();
+      }
+      break;
+  }
+}
+
+// 跳转播放
+function seekTo(event) {
+  const rect = progressBar.getBoundingClientRect();
+  const percent = (event.clientX - rect.left) / rect.width;
+  audioPlayer.currentTime = percent * audioPlayer.duration;
+}
+
+// 音量控制
+function setVolume(event) {
+  const rect = document.getElementById('volumeSlider').getBoundingClientRect();
+  const percent = Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width));
+  playerState.volume = percent;
+  audioPlayer.volume = percent;
+  volumeFill.style.width = (percent * 100) + '%';
+  
+  if (playerState.isMuted) {
+    toggleMute();
+  }
+}
+
+// 静音切换
+function toggleMute() {
+  playerState.isMuted = !playerState.isMuted;
+  audioPlayer.muted = playerState.isMuted;
+  document.getElementById('volumeBtn').textContent = playerState.isMuted ? '🔇' : '🔊';
+}
+
+// 随机播放
+function toggleShuffle() {
+  playerState.isShuffle = !playerState.isShuffle;
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  shuffleBtn.style.color = playerState.isShuffle ? '#667eea' : '#636e72';
+}
+
+// 循环模式
+function toggleRepeat() {
+  const modes = ['none', 'all', 'one'];
+  const currentIndex = modes.indexOf(playerState.repeatMode);
+  playerState.repeatMode = modes[(currentIndex + 1) % modes.length];
+  
+  const repeatBtn = document.getElementById('repeatBtn');
+  switch (playerState.repeatMode) {
+    case 'none':
+      repeatBtn.textContent = '🔁';
+      repeatBtn.style.color = '#636e72';
+      break;
+    case 'all':
+      repeatBtn.textContent = '🔁';
+      repeatBtn.style.color = '#667eea';
+      break;
+    case 'one':
+      repeatBtn.textContent = '🔂';
+      repeatBtn.style.color = '#667eea';
+      break;
+  }
+}
+
+// 播放列表抽屉
+function togglePlaylistDrawer() {
+  playlistDrawer.classList.toggle('show');
+}
+
+// 更新播放列表UI
+function updatePlaylistDrawer() {
+  const drawerList = document.getElementById('drawerList');
+  drawerList.innerHTML = playerState.playlist.map((song, index) => `
+    <div class="drawer-song ${index === playerState.currentIndex ? 'active' : ''}" onclick="playFromPlaylist(${index})">
+      <div class="drawer-song-cover">
+        <span>🎵</span>
+      </div>
+      <div class="drawer-song-info">
+        <h4>${song.title}</h4>
+        <p>${song.artist}</p>
+      </div>
+      ${index === playerState.currentIndex ? '<span>🎧</span>' : ''}
+    </div>
+  `).join('');
+}
+
+// 从播放列表播放
+function playFromPlaylist(index) {
+  playerState.currentIndex = index;
+  playSong(playerState.playlist[index], playerState.playlist);
+}
+
+// 保存到最近播放
+function saveToRecentPlays(song) {
+  let recentPlays = JSON.parse(localStorage.getItem('recentPlays') || '[]');
+  recentPlays = recentPlays.filter(s => s.id !== song.id);
+  recentPlays.unshift(song);
+  recentPlays = recentPlays.slice(0, 20);
+  localStorage.setItem('recentPlays', JSON.stringify(recentPlays));
+}
+
+// 添加到我的收藏
+function addToFavorites(song) {
+  let favorites = JSON.parse(localStorage.getItem('favoriteSongs') || '[]');
+  if (!favorites.find(s => s.id === song.id)) {
+    favorites.push(song);
+    localStorage.setItem('favoriteSongs', JSON.stringify(favorites));
+    showToast('已添加到收藏');
+  } else {
+    showToast('已在收藏列表中');
+  }
+}
+
+// 从收藏移除
+function removeFromFavorites(songId) {
+  let favorites = JSON.parse(localStorage.getItem('favoriteSongs') || '[]');
+  favorites = favorites.filter(s => s.id !== songId);
+  localStorage.setItem('favoriteSongs', JSON.stringify(favorites));
+}
+
+// Toast提示
+function showToast(message) {
+  const existing = document.querySelector('.music-toast');
+  if (existing) existing.remove();
+  
+  const toast = document.createElement('div');
+  toast.className = 'music-toast';
+  toast.textContent = message;
+  toast.style.cssText = `
+    position: fixed;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #2d3436;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    z-index: 9999;
+    animation: fadeInUp 0.3s ease;
+  `;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => toast.remove(), 300);
+  }, 2000);
+}
+
+// 初始化音量
+volumeFill.style.width = (playerState.volume * 100) + '%';
+</script>

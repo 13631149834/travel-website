@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>大屏组件库 - 游导旅游数据大屏</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #00D4FF;
+            --secondary: #7B61FF;
+            --accent: #00FF88;
+            --warning: #FFB800;
+            --danger: #FF4D6D;
+            --text: #E8F4F8;
+            --text-muted: #8899AA;
+            --bg: #0A1929;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        
+        .font-orbitron { font-family: 'Orbitron', monospace; }
+        
+        .bg-grid {
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+        
+        /* Stat Card Component */
+        .widget-stat-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(123, 97, 255, 0.05) 100%);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .widget-stat-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(0, 212, 255, 0.5);
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
+        }
+        
+        /* Chart Container Component */
+        .widget-chart-container {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.05) 0%, rgba(123, 97, 255, 0.02) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+        }
+        
+        /* Progress Bar Component */
+        .widget-progress-bar {
+            height: 8px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .widget-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        /* Ranking Item Component */
+        .widget-ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            margin-bottom: 8px;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 8px;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .widget-ranking-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        /* Badge Component */
+        .widget-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .widget-badge-hot { background: rgba(255, 77, 109, 0.2); color: #FF4D6D; }
+        .widget-badge-new { background: rgba(0, 255, 136, 0.2); color: #00FF88; }
+        .widget-badge-trending { background: rgba(255, 184, 0, 0.2); color: #FFB800; }
+        
+        /* Counter Animation */
+        .widget-counter {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+        }
+        
+        /* Glow Effects */
+        .widget-glow-border {
+            position: relative;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.1), inset 0 0 20px rgba(0, 212, 255, 0.05);
+        }
+        
+        /* Gradient Text */
+        .widget-gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-flow 3s ease infinite;
+        }
+        
+        @keyframes gradient-flow {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+        
+        /* Pulse Animation */
+        .widget-pulse {
+            animation: pulse-ring 2s ease-out infinite;
+        }
+        
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0); }
+        }
+        
+        /* Loading Skeleton */
+        .widget-skeleton {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.1) 25%, rgba(0, 212, 255, 0.2) 50%, rgba(0, 212, 255, 0.1) 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+        }
+        
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Tab Component */
+        .widget-tab {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .widget-tab:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+        
+        .widget-tab.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.3);
+            color: var(--primary);
+        }
+        
+        /* Tooltip */
+        .widget-tooltip {
+            position: absolute;
+            background: rgba(10, 25, 41, 0.95);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: var(--text);
+            pointer-events: none;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 212, 255, 0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 212, 255, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 212, 255, 0.5); }
+        
+        /* Component Preview Section */
+        .preview-section {
+            margin-bottom: 40px;
+        }
+        
+        .preview-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+    </style>
+</head>
+<body class="bg-grid">
+    <!-- Header -->
+    <header class="px-6 py-4 border-b border-cyan-500/20">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center shadow-lg shadow-cyan-500/30">
+                <i class="fas fa-puzzle-piece text-white text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-bold widget-gradient-text font-orbitron">大屏组件库</h1>
+                <p class="text-sm text-cyan-300/70">游导旅游数据可视化组件</p>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="p-6">
+        <!-- Stat Cards Section -->
+        <section class="preview-section">
+            <h2 class="preview-title flex items-center gap-2">
+                <i class="fas fa-chart-bar text-cyan-400"></i>
+                数据卡片组件
+            </h2>
+            <div class="preview-grid">
+                <!-- Basic Stat Card -->
+                <div class="widget-stat-card">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm text-gray-400">今日访问量</span>
+                        <i class="fas fa-eye text-cyan-400"></i>
+                    </div>
+                    <div class="widget-counter text-3xl font-bold text-cyan-400 mb-2">128,456</div>
+                    <div class="flex items-center text-sm">
+                        <span class="text-green-400"><i class="fas fa-arrow-up mr-1"></i>12.5%</span>
+                        <span class="text-gray-500 ml-2">较昨日</span>
+                    </div>
+                </div>
+                
+                <!-- With Trend Chart -->
+                <div class="widget-stat-card">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400 mb-2">页面浏览量</p>
+                            <div class="widget-counter text-3xl font-bold text-purple-400">458,932</div>
+                            <div class="flex items-center mt-2 text-sm">
+                                <span class="text-green-400"><i class="fas fa-arrow-up mr-1"></i>8.3%</span>
+                                <span class="text-gray-500 ml-2">较昨日</span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-500 flex items-center justify-center">
+                            <i class="fas fa-file-alt text-white text-lg"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 h-12" id="sparkline1"></div>
+                </div>
+                
+                <!-- With Progress -->
+                <div class="widget-stat-card">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <p class="text-sm text-gray-400 mb-2">当前在线</p>
+                            <div class="widget-counter text-3xl font-bold text-green-400">8,934</div>
+                            <div class="flex items-center mt-2 text-sm">
+                                <span class="text-red-400"><i class="fas fa-arrow-down mr-1"></i>2.1%</span>
+                                <span class="text-gray-500 ml-2">较昨日</span>
+                            </div>
+                        </div>
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-cyan-500 flex items-center justify-center">
+                            <i class="fas fa-users text-white text-lg"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-xs text-gray-400 mb-1">
+                            <span>负载率</span>
+                            <span>71%</span>
+                        </div>
+                        <div class="widget-progress-bar">
+                            <div class="widget-progress-fill bg-gradient-to-r from-green-400 to-cyan-400" style="width: 71%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Icon Card -->
+                <div class="widget-stat-card">
+                    <div class="flex items-center gap-4">
+                        <div class="w-16 h-16 rounded-2xl bg-gradient-to-br from-yellow-400 to-orange-500 flex items-center justify-center shadow-lg shadow-yellow-500/30">
+                            <i class="fas fa-star text-white text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">平均评分</p>
+                            <div class="widget-counter text-3xl font-bold text-yellow-400">4.9</div>
+                            <div class="text-xs text-gray-500">向导服务评分</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Chart Containers Section -->
+        <section class="preview-section">
+            <h2 class="preview-title flex items-center gap-2">
+                <i class="fas fa-chart-line text-purple-400"></i>
+                图表容器组件
+            </h2>
+            <div class="preview-grid">
+                <!-- Line Chart -->
+                <div class="widget-chart-container">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold flex items-center gap-2">
+                            <i class="fas fa-chart-area text-cyan-400"></i>
+                            折线图
+                        </h3>
+                        <div class="flex gap-2">
+                            <button class="widget-tab active">7日</button>
+                            <button class="widget-tab">30日</button>
+                        </div>
+                    </div>
+                    <div class="h-48" id="lineChart"></div>
+                </div>
+                
+                <!-- Bar Chart -->
+                <div class="widget-chart-container">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold flex items-center gap-2">
+                            <i class="fas fa-chart-bar text-green-400"></i>
+                            柱状图
+                        </h3>
+                    </div>
+                    <div class="h-48" id="barChart"></div>
+                </div>
+                
+                <!-- Pie Chart -->
+                <div class="widget-chart-container">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold flex items-center gap-2">
+                            <i class="fas fa-chart-pie text-yellow-400"></i>
+                            饼图
+                        </h3>
+                    </div>
+                    <div class="h-48" id="pieChart"></div>
+                </div>
+                
+                <!-- Area Chart -->
+                <div class="widget-chart-container">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold flex items-center gap-2">
+                            <i class="fas fa-mountain text-red-400"></i>
+                            面积图
+                        </h3>
+                    </div>
+                    <div class="h-48" id="areaChart"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Ranking Lists Section -->
+        <section class="preview-section">
+            <h2 class="preview-title flex items-center gap-2">
+                <i class="fas fa-list-ol text-yellow-400"></i>
+                排名列表组件
+            </h2>
+            <div class="preview-grid">
+                <!-- Basic Ranking -->
+                <div class="widget-chart-container">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">热门目的地</h3>
+                        <a href="#" class="text-sm text-cyan-400 hover:text-cyan-300">查看全部</a>
+                    </div>
+                    <div id="rankingList1">
+                        <div class="widget-ranking-item">
+                            <span class="w-7 h-7 flex items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 text-black font-bold text-sm mr-3">1</span>
+                            <div class="flex-1">
+                                <div class="font-medium">东京</div>
+                                <div class="text-xs text-gray-500">日本</div>
+                            </div>
+                            <div class="text-cyan-400 font-semibold">156.8k</div>
+                        </div>
+                        <div class="widget-ranking-item">
+                            <span class="w-7 h-7 flex items-center justify-center rounded-full bg-gradient-to-br from-gray-300 to-gray-400 text-black font-bold text-sm mr-3">2</span>
+                            <div class="flex-1">
+                                <div class="font-medium">曼谷</div>
+                                <div class="text-xs text-gray-500">泰国</div>
+                            </div>
+                            <div class="text-cyan-400 font-semibold">134.6k</div>
+                        </div>
+                        <div class="widget-ranking-item">
+                            <span class="w-7 h-7 flex items-center justify-center rounded-full bg-gradient-to-br from-amber-600 to-amber-700 text-white font-bold text-sm mr-3">3</span>
+                            <div class="flex-1">
+                                <div class="font-medium">大理</div>
+                                <div class="text-xs text-gray-500">中国</div>
+                            </div>
+                            <div class="text-cyan-400 font-semibold">123.5k</div>
+                        </div>
+                        <div class="widget-ranking-item">
+                            <span class="w-7 h-7 flex items-center justify-center rounded-full bg-cyan-500/20 text-cyan-400 font-bold text-sm mr-3">4</span>
+                            <div class="flex-1">
+                                <div class="font-medium">巴黎</div>
+                                <div class="text-xs text-gray-500">法国</div>
+                            </div>
+                            <div class="text-cyan-400 font-semibold">98.8k</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ranking with Badges -->
+                <div class="widget-chart-container">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">热门攻略</h3>
+                        <div class="flex gap-2">
+                            <span class="widget-badge widget-badge-hot">热门</span>
+                            <span class="widget-badge widget-badge-new">新上</span>
+                        </div>
+                    </div>
+                    <div id="rankingList2">
+                        <div class="widget-ranking-item">
+                            <span class="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-yellow-400 to-orange-500 text-black font-bold mr-3">1</span>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm flex items-center gap-2">
+                                    日本东京自由行攻略
+                                    <span class="widget-badge widget-badge-hot">热门</span>
+                                </div>
+                                <div class="text-xs text-gray-500">45.7k 浏览</div>
+                            </div>
+                            <span class="text-green-400 text-sm">+15.2%</span>
+                        </div>
+                        <div class="widget-ranking-item">
+                            <span class="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-gray-300 to-gray-400 text-black font-bold mr-3">2</span>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm flex items-center gap-2">
+                                    泰国曼谷美食地图
+                                    <span class="widget-badge widget-badge-trending">飙升</span>
+                                </div>
+                                <div class="text-xs text-gray-500">38.9k 浏览</div>
+                            </div>
+                            <span class="text-green-400 text-sm">+8.5%</span>
+                        </div>
+                        <div class="widget-ranking-item">
+                            <span class="w-6 h-6 flex items-center justify-center rounded-full bg-gradient-to-br from-amber-600 to-amber-700 text-white font-bold mr-3">3</span>
+                            <div class="flex-1">
+                                <div class="font-medium text-sm flex items-center gap-2">
+                                    云南大理旅游全攻略
+                                    <span class="widget-badge widget-badge-new">新上</span>
+                                </div>
+                                <div class="text-xs text-gray-500">32.5k 浏览</div>
+                            </div>
+                            <span class="text-green-400 text-sm">+12.3%</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Ranking with Progress -->
+                <div class="widget-chart-container">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold">地域分布</h3>
+                    </div>
+                    <div id="rankingList3">
+                        <div class="mb-3">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>北京</span>
+                                <span class="text-cyan-400">23.5%</span>
+                            </div>
+                            <div class="widget-progress-bar">
+                                <div class="widget-progress-fill bg-gradient-to-r from-cyan-400 to-blue-500" style="width: 100%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>上海</span>
+                                <span class="text-purple-400">18.2%</span>
+                            </div>
+                            <div class="widget-progress-bar">
+                                <div class="widget-progress-fill bg-gradient-to-r from-purple-400 to-pink-500" style="width: 77%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>广东</span>
+                                <span class="text-green-400">15.8%</span>
+                            </div>
+                            <div class="widget-progress-bar">
+                                <div class="widget-progress-fill bg-gradient-to-r from-green-400 to-teal-500" style="width: 67%"></div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>江苏</span>
+                                <span class="text-yellow-400">9.3%</span>
+                            </div>
+                            <div class="widget-progress-bar">
+                                <div class="widget-progress-fill bg-gradient-to-r from-yellow-400 to-orange-500" style="width: 40%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Special Widgets Section -->
+        <section class="preview-section">
+            <h2 class="preview-title flex items-center gap-2">
+                <i class="fas fa-magic text-pink-400"></i>
+                特色组件
+            </h2>
+            <div class="preview-grid">
+                <!-- Live Indicator -->
+                <div class="widget-stat-card">
+                    <div class="flex items-center justify-center gap-4">
+                        <div class="w-4 h-4 rounded-full bg-red-500 widget-pulse"></div>
+                        <span class="text-lg font-semibold">实时数据</span>
+                        <span class="text-3xl font-bold widget-gradient-text font-orbitron" id="liveCounter">8,934</span>
+                    </div>
+                    <p class="text-center text-sm text-gray-500 mt-2">当前在线用户数</p>
+                </div>
+                
+                <!-- Loading Skeleton -->
+                <div class="widget-stat-card">
+                    <p class="text-sm text-gray-400 mb-3">加载状态</p>
+                    <div class="space-y-3">
+                        <div class="h-4 widget-skeleton rounded w-3/4"></div>
+                        <div class="h-4 widget-skeleton rounded w-1/2"></div>
+                        <div class="h-4 widget-skeleton rounded w-5/6"></div>
+                    </div>
+                </div>
+                
+                <!-- Tabs -->
+                <div class="widget-chart-container">
+                    <p class="text-sm text-gray-400 mb-3">标签页组件</p>
+                    <div class="flex gap-2 mb-4">
+                        <button class="widget-tab active">数据概览</button>
+                        <button class="widget-tab">趋势分析</button>
+                        <button class="widget-tab">详细报告</button>
+                    </div>
+                    <div class="p-4 bg-cyan-500/10 rounded-lg">
+                        <p class="text-sm text-gray-400">标签页内容区域</p>
+                    </div>
+                </div>
+                
+                <!-- Circular Progress -->
+                <div class="widget-stat-card text-center">
+                    <p class="text-sm text-gray-400 mb-3">环形进度</p>
+                    <div class="relative w-32 h-32 mx-auto">
+                        <svg class="w-full h-full progress-ring" viewBox="0 0 100 100">
+                            <circle cx="50" cy="50" r="40" stroke="#1a3a4a" stroke-width="8" fill="none"/>
+                            <circle cx="50" cy="50" r="40" stroke="#00D4FF" stroke-width="8" fill="none"
+                                stroke-dasharray="251.2" stroke-dashoffset="75.36"
+                                stroke-linecap="round" class="progress-ring-circle"/>
+                        </svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-2xl font-bold text-cyan-400">70%</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">目标完成率</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Color Palette -->
+        <section class="preview-section">
+            <h2 class="preview-title flex items-center gap-2">
+                <i class="fas fa-palette text-cyan-400"></i>
+                色彩系统
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                <div class="text-center">
+                    <div class="h-16 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-500 mb-2 shadow-lg shadow-cyan-500/30"></div>
+                    <p class="font-medium">Primary</p>
+                    <p class="text-xs text-gray-500">#00D4FF</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-16 rounded-lg bg-gradient-to-br from-purple-400 to-pink-500 mb-2 shadow-lg shadow-purple-500/30"></div>
+                    <p class="font-medium">Secondary</p>
+                    <p class="text-xs text-gray-500">#7B61FF</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-16 rounded-lg bg-gradient-to-br from-green-400 to-teal-500 mb-2 shadow-lg shadow-green-500/30"></div>
+                    <p class="font-medium">Accent</p>
+                    <p class="text-xs text-gray-500">#00FF88</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-16 rounded-lg bg-gradient-to-br from-yellow-400 to-orange-500 mb-2 shadow-lg shadow-yellow-500/30"></div>
+                    <p class="font-medium">Warning</p>
+                    <p class="text-xs text-gray-500">#FFB800</p>
+                </div>
+                <div class="text-center">
+                    <div class="h-16 rounded-lg bg-gradient-to-br from-red-400 to-pink-500 mb-2 shadow-lg shadow-red-500/30"></div>
+                    <p class="font-medium">Danger</p>
+                    <p class="text-xs text-gray-500">#FF4D6D</p>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="py-4 text-center text-sm text-gray-500 border-t border-cyan-500/20">
+        <p>© 2026 游导旅游 youdao-travel.com | 组件库版本 1.0.0</p>
+    </footer>
+
+    <script>
+        // Initialize Charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sparkline
+            const sparkline = echarts.init(document.getElementById('sparkline1'));
+            sparkline.setOption({
+                grid: { top: 0, bottom: 0, left: 0, right: 0 },
+                xAxis: { type: 'category', show: false, data: [1,2,3,4,5,6,7] },
+                yAxis: { type: 'value', show: false },
+                series: [{
+                    type: 'line',
+                    data: [45, 52, 48, 60, 58, 72, 68],
+                    smooth: true,
+                    symbol: 'none',
+                    lineStyle: { color: '#7B61FF', width: 2 },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                            { offset: 0, color: 'rgba(123, 97, 255, 0.4)' },
+                            { offset: 1, color: 'rgba(123, 97, 255, 0)' }
+                        ])
+                    }
+                }]
+            });
+            
+            // Line Chart
+            const lineChart = echarts.init(document.getElementById('lineChart'));
+            lineChart.setOption({
+                tooltip: { trigger: 'axis', backgroundColor: 'rgba(10, 25, 41, 0.95)', borderColor: 'rgba(0, 212, 255, 0.3)', textStyle: { color: '#E8F4F8' } },
+                grid: { top: 10, left: 40, right: 10, bottom: 25 },
+                xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], axisLine: { lineStyle: { color: 'rgba(0, 212, 255, 0.3)' } }, axisLabel: { color: '#8899AA' } },
+                yAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: 'rgba(0, 212, 255, 0.1)' } }, axisLabel: { color: '#8899AA' } },
+                series: [{ type: 'line', data: [820, 932, 901, 934, 1290, 1330, 1320], smooth: true, lineStyle: { color: '#00D4FF', width: 3 }, areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(0, 212, 255, 0.4)' }, { offset: 1, color: 'rgba(0, 212, 255, 0)' }]) }, itemStyle: { color: '#00D4FF' } }]
+            });
+            
+            // Bar Chart
+            const barChart = echarts.init(document.getElementById('barChart'));
+            barChart.setOption({
+                tooltip: { trigger: 'axis', backgroundColor: 'rgba(10, 25, 41, 0.95)', borderColor: 'rgba(0, 255, 136, 0.3)', textStyle: { color: '#E8F4F8' } },
+                grid: { top: 10, left: 40, right: 10, bottom: 25 },
+                xAxis: { type: 'category', data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], axisLine: { lineStyle: { color: 'rgba(0, 255, 136, 0.3)' } }, axisLabel: { color: '#8899AA' } },
+                yAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: 'rgba(0, 255, 136, 0.1)' } }, axisLabel: { color: '#8899AA' } },
+                series: [{ type: 'bar', data: [120, 200, 150, 80, 70, 110, 130], barWidth: '50%', itemStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#00FF88' }, { offset: 1, color: '#00D4FF' }]) } }]
+            });
+            
+            // Pie Chart
+            const pieChart = echarts.init(document.getElementById('pieChart'));
+            pieChart.setOption({
+                tooltip: { trigger: 'item', backgroundColor: 'rgba(10, 25, 41, 0.95)', borderColor: 'rgba(123, 97, 255, 0.3)', textStyle: { color: '#E8F4F8' }, formatter: '{b}: {c}%' },
+                series: [{ type: 'pie', radius: ['35%', '65%'], center: ['50%', '50%'], avoidLabelOverlap: false, itemStyle: { borderRadius: 6, borderColor: '#0A1929', borderWidth: 2 }, label: { show: false }, emphasis: { label: { show: true, fontSize: 12, fontWeight: 'bold' } }, data: [{ name: '移动端', value: 68.5, itemStyle: { color: '#00D4FF' } }, { name: 'PC端', value: 25.3, itemStyle: { color: '#7B61FF' } }, { name: '平板', value: 6.2, itemStyle: { color: '#00FF88' } }] }]
+            });
+            
+            // Area Chart
+            const areaChart = echarts.init(document.getElementById('areaChart'));
+            areaChart.setOption({
+                tooltip: { trigger: 'axis', backgroundColor: 'rgba(10, 25, 41, 0.95)', borderColor: 'rgba(255, 77, 109, 0.3)', textStyle: { color: '#E8F4F8' } },
+                grid: { top: 10, left: 40, right: 10, bottom: 25 },
+                xAxis: { type: 'category', data: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'], axisLine: { lineStyle: { color: 'rgba(255, 77, 109, 0.3)' } }, axisLabel: { color: '#8899AA' } },
+                yAxis: { type: 'value', axisLine: { show: false }, splitLine: { lineStyle: { color: 'rgba(255, 77, 109, 0.1)' } }, axisLabel: { color: '#8899AA' } },
+                series: [{ type: 'line', data: [300, 450, 380, 520, 480, 600], smooth: true, lineStyle: { color: '#FF4D6D', width: 3 }, areaStyle: { color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: 'rgba(255, 77, 109, 0.4)' }, { offset: 1, color: 'rgba(255, 77, 109, 0)' }]) }, itemStyle: { color: '#FF4D6D' } }]
+            });
+            
+            // Live Counter Animation
+            let liveCount = 8934;
+            setInterval(() => {
+                liveCount += Math.floor(Math.random() * 20) - 10;
+                liveCount = Math.max(8000, Math.min(10000, liveCount));
+                document.getElementById('liveCounter').textContent = liveCount.toLocaleString();
+            }, 2000);
+            
+            // Resize handler
+            window.addEventListener('resize', function() {
+                sparkline.resize();
+                lineChart.resize();
+                barChart.resize();
+                pieChart.resize();
+                areaChart.resize();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,551 @@
+<!-- 
+  语言选择器组件 - Language Selector Component
+  版本: 2.0
+  更新: 2025-04-15
+  支持语言: 简体中文, English, 日本語, 한국어, ไทย, Tiếng Việt, Bahasa Indonesia, Bahasa Melayu
+-->
+
+<div class="lang-selector" id="langSelector" role="combobox" aria-expanded="false" aria-haspopup="listbox">
+  <!-- 触发按钮 -->
+  <button class="lang-trigger" id="langTrigger" aria-label="选择语言" type="button">
+    <span class="lang-flag-icon" id="currentLangFlag">🇨🇳</span>
+    <span class="lang-current-name" id="currentLangName">中文</span>
+    <svg class="lang-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M6 9l6 6 6-6"/>
+    </svg>
+  </button>
+
+  <!-- 语言选择面板 -->
+  <div class="lang-panel" id="langPanel" role="listbox" aria-label="可用语言">
+    <!-- 搜索框 -->
+    <div class="lang-search">
+      <svg class="lang-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <input type="text" class="lang-search-input" id="langSearch" placeholder="搜索语言..." autocomplete="off">
+    </div>
+
+    <!-- 语言列表 -->
+    <div class="lang-list" id="langList">
+      <!-- 简体中文 -->
+      <button class="lang-item" data-lang="zh-CN" data-native="中文" data-name="简体中文" role="option" type="button">
+        <span class="lang-item-flag">🇨🇳</span>
+        <span class="lang-item-info">
+          <span class="lang-item-native">中文</span>
+          <span class="lang-item-name">简体中文</span>
+        </span>
+        <span class="lang-item-check">✓</span>
+      </button>
+
+      <!-- English -->
+      <button class="lang-item" data-lang="en" data-native="English" data-name="English" role="option" type="button">
+        <span class="lang-item-flag">🇺🇸</span>
+        <span class="lang-item-info">
+          <span class="lang-item-native">English</span>
+          <span class="lang-item-name">English</span>
+        </span>
+        <span class="lang-item-check">✓</span>
+      </button>
+
+      <!-- 日本語 -->
+      <button class="lang-item" data-lang="ja" data-native="日本語" data-name="日本語" role="option" type="button">
+        <span class="lang-item-flag">🇯🇵</span>
+        <span class="lang-item-info">
+          <span class="lang-item-native">日本語</span>
+          <span class="lang-item-name">日本語</span>
+        </span>
+        <span class="lang-item-check">✓</span>
+      </button>
+
+      <!-- 한국어 -->
+      <button class="lang-item" data-lang="ko" data-native="한국어" data-name="한국어" role="option" type="button">
+        <span class="lang-item-flag">🇰🇷</span>
+        <span class="lang-item-info">
+          <span class="lang-item-native">한국어</span>
+          <span class="lang-item-name">한국어</span>
+        </span>
+        <span class="lang-item-check">✓</span>
+      </button>
+
+      <!-- ไทย -->
+      <button class="lang-item" data-lang="th" data-native="ไทย" data-name="ภาษาไทย" role="option" type="button">
+        <span class="lang-item-flag">🇹🇭</span>
+        <span class="lang-item-info">
+          <span class="lang-item-native">ไทย</span>
+          <span class="lang-item-name">ภาษาไทย</span>
+        </span>
+        <span class="lang-item-check">✓</span>
+      </button>
+
+      <!-- Tiếng Việt -->
+      <button class="lang-item" data-lang="vi" data-native="Tiếng Việt" data-name="Tiếng Việt" role="option" type="button">
+        <span class="lang-item-flag">🇻🇳</span>
+        <span class="lang-item-info">
+          <span class="lang-item-native">Tiếng Việt</span>
+          <span class="lang-item-name">Tiếng Việt</span>
+        </span>
+        <span class="lang-item-check">✓</span>
+      </button>
+
+      <!-- Bahasa Indonesia -->
+      <button class="lang-item" data-lang="id" data-native="Indonesia" data-name="Bahasa Indonesia" role="option" type="button">
+        <span class="lang-item-flag">🇮🇩</span>
+        <span class="lang-item-info">
+          <span class="lang-item-native">Indonesia</span>
+          <span class="lang-item-name">Bahasa Indonesia</span>
+        </span>
+        <span class="lang-item-check">✓</span>
+      </button>
+
+      <!-- Bahasa Melayu -->
+      <button class="lang-item" data-lang="ms" data-native="Melayu" data-name="Bahasa Melayu" role="option" type="button">
+        <span class="lang-item-flag">🇲🇾</span>
+        <span class="lang-item-info">
+          <span class="lang-item-native">Melayu</span>
+          <span class="lang-item-name">Bahasa Melayu</span>
+        </span>
+        <span class="lang-item-check">✓</span>
+      </button>
+    </div>
+
+    <!-- 分隔线 -->
+    <div class="lang-divider"></div>
+
+    <!-- 地区快捷切换 -->
+    <div class="lang-regions">
+      <span class="lang-regions-title">按地区</span>
+      <div class="lang-regions-grid">
+        <button class="lang-region-btn" data-lang="zh-CN" type="button">🇨🇳 中国</button>
+        <button class="lang-region-btn" data-lang="en" type="button">🌍 Global</button>
+        <button class="lang-region-btn" data-lang="ja" type="button">🇯🇵 日本</button>
+        <button class="lang-region-btn" data-lang="ko" type="button">🇰🇷 韓国</button>
+        <button class="lang-region-btn" data-lang="th" type="button">🇹🇭 ASEAN</button>
+        <button class="lang-region-btn" data-lang="vi" type="button">🇻🇳 ASEAN</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+/* ==================== 语言选择器样式 ==================== */
+.lang-selector {
+  position: relative;
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  z-index: 1000;
+}
+
+/* 触发按钮 */
+.lang-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #334155;
+  transition: all 0.25s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.lang-trigger:hover {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  border-color: #cbd5e1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.lang-trigger:focus {
+  outline: none;
+  border-color: #4F86F7;
+  box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15);
+}
+
+.lang-flag-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.lang-current-name {
+  font-weight: 500;
+  min-width: 24px;
+}
+
+.lang-arrow {
+  width: 14px;
+  height: 14px;
+  color: #94a3b8;
+  transition: transform 0.25s ease;
+}
+
+.lang-selector[aria-expanded="true"] .lang-arrow {
+  transform: rotate(180deg);
+}
+
+/* 选择面板 */
+.lang-panel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 300px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.96);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.lang-selector[aria-expanded="true"] .lang-panel {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+/* 搜索框 */
+.lang-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #fafbfc;
+}
+
+.lang-search-icon {
+  width: 16px;
+  height: 16px;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.lang-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #334155;
+  outline: none;
+}
+
+.lang-search-input::placeholder {
+  color: #94a3b8;
+}
+
+/* 语言列表 */
+.lang-list {
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.lang-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lang-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lang-list::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 3px;
+}
+
+.lang-list::-webkit-scrollbar-thumb:hover {
+  background: #cbd5e1;
+}
+
+/* 语言项 */
+.lang-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.lang-item:hover {
+  background: #f1f5f9;
+}
+
+.lang-item:focus {
+  outline: none;
+  background: #e2e8f0;
+}
+
+.lang-item.active {
+  background: linear-gradient(135deg, rgba(79, 134, 247, 0.1) 0%, rgba(79, 134, 247, 0.05) 100%);
+}
+
+.lang-item-flag {
+  font-size: 24px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.lang-item-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.lang-item-native {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.3;
+}
+
+.lang-item-name {
+  font-size: 12px;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+.lang-item-check {
+  font-size: 14px;
+  color: #4F86F7;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.lang-item.active .lang-item-check {
+  opacity: 1;
+}
+
+/* 分隔线 */
+.lang-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e2e8f0, transparent);
+  margin: 4px 16px;
+}
+
+/* 地区快捷切换 */
+.lang-regions {
+  padding: 12px 16px 16px;
+}
+
+.lang-regions-title {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #94a3b8;
+  margin-bottom: 10px;
+}
+
+.lang-regions-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.lang-region-btn {
+  padding: 8px 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.lang-region-btn:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.lang-region-btn:focus {
+  outline: none;
+  border-color: #4F86F7;
+  box-shadow: 0 0 0 2px rgba(79, 134, 247, 0.15);
+}
+
+/* 隐藏状态 */
+.lang-item.hidden {
+  display: none;
+}
+
+/* 动画 */
+@keyframes langFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.lang-item {
+  animation: langFadeIn 0.2s ease forwards;
+}
+
+.lang-item:nth-child(1) { animation-delay: 0ms; }
+.lang-item:nth-child(2) { animation-delay: 30ms; }
+.lang-item:nth-child(3) { animation-delay: 60ms; }
+.lang-item:nth-child(4) { animation-delay: 90ms; }
+.lang-item:nth-child(5) { animation-delay: 120ms; }
+.lang-item:nth-child(6) { animation-delay: 150ms; }
+.lang-item:nth-child(7) { animation-delay: 180ms; }
+.lang-item:nth-child(8) { animation-delay: 210ms; }
+
+/* 响应式 */
+@media (max-width: 640px) {
+  .lang-panel {
+    width: calc(100vw - 32px);
+    right: -60px;
+  }
+
+  .lang-regions-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+</style>
+
+<script>
+(function() {
+  // 语言选择器核心功能
+  class LanguageSelector {
+    constructor(container) {
+      this.container = container;
+      this.trigger = container.querySelector('#langTrigger');
+      this.panel = container.querySelector('#langPanel');
+      this.currentFlag = container.querySelector('#currentLangFlag');
+      this.currentName = container.querySelector('#currentLangName');
+      this.searchInput = container.querySelector('#langSearch');
+      this.langList = container.querySelector('#langList');
+      this.langItems = container.querySelectorAll('.lang-item');
+      this.regionBtns = container.querySelectorAll('.lang-region-btn');
+
+      this.currentLang = this.getStoredLang() || 'zh-CN';
+      this.init();
+    }
+
+    init() {
+      // 绑定事件
+      this.trigger.addEventListener('click', () => this.toggle());
+      this.searchInput.addEventListener('input', (e) => this.filterLanguages(e.target.value));
+      
+      this.langItems.forEach(item => {
+        item.addEventListener('click', () => this.selectLang(item.dataset.lang));
+      });
+
+      this.regionBtns.forEach(btn => {
+        btn.addEventListener('click', () => this.selectLang(btn.dataset.lang));
+      });
+
+      // 点击外部关闭
+      document.addEventListener('click', (e) => {
+        if (!this.container.contains(e.target)) {
+          this.close();
+        }
+      });
+
+      // ESC 关闭
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.container.getAttribute('aria-expanded') === 'true') {
+          this.close();
+        }
+      });
+
+      // 初始化当前语言
+      this.setActiveLang(this.currentLang);
+    }
+
+    toggle() {
+      const isOpen = this.container.getAttribute('aria-expanded') === 'true';
+      this.container.setAttribute('aria-expanded', !isOpen);
+      
+      if (!isOpen) {
+        setTimeout(() => this.searchInput.focus(), 100);
+      }
+    }
+
+    close() {
+      this.container.setAttribute('aria-expanded', 'false');
+      this.searchInput.value = '';
+      this.filterLanguages('');
+    }
+
+    selectLang(langCode) {
+      this.setActiveLang(langCode);
+      this.storeLang(langCode);
+      this.close();
+      
+      // 触发语言切换事件
+      window.dispatchEvent(new CustomEvent('langChange', { 
+        detail: { lang: langCode } 
+      }));
+    }
+
+    setActiveLang(langCode) {
+      this.currentLang = langCode;
+      
+      // 更新触发器显示
+      const activeItem = this.langList.querySelector(`[data-lang="${langCode}"]`);
+      if (activeItem) {
+        this.currentFlag.textContent = activeItem.querySelector('.lang-item-flag').textContent;
+        this.currentName.textContent = activeItem.dataset.native;
+      }
+
+      // 更新选中状态
+      this.langItems.forEach(item => {
+        item.classList.toggle('active', item.dataset.lang === langCode);
+      });
+
+      this.regionBtns.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.lang === langCode);
+      });
+    }
+
+    filterLanguages(query) {
+      const q = query.toLowerCase().trim();
+      
+      this.langItems.forEach(item => {
+        const native = item.dataset.native.toLowerCase();
+        const name = item.dataset.name.toLowerCase();
+        const match = !q || native.includes(q) || name.includes(q);
+        item.classList.toggle('hidden', !match);
+      });
+    }
+
+    getStoredLang() {
+      return localStorage.getItem('preferred-lang');
+    }
+
+    storeLang(langCode) {
+      localStorage.setItem('preferred-lang', langCode);
+    }
+  }
+
+  // 初始化所有语言选择器
+  document.querySelectorAll('.lang-selector').forEach(el => {
+    new LanguageSelector(el);
+  });
+
+  // 语言切换事件处理
+  window.addEventListener('langChange', (e) => {
+    console.log('Language changed to:', e.detail.lang);
+  });
+})();
+</script>

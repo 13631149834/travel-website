@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的导览 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#667eea',
+            secondary: '#764ba2',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../css/audio-guide.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-6">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="index.html" class="font-semibold border-b-2 border-white pb-1">🎧 有声导览</a>
+          <a href="map.html" class="hover:opacity-80 transition">导览地图</a>
+          <a href="my-guides.html" class="font-semibold border-b-2 border-white pb-1">我的导览</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="index.html" class="block py-2">首页</a>
+        <a href="index.html" class="block py-2 font-semibold">🎧 有声导览</a>
+        <a href="map.html" class="block py-2">导览地图</a>
+        <a href="my-guides.html" class="block py-2 font-semibold">我的导览</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="gradient-hero text-white py-8">
+    <div class="max-w-7xl mx-auto px-4">
+      <h1 class="text-3xl font-bold mb-2">👤 我的导览</h1>
+      <p class="opacity-90">管理您下载的导览和播放历史</p>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <div class="text-3xl mb-2">📥</div>
+        <div class="text-2xl font-bold text-gray-800" id="statDownloaded">3</div>
+        <div class="text-sm text-gray-500">已下载</div>
+      </div>
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <div class="text-3xl mb-2">❤️</div>
+        <div class="text-2xl font-bold text-gray-800" id="statFavorited">5</div>
+        <div class="text-sm text-gray-500">收藏的导览</div>
+      </div>
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <div class="text-3xl mb-2">📜</div>
+        <div class="text-2xl font-bold text-gray-800" id="statHistory">12</div>
+        <div class="text-sm text-gray-500">播放历史</div>
+      </div>
+      <div class="bg-white rounded-xl p-5 shadow-sm">
+        <div class="text-3xl mb-2">⏱️</div>
+        <div class="text-2xl font-bold text-gray-800" id="statHours">8.5</div>
+        <div class="text-sm text-gray-500">累计收听(小时)</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-nav mb-6">
+      <button class="active" data-tab="favorites" onclick="switchTab('favorites')">
+        ❤️ 收藏
+      </button>
+      <button data-tab="downloaded" onclick="switchTab('downloaded')">
+        📥 已下载
+      </button>
+      <button data-tab="history" onclick="switchTab('history')">
+        📜 播放历史
+      </button>
+    </div>
+
+    <!-- Favorites Tab -->
+    <section id="favoritesSection" class="tab-content">
+      <div id="favoritesList" class="space-y-4">
+        <!-- Favorites will be loaded here -->
+      </div>
+      <div id="favoritesEmpty" class="empty-state hidden">
+        <div class="empty-state-icon">❤️</div>
+        <div class="empty-state-title">暂无收藏</div>
+        <div class="empty-state-desc">在导览列表中点击心形图标收藏感兴趣的导览</div>
+        <a href="index.html" class="inline-block mt-4 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition">
+          浏览导览
+        </a>
+      </div>
+    </section>
+
+    <!-- Downloaded Tab -->
+    <section id="downloadedSection" class="tab-content hidden">
+      <div id="downloadedList" class="space-y-4">
+        <!-- Downloaded items will be loaded here -->
+      </div>
+      <div id="downloadedEmpty" class="empty-state hidden">
+        <div class="empty-state-icon">📥</div>
+        <div class="empty-state-title">暂无下载</div>
+        <div class="empty-state-desc">下载导览以便在离线状态下收听</div>
+        <a href="index.html" class="inline-block mt-4 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition">
+          浏览导览
+        </a>
+      </div>
+    </section>
+
+    <!-- History Tab -->
+    <section id="historySection" class="tab-content hidden">
+      <div id="historyList" class="space-y-4">
+        <!-- History items will be loaded here -->
+      </div>
+      <div id="historyEmpty" class="empty-state hidden">
+        <div class="empty-state-icon">📜</div>
+        <div class="empty-state-title">暂无播放历史</div>
+        <div class="empty-state-desc">您还没有开始收听任何导览</div>
+        <a href="index.html" class="inline-block mt-4 px-6 py-2 bg-primary text-white rounded-full hover:bg-primary/90 transition">
+          开始探索
+        </a>
+      </div>
+    </section>
+
+    <!-- Storage Info -->
+    <div class="mt-8 bg-white rounded-xl p-5 shadow-sm">
+      <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-gray-800">💾 存储空间</h3>
+        <button class="text-sm text-primary hover:underline" onclick="clearAllHistory()">清除全部</button>
+      </div>
+      <div class="mb-3">
+        <div class="flex justify-between text-sm mb-1">
+          <span class="text-gray-600">已使用空间</span>
+          <span class="font-medium" id="storageUsed">45.2 MB / 500 MB</span>
+        </div>
+        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-primary to-secondary rounded-full" style="width: 9%"></div>
+        </div>
+      </div>
+      <p class="text-sm text-gray-500">下载更多导览以充分利用离线功能</p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <div class="flex items-center justify-center gap-2 mb-4">
+        <span class="text-2xl">🧭</span>
+        <span class="text-xl font-bold">游导旅游</span>
+      </div>
+      <p class="text-gray-400 text-sm">&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+    </div>
+  </footer>
+
+  <script>
+    // Guide data
+    const allGuides = [
+      { id: 'tokyo-asakusa', title: '浅草寺', city: '东京', cityFlag: '🇯🇵', image: 'https://images.unsplash.com/photo-1545569341-9eb8b30979d9?w=200', duration: '14:05', rating: 4.9, size: '12.5MB', lastPlayed: '2024-01-15', progress: 85 },
+      { id: 'tokyo-tower', title: '东京塔', city: '东京', cityFlag: '🇯🇵', image: 'https://images.unsplash.com/photo-1536098561742-ca998e48cbcc?w=200', duration: '12:00', rating: 4.8, size: '10.8MB', lastPlayed: '2024-01-14', progress: 100 },
+      { id: 'tokyo-meiji', title: '明治神宫', city: '东京', cityFlag: '🇯🇵', image: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=200', duration: '11:20', rating: 4.9, size: '10.2MB', lastPlayed: '2024-01-13', progress: 45 },
+      { id: 'osaka-castle', title: '大阪城', city: '大阪', cityFlag: '🇯🇵', image: 'https://images.unsplash.com/photo-1589452271712-64b8a66c7b71?w=200', duration: '13:00', rating: 4.9, size: '11.7MB', lastPlayed: '2024-01-12', progress: 100 },
+      { id: 'osaka-dotonbori', title: '道顿堀', city: '大阪', cityFlag: '🇯🇵', image: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?w=200', duration: '10:50', rating: 4.7, size: '9.8MB', lastPlayed: '2024-01-11', progress: 60 },
+      { id: 'seoul-gyeongbokgung', title: '景福宫', city: '首尔', cityFlag: '🇰🇷', image: 'https://images.unsplash.com/photo-1587132137056-bfbf0166836e?w=200', duration: '14:10', rating: 4.9, size: '12.8MB', lastPlayed: '2024-01-10', progress: 30 },
+      { id: 'seoul-myengdong', title: '明洞', city: '首尔', cityFlag: '🇰🇷', image: 'https://images.unsplash.com/photo-1538485399081-7191377e8241?w=200', duration: '09:40', rating: 4.6, size: '8.7MB', lastPlayed: null, progress: 0 },
+      { id: 'bangkok-grand-palace', title: '大皇宫', city: '曼谷', cityFlag: '🇹🇭', image: 'https://images.unsplash.com/photo-1508009603885-50cf7c579365?w=200', duration: '14:40', rating: 4.9, size: '13.2MB', lastPlayed: null, progress: 0 }
+    ];
+
+    let favorites = JSON.parse(localStorage.getItem('audioFavorites') || '["tokyo-asakusa","tokyo-tower","osaka-castle","seoul-gyeongbokgung","bangkok-grand-palace"]');
+    let downloaded = JSON.parse(localStorage.getItem('audioDownloaded') || '["tokyo-asakusa","tokyo-tower","osaka-castle"]');
+    let history = JSON.parse(localStorage.getItem('audioHistory') || '[]');
+
+    function init() {
+      // Initialize history if empty
+      if (history.length === 0) {
+        history = [
+          { guideId: 'tokyo-asakusa', timestamp: Date.now() - 3600000, progress: 85 },
+          { guideId: 'tokyo-tower', timestamp: Date.now() - 86400000, progress: 100 },
+          { guideId: 'tokyo-meiji', timestamp: Date.now() - 172800000, progress: 45 },
+          { guideId: 'osaka-castle', timestamp: Date.now() - 259200000, progress: 100 },
+          { guideId: 'osaka-dotonbori', timestamp: Date.now() - 345600000, progress: 60 },
+          { guideId: 'seoul-gyeongbokgung', timestamp: Date.now() - 432000000, progress: 30 }
+        ];
+        localStorage.setItem('audioHistory', JSON.stringify(history));
+      }
+
+      updateStats();
+      renderFavorites();
+      renderDownloaded();
+      renderHistory();
+    }
+
+    function updateStats() {
+      document.getElementById('statDownloaded').textContent = downloaded.length;
+      document.getElementById('statFavorited').textContent = favorites.length;
+      document.getElementById('statHistory').textContent = history.length;
+      
+      // Calculate total hours
+      let totalMinutes = 0;
+      history.forEach(h => {
+        const guide = allGuides.find(g => g.id === h.guideId);
+        if (guide) {
+          const [mins, secs] = guide.duration.split(':').map(Number);
+          totalMinutes += (mins + secs / 60) * (h.progress / 100);
+        }
+      });
+      document.getElementById('statHours').textContent = (totalMinutes / 60).toFixed(1);
+
+      // Update storage
+      let totalSize = 0;
+      downloaded.forEach(id => {
+        const guide = allGuides.find(g => g.id === id);
+        if (guide) totalSize += parseFloat(guide.size);
+      });
+      document.getElementById('storageUsed').textContent = `${totalSize.toFixed(1)} MB / 500 MB`;
+    }
+
+    function renderFavorites() {
+      const container = document.getElementById('favoritesList');
+      const emptyState = document.getElementById('favoritesEmpty');
+      
+      const favoritedGuides = allGuides.filter(g => favorites.includes(g.id));
+      
+      if (favoritedGuides.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.innerHTML = favoritedGuides.map(guide => createGuideItem(guide, 'favorites')).join('');
+    }
+
+    function renderDownloaded() {
+      const container = document.getElementById('downloadedList');
+      const emptyState = document.getElementById('downloadedEmpty');
+      
+      const downloadedGuides = allGuides.filter(g => downloaded.includes(g.id));
+      
+      if (downloadedGuides.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      container.innerHTML = downloadedGuides.map(guide => createGuideItem(guide, 'downloaded')).join('');
+    }
+
+    function renderHistory() {
+      const container = document.getElementById('historyList');
+      const emptyState = document.getElementById('historyEmpty');
+      
+      if (history.length === 0) {
+        container.innerHTML = '';
+        emptyState.classList.remove('hidden');
+        return;
+      }
+
+      emptyState.classList.add('hidden');
+      
+      // Sort by timestamp
+      const sortedHistory = [...history].sort((a, b) => b.timestamp - a.timestamp);
+      
+      container.innerHTML = sortedHistory.map(h => {
+        const guide = allGuides.find(g => g.id === h.guideId);
+        if (!guide) return '';
+        
+        const date = new Date(h.timestamp);
+        const timeStr = date.toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' }) + ' ' + date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+        
+        return `
+          <div class="history-item">
+            <img src="${guide.image}" alt="${guide.title}" class="w-16 h-16 rounded-xl object-cover">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="font-semibold text-gray-800">${guide.title}</span>
+                <span class="text-xs text-gray-500">${guide.cityFlag} ${guide.city}</span>
+              </div>
+              <div class="flex items-center gap-4 text-sm text-gray-500">
+                <span>⏱️ ${guide.duration}</span>
+                <span>📅 ${timeStr}</span>
+              </div>
+              <div class="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-primary rounded-full" style="width: ${h.progress}%"></div>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              ${h.progress === 100 
+                ? '<span class="px-2 py-1 bg-green-100 text-green-600 text-xs rounded-full">已完成</span>'
+                : `<span class="px-2 py-1 bg-primary/10 text-primary text-xs rounded-full">${h.progress}%</span>`
+              }
+              <button class="p-2 hover:bg-gray-100 rounded-lg transition" onclick="removeFromHistory('${guide.id}')">
+                <span class="text-gray-400">🗑️</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function createGuideItem(guide, type) {
+      const historyItem = history.find(h => h.guideId === guide.id);
+      const progress = historyItem ? historyItem.progress : 0;
+      
+      return `
+        <div class="guide-card bg-white" onclick="playGuide('${guide.id}')">
+          <div class="guide-card-image">
+            <img src="${guide.image}" alt="${guide.title}" loading="lazy">
+            ${guide.isHot ? '<span class="guide-card-badge bg-red-500 text-white">热门</span>' : ''}
+          </div>
+          <div class="p-4">
+            <div class="flex items-center gap-2 mb-2">
+              <span class="text-sm">${guide.cityFlag} ${guide.city}</span>
+              <div class="flex items-center gap-1 text-amber-500">
+                <span>⭐</span>
+                <span class="text-sm font-medium">${guide.rating}</span>
+              </div>
+            </div>
+            <h3 class="font-bold text-gray-800 mb-1">${guide.title}</h3>
+            <div class="flex items-center justify-between text-sm text-gray-500 mb-3">
+              <span>⏱️ ${guide.duration}</span>
+              ${type === 'downloaded' ? `<span>📦 ${guide.size}</span>` : ''}
+            </div>
+            ${progress > 0 ? `
+              <div class="mb-3">
+                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                  <span>播放进度</span>
+                  <span>${progress}%</span>
+                </div>
+                <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div class="h-full bg-primary rounded-full" style="width: ${progress}%"></div>
+                </div>
+              </div>
+            ` : ''}
+            <div class="flex gap-2">
+              <button class="flex-1 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 transition" onclick="event.stopPropagation(); playGuide('${guide.id}')">
+                ${progress > 0 ? '▶️ 继续播放' : '▶️ 开始播放'}
+              </button>
+              ${type === 'favorites' ? `
+                <button class="px-3 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition" onclick="event.stopPropagation(); toggleFavorite('${guide.id}')">
+                  <span class="text-red-500">♥</span>
+                </button>
+              ` : ''}
+              ${type === 'downloaded' ? `
+                <button class="px-3 py-2 bg-gray-100 rounded-lg hover:bg-red-50 hover:text-red-500 transition" onclick="event.stopPropagation(); deleteDownload('${guide.id}')">
+                  <span class="text-gray-400">🗑️</span>
+                </button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-nav button').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      
+      document.querySelectorAll('.tab-content').forEach(section => {
+        section.classList.add('hidden');
+      });
+      
+      document.getElementById(`${tab}Section`).classList.remove('hidden');
+    }
+
+    function playGuide(guideId) {
+      window.location.href = `spot.html?id=${guideId}`;
+    }
+
+    function toggleFavorite(guideId) {
+      favorites = favorites.filter(id => id !== guideId);
+      localStorage.setItem('audioFavorites', JSON.stringify(favorites));
+      updateStats();
+      renderFavorites();
+    }
+
+    function deleteDownload(guideId) {
+      if (confirm('确定要删除此下载吗？')) {
+        downloaded = downloaded.filter(id => id !== guideId);
+        localStorage.setItem('audioDownloaded', JSON.stringify(downloaded));
+        updateStats();
+        renderDownloaded();
+      }
+    }
+
+    function removeFromHistory(guideId) {
+      history = history.filter(h => h.guideId !== guideId);
+      localStorage.setItem('audioHistory', JSON.stringify(history));
+      updateStats();
+      renderHistory();
+    }
+
+    function clearAllHistory() {
+      if (confirm('确定要清除所有播放历史吗？')) {
+        history = [];
+        localStorage.setItem('audioHistory', JSON.stringify(history));
+        updateStats();
+        renderHistory();
+      }
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

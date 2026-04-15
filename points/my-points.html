@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的积分 - 积分商城 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../css/points/points.css">
+  <link rel="stylesheet" href="../css/footer.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            points: '#f97316'
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-gradient-to-br from-orange-50 to-amber-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 text-gray-700 hover:text-primary transition">
+          <span class="text-2xl">🧭</span>
+          <span class="text-xl font-bold">游导旅游</span>
+        </a>
+        <div class="flex items-center gap-6">
+          <a href="index.html" class="text-gray-600 hover:text-primary transition">积分商城</a>
+          <a href="products.html" class="text-gray-600 hover:text-primary transition">全部商品</a>
+          <a href="my-points.html" class="text-points font-semibold border-b-2 border-points pb-1">我的积分</a>
+          <a href="tasks.html" class="text-gray-600 hover:text-primary transition">赚积分</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Points Overview -->
+    <div class="points-gradient rounded-3xl p-8 mb-8 text-white relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+      <div class="relative z-10">
+        <div class="text-center">
+          <p class="text-white/80 mb-2">当前积分余额</p>
+          <div class="flex items-center justify-center gap-2 mb-4">
+            <span class="text-6xl md:text-7xl font-black" id="pointsDisplay">0</span>
+            <span class="text-3xl">积分</span>
+          </div>
+          <div class="flex items-center justify-center gap-6 text-white/80 text-sm">
+            <span>✨ 有效期至: <span id="expiryDate">-</span></span>
+            <span>📅 剩余 <span id="daysRemaining">365</span> 天</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div class="stats-card">
+        <div class="text-3xl mb-2">📈</div>
+        <p class="text-gray-500 text-sm">累计获得</p>
+        <p class="stats-number text-green-600" id="totalIncome">0</p>
+      </div>
+      <div class="stats-card">
+        <div class="text-3xl mb-2">📉</div>
+        <p class="text-gray-500 text-sm">累计消耗</p>
+        <p class="stats-number text-red-500" id="totalExpense">0</p>
+      </div>
+      <div class="stats-card">
+        <div class="text-3xl mb-2">📦</div>
+        <p class="text-gray-500 text-sm">兑换次数</p>
+        <p class="stats-number" id="exchangeCount">0</p>
+      </div>
+      <div class="stats-card">
+        <div class="text-3xl mb-2">📅</div>
+        <p class="text-gray-500 text-sm">签到天数</p>
+        <p class="stats-number text-blue-600" id="signInDays">0</p>
+      </div>
+    </div>
+
+    <!-- Points Source Stats -->
+    <div class="bg-white rounded-2xl p-6 mb-8 shadow-sm border border-orange-100">
+      <h3 class="font-bold text-lg text-gray-800 mb-4">📊 积分来源统计</h3>
+      <div id="sourceStats" class="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <!-- Source stats will be loaded here -->
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="flex border-b">
+        <button onclick="switchTab('history')" class="tab-btn active flex-1 px-6 py-4 font-semibold text-center border-b-2 border-points text-points" data-tab="history">
+          📜 积分明细
+        </button>
+        <button onclick="switchTab('exchanges')" class="tab-btn flex-1 px-6 py-4 font-semibold text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700" data-tab="exchanges">
+          📦 兑换记录
+        </button>
+      </div>
+
+      <!-- History Tab -->
+      <div id="historyTab" class="p-6">
+        <div id="historyList" class="space-y-3">
+          <!-- History will be loaded here -->
+        </div>
+        <div id="historyEmpty" class="empty-state hidden">
+          <div class="empty-state-icon">📝</div>
+          <h3 class="text-lg font-semibold mb-2">暂无积分记录</h3>
+          <p class="text-sm">快去完成任务赚取积分吧</p>
+          <a href="tasks.html" class="inline-block mt-4 px-6 py-2 points-gradient text-white font-semibold rounded-full hover:opacity-90 transition">
+            去赚积分
+          </a>
+        </div>
+      </div>
+
+      <!-- Exchanges Tab -->
+      <div id="exchangesTab" class="p-6 hidden">
+        <div id="exchangesList" class="space-y-3">
+          <!-- Exchanges will be loaded here -->
+        </div>
+        <div id="exchangesEmpty" class="empty-state hidden">
+          <div class="empty-state-icon">🎁</div>
+          <h3 class="text-lg font-semibold mb-2">暂无兑换记录</h3>
+          <p class="text-sm">快去兑换心仪的商品吧</p>
+          <a href="products.html" class="inline-block mt-4 px-6 py-2 points-gradient text-white font-semibold rounded-full hover:opacity-90 transition">
+            浏览商品
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12 mt-16">
+    <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+      <p>© 2024 游导旅游 youdao-travel.com 版权所有</p>
+    </div>
+  </footer>
+
+  <script src="../js/points/points-system.js"></script>
+  <script>
+    // 加载数据
+    function loadData() {
+      const userData = PointsSystem.getUserData();
+      const stats = PointsSystem.getStats();
+      const expiry = PointsSystem.getPointsExpiry();
+      
+      // 显示积分
+      document.getElementById('pointsDisplay').textContent = userData.points.toLocaleString();
+      document.getElementById('expiryDate').textContent = new Date(expiry.expiryDate).toLocaleDateString('zh-CN');
+      document.getElementById('daysRemaining').textContent = expiry.daysRemaining;
+      
+      // 显示统计
+      document.getElementById('totalIncome').textContent = stats.totalIncome;
+      document.getElementById('totalExpense').textContent = stats.totalExpense;
+      document.getElementById('exchangeCount').textContent = stats.exchangeCount;
+      document.getElementById('signInDays').textContent = stats.validDays;
+      
+      // 渲染积分来源统计
+      renderSourceStats(stats.incomeBySource);
+      
+      // 渲染积分明细
+      renderHistory();
+      
+      // 渲染兑换记录
+      renderExchanges();
+    }
+
+    // 渲染积分来源统计
+    function renderSourceStats(sources) {
+      const container = document.getElementById('sourceStats');
+      const sourceNames = {
+        daily_signin: '每日签到',
+        publish_travel: '发布游记',
+        post_comment: '发表评论',
+        invite_friend: '邀请好友',
+        complete_profile: '完善资料',
+        daily_browse: '浏览景点',
+        daily_search: '搜索目的地',
+        daily_share: '分享内容'
+      };
+      
+      const total = Object.values(sources).reduce((sum, val) => sum + val, 0);
+      
+      let html = '';
+      for (const [source, points] of Object.entries(sources)) {
+        const percent = total > 0 ? Math.round((points / total) * 100) : 0;
+        html += `
+          <div class="bg-orange-50 rounded-xl p-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-sm text-gray-600">${sourceNames[source] || source}</span>
+              <span class="font-semibold text-points">${points}</span>
+            </div>
+            <div class="task-progress">
+              <div class="task-progress-bar" style="width: ${percent}%"></div>
+            </div>
+            <p class="text-xs text-gray-400 mt-1">${percent}%</p>
+          </div>
+        `;
+      }
+      
+      if (!html) {
+        html = `
+          <div class="col-span-5 text-center py-8 text-gray-400">
+            <p>暂无积分来源数据</p>
+          </div>
+        `;
+      }
+      
+      container.innerHTML = html;
+    }
+
+    // 渲染积分明细
+    function renderHistory() {
+      const container = document.getElementById('historyList');
+      const emptyState = document.getElementById('historyEmpty');
+      const history = PointsSystem.getPointsHistory();
+      
+      if (history.length === 0) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      
+      container.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      
+      container.innerHTML = history.slice(0, 20).map(item => `
+        <div class="flex items-center gap-4 p-4 rounded-xl hover:bg-gray-50 transition ${item.type === 'income' ? 'bg-green-50/50' : 'bg-red-50/50'}">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center ${item.type === 'income' ? 'bg-green-100' : 'bg-red-100'}">
+            <span class="text-2xl">${item.type === 'income' ? '📈' : '📉'}</span>
+          </div>
+          <div class="flex-1">
+            <h4 class="font-semibold text-gray-800">${item.description}</h4>
+            <p class="text-sm text-gray-500">${PointsSystem.formatDate(item.time)}</p>
+          </div>
+          <span class="text-xl font-bold ${item.type === 'income' ? 'text-green-600' : 'text-red-500'}">
+            ${item.type === 'income' ? '+' : '-'}${item.points}
+          </span>
+        </div>
+      `).join('');
+    }
+
+    // 渲染兑换记录
+    function renderExchanges() {
+      const container = document.getElementById('exchangesList');
+      const emptyState = document.getElementById('exchangesEmpty');
+      const exchanges = PointsSystem.getExchangeHistory();
+      
+      if (exchanges.length === 0) {
+        container.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        return;
+      }
+      
+      container.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      
+      container.innerHTML = exchanges.map(item => `
+        <div class="exchange-item">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center text-2xl">
+              ${item.productImage}
+            </div>
+            <div class="flex-1">
+              <h4 class="font-semibold text-gray-800">${item.productName}</h4>
+              <p class="text-sm text-gray-500">${PointsSystem.formatDate(item.exchangeTime)}</p>
+            </div>
+            <div class="text-right">
+              <span class="status-badge status-${item.status}">
+                ${item.status === 'pending' ? '待发货' : item.status === 'shipped' ? '已发货' : item.status === 'delivered' ? '已完成' : '已取消'}
+              </span>
+              <p class="text-sm text-points font-semibold mt-1">-${item.points}积分</p>
+            </div>
+          </div>
+          ${item.logistics ? `
+            <div class="mt-3 p-3 bg-gray-50 rounded-lg text-sm">
+              <p class="text-gray-600">📦 ${item.logistics}</p>
+            </div>
+          ` : ''}
+          ${item.status === 'pending' ? `
+            <button onclick="cancelExchange(${item.id})" class="mt-3 text-sm text-red-500 hover:underline">
+              取消兑换
+            </button>
+          ` : ''}
+        </div>
+      `).join('');
+    }
+
+    // 取消兑换
+    function cancelExchange(id) {
+      if (confirm('确定要取消此兑换吗？积分将返还到您的账户。')) {
+        const success = PointsSystem.cancelExchange(id);
+        if (success) {
+          loadData();
+        }
+      }
+    }
+
+    // 切换标签
+    function switchTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'border-points', 'text-points');
+        btn.classList.add('border-transparent', 'text-gray-500');
+      });
+      
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active', 'border-points', 'text-points');
+      document.querySelector(`[data-tab="${tab}"]`).classList.remove('border-transparent', 'text-gray-500');
+      
+      document.getElementById('historyTab').classList.toggle('hidden', tab !== 'history');
+      document.getElementById('exchangesTab').classList.toggle('hidden', tab !== 'exchanges');
+    }
+
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

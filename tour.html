@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>功能导览 - 游导旅游</title>
+  <meta name="description" content="跟随导览了解游导旅游平台的核心功能，快速上手使用。">
+  
+  <!-- Preload Critical Resources -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/onboarding.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/accessibility.css">
+  <link rel="stylesheet" href="css/style.css">
+  
+  <style>
+    :root {
+      --tour-primary: #4F86F7;
+      --tour-secondary: #3B82F6;
+      --tour-success: #10B981;
+      --tour-warning: #F59E0B;
+      --tour-bg: #f8fafc;
+      --tour-text: #1e293b;
+      --tour-text-secondary: #64748b;
+      --tour-card-bg: #ffffff;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--tour-bg);
+      color: var(--tour-text);
+      min-height: 100vh;
+    }
+
+    /* Tour Header */
+    .tour-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 64px;
+      background: var(--tour-card-bg);
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      z-index: 100;
+    }
+
+    .tour-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--tour-primary);
+      text-decoration: none;
+    }
+
+    .tour-logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--tour-primary) 0%, var(--tour-secondary) 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .tour-header-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--tour-text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tour-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Buttons */
+    .tour-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: none;
+    }
+
+    .tour-btn-outline {
+      background: transparent;
+      border: 1px solid #e2e8f0;
+      color: var(--tour-text-secondary);
+    }
+
+    .tour-btn-outline:hover {
+      border-color: var(--tour-primary);
+      color: var(--tour-primary);
+    }
+
+    .tour-btn-primary {
+      background: linear-gradient(135deg, var(--tour-primary) 0%, var(--tour-secondary) 100%);
+      color: #fff;
+    }
+
+    .tour-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(79, 134, 247, 0.4);
+    }
+
+    .tour-btn-danger {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    .tour-btn-danger:hover {
+      background: #fecaca;
+    }
+
+    /* Main Content Area */
+    .tour-main {
+      margin-top: 64px;
+      padding: 24px;
+      max-width: 1400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Tour Progress */
+    .tour-progress-container {
+      margin-bottom: 32px;
+    }
+
+    .tour-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .tour-progress-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .tour-progress-step {
+      font-size: 0.875rem;
+      color: var(--tour-text-secondary);
+    }
+
+    .tour-progress-step .current {
+      font-weight: 600;
+      color: var(--tour-primary);
+    }
+
+    .tour-progress-bar-wrapper {
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .tour-progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--tour-primary) 0%, var(--tour-secondary) 100%);
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .tour-progress-steps {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 16px;
+    }
+
+    .tour-progress-step-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+    }
+
+    .tour-progress-step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--tour-text-secondary);
+      transition: all 0.3s ease;
+    }
+
+    .tour-progress-step-item.active .tour-progress-step-dot {
+      background: var(--tour-primary);
+      color: #fff;
+      transform: scale(1.2);
+    }
+
+    .tour-progress-step-item.completed .tour-progress-step-dot {
+      background: var(--tour-success);
+      color: #fff;
+    }
+
+    .tour-progress-step-label {
+      font-size: 12px;
+      color: var(--tour-text-secondary);
+      text-align: center;
+      max-width: 80px;
+    }
+
+    .tour-progress-step-item.active .tour-progress-step-label {
+      color: var(--tour-primary);
+      font-weight: 600;
+    }
+
+    /* Tour Content Card */
+    .tour-content-card {
+      background: var(--tour-card-bg);
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 500px;
+    }
+
+    /* Tour Visual Section */
+    .tour-visual {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tour-visual::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+      animation: tour-glow 10s linear infinite;
+    }
+
+    @keyframes tour-glow {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .tour-visual-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      color: #fff;
+    }
+
+    .tour-visual-icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+      animation: tour-bounce 2s ease-in-out infinite;
+    }
+
+    @keyframes tour-bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .tour-visual-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .tour-visual-desc {
+      font-size: 1rem;
+      opacity: 0.9;
+      max-width: 300px;
+    }
+
+    /* Tour Info Section */
+    .tour-info {
+      padding: 48px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tour-step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(79, 134, 247, 0.1);
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--tour-primary);
+      margin-bottom: 16px;
+      width: fit-content;
+    }
+
+    .tour-info-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .tour-info-desc {
+      font-size: 1rem;
+      color: var(--tour-text-secondary);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .tour-features {
+      flex: 1;
+      margin-bottom: 24px;
+    }
+
+    .tour-features-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--tour-text);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tour-feature-list {
+      list-style: none;
+    }
+
+    .tour-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .tour-feature-item:last-child {
+      border-bottom: none;
+    }
+
+    .tour-feature-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, rgba(79, 134, 247, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .tour-feature-text {
+      font-size: 0.9375rem;
+      color: var(--tour-text);
+    }
+
+    /* Tour Navigation */
+    .tour-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 24px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .tour-nav-progress {
+      display: flex;
+      gap: 6px;
+    }
+
+    .tour-nav-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      transition: all 0.3s ease;
+    }
+
+    .tour-nav-dot.active {
+      width: 24px;
+      border-radius: 4px;
+      background: var(--tour-primary);
+    }
+
+    .tour-nav-dot.completed {
+      background: var(--tour-success);
+    }
+
+    .tour-nav-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Tour Complete Card */
+    .tour-complete {
+      text-align: center;
+      padding: 48px;
+    }
+
+    .tour-complete-icon {
+      font-size: 80px;
+      margin-bottom: 24px;
+    }
+
+    .tour-complete-title {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: var(--tour-success);
+    }
+
+    .tour-complete-desc {
+      font-size: 1.125rem;
+      color: var(--tour-text-secondary);
+      margin-bottom: 32px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .tour-complete-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* Responsive */
+    @media (max-width: 968px) {
+      .tour-content-card {
+        grid-template-columns: 1fr;
+      }
+
+      .tour-visual {
+        padding: 32px;
+        min-height: 200px;
+      }
+
+      .tour-visual-icon {
+        font-size: 60px;
+      }
+
+      .tour-visual-title {
+        font-size: 1.5rem;
+      }
+
+      .tour-info {
+        padding: 32px;
+      }
+
+      .tour-progress-steps {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .tour-header {
+        padding: 0 16px;
+      }
+
+      .tour-header-title {
+        display: none;
+      }
+
+      .tour-main {
+        padding: 16px;
+      }
+
+      .tour-nav-buttons {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .tour-btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Tour Header -->
+  <header class="tour-header">
+    <a href="index.html" class="tour-logo">
+      <div class="tour-logo-icon">🧭</div>
+      <span>游导旅游</span>
+    </a>
+    <div class="tour-header-title">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M12 6v6l4 2"/>
+      </svg>
+      <span>功能导览</span>
+    </div>
+    <div class="tour-header-actions">
+      <a href="discover.html" class="tour-btn tour-btn-outline">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="3" width="7" height="7"/>
+          <rect x="14" y="3" width="7" height="7"/>
+          <rect x="14" y="14" width="7" height="7"/>
+          <rect x="3" y="14" width="7" height="7"/>
+        </svg>
+        全部功能
+      </a>
+      <button class="tour-btn tour-btn-danger" id="exitTourBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+        退出导览
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="tour-main">
+    <!-- Progress Container -->
+    <div class="tour-progress-container">
+      <div class="tour-progress-header">
+        <h1 class="tour-progress-title">探索平台核心功能</h1>
+        <div class="tour-progress-step">
+          步骤 <span class="current" id="currentStep">1</span> / <span id="totalSteps">6</span>
+        </div>
+      </div>
+      <div class="tour-progress-bar-wrapper">
+        <div class="tour-progress-bar" id="progressBar" style="width: 16.67%"></div>
+      </div>
+      <div class="tour-progress-steps" id="progressSteps">
+        <!-- Generated by JS -->
+      </div>
+    </div>
+
+    <!-- Tour Content Card -->
+    <div class="tour-content-card" id="tourContent">
+      <!-- Tour Visual -->
+      <div class="tour-visual">
+        <div class="tour-visual-content">
+          <div class="tour-visual-icon" id="stepIcon">🌟</div>
+          <h2 class="tour-visual-title" id="stepTitle">欢迎开始</h2>
+          <p class="tour-visual-desc" id="stepSubtitle">跟随导览了解平台功能</p>
+        </div>
+      </div>
+
+      <!-- Tour Info -->
+      <div class="tour-info">
+        <div class="tour-step-badge" id="stepBadge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5"/>
+            <path d="M2 12l10 5 10-5"/>
+          </svg>
+          <span>第一步</span>
+        </div>
+        <h2 class="tour-info-title" id="infoTitle">欢迎来到游导旅游</h2>
+        <p class="tour-info-desc" id="infoDesc">
+          我们很高兴您选择游导旅游！让我们用几分钟时间，带您快速了解平台的核心功能，帮助您开始精彩的旅行规划。
+        </p>
+
+        <div class="tour-features" id="featuresContainer">
+          <div class="tour-features-title">您将了解到</div>
+          <ul class="tour-feature-list" id="featureList">
+            <!-- Generated by JS -->
+          </ul>
+        </div>
+
+        <div class="tour-nav">
+          <div class="tour-nav-progress" id="navDots">
+            <!-- Generated by JS -->
+          </div>
+          <div class="tour-nav-buttons">
+            <button class="tour-btn tour-btn-outline" id="prevBtn" style="display: none;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+              </svg>
+              上一步
+            </button>
+            <button class="tour-btn tour-btn-primary" id="nextBtn">
+              下一步
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Tour Steps Configuration
+    const TOUR_STEPS = [
+      {
+        id: 'welcome',
+        icon: '🌟',
+        title: '欢迎开始导览',
+        subtitle: '开启您的旅行之旅',
+        badge: '第一步',
+        infoTitle: '欢迎来到游导旅游',
+        infoDesc: '我们很高兴您选择游导旅游！让我们用几分钟时间，带您快速了解平台的核心功能，帮助您开始精彩的旅行规划。',
+        features: [
+          { icon: '🧭', text: '发现全球精彩目的地' },
+          { icon: '👨‍🏫', text: '联系专业认证导游' },
+          { icon: '🗺️', text: '规划完美旅行路线' },
+          { icon: '💎', text: '获取独家旅行优惠' }
+        ]
+      },
+      {
+        id: 'search',
+        icon: '🔍',
+        title: '智能搜索',
+        subtitle: '快速找到所需内容',
+        badge: '第二步',
+        infoTitle: '快速搜索目的地和导游',
+        infoDesc: '使用我们的智能搜索功能，输入目的地、日期或关键词，即可快速找到相关的导游、路线和旅行攻略。支持模糊搜索和智能推荐。',
+        features: [
+          { icon: '🎯', text: '精准关键词匹配' },
+          { icon: '🏷️', text: '多维度筛选过滤' },
+          { icon: '📅', text: '日期范围搜索' },
+          { icon: '⭐', text: '按评分排序' }
+        ]
+      },
+      {
+        id: 'guides',
+        icon: '👨‍🏫',
+        title: '导游服务',
+        subtitle: '专业导游伴您同行',
+        badge: '第三步',
+        infoTitle: '发现并预约专业导游',
+        infoDesc: '浏览海量经过认证的专业导游，查看详细资料、服务评价和过往作品。根据目的地、出行日期和预算，筛选最合适的导游。',
+        features: [
+          { icon: '✅', text: '官方认证标识' },
+          { icon: '⭐', text: '真实用户评价' },
+          { icon: '💬', text: '在线即时沟通' },
+          { icon: '📅', text: '预约空闲时间' }
+        ]
+      },
+      {
+        id: 'destinations',
+        icon: '🌍',
+        title: '目的地探索',
+        subtitle: '发现世界之美',
+        badge: '第四步',
+        infoTitle: '探索热门与小众目的地',
+        infoDesc: '从热门景点到小众秘境，发现独特的旅行灵感。查看目的地的详细介绍、旅行攻略、最佳季节和实用贴士。',
+        features: [
+          { icon: '🏔️', text: '热门景点推荐' },
+          { icon: '🌅', text: '最佳旅行季节' },
+          { icon: '📸', text: '精选旅行攻略' },
+          { icon: '💡', text: '实用旅行贴士' }
+        ]
+      },
+      {
+        id: 'tools',
+        icon: '🛠️',
+        title: '实用工具',
+        subtitle: '出行准备更轻松',
+        badge: '第五步',
+        infoTitle: '一站式旅行工具箱',
+        infoDesc: '汇率换算、天气查询、世界时钟、签证指南...多种实用工具帮助您做好出行准备，让旅行更加轻松便捷。',
+        features: [
+          { icon: '💱', text: '实时汇率换算' },
+          { icon: '🌤️', text: '目的地天气预报' },
+          { icon: '🕐', text: '世界时钟' },
+          { icon: '📋', text: '签证申请清单' }
+        ]
+      },
+      {
+        id: 'profile',
+        icon: '👤',
+        title: '个人中心',
+        subtitle: '管理您的旅行生活',
+        badge: '第六步',
+        infoTitle: '个人中心与账户管理',
+        infoDesc: '在个人中心管理您的个人信息、订单记录、收藏内容、积分奖励和消息通知。查看您的旅行足迹，开启下一次冒险。',
+        features: [
+          { icon: '📝', text: '个人信息管理' },
+          { icon: '📦', text: '订单查询追踪' },
+          { icon: '❤️', text: '收藏与足迹' },
+          { icon: '🏆', text: '积分与勋章' }
+        ]
+      }
+    ];
+
+    // Tour State
+    let currentStepIndex = 0;
+    const totalSteps = TOUR_STEPS.length;
+
+    // DOM Elements
+    const currentStepEl = document.getElementById('currentStep');
+    const totalStepsEl = document.getElementById('totalSteps');
+    const progressBar = document.getElementById('progressBar');
+    const progressSteps = document.getElementById('progressSteps');
+    const stepIcon = document.getElementById('stepIcon');
+    const stepTitle = document.getElementById('stepTitle');
+    const stepSubtitle = document.getElementById('stepSubtitle');
+    const stepBadge = document.getElementById('stepBadge');
+    const infoTitle = document.getElementById('infoTitle');
+    const infoDesc = document.getElementById('infoDesc');
+    const featureList = document.getElementById('featureList');
+    const navDots = document.getElementById('navDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const exitTourBtn = document.getElementById('exitTourBtn');
+    const tourContent = document.getElementById('tourContent');
+
+    // Initialize
+    function init() {
+      totalStepsEl.textContent = totalSteps;
+      renderProgressSteps();
+      renderNavDots();
+      updateStep();
+
+      // Event Listeners
+      prevBtn.addEventListener('click', prevStep);
+      nextBtn.addEventListener('click', nextStep);
+      exitTourBtn.addEventListener('click', exitTour);
+    }
+
+    // Render Progress Steps
+    function renderProgressSteps() {
+      progressSteps.innerHTML = TOUR_STEPS.map((step, index) => `
+        <div class="tour-progress-step-item ${index === 0 ? 'active' : ''}" data-index="${index}">
+          <div class="tour-progress-step-dot">${index + 1}</div>
+          <span class="tour-progress-step-label">${step.badge.replace('第', '').replace('步', '')}</span>
+        </div>
+      `).join('');
+    }
+
+    // Render Navigation Dots
+    function renderNavDots() {
+      navDots.innerHTML = TOUR_STEPS.map((_, index) => `
+        <div class="tour-nav-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>
+      `).join('');
+    }
+
+    // Update Step Content
+    function updateStep() {
+      const step = TOUR_STEPS[currentStepIndex];
+      const progressPercent = ((currentStepIndex + 1) / totalSteps) * 100;
+
+      // Update progress
+      currentStepEl.textContent = currentStepIndex + 1;
+      progressBar.style.width = `${progressPercent}%`;
+
+      // Update progress steps
+      document.querySelectorAll('.tour-progress-step-item').forEach((item, index) => {
+        item.classList.remove('active', 'completed');
+        if (index < currentStepIndex) item.classList.add('completed');
+        if (index === currentStepIndex) item.classList.add('active');
+      });
+
+      // Update nav dots
+      document.querySelectorAll('.tour-nav-dot').forEach((dot, index) => {
+        dot.classList.remove('active', 'completed');
+        if (index < currentStepIndex) dot.classList.add('completed');
+        if (index === currentStepIndex) dot.classList.add('active');
+      });
+
+      // Update visual
+      stepIcon.textContent = step.icon;
+      stepTitle.textContent = step.title;
+      stepSubtitle.textContent = step.subtitle;
+
+      // Update info
+      stepBadge.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+          <path d="M2 17l10 5 10-5"/>
+          <path d="M2 12l10 5 10-5"/>
+        </svg>
+        <span>${step.badge}</span>
+      `;
+      infoTitle.textContent = step.infoTitle;
+      infoDesc.textContent = step.infoDesc;
+
+      // Update features
+      featureList.innerHTML = step.features.map(feature => `
+        <li class="tour-feature-item">
+          <div class="tour-feature-icon">${feature.icon}</div>
+          <span class="tour-feature-text">${feature.text}</span>
+        </li>
+      `).join('');
+
+      // Update buttons
+      prevBtn.style.display = currentStepIndex === 0 ? 'none' : 'flex';
+      
+      if (currentStepIndex === totalSteps - 1) {
+        nextBtn.innerHTML = `
+          完成导览
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22,4 12,14.01 9,11.01"/>
+          </svg>
+        `;
+      } else {
+        nextBtn.innerHTML = `
+          下一步
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        `;
+      }
+
+      // Add animation
+      tourContent.style.opacity = '0';
+      tourContent.style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        tourContent.style.transition = 'all 0.4s ease';
+        tourContent.style.opacity = '1';
+        tourContent.style.transform = 'translateY(0)';
+      }, 50);
+    }
+
+    // Navigation Functions
+    function nextStep() {
+      if (currentStepIndex < totalSteps - 1) {
+        currentStepIndex++;
+        updateStep();
+      } else {
+        completeTour();
+      }
+    }
+
+    function prevStep() {
+      if (currentStepIndex > 0) {
+        currentStepIndex--;
+        updateStep();
+      }
+    }
+
+    function exitTour() {
+      if (confirm('确定要退出导览吗？您可以随时从帮助菜单重新开始。')) {
+        localStorage.setItem('travel_onboarded', 'partial');
+        localStorage.setItem('travel_onboarding_step', currentStepIndex);
+        window.location.href = 'index.html';
+      }
+    }
+
+    function completeTour() {
+      // Mark as onboarded
+      localStorage.setItem('travel_onboarded', 'true');
+      localStorage.removeItem('travel_onboarding_step');
+
+      // Show completion state
+      tourContent.innerHTML = `
+        <div class="tour-complete">
+          <div class="tour-complete-icon">🎉</div>
+          <h2 class="tour-complete-title">导览完成！</h2>
+          <p class="tour-complete-desc">
+            恭喜您已完成所有功能导览！现在可以开始使用游导旅游，探索世界的精彩了。祝您旅途愉快！🌍✈️
+          </p>
+          <div class="tour-complete-actions">
+            <a href="index.html" class="tour-btn tour-btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9,22 9,12 15,12 15,22"/>
+              </svg>
+              返回首页
+            </a>
+            <a href="discover.html" class="tour-btn tour-btn-outline">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+              </svg>
+              探索更多功能
+            </a>
+          </div>
+        </div>
+      `;
+
+      // Update header
+      document.querySelector('.tour-header-title span').textContent = '导览完成';
+    }
+
+    // Initialize on load
+    init();
+  </script>
+</body>
+</html>

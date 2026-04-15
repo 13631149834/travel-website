@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>性能监控组件 - 游导旅游</title>
+  <link rel="icon" href="../images/favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --primary: #ff6b35;
+      --primary-dark: #e55a2b;
+      --secondary: #1e3a5f;
+      --bg-light: #f8f9fa;
+      --bg-white: #ffffff;
+      --text-dark: #2d3436;
+      --text-gray: #636e72;
+      --border: #e9ecef;
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
+      --radius: 12px;
+      --radius-sm: 8px;
+      --success: #10B981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #3B82F6;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .page-title {
+      color: white;
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 40px;
+    }
+
+    .widgets-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* 评分徽章组件 */
+    .score-badge-widget {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+
+    .widget-title {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .score-circle {
+      width: 140px;
+      height: 140px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .score-circle svg {
+      transform: rotate(-90deg);
+    }
+
+    .score-bg {
+      fill: none;
+      stroke: var(--border);
+      stroke-width: 10;
+    }
+
+    .score-progress {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 377;
+      transition: stroke-dashoffset 1s ease;
+    }
+
+    .score-value {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+    }
+
+    .score-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+    }
+
+    .score-unit {
+      font-size: 0.9rem;
+      color: var(--text-gray);
+    }
+
+    .score-label {
+      margin-top: 12px;
+      font-weight: 600;
+      padding: 4px 16px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .score-label.good { background: rgba(16,185,129,0.1); color: var(--success); }
+    .score-label.warning { background: rgba(245,158,11,0.1); color: var(--warning); }
+    .score-label.poor { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+    /* 加载时间组件 */
+    .load-time-widget {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .load-time-display {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .time-value {
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .time-unit {
+      font-size: 1.2rem;
+      color: var(--text-gray);
+    }
+
+    .time-comparison {
+      text-align: center;
+      padding: 12px;
+      background: var(--bg-light);
+      border-radius: var(--radius-sm);
+    }
+
+    .comparison-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 0;
+      font-size: 0.85rem;
+    }
+
+    .comparison-label {
+      color: var(--text-gray);
+    }
+
+    .comparison-value {
+      font-weight: 600;
+    }
+
+    .comparison-value.good { color: var(--success); }
+    .comparison-value.warning { color: var(--warning); }
+    .comparison-value.poor { color: var(--danger); }
+
+    /* 指标卡片组 */
+    .metrics-grid {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .metric-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .metric-row:last-child {
+      border-bottom: none;
+    }
+
+    .metric-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .metric-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+    }
+
+    .metric-icon.lcp { background: rgba(59,130,246,0.1); }
+    .metric-icon.fid { background: rgba(16,185,129,0.1); }
+    .metric-icon.cls { background: rgba(245,158,11,0.1); }
+    .metric-icon.fcp { background: rgba(139,92,246,0.1); }
+
+    .metric-name {
+      font-weight: 500;
+    }
+
+    .metric-subname {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+    }
+
+    .metric-value-group {
+      text-align: right;
+    }
+
+    .metric-value {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .metric-status {
+      font-size: 0.7rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    .metric-status.good { background: rgba(16,185,129,0.1); color: var(--success); }
+    .metric-status.warning { background: rgba(245,158,11,0.1); color: var(--warning); }
+    .metric-status.poor { background: rgba(239,68,68,0.1); color: var(--danger); }
+
+    /* 资源统计组件 */
+    .resource-widget {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .resource-bars {
+      margin-top: 16px;
+    }
+
+    .resource-bar-item {
+      margin-bottom: 16px;
+    }
+
+    .resource-bar-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      font-size: 0.85rem;
+    }
+
+    .resource-bar-name {
+      color: var(--text-gray);
+    }
+
+    .resource-bar-value {
+      font-weight: 600;
+    }
+
+    .resource-bar {
+      height: 8px;
+      background: var(--bg-light);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .resource-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s;
+    }
+
+    .resource-bar-fill.images { background: #3B82F6; }
+    .resource-bar-fill.scripts { background: #10B981; }
+    .resource-bar-fill.styles { background: #f59e0b; }
+    .resource-bar-fill.fonts { background: #8B5CF6; }
+
+    /* 实时状态组件 */
+    .realtime-widget {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .realtime-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .realtime-stat {
+      text-align: center;
+      padding: 16px;
+      background: var(--bg-light);
+      border-radius: var(--radius-sm);
+    }
+
+    .realtime-stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+
+    .realtime-stat-label {
+      font-size: 0.75rem;
+      color: var(--text-gray);
+      margin-top: 4px;
+    }
+
+    /* 迷你趋势图 */
+    .mini-trend-widget {
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .mini-chart-container {
+      height: 120px;
+      margin-top: 16px;
+    }
+
+    /* 状态指示器 */
+    .status-indicator {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .status-indicator.healthy {
+      background: rgba(16,185,129,0.1);
+      color: var(--success);
+    }
+
+    .status-indicator.warning {
+      background: rgba(245,158,11,0.1);
+      color: var(--warning);
+    }
+
+    .status-indicator.critical {
+      background: rgba(239,68,68,0.1);
+      color: var(--danger);
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    .status-indicator.healthy .status-dot { background: var(--success); }
+    .status-indicator.warning .status-dot { background: var(--warning); }
+    .status-indicator.critical .status-dot { background: var(--danger); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.2); }
+    }
+
+    /* 悬浮监控面板 */
+    .floating-monitor {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: var(--bg-white);
+      border-radius: 50%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+
+    .floating-monitor:hover {
+      transform: scale(1.1);
+    }
+
+    .floating-monitor .score {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--success);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+
+    .floating-monitor.warning .score { background: var(--warning); }
+    .floating-monitor.critical .score { background: var(--danger); }
+
+    /* 展开的监控面板 */
+    .monitor-panel {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 360px;
+      background: var(--bg-white);
+      border-radius: var(--radius);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      padding: 20px;
+      z-index: 999;
+      display: none;
+    }
+
+    .monitor-panel.show {
+      display: block;
+      animation: slideUp 0.3s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-title {
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-close {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: var(--bg-light);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: all 0.3s;
+    }
+
+    .panel-close:hover {
+      background: var(--danger);
+      color: white;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .widgets-grid {
+        grid-template-columns: 1fr;
+      }
+      .floating-monitor {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+      }
+      .monitor-panel {
+        width: calc(100% - 40px);
+        right: 20px;
+        left: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1 class="page-title">📊 性能监控组件展示</h1>
+
+  <div class="widgets-grid">
+    <!-- 性能评分徽章 -->
+    <div class="score-badge-widget">
+      <div class="widget-title">
+        <span>🎯</span> 性能评分
+      </div>
+      <div class="score-circle">
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle class="score-bg" cx="70" cy="70" r="60"/>
+          <circle class="score-progress" cx="70" cy="70" r="60" 
+                  stroke="#10B981" 
+                  stroke-dashoffset="38" 
+                  id="scoreRing"/>
+        </svg>
+        <div class="score-value">
+          <div class="score-number" id="scoreNumber">90</div>
+          <div class="score-unit">分</div>
+        </div>
+      </div>
+      <span class="score-label good" id="scoreLabel">优秀</span>
+    </div>
+
+    <!-- 加载时间显示 -->
+    <div class="load-time-widget">
+      <div class="widget-title">
+        <span>⚡</span> 页面加载时间
+      </div>
+      <div class="load-time-display">
+        <div class="time-value" id="loadTime">2.3</div>
+        <div class="time-unit">秒</div>
+      </div>
+      <div class="time-comparison">
+        <div class="comparison-row">
+          <span class="comparison-label">目标值</span>
+          <span class="comparison-value">≤ 3.0s</span>
+        </div>
+        <div class="comparison-row">
+          <span class="comparison-label">行业基准</span>
+          <span class="comparison-value warning">3.5s</span>
+        </div>
+        <div class="comparison-row">
+          <span class="comparison-label">上次记录</span>
+          <span class="comparison-value good">2.6s</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Core Web Vitals 指标组 -->
+    <div class="metrics-grid">
+      <div class="widget-title">
+        <span>📊</span> Core Web Vitals
+      </div>
+      <div class="metric-row">
+        <div class="metric-info">
+          <div class="metric-icon lcp">📊</div>
+          <div>
+            <div class="metric-name">LCP</div>
+            <div class="metric-subname">最大内容绘制</div>
+          </div>
+        </div>
+        <div class="metric-value-group">
+          <div class="metric-value">2.3s</div>
+          <span class="metric-status good">优秀</span>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-info">
+          <div class="metric-icon fid">👆</div>
+          <div>
+            <div class="metric-name">FID</div>
+            <div class="metric-subname">首次输入延迟</div>
+          </div>
+        </div>
+        <div class="metric-value-group">
+          <div class="metric-value">85ms</div>
+          <span class="metric-status good">优秀</span>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-info">
+          <div class="metric-icon cls">📐</div>
+          <div>
+            <div class="metric-name">CLS</div>
+            <div class="metric-subname">累计布局偏移</div>
+          </div>
+        </div>
+        <div class="metric-value-group">
+          <div class="metric-value">0.08</div>
+          <span class="metric-status good">优秀</span>
+        </div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-info">
+          <div class="metric-icon fcp">⏱️</div>
+          <div>
+            <div class="metric-name">FCP</div>
+            <div class="metric-subname">首次内容绘制</div>
+          </div>
+        </div>
+        <div class="metric-value-group">
+          <div class="metric-value">1.5s</div>
+          <span class="metric-status good">优秀</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 资源统计 -->
+    <div class="resource-widget">
+      <div class="widget-title">
+        <span>📦</span> 资源大小分析
+      </div>
+      <div class="resource-bars">
+        <div class="resource-bar-item">
+          <div class="resource-bar-header">
+            <span class="resource-bar-name">🖼️ 图片资源</span>
+            <span class="resource-bar-value">2.4 MB</span>
+          </div>
+          <div class="resource-bar">
+            <div class="resource-bar-fill images" style="width: 72%;"></div>
+          </div>
+        </div>
+        <div class="resource-bar-item">
+          <div class="resource-bar-header">
+            <span class="resource-bar-name">📜 JavaScript</span>
+            <span class="resource-bar-value">486 KB</span>
+          </div>
+          <div class="resource-bar">
+            <div class="resource-bar-fill scripts" style="width: 35%;"></div>
+          </div>
+        </div>
+        <div class="resource-bar-item">
+          <div class="resource-bar-header">
+            <span class="resource-bar-name">🎨 CSS 样式</span>
+            <span class="resource-bar-value">156 KB</span>
+          </div>
+          <div class="resource-bar">
+            <div class="resource-bar-fill styles" style="width: 18%;"></div>
+          </div>
+        </div>
+        <div class="resource-bar-item">
+          <div class="resource-bar-header">
+            <span class="resource-bar-name">🔤 字体文件</span>
+            <span class="resource-bar-value">89 KB</span>
+          </div>
+          <div class="resource-bar">
+            <div class="resource-bar-fill fonts" style="width: 12%;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 实时状态 -->
+    <div class="realtime-widget">
+      <div class="widget-title">
+        <span>🔴</span> 实时状态
+      </div>
+      <div class="status-indicator healthy">
+        <span class="status-dot"></span>
+        <span>运行正常</span>
+      </div>
+      <div class="realtime-stats">
+        <div class="realtime-stat">
+          <div class="realtime-stat-value">1,247</div>
+          <div class="realtime-stat-label">活跃用户</div>
+        </div>
+        <div class="realtime-stat">
+          <div class="realtime-stat-value">342</div>
+          <div class="realtime-stat-label">请求/秒</div>
+        </div>
+        <div class="realtime-stat">
+          <div class="realtime-stat-value">99.9%</div>
+          <div class="realtime-stat-label">可用率</div>
+        </div>
+        <div class="realtime-stat">
+          <div class="realtime-stat-value">145ms</div>
+          <div class="realtime-stat-label">响应时间</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 迷你趋势图 -->
+    <div class="mini-trend-widget">
+      <div class="widget-title">
+        <span>📈</span> 性能趋势 (24小时)
+      </div>
+      <div class="mini-chart-container">
+        <canvas id="miniTrendChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- 悬浮监控按钮 -->
+  <div class="floating-monitor" onclick="toggleMonitorPanel()">
+    📊
+    <span class="score">90</span>
+  </div>
+
+  <!-- 展开的监控面板 -->
+  <div class="monitor-panel" id="monitorPanel">
+    <div class="panel-header">
+      <div class="panel-title">
+        <span>📊</span> 实时监控
+      </div>
+      <button class="panel-close" onclick="toggleMonitorPanel()">✕</button>
+    </div>
+    <div class="widget-title" style="justify-content: flex-start;">
+      <span class="status-indicator healthy" style="margin: 0;">
+        <span class="status-dot"></span>
+        <span>网站运行正常</span>
+      </span>
+    </div>
+    <div style="margin-top: 16px;">
+      <div class="metric-row">
+        <div class="metric-name">整体评分</div>
+        <div class="metric-value good">90</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-name">加载时间</div>
+        <div class="metric-value">2.3s</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-name">LCP</div>
+        <div class="metric-value">2.3s</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-name">CLS</div>
+        <div class="metric-value">0.08</div>
+      </div>
+    </div>
+    <div style="margin-top: 16px; text-align: center;">
+      <a href="dashboard.html" style="color: var(--primary); font-size: 0.9rem; text-decoration: none;">
+        查看完整监控面板 →
+      </a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script>
+    // 切换监控面板
+    function toggleMonitorPanel() {
+      const panel = document.getElementById('monitorPanel');
+      panel.classList.toggle('show');
+    }
+
+    // 模拟实时数据更新
+    let currentScore = 90;
+    let currentLoadTime = 2.3;
+
+    function updateMetrics() {
+      // 模拟数据波动
+      currentScore = 85 + Math.floor(Math.random() * 10);
+      currentLoadTime = (2.0 + Math.random() * 0.8).toFixed(1);
+
+      // 更新评分显示
+      const scoreNumber = document.getElementById('scoreNumber');
+      const scoreRing = document.getElementById('scoreRing');
+      const scoreLabel = document.getElementById('scoreLabel');
+      const loadTime = document.getElementById('loadTime');
+      const floatingScore = document.querySelector('.floating-monitor .score');
+
+      scoreNumber.textContent = currentScore;
+      loadTime.textContent = currentLoadTime;
+      floatingScore.textContent = currentScore;
+
+      // 更新圆环进度 (分数转角度)
+      const offset = 377 - (currentScore / 100) * 377;
+      scoreRing.setAttribute('stroke-dashoffset', offset);
+
+      // 更新颜色和标签
+      let color, label, labelClass;
+      if (currentScore >= 85) {
+        color = '#10B981';
+        label = '优秀';
+        labelClass = 'good';
+      } else if (currentScore >= 70) {
+        color = '#f59e0b';
+        label = '良好';
+        labelClass = 'warning';
+      } else {
+        color = '#ef4444';
+        label = '需改进';
+        labelClass = 'poor';
+      }
+
+      scoreRing.setAttribute('stroke', color);
+      scoreLabel.textContent = label;
+      scoreLabel.className = 'score-label ' + labelClass;
+
+      // 更新悬浮按钮颜色
+      const floatingMonitor = document.querySelector('.floating-monitor');
+      floatingMonitor.classList.remove('warning', 'critical');
+      if (currentScore < 70) {
+        floatingMonitor.classList.add('critical');
+      } else if (currentScore < 85) {
+        floatingMonitor.classList.add('warning');
+      }
+    }
+
+    // 初始化迷你趋势图
+    function initMiniChart() {
+      const ctx = document.getElementById('miniTrendChart').getContext('2d');
+      const hours = Array.from({length: 24}, (_, i) => `${i}:00`);
+      
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: hours,
+          datasets: [{
+            label: '加载时间',
+            data: [2.5, 2.4, 2.6, 2.3, 2.4, 2.2, 2.5, 2.3, 2.4, 2.1, 2.3, 2.2, 2.4, 2.3, 2.5, 2.2, 2.3, 2.1, 2.4, 2.2, 2.3, 2.5, 2.4, 2.3],
+            borderColor: '#ff6b35',
+            backgroundColor: 'rgba(255, 107, 53, 0.1)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: 0,
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: false,
+              min: 1.8,
+              max: 3.0,
+              grid: { color: 'rgba(0,0,0,0.05)' },
+              ticks: { font: { size: 10 } }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 9 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 6 }
+            }
+          }
+        }
+      });
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      initMiniChart();
+      updateMetrics();
+
+      // 每10秒更新一次数据
+      setInterval(updateMetrics, 10000);
+    });
+  </script>
+</body>
+</html>

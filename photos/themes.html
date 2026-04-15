@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主题图库 - 游导旅游</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        * { font-family: 'Noto Sans SC', sans-serif; }
+        
+        .masonry { column-count: 4; column-gap: 16px; }
+        @media (max-width: 1280px) { .masonry { column-count: 3; } }
+        @media (max-width: 768px) { .masonry { column-count: 2; } }
+        @media (max-width: 480px) { .masonry { column-count: 1; } }
+        
+        .masonry-item { break-inside: avoid; margin-bottom: 16px; }
+        
+        .photo-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .photo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+        }
+        
+        .theme-hero {
+            background: linear-gradient(135deg, var(--theme-color-1, #667eea) 0%, var(--theme-color-2, #764ba2) 100%);
+        }
+        
+        .theme-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .theme-card:hover {
+            transform: translateY(-8px) scale(1.02);
+        }
+        .theme-card:hover .theme-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 100%);
+        }
+        .theme-card:hover .theme-content {
+            transform: translateY(-10px);
+        }
+        
+        .tab-btn {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: currentColor;
+            border-radius: 2px;
+            transform: translateX(-50%);
+            transition: width 0.3s ease;
+        }
+        .tab-btn.active::after { width: 100%; }
+        .tab-btn.active { color: var(--tab-color, #667eea); }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../index.html" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-compass text-white text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">游导旅游</span>
+                </a>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="../index.html" class="text-gray-600 hover:text-gray-900 font-medium">首页</a>
+                    <a href="destinations.html" class="text-gray-600 hover:text-gray-900 font-medium">目的地</a>
+                    <a href="themes.html" class="text-blue-600 font-medium">主题</a>
+                    <a href="index.html" class="text-gray-600 hover:text-gray-900 font-medium">图片库</a>
+                    <a href="my-photos.html" class="text-gray-600 hover:text-gray-900 font-medium">我的图库</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <a href="upload.html" class="hidden sm:flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all">
+                        <i class="fas fa-cloud-upload-alt mr-2"></i>
+                        上传
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero -->
+    <section id="themeHero" class="theme-hero text-white py-12 md:py-16 transition-all duration-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center mb-4">
+                <span id="themeIcon" class="text-5xl mr-4">🏔️</span>
+                <div>
+                    <h1 id="themeTitle" class="text-3xl md:text-4xl font-bold">风景图片</h1>
+                    <p id="themeDesc" class="text-white/80">自然风光、山水湖泊、城市景观</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-8 mt-6">
+                <div class="text-center">
+                    <div id="themePhotoCount" class="text-4xl font-bold">1,245</div>
+                    <div class="text-sm text-white/70">精选图片</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-4xl font-bold">156</div>
+                    <div class="text-sm text-white/70">上传者</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Theme Navigation -->
+    <section class="bg-white border-b border-gray-100 sticky top-16 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex overflow-x-auto py-4 gap-2 md:gap-4 scrollbar-hide">
+                <button onclick="selectTheme('all')" class="tab-btn active flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium flex items-center whitespace-nowrap" style="--tab-color: #667eea">
+                    <span class="text-xl mr-2">🌟</span>全部
+                </button>
+                <button onclick="selectTheme('landscape')" class="tab-btn flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium flex items-center whitespace-nowrap text-gray-500" style="--tab-color: #10b981">
+                    <span class="text-xl mr-2">🏔️</span>风景
+                </button>
+                <button onclick="selectTheme('food')" class="tab-btn flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium flex items-center whitespace-nowrap text-gray-500" style="--tab-color: #f59e0b">
+                    <span class="text-xl mr-2">🍜</span>美食
+                </button>
+                <button onclick="selectTheme('architecture')" class="tab-btn flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium flex items-center whitespace-nowrap text-gray-500" style="--tab-color: #8b5cf6">
+                    <span class="text-xl mr-2">🏛️</span>建筑
+                </button>
+                <button onclick="selectTheme('culture')" class="tab-btn flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium flex items-center whitespace-nowrap text-gray-500" style="--tab-color: #ec4899">
+                    <span class="text-xl mr-2">🎎</span>人文
+                </button>
+                <button onclick="selectTheme('night')" class="tab-btn flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium flex items-center whitespace-nowrap text-gray-500" style="--tab-color: #6366f1">
+                    <span class="text-xl mr-2">🌃</span>夜景
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <section class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Filter Bar -->
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+                <div class="flex flex-wrap items-center gap-3">
+                    <select id="filterDestination" onchange="filterPhotos()" class="px-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">全部目的地</option>
+                        <option value="japan">🗾 日本</option>
+                        <option value="korea">🇰🇷 韩国</option>
+                        <option value="thailand">🇹🇭 泰国</option>
+                        <option value="singapore">🇸🇬 新加坡</option>
+                    </select>
+                    <select id="filterSeason" onchange="filterPhotos()" class="px-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">全部季节</option>
+                        <option value="spring">🌸 春季</option>
+                        <option value="summer">☀️ 夏季</option>
+                        <option value="autumn">🍂 秋季</option>
+                        <option value="winter">❄️ 冬季</option>
+                    </select>
+                </div>
+                <div class="text-gray-500 text-sm">
+                    共 <span id="photoCount">0</span> 张图片
+                </div>
+            </div>
+            
+            <!-- Photo Grid -->
+            <div id="photoGrid" class="masonry mb-8">
+                <!-- Photos will be loaded dynamically -->
+            </div>
+            
+            <!-- Load More -->
+            <div class="text-center py-8">
+                <button onclick="loadMore()" class="px-8 py-3 bg-white border-2 border-gray-200 text-gray-700 font-medium rounded-xl hover:border-blue-500 hover:text-blue-600 hover:shadow-lg transition-all inline-flex items-center">
+                    <i class="fas fa-arrow-down mr-2"></i>
+                    加载更多
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Theme Showcase -->
+    <section class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">探索精彩主题</h2>
+                <p class="text-gray-500">发现不同主题下的绝美风景</p>
+            </div>
+            <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <div onclick="selectTheme('landscape')" class="theme-card relative rounded-2xl overflow-hidden aspect-square cursor-pointer group">
+                    <img src="https://s.coze.cn/image/QQRz4o0a-ek/" alt="风景" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="theme-overlay absolute inset-0 bg-gradient-to-t from-black/70 to-transparent transition-all"></div>
+                    <div class="theme-content absolute bottom-0 left-0 right-0 p-4 transition-transform">
+                        <div class="text-3xl mb-2">🏔️</div>
+                        <h3 class="text-white text-lg font-bold">风景</h3>
+                        <p class="text-white/70 text-sm">1,245 张</p>
+                    </div>
+                </div>
+                <div onclick="selectTheme('food')" class="theme-card relative rounded-2xl overflow-hidden aspect-square cursor-pointer group">
+                    <img src="https://s.coze.cn/image/GMOTzqM5LWc/" alt="美食" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="theme-overlay absolute inset-0 bg-gradient-to-t from-black/70 to-transparent transition-all"></div>
+                    <div class="theme-content absolute bottom-0 left-0 right-0 p-4 transition-transform">
+                        <div class="text-3xl mb-2">🍜</div>
+                        <h3 class="text-white text-lg font-bold">美食</h3>
+                        <p class="text-white/70 text-sm">876 张</p>
+                    </div>
+                </div>
+                <div onclick="selectTheme('architecture')" class="theme-card relative rounded-2xl overflow-hidden aspect-square cursor-pointer group">
+                    <img src="https://s.coze.cn/image/I-IhDT3bsbY/" alt="建筑" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="theme-overlay absolute inset-0 bg-gradient-to-t from-black/70 to-transparent transition-all"></div>
+                    <div class="theme-content absolute bottom-0 left-0 right-0 p-4 transition-transform">
+                        <div class="text-3xl mb-2">🏛️</div>
+                        <h3 class="text-white text-lg font-bold">建筑</h3>
+                        <p class="text-white/70 text-sm">654 张</p>
+                    </div>
+                </div>
+                <div onclick="selectTheme('culture')" class="theme-card relative rounded-2xl overflow-hidden aspect-square cursor-pointer group">
+                    <img src="https://s.coze.cn/image/WNNMpuKX-N0/" alt="人文" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="theme-overlay absolute inset-0 bg-gradient-to-t from-black/70 to-transparent transition-all"></div>
+                    <div class="theme-content absolute bottom-0 left-0 right-0 p-4 transition-transform">
+                        <div class="text-3xl mb-2">🎎</div>
+                        <h3 class="text-white text-lg font-bold">人文</h3>
+                        <p class="text-white/70 text-sm">523 张</p>
+                    </div>
+                </div>
+                <div onclick="selectTheme('night')" class="theme-card relative rounded-2xl overflow-hidden aspect-square cursor-pointer group">
+                    <img src="https://s.coze.cn/image/9VjLGxp12S4/" alt="夜景" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="theme-overlay absolute inset-0 bg-gradient-to-t from-black/70 to-transparent transition-all"></div>
+                    <div class="theme-content absolute bottom-0 left-0 right-0 p-4 transition-transform">
+                        <div class="text-3xl mb-2">🌃</div>
+                        <h3 class="text-white text-lg font-bold">夜景</h3>
+                        <p class="text-white/70 text-sm">432 张</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-compass text-white text-sm"></i>
+                    </div>
+                    <span class="font-bold text-white">游导旅游</span>
+                </div>
+                <p class="text-sm">&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Photo Modal -->
+    <div id="photoModal" class="fixed inset-0 bg-black/90 z-50 hidden">
+        <button onclick="closeModal()" class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 z-10">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="absolute inset-0 flex items-center justify-center p-4 md:p-8">
+            <div class="bg-white rounded-2xl max-w-6xl w-full max-h-full overflow-hidden flex flex-col md:flex-row">
+                <div class="md:w-2/3 bg-black flex items-center justify-center">
+                    <img id="modalImage" src="" alt="" class="max-w-full max-h-[70vh] md:max-h-full object-contain">
+                </div>
+                <div class="md:w-1/3 p-6 overflow-y-auto max-h-[30vh] md:max-h-full">
+                    <h3 id="modalTitle" class="text-xl font-bold text-gray-900 mb-2"></h3>
+                    <p id="modalDesc" class="text-gray-600 text-sm mb-4"></p>
+                    <div id="modalMeta" class="space-y-2 text-sm text-gray-500 mb-4"></div>
+                    <div id="modalTags" class="flex flex-wrap gap-2 mb-4"></div>
+                    <div class="flex gap-2">
+                        <a href="#" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center">
+                            <i class="fas fa-download mr-2"></i>下载
+                        </a>
+                        <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let photos = [];
+        let filteredPhotos = [];
+        let currentTheme = 'all';
+        
+        const themeData = {
+            all: {
+                name: '全部主题',
+                icon: '🌟',
+                desc: '探索所有精彩图片',
+                colors: ['#667eea', '#764ba2'],
+                count: 2856
+            },
+            landscape: {
+                name: '风景图片',
+                icon: '🏔️',
+                desc: '自然风光、山水湖泊、城市景观',
+                colors: ['#10b981', '#059669'],
+                count: 1245
+            },
+            food: {
+                name: '美食图片',
+                icon: '🍜',
+                desc: '各国美食、街头小吃、甜点饮品',
+                colors: ['#f59e0b', '#d97706'],
+                count: 876
+            },
+            architecture: {
+                name: '建筑图片',
+                icon: '🏛️',
+                desc: '传统建筑、现代建筑、宗教场所',
+                colors: ['#8b5cf6', '#7c3aed'],
+                count: 654
+            },
+            culture: {
+                name: '人文图片',
+                icon: '🎎',
+                desc: '民俗风情、节日庆典、生活百态',
+                colors: ['#ec4899', '#db2777'],
+                count: 523
+            },
+            night: {
+                name: '夜景图片',
+                icon: '🌃',
+                desc: '城市夜景、灯光秀、星轨银河',
+                colors: ['#6366f1', '#4f46e5'],
+                count: 432
+            }
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPhotoData();
+            
+            // Check URL params
+            const params = new URLSearchParams(window.location.search);
+            const theme = params.get('theme');
+            if (theme) {
+                selectTheme(theme);
+            }
+        });
+        
+        async function loadPhotoData() {
+            try {
+                const response = await fetch('../data/photos.json');
+                const data = await response.json();
+                photos = data.photos;
+                filterPhotos();
+            } catch (error) {
+                console.error('Failed to load photos:', error);
+            }
+        }
+        
+        function selectTheme(theme) {
+            currentTheme = theme;
+            
+            // Update tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('text-gray-500');
+            });
+            event.target.closest('.tab-btn').classList.add('active');
+            event.target.closest('.tab-btn').classList.remove('text-gray-500');
+            
+            // Update hero
+            const data = themeData[theme];
+            document.getElementById('themeIcon').textContent = data.icon;
+            document.getElementById('themeTitle').textContent = data.name;
+            document.getElementById('themeDesc').textContent = data.desc;
+            document.getElementById('themePhotoCount').textContent = data.count;
+            
+            const hero = document.getElementById('themeHero');
+            hero.style.setProperty('--theme-color-1', data.colors[0]);
+            hero.style.setProperty('--theme-color-2', data.colors[1]);
+            
+            // Reset filters
+            document.getElementById('filterDestination').value = '';
+            document.getElementById('filterSeason').value = '';
+            
+            filterPhotos();
+        }
+        
+        function filterPhotos() {
+            const destFilter = document.getElementById('filterDestination').value;
+            const seasonFilter = document.getElementById('filterSeason').value;
+            
+            filteredPhotos = photos.filter(photo => {
+                if (currentTheme !== 'all' && photo.theme !== currentTheme) return false;
+                if (destFilter && photo.destination !== destFilter) return false;
+                if (seasonFilter && photo.season !== seasonFilter) return false;
+                return true;
+            });
+            
+            document.getElementById('photoCount').textContent = filteredPhotos.length;
+            renderPhotos();
+        }
+        
+        function renderPhotos() {
+            const grid = document.getElementById('photoGrid');
+            
+            if (filteredPhotos.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <div class="text-6xl mb-4">🔍</div>
+                        <h3 class="text-xl font-medium text-gray-600 mb-2">暂无相关图片</h3>
+                        <p class="text-gray-400">试试选择其他筛选条件</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filteredPhotos.map((photo, index) => `
+                <div class="masonry-item">
+                    <div class="photo-card rounded-xl overflow-hidden shadow-md bg-white" onclick="openModal(${index})">
+                        <div class="relative overflow-hidden">
+                            <img src="${photo.thumbUrl}" alt="${photo.title}" 
+                                 class="w-full object-cover hover:scale-105 transition-transform duration-500"
+                                 style="aspect-ratio: ${getRandomAspectRatio()}">
+                            <div class="absolute top-3 left-3">
+                                <span class="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700">
+                                    ${getDestinationName(photo.destination)}
+                                </span>
+                            </div>
+                            <div class="absolute bottom-3 right-3 opacity-0 hover:opacity-100 transition-opacity">
+                                <span class="px-2 py-1 bg-black/70 backdrop-blur-sm rounded-full text-xs text-white">
+                                    ${getThemeName(photo.theme)}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h4 class="font-semibold text-gray-900 mb-1 truncate">${photo.title}</h4>
+                            <p class="text-gray-500 text-xs truncate">${photo.description}</p>
+                            <div class="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+                                <div class="flex items-center text-xs text-gray-400">
+                                    <i class="fas fa-heart text-red-400 mr-1"></i>${photo.likes}
+                                </div>
+                                <div class="flex items-center text-xs text-gray-400">
+                                    <i class="fas fa-download text-blue-400 mr-1"></i>${photo.downloads}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function getDestinationName(dest) {
+            const names = { japan: '🗾 日本', korea: '🇰🇷 韩国', thailand: '🇹🇭 泰国', singapore: '🇸🇬 新加坡', general: '🌍 其他' };
+            return names[dest] || '🌍 其他';
+        }
+        
+        function getThemeName(theme) {
+            const names = { landscape: '🏔️ 风景', food: '🍜 美食', architecture: '🏛️ 建筑', culture: '🎎 人文', night: '🌃 夜景' };
+            return names[theme] || '📷 其他';
+        }
+        
+        function getSeasonName(season) {
+            const names = { spring: '🌸 春', summer: '☀️ 夏', autumn: '🍂 秋', winter: '❄️ 冬', all: '📅 全年' };
+            return names[season] || '📅 全年';
+        }
+        
+        function getRandomAspectRatio() {
+            const ratios = ['3/4', '4/5', '1/1', '4/3', '16/10'];
+            return ratios[Math.floor(Math.random() * ratios.length)];
+        }
+        
+        function openModal(index) {
+            const photo = filteredPhotos[index];
+            
+            document.getElementById('modalImage').src = photo.url;
+            document.getElementById('modalTitle').textContent = photo.title;
+            document.getElementById('modalDesc').textContent = photo.description;
+            
+            document.getElementById('modalMeta').innerHTML = `
+                <div><i class="fas fa-map-marker-alt mr-2 text-red-400"></i>${getDestinationName(photo.destination)} · ${photo.city}</div>
+                <div><i class="fas fa-tag mr-2 text-blue-400"></i>${getThemeName(photo.theme)} · ${getSeasonName(photo.season)}</div>
+                <div><i class="fas fa-calendar mr-2 text-green-400"></i>${photo.date}</div>
+                <div><i class="fas fa-camera mr-2 text-purple-400"></i>${photo.camera}</div>
+            `;
+            
+            document.getElementById('modalTags').innerHTML = photo.tags.map(tag => 
+                `<span class="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs">${tag}</span>`
+            ).join('');
+            
+            document.getElementById('photoModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            document.getElementById('photoModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        function loadMore() {
+            const btn = event.target;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>加载中...';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i>已加载全部';
+                btn.disabled = true;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

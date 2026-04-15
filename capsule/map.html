@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>胶囊地图 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/capsule.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            capsule: {
+              primary: '#6366f1',
+              secondary: '#8b5cf6',
+              accent: '#f59e0b',
+              mystery: '#1e1b4b',
+              glow: '#a78bfa'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%); }
+    .text-gradient { background: linear-gradient(135deg, #a78bfa, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    #map { height: 500px; border-radius: 16px; z-index: 1; }
+    .map-marker-custom { 
+      width: 40px; 
+      height: 40px; 
+      background: linear-gradient(135deg, #6366f1, #8b5cf6); 
+      border-radius: 50% 50% 50% 0; 
+      transform: rotate(-45deg); 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+    }
+    .map-marker-inner { transform: rotate(45deg); font-size: 18px; }
+    .custom-marker-icon { background: transparent; border: none; }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .leaflet-popup-content-wrapper { 
+      background: linear-gradient(145deg, #1a1a2e, #0f0f1a); 
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 12px;
+      color: #e2e8f0;
+    }
+    .leaflet-popup-tip { background: #1a1a2e; }
+  </style>
+</head>
+<body class="gradient-hero min-h-screen">
+  <!-- 导航栏 -->
+  <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <a href="index.html" class="text-white/80 hover:text-white transition text-2xl">←</a>
+          <span class="text-xl font-bold text-white">胶囊地图</span>
+        </div>
+        <div class="flex items-center gap-4">
+          <button class="btn-capsule btn-capsule-secondary text-sm" onclick="centerOnMyLocation()">
+            <span>📍</span>
+            <span>我的位置</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- 说明卡片 -->
+    <div class="memory-content mb-8 fade-in">
+      <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <span>🗺️</span>
+        <span>时间胶囊地图</span>
+      </h2>
+      <p class="text-gray-400 mb-4">地图上标记了你创建的所有有时间位置的时间胶囊。点击标记可以查看详情。</p>
+      
+      <!-- 图例 -->
+      <div class="flex flex-wrap gap-4">
+        <div class="flex items-center gap-2">
+          <div class="w-4 h-4 rounded-full bg-gradient-to-br from-capsule-primary to-capsule-secondary"></div>
+          <span class="text-gray-400 text-sm">封印中</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-4 h-4 rounded-full bg-gradient-to-br from-amber-500 to-orange-600"></div>
+          <span class="text-gray-400 text-sm">已开启</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-4 h-4 rounded-full bg-gradient-to-br from-green-500 to-emerald-600"></div>
+          <span class="text-gray-400 text-sm">当前位置</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 地图容器 -->
+    <div class="relative mb-8">
+      <div id="map"></div>
+      
+      <!-- 地图控件 -->
+      <div class="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+        <button onclick="zoomIn()" class="w-10 h-10 bg-capsule-mystery/90 rounded-lg flex items-center justify-center text-white hover:bg-capsule-primary transition">+</button>
+        <button onclick="zoomOut()" class="w-10 h-10 bg-capsule-mystery/90 rounded-lg flex items-center justify-center text-white hover:bg-capsule-primary transition">−</button>
+      </div>
+    </div>
+
+    <!-- 胶囊列表 -->
+    <div class="mb-8">
+      <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <span>📍</span>
+        <span>所有位置胶囊 (<span id="capsuleCount">0</span>)</span>
+      </h3>
+      
+      <div id="capsuleList" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- 动态加载 -->
+      </div>
+
+      <div id="emptyState" class="empty-state hidden">
+        <div class="empty-state-icon">📍</div>
+        <h3 class="empty-state-title">暂无位置胶囊</h3>
+        <p class="empty-state-desc">创建带有位置标记的时间胶囊，它们将显示在地图上</p>
+        <a href="create.html" class="btn-capsule btn-capsule-gold mt-4">
+          <span>✨</span>
+          <span>创建位置胶囊</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 开启条件说明 -->
+    <div class="memory-content fade-in">
+      <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+        <span>🔮</span>
+        <span>开启条件说明</span>
+      </h3>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="p-4 bg-white/5 rounded-xl">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl">⏰</span>
+            <h4 class="text-lg font-semibold text-white">时间开启</h4>
+          </div>
+          <p class="text-gray-400 text-sm">到达设定的日期和时间后，胶囊自动开启。无需任何操作，静待惊喜降临。</p>
+        </div>
+        
+        <div class="p-4 bg-white/5 rounded-xl">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl">📍</span>
+            <h4 class="text-lg font-semibold text-white">地点开启</h4>
+          </div>
+          <p class="text-gray-400 text-sm">当你到达胶囊标记的位置附近时（默认500米范围），GPS验证后胶囊开启。</p>
+        </div>
+        
+        <div class="p-4 bg-white/5 rounded-xl">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl">🔐</span>
+            <h4 class="text-lg font-semibold text-white">密码开启</h4>
+          </div>
+          <p class="text-gray-400 text-sm">输入正确的密码即可开启。适合制作送给朋友的惊喜礼物。</p>
+        </div>
+        
+        <div class="p-4 bg-white/5 rounded-xl">
+          <div class="flex items-center gap-3 mb-3">
+            <span class="text-3xl">🔮</span>
+            <h4 class="text-lg font-semibold text-white">组合条件</h4>
+          </div>
+          <p class="text-gray-400 text-sm">需要同时满足多个条件才能开启，更加神秘和具有仪式感。</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 位置预览模态框 -->
+  <div id="locationModal" class="modal-overlay">
+    <div class="modal-content">
+      <div id="locationModalContent">
+        <!-- 动态内容 -->
+      </div>
+      <div class="flex gap-4 mt-6">
+        <button class="btn-capsule btn-capsule-secondary flex-1" onclick="closeLocationModal()">关闭</button>
+        <a href="#" id="viewCapsuleBtn" class="btn-capsule btn-capsule-gold flex-1 text-center">查看详情</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let map;
+    let markers = [];
+    let userLocationMarker = null;
+    let myLocation = null;
+
+    // 初始化地图
+    function initMap() {
+      // 中国中心点
+      map = L.map('map').setView([35.8617, 104.1954], 5);
+      
+      // 深色主题地图瓦片
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        attribution: '© OpenStreetMap contributors © CARTO',
+        maxZoom: 18
+      }).addTo(map);
+      
+      loadCapsulesToMap();
+    }
+
+    // 加载胶囊到地图
+    function loadCapsulesToMap() {
+      const capsules = JSON.parse(localStorage.getItem('travelCapsules') || '[]');
+      const locationCapsules = capsules.filter(c => c.location && c.location.latitude && c.location.longitude);
+      
+      document.getElementById('capsuleCount').textContent = locationCapsules.length;
+      
+      if (locationCapsules.length === 0) {
+        document.getElementById('emptyState').classList.remove('hidden');
+        return;
+      }
+      
+      document.getElementById('emptyState').classList.add('hidden');
+      
+      // 清除旧标记
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+      
+      // 添加新标记
+      locationCapsules.forEach(capsule => {
+        const isOpened = capsule.status === 'opened';
+        
+        // 自定义图标
+        const icon = L.divIcon({
+          className: 'custom-marker-icon',
+          html: `
+            <div class="map-marker-custom" style="background: ${isOpened ? 'linear-gradient(135deg, #f59e0b, #d97706)' : 'linear-gradient(135deg, #6366f1, #8b5cf6)'}">
+              <span class="map-marker-inner">${isOpened ? '✨' : '⏳'}</span>
+            </div>
+          `,
+          iconSize: [40, 40],
+          iconAnchor: [20, 40],
+          popupAnchor: [0, -40]
+        });
+        
+        const marker = L.marker([capsule.location.latitude, capsule.location.longitude], { icon: icon })
+          .addTo(map)
+          .bindPopup(`
+            <div style="min-width: 200px;">
+              <h4 style="font-weight: bold; margin-bottom: 8px;">${capsule.title}</h4>
+              <p style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">${capsule.description || ''}</p>
+              <span style="display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; background: ${isOpened ? 'rgba(16, 185, 129, 0.2); color: #34d399' : 'rgba(99, 102, 241, 0.2); color: #a78bfa'}">
+                ${isOpened ? '已开启' : '封印中'}
+              </span>
+            </div>
+          `)
+          .on('click', () => showLocationModal(capsule));
+        
+        markers.push(marker);
+      });
+      
+      // 如果有标记，调整视图
+      if (markers.length > 0) {
+        const group = L.featureGroup(markers);
+        map.fitBounds(group.getBounds().pad(0.1));
+      }
+      
+      // 渲染列表
+      renderCapsuleList(locationCapsules);
+    }
+
+    // 渲染胶囊列表
+    function renderCapsuleList(capsules) {
+      const container = document.getElementById('capsuleList');
+      container.innerHTML = capsules.map(capsule => {
+        const isOpened = capsule.status === 'opened';
+        const conditionType = capsule.openConditions?.type || 'time';
+        const conditionIcons = { time: '⏰', location: '📍', password: '🔐', combination: '🔮' };
+        
+        return `
+          <div class="capsule-card p-4 cursor-pointer" onclick="showLocationModal(capsules.find(c => c.id === '${capsule.id}'))">
+            <div class="flex items-start justify-between mb-3">
+              <span class="text-2xl">${isOpened ? '✨' : '⏳'}</span>
+              <span class="${isOpened ? 'status-opened' : 'status-sealed'}">
+                ${isOpened ? '已开启' : '封印中'}
+              </span>
+            </div>
+            <h4 class="font-bold text-white mb-2">${capsule.title}</h4>
+            <p class="text-gray-400 text-sm mb-3 line-clamp-2">${capsule.description || ''}</p>
+            <div class="flex items-center gap-2 text-gray-500 text-sm">
+              <span>${conditionIcons[conditionType]}</span>
+              <span>${capsule.location.name}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 显示位置模态框
+    function showLocationModal(capsule) {
+      const isOpened = capsule.status === 'opened';
+      const conditionType = capsule.openConditions?.type || 'time';
+      
+      document.getElementById('locationModalContent').innerHTML = `
+        <div class="text-center mb-4">
+          <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-br ${isOpened ? 'from-amber-500 to-orange-600' : 'from-capsule-primary to-capsule-secondary'} flex items-center justify-center mb-4">
+            <span class="text-4xl">${isOpened ? '✨' : '⏳'}</span>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-2">${capsule.title}</h3>
+          <p class="text-gray-400 text-sm">${capsule.description || ''}</p>
+        </div>
+        
+        <div class="space-y-3">
+          <div class="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+            <span class="text-xl">📍</span>
+            <div>
+              <p class="text-white text-sm">${capsule.location.name}</p>
+              <p class="text-gray-500 text-xs">${capsule.location.latitude}, ${capsule.location.longitude}</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+            <span class="text-xl">${conditionType === 'time' ? '⏰' : conditionType === 'location' ? '📍' : conditionType === 'password' ? '🔐' : '🔮'}</span>
+            <div>
+              <p class="text-white text-sm">${conditionType === 'time' ? '时间开启' : conditionType === 'location' ? '地点开启' : conditionType === 'password' ? '密码开启' : '组合条件'}</p>
+              ${conditionType === 'time' && capsule.openConditions?.conditions?.[0] ? `
+                <p class="text-gray-500 text-xs">${capsule.openConditions.conditions[0].date} ${capsule.openConditions.conditions[0].time || ''}</p>
+              ` : ''}
+            </div>
+          </div>
+          
+          <div class="flex items-center gap-3 p-3 bg-white/5 rounded-lg">
+            <span class="text-xl">📅</span>
+            <div>
+              <p class="text-white text-sm">创建时间</p>
+              <p class="text-gray-500 text-xs">${new Date(capsule.createdAt).toLocaleDateString('zh-CN')}</p>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('viewCapsuleBtn').href = `detail.html?id=${capsule.id}`;
+      document.getElementById('locationModal').classList.add('active');
+      
+      // 地图移动到该位置
+      map.setView([capsule.location.latitude, capsule.location.longitude], 12);
+    }
+
+    function closeLocationModal() {
+      document.getElementById('locationModal').classList.remove('active');
+    }
+
+    // 缩放控制
+    function zoomIn() {
+      map.zoomIn();
+    }
+
+    function zoomOut() {
+      map.zoomOut();
+    }
+
+    // 定位到我的位置
+    function centerOnMyLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          function(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            
+            myLocation = [lat, lng];
+            
+            if (userLocationMarker) {
+              map.removeLayer(userLocationMarker);
+            }
+            
+            const icon = L.divIcon({
+              className: 'custom-marker-icon',
+              html: `
+                <div style="width: 20px; height: 20px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 10px rgba(16, 185, 129, 0.5);"></div>
+              `,
+              iconSize: [20, 20],
+              iconAnchor: [10, 10]
+            });
+            
+            userLocationMarker = L.marker([lat, lng], { icon: icon })
+              .addTo(map)
+              .bindPopup('<p class="text-sm">你在这里</p>');
+            
+            map.setView([lat, lng], 12);
+          },
+          function() {
+            alert('无法获取位置，请检查定位权限');
+          }
+        );
+      } else {
+        alert('浏览器不支持定位');
+      }
+    }
+
+    // 检查附近胶囊
+    function checkNearbyCapsules() {
+      if (!myLocation) {
+        centerOnMyLocation();
+        return;
+      }
+      
+      const capsules = JSON.parse(localStorage.getItem('travelCapsules') || '[]');
+      const nearbyCapsules = capsules.filter(c => {
+        if (!c.location || c.status === 'opened') return false;
+        const distance = getDistance(myLocation[0], myLocation[1], c.location.latitude, c.location.longitude);
+        return distance <= 1000; // 1公里内
+      });
+      
+      if (nearbyCapsules.length > 0) {
+        alert(`发现 ${nearbyCapsules.length} 个附近的胶囊！`);
+        nearbyCapsules.forEach(c => {
+          const marker = markers.find(m => {
+            const pos = m.getLatLng();
+            return pos.lat === c.location.latitude && pos.lng === c.location.longitude;
+          });
+          if (marker) {
+            marker.openPopup();
+          }
+        });
+      } else {
+        alert('附近没有可开启的胶囊');
+      }
+    }
+
+    // 计算距离
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // 页面加载
+    document.addEventListener('DOMContentLoaded', function() {
+      initMap();
+      
+      // 点击模态框外部关闭
+      document.getElementById('locationModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+          closeLocationModal();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

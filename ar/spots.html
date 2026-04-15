@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AR景点列表 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ar: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              200: '#bae6fd',
+              300: '#7dd3fc',
+              400: '#38bdf8',
+              500: '#0ea5e9',
+              600: '#0284c7',
+              700: '#0369a1',
+              800: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    
+    .ar-gradient {
+      background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 50%, #0284c7 100%);
+    }
+    
+    .glass-card {
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .spot-card {
+      transition: all 0.3s ease;
+    }
+    
+    .spot-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(14, 165, 233, 0.2);
+    }
+    
+    .ar-badge {
+      background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(14, 165, 233, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(14, 165, 233, 0); }
+    }
+    
+    .feature-tag {
+      background: rgba(14, 165, 233, 0.15);
+      border: 1px solid rgba(14, 165, 233, 0.3);
+    }
+    
+    .city-tab.active {
+      background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+      color: white;
+    }
+    
+    .fade-in {
+      animation: fadeIn 0.5s ease forwards;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-900 min-h-screen">
+  <!-- Navigation -->
+  <nav class="ar-gradient text-white sticky top-0 z-50 shadow-2xl">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="../destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="spots.html" class="font-semibold border-b-2 border-white pb-1">🥽 AR景点</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="../destinations.html" class="block py-2">目的地</a>
+        <a href="spots.html" class="block py-2 font-semibold">🥽 AR景点</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="ar-gradient text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full text-sm mb-6">
+        <span>🏛️</span>
+        <span>AR 景点列表</span>
+      </div>
+      <h1 class="text-4xl md:text-5xl font-extrabold mb-4">支持 AR 体验的景点</h1>
+      <p class="text-xl opacity-90 max-w-2xl mx-auto">精选亚洲热门景点，提供沉浸式AR体验</p>
+      
+      <!-- Stats -->
+      <div class="flex justify-center gap-8 mt-10">
+        <div class="text-center">
+          <div class="text-4xl font-bold">5</div>
+          <div class="text-sm opacity-80">精选景点</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-bold">4</div>
+          <div class="text-sm opacity-80">覆盖城市</div>
+        </div>
+        <div class="text-center">
+          <div class="text-4xl font-bold">6</div>
+          <div class="text-sm opacity-80">AR功能</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- City Filter -->
+  <section class="bg-slate-900 py-8 sticky top-16 z-40 border-b border-slate-800">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex flex-wrap justify-center gap-3">
+        <button class="city-tab active px-6 py-3 rounded-full font-medium transition-all" data-city="all" onclick="filterSpots('all')">
+          🌍 全部
+        </button>
+        <button class="city-tab px-6 py-3 rounded-full font-medium text-slate-400 hover:bg-slate-800 transition-all" data-city="tokyo" onclick="filterSpots('tokyo')">
+          🇯🇵 东京
+        </button>
+        <button class="city-tab px-6 py-3 rounded-full font-medium text-slate-400 hover:bg-slate-800 transition-all" data-city="osaka" onclick="filterSpots('osaka')">
+          🇯🇵 大阪
+        </button>
+        <button class="city-tab px-6 py-3 rounded-full font-medium text-slate-400 hover:bg-slate-800 transition-all" data-city="seoul" onclick="filterSpots('seoul')">
+          🇰🇷 首尔
+        </button>
+        <button class="city-tab px-6 py-3 rounded-full font-medium text-slate-400 hover:bg-slate-800 transition-all" data-city="bangkok" onclick="filterSpots('bangkok')">
+          🇹🇭 曼谷
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Spots Grid -->
+  <section class="bg-slate-900 py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div id="spotsGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Senso-ji Temple -->
+        <div class="spot-card glass-card rounded-3xl overflow-hidden" data-city="tokyo">
+          <div class="relative">
+            <div class="aspect-video bg-gradient-to-br from-red-600 to-orange-500 flex items-center justify-center">
+              <div class="text-8xl">⛩️</div>
+            </div>
+            <div class="ar-badge absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold text-white flex items-center gap-1">
+              <span>🥽</span>
+              <span>AR</span>
+            </div>
+            <div class="absolute bottom-4 left-4 flex gap-2">
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🏯 寺庙</span>
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🇯🇵 东京</span>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-white mb-2">浅草寺</h3>
+            <p class="text-slate-400 text-sm mb-4">Senso-ji Temple</p>
+            
+            <div class="flex items-center gap-4 mb-4">
+              <div class="flex items-center gap-1">
+                <span class="text-yellow-400">⭐</span>
+                <span class="text-white font-medium">4.8</span>
+              </div>
+              <div class="text-slate-500 text-sm">12,580 评价</div>
+            </div>
+            
+            <p class="text-slate-400 text-sm mb-4">东京最古老的寺庙，感受千年佛教文化，体验传统日式风情</p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">3D历史重建</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">虚拟导游</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">实时翻译</span>
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
+              <div class="text-slate-500 text-sm">
+                <span class="text-cyan-400">45MB</span> 数据
+              </div>
+              <a href="detail.html?spot=senso-ji" class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-medium hover:shadow-lg hover:shadow-cyan-500/30 transition-all">
+                开启AR
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tokyo Tower -->
+        <div class="spot-card glass-card rounded-3xl overflow-hidden" data-city="tokyo">
+          <div class="relative">
+            <div class="aspect-video bg-gradient-to-br from-orange-500 to-red-600 flex items-center justify-center">
+              <div class="text-8xl">🗼</div>
+            </div>
+            <div class="ar-badge absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold text-white flex items-center gap-1">
+              <span>🥽</span>
+              <span>AR</span>
+            </div>
+            <div class="absolute bottom-4 left-4 flex gap-2">
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🏗️ 地标</span>
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🇯🇵 东京</span>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-white mb-2">东京塔</h3>
+            <p class="text-slate-400 text-sm mb-4">Tokyo Tower</p>
+            
+            <div class="flex items-center gap-4 mb-4">
+              <div class="flex items-center gap-1">
+                <span class="text-yellow-400">⭐</span>
+                <span class="text-white font-medium">4.7</span>
+              </div>
+              <div class="text-slate-500 text-sm">8,920 评价</div>
+            </div>
+            
+            <p class="text-slate-400 text-sm mb-4">东京标志性铁塔，俯瞰城市全景，欣赏浪漫夜景</p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">3D模型</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">夜景增强</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">AR合影</span>
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
+              <div class="text-slate-500 text-sm">
+                <span class="text-cyan-400">68MB</span> 数据
+              </div>
+              <a href="detail.html?spot=tokyo-tower" class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-medium hover:shadow-lg hover:shadow-cyan-500/30 transition-all">
+                开启AR
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Osaka Castle -->
+        <div class="spot-card glass-card rounded-3xl overflow-hidden" data-city="osaka">
+          <div class="relative">
+            <div class="aspect-video bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center">
+              <div class="text-8xl">🏯</div>
+            </div>
+            <div class="ar-badge absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold text-white flex items-center gap-1">
+              <span>🥽</span>
+              <span>AR</span>
+            </div>
+            <div class="absolute bottom-4 left-4 flex gap-2">
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🏰 城堡</span>
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🇯🇵 大阪</span>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-white mb-2">大阪城</h3>
+            <p class="text-slate-400 text-sm mb-4">Osaka Castle</p>
+            
+            <div class="flex items-center gap-4 mb-4">
+              <div class="flex items-center gap-1">
+                <span class="text-yellow-400">⭐</span>
+                <span class="text-white font-medium">4.9</span>
+              </div>
+              <div class="text-slate-500 text-sm">15,600 评价</div>
+            </div>
+            
+            <p class="text-slate-400 text-sm mb-4">日本著名城堡，丰臣秀吉故居，感受战国风云</p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">历史场景</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">3D模型</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">AR导航</span>
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
+              <div class="text-slate-500 text-sm">
+                <span class="text-cyan-400">52MB</span> 数据
+              </div>
+              <a href="detail.html?spot=osaka-castle" class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-medium hover:shadow-lg hover:shadow-cyan-500/30 transition-all">
+                开启AR
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Gyeongbokgung Palace -->
+        <div class="spot-card glass-card rounded-3xl overflow-hidden" data-city="seoul">
+          <div class="relative">
+            <div class="aspect-video bg-gradient-to-br from-green-600 to-emerald-600 flex items-center justify-center">
+              <div class="text-8xl">🏛️</div>
+            </div>
+            <div class="ar-badge absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold text-white flex items-center gap-1">
+              <span>🥽</span>
+              <span>AR</span>
+            </div>
+            <div class="absolute bottom-4 left-4 flex gap-2">
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🏺 宫殿</span>
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🇰🇷 首尔</span>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-white mb-2">景福宫</h3>
+            <p class="text-slate-400 text-sm mb-4">Gyeongbokgung Palace</p>
+            
+            <div class="flex items-center gap-4 mb-4">
+              <div class="flex items-center gap-1">
+                <span class="text-yellow-400">⭐</span>
+                <span class="text-white font-medium">4.8</span>
+              </div>
+              <div class="text-slate-500 text-sm">9,800 评价</div>
+            </div>
+            
+            <p class="text-slate-400 text-sm mb-4">朝鲜王朝第一宫殿，韩国文化象征，体验韩服魅力</p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">韩服AR</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">历史还原</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">实时翻译</span>
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
+              <div class="text-slate-500 text-sm">
+                <span class="text-cyan-400">58MB</span> 数据
+              </div>
+              <a href="detail.html?spot=gyeongbokgung" class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-medium hover:shadow-lg hover:shadow-cyan-500/30 transition-all">
+                开启AR
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Grand Palace -->
+        <div class="spot-card glass-card rounded-3xl overflow-hidden" data-city="bangkok">
+          <div class="relative">
+            <div class="aspect-video bg-gradient-to-br from-amber-500 to-yellow-500 flex items-center justify-center">
+              <div class="text-8xl">🕌</div>
+            </div>
+            <div class="ar-badge absolute top-4 right-4 px-3 py-1 rounded-full text-sm font-bold text-white flex items-center gap-1">
+              <span>🥽</span>
+              <span>AR</span>
+            </div>
+            <div class="absolute bottom-4 left-4 flex gap-2">
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🏛️ 宫殿</span>
+              <span class="bg-white/20 backdrop-blur px-3 py-1 rounded-full text-sm">🇹🇭 曼谷</span>
+            </div>
+          </div>
+          
+          <div class="p-6">
+            <h3 class="text-xl font-bold text-white mb-2">大皇宫</h3>
+            <p class="text-slate-400 text-sm mb-4">Grand Palace</p>
+            
+            <div class="flex items-center gap-4 mb-4">
+              <div class="flex items-center gap-1">
+                <span class="text-yellow-400">⭐</span>
+                <span class="text-white font-medium">4.9</span>
+              </div>
+              <div class="text-slate-500 text-sm">21,000 评价</div>
+            </div>
+            
+            <p class="text-slate-400 text-sm mb-4">泰国皇室居所，建筑艺术瑰宝，感受泰式华丽</p>
+            
+            <div class="flex flex-wrap gap-2 mb-4">
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">3D金殿</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">历史场景</span>
+              <span class="feature-tag px-2 py-1 rounded text-xs text-cyan-400">AR合影</span>
+            </div>
+            
+            <div class="flex items-center justify-between pt-4 border-t border-slate-700">
+              <div class="text-slate-500 text-sm">
+                <span class="text-cyan-400">75MB</span> 数据
+              </div>
+              <a href="detail.html?spot=grand-palace" class="px-5 py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-full font-medium hover:shadow-lg hover:shadow-cyan-500/30 transition-all">
+                开启AR
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Empty State -->
+      <div id="emptyState" class="hidden text-center py-16">
+        <div class="text-6xl mb-4">🔍</div>
+        <h3 class="text-xl font-bold text-white mb-2">暂无相关景点</h3>
+        <p class="text-slate-400">该城市暂未开放AR体验，敬请期待</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Summary -->
+  <section class="bg-gradient-to-b from-slate-900 to-slate-800 py-16">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-bold text-white mb-4">✨ 每个景点都包含</h2>
+      </div>
+      
+      <div class="grid md:grid-cols-3 lg:grid-cols-6 gap-6">
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-3xl mb-2">🏛️</div>
+          <div class="text-sm text-white">3D模型</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-3xl mb-2">⏳</div>
+          <div class="text-sm text-white">历史还原</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-3xl mb-2">🎭</div>
+          <div class="text-sm text-white">虚拟导游</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-3xl mb-2">🌐</div>
+          <div class="text-sm text-white">实时翻译</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-3xl mb-2">🧭</div>
+          <div class="text-sm text-white">路线导航</div>
+        </div>
+        <div class="glass-card rounded-2xl p-4 text-center">
+          <div class="text-3xl mb-2">🏷️</div>
+          <div class="text-sm text-white">信息标签</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="ar-gradient py-16">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-white mb-4">还有其他问题？</h2>
+      <p class="text-xl text-white/80 mb-8">查看完整使用教程</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="tutorial.html" class="px-8 py-4 bg-white text-ar-700 rounded-full font-bold text-lg hover:bg-cyan-50 transition shadow-xl">
+          📚 查看教程
+        </a>
+        <a href="guide.html" class="px-8 py-4 glass-card rounded-full font-bold text-lg hover:bg-white/20 transition">
+          📖 使用指南
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-slate-900 text-white py-12 border-t border-slate-800">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-2">
+          <span class="text-3xl">🧭</span>
+          <span class="text-xl font-bold">游导旅游</span>
+        </div>
+        <div class="flex items-center gap-6 text-slate-400">
+          <a href="index.html" class="hover:text-white transition">AR首页</a>
+          <a href="spots.html" class="hover:text-white transition">景点列表</a>
+          <a href="tutorial.html" class="hover:text-white transition">教程</a>
+        </div>
+        <p class="text-slate-500 text-sm">© 2025 游导旅游. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+    
+    function filterSpots(city) {
+      // Update tab styles
+      document.querySelectorAll('.city-tab').forEach(tab => {
+        tab.classList.remove('active');
+        tab.classList.add('text-slate-400');
+      });
+      document.querySelector(`[data-city="${city}"]`).classList.add('active');
+      document.querySelector(`[data-city="${city}"]`).classList.remove('text-slate-400');
+      
+      // Filter spots
+      const spots = document.querySelectorAll('.spot-card');
+      const emptyState = document.getElementById('emptyState');
+      let visibleCount = 0;
+      
+      spots.forEach(spot => {
+        if (city === 'all' || spot.dataset.city === city) {
+          spot.style.display = 'block';
+          spot.classList.add('fade-in');
+          visibleCount++;
+        } else {
+          spot.style.display = 'none';
+          spot.classList.remove('fade-in');
+        }
+      });
+      
+      if (emptyState) {
+        emptyState.classList.toggle('hidden', visibleCount > 0);
+      }
+    }
+  </script>
+</body>
+</html>

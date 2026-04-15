@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>目的地美食 - 游导旅游|全球美食推荐</title>
+  <meta name="description" content="探索全球目的地美食，从街头小吃到米其林餐厅，跟着导游品尝地道风味。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <style>
+    :root {
+      --food-primary: #e85d04;
+      --food-secondary: #dc2f02;
+      --food-accent: #ffba08;
+      --food-bg: #fffbf0;
+    }
+
+    /* Hero */
+    .food-hero {
+      background: linear-gradient(135deg, #e85d04 0%, #dc2f02 50%, #9d0208 100%);
+      color: #fff;
+      padding: 60px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .food-hero::before {
+      content: '🍜';
+      position: absolute;
+      top: 20px;
+      left: 10%;
+      font-size: 4rem;
+      opacity: 0.2;
+      animation: float 3s ease-in-out infinite;
+    }
+    .food-hero::after {
+      content: '🍕';
+      position: absolute;
+      bottom: 20px;
+      right: 10%;
+      font-size: 4rem;
+      opacity: 0.2;
+      animation: float 3s ease-in-out infinite 1s;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .food-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .food-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto 24px;
+    }
+    .search-box {
+      max-width: 500px;
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+    }
+    .search-box input {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 1rem;
+    }
+    .search-box button {
+      padding: 14px 28px;
+      background: var(--food-accent);
+      border: none;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Content */
+    .food-content {
+      padding: 50px 0 80px;
+      background: var(--food-bg);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Countries */
+    .countries-section {
+      margin-bottom: 50px;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .country-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .country-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      text-decoration: none;
+      color: inherit;
+    }
+    .country-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    }
+    .country-card-banner {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+    }
+    .country-card.jp { background: linear-gradient(135deg, #ff4b4b 0%, #c62828 100%); }
+    .country-card.kr { background: linear-gradient(135deg, #4fc3f7 0%, #0288d1 100%); }
+    .country-card.th { background: linear-gradient(135deg, #ffb74d 0%, #f57c00 100%); }
+    .country-card-content {
+      padding: 20px;
+    }
+    .country-card h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+    .country-card p {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+    }
+    .country-card .food-count {
+      display: inline-block;
+      margin-top: 12px;
+      padding: 6px 14px;
+      background: var(--food-bg);
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      color: var(--food-primary);
+      font-weight: 600;
+    }
+
+    /* Category Tabs */
+    .category-section {
+      margin-bottom: 50px;
+    }
+    .category-tabs {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+    .category-tab {
+      padding: 12px 24px;
+      background: #fff;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+    .category-tab:hover, .category-tab.active {
+      border-color: var(--food-primary);
+      color: var(--food-primary);
+      background: #fff;
+    }
+    .category-tab.active {
+      background: var(--food-primary);
+      color: #fff;
+    }
+
+    /* Food Grid */
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .food-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .food-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    }
+    .food-card-image {
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: linear-gradient(135deg, #fff5eb 0%, #ffe4cc 100%);
+    }
+    .food-card-content {
+      padding: 20px;
+    }
+    .food-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .food-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .food-card .rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.9rem;
+      color: var(--food-accent);
+    }
+    .food-card p {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .food-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 16px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .food-card .price {
+      font-weight: 600;
+      color: var(--food-secondary);
+    }
+    .food-card .reviews {
+      font-size: 0.85rem;
+      color: var(--gray-400);
+    }
+
+    /* Restaurant Section */
+    .restaurant-section {
+      margin-top: 60px;
+    }
+    .restaurant-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+    }
+    .restaurant-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .restaurant-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    }
+    .restaurant-card-banner {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: #fff;
+    }
+    .restaurant-card.jp { background: linear-gradient(135deg, #ff4b4b 0%, #c62828 100%); }
+    .restaurant-card.kr { background: linear-gradient(135deg, #4fc3f7 0%, #0288d1 100%); }
+    .restaurant-card.th { background: linear-gradient(135deg, #ffb74d 0%, #f57c00 100%); }
+    .restaurant-card-content {
+      padding: 20px;
+    }
+    .restaurant-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .restaurant-card .meta {
+      display: flex;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+    .restaurant-card .rating {
+      color: var(--food-accent);
+      font-weight: 600;
+    }
+    .restaurant-card .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .restaurant-card .feature-tag {
+      padding: 4px 10px;
+      background: var(--food-bg);
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      color: var(--food-primary);
+    }
+    .restaurant-card .address {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+
+    /* CTA */
+    .cta-section {
+      background: linear-gradient(135deg, var(--food-primary) 0%, var(--food-secondary) 100%);
+      color: #fff;
+      padding: 50px;
+      border-radius: var(--radius-lg);
+      text-align: center;
+      margin-top: 60px;
+    }
+    .cta-section h2 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+    .cta-section p {
+      opacity: 0.9;
+      margin-bottom: 24px;
+    }
+    .cta-btn {
+      display: inline-block;
+      padding: 14px 36px;
+      background: #fff;
+      color: var(--food-primary);
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .cta-btn:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav container">
+      <a href="index.html" class="logo">游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="destinations.html">目的地</a>
+        <a href="routes.html">路线</a>
+        <a href="food/index.html" class="active">美食</a>
+        <a href="guide.html">导游</a>
+      </div>
+      <div class="header-actions">
+        <a href="login.html" class="btn-outline">登录</a>
+        <a href="register.html" class="btn-primary">注册</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="food-hero">
+    <div class="container">
+      <h1>🍽️ 探索目的地美食</h1>
+      <p>从街头小吃到米其林餐厅，跟着导游品尝最地道的风味</p>
+      <div class="search-box">
+        <input type="text" placeholder="搜索美食、餐厅或目的地...">
+        <button>搜索</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="food-content">
+    <div class="container">
+      <!-- Countries -->
+      <section class="countries-section">
+        <h2 class="section-title">🌏 目的地美食</h2>
+        <div class="country-cards">
+          <a href="food/japan-food.html" class="country-card jp">
+            <div class="country-card-banner">🇯🇵</div>
+            <div class="country-card-content">
+              <h3>日本美食</h3>
+              <p>寿司、拉面、和牛、怀石料理...</p>
+              <span class="food-count">156+ 美食</span>
+            </div>
+          </a>
+          <a href="food/korea-food.html" class="country-card kr">
+            <div class="country-card-banner">🇰🇷</div>
+            <div class="country-card-content">
+              <h3>韩国美食</h3>
+              <p>烤肉、泡菜、石锅拌饭、炸鸡...</p>
+              <span class="food-count">98+ 美食</span>
+            </div>
+          </a>
+          <a href="food/thailand-food.html" class="country-card th">
+            <div class="country-card-banner">🇹🇭</div>
+            <div class="country-card-content">
+              <h3>泰国美食</h3>
+              <p>泰式料理、芒果糯米饭、街边小吃...</p>
+              <span class="food-count">87+ 美食</span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- Categories -->
+      <section class="category-section">
+        <h2 class="section-title">🏷️ 美食分类</h2>
+        <div class="category-tabs">
+          <span class="category-tab active" data-category="all">全部</span>
+          <span class="category-tab" data-category="traditional">🏮 传统料理</span>
+          <span class="category-tab" data-category="street-food">🍡 街头小吃</span>
+          <span class="category-tab" data-category="fine-dining">✨ 精致餐饮</span>
+          <span class="category-tab" data-category="desserts">🍰 甜品甜点</span>
+        </div>
+        <div class="food-grid" id="foodGrid">
+          <!-- Foods loaded dynamically -->
+        </div>
+      </section>
+
+      <!-- Restaurant Section -->
+      <section class="restaurant-section">
+        <h2 class="section-title">🏪 热门餐厅</h2>
+        <div class="restaurant-grid" id="restaurantGrid">
+          <!-- Restaurants loaded dynamically -->
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="cta-section">
+        <h2>🍜 定制专属美食之旅</h2>
+        <p>让专业导游带您品尝最地道的当地美食，体验不一样的文化之旅</p>
+        <a href="trip-planner.html" class="cta-btn">开始规划</a>
+      </section>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>游导旅游</h4>
+          <p>您的专属旅行伙伴</p>
+        </div>
+        <div class="footer-col">
+          <h4>快速链接</h4>
+          <a href="about.html">关于我们</a>
+          <a href="services.html">服务项目</a>
+          <a href="help.html">帮助中心</a>
+        </div>
+        <div class="footer-col">
+          <h4>联系我们</h4>
+          <p>客服电话：400-123-4567</p>
+          <p>邮箱：info@youdao-travel.com</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 游导旅游 youdao-travel.com</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Load food data
+    async function loadFoodData() {
+      try {
+        const response = await fetch('data/food.json');
+        const data = await response.json();
+        renderFoods(data.foods);
+        renderRestaurants(data.restaurants);
+      } catch (error) {
+        console.error('Failed to load food data:', error);
+      }
+    }
+
+    function renderFoods(foods) {
+      const grid = document.getElementById('foodGrid');
+      grid.innerHTML = foods.map(food => `
+        <div class="food-card" data-category="${food.category}">
+          <div class="food-card-image">${food.image}</div>
+          <div class="food-card-content">
+            <div class="food-card-header">
+              <h3>${food.name}</h3>
+              <span class="rating">⭐ ${food.rating}</span>
+            </div>
+            <p>${food.description}</p>
+            <div class="food-card-footer">
+              <span class="price">${food.price_range}</span>
+              <span class="reviews">${food.reviews}人评价</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderRestaurants(restaurants) {
+      const grid = document.getElementById('restaurantGrid');
+      grid.innerHTML = restaurants.map(rest => `
+        <div class="restaurant-card ${rest.country}">
+          <div class="restaurant-card-banner">🏪</div>
+          <div class="restaurant-card-content">
+            <h3>${rest.name}</h3>
+            <div class="meta">
+              <span class="rating">⭐ ${rest.rating}</span>
+              <span>📍 ${rest.city}</span>
+              <span>💰 ${rest.price_range}</span>
+            </div>
+            <div class="features">
+              ${rest.features.map(f => `<span class="feature-tag">${f}</span>`).join('')}
+            </div>
+            <div class="address">📍 ${rest.address}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Category filter
+    document.querySelectorAll('.category-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        // Filter logic would go here
+      });
+    });
+
+    // Init
+    loadFoodData();
+  </script>
+</body>
+</html>

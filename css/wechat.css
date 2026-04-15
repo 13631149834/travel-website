@@ -1,0 +1,542 @@
+/**
+ * 游导旅游 - 微信生态样式组件
+ * @version 1.2.0
+ */
+
+/* ==================== 关注引导组件 ==================== */
+
+.wechat-follow-widget {
+  position: fixed;
+  right: 20px;
+  bottom: 100px;
+  z-index: 1000;
+}
+
+.wechat-follow-trigger {
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #07c160 0%, #1aad19 100%);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(7, 193, 96, 0.4);
+  transition: all 0.3s ease;
+}
+
+.wechat-follow-trigger:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 24px rgba(7, 193, 96, 0.5);
+}
+
+.wechat-follow-trigger .wechat-icon {
+  font-size: 1.5rem;
+}
+
+.wechat-follow-trigger .follow-text {
+  font-size: 0.6rem;
+  color: #fff;
+  margin-top: 2px;
+}
+
+.wechat-follow-popup {
+  position: absolute;
+  bottom: 70px;
+  right: 0;
+  width: 280px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.wechat-follow-popup.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.wechat-follow-popup .popup-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  background: #f5f5f5;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+}
+
+.wechat-follow-popup .qrcode-container {
+  width: 160px;
+  height: 160px;
+  margin: 0 auto 16px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wechat-follow-popup .qrcode-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.wechat-follow-popup .popup-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+.wechat-follow-popup .popup-desc {
+  font-size: 0.85rem;
+  color: #666;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.wechat-follow-popup .popup-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  background: #07c160;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
+
+.wechat-follow-popup .popup-btn:hover {
+  background: #06ad56;
+}
+
+/* ==================== 分享按钮组 ==================== */
+
+.share-container {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.share-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.share-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.share-btn-wechat:hover {
+  background: #07c160;
+  color: #fff;
+  border-color: #07c160;
+}
+
+.share-btn-weibo:hover {
+  background: #e6162d;
+  color: #fff;
+  border-color: #e6162d;
+}
+
+.share-btn-qq:hover {
+  background: #1296db;
+  color: #fff;
+  border-color: #1296db;
+}
+
+.share-btn-copy:hover {
+  background: #333;
+  color: #fff;
+  border-color: #333;
+}
+
+/* ==================== 分享弹窗 ==================== */
+
+.share-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.share-modal.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.share-modal-content {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px;
+  max-width: 360px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.share-modal.show .share-modal-content {
+  transform: scale(1);
+}
+
+.share-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-modal-content h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.share-modal-content .share-tip {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.share-modal-content .wechat-qrcode {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 20px;
+  background: #f5f5f5;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.share-modal-content .wechat-qrcode img {
+  width: 100%;
+  height: 100%;
+}
+
+.share-url-box {
+  display: flex;
+  gap: 8px;
+}
+
+.share-url-input {
+  flex: 1;
+  padding: 12px;
+  background: #f5f5f5;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.share-copy-btn {
+  padding: 12px 20px;
+  background: #07c160;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.share-copy-btn:hover {
+  background: #06ad56;
+}
+
+/* ==================== 分享卡片预览 ==================== */
+
+.share-card-preview {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  max-width: 320px;
+}
+
+.share-card-image {
+  width: 100%;
+  height: 160px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 3rem;
+}
+
+.share-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.share-card-content {
+  padding: 16px;
+}
+
+.share-card-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.share-card-desc {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.share-card-source {
+  font-size: 0.8rem;
+  color: #999;
+}
+
+/* ==================== 小程序码展示 ==================== */
+
+.miniprogram-qrcode {
+  text-align: center;
+  padding: 24px;
+  background: #f8f9fa;
+  border-radius: 16px;
+}
+
+.miniprogram-qrcode .qrcode-img {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 16px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.miniprogram-qrcode .qrcode-img img {
+  width: 100%;
+  height: 100%;
+}
+
+.miniprogram-qrcode .qrcode-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.miniprogram-qrcode .qrcode-size {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+/* ==================== 微信登录按钮 ==================== */
+
+.wechat-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 24px;
+  background: #07c160;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wechat-login-btn:hover {
+  background: #06ad56;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(7, 193, 96, 0.3);
+}
+
+.wechat-login-btn .wechat-icon {
+  font-size: 1.2rem;
+}
+
+/* ==================== 微信支付样式 ==================== */
+
+.wechat-pay-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 16px;
+  background: #07c160;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.wechat-pay-btn:hover {
+  background: #06ad56;
+  box-shadow: 0 8px 24px rgba(7, 193, 96, 0.35);
+}
+
+.wechat-pay-btn .icon {
+  font-size: 1.3rem;
+}
+
+/* 支付进度条 */
+.pay-progress {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.pay-progress .step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.pay-progress .step-circle {
+  width: 40px;
+  height: 40px;
+  background: #eee;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.pay-progress .step.active .step-circle {
+  background: #07c160;
+  color: #fff;
+}
+
+.pay-progress .step.completed .step-circle {
+  background: #10b981;
+  color: #fff;
+}
+
+.pay-progress .step-label {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.pay-progress .step.active .step-label {
+  color: #07c160;
+  font-weight: 600;
+}
+
+.pay-progress .step-line {
+  width: 60px;
+  height: 2px;
+  background: #eee;
+  margin-bottom: 24px;
+}
+
+.pay-progress .step.completed + .step-line,
+.pay-progress .step-line.completed {
+  background: #10b981;
+}
+
+/* ==================== 响应式适配 ==================== */
+
+@media (max-width: 768px) {
+  .wechat-follow-widget {
+    right: 16px;
+    bottom: 80px;
+  }
+
+  .wechat-follow-trigger {
+    width: 48px;
+    height: 48px;
+  }
+
+  .wechat-follow-trigger .wechat-icon {
+    font-size: 1.2rem;
+  }
+
+  .wechat-follow-trigger .follow-text {
+    display: none;
+  }
+
+  .wechat-follow-popup {
+    width: 260px;
+    right: -10px;
+  }
+
+  .share-buttons {
+    justify-content: center;
+  }
+
+  .share-btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}

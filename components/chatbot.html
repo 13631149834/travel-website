@@ -1,0 +1,797 @@
+<!-- 游导旅游智能问答机器人组件 -->
+<!-- 使用方式：在页面底部添加 <div id="chatbot-container"></div> 并引入此组件 -->
+
+<style>
+/* 聊天机器人样式 */
+.chatbot-float-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(14, 165, 233, 0.4);
+  transition: all 0.3s ease;
+  z-index: 9999;
+  border: none;
+}
+
+.chatbot-float-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(14, 165, 233, 0.5);
+}
+
+.chatbot-float-btn .badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 18px;
+  height: 18px;
+  background: #ef4444;
+  border-radius: 50%;
+  color: white;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.chatbot-window {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+  width: 380px;
+  height: 560px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.15);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9998;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chatbot-window.active {
+  display: flex;
+}
+
+/* 头部 */
+.chatbot-header {
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.chatbot-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chatbot-avatar {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.chatbot-header-text h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.chatbot-header-text p {
+  font-size: 12px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.chatbot-header-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.chatbot-header-btn {
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  border-radius: 8px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.chatbot-header-btn:hover {
+  background: rgba(255,255,255,0.3);
+}
+
+/* 消息区域 */
+.chatbot-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  background: #f8fafc;
+  scroll-behavior: smooth;
+}
+
+.chatbot-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chatbot-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chatbot-messages::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+/* 消息气泡 */
+.message {
+  display: flex;
+  margin-bottom: 12px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.message.user {
+  flex-direction: row-reverse;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.message.bot .message-avatar {
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  color: white;
+  font-size: 14px;
+}
+
+.message.user .message-avatar {
+  background: #10b981;
+  color: white;
+  font-size: 12px;
+}
+
+.message-content {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.message.bot .message-content {
+  background: white;
+  color: #334155;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.message.user .message-content {
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+/* 打字动画 */
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 16px;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  width: fit-content;
+}
+
+.typing-dot {
+  width: 8px;
+  height: 8px;
+  background: #94a3b8;
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) { animation-delay: -0.32s; }
+.typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounce {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* 快捷问题 */
+.quick-questions {
+  padding: 12px 16px;
+  background: #f1f5f9;
+  border-top: 1px solid #e2e8f0;
+}
+
+.quick-questions-title {
+  font-size: 12px;
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.quick-questions-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.quick-btn {
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  font-size: 12px;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quick-btn:hover {
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  color: white;
+  border-color: transparent;
+}
+
+/* 输入区域 */
+.chatbot-input-area {
+  padding: 12px 16px;
+  background: white;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+}
+
+.chatbot-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 24px;
+  font-size: 14px;
+  resize: none;
+  max-height: 100px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.chatbot-input:focus {
+  outline: none;
+  border-color: #0ea5e9;
+}
+
+.chatbot-send-btn {
+  width: 44px;
+  height: 44px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.chatbot-send-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4);
+}
+
+.chatbot-send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 分类快捷按钮 */
+.category-buttons {
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.category-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.category-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.category-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  min-width: 60px;
+}
+
+.category-btn:hover {
+  border-color: #0ea5e9;
+  background: #f0f9ff;
+}
+
+.category-btn .icon {
+  font-size: 20px;
+}
+
+.category-btn .text {
+  font-size: 11px;
+  color: #64748b;
+  white-space: nowrap;
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+  .chatbot-float-btn {
+    bottom: 16px;
+    right: 16px;
+    width: 52px;
+    height: 52px;
+  }
+  
+  .chatbot-window {
+    bottom: 80px;
+    right: 8px;
+    left: 8px;
+    width: auto;
+    height: calc(100vh - 140px);
+    border-radius: 20px;
+  }
+}
+
+/* 通知气泡动画 */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+</style>
+
+<!-- 悬浮按钮 -->
+<button class="chatbot-float-btn" id="chatbotToggle" aria-label="打开智能问答">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+  </svg>
+  <span class="badge" id="unreadBadge" style="display: none;">1</span>
+</button>
+
+<!-- 聊天窗口 -->
+<div class="chatbot-window" id="chatbotWindow">
+  <!-- 头部 -->
+  <div class="chatbot-header">
+    <div class="chatbot-header-info">
+      <div class="chatbot-avatar">🧭</div>
+      <div class="chatbot-header-text">
+        <h3>游导小助手</h3>
+        <p>24小时在线 · 随时为您服务</p>
+      </div>
+    </div>
+    <div class="chatbot-header-actions">
+      <button class="chatbot-header-btn" id="chatbotMinimize" title="最小化">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+      <button class="chatbot-header-btn" id="chatbotClose" title="关闭">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 分类快捷按钮 -->
+  <div class="category-buttons">
+    <div class="category-scroll" id="categoryScroll">
+      <button class="category-btn" data-category="visa">
+        <span class="icon">📋</span>
+        <span class="text">签证</span>
+      </button>
+      <button class="category-btn" data-category="transport">
+        <span class="icon">✈️</span>
+        <span class="text">交通</span>
+      </button>
+      <button class="category-btn" data-category="accommodation">
+        <span class="icon">🏨</span>
+        <span class="text">住宿</span>
+      </button>
+      <button class="category-btn" data-category="food">
+        <span class="icon">🍜</span>
+        <span class="text">美食</span>
+      </button>
+      <button class="category-btn" data-category="attractions">
+        <span class="icon">🏛️</span>
+        <span class="text">景点</span>
+      </button>
+      <button class="category-btn" data-category="shopping">
+        <span class="icon">🛍️</span>
+        <span class="text">购物</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 消息区域 -->
+  <div class="chatbot-messages" id="chatbotMessages">
+    <!-- 欢迎消息 -->
+    <div class="message bot">
+      <div class="message-avatar">🧭</div>
+      <div class="message-content">👋 你好！欢迎来到游导旅游！\n\n我是您的智能旅行助手，可以帮您解答签证、交通、住宿、美食、景点、购物等各种旅行问题。\n\n请告诉我您想去哪里旅行，或者有什么问题想咨询呢？</div>
+    </div>
+  </div>
+
+  <!-- 快捷问题 -->
+  <div class="quick-questions" id="quickQuestions">
+    <div class="quick-questions-title">💡 快捷问题</div>
+    <div class="quick-questions-list">
+      <button class="quick-btn">日本签证怎么办理</button>
+      <button class="quick-btn">日本JR Pass怎么买</button>
+      <button class="quick-btn">东京必去景点</button>
+      <button class="quick-btn">日本必吃美食</button>
+    </div>
+  </div>
+
+  <!-- 输入区域 -->
+  <div class="chatbot-input-area">
+    <textarea class="chatbot-input" id="chatbotInput" placeholder="输入您的问题..." rows="1"></textarea>
+    <button class="chatbot-send-btn" id="chatbotSendBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+// 问答机器人核心逻辑
+(function() {
+  // 问答数据（内嵌简化版）
+  const botData = {
+    categories: {
+      visa: { name: "签证问题", icon: "📋", keywords: ["签证", "护照", "落地签", "免签"] },
+      transport: { name: "交通问题", icon: "✈️", keywords: ["航班", "机票", "地铁", "JR", "火车"] },
+      accommodation: { name: "住宿问题", icon: "🏨", keywords: ["酒店", "民宿", "住宿", "预订"] },
+      food: { name: "美食问题", icon: "🍜", keywords: ["美食", "餐厅", "小吃", "夜市"] },
+      attractions: { name: "景点问题", icon: "🏛️", keywords: ["景点", "门票", "开放时间", "博物馆"] },
+      shopping: { name: "购物问题", icon: "🛍️", keywords: ["购物", "免税", "退税", "伴手礼"] }
+    },
+    responses: [
+      {
+        id: "visa_001", category: "visa", keywords: ["日本签证", "日本签证办理"],
+        answer: "📋 **日本签证办理指南**\n\n**签证类型**：\n• 单次旅游签证（停留15天）\n• 三年多次签证（停留30天）\n• 五年多次签证（停留90天）\n\n**基本材料**：\n1. 护照原件（有效期6个月以上）\n2. 签证申请表\n3. 2寸白底照片2张\n4. 身份证、户口本复印件\n5. 在职证明/学生证明\n6. 资产证明（流水/房产/车产）\n\n**办理时间**：通常5-7个工作日\n**建议**：通过正规旅行社代办更省心！"
+      },
+      {
+        id: "visa_002", category: "visa", keywords: ["泰国落地签", "落地签材料", "泰国免签"],
+        answer: "🇹🇭 **泰国落地签办理指南**\n\n**最新政策**：\n• 中国公民可享受免签入境待遇\n• 停留期限不超过30天\n\n**落地签所需材料**：\n1. 护照原件（有效期6个月以上）\n2. 往返机票行程单\n3. 酒店预订单\n4. 2寸白底照片1张\n5. 落地签申请表\n6. 随身现金（建议20000泰铢或等值人民币）\n\n**落地签费用**：2000泰铢\n**小贴士**：提前准备好材料可以加快通关速度！"
+      },
+      {
+        id: "transport_001", category: "transport", keywords: ["JR Pass", "JR通票", "日本火车票"],
+        answer: "🚄 **日本JR Pass全攻略**\n\n**什么是JR Pass？**\n日本铁路周游券，可无限次乘坐JR集团全线列车、巴士、渡轮。\n\n**票价参考**：\n• 7日普通车厢：约50,000日元\n• 14日普通车厢：约80,000日元\n• 21日普通车厢：约100,000日元\n\n**适用范围**：\n✅ 新干线（不可乘坐Nozomi号）\n✅ 特急、急行、普通列车\n✅ JR巴士\n\n**购买方式**：\n1. 国内提前购买换票证\n2. 日本机场/车站购买\n3. 官网在线购买"
+      },
+      {
+        id: "transport_002", category: "transport", keywords: ["东京地铁", "地铁乘坐", "东京交通"],
+        answer: "🚇 **东京地铁乘坐指南**\n\n**两大地铁系统**：\n• Tokyo Metro（9条线）\n• 都营地铁（4条线）\n\n**购票方式**：\n1. **单程票**：按距离计价，170-320日元\n2. **Suica/PASMO卡**：刷卡进站超方便！\n3. **一日券**：600-1000日元\n\n**推荐App**：\n• 换乘案内 - 精确换乘\n• Google Maps - 导航首选\n\n💡 **小贴士**：买张Suica卡，地铁、电车、便利店都能用！"
+      },
+      {
+        id: "food_001", category: "food", keywords: ["日本美食", "必吃", "美食推荐"],
+        answer: "🍜 **日本必吃美食清单**\n\n**东京**：\n• 筑地市场：新鲜寿司、海鲜丼\n• 拉面：一兰、九州豚骨\n• 甜品：Harbs水果千层\n\n**大阪**：\n• 道顿堀章鱼烧\n• 蟹道乐：螃蟹料理\n• 串炸：元祖串炸\n\n**京都**：\n• 汤豆腐：南禅寺汤豆腐\n• 抹茶甜品：茶寮都路里\n\n**觅食技巧**：\n• 参考Tabelog评分（4.0+必吃）\n• 避开车站内的店，往巷子里走"
+      },
+      {
+        id: "attractions_001", category: "attractions", keywords: ["东京景点", "必去景点", "东京旅游"],
+        answer: "🏯 **东京必去景点盘点**\n\n**经典景点**：\n• 🗼 东京塔/晴空塔 - 地标建筑\n• ⛩️ 浅草寺 - 雷门、仲见世街\n• 🏛️ 皇居 - 日本皇室居所\n• 🛍️ 新宿、涩谷、银座 - 购物天堂\n\n**特色体验**：\n• 🎮 秋叶原 - 动漫、游戏\n• 🐱 猫咪咖啡馆\n• 🏯 明治神宫 - 祈福参拜\n\n**近郊推荐**：\n• 🏮 川越小江户 - 江户风情\n• 🎢 迪士尼乐园"
+      },
+      {
+        id: "shopping_001", category: "shopping", keywords: ["日本购物", "退税", "免税"],
+        answer: "🛍️ **日本购物退税指南**\n\n**免税条件**：\n• 一般商品：同一天同一家店消费满5,000日元\n• 消耗品：同一天同一家店消费满5,000日元\n\n**退税流程**：\n1. 购物时出示护照，说明TAX FREE\n2. 店员办理免税手续\n3. 护照上会贴免税购物清单\n4. 出境时海关可能会抽查\n\n**注意事项**：\n• 一般商品需在30天内带出日本\n• 消耗品不可在日本境内使用"
+      },
+      {
+        id: "greeting", category: "general", keywords: ["你好", "hi", "hello", "嗨"],
+        answer: "👋 你好呀！欢迎来到游导旅游！\n\n我是您的智能旅行助手，可以帮您解答：\n\n📋 签证问题\n✈️ 交通出行\n🏨 酒店住宿\n🍜 美食推荐\n🏛️ 景点攻略\n🛍️ 购物退税\n\n请告诉我您想去哪里旅行，或者有什么问题想咨询呢？"
+      },
+      {
+        id: "thanks", category: "general", keywords: ["谢谢", "感谢", "谢啦"],
+        answer: "😊 不客气！\n\n如果您还有其他问题，随时问我哦～\n\n祝您旅途愉快！🌍✨"
+      }
+    ],
+    categoryResponses: {
+      visa: "📋 **签证相关问题**\n\n我可以帮您解答：\n• 日本签证怎么办理\n• 泰国落地签流程\n• 韩国签证要求\n• 新加坡、马来西亚签证\n• 欧洲申根签证\n• 各国签证材料准备\n\n请告诉我您想去哪个国家？",
+      transport: "✈️ **交通相关问题**\n\n我可以帮您解答：\n• 日本JR Pass购买和使用\n• 东京地铁乘坐指南\n• 廉价机票抢购技巧\n• 机场接送服务\n• 包车和租车建议\n\n请告诉我您的目的地？",
+      accommodation: "🏨 **住宿相关问题**\n\n我可以帮您解答：\n• 各城市酒店推荐\n• 民宿vs酒店对比\n• 如何选择住宿位置\n• 预订平台推荐\n• 取消政策解读\n\n请告诉我您的出行目的地？",
+      food: "🍜 **美食相关问题**\n\n我可以帮您解答：\n• 各国必吃美食推荐\n• 米其林餐厅预约\n• 街头美食攻略\n• 餐厅预订技巧\n• 素食/特殊饮食选择\n\n请告诉我您想去哪里品尝美食？",
+      attractions: "🏛️ **景点相关问题**\n\n我可以帮您解答：\n• 必去景点推荐\n• 门票预订和优惠\n• 开放时间和游览建议\n• 一日游/半日游规划\n• 景点游览顺序优化\n\n请告诉我您的目的地？",
+      shopping: "🛍️ **购物相关问题**\n\n我可以帮您解答：\n• 免税店购物攻略\n• 退税流程详解\n• 伴手礼推荐\n• 购物区域推荐\n• 品牌比价技巧\n\n请告诉我您想去哪里购物？"
+    }
+  };
+
+  // DOM 元素
+  const chatbotToggle = document.getElementById('chatbotToggle');
+  const chatbotWindow = document.getElementById('chatbotWindow');
+  const chatbotMessages = document.getElementById('chatbotMessages');
+  const chatbotInput = document.getElementById('chatbotInput');
+  const chatbotSendBtn = document.getElementById('chatbotSendBtn');
+  const chatbotMinimize = document.getElementById('chatbotMinimize');
+  const chatbotClose = document.getElementById('chatbotClose');
+  const categoryBtns = document.querySelectorAll('.category-btn');
+  const quickBtns = document.querySelectorAll('.quick-btn');
+
+  let isWindowOpen = false;
+  let unreadCount = 0;
+  let chatHistory = JSON.parse(localStorage.getItem('chatHistory') || '[]');
+
+  // 初始化
+  function init() {
+    loadChatHistory();
+    bindEvents();
+  }
+
+  // 绑定事件
+  function bindEvents() {
+    chatbotToggle.addEventListener('click', toggleWindow);
+    chatbotMinimize.addEventListener('click', minimizeWindow);
+    chatbotClose.addEventListener('click', closeWindow);
+    chatbotSendBtn.addEventListener('click', sendMessage);
+    chatbotInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // 自动调整输入框高度
+    chatbotInput.addEventListener('input', autoResize);
+
+    // 分类按钮
+    categoryBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const category = btn.dataset.category;
+        handleCategoryClick(category);
+      });
+    });
+
+    // 快捷问题按钮
+    quickBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const question = btn.textContent;
+        chatbotInput.value = question;
+        sendMessage();
+      });
+    });
+  }
+
+  // 切换窗口
+  function toggleWindow() {
+    isWindowOpen = !isWindowOpen;
+    chatbotWindow.classList.toggle('active', isWindowOpen);
+    if (isWindowOpen) {
+      chatbotInput.focus();
+      resetUnread();
+    }
+  }
+
+  // 最小化窗口
+  function minimizeWindow() {
+    isWindowOpen = false;
+    chatbotWindow.classList.remove('active');
+  }
+
+  // 关闭窗口
+  function closeWindow() {
+    isWindowOpen = false;
+    chatbotWindow.classList.remove('active');
+    saveChatHistory();
+  }
+
+  // 自动调整输入框高度
+  function autoResize() {
+    chatbotInput.style.height = 'auto';
+    chatbotInput.style.height = Math.min(chatbotInput.scrollHeight, 100) + 'px';
+  }
+
+  // 发送消息
+  function sendMessage() {
+    const message = chatbotInput.value.trim();
+    if (!message) return;
+
+    addMessage(message, 'user');
+    chatbotInput.value = '';
+    autoResize();
+
+    // 保存到历史
+    chatHistory.push({ role: 'user', content: message, time: Date.now() });
+    saveChatHistory();
+
+    // 显示打字动画
+    showTyping();
+
+    // 模拟延迟回复
+    setTimeout(() => {
+      hideTyping();
+      const response = getResponse(message);
+      addMessage(response, 'bot');
+      chatHistory.push({ role: 'bot', content: response, time: Date.now() });
+      saveChatHistory();
+    }, 800 + Math.random() * 800);
+  }
+
+  // 添加消息到聊天区域
+  function addMessage(content, role) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${role}`;
+    messageDiv.innerHTML = `
+      <div class="message-avatar">${role === 'bot' ? '🧭' : '👤'}</div>
+      <div class="message-content">${content}</div>
+    `;
+    chatbotMessages.appendChild(messageDiv);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  }
+
+  // 显示打字动画
+  function showTyping() {
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'message bot';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = `
+      <div class="message-avatar">🧭</div>
+      <div class="typing-indicator">
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+        <div class="typing-dot"></div>
+      </div>
+    `;
+    chatbotMessages.appendChild(typingDiv);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  }
+
+  // 隐藏打字动画
+  function hideTyping() {
+    const typing = document.getElementById('typingIndicator');
+    if (typing) typing.remove();
+  }
+
+  // 获取回复
+  function getResponse(message) {
+    const lowerMsg = message.toLowerCase();
+
+    // 遍历所有响应，查找匹配
+    for (const response of botData.responses) {
+      for (const keyword of response.keywords) {
+        if (lowerMsg.includes(keyword.toLowerCase())) {
+          return response.answer;
+        }
+      }
+    }
+
+    // 默认回复
+    return "🤔 抱歉，我没能完全理解您的问题。\n\n您可以尝试这样问我：\n• \"日本签证怎么办理\"\n• \"东京有什么好吃的\"\n• \"大阪环球影城攻略\"\n• \"日本JR Pass怎么买\"\n\n或者您可以告诉我您想去的目的地，我来帮您规划！";
+  }
+
+  // 处理分类点击
+  function handleCategoryClick(category) {
+    const categoryInfo = botData.categories[category];
+    const response = botData.categoryResponses[category];
+    
+    if (response) {
+      addMessage(response, 'bot');
+      chatHistory.push({ role: 'bot', content: response, time: Date.now() });
+      saveChatHistory();
+    }
+  }
+
+  // 未读消息计数
+  function incrementUnread() {
+    unreadCount++;
+    const badge = document.getElementById('unreadBadge');
+    badge.textContent = unreadCount;
+    badge.style.display = 'flex';
+    chatbotToggle.classList.add('pulse-animation');
+  }
+
+  function resetUnread() {
+    unreadCount = 0;
+    document.getElementById('unreadBadge').style.display = 'none';
+    chatbotToggle.classList.remove('pulse-animation');
+  }
+
+  // 保存聊天历史
+  function saveChatHistory() {
+    try {
+      localStorage.setItem('chatHistory', JSON.stringify(chatHistory.slice(-100)));
+    } catch (e) {
+      console.warn('无法保存聊天历史:', e);
+    }
+  }
+
+  // 加载聊天历史
+  function loadChatHistory() {
+    if (chatHistory.length > 0) {
+      chatHistory.forEach(msg => {
+        addMessage(msg.content, msg.role);
+      });
+    }
+  }
+
+  // 清空聊天历史
+  window.clearChatHistory = function() {
+    chatHistory = [];
+    localStorage.removeItem('chatHistory');
+    chatbotMessages.innerHTML = `
+      <div class="message bot">
+        <div class="message-avatar">🧭</div>
+        <div class="message-content">👋 聊天记录已清空！\n\n我是您的智能旅行助手，有什么可以帮您的吗？</div>
+      </div>
+    `;
+  };
+
+  // 初始化
+  init();
+})();
+</script>

@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>邀请有礼 - 游导旅游</title>
+  <meta name="description" content="邀请好友注册，双方各得优惠券，好友首单再享优惠">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <style>
+    :root {
+      --invite-green: #10B981;
+      --invite-teal: #14B8A6;
+    }
+
+    /* Hero */
+    .invite-hero {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .invite-hero::before {
+      content: '🎁';
+      position: absolute;
+      font-size: 20rem;
+      opacity: 0.1;
+      right: -50px;
+      top: -50px;
+    }
+
+    .invite-hero::after {
+      content: '👥';
+      position: absolute;
+      font-size: 15rem;
+      opacity: 0.1;
+      left: -30px;
+      bottom: -30px;
+    }
+
+    .invite-content {
+      position: relative;
+      z-index: 10;
+      padding: 40px 20px;
+    }
+
+    .invite-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 15px;
+    }
+
+    .invite-subtitle {
+      font-size: 1.3rem;
+      opacity: 0.95;
+      margin-bottom: 40px;
+    }
+
+    /* 邀请码 */
+    .invite-code-box {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px 40px;
+      display: inline-block;
+      margin-bottom: 30px;
+    }
+
+    .invite-code-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+
+    .invite-code {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: 8px;
+      font-family: monospace;
+    }
+
+    .invite-code-btn {
+      margin-top: 15px;
+      padding: 12px 30px;
+      background: white;
+      color: #10B981;
+      border: none;
+      border-radius: 30px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .invite-code-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    /* 奖励说明 */
+    .rewards-section {
+      background: #f8fafc;
+      padding: 80px 20px;
+    }
+
+    .rewards-header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .rewards-icon {
+      font-size: 3rem;
+      margin-bottom: 15px;
+    }
+
+    .rewards-title {
+      font-size: 2rem;
+      color: #1E293B;
+    }
+
+    .rewards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .reward-card {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reward-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 5px;
+    }
+
+    .reward-card.sender::before {
+      background: linear-gradient(90deg, #10B981, #059669);
+    }
+
+    .reward-card.receiver::before {
+      background: linear-gradient(90deg, #3B82F6, #2563EB);
+    }
+
+    .reward-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .reward-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    .reward-title {
+      font-size: 1.5rem;
+      color: #1E293B;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .reward-desc {
+      color: #64748B;
+      margin-bottom: 25px;
+      line-height: 1.6;
+    }
+
+    .reward-value {
+      font-size: 3rem;
+      font-weight: 800;
+      color: #10B981;
+      margin-bottom: 10px;
+    }
+
+    .reward-note {
+      font-size: 0.9rem;
+      color: #9CA3AF;
+    }
+
+    /* 阶梯奖励 */
+    .tier-section {
+      background: linear-gradient(135deg, #1E1B4B 0%, #312E81 100%);
+      padding: 80px 20px;
+      color: white;
+    }
+
+    .tier-section .section-title {
+      color: white;
+      text-align: center;
+    }
+
+    .tier-section .section-desc {
+      color: rgba(255,255,255,0.8);
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .tier-timeline {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .tier-item {
+      display: flex;
+      align-items: center;
+      gap: 30px;
+      padding: 30px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 16px;
+      margin-bottom: 20px;
+      transition: all 0.3s;
+    }
+
+    .tier-item:hover {
+      background: rgba(255,255,255,0.12);
+      transform: translateX(10px);
+    }
+
+    .tier-number {
+      width: 60px;
+      height: 60px;
+      background: var(--invite-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .tier-content {
+      flex: 1;
+    }
+
+    .tier-level {
+      display: inline-block;
+      background: rgba(245, 158, 11, 0.2);
+      color: #FBBF24;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .tier-title {
+      font-size: 1.3rem;
+      margin-bottom: 5px;
+    }
+
+    .tier-desc {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.95rem;
+    }
+
+    .tier-reward {
+      text-align: right;
+    }
+
+    .tier-reward-value {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #10B981;
+    }
+
+    .tier-reward-label {
+      font-size: 0.85rem;
+      opacity: 0.8;
+    }
+
+    /* 邀请记录 */
+    .records-section {
+      background: #f8fafc;
+      padding: 80px 20px;
+    }
+
+    .records-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .records-stats {
+      display: flex;
+      gap: 40px;
+    }
+
+    .record-stat {
+      text-align: center;
+    }
+
+    .record-stat-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #10B981;
+    }
+
+    .record-stat-label {
+      font-size: 0.9rem;
+      color: #64748B;
+    }
+
+    .records-table {
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+
+    .records-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .records-table th,
+    .records-table td {
+      padding: 18px 20px;
+      text-align: left;
+    }
+
+    .records-table th {
+      background: #F8FAFC;
+      color: #64748B;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .records-table td {
+      border-bottom: 1px solid #F1F5F9;
+      color: #1E293B;
+    }
+
+    .records-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 15px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .status-badge.success {
+      background: #D1FAE5;
+      color: #059669;
+    }
+
+    .status-badge.pending {
+      background: #FEF3C7;
+      color: #D97706;
+    }
+
+    /* 分享方式 */
+    .share-section {
+      background: white;
+      padding: 60px 20px;
+    }
+
+    .share-title {
+      text-align: center;
+      font-size: 1.8rem;
+      color: #1E293B;
+      margin-bottom: 40px;
+    }
+
+    .share-grid {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .share-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 25px 35px;
+      border-radius: 16px;
+      background: #F8FAFC;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .share-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .share-btn-icon {
+      font-size: 2.5rem;
+    }
+
+    .share-btn-text {
+      font-size: 0.95rem;
+      color: #475569;
+      font-weight: 500;
+    }
+
+    .share-btn.wechat { background: #F0FDF4; }
+    .share-btn.weibo { background: #FEF2F2; }
+    .share-btn.qq { background: #EFF6FF; }
+    .share-btn.copy { background: #F5F3FF; }
+
+    /* 邀请排行榜 */
+    .ranking-section {
+      background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+      padding: 80px 20px;
+      color: white;
+    }
+
+    .ranking-section .section-title {
+      color: white;
+      text-align: center;
+    }
+
+    .ranking-section .section-desc {
+      color: rgba(255,255,255,0.9);
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    .ranking-list {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px 25px;
+      margin-bottom: 15px;
+      transition: all 0.3s;
+    }
+
+    .ranking-item:hover {
+      background: rgba(255,255,255,0.2);
+      transform: scale(1.02);
+    }
+
+    .ranking-item.top-1 {
+      background: linear-gradient(135deg, #FCD34D, #F59E0B);
+      color: #1E293B;
+    }
+
+    .ranking-item.top-2 {
+      background: linear-gradient(135deg, #D1D5DB, #9CA3AF);
+      color: #1E293B;
+    }
+
+    .ranking-item.top-3 {
+      background: linear-gradient(135deg, #FDBA74, #EA580C);
+      color: white;
+    }
+
+    .ranking-position {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+    }
+
+    .ranking-item.top-1 .ranking-position {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .ranking-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+
+    .ranking-info {
+      flex: 1;
+    }
+
+    .ranking-name {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .ranking-count {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .ranking-reward {
+      text-align: right;
+    }
+
+    .ranking-reward-value {
+      font-size: 1.3rem;
+      font-weight: 800;
+    }
+
+    .ranking-reward-label {
+      font-size: 0.8rem;
+      opacity: 0.8;
+    }
+
+    /* 弹窗 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      animation: modalIn 0.3s ease;
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      color: #1E293B;
+      margin-bottom: 15px;
+    }
+
+    .modal-desc {
+      color: #64748B;
+      margin-bottom: 25px;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 15px;
+      border: 2px solid #E2E8F0;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-btn {
+      padding: 14px 40px;
+      background: #10B981;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .modal-btn:hover {
+      background: #059669;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #9CA3AF;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .invite-title {
+        font-size: 2.2rem;
+      }
+
+      .tier-item {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .tier-reward {
+        text-align: center;
+      }
+
+      .records-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .records-stats {
+        justify-content: center;
+      }
+
+      .share-grid {
+        flex-direction: column;
+      }
+
+      .share-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单" aria-expanded="false" tabindex="0"><span></span></div>
+      <div class="nav-links">
+        <a href="index.html">🏠 首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="routes.html">🗺️ 线路</a>
+        <a href="activities.html" class="active">🎯 活动</a>
+        <a href="membership.html">👑 会员</a>
+        <a href="search.html" style="color:#667eea">🔍</a>
+        <a href="wechat-contact.html" style="color:#07c160;font-weight:600">💬</a>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main-content">
+    <!-- Hero -->
+    <section class="invite-hero">
+      <div class="invite-content">
+        <h1 class="invite-title">🎁 邀请有礼</h1>
+        <p class="invite-subtitle">邀请好友加入游导旅游，双方各得¥200优惠券</p>
+        
+        <div class="invite-code-box">
+          <div class="invite-code-label">您的专属邀请码</div>
+          <div class="invite-code" id="inviteCode">YDAO2025</div>
+          <button class="invite-code-btn" onclick="copyCode()">📋 复制邀请码</button>
+        </div>
+
+        <div>
+          <button class="invite-code-btn" onclick="showInviteModal()" style="background: #1E293B; color: white;">
+            🔗 复制邀请链接
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 奖励说明 -->
+    <section class="rewards-section">
+      <div class="rewards-header">
+        <div class="rewards-icon">💰</div>
+        <h2 class="rewards-title">邀请奖励</h2>
+      </div>
+      <div class="rewards-grid">
+        <div class="reward-card sender">
+          <div class="reward-icon">👤</div>
+          <h3 class="reward-title">邀请人奖励</h3>
+          <p class="reward-desc">每成功邀请1位好友注册，您可获得</p>
+          <div class="reward-value">¥200</div>
+          <div class="reward-note">无上限，邀请越多奖励越多</div>
+        </div>
+        <div class="reward-card receiver">
+          <div class="reward-icon">🎉</div>
+          <h3 class="reward-title">被邀请人奖励</h3>
+          <p class="reward-desc">好友通过您的链接注册，可获得</p>
+          <div class="reward-value">¥200</div>
+          <div class="reward-note">首单立减，再减¥100</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 阶梯奖励 -->
+    <section class="tier-section">
+      <h2 class="section-title">🏆 阶梯奖励</h2>
+      <p class="section-desc">邀请人数越多，额外奖励越丰厚</p>
+      
+      <div class="tier-timeline">
+        <div class="tier-item">
+          <div class="tier-number">1</div>
+          <div class="tier-content">
+            <span class="tier-level">🌱 入门</span>
+            <div class="tier-title">首次邀请</div>
+            <div class="tier-desc">成功邀请1位好友注册</div>
+          </div>
+          <div class="tier-reward">
+            <div class="tier-reward-value">¥200</div>
+            <div class="tier-reward-label">优惠券</div>
+          </div>
+        </div>
+        <div class="tier-item">
+          <div class="tier-number">5</div>
+          <div class="tier-content">
+            <span class="tier-level">🌟 进阶</span>
+            <div class="tier-title">邀请5人</div>
+            <div class="tier-desc">累计成功邀请5位好友</div>
+          </div>
+          <div class="tier-reward">
+            <div class="tier-reward-value">+¥500</div>
+            <div class="tier-reward-label">额外奖励</div>
+          </div>
+        </div>
+        <div class="tier-item">
+          <div class="tier-number">10</div>
+          <div class="tier-content">
+            <span class="tier-level">💎 精英</span>
+            <div class="tier-title">邀请10人</div>
+            <div class="tier-desc">累计成功邀请10位好友</div>
+          </div>
+          <div class="tier-reward">
+            <div class="tier-reward-value">+¥1500</div>
+            <div class="tier-reward-label">额外奖励</div>
+          </div>
+        </div>
+        <div class="tier-item">
+          <div class="tier-number">20</div>
+          <div class="tier-content">
+            <span class="tier-level">👑 冠军</span>
+            <div class="tier-title">邀请20人</div>
+            <div class="tier-desc">累计成功邀请20位好友</div>
+          </div>
+          <div class="tier-reward">
+            <div class="tier-reward-value">+¥5000</div>
+            <div class="tier-reward-label">额外奖励</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 邀请记录 -->
+    <section class="records-section">
+      <div class="records-header">
+        <div class="records-stats">
+          <div class="record-stat">
+            <div class="record-stat-value">12</div>
+            <div class="record-stat-label">已邀请</div>
+          </div>
+          <div class="record-stat">
+            <div class="record-stat-value">8</div>
+            <div class="record-stat-label">已注册</div>
+          </div>
+          <div class="record-stat">
+            <div class="record-stat-value">¥1600</div>
+            <div class="record-stat-label">已获得</div>
+          </div>
+        </div>
+        <a href="my-invitations.html" class="tier-btn" style="display: inline-block; padding: 12px 25px; background: #10B981; color: white; border-radius: 10px; text-decoration: none;">
+          查看全部记录
+        </a>
+      </div>
+      <div class="records-table">
+        <table>
+          <thead>
+            <tr>
+              <th>被邀请人</th>
+              <th>注册时间</th>
+              <th>首单状态</th>
+              <th>邀请奖励</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>张**</td>
+              <td>2025-04-10</td>
+              <td><span class="status-badge success">已完成</span></td>
+              <td style="color: #10B981; font-weight: 600;">¥200</td>
+            </tr>
+            <tr>
+              <td>李**</td>
+              <td>2025-04-08</td>
+              <td><span class="status-badge success">已完成</span></td>
+              <td style="color: #10B981; font-weight: 600;">¥200</td>
+            </tr>
+            <tr>
+              <td>王**</td>
+              <td>2025-04-05</td>
+              <td><span class="status-badge pending">待首单</span></td>
+              <td style="color: #9CA3AF;">待发放</td>
+            </tr>
+            <tr>
+              <td>赵**</td>
+              <td>2025-04-02</td>
+              <td><span class="status-badge success">已完成</span></td>
+              <td style="color: #10B981; font-weight: 600;">¥200</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 分享方式 -->
+    <section class="share-section">
+      <h3 class="share-title">📱 分享方式</h3>
+      <div class="share-grid">
+        <button class="share-btn wechat" onclick="shareToWechat()">
+          <span class="share-btn-icon">💬</span>
+          <span class="share-btn-text">微信好友</span>
+        </button>
+        <button class="share-btn weibo" onclick="shareToWeibo()">
+          <span class="share-btn-icon">📝</span>
+          <span class="share-btn-text">微博</span>
+        </button>
+        <button class="share-btn qq" onclick="shareToQQ()">
+          <span class="share-btn-icon">💬</span>
+          <span class="share-btn-text">QQ</span>
+        </button>
+        <button class="share-btn copy" onclick="copyLink()">
+          <span class="share-btn-icon">🔗</span>
+          <span class="share-btn-text">复制链接</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- 邀请排行榜 -->
+    <section class="ranking-section">
+      <h2 class="section-title">🏅 邀请排行榜</h2>
+      <p class="section-desc">本月邀请达人，赢取额外奖励</p>
+      
+      <div class="ranking-list">
+        <div class="ranking-item top-1">
+          <div class="ranking-position">🥇</div>
+          <div class="ranking-avatar">😎</div>
+          <div class="ranking-info">
+            <div class="ranking-name">旅行者001</div>
+            <div class="ranking-count">本月邀请 58 人</div>
+          </div>
+          <div class="ranking-reward">
+            <div class="ranking-reward-value">¥5000</div>
+            <div class="ranking-reward-label">本月奖励</div>
+          </div>
+        </div>
+        <div class="ranking-item top-2">
+          <div class="ranking-position">🥈</div>
+          <div class="ranking-avatar">🌟</div>
+          <div class="ranking-info">
+            <div class="ranking-name">阳光正好</div>
+            <div class="ranking-count">本月邀请 42 人</div>
+          </div>
+          <div class="ranking-reward">
+            <div class="ranking-reward-value">¥3000</div>
+            <div class="ranking-reward-label">本月奖励</div>
+          </div>
+        </div>
+        <div class="ranking-item top-3">
+          <div class="ranking-position">🥉</div>
+          <div class="ranking-avatar">✨</div>
+          <div class="ranking-info">
+            <div class="ranking-name">旅行家小王</div>
+            <div class="ranking-count">本月邀请 35 人</div>
+          </div>
+          <div class="ranking-reward">
+            <div class="ranking-reward-value">¥1500</div>
+            <div class="ranking-reward-label">本月奖励</div>
+          </div>
+        </div>
+        <div class="ranking-item">
+          <div class="ranking-position">4</div>
+          <div class="ranking-avatar">🎒</div>
+          <div class="ranking-info">
+            <div class="ranking-name">漫步云端</div>
+            <div class="ranking-count">本月邀请 28 人</div>
+          </div>
+          <div class="ranking-reward">
+            <div class="ranking-reward-value">¥800</div>
+            <div class="ranking-reward-label">本月奖励</div>
+          </div>
+        </div>
+        <div class="ranking-item">
+          <div class="ranking-position">5</div>
+          <div class="ranking-avatar">🌍</div>
+          <div class="ranking-info">
+            <div class="ranking-name">背包客</div>
+            <div class="ranking-count">本月邀请 22 人</div>
+          </div>
+          <div class="ranking-reward">
+            <div class="ranking-reward-value">¥500</div>
+            <div class="ranking-reward-label">本月奖励</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 邀请弹窗 -->
+  <div class="modal-overlay" id="inviteModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal()">&times;</span>
+      <div class="modal-icon">🔗</div>
+      <h3 class="modal-title">复制邀请链接</h3>
+      <p class="modal-desc">复制下方链接发送给好友，好友点击后注册即可绑定邀请关系</p>
+      <input type="text" class="modal-input" id="inviteLink" value="https://youdao-travel.com/register?code=YDAO2025" readonly>
+      <button class="modal-btn" onclick="copyInviteLink()">复制链接</button>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span style="font-size: 1.5rem;">🧭</span>
+            <span>游导旅游</span>
+          </div>
+          <p>专业的导游与游客一站式旅行平台<br>让旅行更简单，让体验更美好</p>
+        </div>
+        <div class="footer-links">
+          <h4>活动分类</h4>
+          <a href="brand-day.html">品牌日</a>
+          <a href="invite.html">邀请有礼</a>
+          <a href="flash-sales.html">限时秒杀</a>
+          <a href="membership-events.html">会员活动</a>
+        </div>
+        <div class="footer-links">
+          <h4>帮助中心</h4>
+          <a href="help.html">常见问题</a>
+          <a href="contact.html">联系我们</a>
+          <a href="service-promise.html">服务承诺</a>
+        </div>
+        <div class="footer-links">
+          <h4>法律信息</h4>
+          <a href="privacy.html">隐私政策</a>
+          <a href="terms.html">服务条款</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 游导旅游 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 复制邀请码
+    function copyCode() {
+      const code = document.getElementById('inviteCode').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('邀请码已复制：' + code);
+      });
+    }
+
+    // 复制邀请链接
+    function copyLink() {
+      const link = document.getElementById('inviteLink').value;
+      navigator.clipboard.writeText(link).then(() => {
+        alert('邀请链接已复制，快去分享吧！');
+      });
+    }
+
+    // 分享
+    function shareToWechat() {
+      alert('请在微信中粘贴分享链接');
+    }
+
+    function shareToWeibo() {
+      const text = '我在游导旅游发现了一个超棒的旅行平台，邀请码：YDAO2025，注册即送¥200优惠券！';
+      window.open(`https://service.weibo.com/share/share.php?title=${encodeURIComponent(text)}`);
+    }
+
+    function shareToQQ() {
+      alert('请在QQ中粘贴分享链接');
+    }
+
+    // 弹窗
+    function showInviteModal() {
+      document.getElementById('inviteModal').classList.add('show');
+    }
+
+    function closeModal() {
+      document.getElementById('inviteModal').classList.remove('show');
+    }
+
+    function copyInviteLink() {
+      const link = document.getElementById('inviteLink').value;
+      navigator.clipboard.writeText(link).then(() => {
+        alert('邀请链接已复制！');
+        closeModal();
+      });
+    }
+
+    // 点击弹窗外部关闭
+    document.getElementById('inviteModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeModal();
+      }
+    });
+
+    // 导航
+    function toggleNav() {
+      const nav = document.querySelector('.nav-links');
+      const toggle = document.querySelector('.nav-toggle');
+      nav.classList.toggle('active');
+      toggle.classList.toggle('active');
+    }
+  </script>
+</body>
+</html>

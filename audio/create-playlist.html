@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>创建歌单 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .cover-option { transition: all 0.2s ease; }
+    .cover-option:hover { transform: scale(1.05); }
+    .cover-option.selected { ring: 4px; ring-color: #667eea; }
+    .drag-over { background-color: #f3f4f6; border-color: #667eea; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- 顶部导航 -->
+  <header class="gradient-bg text-white shadow-lg">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-4">
+          <a href="index.html" class="text-xl font-bold flex items-center">
+            <i class="fas fa-compass mr-2"></i>游导
+          </a>
+          <span class="hidden md:inline text-sm opacity-90">创建歌单</span>
+        </div>
+        <div class="flex items-center space-x-4">
+          <a href="index.html" class="p-2 hover:bg-white/20 rounded-full transition" title="返回">
+            <i class="fas fa-arrow-left"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-6 pb-24">
+    <div class="max-w-3xl mx-auto">
+      <!-- 页面标题 -->
+      <div class="text-center mb-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">✨ 创建新歌单</h1>
+        <p class="text-gray-500">整理你喜欢的音频，创建专属播放列表</p>
+      </div>
+
+      <!-- 创建表单 -->
+      <form class="bg-white rounded-2xl shadow-sm overflow-hidden" id="createPlaylistForm">
+        <!-- 歌单封面 -->
+        <div class="p-6 border-b border-gray-100">
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-image text-purple-600 mr-2"></i>歌单封面
+          </h3>
+          <div class="flex flex-col md:flex-row gap-6">
+            <!-- 预览 -->
+            <div class="flex-shrink-0">
+              <div class="w-48 h-48 rounded-xl bg-gradient-to-br from-purple-400 to-indigo-500 flex items-center justify-center overflow-hidden" id="coverPreview">
+                <span class="text-6xl">🎵</span>
+              </div>
+            </div>
+            <!-- 选择 -->
+            <div class="flex-1">
+              <p class="text-sm text-gray-500 mb-3">选择一张图片作为歌单封面</p>
+              <div class="grid grid-cols-4 gap-3 mb-4" id="coverOptions">
+                <div class="cover-option w-full h-16 rounded-lg overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-purple-500 selected" data-cover="gradient-1" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                  <div class="w-full h-full flex items-center justify-center text-white text-xl">🎵</div>
+                </div>
+                <div class="cover-option w-full h-16 rounded-lg overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-purple-500" data-cover="gradient-2" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                  <div class="w-full h-full flex items-center justify-center text-white text-xl">🎤</div>
+                </div>
+                <div class="cover-option w-full h-16 rounded-lg overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-purple-500" data-cover="gradient-3" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+                  <div class="w-full h-full flex items-center justify-center text-white text-xl">🌊</div>
+                </div>
+                <div class="cover-option w-full h-16 rounded-lg overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-purple-500" data-cover="gradient-4" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+                  <div class="w-full h-full flex items-center justify-center text-white text-xl">🌿</div>
+                </div>
+                <div class="cover-option w-full h-16 rounded-lg overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-purple-500" data-cover="image-1" style="background-image: url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=100'); background-size: cover;">
+                </div>
+                <div class="cover-option w-full h-16 rounded-lg overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-purple-500" data-cover="image-2" style="background-image: url('https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=100'); background-size: cover;">
+                </div>
+                <div class="cover-option w-full h-16 rounded-lg overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-purple-500" data-cover="image-3" style="background-image: url('https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=100'); background-size: cover;">
+                </div>
+                <div class="cover-option w-full h-16 rounded-lg overflow-hidden cursor-pointer ring-2 ring-transparent hover:ring-purple-500" data-cover="image-4" style="background-image: url('https://images.unsplash.com/photo-1523428096881-5bd79d043006?w=100'); background-size: cover;">
+                </div>
+              </div>
+              <label class="inline-flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg cursor-pointer hover:bg-gray-200 transition">
+                <i class="fas fa-upload mr-2"></i>
+                上传图片
+                <input type="file" class="hidden" accept="image/*" id="coverUpload">
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 歌单信息 -->
+        <div class="p-6 border-b border-gray-100">
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-info-circle text-purple-600 mr-2"></i>歌单信息
+          </h3>
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">歌单名称 *</label>
+              <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition" placeholder="给歌单起个名字" maxlength="50" id="playlistName" required>
+              <p class="text-xs text-gray-400 mt-1 text-right"><span id="nameCount">0</span>/50</p>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">描述（可选）</label>
+              <textarea class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition resize-none" rows="3" placeholder="介绍一下这个歌单" maxlength="200" id="playlistDesc"></textarea>
+              <p class="text-xs text-gray-400 mt-1 text-right"><span id="descCount">0</span>/200</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 隐私设置 -->
+        <div class="p-6 border-b border-gray-100">
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center">
+            <i class="fas fa-lock text-purple-600 mr-2"></i>隐私设置
+          </h3>
+          <div class="space-y-3">
+            <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition">
+              <input type="radio" name="privacy" value="public" class="w-4 h-4 text-purple-600" checked>
+              <div class="ml-3">
+                <div class="flex items-center">
+                  <i class="fas fa-globe text-green-500 mr-2"></i>
+                  <span class="font-medium text-gray-800">公开</span>
+                </div>
+                <p class="text-sm text-gray-500 mt-1">所有人都可以在音频库中发现这个歌单</p>
+              </div>
+            </label>
+            <label class="flex items-center p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-gray-50 transition">
+              <input type="radio" name="privacy" value="private" class="w-4 h-4 text-purple-600">
+              <div class="ml-3">
+                <div class="flex items-center">
+                  <i class="fas fa-lock text-gray-400 mr-2"></i>
+                  <span class="font-medium text-gray-800">私密</span>
+                </div>
+                <p class="text-sm text-gray-500 mt-1">只有你自己可以访问这个歌单</p>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- 添加音频 -->
+        <div class="p-6">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-gray-800 flex items-center">
+              <i class="fas fa-music text-purple-600 mr-2"></i>添加音频
+            </h3>
+            <div class="flex items-center space-x-2">
+              <button type="button" class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition" onclick="showAddModal()">
+                <i class="fas fa-search mr-1"></i>搜索添加
+              </button>
+              <button type="button" class="px-3 py-1.5 text-sm border border-gray-300 rounded-lg hover:bg-gray-50 transition" onclick="selectFromLibrary()">
+                <i class="fas fa-list mr-1"></i>从曲库选择
+              </button>
+            </div>
+          </div>
+
+          <!-- 已添加的音频列表 -->
+          <div class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center" id="emptyTracks">
+            <div class="text-5xl mb-4">🎶</div>
+            <p class="text-gray-500 mb-2">还没有添加任何音频</p>
+            <p class="text-sm text-gray-400">点击上方按钮添加你喜欢的音频</p>
+          </div>
+
+          <div class="space-y-2 hidden" id="trackList">
+            <!-- 示例曲目 -->
+            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+              <div class="flex items-center flex-1">
+                <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded object-cover">
+                <div class="ml-3 flex-1 min-w-0">
+                  <h4 class="font-medium text-gray-800 text-sm truncate">京都的樱花季</h4>
+                  <p class="text-xs text-gray-500 truncate">日本轻音乐团</p>
+                </div>
+              </div>
+              <span class="text-xs text-gray-400 mx-4">4:05</span>
+              <button type="button" class="p-2 text-gray-400 hover:text-red-500 transition">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+              <div class="flex items-center flex-1">
+                <img src="https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded object-cover">
+                <div class="ml-3 flex-1 min-w-0">
+                  <h4 class="font-medium text-gray-800 text-sm truncate">东京夜未眠</h4>
+                  <p class="text-xs text-gray-500 truncate">城市漫游者</p>
+                </div>
+              </div>
+              <span class="text-xs text-gray-400 mx-4">5:12</span>
+              <button type="button" class="p-2 text-gray-400 hover:text-red-500 transition">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div class="flex items-center p-3 bg-gray-50 rounded-lg">
+              <div class="flex items-center flex-1">
+                <img src="https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded object-cover">
+                <div class="ml-3 flex-1 min-w-0">
+                  <h4 class="font-medium text-gray-800 text-sm truncate">富士山的呼唤</h4>
+                  <p class="text-xs text-gray-500 truncate">日本传统乐团</p>
+                </div>
+              </div>
+              <span class="text-xs text-gray-400 mx-4">5:45</span>
+              <button type="button" class="p-2 text-gray-400 hover:text-red-500 transition">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+
+          <p class="text-xs text-gray-400 mt-4 text-center">已添加 <span id="trackCount">3</span> 首音频</p>
+        </div>
+
+        <!-- 提交按钮 -->
+        <div class="p-6 bg-gray-50 border-t border-gray-100">
+          <div class="flex items-center justify-center space-x-4">
+            <button type="button" class="px-8 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition font-medium" onclick="saveAsDraft()">
+              保存草稿
+            </button>
+            <button type="submit" class="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:opacity-90 transition font-medium shadow-lg">
+              <i class="fas fa-check mr-2"></i>创建歌单
+            </button>
+          </div>
+        </div>
+      </form>
+
+      <!-- 提示 -->
+      <div class="mt-6 p-4 bg-blue-50 rounded-xl">
+        <div class="flex items-start">
+          <i class="fas fa-lightbulb text-blue-500 mt-1 mr-3"></i>
+          <div>
+            <h4 class="font-medium text-blue-800 mb-1">创建歌单小贴士</h4>
+            <ul class="text-sm text-blue-600 space-y-1">
+              <li>• 选择一个独特的封面和名称，让你的歌单更容易被记住</li>
+              <li>• 添加描述可以帮助其他人了解歌单的内容</li>
+              <li>• 公开歌单可以获得更多关注和互动</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 添加音频模态框 -->
+  <div class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4" id="addModal">
+    <div class="bg-white rounded-2xl w-full max-w-2xl max-h-[80vh] overflow-hidden">
+      <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="font-bold text-gray-800">添加音频</h3>
+        <button class="p-2 hover:bg-gray-100 rounded-full transition" onclick="closeAddModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="p-4">
+        <div class="relative">
+          <input type="text" placeholder="搜索音频..." class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none">
+          <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+      </div>
+      <div class="p-4 overflow-y-auto max-h-96">
+        <div class="space-y-2">
+          <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition">
+            <input type="checkbox" class="w-4 h-4 text-purple-600 rounded" checked>
+            <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded object-cover ml-3">
+            <div class="ml-3 flex-1 min-w-0">
+              <h4 class="font-medium text-gray-800 text-sm truncate">在路上</h4>
+              <p class="text-xs text-gray-500 truncate">旅行乐团</p>
+            </div>
+            <span class="text-xs text-gray-400">4:47</span>
+          </div>
+          <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition">
+            <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+            <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded object-cover ml-3">
+            <div class="ml-3 flex-1 min-w-0">
+              <h4 class="font-medium text-gray-800 text-sm truncate">星空下的旅人</h4>
+              <p class="text-xs text-gray-500 truncate">民谣诗人</p>
+            </div>
+            <span class="text-xs text-gray-400">4:58</span>
+          </div>
+          <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition">
+            <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded object-cover ml-3">
+            <div class="ml-3 flex-1 min-w-0">
+              <h4 class="font-medium text-gray-800 text-sm truncate">咖啡馆时光</h4>
+              <p class="text-xs text-gray-500 truncate">轻音乐社</p>
+            </div>
+            <span class="text-xs text-gray-400">3:00</span>
+          </div>
+          <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition">
+            <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+            <img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded object-cover ml-3">
+            <div class="ml-3 flex-1 min-w-0">
+              <h4 class="font-medium text-gray-800 text-sm truncate">海浪轻语</h4>
+              <p class="text-xs text-gray-500 truncate">自然之声</p>
+            </div>
+            <span class="text-xs text-gray-400">10:00</span>
+          </div>
+          <div class="flex items-center p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition">
+            <input type="checkbox" class="w-4 h-4 text-purple-600 rounded">
+            <img src="https://images.unsplash.com/photo-1504214208698-ea1916a2195a?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded object-cover ml-3">
+            <div class="ml-3 flex-1 min-w-0">
+              <h4 class="font-medium text-gray-800 text-sm truncate">济州岛的海风</h4>
+              <p class="text-xs text-gray-500 truncate">海岛工作室</p>
+            </div>
+            <span class="text-xs text-gray-400">4:27</span>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 border-t border-gray-100">
+        <button class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:opacity-90 transition font-medium" onclick="addSelectedTracks()">
+          添加选中音频 (4)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 从曲库选择模态框 -->
+  <div class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4" id="libraryModal">
+    <div class="bg-white rounded-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden">
+      <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+        <h3 class="font-bold text-gray-800">从曲库选择</h3>
+        <button class="p-2 hover:bg-gray-100 rounded-full transition" onclick="closeLibraryModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="p-4 border-b border-gray-100">
+        <div class="flex items-center space-x-2 overflow-x-auto pb-2">
+          <button class="px-4 py-1.5 bg-purple-100 text-purple-600 rounded-full text-sm font-medium whitespace-nowrap">全部</button>
+          <button class="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm whitespace-nowrap hover:bg-gray-200">🎵 旅行歌曲</button>
+          <button class="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm whitespace-nowrap hover:bg-gray-200">🎹 轻音乐</button>
+          <button class="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm whitespace-nowrap hover:bg-gray-200">🌊 白噪音</button>
+          <button class="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm whitespace-nowrap hover:bg-gray-200">🏯 日本音乐</button>
+          <button class="px-4 py-1.5 bg-gray-100 text-gray-600 rounded-full text-sm whitespace-nowrap hover:bg-gray-200">🎌 韩国音乐</button>
+        </div>
+      </div>
+      <div class="p-4 overflow-y-auto max-h-[50vh]">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="libraryGrid">
+          <!-- 曲库项目会动态加载 -->
+          <div class="text-center py-8 col-span-4">
+            <i class="fas fa-spinner fa-spin text-3xl text-purple-600 mb-3"></i>
+            <p class="text-gray-500">加载曲库...</p>
+          </div>
+        </div>
+      </div>
+      <div class="p-4 border-t border-gray-100 bg-gray-50">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-500">已选择 <span class="text-purple-600 font-medium" id="selectedCount">0</span> 首</span>
+          <button class="px-6 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:opacity-90 transition font-medium" onclick="addFromLibrary()">
+            添加到歌单
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 提示 -->
+  <div class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg z-50 hidden" id="toast">
+    <i class="fas fa-check-circle mr-2 text-green-400"></i>
+    <span id="toastMessage">操作成功</span>
+  </div>
+
+  <script>
+    // 封面选择
+    const coverOptions = document.querySelectorAll('.cover-option');
+    coverOptions.forEach(option => {
+      option.addEventListener('click', function() {
+        coverOptions.forEach(opt => {
+          opt.classList.remove('selected', 'ring-2', 'ring-purple-500');
+        });
+        this.classList.add('selected', 'ring-2', 'ring-purple-500');
+        
+        const coverType = this.dataset.cover;
+        const preview = document.getElementById('coverPreview');
+        
+        if (coverType.startsWith('image-')) {
+          const imgUrl = this.style.backgroundImage.slice(5, -2);
+          preview.style.backgroundImage = `url(${imgUrl})`;
+          preview.innerHTML = '';
+        } else {
+          preview.style.backgroundImage = this.style.backgroundImage;
+          const icons = {
+            'gradient-1': '🎵',
+            'gradient-2': '🎤',
+            'gradient-3': '🌊',
+            'gradient-4': '🌿'
+          };
+          preview.innerHTML = `<span class="text-6xl">${icons[coverType] || '🎵'}</span>`;
+        }
+      });
+    });
+
+    // 封面上传
+    document.getElementById('coverUpload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const preview = document.getElementById('coverPreview');
+          preview.style.backgroundImage = `url(${event.target.result})`;
+          preview.innerHTML = '';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    // 字数统计
+    const playlistName = document.getElementById('playlistName');
+    const nameCount = document.getElementById('nameCount');
+    const playlistDesc = document.getElementById('playlistDesc');
+    const descCount = document.getElementById('descCount');
+
+    playlistName.addEventListener('input', function() {
+      nameCount.textContent = this.value.length;
+    });
+
+    playlistDesc.addEventListener('input', function() {
+      descCount.textContent = this.value.length;
+    });
+
+    // 添加音频模态框
+    function showAddModal() {
+      document.getElementById('addModal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      document.getElementById('addModal').classList.add('hidden');
+    }
+
+    // 从曲库选择
+    function selectFromLibrary() {
+      document.getElementById('libraryModal').classList.remove('hidden');
+      // 模拟加载曲库
+      setTimeout(() => {
+        const grid = document.getElementById('libraryGrid');
+        grid.innerHTML = `
+          ${generateLibraryItem('在路上', '旅行乐团', 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=300&h=300&fit=crop')}
+          ${generateLibraryItem('星空下的旅人', '民谣诗人', 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=300&h=300&fit=crop')}
+          ${generateLibraryItem('咖啡馆时光', '轻音乐社', 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=300&fit=crop')}
+          ${generateLibraryItem('海浪轻语', '自然之声', 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=300&h=300&fit=crop')}
+          ${generateLibraryItem('京都的樱花季', '日本轻音乐团', 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=300&h=300&fit=crop')}
+          ${generateLibraryItem('东京夜未眠', '城市漫游者', 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=300&h=300&fit=crop')}
+          ${generateLibraryItem('富士山的呼唤', '日本传统乐团', 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=300&h=300&fit=crop')}
+          ${generateLibraryItem('首尔的早晨', '韩流音乐社', 'https://images.unsplash.com/photo-1517154421773-0529f29ea451?w=300&h=300&fit=crop')}
+        `;
+      }, 500);
+    }
+
+    function generateLibraryItem(title, artist, cover) {
+      return `
+        <div class="bg-gray-50 rounded-lg overflow-hidden cursor-pointer hover:shadow-md transition" onclick="this.classList.toggle('ring-2'); this.classList.toggle('ring-purple-500');">
+          <img src="${cover}" alt="${title}" class="w-full aspect-square object-cover">
+          <div class="p-2">
+            <h4 class="text-sm font-medium text-gray-800 truncate">${title}</h4>
+            <p class="text-xs text-gray-500 truncate">${artist}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function closeLibraryModal() {
+      document.getElementById('libraryModal').classList.add('hidden');
+    }
+
+    // 添加选中的曲目
+    function addSelectedTracks() {
+      closeAddModal();
+      document.getElementById('emptyTracks').classList.add('hidden');
+      document.getElementById('trackList').classList.remove('hidden');
+      showToast('已添加 4 首音频');
+    }
+
+    function addFromLibrary() {
+      closeLibraryModal();
+      document.getElementById('emptyTracks').classList.add('hidden');
+      document.getElementById('trackList').classList.remove('hidden');
+      showToast('已添加 2 首音频');
+    }
+
+    // Toast提示
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+      toastMessage.textContent = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 2000);
+    }
+
+    // 保存草稿
+    function saveAsDraft() {
+      const name = playlistName.value.trim();
+      if (!name) {
+        showToast('请输入歌单名称');
+        playlistName.focus();
+        return;
+      }
+      showToast('草稿已保存');
+    }
+
+    // 表单提交
+    document.getElementById('createPlaylistForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const name = playlistName.value.trim();
+      if (!name) {
+        showToast('请输入歌单名称');
+        playlistName.focus();
+        return;
+      }
+      showToast('歌单创建成功！');
+      setTimeout(() => {
+        location.href = 'my-audio.html';
+      }, 1500);
+    });
+
+    // 关闭模态框
+    document.getElementById('addModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAddModal();
+      }
+    });
+
+    document.getElementById('libraryModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeLibraryModal();
+      }
+    });
+  </script>
+</body>
+</html>

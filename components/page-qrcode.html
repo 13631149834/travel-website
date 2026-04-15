@@ -1,0 +1,551 @@
+<!-- 页面二维码悬浮组件 -->
+<!-- 使用方法：在需要显示二维码悬浮按钮的页面底部添加此组件 -->
+
+<style>
+  /* Page QR Component Styles */
+  .page-qr-fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+  }
+
+  .page-qr-toggle {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(249, 115, 22, 0.4);
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .page-qr-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 25px rgba(249, 115, 22, 0.5);
+  }
+
+  .page-qr-toggle i {
+    font-size: 24px;
+    color: white;
+  }
+
+  .page-qr-toggle .badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  .page-qr-popup {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    width: 280px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .page-qr-popup.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+  }
+
+  .page-qr-popup::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    right: 24px;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid white;
+  }
+
+  .page-qr-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  .page-qr-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+  }
+
+  .page-qr-close {
+    width: 28px;
+    height: 28px;
+    border: none;
+    background: #f3f4f6;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6b7280;
+    transition: all 0.2s;
+  }
+
+  .page-qr-close:hover {
+    background: #e5e7eb;
+    color: #374151;
+  }
+
+  .page-qr-canvas-wrapper {
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  .page-qr-canvas-wrapper canvas {
+    max-width: 180px;
+    max-height: 180px;
+  }
+
+  .page-qr-url {
+    font-size: 12px;
+    color: #6b7280;
+    text-align: center;
+    margin-bottom: 12px;
+    word-break: break-all;
+    padding: 8px;
+    background: #f9fafb;
+    border-radius: 8px;
+  }
+
+  .page-qr-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .page-qr-btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.2s;
+  }
+
+  .page-qr-btn-primary {
+    background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+    color: white;
+  }
+
+  .page-qr-btn-primary:hover {
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+  }
+
+  .page-qr-btn-secondary {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  .page-qr-btn-secondary:hover {
+    background: #e5e7eb;
+  }
+
+  .page-qr-btn-icon {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: #6b7280;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }
+
+  .page-qr-btn-icon:hover {
+    background: #f3f4f6;
+    color: #374151;
+  }
+
+  .page-qr-share {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  .page-qr-share-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+
+  .page-qr-share-btn:hover {
+    transform: scale(1.1);
+  }
+
+  .page-qr-share-btn.wechat { background: #07c160; }
+  .page-qr-share-btn.weibo { background: #e6162d; }
+  .page-qr-share-btn.qq { background: #1296db; }
+  .page-qr-share-btn.link { background: #6b7280; }
+
+  .page-qr-toast {
+    position: fixed;
+    bottom: 100px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #1f2937;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 10000;
+  }
+
+  .page-qr-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 640px) {
+    .page-qr-fab {
+      bottom: 16px;
+      right: 16px;
+    }
+
+    .page-qr-toggle {
+      width: 48px;
+      height: 48px;
+    }
+
+    .page-qr-toggle i {
+      font-size: 20px;
+    }
+
+    .page-qr-popup {
+      width: 260px;
+      right: -10px;
+    }
+  }
+
+  /* Dark Mode Support */
+  @media (prefers-color-scheme: dark) {
+    .page-qr-popup {
+      background: #1f2937;
+    }
+
+    .page-qr-popup::after {
+      border-top-color: #1f2937;
+    }
+
+    .page-qr-title {
+      color: #f9fafb;
+    }
+
+    .page-qr-url {
+      background: #374151;
+      color: #9ca3af;
+    }
+
+    .page-qr-btn-secondary {
+      background: #374151;
+      color: #f9fafb;
+    }
+
+    .page-qr-btn-secondary:hover {
+      background: #4b5563;
+    }
+  }
+</style>
+
+<!-- Page QR FAB Container -->
+<div class="page-qr-fab" id="pageQRFab">
+  <!-- Popup -->
+  <div class="page-qr-popup" id="pageQRPopup">
+    <div class="page-qr-header">
+      <span class="page-qr-title">📱 扫码访问</span>
+      <button class="page-qr-close" onclick="togglePageQR()">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="page-qr-canvas-wrapper">
+      <canvas id="pageQRCanvas" width="180" height="180"></canvas>
+    </div>
+    
+    <div class="page-qr-url" id="pageQRUrl">
+      <!-- URL will be inserted here -->
+    </div>
+    
+    <div class="page-qr-actions">
+      <button class="page-qr-btn page-qr-btn-primary" onclick="downloadPageQR()">
+        <i class="fas fa-download"></i>
+        下载
+      </button>
+      <button class="page-qr-btn page-qr-btn-secondary" onclick="copyPageURL()">
+        <i class="fas fa-copy"></i>
+        复制链接
+      </button>
+    </div>
+    
+    <div class="page-qr-share">
+      <button class="page-qr-share-btn wechat" onclick="shareToWechat()" title="微信">
+        <i class="fab fa-weixin"></i>
+      </button>
+      <button class="page-qr-share-btn weibo" onclick="shareToWeibo()" title="微博">
+        <i class="fab fa-weibo"></i>
+      </button>
+      <button class="page-qr-share-btn qq" onclick="shareToQQ()" title="QQ">
+        <i class="fab fa-qq"></i>
+      </button>
+      <button class="page-qr-share-btn link" onclick="copyPageURL()" title="复制链接">
+        <i class="fas fa-link"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Toggle Button -->
+  <button class="page-qr-toggle" onclick="togglePageQR()" aria-label="显示页面二维码">
+    <i class="fas fa-qrcode" id="pageQRIcon"></i>
+  </button>
+</div>
+
+<!-- Toast -->
+<div class="page-qr-toast" id="pageQRToast"></div>
+
+<script>
+  // Page QR State
+  let pageQRGenerated = false;
+  let currentPageURL = window.location.href;
+
+  /**
+   * Initialize Page QR Component
+   * Call this function when the page loads
+   */
+  function initPageQR() {
+    // Get current page URL
+    currentPageURL = window.location.href;
+    
+    // Update URL display
+    const urlDisplay = document.getElementById('pageQRUrl');
+    if (urlDisplay) {
+      urlDisplay.textContent = currentPageURL;
+    }
+    
+    // Generate QR code on first open
+    document.getElementById('pageQRPopup').addEventListener('transitionend', function() {
+      if (!pageQRGenerated) {
+        generatePageQR();
+      }
+    });
+  }
+
+  /**
+   * Toggle QR Popup
+   */
+  function togglePageQR() {
+    const popup = document.getElementById('pageQRPopup');
+    const icon = document.getElementById('pageQRIcon');
+    
+    if (popup.classList.contains('show')) {
+      popup.classList.remove('show');
+      icon.className = 'fas fa-qrcode';
+    } else {
+      popup.classList.add('show');
+      icon.className = 'fas fa-times';
+      
+      // Generate QR if not yet generated
+      if (!pageQRGenerated) {
+        generatePageQR();
+      }
+    }
+  }
+
+  /**
+   * Generate QR Code for Current Page
+   */
+  async function generatePageQR() {
+    const canvas = document.getElementById('pageQRCanvas');
+    if (!canvas) return;
+    
+    try {
+      // Check if QRCode library is available
+      if (typeof QRCode !== 'undefined') {
+        await QRCode.toCanvas(canvas, currentPageURL, {
+          width: 180,
+          margin: 2,
+          color: {
+            dark: '#1f2937',
+            light: '#ffffff'
+          }
+        });
+        pageQRGenerated = true;
+      } else {
+        console.warn('QRCode library not loaded. Please include qrcode.min.js');
+      }
+    } catch (error) {
+      console.error('Failed to generate QR code:', error);
+    }
+  }
+
+  /**
+   * Download Page QR Code
+   */
+  function downloadPageQR() {
+    const canvas = document.getElementById('pageQRCanvas');
+    if (!canvas) return;
+    
+    try {
+      canvas.toBlob(function(blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'page-qrcode.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showPageQRToast('二维码已下载');
+      }, 'image/png');
+    } catch (error) {
+      showPageQRToast('下载失败', 'error');
+    }
+  }
+
+  /**
+   * Copy Current Page URL
+   */
+  async function copyPageURL() {
+    try {
+      await navigator.clipboard.writeText(currentPageURL);
+      showPageQRToast('链接已复制到剪贴板');
+    } catch (error) {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea');
+      textarea.value = currentPageURL;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showPageQRToast('链接已复制到剪贴板');
+    }
+  }
+
+  /**
+   * Share to WeChat (simulated - would need WeChat SDK)
+   */
+  function shareToWechat() {
+    if (typeof wx !== 'undefined' && wx.updateAppMessageShareData) {
+      wx.updateAppMessageShareData({
+        title: document.title,
+        desc: document.metaDescription || '分享自游导旅游',
+        link: currentPageURL,
+        imgUrl: window.location.origin + '/logo.png'
+      });
+    }
+    showPageQRToast('请在微信中打开并分享');
+  }
+
+  /**
+   * Share to Weibo
+   */
+  function shareToWeibo() {
+    const shareURL = `https://service.weibo.com/share/share.php?url=${encodeURIComponent(currentPageURL)}&title=${encodeURIComponent(document.title)}`;
+    window.open(shareURL, '_blank', 'width=600,height=500');
+  }
+
+  /**
+   * Share to QQ
+   */
+  function shareToQQ() {
+    const shareURL = `https://connect.qq.com/widget/shareqq/iframe_index.html?url=${encodeURIComponent(currentPageURL)}&title=${encodeURIComponent(document.title)}`;
+    window.open(shareURL, '_blank', 'width=600,height=500');
+  }
+
+  /**
+   * Show Toast Message
+   */
+  function showPageQRToast(message, type = 'success') {
+    const toast = document.getElementById('pageQRToast');
+    if (!toast) return;
+    
+    toast.textContent = message;
+    toast.style.background = type === 'error' ? '#ef4444' : '#1f2937';
+    toast.classList.add('show');
+    
+    setTimeout(function() {
+      toast.classList.remove('show');
+    }, 3000);
+  }
+
+  // Close popup when clicking outside
+  document.addEventListener('click', function(event) {
+    const fab = document.getElementById('pageQRFab');
+    const popup = document.getElementById('pageQRPopup');
+    
+    if (fab && popup && !fab.contains(event.target)) {
+      popup.classList.remove('show');
+      const icon = document.getElementById('pageQRIcon');
+      if (icon) {
+        icon.className = 'fas fa-qrcode';
+      }
+    }
+  });
+
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPageQR);
+  } else {
+    initPageQR();
+  }
+</script>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>普吉岛旅游百科 - 游导旅游</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif; background: #f5f7fa; color: #333; line-height: 1.8; }
+        .navbar { background: linear-gradient(135deg, #06b6d4, #0891b2); padding: 15px 0; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 20px rgba(6,182,212,0.3); }
+        .nav-container { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { color: white; font-size: 24px; font-weight: 700; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .nav-links { display: flex; gap: 30px; list-style: none; }
+        .nav-links a { color: rgba(255,255,255,0.9); text-decoration: none; font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: #fff; }
+        .hero-section { position: relative; height: 70vh; min-height: 500px; overflow: hidden; }
+        .hero-image { width: 100%; height: 100%; object-fit: cover; }
+        .hero-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%); }
+        .hero-content { position: absolute; bottom: 0; left: 0; right: 0; padding: 60px; color: white; }
+        .city-badge { display: inline-block; background: linear-gradient(135deg, #ff6b6b, #ff8e53); padding: 8px 20px; border-radius: 30px; font-size: 14px; font-weight: 500; margin-bottom: 20px; }
+        .hero-title { font-size: 56px; font-weight: 700; margin-bottom: 15px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+        .hero-subtitle { font-size: 20px; opacity: 0.95; max-width: 700px; }
+        .share-buttons { position: absolute; top: 100px; right: 30px; display: flex; flex-direction: column; gap: 10px; }
+        .share-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; cursor: pointer; transition: transform 0.3s; border: none; }
+        .share-btn:hover { transform: scale(1.1); }
+        .share-wechat { background: #07c160; } .share-weibo { background: #e6162d; } .share-qq { background: #12b7f5; } .share-copy { background: #06b6d4; }
+        .main-content { max-width: 1200px; margin: 0 auto; padding: 50px 20px; }
+        .quick-nav { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 40px; padding: 25px; background: white; border-radius: 20px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .quick-nav a { padding: 10px 20px; background: #ecfeff; color: #06b6d4; text-decoration: none; font-weight: 500; transition: all 0.3s; display: flex; align-items: center; gap: 8px; border-radius: 25px; }
+        .quick-nav a:hover { background: #06b6d4; color: white; }
+        .section { background: white; border-radius: 20px; padding: 40px; margin-bottom: 30px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .section-title { font-size: 28px; margin-bottom: 25px; color: #333; display: flex; align-items: center; gap: 12px; }
+        .section-title .icon { width: 50px; height: 50px; background: linear-gradient(135deg, #06b6d4, #0891b2); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: white; }
+        .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 25px; }
+        .info-card { background: linear-gradient(135deg, #ecfeff, #cffafe); border-radius: 16px; padding: 25px; transition: transform 0.3s; }
+        .info-card:hover { transform: translateY(-5px); box-shadow: 0 10px 30px rgba(6,182,212,0.15); }
+        .info-card h4 { font-size: 18px; margin-bottom: 12px; color: #333; display: flex; align-items: center; gap: 8px; }
+        .info-card p { color: #666; font-size: 14px; line-height: 1.8; }
+        .beach-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; }
+        .beach-card { border-radius: 20px; overflow: hidden; background: white; box-shadow: 0 5px 20px rgba(0,0,0,0.08); transition: transform 0.3s; }
+        .beach-card:hover { transform: translateY(-8px); }
+        .beach-img { width: 100%; height: 220px; object-fit: cover; }
+        .beach-content { padding: 25px; }
+        .beach-content h4 { font-size: 20px; margin-bottom: 10px; color: #333; }
+        .beach-content p { color: #666; font-size: 14px; line-height: 1.8; }
+        .beach-tags { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+        .beach-tag { padding: 5px 12px; background: #ecfeff; color: #06b6d4; border-radius: 20px; font-size: 12px; }
+        .activity-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .activity-card { display: flex; gap: 15px; padding: 20px; background: linear-gradient(135deg, #fff9f0, #fff5e6); border-radius: 16px; transition: transform 0.3s; }
+        .activity-card:hover { transform: scale(1.02); }
+        .activity-emoji { font-size: 40px; flex-shrink: 0; }
+        .activity-info h4 { font-size: 16px; margin-bottom: 8px; color: #333; }
+        .activity-info p { font-size: 13px; color: #666; line-height: 1.6; }
+        .island-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .island-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.08); transition: transform 0.3s; }
+        .island-card:hover { transform: translateY(-5px); }
+        .island-img { width: 100%; height: 160px; object-fit: cover; }
+        .island-content { padding: 20px; }
+        .island-content h4 { font-size: 18px; margin-bottom: 8px; color: #333; }
+        .island-content p { font-size: 13px; color: #666; }
+        .timeline { position: relative; padding-left: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 3px; background: linear-gradient(180deg, #06b6d4, #0891b2); border-radius: 2px; }
+        .timeline-item { position: relative; margin-bottom: 25px; padding: 20px 25px; background: linear-gradient(135deg, #ecfeff, #cffafe); border-radius: 12px; }
+        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 25px; width: 14px; height: 14px; background: #06b6d4; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 8px rgba(6,182,212,0.3); }
+        .timeline-item h4 { font-size: 16px; margin-bottom: 8px; color: #333; }
+        .timeline-item p { font-size: 14px; color: #666; }
+        .budget-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .budget-table th, .budget-table td { padding: 15px 20px; text-align: left; border-bottom: 1px solid #eee; }
+        .budget-table th { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; font-weight: 500; }
+        .budget-table tr:hover td { background: #ecfeff; }
+        .guide-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .guide-card { background: linear-gradient(135deg, #ecfeff, #e8ecff); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; align-items: center; text-align: center; transition: transform 0.3s; }
+        .guide-card:hover { transform: translateY(-5px); }
+        .guide-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #06b6d4, #0891b2); display: flex; align-items: center; justify-content: center; font-size: 32px; color: white; margin-bottom: 15px; }
+        .guide-name { font-size: 18px; font-weight: 600; color: #333; margin-bottom: 5px; }
+        .guide-title { font-size: 13px; color: #06b6d4; margin-bottom: 10px; }
+        .guide-desc { font-size: 13px; color: #666; line-height: 1.6; margin-bottom: 15px; }
+        .guide-tags { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+        .guide-tag { padding: 5px 12px; background: white; color: #06b6d4; border-radius: 20px; font-size: 12px; }
+        .tips-list { list-style: none; }
+        .tips-list li { padding: 15px 20px; background: linear-gradient(135deg, #fff9f0, #fff5e6); border-radius: 12px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 12px; }
+        .tips-list .tip-icon { font-size: 20px; flex-shrink: 0; }
+        .highlight-box { background: linear-gradient(135deg, #fff9f0, #fff); border-left: 4px solid #06b6d4; padding: 20px 25px; border-radius: 0 12px 12px 0; margin: 20px 0; }
+        .highlight-box h4 { color: #ff6b6b; margin-bottom: 10px; }
+        @media (max-width: 768px) { .hero-title { font-size: 36px; } .hero-content { padding: 30px 20px; } .section { padding: 25px; } .beach-grid { grid-template-columns: 1fr; } .share-buttons { top: 80px; right: 15px; } }
+        .footer { background: #1a1a2e; color: white; padding: 50px 20px 30px; margin-top: 50px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+        .footer-section h4 { font-size: 18px; margin-bottom: 20px; color: #06b6d4; }
+        .footer-section a { display: block; color: rgba(255,255,255,0.7); text-decoration: none; margin-bottom: 10px; transition: color 0.3s; }
+        .footer-section a:hover { color: white; }
+        .footer-bottom { max-width: 1200px; margin: 30px auto 0; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; color: rgba(255,255,255,0.5); font-size: 14px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">✈️ 游导旅游</a>
+            <ul class="nav-links">
+                <li><a href="#">首页</a></li>
+                <li><a href="#">目的地</a></li>
+                <li><a href="#">导游</a></li>
+                <li><a href="#">攻略</a></li>
+                <li><a href="#">联系我们</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <img src="https://s.coze.cn/image/6y79YGmmmYc/" alt="普吉岛日落" class="hero-image">
+        <div class="hero-overlay"></div>
+        <div class="share-buttons">
+            <button class="share-btn share-wechat" title="分享到微信">💬</button>
+            <button class="share-btn share-weibo" title="分享到微博">📱</button>
+            <button class="share-btn share-qq" title="分享到QQ">💭</button>
+            <button class="share-btn share-copy" title="复制链接">🔗</button>
+        </div>
+        <div class="hero-content">
+            <span class="city-badge">泰国 · 安达曼海明珠</span>
+            <h1 class="hero-title">普吉岛旅游百科</h1>
+            <p class="hero-subtitle">泰国最大的海岛，碧海蓝天、白沙椰林、热带风情，从热闹的芭东海滩到宁静的卡伦海滩，总有一片属于你的天堂</p>
+        </div>
+    </section>
+
+    <main class="main-content">
+        <nav class="quick-nav">
+            <a href="#overview">🏝️ 海岛介绍</a>
+            <a href="#beaches">🏖️ 海滩推荐</a>
+            <a href="#activities">🏄 水上活动</a>
+            <a href="#islands">🚤 周边小岛</a>
+            <a href="#guide">👨‍🏫 相关导游</a>
+        </nav>
+
+        <!-- 海岛介绍 -->
+        <section id="overview" class="section">
+            <h2 class="section-title"><span class="icon">🏝️</span>海岛介绍</h2>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>📍 地理位置</h4>
+                    <p>普吉岛位于泰国南部安达曼海海域，面积约576平方公里，是泰国最大的海岛。距离曼谷约862公里，从曼谷乘飞机约1.5小时即可到达。岛上有南北两个机场，国内外航班频繁。</p>
+                </div>
+                <div class="info-card">
+                    <h4>🌊 气候特征</h4>
+                    <p>属于热带季风气候，全年高温多雨。11月-4月是最佳旅游季节，天气晴朗，海面平静。5月-10月为雨季，降雨频繁但多为阵雨，酒店价格较低，是淡季出游的好时机。</p>
+                </div>
+                <div class="info-card">
+                    <h4>🎉 海岛文化</h4>
+                    <p>普吉岛人口约40万，70%信奉佛教。华裔普吉人占多数，创造了独特的"娘惹文化"。每年11月的普吉岛素食节（Puket Vegetarian Festival）热闹非凡，吸引众多游客。</p>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>💡 游导小贴士</h4>
+                <p>普吉岛面积较大，出行主要靠租车或包车。建议住在靠近海滩的度假酒店，出门就是大海的感觉太美妙。出海一日游是必体验，提前在淘宝/当地旅行社预订更便宜。注意防晒，SPF50+防晒霜是必备！</p>
+            </div>
+        </section>
+
+        <!-- 海滩推荐 -->
+        <section id="beaches" class="section">
+            <h2 class="section-title"><span class="icon">🏖️</span>海滩推荐</h2>
+            
+            <div class="beach-grid">
+                <div class="beach-card">
+                    <img src="https://s.coze.cn/image/3kp-MGC8eMY/" alt="芭东海滩" class="beach-img">
+                    <div class="beach-content">
+                        <h4>芭东海滩 Patong Beach</h4>
+                        <p>普吉岛最热闹的海滩，酒吧街、夜市、购物中心应有尽有。喜欢热闹、 nightlife的游客首选。海浪平稳，适合游泳，但人较多，建议早上去体验更佳。</p>
+                        <div class="beach-tags">
+                            <span class="beach-tag">夜生活丰富</span>
+                            <span class="beach-tag">购物方便</span>
+                            <span class="beach-tag">人流量大</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="beach-card">
+                    <img src="https://s.coze.cn/image/Ot02NFWlczc/" alt="卡伦海滩" class="beach-img">
+                    <div class="beach-content">
+                        <h4>卡伦海滩 Karon Beach</h4>
+                        <p>普吉岛最长的海滩之一，约3公里的银白沙滩。海水清澈，浪头较大，是冲浪爱好者的天堂。相对芭东更加安静，适合家庭和情侣度假。</p>
+                        <div class="beach-tags">
+                            <span class="beach-tag">海滩悠长</span>
+                            <span class="beach-tag">冲浪胜地</span>
+                            <span class="beach-tag">相对安静</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="beach-card">
+                    <img src="https://s.coze.cn/image/R0SOXGKS38g/" alt="卡塔海滩" class="beach-img">
+                    <div class="beach-content">
+                        <h4>卡塔海滩 Kata Beach</h4>
+                        <p>由卡塔北、卡塔南两个小湾组成，形状类似一 W 字。海水平静，适合游泳和浮潜。是冲浪初学者的好去处，也是欣赏日落的绝佳地点。</p>
+                        <div class="beach-tags">
+                            <span class="beach-tag">浮潜胜地</span>
+                            <span class="beach-tag">日落绝美</span>
+                            <span class="beach-tag">适合家庭</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="beach-card">
+                    <img src="https://s.coze.cn/image/AnOvV-R3C-A/" alt="迈考海滩" class="beach-img">
+                    <div class="beach-content">
+                        <h4>迈考海滩 Mai Kao Beach</h4>
+                        <p>普吉岛最北端的海滩，是斯米兰群岛和考拉国家公园的门户。人少安静，海龟常在此产卵。适合追求宁静度假体验的游客。</p>
+                        <div class="beach-tags">
+                            <span class="beach-tag">人少清静</span>
+                            <span class="beach-tag">生态保护</span>
+                            <span class="beach-tag">靠近机场</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="beach-card">
+                    <img src="https://s.coze.cn/image/vw0LA_2OqF4/" alt="苏林海滩" class="beach-img">
+                    <div class="beach-content">
+                        <h4>苏林海滩 Surin Beach</h4>
+                        <p>贵族海滩之一，曾被选为全球最美海滩之一。海滩洁净，水清沙幼，椰林树影。周边有高端度假村，是追求品质的游客首选。</p>
+                        <div class="beach-tags">
+                            <span class="beach-tag">高端度假</span>
+                            <span class="beach-tag">环境优美</span>
+                            <span class="beach-tag">游客较少</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="beach-card">
+                    <img src="https://s.coze.cn/image/p11-doubao-search-sign.byteimg.com/tos-cn-i-be4g95zd3a/974680130065924182~tplv-be4g95zd3a-image.jpeg" alt="奈函海滩" class="beach-img">
+                    <div class="beach-content">
+                        <h4>奈函海滩 Nai Harn Beach</h4>
+                        <p>位于普吉岛最南端的小众海滩，被山峦环绕，风景如画。是当地人和欧美游客喜爱的私密海滩，非常适合看日落。海滩边有多家咖啡馆。</p>
+                        <div class="beach-tags">
+                            <span class="beach-tag">小众宝藏</span>
+                            <span class="beach-tag">日落绝美</span>
+                            <span class="beach-tag">咖啡馆多</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 水上活动 -->
+        <section id="activities" class="section">
+            <h2 class="section-title"><span class="icon">🏄</span>水上活动</h2>
+            
+            <div class="activity-grid">
+                <div class="activity-card">
+                    <div class="activity-emoji">🤿</div>
+                    <div class="activity-info">
+                        <h4>浮潜 & 深潜</h4>
+                        <p>普吉岛周边海域珊瑚礁丰富，常见小丑鱼、海龟、海鳗。皮皮岛、皇帝岛、斯米兰群岛是潜水胜地。浮潜体验约200元，深潜含装备约500-800元。</p>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-emoji">🏄</div>
+                    <div class="activity-info">
+                        <h4>冲浪</h4>
+                        <p>卡伦海滩和卡塔海滩是冲浪天堂，11月-4月是最佳季节。冲浪学校众多，初学者可参加2小时体验课程，约300-500元含教练和装备。</p>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-emoji">🚤</div>
+                    <div class="activity-info">
+                        <h4>水上摩托 & 拖曳伞</h4>
+                        <p>芭东海滩有丰富的水上娱乐项目。水上摩托约300元/15分钟，拖曳伞约200元/次。香蕉船、飞鱼等也是热门选择。</p>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-emoji">⛵</div>
+                    <div class="activity-info">
+                        <h4>帆船 & 游艇派对</h4>
+                        <p>豪华游艇出海是普吉岛的特色体验，含烧烤、浮潜、海钓。拼船约500-1000元/人，包游艇约3000-5000元/天起，适合特殊场合。</p>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-emoji">🧗</div>
+                    <div class="activity-info">
+                        <h4>攀牙湾泛舟</h4>
+                        <p>007系列电影取景地，乘皮划艇探索石灰岩洞穴和红树林。配上溶洞探险，非常适合亲子同乐。半日游约400-600元。</p>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-emoji">🐘</div>
+                    <div class="activity-info">
+                        <h4>骑大象 & 丛林飞跃</h4>
+                        <p>普吉岛有多家大象保护营，可以给大象喂食、洗澡。丛林飞跃让你在树梢间飞翔，体验感十足。两者组合约500-800元。</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="highlight-box">
+                <h4>⚠️ 安全提示</h4>
+                <p>参加水上活动务必穿好救生衣，不要单独行动。浮潜、深潜前不要饮酒，确保身体状况良好。选择有资质的正规旅行社，不要贪图便宜。</p>
+            </div>
+        </section>
+
+        <!-- 周边小岛 -->
+        <section id="islands" class="section">
+            <h2 class="section-title"><span class="icon">🚤</span>周边小岛推荐</h2>
+            
+            <div class="island-grid">
+                <div class="island-card">
+                    <img src="https://s.coze.cn/image/7ZusI-xJJeg/" alt="皮皮岛" class="island-img">
+                    <div class="island-content">
+                        <h4>皮皮岛 Phi Phi Islands</h4>
+                        <p>由大皮皮岛和小皮皮岛组成，是好莱坞电影《海滩》的取景地。玛雅湾的碧绿海水令人惊叹，浮潜环境极佳。建议住一晚体验日出日落。</p>
+                    </div>
+                </div>
+                <div class="island-card">
+                    <img src="https://s.coze.cn/image/G8h0uDa-o88/" alt="皇帝岛" class="island-img">
+                    <div class="island-content">
+                        <h4>皇帝岛 Racha Island</h4>
+                        <p>"Racha"在泰语中是"皇帝"的意思，海水清澈见底，能见度极高。是浮潜和深潜的绝佳之地，岛上有奢华度假村，适合度假放松。</p>
+                    </div>
+                </div>
+                <div class="island-card">
+                    <img src="https://s.coze.cn/image/aLX8Y_xucRk/" alt="斯米兰群岛" class="island-img">
+                    <div class="island-content">
+                        <h4>斯米兰群岛 Similan Islands</h4>
+                        <p>世界十大潜水圣地之一，每年11月-4月开放。海龟、魔鬼鱼、鲸鲨常出没，海底珊瑚色彩斑斓。需要提前预订，每天上岛人数有限制。</p>
+                    </div>
+                </div>
+                <div class="island-card">
+                    <img src="https://s.coze.cn/image/WPcGrARJ7Hs/" alt="蛋岛" class="island-img">
+                    <div class="island-content">
+                        <h4>蛋岛 Khai Islands</h4>
+                        <p>由三个小岛组成，因形状像蛋而得名。海水浅且清澈，非常适合亲子游和浮潜初学者。小鱼众多，是小朋友的最爱。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 美食推荐 -->
+        <section id="food" class="section">
+            <h2 class="section-title"><span class="icon">🍜</span>美食推荐</h2>
+            
+            <div class="activity-grid">
+                <div class="activity-card">
+                    <div class="activity-emoji">🦐</div>
+                    <div class="activity-info">
+                        <h4>海鲜大餐</h4>
+                        <p>普吉岛的海鲜新鲜又便宜，拉威海鲜市场是当地人推荐的采购地点。挑好海鲜后付加工费让餐厅烹饪，龙虾、石斑鱼、皮皮虾都是必点。</p>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-emoji">🍛</div>
+                    <div class="activity-info">
+                        <h4>泰南料理</h4>
+                        <p>普吉岛属于泰国南部，口味与曼谷略有不同。更偏辣、更浓油赤酱。Massaman咖喱、泰式红烧肉、Hokkien炒粿条是当地特色。</p>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-emoji">🥭</div>
+                    <div class="activity-info">
+                        <h4>热带水果</h4>
+                        <p>泰国水果品质优良，普吉岛更是便宜。山竹、榴莲、芒果、红毛丹、蛇皮果都是时令鲜品。路边摊和水果市场随处可见。</p>
+                    </div>
+                </div>
+                <div class="activity-card">
+                    <div class="activity-emoji">🍹</div>
+                    <div class="activity-info">
+                        <h4>海岛饮品</h4>
+                        <p>椰子shake是最解暑的选择，芒果shake、香蕉shake也很常见。Thai Tea泰式奶茶奶香浓郁。岛上有不少特色酒吧和海边餐厅。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 最佳时间 -->
+        <section id="best-time" class="section">
+            <h2 class="section-title"><span class="icon">📅</span>最佳旅游时间</h2>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>🌟 11月-4月 · 旺季</h4>
+                    <p>天气晴朗，海面平静，是最佳旅游季节。圣诞和新年期间酒店价格最高，需提前2-3个月预订。斯米兰群岛在此期间开放。</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>☀️ 5月-10月 · 淡季</h4>
+                    <p>雨季来临，降雨频繁，但多为阵雨。酒店价格较低，是省钱出游的好时机。海上活动照常进行，但需关注天气预报。</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>🎆 9月-10月 · 超淡季</h4>
+                    <p>雨量最大的时候，台风概率增加。但酒店价格最低，某些高端酒店甚至半价。此时段前往需做好心理准备，但也可能遇到意外惊喜。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 预算参考 -->
+        <section id="budget" class="section">
+            <h2 class="section-title"><span class="icon">💰</span>预算参考</h2>
+            
+            <table class="budget-table">
+                <thead>
+                    <tr>
+                        <th>预算类型</th>
+                        <th>每日预算</th>
+                        <th>包含内容</th>
+                        <th>适合人群</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>💰 经济型</td>
+                        <td>¥300-500</td>
+                        <td>Guesthouse/经济酒店、街边美食、普通出海一日游</td>
+                        <td>背包客、学生党</td>
+                    </tr>
+                    <tr>
+                        <td>💰💰 舒适型</td>
+                        <td>¥800-1500</td>
+                        <td>四星酒店、海鲜餐厅、包船出海、SPA体验</td>
+                        <td>家庭游、情侣游</td>
+                    </tr>
+                    <tr>
+                        <td>💰💰💰 豪华型</td>
+                        <td>¥3000+</td>
+                        <td>五星海滨度假村、米其林餐厅、私人游艇、潜水考证</td>
+                        <td>蜜月、度假放松</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 注意事项 -->
+        <section id="tips" class="section">
+            <h2 class="section-title"><span class="icon">⚠️</span>注意事项</h2>
+            
+            <ul class="tips-list">
+                <li><span class="tip-icon">☀️</span><div><strong>防晒必备：</strong>普吉岛紫外线极强，SPF50+防晒霜、墨镜、遮阳帽是标配。每2小时补涂一次防晒，避免晒伤。建议购买珊瑚友好型防晒霜，保护海洋环境。</div></li>
+                <li><span class="tip-icon">🏍️</span><div><strong>交通出行：</strong>岛上打车较贵，建议用Bolt或Grab叫车，比出租车便宜很多。租摩托车约150-200泰铢/天，但需国际驾照。靠左行驶，务必戴头盔。</div></li>
+                <li><span class="tip-icon">💊</span><div><strong>健康安全：</strong>出海前确认身体状况，备好晕船药。自来水不能直接饮用，购买矿泉水。肠胃药、创可贴、驱蚊液建议随身携带。</div></li>
+                <li><span class="tip-icon">🐘</span><div><strong>动物体验：</strong>建议选择有道德规范的大象保护营，避免骑大象表演。选择有资质的潜水中心，遵守教练指导。保护海洋生物，不要触摸珊瑚。</div></li>
+                <li><span class="tip-icon">💴</span><div><strong>支付方式：</strong>支付宝、微信支付在普吉岛普及度很高，很多店铺都有。711便利店支持所有电子支付。出海活动建议付泰铢现金。</div></li>
+            </ul>
+        </section>
+
+        <!-- 相关导游 -->
+        <section id="guide" class="section">
+            <h2 class="section-title"><span class="icon">👨‍🏫</span>相关导游</h2>
+            
+            <div class="guide-grid">
+                <div class="guide-card">
+                    <div class="guide-avatar">🏝️</div>
+                    <div class="guide-name">阿海</div>
+                    <div class="guide-title">海岛专家 | 8年经验</div>
+                    <div class="guide-desc">土生土长的普吉岛人，从小在海边长大。熟悉每一个隐秘海滩，知道哪里能看到最美的日出日落，出海安全第一。</div>
+                    <div class="guide-tags">
+                        <span class="guide-tag">中文</span>
+                        <span class="guide-tag">出海专家</span>
+                        <span class="guide-tag">摄影向导</span>
+                    </div>
+                </div>
+                <div class="guide-card">
+                    <div class="guide-avatar">🤿</div>
+                    <div class="guide-name">PADI教练 小明</div>
+                    <div class="guide-title">潜水教练 | 持证教练</div>
+                    <div class="guide-desc">持有PADI潜水教练执照，带过上千名学员体验深潜。擅长水下摄影，能帮你拍到海龟、小丑鱼群等海洋生物。</div>
+                    <div class="guide-tags">
+                        <span class="guide-tag">中文</span>
+                        <span class="guide-tag">潜水考证</span>
+                        <span class="guide-tag">水下摄影</span>
+                    </div>
+                </div>
+                <div class="guide-card">
+                    <div class="guide-avatar">🦐</div>
+                    <div class="guide-name">Mook</div>
+                    <div class="guide-title">美食向导</div>
+                    <div class="guide-desc">普吉岛美食博主，知道哪家海鲜最新鲜、哪家餐厅最地道。带你避开游客陷阱，寻找当地人才知道的美食宝藏。</div>
+                    <div class="guide-tags">
+                        <span class="guide-tag">泰语/英语</span>
+                        <span class="guide-tag">美食向导</span>
+                        <span class="guide-tag">海鲜代购</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>关于游导</h4>
+                <a href="#">关于我们</a>
+                <a href="#">加入我们</a>
+                <a href="#">合作伙伴</a>
+            </div>
+            <div class="footer-section">
+                <h4>旅游服务</h4>
+                <a href="#">当地导游</a>
+                <a href="#">私人定制</a>
+                <a href="#">签证办理</a>
+            </div>
+            <div class="footer-section">
+                <h4>帮助中心</h4>
+                <a href="#">常见问题</a>
+                <a href="#">用户指南</a>
+                <a href="#">联系客服</a>
+            </div>
+            <div class="footer-section">
+                <h4>关注我们</h4>
+                <a href="#">微信公众号</a>
+                <a href="#">微博</a>
+                <a href="#">小红书</a>
+            </div>
+        </div>
+        <div class="footer-bottom">© 2024 游导旅游 youdao-travel.com 版权所有</div>
+    </footer>
+</body>
+</html>

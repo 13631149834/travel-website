@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/accessibility.css">
+<link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/guide/guide-tools.css">
+  <link rel="stylesheet" href="css/guide/calendar.css">
+  <title>导游日历 - 游导旅游</title>
+  <meta name="description" content="导游日历 - 游导旅游">
+  <link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <meta name="keywords" content="游导旅游,guide-calendar">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/guide-calendar.html">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">跳转到主要内容</a>
+
+
+  <!-- 导游登录验证 -->
+  <script>
+    const userType = localStorage.getItem('userType');
+    if (userType !== 'guide') {
+      window.location.href = 'login.html?type=guide&msg=请先登录导游账号';
+    }
+  </script>
+
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-toggle" onclick="toggleNav()" role="button" aria-label="菜单" aria-expanded="false" tabindex="0"><span></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html">签证中心</a>
+        <a href="guide-tools.html" class="guide-entrance active">导游工具</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 导游子导航 -->
+  <div class="guide-subnav">
+    <div class="container">
+      <div class="subnav-tabs">
+        <a href="guide-dashboard.html" class="subnav-tab">
+          <span class="tab-icon" aria-hidden="true">📊</span>
+          <span>工作台</span>
+        </a>
+        <a href="guide-calendar.html" class="subnav-tab active">
+          <span class="tab-icon" aria-hidden="true">📅</span>
+          <span>日历</span>
+        </a>
+        <a href="guide-bookings.html" class="subnav-tab">
+          <span class="tab-icon" aria-hidden="true">📋</span>
+          <span>预约</span>
+        </a>
+        <a href="guide-profile.html" class="subnav-tab">
+          <span class="tab-icon" aria-hidden="true">👤</span>
+          <span>我的</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主内容 -->
+  <main class="guide-main">
+    <div class="container">
+      <!-- 页面标题 -->
+      <div class="page-header">
+        <h1>📅 日历视图</h1>
+        <div class="header-actions">
+          <button class="btn btn-outline" onclick="scheduleManager.goToToday()">今天</button>
+          <button class="btn btn-primary" onclick="scheduleManager.showAddScheduleModal()">
+            <span>+</span> 添加行程
+          </button>
+        </div>
+      </div>
+
+      <div class="calendar-layout">
+        <!-- 日历主体 -->
+        <div class="calendar-main">
+          <!-- 日历视图 -->
+          <div class="calendar-wrapper">
+            <div id="calendar-container" class="calendar-container">
+              <!-- 日历由JS渲染 -->
+            </div>
+          </div>
+
+          <!-- 日程列表 -->
+          <div class="schedule-panel">
+            <div class="panel-header">
+              <h3>📋 近期行程</h3>
+              <a href="guide-bookings.html" class="more-link">预约管理 →</a>
+            </div>
+            <div id="schedule-list-container" class="schedule-list">
+              <!-- 行程列表由JS渲染 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 侧边栏 -->
+        <aside class="calendar-sidebar">
+          <!-- 统计卡片 -->
+          <div class="stats-card">
+            <h4>本月统计</h4>
+            <div class="stats-grid">
+              <div class="stat-item">
+                <span class="stat-num" id="stat-total">4</span>
+                <span class="stat-label">总行程</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num" id="stat-confirmed">2</span>
+                <span class="stat-label">已确认</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num" id="stat-pending">2</span>
+                <span class="stat-label">待处理</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-num" id="stat-income">¥48,991</span>
+                <span class="stat-label">预计收入</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 可预约时段 -->
+          <div class="sidebar-card">
+            <div class="card-header">
+              <h4>🕐 可预约时段</h4>
+              <button class="btn btn-sm" onclick="scheduleManager.showAvailableSlotsModal()">管理</button>
+            </div>
+            <div id="quick-slots" class="quick-slots">
+              <div class="slot-item">
+                <div class="slot-date">明天</div>
+                <div class="slot-time">09:00-12:00</div>
+                <button class="btn btn-sm btn-outline">设置</button>
+              </div>
+              <div class="slot-item">
+                <div class="slot-date">后天</div>
+                <div class="slot-time">14:00-18:00</div>
+                <button class="btn btn-sm btn-outline">设置</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 待处理事项 -->
+          <div class="sidebar-card">
+            <h4>⚡ 待处理</h4>
+            <div class="pending-list">
+              <div class="pending-item">
+                <span class="pending-icon" aria-hidden="true">📝</span>
+                <div class="pending-content">
+                  <span class="pending-text">确认2个预约</span>
+                  <span class="pending-time">今天</span>
+                </div>
+              </div>
+              <div class="pending-item">
+                <span class="pending-icon" aria-hidden="true">📅</span>
+                <div class="pending-content">
+                  <span class="pending-text">安排下周行程</span>
+                  <span class="pending-time">明天</span>
+                </div>
+              </div>
+              <div class="pending-item">
+                <span class="pending-icon" aria-hidden="true">📤</span>
+                <div class="pending-content">
+                  <span class="pending-text">更新景点资料</span>
+                  <span class="pending-time">本周</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </main>
+
+  <!-- 行程表单模态框 -->
+  <div id="schedule-modal" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">添加行程</h3>
+        <button class="modal-close" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="schedule-form" class="schedule-form">
+          <input type="hidden" name="scheduleId">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>行程标题 <span class="required">*</span></label>
+              <input type="text" name="title" placeholder="如：日本关西6日深度游" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>行程类型</label>
+              <select name="type">
+                <option value="tour">团队游</option>
+                <option value="activity">主题活动</option>
+                <option value="meeting">商务会议</option>
+                <option value="free">自由行</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>状态</label>
+              <select name="status">
+                <option value="draft">草稿</option>
+                <option value="pending">规划中</option>
+                <option value="confirmed">已确认</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>日期 <span class="required">*</span></label>
+              <input type="date" name="date" required>
+            </div>
+            <div class="form-group">
+              <label>时间</label>
+              <div class="time-range">
+                <input type="time" name="startTime" value="09:00">
+                <span>至</span>
+                <input type="time" name="endTime" value="18:00">
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>集合地点</label>
+            <input type="text" name="location" placeholder="如：浦东机场T2航站楼">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>人数</label>
+              <input type="number" name="participants" min="0" placeholder="当前人数">
+            </div>
+            <div class="form-group">
+              <label>最大人数</label>
+              <input type="number" name="maxParticipants" min="1" placeholder="限制人数">
+            </div>
+            <div class="form-group">
+              <label>价格(元/人)</label>
+              <input type="number" name="price" min="0" placeholder="0">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>行程描述</label>
+            <textarea name="description" rows="3" placeholder="详细描述行程安排..."></textarea>
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" name="reminder" checked>
+              <span>开启出发提醒</span>
+            </label>
+            <select name="reminderTime" class="reminder-select">
+              <option value="15">提前15分钟</option>
+              <option value="30" selected>提前30分钟</option>
+              <option value="60">提前1小时</option>
+              <option value="120">提前2小时</option>
+              <option value="1440">提前1天</option>
+            </select>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="btn btn-outline" onclick="closeModal('schedule-modal')">取消</button>
+            <button type="submit" class="btn btn-primary">保存</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 当日行程模态框 -->
+  <div id="day-schedule-modal" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content modal-sm">
+      <div id="day-schedule-list">
+        <!-- 由JS渲染 -->
+      </div>
+    </div>
+  </div>
+
+  <!-- 可预约时段模态框 -->
+  <div id="available-slots-modal" class="modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>可预约时段管理</h3>
+        <button class="modal-close" aria-label="关闭">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="available-slot-form" class="slot-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>日期</label>
+              <input type="date" name="date" required>
+            </div>
+            <div class="form-group">
+              <label>时间段</label>
+              <div class="time-range">
+                <input type="time" name="startTime" value="09:00">
+                <span>至</span>
+                <input type="time" name="endTime" value="12:00">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>可预约组数</label>
+              <input type="number" name="maxBookings" min="1" value="1">
+            </div>
+            <div class="form-group">
+              <label>价格(元)</label>
+              <input type="number" name="price" min="0" placeholder="0">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>备注</label>
+            <input type="text" name="notes" placeholder="如：仅接受提前3天预约">
+          </div>
+          <button type="submit" class="btn btn-primary">添加时段</button>
+        </form>
+        <div class="divider"></div>
+        <h4>已设置的时段</h4>
+        <div id="available-slots-list" class="slots-list">
+          <!-- 由JS渲染 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 通知容器 -->
+  <div id="notification-container" class="notification-container"></div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2024 游导旅游. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- 脚本 -->
+  <script src="js/guide-schedule.js"></script>
+  <script>
+    // 页面初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      // 渲染日历
+      const today = new Date();
+      scheduleManager.renderCalendar(today.getFullYear(), today.getMonth() + 1);
+      
+      // 渲染行程列表
+      scheduleManager.refreshScheduleList();
+      
+      // 更新统计
+      updateCalendarStats();
+      
+      // 可预约时段表单
+      document.getElementById('available-slot-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        scheduleManager.addAvailableSlotFromModal(formData);
+        this.reset();
+      });
+    });
+
+    // 更新统计
+    function updateCalendarStats() {
+      const schedules = scheduleManager.schedules;
+      const today = new Date();
+      const currentMonth = today.getMonth();
+      const currentYear = today.getFullYear();
+      
+      const monthSchedules = schedules.filter(s => {
+        const d = new Date(s.date);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      });
+      
+      document.getElementById('stat-total').textContent = monthSchedules.length;
+      document.getElementById('stat-confirmed').textContent = 
+        monthSchedules.filter(s => s.status === 'confirmed').length;
+      document.getElementById('stat-pending').textContent = 
+        monthSchedules.filter(s => s.status === 'pending').length;
+      
+      const totalIncome = monthSchedules.reduce((sum, s) => {
+        return sum + (s.price * (s.participants || 0));
+      }, 0);
+      document.getElementById('stat-income').textContent = '¥' + totalIncome.toLocaleString();
+    }
+  </script>
+</body>
+</html>

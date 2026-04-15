@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打卡记录 - 游导旅游</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/checkin/checkin.css">
+  <style>
+    .photo-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    .photo-modal.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    .photo-modal img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="../index.html" class="logo">
+          <span class="logo-icon">🧭</span>
+          <span>游导旅游</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../destinations.html">目的地</a></li>
+          <li><a href="../routes.html">路线</a></li>
+          <li><a href="../guide.html">导游</a></li>
+          <li><a href="index.html" class="active">打卡签到</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="btn-icon" title="通知">🔔</button>
+          <button class="btn-icon" title="个人中心">👤</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 主内容 -->
+  <main class="container py-8">
+    <!-- 面包屑 -->
+    <nav class="breadcrumb">
+      <a href="../index.html">首页</a>
+      <span>›</span>
+      <a href="index.html">打卡签到</a>
+      <span>›</span>
+      <span>打卡记录</span>
+    </nav>
+
+    <!-- 标签导航 -->
+    <div class="tab-nav">
+      <button class="tab-btn active" onclick="switchTab('records')">📝 打卡记录</button>
+      <button class="tab-btn" onclick="switchTab('photos')">📸 照片墙</button>
+      <button class="tab-btn" onclick="switchTab('stats')">📊 数据统计</button>
+    </div>
+
+    <!-- 打卡记录列表 -->
+    <div class="tab-content active" id="tab-records">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">打卡历史</h2>
+        <div class="flex gap-2">
+          <button class="px-4 py-2 rounded-lg bg-gray-100 text-sm hover:bg-gray-200">
+            全部
+          </button>
+          <button class="px-4 py-2 rounded-lg bg-orange-50 text-orange-500 text-sm">
+            景点打卡
+          </button>
+          <button class="px-4 py-2 rounded-lg bg-gray-100 text-sm hover:bg-gray-200">
+            每日签到
+          </button>
+        </div>
+      </div>
+      
+      <div class="checkin-record-list" id="recordList">
+        <!-- 动态生成 -->
+      </div>
+      
+      <div class="text-center py-8" id="emptyRecords" style="display: none;">
+        <div class="text-6xl mb-4">📝</div>
+        <h3 class="text-xl font-bold mb-2">暂无打卡记录</h3>
+        <p class="text-gray-500 mb-4">开始你的第一次打卡吧</p>
+        <a href="index.html" class="inline-block bg-orange-500 text-white px-6 py-3 rounded-full hover:bg-orange-600 transition">
+          立即签到
+        </a>
+      </div>
+    </div>
+
+    <!-- 照片墙 -->
+    <div class="tab-content" id="tab-photos">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-xl font-bold">我的照片墙</h2>
+        <span class="text-gray-500" id="photoCount">0 张照片</span>
+      </div>
+      
+      <div class="photo-wall" id="photoWall">
+        <!-- 动态生成 -->
+      </div>
+      
+      <div class="text-center py-12" id="emptyPhotos" style="display: none;">
+        <div class="text-6xl mb-4">📸</div>
+        <h3 class="text-xl font-bold mb-2">还没有照片</h3>
+        <p class="text-gray-500 mb-4">去景点打卡并上传照片吧</p>
+        <a href="spots.html" class="inline-block bg-orange-500 text-white px-6 py-3 rounded-full hover:bg-orange-600 transition">
+          去打卡
+        </a>
+      </div>
+    </div>
+
+    <!-- 数据统计 -->
+    <div class="tab-content" id="tab-stats">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 打卡城市分布 -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+          <h3 class="font-bold text-lg mb-4">🏙️ 打卡城市分布</h3>
+          <div class="space-y-4" id="cityStats">
+            <!-- 动态生成 -->
+          </div>
+        </div>
+        
+        <!-- 月度打卡趋势 -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+          <h3 class="font-bold text-lg mb-4">📈 月度打卡趋势</h3>
+          <div class="flex items-end justify-between h-40 gap-2" id="monthTrend">
+            <!-- 动态生成 -->
+          </div>
+          <div class="flex justify-between mt-2 text-xs text-gray-400" id="monthLabels">
+            <!-- 动态生成 -->
+          </div>
+        </div>
+        
+        <!-- 心情分布 -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+          <h3 class="font-bold text-lg mb-4">😊 心情分布</h3>
+          <div class="grid grid-cols-5 gap-3" id="moodStats">
+            <!-- 动态生成 -->
+          </div>
+        </div>
+        
+        <!-- 打卡成就 -->
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+          <h3 class="font-bold text-lg mb-4">🏆 成就进度</h3>
+          <div class="space-y-4" id="achievementStats">
+            <!-- 动态生成 -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 照片预览弹窗 -->
+  <div class="photo-modal" id="photoModal" onclick="closePhotoModal()">
+    <button class="absolute top-4 right-4 text-white text-3xl hover:opacity-70" onclick="closePhotoModal()">×</button>
+    <img src="" alt="照片预览" id="modalPhoto">
+  </div>
+
+  <!-- 分享弹窗 -->
+  <div class="modal-overlay" id="shareModal">
+    <div class="modal">
+      <h3 class="modal-title">📤 分享打卡</h3>
+      <div class="modal-content">
+        <p class="text-gray-500 mb-4">分享到社交平台可获得 +5 积分</p>
+        <div class="grid grid-cols-4 gap-4">
+          <button class="flex flex-col items-center p-4 rounded-xl bg-green-50 hover:bg-green-100 transition" onclick="shareTo('wechat')">
+            <span class="text-3xl mb-2">💬</span>
+            <span class="text-sm">微信</span>
+          </button>
+          <button class="flex flex-col items-center p-4 rounded-xl bg-red-50 hover:bg-red-100 transition" onclick="shareTo('weibo')">
+            <span class="text-3xl mb-2">📱</span>
+            <span class="text-sm">微博</span>
+          </button>
+          <button class="flex flex-col items-center p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition" onclick="shareTo('qq')">
+            <span class="text-3xl mb-2">💬</span>
+            <span class="text-sm">QQ</span>
+          </button>
+          <button class="flex flex-col items-center p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition" onclick="shareTo('copy')">
+            <span class="text-3xl mb-2">🔗</span>
+            <span class="text-sm">复制链接</span>
+          </button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="modal-cancel" onclick="closeShareModal()">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-12 mt-12">
+    <div class="container text-center text-gray-400">
+      <p>© 2024 游导旅游 youdao-travel.com</p>
+    </div>
+  </footer>
+
+  <script src="../js/checkin/checkin-core.js"></script>
+  <script>
+    let checkinSystem;
+    let checkinData;
+    let currentRecordId = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      checkinSystem = new CheckinSystem();
+      checkinData = await checkinSystem.loadData();
+      
+      renderRecords();
+      renderPhotoWall();
+      renderStats();
+    });
+
+    function switchTab(tabName) {
+      // 更新按钮状态
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+      
+      // 更新内容显示
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+      });
+      document.getElementById('tab-' + tabName).classList.add('active');
+    }
+
+    function renderRecords() {
+      const container = document.getElementById('recordList');
+      const emptyState = document.getElementById('emptyRecords');
+      const records = [...checkinSystem.checkinData.spotCheckins].reverse();
+      
+      if (records.length === 0) {
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      container.style.display = 'flex';
+      emptyState.style.display = 'none';
+      
+      let html = '';
+      records.forEach(record => {
+        const date = new Date(record.date).toLocaleDateString('zh-CN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          weekday: 'long'
+        });
+        
+        const mood = record.mood ? checkinData.moods.find(m => m.id === record.mood) : null;
+        
+        html += `
+          <div class="checkin-record-item">
+            ${record.photo ? `
+              <img src="${record.photo}" alt="${record.spotName}" class="record-photo" onclick="showPhotoModal('${record.photo}')">
+            ` : `
+              <div class="record-photo flex items-center justify-center bg-gradient-to-br from-orange-100 to-yellow-100">
+                <span class="text-4xl">📍</span>
+              </div>
+            `}
+            <div class="record-content">
+              <div class="record-header">
+                <div>
+                  <h3 class="record-title">${record.spotName}</h3>
+                  ${mood ? `<span class="text-2xl ml-2">${mood.icon}</span>` : ''}
+                </div>
+              </div>
+              <div class="record-location">
+                📍 ${record.city}
+              </div>
+              ${record.note ? `<p class="record-note">${record.note}</p>` : ''}
+              <div class="record-meta">
+                <span>🕐 ${date}</span>
+                <span>+20 积分</span>
+              </div>
+            </div>
+            <div class="record-actions">
+              <button class="share-btn" onclick="showShareModal('${record.spotId}')">分享</button>
+              <button class="like-btn" onclick="likeRecord('${record.spotId}')">❤️ 赞</button>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function renderPhotoWall() {
+      const container = document.getElementById('photoWall');
+      const emptyState = document.getElementById('emptyPhotos');
+      const photos = checkinSystem.checkinData.photos || [];
+      
+      document.getElementById('photoCount').textContent = photos.length + ' 张照片';
+      
+      if (photos.length === 0) {
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      container.style.display = 'grid';
+      emptyState.style.display = 'none';
+      
+      let html = '';
+      photos.forEach(photo => {
+        const spot = checkinData.spots.find(s => s.id === photo.spotId);
+        html += `
+          <div class="photo-wall-item" onclick="showPhotoModal('${photo.url}')">
+            <img src="${photo.url}" alt="打卡照片">
+            <div class="photo-wall-overlay">
+              <span>📍 ${spot ? spot.name : '未知景点'}</span>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function renderStats() {
+      renderCityStats();
+      renderMonthTrend();
+      renderMoodStats();
+      renderAchievementStats();
+    }
+
+    function renderCityStats() {
+      const container = document.getElementById('cityStats');
+      const cities = {};
+      
+      checkinSystem.checkinData.spotCheckins.forEach(checkin => {
+        cities[checkin.city] = (cities[checkin.city] || 0) + 1;
+      });
+      
+      const sorted = Object.entries(cities).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      
+      if (sorted.length === 0) {
+        container.innerHTML = '<p class="text-gray-400">暂无数据</p>';
+        return;
+      }
+      
+      const maxCount = sorted[0][1];
+      let html = '';
+      sorted.forEach(([city, count], index) => {
+        const width = (count / maxCount * 100) + '%';
+        const colors = ['bg-orange-400', 'bg-yellow-400', 'bg-green-400', 'bg-blue-400', 'bg-purple-400'];
+        html += `
+          <div class="flex items-center gap-3">
+            <span class="w-6 text-center font-bold ${index < 3 ? 'text-orange-500' : 'text-gray-400'}">${index + 1}</span>
+            <span class="flex-1">${city}</span>
+            <div class="flex-1 h-4 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full ${colors[index]} rounded-full transition-all" style="width: ${width}"></div>
+            </div>
+            <span class="text-gray-500 text-sm">${count}</span>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function renderMonthTrend() {
+      const container = document.getElementById('monthTrend');
+      const labels = document.getElementById('monthLabels');
+      const history = checkinSystem.checkinData.checkinHistory;
+      
+      // 获取最近6个月的数据
+      const months = [];
+      const counts = [];
+      const now = new Date();
+      
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+        const monthStr = d.toISOString().slice(0, 7);
+        const count = history.filter(h => h.date.startsWith(monthStr)).length;
+        months.push(d);
+        counts.push(count);
+      }
+      
+      const maxCount = Math.max(...counts, 1);
+      const monthNames = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+      
+      let html = '';
+      counts.forEach(count => {
+        const height = (count / maxCount * 100) + '%';
+        html += `
+          <div class="flex-1 flex flex-col items-center justify-end">
+            <span class="text-sm font-bold text-orange-500 mb-1">${count}</span>
+            <div class="w-full bg-gradient-to-t from-orange-400 to-yellow-300 rounded-t-lg transition-all" style="height: ${height}"></div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+      labels.innerHTML = months.map(m => `<span>${monthNames[m.getMonth()]}</span>`).join('');
+    }
+
+    function renderMoodStats() {
+      const container = document.getElementById('moodStats');
+      const moodCounts = {};
+      
+      checkinSystem.checkinData.checkinHistory.forEach(h => {
+        if (h.mood) {
+          moodCounts[h.mood] = (moodCounts[h.mood] || 0) + 1;
+        }
+      });
+      
+      if (Object.keys(moodCounts).length === 0) {
+        container.innerHTML = '<p class="col-span-5 text-gray-400 text-center">暂无心情记录</p>';
+        return;
+      }
+      
+      let html = '';
+      checkinData.moods.forEach(mood => {
+        const count = moodCounts[mood.id] || 0;
+        if (count > 0) {
+          html += `
+            <div class="text-center p-3 rounded-xl bg-gray-50">
+              <span class="text-2xl">${mood.icon}</span>
+              <div class="text-xs text-gray-500 mt-1">${count}</div>
+            </div>
+          `;
+        }
+      });
+      
+      container.innerHTML = html || '<p class="col-span-5 text-gray-400 text-center">暂无心情记录</p>';
+    }
+
+    function renderAchievementStats() {
+      const container = document.getElementById('achievementStats');
+      const unlocked = checkinSystem.checkinData.achievements;
+      const allAchievements = checkinData.achievements;
+      
+      const stats = [
+        { name: '签到总数', current: checkinSystem.checkinData.totalCheckins, target: 100 },
+        { name: '景点打卡', current: checkinSystem.checkinData.spotCheckins.length, target: 100 },
+        { name: '连续签到', current: checkinSystem.checkinData.currentStreak, target: 30 },
+        { name: '获得成就', current: unlocked.length, target: allAchievements.length }
+      ];
+      
+      let html = '';
+      stats.forEach(stat => {
+        const progress = Math.min((stat.current / stat.target) * 100, 100);
+        html += `
+          <div>
+            <div class="flex justify-between mb-1">
+              <span>${stat.name}</span>
+              <span class="text-orange-500">${stat.current}/${stat.target}</span>
+            </div>
+            <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div class="h-full bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full transition-all" style="width: ${progress}%"></div>
+            </div>
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function showPhotoModal(src) {
+      document.getElementById('modalPhoto').src = src;
+      document.getElementById('photoModal').classList.add('show');
+    }
+
+    function closePhotoModal() {
+      document.getElementById('photoModal').classList.remove('show');
+    }
+
+    function showShareModal(recordId) {
+      currentRecordId = recordId;
+      document.getElementById('shareModal').classList.add('show');
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.remove('show');
+      currentRecordId = null;
+    }
+
+    function shareTo(platform) {
+      const result = checkinSystem.shareCheckin(currentRecordId);
+      
+      if (result.success) {
+        showToast('分享成功！+5积分', 'success');
+      }
+      
+      closeShareModal();
+      
+      // 模拟分享
+      switch (platform) {
+        case 'wechat':
+          showToast('已打开微信分享', 'info');
+          break;
+        case 'weibo':
+          showToast('已打开微博分享', 'info');
+          break;
+        case 'qq':
+          showToast('已打开QQ分享', 'info');
+          break;
+        case 'copy':
+          navigator.clipboard.writeText('我在游导旅游打卡了这个景点！');
+          showToast('链接已复制到剪贴板', 'success');
+          break;
+      }
+    }
+
+    function likeRecord(recordId) {
+      showToast('点赞成功！', 'success');
+    }
+
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

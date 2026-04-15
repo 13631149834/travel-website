@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>导出日记 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+            warm: '#f59e0b',
+            soft: '#fef3c7',
+            blush: '#fecaca',
+            mint: '#d1fae5'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .gradient-warm { background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .slide-up { animation: slideUp 0.4s ease; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .export-card { transition: all 0.3s ease; cursor: pointer; }
+    .export-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    .export-card.selected { border-color: #0ea5e9; box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2); }
+    .checkbox { transition: all 0.2s ease; }
+    .checkbox.checked { background: #0ea5e9; border-color: #0ea5e9; }
+    .checkbox.checked svg { opacity: 1; }
+    .print-preview { background: white; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    @media print {
+      body { background: white; }
+      .no-print { display: none !important; }
+      .print-preview { box-shadow: none; padding: 0; }
+    }
+  </style>
+  <style id="printStyles">
+    .diary-print-item {
+      page-break-inside: avoid;
+      margin-bottom: 30px;
+      border-bottom: 1px dashed #ddd;
+      padding-bottom: 20px;
+    }
+    .diary-print-item:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg backdrop-blur-md bg-opacity-95 no-print">
+    <div class="max-w-6xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="flex items-center gap-6">
+          <a href="index.html" class="hover:opacity-80 transition flex items-center gap-1">
+            📔 旅行日记
+          </a>
+          <a href="statistics.html" class="hover:opacity-80 transition flex items-center gap-1">
+            📊 统计
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="max-w-5xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8 fade-in">
+      <div class="inline-block px-4 py-1.5 bg-green-100 rounded-full text-sm mb-4">📤 导出你的旅行回忆</div>
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">📤 导出日记</h1>
+      <p class="text-gray-600">将你的旅行日记导出为不同格式，方便保存和分享</p>
+    </div>
+
+    <!-- Export Options -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+      <div class="export-card bg-white rounded-2xl shadow-lg p-6 text-center selected" onclick="selectExportType('pdf')" id="exportPdf">
+        <div class="w-16 h-16 mx-auto mb-4 bg-red-100 rounded-2xl flex items-center justify-center">
+          <span class="text-3xl">📄</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">PDF文档</h3>
+        <p class="text-sm text-gray-500">适合打印和永久保存</p>
+      </div>
+      
+      <div class="export-card bg-white rounded-2xl shadow-lg p-6 text-center" onclick="selectExportType('image')" id="exportImage">
+        <div class="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-2xl flex items-center justify-center">
+          <span class="text-3xl">🖼️</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">图片集</h3>
+        <p class="text-sm text-gray-500">生成精美图片分享</p>
+      </div>
+      
+      <div class="export-card bg-white rounded-2xl shadow-lg p-6 text-center" onclick="selectExportType('print')" id="exportPrint">
+        <div class="w-16 h-16 mx-auto mb-4 bg-green-100 rounded-2xl flex items-center justify-center">
+          <span class="text-3xl">🖨️</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">打印版</h3>
+        <p class="text-sm text-gray-500">直接打印或保存为PDF</p>
+      </div>
+      
+      <div class="export-card bg-white rounded-2xl shadow-lg p-6 text-center" onclick="selectExportType('text')" id="exportText">
+        <div class="w-16 h-16 mx-auto mb-4 bg-purple-100 rounded-2xl flex items-center justify-center">
+          <span class="text-3xl">📝</span>
+        </div>
+        <h3 class="font-bold text-gray-800 mb-2">文本文件</h3>
+        <p class="text-sm text-gray-500">纯文本格式，便于编辑</p>
+      </div>
+    </div>
+
+    <!-- Export Options Panel -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 slide-up no-print">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span class="text-2xl">⚙️</span> 导出选项
+      </h2>
+
+      <!-- Date Range -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-3">选择日期范围</label>
+        <div class="flex flex-wrap gap-4">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="dateRange" value="all" checked class="hidden peer">
+            <span class="px-4 py-2 rounded-full border-2 border-gray-200 peer-checked:border-primary peer-checked:bg-blue-50 transition">全部日记</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="dateRange" value="month" class="hidden peer">
+            <span class="px-4 py-2 rounded-full border-2 border-gray-200 peer-checked:border-primary peer-checked:bg-blue-50 transition">最近一个月</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="dateRange" value="year" class="hidden peer">
+            <span class="px-4 py-2 rounded-full border-2 border-gray-200 peer-checked:border-primary peer-checked:bg-blue-50 transition">最近一年</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="radio" name="dateRange" value="custom" class="hidden peer">
+            <span class="px-4 py-2 rounded-full border-2 border-gray-200 peer-checked:border-primary peer-checked:bg-blue-50 transition">自定义</span>
+          </label>
+        </div>
+        <div id="customDateRange" class="hidden mt-4 flex flex-wrap gap-4">
+          <input type="date" id="startDate" class="px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+          <span class="text-gray-400 self-center">至</span>
+          <input type="date" id="endDate" class="px-4 py-2 rounded-lg border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none">
+        </div>
+      </div>
+
+      <!-- Select Diaries -->
+      <div class="mb-6">
+        <div class="flex items-center justify-between mb-3">
+          <label class="text-gray-700 font-medium">选择日记</label>
+          <button onclick="toggleSelectAll()" class="text-sm text-primary hover:underline">全选/取消全选</button>
+        </div>
+        <div id="diarySelector" class="max-h-64 overflow-y-auto space-y-2">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Include Options -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-3">包含内容</label>
+        <div class="flex flex-wrap gap-4">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <div class="checkbox w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center checked" onclick="toggleCheckbox(this)">
+              <svg class="w-3 h-3 text-white opacity-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <span class="text-gray-600">日记内容</span>
+            <input type="checkbox" checked class="hidden" id="includeContent">
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <div class="checkbox w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center checked" onclick="toggleCheckbox(this)">
+              <svg class="w-3 h-3 text-white opacity-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <span class="text-gray-600">照片</span>
+            <input type="checkbox" checked class="hidden" id="includePhotos">
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <div class="checkbox w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center checked" onclick="toggleCheckbox(this)">
+              <svg class="w-3 h-3 text-white opacity-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <span class="text-gray-600">心情天气</span>
+            <input type="checkbox" checked class="hidden" id="includeMoodWeather">
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <div class="checkbox w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center checked" onclick="toggleCheckbox(this)">
+              <svg class="w-3 h-3 text-white opacity-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+              </svg>
+            </div>
+            <span class="text-gray-600">标签</span>
+            <input type="checkbox" checked class="hidden" id="includeTags">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="bg-white rounded-2xl shadow-lg p-6 mb-8 slide-up">
+      <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span class="text-2xl">👁️</span> 预览
+      </h2>
+      <div id="previewContent" class="print-preview max-h-96 overflow-y-auto">
+        <div class="text-center text-gray-400 py-8">
+          <div class="text-6xl mb-4">📄</div>
+          <p>选择日记后预览将显示在这里</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Export Button -->
+    <div class="text-center no-print">
+      <button onclick="startExport()" class="px-10 py-4 gradient-warm text-white rounded-full font-bold text-lg flex items-center gap-3 mx-auto shadow-lg hover:shadow-xl transition">
+        <span>📤</span>
+        <span id="exportButtonText">导出为PDF</span>
+      </button>
+      <p class="text-gray-500 text-sm mt-4">共选择 <span id="selectedCount">0</span> 篇日记</p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-gray-800 text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    <span id="toastMessage">提示信息</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 mt-16 no-print">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <p class="text-gray-400">&copy; 2024 游导旅游. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    const STORAGE_KEY = 'travelDiaries';
+    let diaryData = [];
+    let configData = null;
+    let selectedExportType = 'pdf';
+    let selectedDiaries = new Set();
+
+    // Load data
+    async function loadData() {
+      try {
+        const response = await fetch('data/diary.json');
+        configData = await response.json();
+        loadDiariesFromStorage();
+        renderDiarySelector();
+        checkUrlParams();
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        loadDiariesFromStorage();
+        renderDiarySelector();
+        checkUrlParams();
+      }
+    }
+
+    function loadDiariesFromStorage() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        diaryData = JSON.parse(stored);
+      }
+    }
+
+    function getMoodInfo(moodId) {
+      return configData?.moods?.find(m => m.id === moodId) || { emoji: '😊', label: '未知', color: '#94a3b8', bgColor: '#e2e8f0' };
+    }
+
+    function getWeatherInfo(weatherId) {
+      return configData?.weathers?.find(w => w.id === weatherId) || { emoji: '☀️', label: '未知' };
+    }
+
+    function checkUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const diaryId = params.get('diary');
+      if (diaryId) {
+        selectedDiaries.add(diaryId);
+        updateSelectedCount();
+        renderPreview();
+        renderDiarySelector();
+      }
+    }
+
+    function renderDiarySelector() {
+      const container = document.getElementById('diarySelector');
+      if (diaryData.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center py-4">还没有日记，去写一篇吧！</p>';
+        return;
+      }
+
+      const sortedDiaries = [...diaryData].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      container.innerHTML = sortedDiaries.map(diary => {
+        const moodInfo = getMoodInfo(diary.mood);
+        const date = new Date(diary.createdAt).toLocaleDateString('zh-CN');
+        const isSelected = selectedDiaries.has(diary.id);
+        
+        return `
+          <div class="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition ${isSelected ? 'bg-blue-50' : ''}" onclick="toggleDiarySelection('${diary.id}')">
+            <div class="w-5 h-5 rounded border-2 flex items-center justify-center ${isSelected ? 'bg-primary border-primary' : 'border-gray-300'}">
+              ${isSelected ? '<svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>' : ''}
+            </div>
+            <span class="text-2xl">${moodInfo.emoji}</span>
+            <div class="flex-1">
+              <div class="font-medium text-gray-800">${diary.title || '无标题'}</div>
+              <div class="text-sm text-gray-500">${date} · ${diary.location || '未知地点'}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleDiarySelection(id) {
+      if (selectedDiaries.has(id)) {
+        selectedDiaries.delete(id);
+      } else {
+        selectedDiaries.add(id);
+      }
+      updateSelectedCount();
+      renderDiarySelector();
+      renderPreview();
+    }
+
+    function toggleSelectAll() {
+      if (selectedDiaries.size === diaryData.length) {
+        selectedDiaries.clear();
+      } else {
+        selectedDiaries = new Set(diaryData.map(d => d.id));
+      }
+      updateSelectedCount();
+      renderDiarySelector();
+      renderPreview();
+    }
+
+    function updateSelectedCount() {
+      document.getElementById('selectedCount').textContent = selectedDiaries.size;
+    }
+
+    // Export type selection
+    function selectExportType(type) {
+      selectedExportType = type;
+      document.querySelectorAll('.export-card').forEach(card => card.classList.remove('selected'));
+      document.getElementById('export' + type.charAt(0).toUpperCase() + type.slice(1)).classList.add('selected');
+      document.getElementById('exportButtonText').textContent = {
+        pdf: '导出为PDF',
+        image: '生成分享图片',
+        print: '打印日记',
+        text: '导出文本文件'
+      }[type];
+    }
+
+    // Checkbox toggle
+    function toggleCheckbox(el) {
+      el.classList.toggle('checked');
+      const input = el.nextElementSibling.nextElementSibling;
+      if (input && input.type === 'checkbox') {
+        input.checked = el.classList.contains('checked');
+      }
+      renderPreview();
+    }
+
+    // Date range
+    document.querySelectorAll('input[name="dateRange"]').forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const customRange = document.getElementById('customDateRange');
+        if (e.target.value === 'custom') {
+          customRange.classList.remove('hidden');
+        } else {
+          customRange.classList.add('hidden');
+        }
+        renderPreview();
+      });
+    });
+
+    // Preview
+    function renderPreview() {
+      const container = document.getElementById('previewContent');
+      const selectedDiaryList = diaryData.filter(d => selectedDiaries.has(d.id));
+      
+      if (selectedDiaryList.length === 0) {
+        container.innerHTML = `
+          <div class="text-center text-gray-400 py-8">
+            <div class="text-6xl mb-4">📄</div>
+            <p>选择日记后预览将显示在这里</p>
+          </div>
+        `;
+        return;
+      }
+
+      const includeContent = document.getElementById('includeContent').checked;
+      const includePhotos = document.getElementById('includePhotos').checked;
+      const includeMoodWeather = document.getElementById('includeMoodWeather').checked;
+      const includeTags = document.getElementById('includeTags').checked;
+
+      container.innerHTML = selectedDiaryList.map(diary => {
+        const moodInfo = getMoodInfo(diary.mood);
+        const weatherInfo = getWeatherInfo(diary.weather);
+        const date = new Date(diary.createdAt).toLocaleDateString('zh-CN', { 
+          year: 'numeric', month: 'long', day: 'numeric' 
+        });
+
+        return `
+          <div class="diary-print-item mb-6 pb-6 border-b border-gray-200">
+            <div class="flex items-center gap-3 mb-3">
+              <span class="text-3xl">${moodInfo.emoji}</span>
+              <div>
+                <h3 class="font-bold text-lg text-gray-800">${diary.title || '无标题'}</h3>
+                <div class="text-sm text-gray-500">
+                  ${date} ${diary.location ? `· ${diary.location}` : ''}
+                </div>
+              </div>
+            </div>
+            ${includeMoodWeather ? `
+              <div class="flex gap-3 mb-3 text-sm">
+                <span class="px-3 py-1 rounded-full" style="background: ${moodInfo.bgColor}">${moodInfo.emoji} ${moodInfo.label}</span>
+                <span class="px-3 py-1 bg-blue-50 rounded-full">${weatherInfo.emoji} ${weatherInfo.label}</span>
+              </div>
+            ` : ''}
+            ${includeTags && diary.tags && diary.tags.length > 0 ? `
+              <div class="flex flex-wrap gap-2 mb-3">
+                ${diary.tags.map(tag => `<span class="px-2 py-0.5 bg-gray-100 rounded text-xs text-gray-600">${tag}</span>`).join('')}
+              </div>
+            ` : ''}
+            ${includeContent ? `
+              <p class="text-gray-700 leading-relaxed whitespace-pre-wrap">${diary.content}</p>
+            ` : ''}
+            ${includePhotos && diary.photos && diary.photos.length > 0 ? `
+              <div class="flex gap-2 mt-3 flex-wrap">
+                ${diary.photos.slice(0, 4).map(photo => `
+                  <img src="${photo}" alt="照片" class="w-20 h-20 object-cover rounded-lg" onerror="this.style.display='none'">
+                `).join('')}
+                ${diary.photos.length > 4 ? `<span class="text-sm text-gray-500 self-center">+${diary.photos.length - 4}张</span>` : ''}
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Export functions
+    async function startExport() {
+      if (selectedDiaries.size === 0) {
+        showToast('请先选择要导出的日记');
+        return;
+      }
+
+      switch (selectedExportType) {
+        case 'pdf':
+          await exportToPDF();
+          break;
+        case 'image':
+          await exportToImages();
+          break;
+        case 'print':
+          printDiaries();
+          break;
+        case 'text':
+          exportToText();
+          break;
+      }
+    }
+
+    async function exportToPDF() {
+      showToast('正在生成PDF...');
+      
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
+      const margin = 20;
+      let y = margin;
+
+      // Title
+      doc.setFontSize(20);
+      doc.setTextColor(14, 165, 233);
+      doc.text('旅行日记集', pageWidth / 2, y, { align: 'center' });
+      y += 15;
+
+      doc.setFontSize(10);
+      doc.setTextColor(150);
+      doc.text(`导出时间: ${new Date().toLocaleDateString('zh-CN')}`, pageWidth / 2, y, { align: 'center' });
+      y += 10;
+
+      const selectedDiaryList = diaryData.filter(d => selectedDiaries.has(d.id));
+      
+      for (const diary of selectedDiaryList) {
+        const moodInfo = getMoodInfo(diary.mood);
+        const weatherInfo = getWeatherInfo(diary.weather);
+        const date = new Date(diary.createdAt).toLocaleDateString('zh-CN', { 
+          year: 'numeric', month: 'long', day: 'numeric' 
+        });
+
+        // Check if we need a new page
+        if (y > pageHeight - 60) {
+          doc.addPage();
+          y = margin;
+        }
+
+        // Diary header
+        doc.setFontSize(14);
+        doc.setTextColor(0);
+        doc.text(`${moodInfo.emoji} ${diary.title || '无标题'}`, margin, y);
+        y += 7;
+
+        doc.setFontSize(9);
+        doc.setTextColor(150);
+        doc.text(`${date} ${diary.location ? `· ${diary.location}` : ''}`, margin, y);
+        y += 5;
+
+        // Mood and weather
+        if (document.getElementById('includeMoodWeather').checked) {
+          doc.text(`${moodInfo.label} · ${weatherInfo.emoji} ${weatherInfo.label}`, margin, y);
+          y += 5;
+        }
+
+        // Tags
+        if (document.getElementById('includeTags').checked && diary.tags && diary.tags.length > 0) {
+          doc.text(`标签: ${diary.tags.join(', ')}`, margin, y);
+          y += 5;
+        }
+
+        // Content
+        if (document.getElementById('includeContent').checked) {
+          doc.setFontSize(10);
+          doc.setTextColor(50);
+          const lines = doc.splitTextToSize(diary.content, pageWidth - margin * 2);
+          
+          for (const line of lines) {
+            if (y > pageHeight - 20) {
+              doc.addPage();
+              y = margin;
+            }
+            doc.text(line, margin, y);
+            y += 5;
+          }
+        }
+
+        y += 10;
+      }
+
+      doc.save('旅行日记集.pdf');
+      showToast('PDF导出成功！');
+    }
+
+    async function exportToImages() {
+      showToast('正在生成图片...');
+      
+      const container = document.getElementById('previewContent');
+      container.classList.add('print-preview');
+      
+      try {
+        const canvas = await html2canvas(container, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: '#ffffff'
+        });
+        
+        const link = document.createElement('a');
+        link.download = `旅行日记_${new Date().toISOString().slice(0,10)}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        
+        showToast('图片导出成功！');
+      } catch (error) {
+        console.error('Export error:', error);
+        showToast('导出失败，请重试');
+      }
+      
+      container.classList.remove('print-preview');
+    }
+
+    function printDiaries() {
+      const printContent = document.getElementById('previewContent').innerHTML;
+      const styles = document.getElementById('printStyles').innerHTML;
+      
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>旅行日记 - 打印</title>
+          <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+          <style>${styles}
+            body { font-family: 'Noto Sans SC', sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
+            .diary-print-item { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px dashed #ddd; }
+          </style>
+        </head>
+        <body>
+          <h1 style="text-align: center; color: #0ea5e9; margin-bottom: 10px;">旅行日记集</h1>
+          <p style="text-align: center; color: #999; margin-bottom: 30px;">导出时间: ${new Date().toLocaleDateString('zh-CN')}</p>
+          ${printContent}
+        </body>
+        </html>
+      `);
+      printWindow.document.close();
+      printWindow.print();
+      showToast('打印窗口已打开');
+    }
+
+    function exportToText() {
+      const selectedDiaryList = diaryData.filter(d => selectedDiaries.has(d.id));
+      
+      let text = '旅行日记集\n';
+      text += '='.repeat(40) + '\n';
+      text += `导出时间: ${new Date().toLocaleString('zh-CN')}\n`;
+      text += '='.repeat(40) + '\n\n';
+
+      for (const diary of selectedDiaryList) {
+        const moodInfo = getMoodInfo(diary.mood);
+        const weatherInfo = getWeatherInfo(diary.weather);
+        const date = new Date(diary.createdAt).toLocaleString('zh-CN');
+
+        text += `[${moodInfo.emoji}] ${diary.title || '无标题'}\n`;
+        text += `时间: ${date}\n`;
+        text += `地点: ${diary.location || '未知'}\n`;
+        text += `心情: ${moodInfo.label} ${weatherInfo.emoji} ${weatherInfo.label}\n`;
+        if (diary.tags && diary.tags.length > 0) {
+          text += `标签: ${diary.tags.join(', ')}\n`;
+        }
+        text += '-'.repeat(30) + '\n';
+        text += diary.content + '\n';
+        text += '\n' + '='.repeat(40) + '\n\n';
+      }
+
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const link = document.createElement('a');
+      link.download = `旅行日记_${new Date().toISOString().slice(0,10)}.txt`;
+      link.href = URL.createObjectURL(blob);
+      link.click();
+      
+      showToast('文本文件导出成功！');
+    }
+
+    // Toast
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+      }, 2500);
+    }
+
+    // Initialize
+    loadData();
+    renderPreview();
+  </script>
+</body>
+</html>

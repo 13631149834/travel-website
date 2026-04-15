@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的音频 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
+    .tab-btn.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+    .play-btn { transition: all 0.2s ease; }
+    .play-btn:hover { transform: scale(1.1); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f1f1; }
+    ::-webkit-scrollbar-thumb { background: #667eea; border-radius: 3px; }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- 顶部导航 -->
+  <header class="gradient-bg text-white sticky top-0 z-50 shadow-lg">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center space-x-4">
+          <a href="../index.html" class="text-xl font-bold flex items-center">
+            <i class="fas fa-compass mr-2"></i>游导
+          </a>
+          <span class="hidden md:inline text-sm opacity-90">我的音频</span>
+        </div>
+        <nav class="hidden md:flex items-center space-x-6">
+          <a href="index.html" class="text-white/80 hover:text-white transition">首页</a>
+          <a href="destinations.html" class="text-white/80 hover:text-white transition">目的地音乐</a>
+          <a href="themes.html" class="text-white/80 hover:text-white transition">主题音频</a>
+          <a href="my-audio.html" class="text-white font-medium">我的音频</a>
+        </nav>
+        <div class="flex items-center space-x-4">
+          <button class="p-2 hover:bg-white/20 rounded-full transition" title="消息">
+            <i class="fas fa-bell"></i>
+          </button>
+          <div class="w-8 h-8 bg-white/30 rounded-full flex items-center justify-center cursor-pointer">
+            <i class="fas fa-user text-sm"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 用户信息卡片 -->
+  <div class="gradient-bg text-white py-6">
+    <div class="container mx-auto px-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center text-4xl">
+            🎵
+          </div>
+          <div class="ml-4">
+            <h1 class="text-2xl font-bold">我的音频库</h1>
+            <p class="text-white/80 text-sm mt-1">管理你的歌单、收藏和播放历史</p>
+          </div>
+        </div>
+        <button class="px-6 py-3 bg-white text-purple-600 rounded-lg hover:bg-purple-50 transition font-medium shadow-lg" onclick="location.href='create-playlist.html'">
+          <i class="fas fa-plus mr-2"></i>创建歌单
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 统计卡片 -->
+  <div class="container mx-auto px-4 -mt-6">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-xl shadow-sm p-4 text-center">
+        <div class="text-3xl font-bold text-purple-600">2</div>
+        <div class="text-sm text-gray-500 mt-1">我的歌单</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4 text-center">
+        <div class="text-3xl font-bold text-red-500">4</div>
+        <div class="text-sm text-gray-500 mt-1">收藏音频</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4 text-center">
+        <div class="text-3xl font-bold text-blue-500">12</div>
+        <div class="text-sm text-gray-500 mt-1">播放历史</div>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm p-4 text-center">
+        <div class="text-3xl font-bold text-green-500">0</div>
+        <div class="text-sm text-gray-500 mt-1">上传音频</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 标签页切换 -->
+  <div class="container mx-auto px-4 mb-6">
+    <div class="flex items-center space-x-2 overflow-x-auto pb-2" id="contentTabs">
+      <button class="tab-btn active px-6 py-2.5 rounded-full text-sm font-medium whitespace-nowrap transition" data-tab="playlists">
+        <i class="fas fa-list mr-2"></i>我的歌单
+      </button>
+      <button class="tab-btn px-6 py-2.5 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200 transition" data-tab="favorites">
+        <i class="fas fa-heart mr-2"></i>收藏音频
+      </button>
+      <button class="tab-btn px-6 py-2.5 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200 transition" data-tab="history">
+        <i class="fas fa-history mr-2"></i>播放历史
+      </button>
+      <button class="tab-btn px-6 py-2.5 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-600 hover:bg-gray-200 transition" data-tab="uploads">
+        <i class="fas fa-cloud-upload-alt mr-2"></i>上传管理
+      </button>
+    </div>
+  </div>
+
+  <main class="container mx-auto px-4 pb-24">
+    <!-- 我的歌单 -->
+    <section class="tab-content" id="playlistsContent">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- 歌单卡片 1 -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?playlist=my-playlist-001'">
+          <div class="relative h-40">
+            <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=300&fit=crop" alt="歌单封面" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute top-3 right-3">
+              <span class="bg-black/50 text-white text-xs px-2 py-1 rounded">
+                <i class="fas fa-lock mr-1"></i>私密
+              </span>
+            </div>
+            <div class="absolute bottom-3 left-3 right-3">
+              <h3 class="text-white font-bold">我的收藏</h3>
+              <p class="text-white/80 text-sm">12首歌曲</p>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <span><i class="fas fa-headphones mr-1"></i>1,234</span>
+                <span><i class="fas fa-clock mr-1"></i>2天前更新</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button class="p-2 text-gray-400 hover:text-purple-600 transition" title="编辑">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="p-2 text-gray-400 hover:text-red-500 transition" title="删除">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 歌单卡片 2 -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer" onclick="location.href='player.html?playlist=my-playlist-002'">
+          <div class="relative h-40">
+            <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=300&fit=crop" alt="歌单封面" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            <div class="absolute top-3 right-3">
+              <span class="bg-black/50 text-white text-xs px-2 py-1 rounded">
+                <i class="fas fa-lock mr-1"></i>私密
+              </span>
+            </div>
+            <div class="absolute bottom-3 left-3 right-3">
+              <h3 class="text-white font-bold">工作专注</h3>
+              <p class="text-white/80 text-sm">8首歌曲</p>
+            </div>
+          </div>
+          <div class="p-4">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center space-x-4 text-sm text-gray-500">
+                <span><i class="fas fa-headphones mr-1"></i>567</span>
+                <span><i class="fas fa-clock mr-1"></i>1周前更新</span>
+              </div>
+              <div class="flex items-center space-x-2">
+                <button class="p-2 text-gray-400 hover:text-purple-600 transition" title="编辑">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="p-2 text-gray-400 hover:text-red-500 transition" title="删除">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 创建新歌单 -->
+        <div class="bg-white rounded-xl shadow-sm overflow-hidden card-hover cursor-pointer border-2 border-dashed border-gray-200 hover:border-purple-400" onclick="location.href='create-playlist.html'">
+          <div class="h-full min-h-64 flex flex-col items-center justify-center text-gray-400 hover:text-purple-600 transition">
+            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+              <i class="fas fa-plus text-2xl"></i>
+            </div>
+            <p class="font-medium">创建新歌单</p>
+            <p class="text-sm mt-1">整理你喜欢的音频</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 收藏音频 -->
+    <section class="tab-content hidden" id="favoritesContent">
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-800">我收藏的音频</h3>
+          <button class="text-sm text-purple-600 hover:text-purple-700">
+            <i class="fas fa-play mr-1"></i>播放全部
+          </button>
+        </div>
+        <div class="divide-y divide-gray-100">
+          <!-- 收藏项目 1 -->
+          <div class="flex items-center p-4 hover:bg-gray-50 transition group">
+            <div class="w-10 h-10 bg-purple-100 rounded flex items-center justify-center text-purple-600 font-bold">1</div>
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=100&h=100&fit=crop" alt="封面" class="w-14 h-14 rounded-lg object-cover ml-3">
+            <div class="ml-3 flex-1 min-w-0">
+              <h4 class="font-medium text-gray-800 truncate">京都的樱花季</h4>
+              <p class="text-sm text-gray-500 truncate">日本轻音乐团 · 日本四季</p>
+            </div>
+            <span class="text-xs text-gray-400 mx-4">4:05</span>
+            <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition">
+              <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+                <i class="fas fa-play"></i>
+              </button>
+              <button class="p-2 text-red-500 transition" onclick="event.stopPropagation();">
+                <i class="fas fa-heart"></i>
+              </button>
+              <button class="p-2 text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <!-- 收藏项目 2 -->
+          <div class="flex items-center p-4 hover:bg-gray-50 transition group">
+            <div class="w-10 h-10 bg-purple-100 rounded flex items-center justify-center text-purple-600 font-bold">2</div>
+            <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=100&h=100&fit=crop" alt="封面" class="w-14 h-14 rounded-lg object-cover ml-3">
+            <div class="ml-3 flex-1 min-w-0">
+              <h4 class="font-medium text-gray-800 truncate">在路上</h4>
+              <p class="text-sm text-gray-500 truncate">旅行乐团 · 流浪远方</p>
+            </div>
+            <span class="text-xs text-gray-400 mx-4">4:47</span>
+            <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition">
+              <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+                <i class="fas fa-play"></i>
+              </button>
+              <button class="p-2 text-red-500 transition" onclick="event.stopPropagation();">
+                <i class="fas fa-heart"></i>
+              </button>
+              <button class="p-2 text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <!-- 收藏项目 3 -->
+          <div class="flex items-center p-4 hover:bg-gray-50 transition group">
+            <div class="w-10 h-10 bg-purple-100 rounded flex items-center justify-center text-purple-600 font-bold">3</div>
+            <img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=100&h=100&fit=crop" alt="封面" class="w-14 h-14 rounded-lg object-cover ml-3">
+            <div class="ml-3 flex-1 min-w-0">
+              <h4 class="font-medium text-gray-800 truncate">海浪轻语</h4>
+              <p class="text-sm text-gray-500 truncate">自然之声 · 海之声</p>
+            </div>
+            <span class="text-xs text-gray-400 mx-4">10:00</span>
+            <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition">
+              <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+                <i class="fas fa-play"></i>
+              </button>
+              <button class="p-2 text-red-500 transition" onclick="event.stopPropagation();">
+                <i class="fas fa-heart"></i>
+              </button>
+              <button class="p-2 text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+          <!-- 收藏项目 4 -->
+          <div class="flex items-center p-4 hover:bg-gray-50 transition group">
+            <div class="w-10 h-10 bg-purple-100 rounded flex items-center justify-center text-purple-600 font-bold">4</div>
+            <img src="https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?w=100&h=100&fit=crop" alt="封面" class="w-14 h-14 rounded-lg object-cover ml-3">
+            <div class="ml-3 flex-1 min-w-0">
+              <h4 class="font-medium text-gray-800 truncate">富士山的呼唤</h4>
+              <p class="text-sm text-gray-500 truncate">日本传统乐团 · 和风物语</p>
+            </div>
+            <span class="text-xs text-gray-400 mx-4">5:45</span>
+            <div class="flex items-center space-x-2 opacity-0 group-hover:opacity-100 transition">
+              <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+                <i class="fas fa-play"></i>
+              </button>
+              <button class="p-2 text-red-500 transition" onclick="event.stopPropagation();">
+                <i class="fas fa-heart"></i>
+              </button>
+              <button class="p-2 text-gray-400 hover:text-gray-600 transition">
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 播放历史 -->
+    <section class="tab-content hidden" id="historyContent">
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-800">播放历史</h3>
+          <div class="flex items-center space-x-2">
+            <button class="text-sm text-gray-500 hover:text-purple-600">
+              <i class="fas fa-filter mr-1"></i>筛选
+            </button>
+            <button class="text-sm text-red-500 hover:text-red-600">
+              <i class="fas fa-trash mr-1"></i>清空
+            </button>
+          </div>
+        </div>
+        <div class="divide-y divide-gray-100">
+          <!-- 历史记录 1 -->
+          <div class="flex items-center p-4 hover:bg-gray-50 transition group">
+            <div class="w-10 h-10 flex items-center justify-center text-gray-400">
+              <i class="fas fa-clock text-sm"></i>
+            </div>
+            <span class="text-xs text-gray-400 mx-2 w-20">今天 10:30</span>
+            <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=100&h=100&fit=crop" alt="封面" class="w-14 h-14 rounded-lg object-cover">
+            <div class="ml-3 flex-1 min-w-0 cursor-pointer" onclick="location.href='player.html'">
+              <h4 class="font-medium text-gray-800 truncate">京都的樱花季</h4>
+              <p class="text-sm text-gray-500 truncate">日本轻音乐团</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="hidden group-hover:block text-xs text-gray-400 mx-4">已听完</div>
+              <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+                <i class="fas fa-redo" title="再次播放"></i>
+              </button>
+              <button class="p-2 text-gray-400 hover:text-red-500 transition">
+                <i class="far fa-heart" title="收藏"></i>
+              </button>
+            </div>
+          </div>
+          <!-- 历史记录 2 -->
+          <div class="flex items-center p-4 hover:bg-gray-50 transition group">
+            <div class="w-10 h-10 flex items-center justify-center text-gray-400">
+              <i class="fas fa-clock text-sm"></i>
+            </div>
+            <span class="text-xs text-gray-400 mx-2 w-20">今天 09:15</span>
+            <img src="https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=100&h=100&fit=crop" alt="封面" class="w-14 h-14 rounded-lg object-cover">
+            <div class="ml-3 flex-1 min-w-0 cursor-pointer" onclick="location.href='player.html'">
+              <h4 class="font-medium text-gray-800 truncate">在路上</h4>
+              <p class="text-sm text-gray-500 truncate">旅行乐团</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="hidden group-hover:block text-xs text-gray-400 mx-4">播放到 3:00</div>
+              <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+                <i class="fas fa-redo" title="继续播放"></i>
+              </button>
+              <button class="p-2 text-gray-400 hover:text-red-500 transition">
+                <i class="far fa-heart" title="收藏"></i>
+              </button>
+            </div>
+          </div>
+          <!-- 历史记录 3 -->
+          <div class="flex items-center p-4 hover:bg-gray-50 transition group">
+            <div class="w-10 h-10 flex items-center justify-center text-gray-400">
+              <i class="fas fa-clock text-sm"></i>
+            </div>
+            <span class="text-xs text-gray-400 mx-2 w-20">昨天 22:00</span>
+            <img src="https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=100&h=100&fit=crop" alt="封面" class="w-14 h-14 rounded-lg object-cover">
+            <div class="ml-3 flex-1 min-w-0 cursor-pointer" onclick="location.href='player.html'">
+              <h4 class="font-medium text-gray-800 truncate">海浪轻语</h4>
+              <p class="text-sm text-gray-500 truncate">自然之声</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="hidden group-hover:block text-xs text-gray-400 mx-4">已听完</div>
+              <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+                <i class="fas fa-redo" title="再次播放"></i>
+              </button>
+              <button class="p-2 text-gray-400 hover:text-red-500 transition">
+                <i class="fas fa-heart text-red-500" title="已收藏"></i>
+              </button>
+            </div>
+          </div>
+          <!-- 历史记录 4 -->
+          <div class="flex items-center p-4 hover:bg-gray-50 transition group">
+            <div class="w-10 h-10 flex items-center justify-center text-gray-400">
+              <i class="fas fa-clock text-sm"></i>
+            </div>
+            <span class="text-xs text-gray-400 mx-2 w-20">3月13日</span>
+            <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=100&h=100&fit=crop" alt="封面" class="w-14 h-14 rounded-lg object-cover">
+            <div class="ml-3 flex-1 min-w-0 cursor-pointer" onclick="location.href='player.html'">
+              <h4 class="font-medium text-gray-800 truncate">咖啡馆时光</h4>
+              <p class="text-sm text-gray-500 truncate">轻音乐社</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <div class="hidden group-hover:block text-xs text-gray-400 mx-4">已听完</div>
+              <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+                <i class="fas fa-redo" title="再次播放"></i>
+              </button>
+              <button class="p-2 text-gray-400 hover:text-red-500 transition">
+                <i class="far fa-heart" title="收藏"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="p-4 text-center border-t border-gray-100">
+          <button class="text-purple-600 hover:text-purple-700 text-sm">
+            查看更多 <i class="fas fa-angle-down ml-1"></i>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 上传管理 -->
+    <section class="tab-content hidden" id="uploadsContent">
+      <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-gray-100 flex items-center justify-between">
+          <h3 class="font-bold text-gray-800">上传的音频</h3>
+          <button class="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:opacity-90 transition text-sm">
+            <i class="fas fa-cloud-upload-alt mr-2"></i>上传音频
+          </button>
+        </div>
+        <div class="p-8 text-center">
+          <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400"></i>
+          </div>
+          <h4 class="font-medium text-gray-800 mb-2">还没有上传任何音频</h4>
+          <p class="text-sm text-gray-500 mb-4">上传你的专属音乐，与其他旅行者分享</p>
+          <button class="px-6 py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-purple-400 hover:text-purple-600 transition">
+            <i class="fas fa-upload mr-2"></i>开始上传
+          </button>
+        </div>
+      </div>
+
+      <!-- 上传说明 -->
+      <div class="mt-6 p-6 bg-blue-50 rounded-xl">
+        <h4 class="font-medium text-blue-800 mb-3 flex items-center">
+          <i class="fas fa-info-circle mr-2"></i>上传须知
+        </h4>
+        <ul class="text-sm text-blue-600 space-y-2">
+          <li>• 支持 MP3、WAV、AAC 等常见音频格式</li>
+          <li>• 单个文件大小不超过 50MB</li>
+          <li>• 请确保你拥有音频的合法版权</li>
+          <li>• 上传后需审核通过才能公开显示</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- 底部快捷播放器 -->
+  <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+    <div class="h-1 bg-gray-200">
+      <div class="h-full bg-gradient-to-r from-purple-600 to-indigo-600" style="width: 35%"></div>
+    </div>
+    <div class="container mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center">
+        <img src="https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=100&h=100&fit=crop" alt="封面" class="w-12 h-12 rounded-lg object-cover cursor-pointer" onclick="location.href='player.html'">
+        <div class="ml-3">
+          <h4 class="font-medium text-gray-800 text-sm cursor-pointer hover:text-purple-600" onclick="location.href='player.html'">京都的樱花季</h4>
+          <p class="text-xs text-gray-500">日本轻音乐团</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-4">
+        <button class="p-2 text-gray-600 hover:text-purple-600 transition">
+          <i class="fas fa-backward"></i>
+        </button>
+        <button class="p-3 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition shadow-md" id="playPauseBtn">
+          <i class="fas fa-pause"></i>
+        </button>
+        <button class="p-2 text-gray-600 hover:text-purple-600 transition">
+          <i class="fas fa-forward"></i>
+        </button>
+      </div>
+      <div class="hidden md:flex items-center space-x-3">
+        <span class="text-xs text-gray-500">1:26 / 4:05</span>
+        <button class="p-2 text-red-500 transition">
+          <i class="fas fa-heart"></i>
+        </button>
+        <button class="p-2 text-gray-400 hover:text-purple-600 transition">
+          <i class="fas fa-volume-up"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-8 pb-20">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="font-bold mb-4">关于游导</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="../about.html" class="hover:text-white transition">关于我们</a></li>
+            <li><a href="#" class="hover:text-white transition">加入我们</a></li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold mb-4">快速链接</h3>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="../destinations.html" class="hover:text-white transition">目的地</a></li>
+            <li><a href="index.html" class="hover:text-white transition">音频资源</a></li>
+          </ul>
+        </div>
+        <div class="md:col-span-2">
+          <h3 class="font-bold mb-4">关注我们</h3>
+          <div class="flex space-x-4">
+            <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+              <i class="fab fa-weibo"></i>
+            </a>
+            <a href="#" class="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+              <i class="fab fa-weixin"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm text-gray-400">
+        <p>&copy; 2024 游导旅游 youdao-travel.com</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 标签页切换
+    const tabs = document.querySelectorAll('.tab-btn');
+    const contents = document.querySelectorAll('.tab-content');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const targetId = this.dataset.tab;
+        
+        // 更新标签状态
+        tabs.forEach(t => {
+          t.classList.remove('active');
+          t.classList.add('bg-gray-100', 'text-gray-600');
+        });
+        this.classList.add('active');
+        this.classList.remove('bg-gray-100', 'text-gray-600');
+        
+        // 更新内容显示
+        contents.forEach(content => {
+          content.classList.add('hidden');
+        });
+        document.getElementById(targetId + 'Content').classList.remove('hidden');
+      });
+    });
+
+    // 播放/暂停
+    document.getElementById('playPauseBtn').addEventListener('click', function() {
+      const icon = this.querySelector('i');
+      if (icon.classList.contains('fa-pause')) {
+        icon.classList.remove('fa-pause');
+        icon.classList.add('fa-play');
+      } else {
+        icon.classList.remove('fa-play');
+        icon.classList.add('fa-pause');
+      }
+    });
+
+    // 收藏切换
+    document.querySelectorAll('.fa-heart, .far.fa-heart').forEach(heart => {
+      heart.parentElement.addEventListener('click', function(e) {
+        e.stopPropagation();
+        const icon = this.querySelector('i');
+        if (icon.classList.contains('far')) {
+          icon.classList.remove('far');
+          icon.classList.add('fas');
+          icon.classList.add('text-red-500');
+        } else {
+          icon.classList.remove('fas');
+          icon.classList.add('far');
+          icon.classList.remove('text-red-500');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

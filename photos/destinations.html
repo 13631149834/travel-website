@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>目的地图库 - 游导旅游</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        * { font-family: 'Noto Sans SC', sans-serif; }
+        
+        .masonry { column-count: 4; column-gap: 16px; }
+        @media (max-width: 1280px) { .masonry { column-count: 3; } }
+        @media (max-width: 768px) { .masonry { column-count: 2; } }
+        @media (max-width: 480px) { .masonry { column-count: 1; } }
+        
+        .masonry-item { break-inside: avoid; margin-bottom: 16px; }
+        
+        .photo-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .photo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+        }
+        
+        .country-tab {
+            transition: all 0.3s ease;
+        }
+        .country-tab.active {
+            background: linear-gradient(135deg, var(--tw-gradient-from), var(--tw-gradient-to));
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .city-btn {
+            transition: all 0.2s ease;
+        }
+        .city-btn:hover {
+            transform: translateY(-2px);
+        }
+        .city-btn.active {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #667eea, #764ba2); border-radius: 3px; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="../index.html" class="flex items-center space-x-2">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <i class="fas fa-compass text-white text-lg"></i>
+                    </div>
+                    <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">游导旅游</span>
+                </a>
+                <nav class="hidden md:flex items-center space-x-8">
+                    <a href="../index.html" class="text-gray-600 hover:text-gray-900 font-medium">首页</a>
+                    <a href="destinations.html" class="text-blue-600 font-medium">目的地</a>
+                    <a href="themes.html" class="text-gray-600 hover:text-gray-900 font-medium">主题</a>
+                    <a href="index.html" class="text-gray-600 hover:text-gray-900 font-medium">图片库</a>
+                    <a href="my-photos.html" class="text-gray-600 hover:text-gray-900 font-medium">我的图库</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <a href="upload.html" class="hidden sm:flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all">
+                        <i class="fas fa-cloud-upload-alt mr-2"></i>
+                        上传
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero -->
+    <section class="hero-gradient text-white py-12 md:py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold mb-2">目的地图库</h1>
+                    <p class="text-white/80">按目的地探索精彩旅游图片</p>
+                </div>
+                <div class="hidden md:flex items-center space-x-8">
+                    <div class="text-center">
+                        <div class="text-4xl font-bold">1,267</div>
+                        <div class="text-sm text-white/70">日本图片</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold">856</div>
+                        <div class="text-sm text-white/70">韩国图片</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold">1,023</div>
+                        <div class="text-sm text-white/70">泰国图片</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl font-bold">523</div>
+                        <div class="text-sm text-white/70">新加坡图片</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Main Content -->
+    <section class="py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Country Tabs -->
+            <div class="flex flex-wrap gap-3 mb-8">
+                <button onclick="selectCountry('all')" class="country-tab active px-6 py-3 rounded-xl font-medium flex items-center" id="tab-all">
+                    <span class="text-xl mr-2">🌍</span>全部
+                </button>
+                <button onclick="selectCountry('japan')" class="country-tab px-6 py-3 rounded-xl font-medium bg-white shadow-sm flex items-center" id="tab-japan">
+                    <span class="text-xl mr-2">🗾</span>日本
+                </button>
+                <button onclick="selectCountry('korea')" class="country-tab px-6 py-3 rounded-xl font-medium bg-white shadow-sm flex items-center" id="tab-korea">
+                    <span class="text-xl mr-2">🇰🇷</span>韩国
+                </button>
+                <button onclick="selectCountry('thailand')" class="country-tab px-6 py-3 rounded-xl font-medium bg-white shadow-sm flex items-center" id="tab-thailand">
+                    <span class="text-xl mr-2">🇹🇭</span>泰国
+                </button>
+                <button onclick="selectCountry('singapore')" class="country-tab px-6 py-3 rounded-xl font-medium bg-white shadow-sm flex items-center" id="tab-singapore">
+                    <span class="text-xl mr-2">🇸🇬</span>新加坡
+                </button>
+            </div>
+            
+            <!-- Cities Filter -->
+            <div class="bg-white rounded-xl p-4 mb-8 shadow-sm">
+                <div class="flex flex-wrap items-center gap-4">
+                    <span class="text-gray-500 font-medium flex-shrink-0">
+                        <i class="fas fa-map-marker-alt mr-2 text-red-400"></i>选择城市:
+                    </span>
+                    <div id="cityFilters" class="flex flex-wrap gap-2">
+                        <!-- Cities will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Results Header -->
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900" id="resultsTitle">全部目的地</h2>
+                    <p class="text-gray-500 text-sm mt-1">共 <span id="photoCount">0</span> 张图片</p>
+                </div>
+                <div class="flex items-center gap-4">
+                    <select id="sortBy" onchange="sortPhotos()" class="px-4 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="latest">最新上传</option>
+                        <option value="popular">最受欢迎</option>
+                        <option value="likes">最多点赞</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Photo Grid -->
+            <div id="photoGrid" class="masonry mb-8">
+                <!-- Photos will be loaded dynamically -->
+            </div>
+            
+            <!-- Load More -->
+            <div class="text-center py-8">
+                <button onclick="loadMore()" class="px-8 py-3 bg-white border-2 border-gray-200 text-gray-700 font-medium rounded-xl hover:border-blue-500 hover:text-blue-600 hover:shadow-lg transition-all inline-flex items-center">
+                    <i class="fas fa-arrow-down mr-2"></i>
+                    加载更多
+                </button>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Country Info Cards -->
+    <section class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8">热门目的地介绍</h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Japan -->
+                <div class="bg-gradient-to-br from-red-50 to-pink-50 rounded-2xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="text-5xl mb-4">🗾</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">日本 Japan</h3>
+                    <p class="text-gray-600 text-sm mb-4">传统与现代完美融合的国度，从京都的古韵到东京的繁华，从富士山的壮丽到樱花的浪漫。</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-camera mr-2 text-red-400"></i>东京、京都、大阪</li>
+                        <li><i class="fas fa-calendar mr-2 text-red-400"></i>最佳季节: 3-5月、10-11月</li>
+                    </ul>
+                    <button onclick="selectCountry('japan')" class="mt-4 w-full py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                        浏览日本图片
+                    </button>
+                </div>
+                
+                <!-- Korea -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="text-5xl mb-4">🇰🇷</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">韩国 Korea</h3>
+                    <p class="text-gray-600 text-sm mb-4">K-pop与韩剧的发源地，既有首尔的时尚潮流，也有济州岛的海岛风情与历史古刹。</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-camera mr-2 text-blue-400"></i>首尔、釜山、济州岛</li>
+                        <li><i class="fas fa-calendar mr-2 text-blue-400"></i>最佳季节: 4-6月、9-11月</li>
+                    </ul>
+                    <button onclick="selectCountry('korea')" class="mt-4 w-full py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                        浏览韩国图片
+                    </button>
+                </div>
+                
+                <!-- Thailand -->
+                <div class="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-2xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="text-5xl mb-4">🇹🇭</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">泰国 Thailand</h3>
+                    <p class="text-gray-600 text-sm mb-4">微笑佛国的热带风情，金碧辉煌的寺庙、热闹的夜市、美丽的海岛与独特的美食文化。</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-camera mr-2 text-orange-400"></i>曼谷、清迈、普吉岛</li>
+                        <li><i class="fas fa-calendar mr-2 text-orange-400"></i>最佳季节: 11-4月</li>
+                    </ul>
+                    <button onclick="selectCountry('thailand')" class="mt-4 w-full py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors">
+                        浏览泰国图片
+                    </button>
+                </div>
+                
+                <!-- Singapore -->
+                <div class="bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="text-5xl mb-4">🇸🇬</div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">新加坡 Singapore</h3>
+                    <p class="text-gray-600 text-sm mb-4">花园城市的魅力，现代建筑与自然景观和谐共存，从滨海湾到圣淘沙，处处是风景。</p>
+                    <ul class="text-sm text-gray-500 space-y-1">
+                        <li><i class="fas fa-camera mr-2 text-green-400"></i>滨海湾、牛车水、圣淘沙</li>
+                        <li><i class="fas fa-calendar mr-2 text-green-400"></i>最佳季节: 全年适宜</li>
+                    </ul>
+                    <button onclick="selectCountry('singapore')" class="mt-4 w-full py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                        浏览新加坡图片
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-gray-400 py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-compass text-white text-sm"></i>
+                    </div>
+                    <span class="font-bold text-white">游导旅游</span>
+                </div>
+                <p class="text-sm">&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Photo Modal -->
+    <div id="photoModal" class="fixed inset-0 bg-black/90 z-50 hidden">
+        <button onclick="closeModal()" class="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 z-10">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="absolute inset-0 flex items-center justify-center p-4 md:p-8">
+            <div class="bg-white rounded-2xl max-w-6xl w-full max-h-full overflow-hidden flex flex-col md:flex-row">
+                <div class="md:w-2/3 bg-black flex items-center justify-center">
+                    <img id="modalImage" src="" alt="" class="max-w-full max-h-[70vh] md:max-h-full object-contain">
+                </div>
+                <div class="md:w-1/3 p-6 overflow-y-auto max-h-[30vh] md:max-h-full">
+                    <h3 id="modalTitle" class="text-xl font-bold text-gray-900 mb-2"></h3>
+                    <p id="modalDesc" class="text-gray-600 text-sm mb-4"></p>
+                    <div id="modalMeta" class="space-y-2 text-sm text-gray-500 mb-4"></div>
+                    <div class="flex gap-2">
+                        <a href="#" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-center">
+                            <i class="fas fa-download mr-2"></i>下载
+                        </a>
+                        <button class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let photos = [];
+        let filteredPhotos = [];
+        let currentCountry = 'all';
+        let currentCity = '';
+        
+        const cityData = {
+            all: [
+                { id: '', name: '全部城市' },
+                { id: 'tokyo', name: '东京' },
+                { id: 'kyoto', name: '京都' },
+                { id: 'osaka', name: '大阪' },
+                { id: 'seoul', name: '首尔' },
+                { id: 'busan', name: '釜山' },
+                { id: 'bangkok', name: '曼谷' },
+                { id: 'chiangmai', name: '清迈' },
+                { id: 'phuket', name: '普吉岛' },
+                { id: 'singapore', name: '新加坡' }
+            ],
+            japan: [
+                { id: '', name: '全部' },
+                { id: 'tokyo', name: '东京' },
+                { id: 'kyoto', name: '京都' },
+                { id: 'osaka', name: '大阪' },
+                { id: 'yamanashi', name: '山梨' },
+                { id: 'nara', name: '奈良' }
+            ],
+            korea: [
+                { id: '', name: '全部' },
+                { id: 'seoul', name: '首尔' },
+                { id: 'busan', name: '釜山' },
+                { id: 'jeju', name: '济州岛' }
+            ],
+            thailand: [
+                { id: '', name: '全部' },
+                { id: 'bangkok', name: '曼谷' },
+                { id: 'chiangmai', name: '清迈' },
+                { id: 'phuket', name: '普吉岛' }
+            ],
+            singapore: [
+                { id: '', name: '新加坡' }
+            ]
+        };
+        
+        const countryNames = {
+            all: '全部目的地',
+            japan: '日本',
+            korea: '韩国',
+            thailand: '泰国',
+            singapore: '新加坡'
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPhotoData();
+            
+            // Check URL params
+            const params = new URLSearchParams(window.location.search);
+            const country = params.get('country');
+            if (country) {
+                selectCountry(country);
+            }
+        });
+        
+        async function loadPhotoData() {
+            try {
+                const response = await fetch('../data/photos.json');
+                const data = await response.json();
+                photos = data.photos;
+                filterPhotos();
+            } catch (error) {
+                console.error('Failed to load photos:', error);
+            }
+        }
+        
+        function selectCountry(country) {
+            currentCountry = country;
+            currentCity = '';
+            
+            // Update tabs
+            document.querySelectorAll('.country-tab').forEach(tab => {
+                tab.classList.remove('active');
+                tab.classList.add('bg-white', 'shadow-sm');
+            });
+            document.getElementById('tab-' + country).classList.add('active');
+            document.getElementById('tab-' + country).classList.remove('bg-white', 'shadow-sm');
+            
+            // Update cities
+            renderCities();
+            
+            // Update title
+            document.getElementById('resultsTitle').textContent = countryNames[country];
+            
+            filterPhotos();
+        }
+        
+        function renderCities() {
+            const container = document.getElementById('cityFilters');
+            const cities = cityData[currentCountry] || cityData.all;
+            
+            container.innerHTML = cities.map(city => `
+                <button onclick="selectCity('${city.id}')" 
+                        class="city-btn px-4 py-2 rounded-lg text-sm font-medium ${city.id === currentCity ? 'active' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}"
+                        id="city-${city.id || 'all'}">
+                    ${city.name}
+                </button>
+            `).join('');
+        }
+        
+        function selectCity(cityId) {
+            currentCity = cityId;
+            
+            document.querySelectorAll('.city-btn').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('bg-gray-100', 'text-gray-600');
+            });
+            document.getElementById('city-' + (cityId || 'all')).classList.add('active');
+            document.getElementById('city-' + (cityId || 'all')).classList.remove('bg-gray-100', 'text-gray-600');
+            
+            filterPhotos();
+        }
+        
+        function filterPhotos() {
+            filteredPhotos = photos.filter(photo => {
+                if (currentCountry !== 'all' && photo.destination !== currentCountry) return false;
+                if (currentCity && photo.city !== currentCity) return false;
+                return true;
+            });
+            
+            document.getElementById('photoCount').textContent = filteredPhotos.length;
+            renderPhotos();
+        }
+        
+        function sortPhotos() {
+            const sortBy = document.getElementById('sortBy').value;
+            
+            switch(sortBy) {
+                case 'latest':
+                    filteredPhotos.sort((a, b) => new Date(b.date) - new Date(a.date));
+                    break;
+                case 'popular':
+                    filteredPhotos.sort((a, b) => b.downloads - a.downloads);
+                    break;
+                case 'likes':
+                    filteredPhotos.sort((a, b) => b.likes - a.likes);
+                    break;
+            }
+            
+            renderPhotos();
+        }
+        
+        function renderPhotos() {
+            const grid = document.getElementById('photoGrid');
+            
+            if (filteredPhotos.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-16">
+                        <div class="text-6xl mb-4">🔍</div>
+                        <h3 class="text-xl font-medium text-gray-600 mb-2">暂无相关图片</h3>
+                        <p class="text-gray-400">试试选择其他目的地或城市</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = filteredPhotos.map((photo, index) => `
+                <div class="masonry-item">
+                    <div class="photo-card rounded-xl overflow-hidden shadow-md bg-white" onclick="openModal(${index})">
+                        <div class="relative overflow-hidden">
+                            <img src="${photo.thumbUrl}" alt="${photo.title}" 
+                                 class="w-full object-cover hover:scale-105 transition-transform duration-500"
+                                 style="aspect-ratio: ${getRandomAspectRatio()}">
+                            <div class="absolute top-3 left-3">
+                                <span class="px-2 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-medium text-gray-700">
+                                    ${getCityName(photo.city)}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-3">
+                            <h4 class="font-semibold text-gray-900 mb-1 truncate">${photo.title}</h4>
+                            <p class="text-gray-500 text-xs truncate">${photo.description}</p>
+                            <div class="flex items-center justify-between mt-2 pt-2 border-t border-gray-100">
+                                <div class="flex items-center text-xs text-gray-400">
+                                    <i class="fas fa-heart text-red-400 mr-1"></i>${photo.likes}
+                                </div>
+                                <div class="flex items-center text-xs text-gray-400">
+                                    <i class="fas fa-download text-blue-400 mr-1"></i>${photo.downloads}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function getCityName(cityId) {
+            const cities = {
+                tokyo: '东京', kyoto: '京都', osaka: '大阪', yamanashi: '山梨', nara: '奈良',
+                seoul: '首尔', busan: '釜山', jeju: '济州岛',
+                bangkok: '曼谷', chiangmai: '清迈', phuket: '普吉岛',
+                singapore: '新加坡'
+            };
+            return cities[cityId] || cityId;
+        }
+        
+        function getRandomAspectRatio() {
+            const ratios = ['3/4', '4/5', '1/1', '4/3', '16/10'];
+            return ratios[Math.floor(Math.random() * ratios.length)];
+        }
+        
+        function openModal(index) {
+            const photo = filteredPhotos[index];
+            
+            document.getElementById('modalImage').src = photo.url;
+            document.getElementById('modalTitle').textContent = photo.title;
+            document.getElementById('modalDesc').textContent = photo.description;
+            
+            document.getElementById('modalMeta').innerHTML = `
+                <div><i class="fas fa-map-marker-alt mr-2 text-red-400"></i>${countryNames[photo.destination]} · ${getCityName(photo.city)}</div>
+                <div><i class="fas fa-calendar mr-2 text-green-400"></i>${photo.date}</div>
+                <div><i class="fas fa-camera mr-2 text-purple-400"></i>${photo.camera}</div>
+            `;
+            
+            document.getElementById('photoModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            document.getElementById('photoModal').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        
+        function loadMore() {
+            const btn = event.target;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>加载中...';
+            setTimeout(() => {
+                btn.innerHTML = '<i class="fas fa-check mr-2"></i>已加载全部';
+                btn.disabled = true;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

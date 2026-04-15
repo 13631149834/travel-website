@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的文档 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 50%, #ec4899 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    .doc-card { transition: all 0.25s ease; }
+    .doc-card:hover { transform: translateY(-6px); }
+    .tab-btn.active { background-color: #8b5cf6; color: white; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-purple-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="../destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="index.html" class="font-semibold border-b-2 border-white pb-1">📥 文档中心</a>
+          <a href="../tools/index.html" class="hover:opacity-80 transition">工具箱</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="../destinations.html" class="block py-2">目的地</a>
+        <a href="index.html" class="block py-2 font-semibold">📥 文档中心</a>
+        <a href="../tools/index.html" class="block py-2">工具箱</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- User Header -->
+  <section class="bg-gradient-to-r from-purple-600 to-pink-500 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex flex-col md:flex-row items-center gap-6">
+        <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center text-5xl">
+          👤
+        </div>
+        <div class="text-center md:text-left">
+          <h1 class="text-2xl font-bold mb-2">旅行爱好者</h1>
+          <p class="text-purple-100">开始收集您的旅行文档吧</p>
+        </div>
+        <div class="md:ml-auto flex gap-4">
+          <div class="text-center px-6 py-3 bg-white/10 rounded-xl">
+            <div class="text-2xl font-bold">12</div>
+            <div class="text-sm opacity-80">下载文档</div>
+          </div>
+          <div class="text-center px-6 py-3 bg-white/10 rounded-xl">
+            <div class="text-2xl font-bold">8</div>
+            <div class="text-sm opacity-80">收藏文档</div>
+          </div>
+          <div class="text-center px-6 py-3 bg-white/10 rounded-xl">
+            <div class="text-2xl font-bold">3</div>
+            <div class="text-sm opacity-80">自定义模板</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tab Navigation -->
+  <section class="max-w-7xl mx-auto px-4 py-6">
+    <div class="flex flex-wrap gap-3">
+      <button class="tab-btn active px-5 py-2.5 rounded-full font-medium text-sm shadow-md" data-tab="downloads">
+        📥 下载历史
+      </button>
+      <button class="tab-btn px-5 py-2.5 bg-gray-100 rounded-full font-medium text-sm shadow-sm" data-tab="favorites">
+        ⭐ 收藏文档
+      </button>
+      <button class="tab-btn px-5 py-2.5 bg-gray-100 rounded-full font-medium text-sm shadow-sm" data-tab="custom">
+        ✨ 自定义模板
+      </button>
+      <button class="tab-btn px-5 py-2.5 bg-gray-100 rounded-full font-medium text-sm shadow-sm" data-tab="manage">
+        🗂️ 文档管理
+      </button>
+    </div>
+  </section>
+
+  <!-- Downloads History -->
+  <section id="downloadsTab" class="tab-content max-w-7xl mx-auto px-4 pb-16">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-gray-800">下载历史</h2>
+      <div class="flex items-center gap-4">
+        <select class="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none bg-white text-sm">
+          <option>全部类型</option>
+          <option>最近一周</option>
+          <option>最近一月</option>
+          <option>全部时间</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="downloadsGrid">
+      <!-- Download history items -->
+    </div>
+  </section>
+
+  <!-- Favorites -->
+  <section id="favoritesTab" class="tab-content max-w-7xl mx-auto px-4 pb-16 hidden">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-gray-800">收藏文档</h2>
+      <span class="text-sm text-gray-500">共 8 个收藏</span>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="favoritesGrid">
+      <!-- Favorite items -->
+    </div>
+  </section>
+
+  <!-- Custom Templates -->
+  <section id="customTab" class="tab-content max-w-7xl mx-auto px-4 pb-16 hidden">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-gray-800">自定义模板</h2>
+      <button onclick="openCreateModal()" class="px-4 py-2 bg-purple-600 text-white rounded-xl font-medium text-sm hover:bg-purple-700 transition flex items-center gap-2">
+        <span>➕</span> 创建模板
+      </button>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="customGrid">
+      <!-- Custom template items -->
+    </div>
+    
+    <!-- Empty State -->
+    <div id="emptyCustom" class="hidden text-center py-16">
+      <div class="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <span class="text-5xl">✨</span>
+      </div>
+      <h3 class="text-xl font-bold text-gray-800 mb-2">暂无自定义模板</h3>
+      <p class="text-gray-500 mb-6">创建您的第一个旅行文档模板，个性化管理旅行资料</p>
+      <button onclick="openCreateModal()" class="px-6 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition">
+        创建第一个模板
+      </button>
+    </div>
+  </section>
+
+  <!-- Document Management -->
+  <section id="manageTab" class="tab-content max-w-7xl mx-auto px-4 pb-16 hidden">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-xl font-bold text-gray-800">文档管理</h2>
+      <div class="flex items-center gap-3">
+        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-200 transition flex items-center gap-2">
+          <span>📤</span> 批量导出
+        </button>
+        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium text-sm hover:bg-gray-200 transition flex items-center gap-2">
+          <span>🗑️</span> 清空记录
+        </button>
+      </div>
+    </div>
+    
+    <!-- Storage Info -->
+    <div class="bg-white rounded-2xl shadow-md p-6 mb-6">
+      <h3 class="font-bold text-gray-800 mb-4">存储空间使用情况</h3>
+      <div class="flex items-center gap-4">
+        <div class="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
+          <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-full rounded-full" style="width: 35%"></div>
+        </div>
+        <span class="text-sm text-gray-600">35% / 100MB</span>
+      </div>
+      <div class="grid grid-cols-3 gap-4 mt-4 text-center">
+        <div>
+          <div class="text-2xl font-bold text-purple-600">35MB</div>
+          <div class="text-sm text-gray-500">已使用</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-green-600">65MB</div>
+          <div class="text-sm text-gray-500">剩余空间</div>
+        </div>
+        <div>
+          <div class="text-2xl font-bold text-gray-600">100MB</div>
+          <div class="text-sm text-gray-500">总容量</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Management List -->
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">文档名称</th>
+            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">类型</th>
+            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">大小</th>
+            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-600">更新时间</th>
+            <th class="px-6 py-4 text-right text-sm font-semibold text-gray-600">操作</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100" id="manageList">
+          <!-- Management items -->
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Create Template Modal -->
+  <div id="createModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full p-6">
+      <div class="flex items-center justify-between mb-6">
+        <h3 class="text-xl font-bold text-gray-800">创建自定义模板</h3>
+        <button onclick="closeCreateModal()" class="text-gray-400 hover:text-gray-600">✕</button>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">模板名称</label>
+          <input type="text" placeholder="例如：我的日本行程" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">模板类型</label>
+          <select class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none bg-white">
+            <option>行程规划</option>
+            <option>预算记录</option>
+            <option>行李清单</option>
+            <option>旅行日记</option>
+            <option>其他</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">模板描述</label>
+          <textarea placeholder="描述模板用途..." rows="3" class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-purple-500 focus:outline-none resize-none"></textarea>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeCreateModal()" class="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition">
+          取消
+        </button>
+        <button onclick="createTemplate()" class="flex-1 py-3 bg-purple-600 text-white rounded-xl font-medium hover:bg-purple-700 transition">
+          创建模板
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Update Notification -->
+  <div class="fixed bottom-6 right-6 z-40">
+    <div id="updateAlert" class="hidden bg-white rounded-2xl shadow-2xl p-4 max-w-sm border-l-4 border-green-500">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl">🔔</span>
+        <div>
+          <h4 class="font-bold text-gray-800">文档更新提醒</h4>
+          <p class="text-sm text-gray-600 mt-1">《日本旅游完全指南》已更新至新版本</p>
+          <button class="mt-2 text-sm text-purple-600 font-medium hover:underline">立即查看 →</button>
+        </div>
+        <button onclick="closeAlert()" class="text-gray-400 hover:text-gray-600 ml-2">✕</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12 mt-auto">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <h3 class="text-white font-bold mb-4 flex items-center gap-2">
+            <span class="text-2xl">🧭</span> 游导旅游
+          </h3>
+          <p class="text-sm">您的贴心旅行助手</p>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">快速链接</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="../index.html" class="hover:text-white transition">首页</a></li>
+            <li><a href="index.html" class="hover:text-white transition">文档中心</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">实用工具</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="../tools/budget-calculator.html" class="hover:text-white transition">预算计算器</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">帮助支持</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="../help.html" class="hover:text-white transition">帮助中心</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 text-center text-sm">
+        <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Sample data
+    const downloadsData = [
+      {
+        id: 'd001',
+        title: '日本旅游完全指南',
+        format: 'PDF',
+        size: '15.6 MB',
+        downloadDate: '2024-03-20',
+        category: 'guides'
+      },
+      {
+        id: 'd002',
+        title: '7日日本行程规划表',
+        format: 'Excel',
+        size: '89 KB',
+        downloadDate: '2024-03-19',
+        category: 'itinerary'
+      },
+      {
+        id: 'd003',
+        title: '日本旅游签证申请表',
+        format: 'PDF',
+        size: '256 KB',
+        downloadDate: '2024-03-18',
+        category: 'visa'
+      },
+      {
+        id: 'd004',
+        title: '行李打包清单模板',
+        format: 'Excel',
+        size: '45 KB',
+        downloadDate: '2024-03-17',
+        category: 'templates'
+      },
+      {
+        id: 'd005',
+        title: '泰国曼谷清迈攻略',
+        format: 'PDF',
+        size: '8.9 MB',
+        downloadDate: '2024-03-15',
+        category: 'guides'
+      },
+      {
+        id: 'd006',
+        title: '旅行日记模板',
+        format: 'Word',
+        size: '3.2 MB',
+        downloadDate: '2024-03-14',
+        category: 'templates'
+      }
+    ];
+
+    const favoritesData = [
+      {
+        id: 'f001',
+        title: '日本旅游完全指南',
+        format: 'PDF',
+        size: '15.6 MB',
+        favoriteDate: '2024-03-20',
+        isHot: true
+      },
+      {
+        id: 'f002',
+        title: '旅行预算规划表',
+        format: 'Excel',
+        size: '67 KB',
+        favoriteDate: '2024-03-19',
+        isHot: true
+      },
+      {
+        id: 'f003',
+        title: '日本签证材料清单',
+        format: 'PDF',
+        size: '180 KB',
+        favoriteDate: '2024-03-18',
+        isHot: false
+      },
+      {
+        id: 'f004',
+        title: '东京地铁线路图2024',
+        format: 'PDF',
+        size: '4.5 MB',
+        favoriteDate: '2024-03-17',
+        isHot: true
+      },
+      {
+        id: 'f005',
+        title: '行李打包清单模板',
+        format: 'Excel',
+        size: '45 KB',
+        favoriteDate: '2024-03-15',
+        isHot: false
+      },
+      {
+        id: 'f006',
+        title: '美国旅游签证DS-160表',
+        format: 'PDF',
+        size: '1.2 MB',
+        favoriteDate: '2024-03-14',
+        isHot: true
+      }
+    ];
+
+    const customTemplates = [
+      {
+        id: 'c001',
+        title: '我的日本行程',
+        type: '行程规划',
+        createdDate: '2024-03-20',
+        items: 12
+      },
+      {
+        id: 'c002',
+        title: '欧洲游预算表',
+        type: '预算记录',
+        createdDate: '2024-03-18',
+        items: 8
+      },
+      {
+        id: 'c003',
+        title: '潜水之旅清单',
+        type: '行李清单',
+        createdDate: '2024-03-15',
+        items: 25
+      }
+    ];
+
+    let currentTab = 'downloads';
+
+    function createDocCard(doc, showDate = true, showRemove = false) {
+      const formatConfig = {
+        'PDF': { bg: 'bg-red-100', text: 'text-red-600' },
+        'Excel': { bg: 'bg-green-100', text: 'text-green-600' },
+        'Word': { bg: 'bg-blue-100', text: 'text-blue-600' }
+      };
+      const fmt = formatConfig[doc.format] || formatConfig['PDF'];
+
+      return `
+        <div class="doc-card bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300">
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-3">
+              <div class="${fmt.bg} ${fmt.text} px-3 py-1 rounded-lg text-xs font-semibold">${doc.format}</div>
+              ${showRemove ? '<button class="text-gray-400 hover:text-red-500 transition">🗑️</button>' : ''}
+            </div>
+            <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">${doc.title}</h3>
+            <p class="text-sm text-gray-500 mb-3">📦 ${doc.size}</p>
+            ${showDate ? `<p class="text-xs text-gray-400 mb-4">⬇️ ${doc.downloadDate || doc.favoriteDate}</p>` : '<p class="text-xs text-gray-400 mb-4">✏️ ${doc.createdDate}</p>'}
+            <div class="flex gap-2">
+              <button onclick="downloadAgain('${doc.id}')" class="flex-1 py-2 bg-purple-600 text-white rounded-xl font-medium text-sm hover:bg-purple-700 transition flex items-center justify-center gap-2">
+                <span>⬇️</span> 下载
+              </button>
+              <button onclick="removeFromList('${doc.id}')" class="px-3 py-2 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition">
+                ❤️
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderDownloads() {
+      const grid = document.getElementById('downloadsGrid');
+      grid.innerHTML = downloadsData.map(doc => createDocCard(doc, true, true)).join('');
+    }
+
+    function renderFavorites() {
+      const grid = document.getElementById('favoritesGrid');
+      grid.innerHTML = favoritesData.map(doc => createDocCard(doc, true, true)).join('');
+    }
+
+    function renderCustom() {
+      const grid = document.getElementById('customGrid');
+      const empty = document.getElementById('emptyCustom');
+      
+      if (customTemplates.length === 0) {
+        grid.classList.add('hidden');
+        empty.classList.remove('hidden');
+      } else {
+        grid.classList.remove('hidden');
+        empty.classList.add('hidden');
+        grid.innerHTML = customTemplates.map(tpl => `
+          <div class="doc-card bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300">
+            <div class="p-5">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="px-3 py-1 bg-purple-100 text-purple-600 rounded-lg text-xs font-semibold">${tpl.type}</span>
+              </div>
+              <h3 class="font-bold text-gray-800 mb-2">${tpl.title}</h3>
+              <p class="text-sm text-gray-500 mb-4">📝 ${tpl.items} 个项目 · 创建于 ${tpl.createdDate}</p>
+              <div class="flex gap-2">
+                <button class="flex-1 py-2 bg-purple-600 text-white rounded-xl font-medium text-sm hover:bg-purple-700 transition">
+                  ✏️ 编辑
+                </button>
+                <button class="px-3 py-2 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition">
+                  📤
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderManage() {
+      const list = document.getElementById('manageList');
+      const allItems = [...downloadsData.map(d => ({...d, type: d.format, date: d.downloadDate}))];
+      
+      list.innerHTML = allItems.map(item => `
+        <tr class="hover:bg-gray-50">
+          <td class="px-6 py-4">
+            <div class="font-medium text-gray-800">${item.title}</div>
+          </td>
+          <td class="px-6 py-4">
+            <span class="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">${item.type}</span>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-600">${item.size}</td>
+          <td class="px-6 py-4 text-sm text-gray-600">${item.date}</td>
+          <td class="px-6 py-4 text-right">
+            <button class="text-purple-600 hover:text-purple-800 text-sm font-medium mr-3">下载</button>
+            <button class="text-red-500 hover:text-red-700 text-sm font-medium">删除</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Tab handling
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('active', 'bg-purple-600', 'text-white');
+          b.classList.add('bg-gray-100');
+        });
+        btn.classList.add('active');
+        btn.classList.remove('bg-gray-100');
+        
+        currentTab = btn.dataset.tab;
+        
+        document.querySelectorAll('.tab-content').forEach(tab => {
+          tab.classList.add('hidden');
+        });
+        document.getElementById(`${currentTab}Tab`).classList.remove('hidden');
+      });
+    });
+
+    function downloadAgain(docId) {
+      alert('正在重新下载文档...\n(演示模式)');
+    }
+
+    function removeFromList(docId) {
+      alert('已从列表中移除');
+    }
+
+    function openCreateModal() {
+      document.getElementById('createModal').classList.remove('hidden');
+      document.getElementById('createModal').classList.add('flex');
+    }
+
+    function closeCreateModal() {
+      document.getElementById('createModal').classList.add('hidden');
+      document.getElementById('createModal').classList.remove('flex');
+    }
+
+    function createTemplate() {
+      alert('模板创建成功！\n(演示模式)');
+      closeCreateModal();
+    }
+
+    function closeAlert() {
+      document.getElementById('updateAlert').classList.add('hidden');
+    }
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    // Initialize
+    renderDownloads();
+    renderFavorites();
+    renderCustom();
+    renderManage();
+
+    // Show update notification after 3 seconds
+    setTimeout(() => {
+      document.getElementById('updateAlert').classList.remove('hidden');
+    }, 3000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>写日记 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+            warm: '#f59e0b',
+            soft: '#fef3c7',
+            blush: '#fecaca',
+            mint: '#d1fae5'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .gradient-warm { background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%); }
+    .mood-selector { transition: all 0.2s ease; }
+    .mood-selector:hover { transform: scale(1.1); }
+    .mood-selector.selected { transform: scale(1.15); box-shadow: 0 0 0 3px currentColor, 0 8px 20px rgba(0,0,0,0.15); }
+    .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; }
+    .photo-item { aspect-ratio: 1; border-radius: 12px; overflow: hidden; position: relative; }
+    .photo-item img { width: 100%; height: 100%; object-fit: cover; }
+    .photo-item .remove-btn { position: absolute; top: 4px; right: 4px; width: 24px; height: 24px; background: rgba(0,0,0,0.6); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
+    .photo-item:hover .remove-btn { opacity: 1; }
+    .tag-chip { transition: all 0.2s ease; cursor: pointer; }
+    .tag-chip:hover { transform: scale(1.05); }
+    .tag-chip.selected { background: linear-gradient(135deg, #0ea5e9, #06b6d4); color: white; }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .slide-up { animation: slideUp 0.4s ease; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    textarea { resize: none; }
+    .char-count { transition: color 0.2s; }
+    .char-count.warning { color: #f59e0b; }
+    .char-count.danger { color: #ef4444; }
+    .weather-btn { transition: all 0.2s ease; }
+    .weather-btn:hover { transform: scale(1.1); background: #e0f2fe; }
+    .weather-btn.selected { background: #0ea5e9; color: white; }
+    .privacy-btn { transition: all 0.2s ease; }
+    .privacy-btn:hover { transform: scale(1.02); background: #f3f4f6; }
+    .privacy-btn.selected { background: #0ea5e9; color: white; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg backdrop-blur-md bg-opacity-95">
+    <div class="max-w-6xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="flex items-center gap-6">
+          <a href="index.html" class="hover:opacity-80 transition flex items-center gap-1">
+            📔 旅行日记
+          </a>
+          <a href="statistics.html" class="hover:opacity-80 transition flex items-center gap-1">
+            📊 统计
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8 fade-in">
+      <div class="inline-block px-4 py-1.5 bg-amber-100 rounded-full text-sm mb-4">✨ 记录今天的美好</div>
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">✍️ 写日记</h1>
+      <p class="text-gray-600">用文字和照片记录旅途中的点点滴滴</p>
+    </div>
+
+    <form id="diaryForm" class="space-y-6">
+      <!-- Title -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 slide-up">
+        <label class="block text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+          <span class="text-xl">📝</span> 标题
+        </label>
+        <input type="text" id="title" name="title" placeholder="给这篇日记起个标题..." 
+               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none text-lg transition"
+               maxlength="50">
+        <p class="text-sm text-gray-400 mt-2 text-right"><span id="titleCount">0</span>/50</p>
+      </div>
+
+      <!-- Content -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 slide-up" style="animation-delay: 0.1s">
+        <label class="block text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+          <span class="text-xl">💭</span> 内容
+        </label>
+        <textarea id="content" name="content" rows="8" placeholder="今天发生了什么有趣的事？分享你的旅行故事..." 
+                  class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition text-gray-700 leading-relaxed"
+                  oninput="updateWordCount()"></textarea>
+        <div class="flex justify-between mt-2">
+          <p class="text-sm text-gray-400">至少写10个字</p>
+          <p class="text-sm char-count"><span id="wordCount">0</span> 字</p>
+        </div>
+      </div>
+
+      <!-- Mood Selection -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 slide-up" style="animation-delay: 0.15s">
+        <label class="block text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-xl">😊</span> 今天的心情
+        </label>
+        <div id="moodSelector" class="grid grid-cols-4 md:grid-cols-8 gap-3">
+          <!-- Dynamically populated -->
+        </div>
+        <input type="hidden" id="selectedMood" name="mood" value="">
+      </div>
+
+      <!-- Weather Selection -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 slide-up" style="animation-delay: 0.2s">
+        <label class="block text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-xl">🌤️</span> 天气
+        </label>
+        <div id="weatherSelector" class="flex flex-wrap gap-3">
+          <!-- Dynamically populated -->
+        </div>
+        <input type="hidden" id="selectedWeather" name="weather" value="">
+      </div>
+
+      <!-- Location -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 slide-up" style="animation-delay: 0.25s">
+        <label class="block text-lg font-semibold text-gray-800 mb-3 flex items-center gap-2">
+          <span class="text-xl">📍</span> 地点
+        </label>
+        <input type="text" id="location" name="location" placeholder="例如：杭州西湖、云南大理..." 
+               class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition">
+        <p class="text-sm text-gray-400 mt-2">可以输入景点名称或地点描述</p>
+      </div>
+
+      <!-- Tags -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 slide-up" style="animation-delay: 0.3s">
+        <label class="block text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-xl">🏷️</span> 标签（可多选）
+        </label>
+        <div id="tagSelector" class="flex flex-wrap gap-2">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+
+      <!-- Photos -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 slide-up" style="animation-delay: 0.35s">
+        <label class="block text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-xl">📷</span> 添加照片
+        </label>
+        <div class="photo-grid mb-4" id="photoGrid">
+          <!-- Photos will be added here -->
+        </div>
+        <label class="flex items-center justify-center gap-2 px-6 py-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary hover:bg-blue-50 transition">
+          <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+          </svg>
+          <span class="text-gray-500 font-medium">点击上传照片</span>
+          <input type="file" id="photoInput" accept="image/*" multiple class="hidden" onchange="handlePhotoUpload(event)">
+        </label>
+      </div>
+
+      <!-- Privacy -->
+      <div class="bg-white rounded-2xl shadow-lg p-6 slide-up" style="animation-delay: 0.4s">
+        <label class="block text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-xl">🔒</span> 隐私设置
+        </label>
+        <div id="privacySelector" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Dynamically populated -->
+        </div>
+        <input type="hidden" id="selectedPrivacy" name="privacy" value="private">
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+        <button type="button" onclick="saveDraft()" class="px-8 py-4 bg-gray-100 text-gray-700 rounded-full font-bold text-lg flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+          📋 保存草稿
+        </button>
+        <button type="submit" class="px-8 py-4 gradient-warm text-white rounded-full font-bold text-lg flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition">
+          ✨ 发布日记
+        </button>
+        <a href="index.html" class="px-8 py-4 bg-white text-gray-600 rounded-full font-bold text-lg flex items-center justify-center gap-2 hover:bg-gray-50 transition border border-gray-200">
+          ← 返回
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-gray-800 text-white rounded-full shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    <span id="toastMessage">提示信息</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-8 mt-16">
+    <div class="max-w-6xl mx-auto px-4 text-center">
+      <p class="text-gray-400">&copy; 2024 游导旅游. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Data management
+    const STORAGE_KEY = 'travelDiaries';
+    let diaryData = [];
+    let configData = null;
+    let uploadedPhotos = [];
+    let selectedTags = [];
+    let editDiaryId = null;
+
+    // Load data
+    async function loadData() {
+      try {
+        const response = await fetch('data/diary.json');
+        configData = await response.json();
+        loadDiariesFromStorage();
+        renderMoodSelector();
+        renderWeatherSelector();
+        renderTagSelector();
+        renderPrivacySelector();
+        checkEditMode();
+        setupFormListeners();
+      } catch (error) {
+        console.error('Failed to load data:', error);
+        renderMoodSelector();
+        renderWeatherSelector();
+        renderTagSelector();
+        renderPrivacySelector();
+        checkEditMode();
+        setupFormListeners();
+      }
+    }
+
+    function loadDiariesFromStorage() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        diaryData = JSON.parse(stored);
+      }
+    }
+
+    function saveDiariesToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(diaryData));
+    }
+
+    // Check if editing existing diary
+    function checkEditMode() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('edit');
+      if (id) {
+        editDiaryId = id;
+        const diary = diaryData.find(d => d.id === id);
+        if (diary) {
+          document.title = '编辑日记 - 游导旅游';
+          document.querySelector('h1').textContent = '✏️ 编辑日记';
+          document.getElementById('title').value = diary.title || '';
+          document.getElementById('content').value = diary.content || '';
+          document.getElementById('location').value = diary.location || '';
+          document.getElementById('selectedMood').value = diary.mood || '';
+          document.getElementById('selectedWeather').value = diary.weather || '';
+          document.getElementById('selectedPrivacy').value = diary.privacy || 'private';
+          
+          if (diary.photos) {
+            uploadedPhotos = [...diary.photos];
+            renderPhotoGrid();
+          }
+          if (diary.tags) {
+            selectedTags = [...diary.tags];
+            renderTagSelector();
+          }
+          
+          updateWordCount();
+          updateTitleCount();
+          selectMood(diary.mood);
+          selectWeather(diary.weather);
+          selectPrivacy(diary.privacy);
+        }
+      }
+    }
+
+    // Mood selector
+    function renderMoodSelector() {
+      const container = document.getElementById('moodSelector');
+      const moods = configData?.moods || [];
+      
+      container.innerHTML = moods.map(mood => `
+        <button type="button" onclick="selectMood('${mood.id}')" 
+                class="mood-selector flex flex-col items-center gap-1 p-3 rounded-xl border-2 border-transparent"
+                data-mood="${mood.id}" style="border-color: ${mood.bgColor}">
+          <span class="text-3xl">${mood.emoji}</span>
+          <span class="text-xs font-medium" style="color: ${mood.color}">${mood.label}</span>
+        </button>
+      `).join('');
+    }
+
+    function selectMood(moodId) {
+      document.getElementById('selectedMood').value = moodId;
+      const moods = configData?.moods || [];
+      document.querySelectorAll('.mood-selector').forEach(btn => {
+        const mood = moods.find(m => m.id === btn.dataset.mood);
+        if (btn.dataset.mood === moodId && mood) {
+          btn.classList.add('selected');
+          btn.style.background = mood.bgColor;
+        } else {
+          btn.classList.remove('selected');
+          btn.style.background = 'transparent';
+        }
+      });
+    }
+
+    // Weather selector
+    function renderWeatherSelector() {
+      const container = document.getElementById('weatherSelector');
+      const weathers = configData?.weathers || [];
+      
+      container.innerHTML = weathers.map(weather => `
+        <button type="button" onclick="selectWeather('${weather.id}')" 
+                class="weather-btn px-4 py-2 rounded-full border border-gray-200 flex items-center gap-2"
+                data-weather="${weather.id}">
+          <span class="text-xl">${weather.emoji}</span>
+          <span class="text-sm font-medium text-gray-600">${weather.label}</span>
+        </button>
+      `).join('');
+    }
+
+    function selectWeather(weatherId) {
+      document.getElementById('selectedWeather').value = weatherId;
+      document.querySelectorAll('.weather-btn').forEach(btn => {
+        if (btn.dataset.weather === weatherId) {
+          btn.classList.add('selected');
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+    }
+
+    // Tag selector
+    function renderTagSelector() {
+      const container = document.getElementById('tagSelector');
+      const tags = configData?.tags || [];
+      
+      container.innerHTML = tags.map(tag => `
+        <span onclick="toggleTag('${tag}')" 
+              class="tag-chip px-4 py-2 rounded-full border border-gray-200 text-sm font-medium ${selectedTags.includes(tag) ? 'selected' : ''}"
+              data-tag="${tag}">
+          ${tag}
+        </span>
+      `).join('');
+    }
+
+    function toggleTag(tag) {
+      const index = selectedTags.indexOf(tag);
+      if (index > -1) {
+        selectedTags.splice(index, 1);
+      } else {
+        selectedTags.push(tag);
+      }
+      renderTagSelector();
+    }
+
+    // Privacy selector
+    function renderPrivacySelector() {
+      const container = document.getElementById('privacySelector');
+      const options = configData?.privacyOptions || [];
+      
+      container.innerHTML = options.map(option => `
+        <button type="button" onclick="selectPrivacy('${option.id}')" 
+                class="privacy-btn p-4 rounded-xl border-2 border-gray-200 text-center ${option.id === 'private' ? 'selected' : ''}"
+                data-privacy="${option.id}" id="privacy-${option.id}">
+          <div class="text-2xl mb-2">${option.emoji}</div>
+          <div class="font-semibold text-gray-800">${option.label}</div>
+          <div class="text-xs text-gray-500 mt-1">${option.desc}</div>
+        </button>
+      `).join('');
+      
+      document.querySelectorAll('.privacy-btn').forEach(btn => {
+        if (btn.dataset.privacy === 'private') {
+          btn.classList.add('selected', 'bg-primary', 'text-white', 'border-primary');
+          btn.querySelector('.text-gray-800')?.classList.add('text-white');
+          btn.querySelector('.text-gray-500')?.classList.add('text-blue-100');
+        }
+      });
+    }
+
+    function selectPrivacy(privacyId) {
+      document.getElementById('selectedPrivacy').value = privacyId;
+      const options = configData?.privacyOptions || [];
+      document.querySelectorAll('.privacy-btn').forEach(btn => {
+        const option = options.find(o => o.id === btn.dataset.privacy);
+        if (btn.dataset.privacy === privacyId) {
+          btn.classList.add('selected', 'bg-primary', 'text-white', 'border-primary');
+          btn.style.background = '#0ea5e9';
+          btn.style.borderColor = '#0ea5e9';
+          btn.querySelector('.text-gray-800')?.classList.add('text-white');
+          btn.querySelector('.text-gray-800')?.classList.remove('text-gray-800');
+          btn.querySelector('.text-gray-500')?.classList.add('text-blue-100');
+          btn.querySelector('.text-gray-500')?.classList.remove('text-gray-500');
+        } else {
+          btn.classList.remove('selected', 'bg-primary', 'text-white', 'border-primary');
+          btn.style.background = 'transparent';
+          btn.style.borderColor = '#e5e7eb';
+          btn.querySelector('.text-gray-800')?.classList.remove('text-white');
+          btn.querySelector('.text-gray-800')?.classList.add('text-gray-800');
+          btn.querySelector('.text-gray-500')?.classList.remove('text-blue-100');
+          btn.querySelector('.text-gray-500')?.classList.add('text-gray-500');
+        }
+      });
+    }
+
+    // Photo handling
+    function handlePhotoUpload(event) {
+      const files = event.target.files;
+      for (let file of files) {
+        if (uploadedPhotos.length >= 9) {
+          showToast('最多只能上传9张照片');
+          break;
+        }
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          uploadedPhotos.push(e.target.result);
+          renderPhotoGrid();
+        };
+        reader.readAsDataURL(file);
+      }
+      event.target.value = '';
+    }
+
+    function removePhoto(index) {
+      uploadedPhotos.splice(index, 1);
+      renderPhotoGrid();
+    }
+
+    function renderPhotoGrid() {
+      const container = document.getElementById('photoGrid');
+      if (uploadedPhotos.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+      
+      container.innerHTML = uploadedPhotos.map((photo, index) => `
+        <div class="photo-item">
+          <img src="${photo}" alt="照片 ${index + 1}">
+          <div class="remove-btn" onclick="removePhoto(${index})">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Word count
+    function updateWordCount() {
+      const content = document.getElementById('content').value;
+      const count = content.trim().length;
+      const countEl = document.getElementById('wordCount');
+      countEl.textContent = count;
+      
+      if (count > 0 && count < 10) {
+        countEl.parentElement.classList.add('warning');
+        countEl.parentElement.classList.remove('danger');
+      } else if (count >= 5000) {
+        countEl.parentElement.classList.add('danger');
+        countEl.parentElement.classList.remove('warning');
+      } else {
+        countEl.parentElement.classList.remove('warning', 'danger');
+      }
+    }
+
+    function updateTitleCount() {
+      const title = document.getElementById('title').value;
+      document.getElementById('titleCount').textContent = title.length;
+    }
+
+    // Form listeners
+    function setupFormListeners() {
+      document.getElementById('title').addEventListener('input', updateTitleCount);
+      
+      document.getElementById('diaryForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        submitDiary();
+      });
+    }
+
+    // Submit diary
+    function submitDiary() {
+      const title = document.getElementById('title').value.trim();
+      const content = document.getElementById('content').value.trim();
+      const mood = document.getElementById('selectedMood').value;
+      const weather = document.getElementById('selectedWeather').value;
+      const location = document.getElementById('location').value.trim();
+      const privacy = document.getElementById('selectedPrivacy').value;
+
+      if (!title) {
+        showToast('请输入标题');
+        document.getElementById('title').focus();
+        return;
+      }
+
+      if (!content || content.length < 10) {
+        showToast('内容至少需要10个字');
+        document.getElementById('content').focus();
+        return;
+      }
+
+      if (!mood) {
+        showToast('请选择心情');
+        return;
+      }
+
+      const now = new Date().toISOString();
+      const diary = {
+        id: editDiaryId || 'd' + Date.now(),
+        title,
+        content,
+        mood,
+        weather,
+        location,
+        tags: [...selectedTags],
+        photos: [...uploadedPhotos],
+        privacy,
+        wordCount: content.length,
+        createdAt: editDiaryId ? diaryData.find(d => d.id === editDiaryId)?.createdAt || now : now,
+        updatedAt: now
+      };
+
+      if (editDiaryId) {
+        const index = diaryData.findIndex(d => d.id === editDiaryId);
+        if (index > -1) {
+          diaryData[index] = diary;
+        }
+        showToast('日记已更新');
+      } else {
+        diaryData.unshift(diary);
+        showToast('日记发布成功！');
+      }
+
+      saveDiariesToStorage();
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1000);
+    }
+
+    // Save draft
+    function saveDraft() {
+      const draft = {
+        title: document.getElementById('title').value,
+        content: document.getElementById('content').value,
+        mood: document.getElementById('selectedMood').value,
+        weather: document.getElementById('selectedWeather').value,
+        location: document.getElementById('location').value,
+        tags: [...selectedTags],
+        photos: [...uploadedPhotos],
+        privacy: document.getElementById('selectedPrivacy').value,
+        savedAt: new Date().toISOString()
+      };
+      localStorage.setItem('diaryDraft', JSON.stringify(draft));
+      showToast('草稿已保存');
+    }
+
+    // Toast
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.classList.remove('opacity-0');
+      toast.classList.add('opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100');
+        toast.classList.add('opacity-0');
+      }, 2500);
+    }
+
+    // Initialize
+    loadData();
+
+    // Load draft on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      const draft = localStorage.getItem('diaryDraft');
+      if (draft && !editDiaryId) {
+        const draftData = JSON.parse(draft);
+        if (confirm('发现未保存的草稿，是否继续编辑？')) {
+          document.getElementById('title').value = draftData.title || '';
+          document.getElementById('content').value = draftData.content || '';
+          document.getElementById('location').value = draftData.location || '';
+          if (draftData.mood) selectMood(draftData.mood);
+          if (draftData.weather) selectWeather(draftData.weather);
+          if (draftData.privacy) selectPrivacy(draftData.privacy);
+          if (draftData.tags) {
+            selectedTags = [...draftData.tags];
+            renderTagSelector();
+          }
+          if (draftData.photos) {
+            uploadedPhotos = [...draftData.photos];
+            renderPhotoGrid();
+          }
+          updateWordCount();
+          updateTitleCount();
+        } else {
+          localStorage.removeItem('diaryDraft');
+        }
+      }
+    });
+  </script>
+</body>
+</html>

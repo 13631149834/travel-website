@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>汇率提醒 - 游导旅游</title>
+  <style>
+    :root {
+      --primary: #4F86F7;
+      --secondary: #3B82F6;
+      --success: #10B981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-primary: #1f2937;
+      --text-secondary: #6b7280;
+      --bg-light: #f9fafb;
+      --border-color: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      color: var(--text-primary);
+      line-height: 1.6;
+      background: var(--bg-light);
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* 导航栏 */
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      height: 60px;
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .navbar .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .navbar .nav-links {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .navbar .nav-links a {
+      color: #333;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+
+    .navbar .nav-links a:hover {
+      color: var(--primary);
+      text-decoration: none;
+    }
+
+    .navbar .nav-links a.active {
+      color: var(--primary);
+      font-weight: 500;
+    }
+
+    /* 页面标题 */
+    .page-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      padding: 48px 0;
+      text-align: center;
+      color: #fff;
+    }
+
+    .page-header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    /* 主内容 */
+    .main-content {
+      padding: 32px 0;
+    }
+
+    /* 设置提醒表单 */
+    .alert-form-section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 32px;
+    }
+
+    .alert-form-section h2 {
+      font-size: 1.25rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group.full-width {
+      grid-column: span 2;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .form-group label .required {
+      color: var(--danger);
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 1rem;
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--bg-light);
+      transition: all 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .form-group input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    .form-group input[type="number"]::-webkit-inner-spin-button,
+    .form-group input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+    }
+
+    .form-group .hint {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+
+    .target-currency {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg-light);
+      border-radius: 12px;
+      margin-bottom: 16px;
+    }
+
+    .target-currency .flag {
+      font-size: 2rem;
+    }
+
+    .target-currency .info {
+      flex: 1;
+    }
+
+    .target-currency .info .code {
+      font-weight: 600;
+      font-size: 1.125rem;
+    }
+
+    .target-currency .info .name {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .target-currency .current-rate {
+      text-align: right;
+    }
+
+    .target-currency .current-rate .rate {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .target-currency .current-rate .label {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .rate-input-group {
+      position: relative;
+    }
+
+    .rate-input-group .unit {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .rate-input-group input {
+      padding-left: 48px;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: var(--secondary);
+    }
+
+    .btn-secondary {
+      background: var(--bg-light);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: #e5e7eb;
+    }
+
+    /* 提醒列表 */
+    .alerts-section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 32px;
+    }
+
+    .alerts-section h2 {
+      font-size: 1.25rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-count {
+      background: var(--primary);
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: normal;
+    }
+
+    .alerts-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px;
+      background: var(--bg-light);
+      border-radius: 12px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .alert-item.achieved {
+      border-left-color: var(--success);
+      background: #f0fdf4;
+    }
+
+    .alert-item.disabled {
+      border-left-color: var(--text-secondary);
+      opacity: 0.6;
+    }
+
+    .alert-item .alert-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .alert-item .currency-badge {
+      font-size: 1.5rem;
+      background: #fff;
+      padding: 8px;
+      border-radius: 8px;
+    }
+
+    .alert-item .alert-details {
+      flex: 1;
+    }
+
+    .alert-item .alert-pair {
+      font-weight: 600;
+      font-size: 1rem;
+    }
+
+    .alert-item .alert-condition {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-item .alert-condition .arrow {
+      color: var(--success);
+    }
+
+    .alert-item .alert-meta {
+      text-align: right;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .alert-item .alert-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: 16px;
+    }
+
+    .alert-item .action-btn {
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .alert-item .action-btn.edit {
+      background: #e0f2fe;
+      color: var(--primary);
+    }
+
+    .alert-item .action-btn.delete {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    .alert-item .action-btn.toggle {
+      background: #fef3c7;
+      color: var(--warning);
+    }
+
+    .alert-item .action-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .achieved-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: var(--success);
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* 提醒说明 */
+    .tips-section {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      margin-bottom: 32px;
+    }
+
+    .tips-section h2 {
+      font-size: 1.25rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .tip-card {
+      padding: 20px;
+      background: var(--bg-light);
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .tip-card .tip-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+
+    .tip-card h4 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+
+    .tip-card p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* 模态框 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 500px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: scale(0.9);
+      transition: transform 0.3s;
+    }
+
+    .modal-overlay.active .modal {
+      transform: scale(1);
+    }
+
+    .modal h3 {
+      font-size: 1.25rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--bg-light);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+    }
+
+    .empty-state .icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    .empty-state h3 {
+      font-size: 1.125rem;
+      margin-bottom: 8px;
+    }
+
+    .empty-state p {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    /* 页脚 */
+    .footer {
+      background: #1f2937;
+      color: #fff;
+      padding: 48px 0 24px;
+      margin-top: 48px;
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .footer-section h4 {
+      font-size: 1rem;
+      margin-bottom: 16px;
+    }
+
+    .footer-section a {
+      display: block;
+      color: #9ca3af;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      transition: color 0.2s;
+    }
+
+    .footer-section a:hover {
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 24px;
+      border-top: 1px solid #374151;
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .navbar .nav-links {
+        display: none;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full-width {
+        grid-column: span 1;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .alert-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+      }
+
+      .alert-item .alert-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: flex-end;
+      }
+
+      .tips-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .btn-group {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="logo">
+      <span>🌍</span>
+      <span>游导旅游</span>
+    </div>
+    <div class="nav-links">
+      <a href="/">首页</a>
+      <a href="/destinations">目的地</a>
+      <a href="/routes">旅游路线</a>
+      <a href="/guides">导游</a>
+      <a href="/currency" class="active">汇率工具</a>
+      <a href="/tips">旅行攻略</a>
+    </div>
+  </nav>
+
+  <!-- 页面标题 -->
+  <header class="page-header">
+    <div class="container">
+      <h1>🔔 汇率提醒</h1>
+      <p>设置目标汇率，到达时自动提醒您</p>
+    </div>
+  </header>
+
+  <!-- 主内容 -->
+  <main class="main-content">
+    <div class="container">
+      <!-- 设置提醒表单 -->
+      <section class="alert-form-section">
+        <h2>➕ 设置汇率提醒</h2>
+        <form id="alert-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>源货币 <span class="required">*</span></label>
+              <select id="from-currency" required>
+                <option value="CNY" selected>🇨🇳 人民币 (CNY)</option>
+                <option value="USD">🇺🇸 美元 (USD)</option>
+                <option value="EUR">🇪🇺 欧元 (EUR)</option>
+                <option value="GBP">🇬🇧 英镑 (GBP)</option>
+                <option value="JPY">🇯🇵 日元 (JPY)</option>
+                <option value="KRW">🇰🇷 韩元 (KRW)</option>
+                <option value="HKD">🇭🇰 港币 (HKD)</option>
+                <option value="TWD">🇹🇼 新台币 (TWD)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>目标货币 <span class="required">*</span></label>
+              <select id="to-currency" required>
+                <option value="USD" selected>🇺🇸 美元 (USD)</option>
+                <option value="EUR">🇪🇺 欧元 (EUR)</option>
+                <option value="GBP">🇬🇧 英镑 (GBP)</option>
+                <option value="JPY">🇯🇵 日元 (JPY)</option>
+                <option value="KRW">🇰🇷 韩元 (KRW)</option>
+                <option value="HKD">🇭🇰 港币 (HKD)</option>
+                <option value="TWD">🇹🇼 新台币 (TWD)</option>
+                <option value="THB">🇹🇭 泰铢 (THB)</option>
+              </select>
+            </div>
+
+            <div class="form-group full-width">
+              <div class="target-currency" id="target-currency">
+                <span class="flag">🇺🇸</span>
+                <div class="info">
+                  <div class="code">USD</div>
+                  <div class="name">美元 / 美元</div>
+                </div>
+                <div class="current-rate">
+                  <div class="rate">7.2500</div>
+                  <div class="label">当前汇率</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>提醒条件 <span class="required">*</span></label>
+              <select id="condition" required>
+                <option value="above">汇率高于</option>
+                <option value="below">汇率低于</option>
+                <option value="equal">汇率等于</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>目标汇率 <span class="required">*</span></label>
+              <div class="rate-input-group">
+                <span class="unit">1 CNY =</span>
+                <input type="number" id="target-rate" step="0.0001" placeholder="7.2500" required>
+              </div>
+            </div>
+
+            <div class="form-group full-width">
+              <label>提醒名称（选填）</label>
+              <input type="text" id="alert-name" placeholder="例如：赴美旅游备用金">
+            </div>
+
+            <div class="form-group">
+              <label>通知方式</label>
+              <select id="notify-method">
+                <option value="both">站内通知 + 邮件</option>
+                <option value="site">仅站内通知</option>
+                <option value="email">仅邮件通知</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>备注（选填）</label>
+              <input type="text" id="note" placeholder="添加备注信息">
+            </div>
+          </div>
+
+          <div class="btn-group">
+            <button type="submit" class="btn btn-primary">
+              <span>✨</span> 创建提醒
+            </button>
+            <button type="reset" class="btn btn-secondary">
+              <span>🔄</span> 重置
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- 提醒列表 -->
+      <section class="alerts-section">
+        <h2>📋 我的提醒 <span class="alert-count" id="alert-count">3</span></h2>
+        <div class="alerts-list" id="alerts-list">
+          <!-- 动态渲染 -->
+        </div>
+      </section>
+
+      <!-- 提示说明 -->
+      <section class="tips-section">
+        <h2>💡 使用提示</h2>
+        <div class="tips-grid">
+          <div class="tip-card">
+            <div class="tip-icon">🎯</div>
+            <h4>设置合理目标</h4>
+            <p>建议参考近期汇率走势，设置一个可实现但有吸引力的目标汇率</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">⏰</div>
+            <h4>及时关注提醒</h4>
+            <p>收到提醒后，建议尽快完成兑换操作，避免汇率波动</p>
+          </div>
+          <div class="tip-card">
+            <div class="tip-icon">📊</div>
+            <h4>关注汇率走势</h4>
+            <p>定期查看汇率走势，了解最佳兑换时机</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- 编辑模态框 -->
+  <div class="modal-overlay" id="edit-modal">
+    <div class="modal">
+      <h3>✏️ 编辑提醒</h3>
+      <form id="edit-form">
+        <input type="hidden" id="edit-id">
+        <div class="form-group">
+          <label>提醒条件</label>
+          <select id="edit-condition" required>
+            <option value="above">汇率高于</option>
+            <option value="below">汇率低于</option>
+            <option value="equal">汇率等于</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>目标汇率</label>
+          <div class="rate-input-group">
+            <span class="unit">1 CNY =</span>
+            <input type="number" id="edit-rate" step="0.0001" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>提醒名称</label>
+          <input type="text" id="edit-name" placeholder="提醒名称">
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="btn btn-primary">保存修改</button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">取消</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h4>关于游导</h4>
+          <a href="/about">关于我们</a>
+          <a href="/achievements">荣誉资质</a>
+          <a href="/contact">联系我们</a>
+        </div>
+        <div class="footer-section">
+          <h4>旅行服务</h4>
+          <a href="/routes">旅游路线</a>
+          <a href="/guides">导游预约</a>
+          <a href="/activities">特色活动</a>
+        </div>
+        <div class="footer-section">
+          <h4>实用工具</h4>
+          <a href="/currency">汇率换算</a>
+          <a href="/weather">天气预报</a>
+          <a href="/translate">翻译工具</a>
+        </div>
+        <div class="footer-section">
+          <h4>帮助中心</h4>
+          <a href="/faq">常见问题</a>
+          <a href="/terms">用户协议</a>
+          <a href="/privacy">隐私政策</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // 货币数据
+    const currencies = {
+      CNY: { name: '人民币', flag: '🇨🇳', rate: 1 },
+      USD: { name: '美元', flag: '🇺🇸', rate: 7.25 },
+      EUR: { name: '欧元', flag: '🇪🇺', rate: 7.85 },
+      GBP: { name: '英镑', flag: '🇬🇧', rate: 9.15 },
+      JPY: { name: '日元', flag: '🇯🇵', rate: 0.048 },
+      KRW: { name: '韩元', flag: '🇰🇷', rate: 0.0054 },
+      HKD: { name: '港币', flag: '🇭🇰', rate: 0.93 },
+      TWD: { name: '新台币', flag: '🇹🇼', rate: 0.23 },
+      THB: { name: '泰铢', flag: '🇹🇭', rate: 0.21 },
+      SGD: { name: '新加坡元', flag: '🇸🇬', rate: 5.38 },
+      AUD: { name: '澳元', flag: '🇦🇺', rate: 4.72 },
+      CAD: { name: '加元', flag: '🇨🇦', rate: 5.35 },
+      CHF: { name: '瑞士法郎', flag: '🇨🇭', rate: 8.12 }
+    };
+
+    // 提醒列表（模拟数据）
+    let alerts = [
+      {
+        id: 1,
+        from: 'CNY',
+        to: 'USD',
+        condition: 'below',
+        targetRate: 7.20,
+        name: '赴美旅游备用金',
+        notifyMethod: 'both',
+        status: 'active',
+        createdAt: '2026-03-20 10:30',
+        achieved: false
+      },
+      {
+        id: 2,
+        from: 'CNY',
+        to: 'EUR',
+        condition: 'below',
+        targetRate: 7.80,
+        name: '欧洲购物预算',
+        notifyMethod: 'site',
+        status: 'active',
+        createdAt: '2026-03-18 14:20',
+        achieved: false
+      },
+      {
+        id: 3,
+        from: 'CNY',
+        to: 'JPY',
+        condition: 'above',
+        targetRate: 0.050,
+        name: '日本留学费用',
+        notifyMethod: 'email',
+        status: 'disabled',
+        createdAt: '2026-03-15 09:00',
+        achieved: false
+      }
+    ];
+
+    let alertIdCounter = 4;
+
+    // 渲染提醒列表
+    function renderAlerts() {
+      const list = document.getElementById('alerts-list');
+      const countEl = document.getElementById('alert-count');
+      
+      countEl.textContent = alerts.length;
+
+      if (alerts.length === 0) {
+        list.innerHTML = `
+          <div class="empty-state">
+            <div class="icon">🔔</div>
+            <h3>暂无汇率提醒</h3>
+            <p>设置目标汇率，当汇率达到时我们会通知您</p>
+          </div>
+        `;
+        return;
+      }
+
+      list.innerHTML = alerts.map(alert => {
+        const fromCurrency = currencies[alert.from];
+        const toCurrency = currencies[alert.to];
+        const currentRate = (fromCurrency.rate / toCurrency.rate).toFixed(4);
+        const conditionText = alert.condition === 'above' ? '高于' : alert.condition === 'below' ? '低于' : '等于';
+        const conditionIcon = alert.condition === 'above' ? '↑' : '↓';
+        const achieved = checkAchievement(alert, currentRate);
+
+        return `
+          <div class="alert-item ${alert.status === 'disabled' ? 'disabled' : ''} ${achieved ? 'achieved' : ''}">
+            <div class="alert-info">
+              <div class="currency-badge">${toCurrency.flag}</div>
+              <div class="alert-details">
+                <div class="alert-pair">
+                  ${alert.name || `${alert.from}/${alert.to}`}
+                </div>
+                <div class="alert-condition">
+                  <span>1 ${alert.from} = ${currentRate} ${alert.to}</span>
+                  <span class="arrow">${conditionIcon}</span>
+                  <span>目标: ${conditionText} ${alert.targetRate}</span>
+                </div>
+              </div>
+            </div>
+            <div class="alert-meta">
+              ${achieved ? '<span class="achieved-badge">✓ 已达成</span>' : ''}
+              <div style="margin-top: 8px;">创建于 ${alert.createdAt}</div>
+            </div>
+            <div class="alert-actions">
+              <button class="action-btn toggle" title="${alert.status === 'active' ? '暂停' : '启用'}" onclick="toggleAlert(${alert.id})">
+                ${alert.status === 'active' ? '⏸' : '▶'}
+              </button>
+              <button class="action-btn edit" title="编辑" onclick="editAlert(${alert.id})">✏️</button>
+              <button class="action-btn delete" title="删除" onclick="deleteAlert(${alert.id})">🗑️</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 检查是否达成
+    function checkAchievement(alert, currentRate) {
+      const rate = parseFloat(currentRate);
+      switch (alert.condition) {
+        case 'above': return rate > alert.targetRate;
+        case 'below': return rate < alert.targetRate;
+        case 'equal': return Math.abs(rate - alert.targetRate) < 0.0001;
+        default: return false;
+      }
+    }
+
+    // 更新目标货币显示
+    function updateTargetCurrency() {
+      const from = document.getElementById('from-currency').value;
+      const to = document.getElementById('to-currency').value;
+      const fromCurrency = currencies[from];
+      const toCurrency = currencies[to];
+      const currentRate = (fromCurrency.rate / toCurrency.rate).toFixed(4);
+
+      document.getElementById('target-currency').innerHTML = `
+        <span class="flag">${toCurrency.flag}</span>
+        <div class="info">
+          <div class="code">${to}</div>
+          <div class="name">${fromCurrency.name} / ${toCurrency.name}</div>
+        </div>
+        <div class="current-rate">
+          <div class="rate">${currentRate}</div>
+          <div class="label">当前汇率</div>
+        </div>
+      `;
+
+      document.getElementById('target-rate').placeholder = currentRate;
+    }
+
+    // 添加提醒
+    function addAlert(data) {
+      const alert = {
+        id: alertIdCounter++,
+        ...data,
+        status: 'active',
+        createdAt: new Date().toLocaleString('zh-CN', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit'
+        }).replace(/\//g, '-'),
+        achieved: false
+      };
+      alerts.unshift(alert);
+      renderAlerts();
+    }
+
+    // 切换提醒状态
+    function toggleAlert(id) {
+      const alert = alerts.find(a => a.id === id);
+      if (alert) {
+        alert.status = alert.status === 'active' ? 'disabled' : 'active';
+        renderAlerts();
+      }
+    }
+
+    // 编辑提醒
+    function editAlert(id) {
+      const alert = alerts.find(a => a.id === id);
+      if (alert) {
+        document.getElementById('edit-id').value = alert.id;
+        document.getElementById('edit-condition').value = alert.condition;
+        document.getElementById('edit-rate').value = alert.targetRate;
+        document.getElementById('edit-name').value = alert.name || '';
+        document.getElementById('edit-modal').classList.add('active');
+      }
+    }
+
+    // 删除提醒
+    function deleteAlert(id) {
+      if (confirm('确定要删除这个汇率提醒吗？')) {
+        alerts = alerts.filter(a => a.id !== id);
+        renderAlerts();
+      }
+    }
+
+    // 关闭模态框
+    function closeModal() {
+      document.getElementById('edit-modal').classList.remove('active');
+    }
+
+    // 事件绑定
+    document.getElementById('from-currency').addEventListener('change', updateTargetCurrency);
+    document.getElementById('to-currency').addEventListener('change', updateTargetCurrency);
+
+    document.getElementById('alert-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const from = document.getElementById('from-currency').value;
+      const to = document.getElementById('to-currency').value;
+      const condition = document.getElementById('condition').value;
+      const targetRate = parseFloat(document.getElementById('target-rate').value);
+      const name = document.getElementById('alert-name').value;
+      const notifyMethod = document.getElementById('notify-method').value;
+
+      addAlert({
+        from,
+        to,
+        condition,
+        targetRate,
+        name,
+        notifyMethod
+      });
+
+      e.target.reset();
+      updateTargetCurrency();
+    });
+
+    document.getElementById('edit-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const id = parseInt(document.getElementById('edit-id').value);
+      const alert = alerts.find(a => a.id === id);
+      if (alert) {
+        alert.condition = document.getElementById('edit-condition').value;
+        alert.targetRate = parseFloat(document.getElementById('edit-rate').value);
+        alert.name = document.getElementById('edit-name').value;
+        renderAlerts();
+        closeModal();
+      }
+    });
+
+    // 初始化
+    updateTargetCurrency();
+    renderAlerts();
+  </script>
+</body>
+</html>

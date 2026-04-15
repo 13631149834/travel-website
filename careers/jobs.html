@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全部职位 - 游导旅游招聘</title>
+  <meta name="description" content="浏览游导旅游全部招聘职位，包括技术、运营、市场、设计等方向。找到适合你的工作机会，加入我们的团队。">
+  <meta name="keywords" content="游导旅游招聘,旅游平台招聘,前端招聘,后端招聘,运营招聘">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="stylesheet" href="css/accessibility.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/careers.css">
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ff6b35">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/careers/jobs.html">
+</head>
+<body>
+
+<!-- 跳转到主内容链接 -->
+<a href="#main-content" class="skip-link">跳转到主内容</a>
+
+<!-- 导航栏 -->
+<header class="header">
+  <div class="container">
+    <nav class="nav" aria-label="主导航">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <ul class="nav-links">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="guides.html">找导游</a></li>
+        <li><a href="visa.html">签证</a></li>
+        <li><a href="routes.html">线路</a></li>
+        <li><a href="knowledge.html">知识</a></li>
+        <li><a href="tools.html">工具</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="careers/index.html" class="btn btn-primary" style="background: var(--primary); color: white;">加入我们</a>
+      </div>
+      <button class="nav-toggle" onclick="toggleNav()" aria-label="菜单" aria-expanded="false">
+        <span></span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<main id="main-content" role="main">
+  <!-- Hero区域 -->
+  <section class="careers-hero">
+    <div class="container">
+      <h1>全部职位</h1>
+      <p>在这里找到属于你的舞台，与我们一起创造更多可能</p>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-number" id="totalJobs">-</div>
+          <div class="hero-stat-label">在招职位</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-number">4</div>
+          <div class="hero-stat-label">业务方向</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-number">5</div>
+          <div class="hero-stat-label">工作地点</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 职位列表 -->
+  <section class="jobs-section">
+    <div class="container">
+      <!-- 分类标签 -->
+      <div class="category-tabs" id="categoryTabs">
+        <button class="category-tab active" data-category="all">
+          全部 <span class="count" id="countAll">0</span>
+        </button>
+        <button class="category-tab" data-category="技术">
+          💻 技术 <span class="count" id="countTech">0</span>
+        </button>
+        <button class="category-tab" data-category="运营">
+          📊 运营 <span class="count" id="countOps">0</span>
+        </button>
+        <button class="category-tab" data-category="市场">
+          📢 市场 <span class="count" id="countMarket">0</span>
+        </button>
+        <button class="category-tab" data-category="设计">
+          🎨 设计 <span class="count" id="countDesign">0</span>
+        </button>
+      </div>
+
+      <!-- 筛选器 -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label class="filter-label">地点</label>
+          <select class="filter-select" id="locationFilter">
+            <option value="">全部地点</option>
+            <option value="北京">北京</option>
+            <option value="上海">上海</option>
+            <option value="广州">广州</option>
+            <option value="深圳">深圳</option>
+            <option value="远程">远程</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label class="filter-label">经验</label>
+          <select class="filter-select" id="experienceFilter">
+            <option value="">全部经验</option>
+            <option value="1-3年">1-3年</option>
+            <option value="2-5年">2-5年</option>
+            <option value="3-5年">3-5年</option>
+          </select>
+        </div>
+        <div class="filter-group" style="flex: 1;">
+          <input type="text" class="search-input" id="searchInput" placeholder="搜索职位名称...">
+        </div>
+      </div>
+
+      <!-- 职位列表 -->
+      <div class="jobs-grid" id="jobsGrid">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+        </div>
+      </div>
+
+      <!-- 空状态 -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="icon">🔍</div>
+        <h3>没有找到匹配的职位</h3>
+        <p>试试调整筛选条件或搜索关键词</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- 页脚 -->
+<footer style="background: var(--secondary); color: white; padding: 48px 0 24px;">
+  <div class="container">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 32px;">
+      <div>
+        <div style="font-size: 24px; font-weight: 700; margin-bottom: 16px;">🌍 游导旅游</div>
+        <p style="opacity: 0.8; font-size: 14px; line-height: 1.7;">
+          连接游客与导游<br>让旅行更简单
+        </p>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 16px;">关于游导</h4>
+        <ul style="list-style: none; opacity: 0.8; font-size: 14px; line-height: 2;">
+          <li><a href="about.html" style="color: white; text-decoration: none;">关于我们</a></li>
+          <li><a href="careers/index.html" style="color: white; text-decoration: none;">加入我们</a></li>
+          <li><a href="contact.html" style="color: white; text-decoration: none;">联系我们</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 16px;">服务支持</h4>
+        <ul style="list-style: none; opacity: 0.8; font-size: 14px; line-height: 2;">
+          <li><a href="help.html" style="color: white; text-decoration: none;">帮助中心</a></li>
+          <li><a href="services.html" style="color: white; text-decoration: none;">服务条款</a></li>
+          <li><a href="privacy.html" style="color: white; text-decoration: none;">隐私政策</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="margin-bottom: 16px;">联系我们</h4>
+        <ul style="list-style: none; opacity: 0.8; font-size: 14px; line-height: 2;">
+          <li>📧 hr@youdao-travel.com</li>
+          <li>📞 13631149834</li>
+        </ul>
+      </div>
+    </div>
+    <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; text-align: center; opacity: 0.6; font-size: 14px;">
+      © 2024 游导旅游 youdao-travel.com 版权所有
+    </div>
+  </div>
+</footer>
+
+<script>
+// 导航切换
+function toggleNav() {
+  const navLinks = document.querySelector('.nav-links');
+  const navToggle = document.querySelector('.nav-toggle');
+  navLinks.classList.toggle('active');
+  navToggle.classList.toggle('active');
+}
+
+// 全局变量
+let allJobs = [];
+let currentFilters = {
+  category: 'all',
+  location: '',
+  experience: '',
+  search: ''
+};
+
+// 加载数据
+async function loadJobs() {
+  try {
+    const response = await fetch('data/careers.json');
+    const data = await response.json();
+    allJobs = data.jobs;
+    updateCategoryCounts();
+    renderJobs(allJobs);
+    setupEventListeners();
+  } catch (error) {
+    console.error('加载数据失败:', error);
+    document.getElementById('jobsGrid').innerHTML = '<div class="empty-state"><p>加载失败，请刷新页面重试</p></div>';
+  }
+}
+
+// 更新分类计数
+function updateCategoryCounts() {
+  const counts = {
+    all: allJobs.length,
+    '技术': allJobs.filter(j => j.category === '技术').length,
+    '运营': allJobs.filter(j => j.category === '运营').length,
+    '市场': allJobs.filter(j => j.category === '市场').length,
+    '设计': allJobs.filter(j => j.category === '设计').length
+  };
+  
+  document.getElementById('totalJobs').textContent = counts.all;
+  document.getElementById('countAll').textContent = counts.all;
+  document.getElementById('countTech').textContent = counts['技术'];
+  document.getElementById('countOps').textContent = counts['运营'];
+  document.getElementById('countMarket').textContent = counts['市场'];
+  document.getElementById('countDesign').textContent = counts['设计'];
+}
+
+// 筛选职位
+function filterJobs() {
+  let filtered = [...allJobs];
+  
+  // 分类筛选
+  if (currentFilters.category !== 'all') {
+    filtered = filtered.filter(job => job.category === currentFilters.category);
+  }
+  
+  // 地点筛选
+  if (currentFilters.location) {
+    filtered = filtered.filter(job => job.location === currentFilters.location);
+  }
+  
+  // 经验筛选
+  if (currentFilters.experience) {
+    filtered = filtered.filter(job => job.experience === currentFilters.experience);
+  }
+  
+  // 搜索筛选
+  if (currentFilters.search) {
+    const search = currentFilters.search.toLowerCase();
+    filtered = filtered.filter(job => 
+      job.title.toLowerCase().includes(search) ||
+      job.description.toLowerCase().includes(search) ||
+      job.category.toLowerCase().includes(search)
+    );
+  }
+  
+  renderJobs(filtered);
+}
+
+// 渲染职位列表
+function renderJobs(jobs) {
+  const grid = document.getElementById('jobsGrid');
+  const emptyState = document.getElementById('emptyState');
+  
+  if (jobs.length === 0) {
+    grid.style.display = 'none';
+    emptyState.style.display = 'block';
+    return;
+  }
+  
+  grid.style.display = 'grid';
+  emptyState.style.display = 'none';
+  
+  grid.innerHTML = jobs.map(job => `
+    <div class="job-card" onclick="location.href='detail.html?id=${job.id}'" role="link" tabindex="0" 
+         onkeypress="if(event.key==='Enter') location.href='detail.html?id=${job.id}'">
+      <div class="job-card-header">
+        <div>
+          <h3 class="job-title">${job.title}</h3>
+          <div class="job-meta">
+            <span class="job-meta-item">📍 ${job.location}</span>
+            <span class="job-meta-item">💼 ${job.experience}</span>
+            <span class="job-meta-item">🎓 ${job.education}</span>
+          </div>
+        </div>
+        <div class="job-salary">${job.salary}</div>
+      </div>
+      <div class="job-tags">
+        <span class="job-tag job-tag-category">${job.category}</span>
+        <span class="job-tag job-tag-location">${job.location}</span>
+        ${job.urgent ? '<span class="job-tag job-tag-urgent">急聘</span>' : ''}
+      </div>
+      <div class="job-card-footer">
+        <span style="font-size: 13px; color: var(--text-light);">${job.type}</span>
+        <button class="job-apply-btn" onclick="event.stopPropagation(); location.href='apply.html?job=${job.id}'">
+          立即申请
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// 设置事件监听
+function setupEventListeners() {
+  // 分类标签点击
+  document.querySelectorAll('.category-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      currentFilters.category = tab.dataset.category;
+      filterJobs();
+    });
+  });
+  
+  // 地点筛选
+  document.getElementById('locationFilter').addEventListener('change', (e) => {
+    currentFilters.location = e.target.value;
+    filterJobs();
+  });
+  
+  // 经验筛选
+  document.getElementById('experienceFilter').addEventListener('change', (e) => {
+    currentFilters.experience = e.target.value;
+    filterJobs();
+  });
+  
+  // 搜索
+  let searchTimeout;
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      currentFilters.search = e.target.value;
+      filterJobs();
+    }, 300);
+  });
+}
+
+// 页面加载完成后执行
+document.addEventListener('DOMContentLoaded', loadJobs);
+</script>
+
+</body>
+</html>

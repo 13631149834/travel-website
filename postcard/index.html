@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>明信片服务 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    .float-animation { animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .stamp-border { border: 3px dashed #ccc; border-radius: 4px; }
+    .postcard-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.15), 0 0 40px rgba(0,0,0,0.05); }
+    .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="../destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="../routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="index.html" class="hover:opacity-80 transition font-medium border-b-2 border-white pb-1 flex items-center gap-1">🖼️ 明信片</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="../destinations.html" class="block py-2">目的地</a>
+        <a href="../routes.html" class="block py-2">路线</a>
+        <a href="index.html" class="block py-2 font-semibold">🖼️ 明信片</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="gradient-hero text-white py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 text-center fade-in">
+      <div class="inline-block px-4 py-1.5 bg-white/20 rounded-full text-sm mb-4">✉️ 旅行纪念新方式</div>
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">电子明信片服务</h1>
+      <p class="text-lg opacity-90 mb-8 max-w-2xl mx-auto">精选全球热门目的地模板，自定义祝福语，发送给亲朋好友，分享您的旅行故事</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="create.html" class="px-8 py-4 bg-white text-primary rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg flex items-center justify-center gap-2">
+          ✨ 创建明信片
+        </a>
+        <a href="templates.html" class="px-8 py-4 bg-white/20 backdrop-blur rounded-full font-bold text-lg hover:bg-white/30 transition border-2 border-white/50 flex items-center justify-center gap-2">
+          🖼️ 浏览模板
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="max-w-7xl mx-auto px-4 -mt-8 mb-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <a href="create.html" class="card-hover bg-white rounded-2xl p-6 text-center shadow-xl border-2 border-transparent hover:border-primary">
+        <div class="w-16 h-16 mx-auto mb-3 bg-blue-100 rounded-full flex items-center justify-center text-3xl">🎨</div>
+        <h3 class="font-bold text-gray-800 mb-1">创建明信片</h3>
+        <p class="text-sm text-gray-500">自定义编辑</p>
+      </a>
+      <a href="templates.html" class="card-hover bg-white rounded-2xl p-6 text-center shadow-xl border-2 border-transparent hover:border-secondary">
+        <div class="w-16 h-16 mx-auto mb-3 bg-green-100 rounded-full flex items-center justify-center text-3xl">📚</div>
+        <h3 class="font-bold text-gray-800 mb-1">模板库</h3>
+        <p class="text-sm text-gray-500">精选主题模板</p>
+      </a>
+      <a href="my-cards.html" class="card-hover bg-white rounded-2xl p-6 text-center shadow-xl border-2 border-transparent hover:border-pink-500">
+        <div class="w-16 h-16 mx-auto mb-3 bg-pink-100 rounded-full flex items-center justify-center text-3xl">📫</div>
+        <h3 class="font-bold text-gray-800 mb-1">我的明信片</h3>
+        <p class="text-sm text-gray-500">查看收藏</p>
+      </a>
+      <a href="my-cards.html#sent" class="card-hover bg-white rounded-2xl p-6 text-center shadow-xl border-2 border-transparent hover:border-orange-500">
+        <div class="w-16 h-16 mx-auto mb-3 bg-orange-100 rounded-full flex items-center justify-center text-3xl">✈️</div>
+        <h3 class="font-bold text-gray-800 mb-1">已发送</h3>
+        <p class="text-sm text-gray-500">发送记录</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold text-gray-800 mb-2">服务特色</h2>
+      <p class="text-gray-500">打造专属您的旅行明信片</p>
+    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="card-hover bg-white rounded-2xl p-8 shadow-lg">
+        <div class="w-14 h-14 mb-4 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center text-white text-2xl">🗺️</div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">丰富模板</h3>
+        <p class="text-gray-500">涵盖东京、大阪、首尔、曼谷、新加坡等热门目的地的精美模板</p>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-8 shadow-lg">
+        <div class="w-14 h-14 mb-4 bg-gradient-to-br from-pink-400 to-pink-600 rounded-xl flex items-center justify-center text-white text-2xl">✏️</div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">自由编辑</h3>
+        <p class="text-gray-500">上传您的旅行照片，添加祝福文字和可爱贴纸，打造专属明信片</p>
+      </div>
+      <div class="card-hover bg-white rounded-2xl p-8 shadow-lg">
+        <div class="w-14 h-14 mb-4 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center text-white text-2xl">🔒</div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">安全加密</h3>
+        <p class="text-gray-500">支持密码保护明信片，定时发送，让您的祝福更贴心</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Popular Templates -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">热门模板</h2>
+        <p class="text-gray-500">最受欢迎的明信片模板</p>
+      </div>
+      <a href="templates.html" class="hidden md:flex items-center gap-2 text-primary hover:underline font-medium">查看全部 →</a>
+    </div>
+    <div id="popularTemplates" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <!-- Templates will be loaded here -->
+    </div>
+    <div class="text-center mt-6 md:hidden">
+      <a href="templates.html" class="inline-flex items-center gap-2 text-primary hover:underline font-medium">查看全部 →</a>
+    </div>
+  </section>
+
+  <!-- Category Cards -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold text-gray-800 mb-2">目的地分类</h2>
+      <p class="text-gray-500">按目的地浏览精美模板</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <a href="templates.html?category=tokyo" class="card-hover bg-white rounded-2xl p-6 text-center shadow-lg border-2 border-transparent hover:border-red-400">
+        <div class="text-5xl mb-3">🗼</div>
+        <h3 class="font-bold text-gray-800">东京</h3>
+        <p class="text-sm text-gray-500">4款模板</p>
+      </a>
+      <a href="templates.html?category=osaka" class="card-hover bg-white rounded-2xl p-6 text-center shadow-lg border-2 border-transparent hover:border-orange-400">
+        <div class="text-5xl mb-3">🏯</div>
+        <h3 class="font-bold text-gray-800">大阪</h3>
+        <p class="text-sm text-gray-500">4款模板</p>
+      </a>
+      <a href="templates.html?category=seoul" class="card-hover bg-white rounded-2xl p-6 text-center shadow-lg border-2 border-transparent hover:border-purple-400">
+        <div class="text-5xl mb-3">🏙️</div>
+        <h3 class="font-bold text-gray-800">首尔</h3>
+        <p class="text-sm text-gray-500">4款模板</p>
+      </a>
+      <a href="templates.html?category=bangkok" class="card-hover bg-white rounded-2xl p-6 text-center shadow-lg border-2 border-transparent hover:border-yellow-400">
+        <div class="text-5xl mb-3">🛕</div>
+        <h3 class="font-bold text-gray-800">曼谷</h3>
+        <p class="text-sm text-gray-500">4款模板</p>
+      </a>
+      <a href="templates.html?category=singapore" class="card-hover bg-white rounded-2xl p-6 text-center shadow-lg border-2 border-transparent hover:border-teal-400">
+        <div class="text-5xl mb-3">🦁</div>
+        <h3 class="font-bold text-gray-800">新加坡</h3>
+        <p class="text-sm text-gray-500">4款模板</p>
+      </a>
+      <a href="templates.html?category=festivals" class="card-hover bg-white rounded-2xl p-6 text-center shadow-lg border-2 border-transparent hover:border-pink-400">
+        <div class="text-5xl mb-3">🎉</div>
+        <h3 class="font-bold text-gray-800">节日</h3>
+        <p class="text-sm text-gray-500">6款模板</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- My postcards preview -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="bg-white rounded-3xl p-8 shadow-xl">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800 mb-1">我的明信片</h2>
+          <p class="text-gray-500">管理您的创作与收藏</p>
+        </div>
+        <a href="my-cards.html" class="text-primary hover:underline font-medium">查看全部 →</a>
+      </div>
+      <div id="myPostcards" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- My postcards will be loaded here -->
+      </div>
+      <div id="emptyState" class="hidden text-center py-12">
+        <div class="text-6xl mb-4">📭</div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">暂无明信片</h3>
+        <p class="text-gray-500 mb-4">开始创建您的第一张明信片吧</p>
+        <a href="create.html" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-full font-medium hover:bg-blue-600 transition">✨ 创建明信片</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="text-center mb-10">
+      <h2 class="text-3xl font-bold text-gray-800 mb-2">使用流程</h2>
+      <p class="text-gray-500">简单几步，完成您的旅行明信片</p>
+    </div>
+    <div class="grid md:grid-cols-4 gap-6">
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 bg-primary text-white rounded-full flex items-center justify-center text-2xl font-bold">1</div>
+        <h3 class="font-bold text-gray-800 mb-2">选择模板</h3>
+        <p class="text-gray-500 text-sm">从丰富模板库中选择喜欢的风格</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 bg-secondary text-white rounded-full flex items-center justify-center text-2xl font-bold">2</div>
+        <h3 class="font-bold text-gray-800 mb-2">上传照片</h3>
+        <p class="text-gray-500 text-sm">添加您的旅行照片或个人照片</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 bg-green-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">3</div>
+        <h3 class="font-bold text-gray-800 mb-2">编辑内容</h3>
+        <p class="text-gray-500 text-sm">编写祝福语，添加贴纸装饰</p>
+      </div>
+      <div class="text-center">
+        <div class="w-16 h-16 mx-auto mb-4 bg-orange-500 text-white rounded-full flex items-center justify-center text-2xl font-bold">4</div>
+        <h3 class="font-bold text-gray-800 mb-2">发送分享</h3>
+        <p class="text-gray-500 text-sm">发送至邮箱或分享给好友</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-2xl">🧭</span>
+            <span class="text-xl font-bold">游导旅游</span>
+          </div>
+          <p class="text-gray-400 text-sm">您的贴心旅行助手，让每一次出行都轻松愉快</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-3">快速链接</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="../destinations.html" class="hover:text-white transition">目的地</a></li>
+            <li><a href="../routes.html" class="hover:text-white transition">旅行路线</a></li>
+            <li><a href="../tools.html" class="hover:text-white transition">旅行工具</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-3">明信片服务</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="create.html" class="hover:text-white transition">创建明信片</a></li>
+            <li><a href="templates.html" class="hover:text-white transition">模板库</a></li>
+            <li><a href="my-cards.html" class="hover:text-white transition">我的明信片</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-3">帮助与支持</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="../help.html" class="hover:text-white transition">帮助中心</a></li>
+            <li><a href="../contact.html" class="hover:text-white transition">联系我们</a></li>
+            <li><a href="../faq.html" class="hover:text-white transition">常见问题</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
+        <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+    
+    let postcardData = null;
+
+    async function loadPostcardData() {
+      try {
+        const response = await fetch('../data/postcard.json');
+        postcardData = await response.json();
+        renderPopularTemplates();
+        renderMyPostcards();
+      } catch (error) { console.error('Failed to load postcard data:', error); }
+    }
+
+    function renderPopularTemplates() {
+      const container = document.getElementById('popularTemplates');
+      const allTemplates = [...postcardData.templates.tokyo, ...postcardData.templates.festivals].slice(0, 8);
+      container.innerHTML = allTemplates.map(t => `
+        <a href="create.html?template=${t.id}" class="card-hover group">
+          <div class="relative overflow-hidden rounded-xl shadow-lg postcard-shadow">
+            <img src="${t.thumbnail}" alt="${t.name}" class="w-full aspect-[4/3] object-cover group-hover:scale-110 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-4">
+              <h4 class="text-white font-bold">${t.name}</h4>
+              <p class="text-white/80 text-sm">${t.description}</p>
+            </div>
+            <div class="absolute top-3 right-3">
+              <span class="px-2 py-1 bg-white/90 rounded-full text-xs font-medium text-gray-700">${t.category === 'tokyo' ? '🗼 东京' : '🎉 节日'}</span>
+            </div>
+          </div>
+        </a>
+      `).join('');
+    }
+
+    function renderMyPostcards() {
+      const container = document.getElementById('myPostcards');
+      const emptyState = document.getElementById('emptyState');
+      const myCards = JSON.parse(localStorage.getItem('myPostcards') || '[]');
+      if (myCards.length === 0) { container.classList.add('hidden'); emptyState.classList.remove('hidden'); return; }
+      container.classList.remove('hidden'); emptyState.classList.add('hidden');
+      container.innerHTML = myCards.slice(0, 4).map(card => `
+        <div class="card-hover group cursor-pointer" onclick="viewPostcard('${card.id}')">
+          <div class="relative overflow-hidden rounded-xl shadow-lg">
+            <img src="${card.photo || card.background?.slice(5, -2) || 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=400'}" alt="${card.title}" class="w-full aspect-[4/3] object-cover">
+            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center"><span class="text-white text-4xl">👁️</span></div>
+          </div>
+          <div class="mt-2">
+            <h4 class="font-bold text-gray-800 truncate">${card.title || '明信片'}</h4>
+            <p class="text-sm text-gray-500">${card.status === 'sent' ? '✈️ 已发送' : card.status === 'draft' ? '📝 草稿' : '📥 已收到'}</p>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function viewPostcard(id) { alert('明信片详情功能开发中...'); }
+    loadPostcardData();
+  </script>
+</body>
+</html>

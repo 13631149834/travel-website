@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录 - 游导旅游</title>
+    <meta name="description" content="用户登录 - 游导旅游">
+    <meta name="keywords" content="登录,账号登录,导游登录,游客登录">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://youdao-travel.com/login.html">
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="stylesheet" href="css/accessibility.css">
+<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+	  <link rel="stylesheet" href="css/form/form-components.css">
+	  <link rel="stylesheet" href="css/ux-enhancement.css">
+    <!-- i18n 语言配置 -->
+    <script src="js/i18n.js" defer></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            min-height: 100vh;
+            transition: background 0.5s ease;
+        }
+        
+        /* 游客模式 - 蓝色系 */
+        body.tourist-mode {
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 50%, #1E40AF 100%);
+        }
+        
+        /* 导游模式 - 紫色系 */
+        body.guide-mode {
+            background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 50%, #6D28D9 100%);
+        }
+        
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .auth-box {
+            background: white;
+            border-radius: 24px;
+            padding: 0;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+        
+        /* 顶部Tab切换 */
+        .auth-tabs {
+            display: flex;
+            padding: 0;
+            background: #F8FAFC;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 20px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: #64748B;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            position: relative;
+        }
+        
+        .auth-tab .tab-icon {
+            font-size: 28px;
+        }
+        
+        .auth-tab .tab-text {
+            font-size: 15px;
+        }
+        
+        .auth-tab.active {
+            color: inherit;
+        }
+        
+        /* 游客Tab激活 - 蓝色 */
+        body.tourist-mode .auth-tab.tourist-tab.active {
+            background: white;
+            color: #3B82F6;
+        }
+        
+        body.tourist-mode .auth-tab.tourist-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #3B82F6, #60A5FA);
+            border-radius: 4px 4px 0 0;
+        }
+        
+        /* 导游Tab激活 - 紫色 */
+        body.guide-mode .auth-tab.guide-tab.active {
+            background: white;
+            color: #8B5CF6;
+        }
+        
+        body.guide-mode .auth-tab.guide-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #8B5CF6, #A78BFA);
+            border-radius: 4px 4px 0 0;
+        }
+        
+        /* 表单区域 */
+        .auth-form-wrap {
+            padding: 35px 40px 40px;
+        }
+        
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .auth-header .logo {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        
+        .auth-header h1 {
+            font-size: 26px;
+            color: #1E293B;
+            margin-bottom: 8px;
+        }
+        
+        .auth-header p {
+            color: #64748B;
+            font-size: 14px;
+        }
+        
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #F8FAFC;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+            background: white;
+        }
+        
+        body.guide-mode .form-group input:focus,
+        body.guide-mode .form-group select:focus {
+            border-color: #8B5CF6;
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+        
+        /* 密码输入框wrapper */
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .password-input-wrapper input {
+            width: 100%;
+            padding-right: 45px;
+        }
+        
+        .input-with-btn {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .input-with-btn input {
+            flex: 1;
+        }
+        
+        .verify-btn {
+            padding: 14px 18px;
+            background: #F1F5F9;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            color: #64748B;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        
+        .verify-btn:hover {
+            background: #E2E8F0;
+            color: #334155;
+        }
+        
+        /* 按钮样式 */
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: white;
+        }
+        
+        body.tourist-mode .btn-primary {
+            background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
+        }
+        
+        body.tourist-mode .btn-primary:hover {
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        body.guide-mode .btn-primary {
+            background: linear-gradient(135deg, #8B5CF6 0%, #6D28D9 100%);
+        }
+        
+        body.guide-mode .btn-primary:hover {
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* 第三方登录 */
+        .social-login {
+            margin: 25px 0;
+        }
+        
+        .social-login-title {
+            text-align: center;
+            color: #94A3B8;
+            font-size: 13px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .social-login-title::before,
+        .social-login-title::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 35%;
+            height: 1px;
+            background: #E2E8F0;
+        }
+        
+        .social-login-title::before { left: 0; }
+        .social-login-title::after { right: 0; }
+        
+        .social-btns {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 2px solid #E2E8F0;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s;
+        }
+        
+        .social-btn:hover {
+            border-color: #10B981;
+            background: #ECFDF5;
+            transform: translateY(-3px);
+        }
+        
+        .social-btn.wechat:hover {
+            border-color: #10B981;
+            background: #ECFDF5;
+        }
+        
+        /* 底部链接 */
+        .auth-footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #64748B;
+            font-size: 14px;
+        }
+        
+        .auth-footer a {
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        body.tourist-mode .auth-footer a {
+            color: #3B82F6;
+        }
+        
+        body.guide-mode .auth-footer a {
+            color: #8B5CF6;
+        }
+        
+        .auth-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* 错误提示 */
+        .error-message {
+            color: #EF4444;
+            font-size: 13px;
+            margin-top: 6px;
+            display: none;
+        }
+        
+        /* 分割线 */
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E2E8F0;
+        }
+        
+        .divider span {
+            padding: 0 15px;
+            color: #94A3B8;
+            font-size: 13px;
+        }
+        
+        /* 隐藏区域 */
+        .form-section {
+            display: none;
+        }
+        
+        .form-section.active {
+            display: block;
+        }
+        
+        /* 导游专属字段 */
+        .guide-fields {
+            background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #DDD6FE;
+        }
+        
+        .guide-fields-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #6D28D9;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .guide-fields .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .guide-fields .form-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .guide-certificate-note {
+            font-size: 12px;
+            color: #7C3AED;
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 480px) {
+            .auth-form-wrap {
+                padding: 25px 20px 30px;
+            }
+            
+            .auth-tab .tab-text {
+                font-size: 13px;
+            }
+            
+            .auth-header h1 {
+                font-size: 22px;
+            }
+        }
+    
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body class="tourist-mode">
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+    <div class="auth-container">
+<main id="main-content" role="main">
+        <div class="auth-box">
+            <!-- Tab切换 -->
+            <div class="auth-tabs">
+                <button class="auth-tab tourist-tab active" onclick="switchTab('tourist')">
+                    <span class="tab-icon" aria-hidden="true">🎬</span>
+                    <span class="tab-text" data-i18n="login.touristTab">我是游客</span>
+                </button>
+                <button class="auth-tab guide-tab" onclick="switchTab('guide')">
+                    <span class="tab-icon" aria-hidden="true">🎒</span>
+                    <span class="tab-text" data-i18n="login.guideTab">我是导游</span>
+                </button>
+                <!-- 语言切换 -->
+                <div class="lang-switcher" style="margin-left: auto; margin-right: 10px;">
+                  <button class="lang-btn active" data-lang="zh" data-lang-btn>中文</button>
+                  <button class="lang-btn" data-lang="en" data-lang-btn>EN</button>
+                </div>
+            </div>
+            
+            <div class="auth-form-wrap">
+                <!-- 游客登录区域 -->
+                <div class="form-section tourist-section active" id="touristSection">
+                    <div class="auth-header">
+                        <div class="logo">🎬</div>
+                        <h1 data-i18n="login.title">欢迎游客登录</h1>
+                        <p data-i18n="login.subtitle">开启你的精彩旅程</p>
+                    </div>
+                    
+                    <form id="touristLoginForm">
+                        <div class="form-group">
+                            <label for="touristEmail" data-i18n="login.email">手机号 / 邮箱</label>
+                            <input type="text" id="touristEmail" data-type="phone" placeholder="请输入手机号" required>
+                            <div class="error-message" id="touristEmailError" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="touristPassword" data-i18n="login.password">密码</label>
+                            <input type="password" id="touristPassword" placeholder="请输入密码" required>
+                            <div class="error-message" id="touristPasswordError" style="display: none;"></div>
+                        </div>
+                        
+                        <div style="text-align: right; margin-bottom: 20px;">
+                            <a href="#" style="color: #64748B; font-size: 14px; text-decoration: none;" data-i18n="login.forgotPassword">忘记密码？</a>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" id="touristLoginBtn" data-i18n="login.loginBtn">游客登录</button>
+                    </form>
+                    
+                    <div class="social-login">
+                        <div class="social-login-title" data-i18n="login.orContinue">其他登录方式</div>
+                        <div class="social-btns">
+                            <button class="social-btn wechat" data-i18n-title="login.wechatLogin" title="微信登录" aria-label="客服"><span class="sr-only">按钮</span></button>
+                        </div>
+                    </div>
+                    
+                    <div class="auth-footer">
+                        <span data-i18n="login.noAccount">还没有账号？</span><a href="register.html" data-i18n="login.goRegister">立即注册</a>
+                    </div>
+                </div>
+                
+                <!-- 导游登录区域 -->
+                <div class="form-section guide-section" id="guideSection">
+                    <div class="auth-header">
+                        <div class="logo">🎒</div>
+                        <h1>导游登录</h1>
+                        <p>管理你的专业服务</p>
+                    </div>
+                    
+                    <form id="guideLoginForm">
+                        <div class="form-group">
+                            <label for="guidePhone">手机号</label>
+                            <input type="tel" id="guidePhone" data-type="phone" placeholder="请输入11位手机号" required>
+                            <div class="error-message" id="guidePhoneError" style="display: none;"></div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="guidePassword">密码</label>
+                            <input type="password" id="guidePassword" placeholder="请输入密码" required>
+                            <div class="error-message" id="guidePasswordError" style="display: none;"></div>
+                        </div>
+                        
+                        <!-- 导游专属字段 -->
+                        <div class="guide-fields">
+                            <div class="guide-fields-title">📋 导游信息（选填）</div>
+                            
+                            <div class="form-group">
+                                <label for="guideYears">从业年限</label>
+                                <select id="guideYears">
+                                    <option value="">请选择从业年限</option>
+                                    <option value="1-3">1-3年</option>
+                                    <option value="3-5">3-5年</option>
+                                    <option value="5-10">5-10年</option>
+                                    <option value="10+">10年以上</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="guideRegion">最近带团地区</label>
+                                <select id="guideRegion">
+                                    <option value="">请选择地区</option>
+                                    <option value="japan">日本</option>
+                                    <option value="thailand">泰国</option>
+                                    <option value="europe">欧洲</option>
+                                    <option value="oceania">澳新</option>
+                                    <option value="southeast">东南亚</option>
+                                    <option value="middle-east">中东</option>
+                                    <option value="china">国内</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="guideCertInput">导游证号（选填）</label>
+                                <input type="text" id="guideCertInput" placeholder="用于快速验证，如 D-12345">
+                                <div class="guide-certificate-note">
+                                    <span aria-hidden="true">💡</span> 填写的导游证号将用于快速身份验证
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="text-align: right; margin-bottom: 20px;">
+                            <a href="#" style="color: #64748B; font-size: 14px; text-decoration: none;">忘记密码？</a>
+                        </div>
+                        
+                        <button type="submit" class="btn-primary" id="guideLoginBtn">导游登录</button>
+                    </form>
+                    
+                    <div class="auth-footer">
+                        还没有入驻？<a href="register.html">立即申请</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 加载 Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="js/supabase-config.js" defer></script>
+    
+    <script>
+        // 工具函数
+        const Utils = {
+            showToast(message, type = 'info') {
+                const toast = document.createElement('div');
+                toast.textContent = message;
+                toast.style.cssText = `position: fixed; top: 20px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; color: white; font-size: 14px; z-index: 9999; background: ${type === 'success' ? '#10B981' : type === 'error' ? '#EF4444' : '#3B82F6'};`;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        };
+
+        // 表单验证工具函数
+        const FormValidator = {
+            // 验证手机号
+            validatePhone(phone) {
+                return /^1[3-9]\d{9}$/.test(phone);
+            },
+            
+            // 验证邮箱
+            validateEmail(email) {
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+            },
+            
+            // 验证密码
+            validatePassword(password) {
+                return password && password.length >= 6;
+            },
+            
+            // 设置输入框错误状态
+            setError(inputEl, errorEl, message) {
+                inputEl.classList.remove('input-success');
+                inputEl.classList.add('input-error');
+                if (errorEl) {
+                    errorEl.textContent = message;
+                    errorEl.style.display = 'block';
+                }
+                Utils.showToast(message, 'error');
+            },
+            
+            // 设置输入框成功状态
+            setSuccess(inputEl, errorEl) {
+                inputEl.classList.remove('input-error');
+                inputEl.classList.add('input-success');
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                }
+            },
+            
+            // 清除状态
+            clearStatus(inputEl, errorEl) {
+                inputEl.classList.remove('input-error', 'input-success');
+                if (errorEl) {
+                    errorEl.style.display = 'none';
+                }
+            }
+        };
+
+        let currentMode = 'tourist';
+
+        // 等待页面加载完成
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 初始化 Supabase
+            if (typeof initSupabase === 'function') {
+                initSupabase();
+            }
+            
+            // 检查是否已登录（使用 Supabase）
+            if (typeof Auth !== 'undefined') {
+                const isLoggedIn = await Auth.isLoggedIn();
+                if (isLoggedIn) {
+                    // 已登录，检查用户类型并跳转
+                    const session = await Auth.getSession();
+                    const userId = session?.user?.id;
+                    if (userId) {
+                        const { data: profile } = await DB.profiles.get(userId);
+                        if (profile?.user_type === 'guide') {
+                            window.location.href = 'guide-dashboard.html';
+                        } else {
+                            window.location.href = 'index.html';
+                        }
+                        return;
+                    }
+                }
+            } else {
+                // Supabase 未配置，回退到 localStorage 检查
+                const savedUser = localStorage.getItem('user');
+                if (savedUser) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+            }
+
+            // Tab切换
+            window.switchTab = function(tab) {
+                currentMode = tab;
+                document.body.className = tab + '-mode';
+                document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+                document.querySelector('.' + tab + '-tab').classList.add('active');
+                document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+                document.getElementById(tab + 'Section').classList.add('active');
+            };
+
+            // 监听 URL 参数中的 mode
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            if (mode === 'guide') {
+                switchTab('guide');
+            }
+
+            // ====== 游客表单实时验证 ======
+            const touristEmailInput = document.getElementById('touristEmail');
+            const touristEmailError = document.getElementById('touristEmailError');
+            const touristPasswordInput = document.getElementById('touristPassword');
+            const touristPasswordError = document.getElementById('touristPasswordError');
+
+            // 游客邮箱/手机号失焦验证
+            touristEmailInput.addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (!value) {
+                    FormValidator.setError(this, touristEmailError, '请输入手机号或邮箱');
+                } else if (FormValidator.validatePhone(value) || FormValidator.validateEmail(value)) {
+                    FormValidator.setSuccess(this, touristEmailError);
+                } else {
+                    FormValidator.setError(this, touristEmailError, '请输入正确的手机号或邮箱');
+                }
+            });
+
+            // 游客密码失焦验证
+            touristPasswordInput.addEventListener('blur', function() {
+                const value = this.value;
+                if (!value) {
+                    FormValidator.setError(this, touristPasswordError, '请输入密码');
+                } else if (FormValidator.validatePassword(value)) {
+                    FormValidator.setSuccess(this, touristPasswordError);
+                } else {
+                    FormValidator.setError(this, touristPasswordError, '密码至少6位');
+                }
+            });
+
+            // 输入时清除错误状态
+            [touristEmailInput, touristPasswordInput].forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('input-error')) {
+                        FormValidator.clearStatus(this, this.nextElementSibling?.classList.contains('error-message') ? this.nextElementSibling : null);
+                    }
+                });
+            });
+
+            // ====== 导游表单实时验证 ======
+            const guidePhoneInput = document.getElementById('guidePhone');
+            const guidePhoneError = document.getElementById('guidePhoneError');
+            const guidePasswordInput = document.getElementById('guidePassword');
+            const guidePasswordError = document.getElementById('guidePasswordError');
+
+            // 导游手机号失焦验证
+            guidePhoneInput.addEventListener('blur', function() {
+                const value = this.value.trim();
+                if (!value) {
+                    FormValidator.setError(this, guidePhoneError, '请输入手机号');
+                } else if (FormValidator.validatePhone(value)) {
+                    FormValidator.setSuccess(this, guidePhoneError);
+                } else {
+                    FormValidator.setError(this, guidePhoneError, '请输入正确的11位手机号');
+                }
+            });
+
+            // 导游密码失焦验证
+            guidePasswordInput.addEventListener('blur', function() {
+                const value = this.value;
+                if (!value) {
+                    FormValidator.setError(this, guidePasswordError, '请输入密码');
+                } else if (FormValidator.validatePassword(value)) {
+                    FormValidator.setSuccess(this, guidePasswordError);
+                } else {
+                    FormValidator.setError(this, guidePasswordError, '密码至少6位');
+                }
+            });
+
+            // 输入时清除错误状态
+            [guidePhoneInput, guidePasswordInput].forEach(input => {
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('input-error')) {
+                        FormValidator.clearStatus(this, this.nextElementSibling?.classList.contains('error-message') ? this.nextElementSibling : null);
+                    }
+                });
+            });
+        
+        // 游客登录表单提交
+        document.getElementById('touristLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('touristEmail').value.trim();
+            const password = document.getElementById('touristPassword').value;
+            const loginBtn = document.getElementById('touristLoginBtn');
+            
+            // 清除错误
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // 验证
+            if (!email) {
+                document.getElementById('touristEmailError').textContent = '请输入邮箱';
+                document.getElementById('touristEmailError').style.display = 'block';
+                return;
+            }
+            
+            if (!password) {
+                document.getElementById('touristPasswordError').textContent = '请输入密码';
+                document.getElementById('touristPasswordError').style.display = 'block';
+                return;
+            }
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = '登录中...';
+            
+            try {
+                // 使用 Supabase 认证
+                if (typeof Auth !== 'undefined' && typeof supabaseClient !== 'undefined') {
+                    initSupabase();
+                    const { data, error } = await Auth.signIn(email, password);
+                    
+                    if (error) {
+                        throw new Error(error.message || '登录失败');
+                    }
+                    
+                    // 更新用户类型为游客
+                    if (data.user) {
+                        await DB.profiles.update(data.user.id, { user_type: 'tourist' });
+                    }
+                    
+                    Utils.showToast('登录成功！', 'success');
+                    
+                    const redirect = urlParams.get('redirect') || 'index.html';
+                    
+                    setTimeout(() => {
+                        window.location.href = redirect;
+                    }, 1000);
+                } else {
+                    // Supabase 未配置，回退到 localStorage
+                    console.warn('Supabase 未配置，使用 localStorage 验证');
+                    
+                    const users = JSON.parse(localStorage.getItem('users') || '[]');
+                    const user = users.find(u => 
+                        (u.phone === email || u.email === email) && u.password === password
+                    );
+                    
+                    if (!user) {
+                        throw new Error('邮箱或密码错误');
+                    }
+                    
+                    localStorage.setItem('user', JSON.stringify(user));
+                    localStorage.setItem('userType', user.role || 'tourist');
+                    
+                    Utils.showToast('登录成功！', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = 'index.html';
+                    }, 1000);
+                }
+            } catch (error) {
+                loginBtn.disabled = false;
+                loginBtn.textContent = '游客登录';
+                Utils.showToast(error.message || '登录失败', 'error');
+            }
+        });
+        
+        // 导游登录表单提交
+        document.getElementById('guideLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phone = document.getElementById('guidePhone').value.trim();
+            const password = document.getElementById('guidePassword').value;
+            const loginBtn = document.getElementById('guideLoginBtn');
+            
+            // 清除错误
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // 验证
+            if (!phone) {
+                document.getElementById('guidePhoneError').textContent = '请输入手机号';
+                document.getElementById('guidePhoneError').style.display = 'block';
+                return;
+            }
+            
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                document.getElementById('guidePhoneError').textContent = '请输入正确的手机号';
+                document.getElementById('guidePhoneError').style.display = 'block';
+                return;
+            }
+            
+            if (!password) {
+                document.getElementById('guidePasswordError').textContent = '请输入密码';
+                document.getElementById('guidePasswordError').style.display = 'block';
+                return;
+            }
+            
+            loginBtn.disabled = true;
+            loginBtn.textContent = '登录中...';
+            
+            try {
+                // Supabase 认证使用邮箱登录（手机号需要通过邮箱验证）
+                // 这里需要用户使用邮箱登录，然后关联手机号
+                Utils.showToast('请使用注册邮箱登录，导游账号将在个人中心关联手机号', 'info');
+                
+                // 如果 Supabase 已配置，提示用户使用邮箱登录
+                if (typeof Auth !== 'undefined') {
+                    // 暂时显示提示，不执行登录
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = '导游登录';
+                    return;
+                }
+                
+                // 回退到 localStorage
+                const users = JSON.parse(localStorage.getItem('users') || '[]');
+                const user = users.find(u => 
+                    u.phone === phone && u.password === password && u.role === 'guide'
+                );
+                
+                if (!user) {
+                    throw new Error('手机号或密码错误，或非导游账号');
+                }
+                
+                // 检查审核状态
+                if (user.status === 'pending') {
+                    throw new Error('您的入驻申请正在审核中，请耐心等待');
+                }
+                
+                // 保存登录状态
+                localStorage.setItem('user', JSON.stringify(user));
+                localStorage.setItem('userType', 'guide');
+                
+                Utils.showToast('导游登录成功！', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'guide-dashboard.html';
+                }, 1000);
+            } catch (error) {
+                loginBtn.disabled = false;
+                loginBtn.textContent = '导游登录';
+                Utils.showToast(error.message || '登录失败', 'error');
+            }
+        });
+        }); // DOMContentLoaded 结束
+    </script>
+
+    
+</main>
+<!-- 页脚 -->
+    <footer id="main-footer" class="footer" style="background: transparent; margin-top: 30px;">
+        <div class="container">
+            <div class="footer-contact" style="text-align: center; margin-bottom: 15px;">
+                <p style="color: #64748B; font-size: 14px;">📧 service@youdao-travel.com  💬 微信：ximao101</p>
+            </div>
+            <div class="footer-bottom" style="justify-content: center;">
+                <p style="color: #94A3B8;">© 2024 游导旅游 · 旅行信息工具平台</p>
+            </div>
+            <div class="footer-links" style="justify-content: center; margin-top: 15px;">
+                <a href="user-agreement.html" style="color: #94A3B8;">用户服务协议</a>
+                <a href="privacy.html" style="color: #94A3B8;">隐私政策</a>
+                <a href="disclaimer.html" style="color: #94A3B8;">免责声明</a>
+                <a href="guide-agreement.html" style="color: #94A3B8;">导游入驻协议</a>
+                <a href="about.html" style="color: #94A3B8;">关于我们</a>
+            </div>
+            <div class="footer-icp" style="justify-content: center; margin-top: 15px;">
+                <p>ICP备案号：【待填写】 | <a href="https://beian.miit.gov.cn/" target="_blank" rel="nofollow" style="color: #94A3B8;">查询备案</a></p>
+                <p style="margin-top:5px;">本平台仅为信息展示工具，不提供旅游服务，不对用户与导游间的交易负责</p>
+            </div>
+        </div>
+    </footer>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- 表单增强脚本 -->
+  <script src="js/form-enhance.js" defer></script>
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+  <script src="js/xss-filter.js" defer></script>
+  <script src="js/security/xss-protection.js" defer></script>
+  <script src="js/security/csrf-protection.js" defer></script>
+  <script src="js/security/input-validator.js" defer></script>
+  <script src="js/form/smart-form.js"></script>
+  <script src="js/form/form-init.js"></script>
+  <script>
+    // 登录表单智能增强
+    document.addEventListener('DOMContentLoaded', function() {
+      const touristForm = document.getElementById('touristLoginForm');
+      const guideForm = document.getElementById('guideLoginForm');
+      
+      if (window.SmartForm) {
+        if (touristForm) {
+          new SmartForm(touristForm, {
+            autoSave: { enabled: true },
+            autofill: { enabled: true },
+            history: { enabled: true }
+          });
+        }
+        if (guideForm) {
+          new SmartForm(guideForm, {
+            autoSave: { enabled: true },
+            autofill: { enabled: true },
+            history: { enabled: true }
+          });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

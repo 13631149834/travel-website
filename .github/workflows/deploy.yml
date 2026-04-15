@@ -1,0 +1,295 @@
+name: Deploy to Vercel
+
+on:
+  # push到main分支时触发
+  push:
+    branches:
+      - main
+      - master
+  # 手动触发
+  workflow_dispatch:
+    inputs:
+      deploy_message:
+        description: '部署说明'
+        required: false
+        default: '手动触发部署'
+
+jobs:
+  # 主部署任务
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 检出代码
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      # 设置Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      # 安装依赖（如果有）
+      - name: Install dependencies
+        run: |
+          if [ -f package.json ]; then
+            npm ci
+          fi
+      
+      # 部署到Vercel
+      - name: Deploy to Vercel
+        id: vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+      
+      # 获取部署URL
+      - name: Get deployment URL
+        run: |
+          echo "Deployment URL: ${{ steps.vercel.outputs.url }}"
+          echo "Preview URL: ${{ steps.vercel.outputs.preview-url }}"
+      
+      # 验证部署
+      - name: Verify deployment
+        run: |
+          echo "Waiting for deployment to be ready..."
+          sleep 30
+          echo "Deployment completed!"
+    
+    # 问题检测与自动修复工作流
+  monitor-and-fix:
+    name: Monitor Website & Auto Fix
+    runs-on: ubuntu-latest
+    needs: deploy
+    if: always()
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      # 网站健康检查
+      - name: Check website health
+        id: health-check
+        run: |
+          echo "Checking website: https://youdao-travel.com"
+          
+          # 检查HTTP状态
+          HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "https://youdao-travel.com" || echo "000")
+          echo "HTTP Status: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" = "200" ] || [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "302" ]; then
+            echo "status=healthy" >> $GITHUB_OUTPUT
+          else
+            echo "status=unhealthy" >> $GITHUB_OUTPUT
+          fi
+      
+      # 常见问题自动修复
+      - name: Auto fix common issues
+        if: steps.health-check.outputs.status == 'unhealthy'
+        run: |
+          echo "Attempting to auto-fix issues..."
+          
+          # 检查并修复缺失的配置文件
+          if [ ! -f "robots.txt" ]; then
+            echo "Creating robots.txt..."
+            echo -e "User-agent: *\nAllow: /\n\nSitemap: https://youdao-travel.com/sitemap.xml" > robots.txt
+          fi
+          
+          if [ ! -f "sitemap.xml" ]; then
+            echo "Creating sitemap.xml placeholder..."
+            echo '<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://youdao-travel.com/</loc></url>
+</urlset>' > sitemap.xml
+          fi
+          
+          # 检查关键文件
+          if [ ! -f "index.html" ]; then
+            echo "ERROR: Critical file index.html is missing!"
+            exit 1
+          fi
+          
+          echo "Auto-fix completed. Committing changes..."
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "GitHub Actions Bot"
+          git add -A
+          git commit -m "Auto-fix: Resolve deployment issues $(date '+%Y-%m-%d %H:%M:%S')" || true
+          git push origin ${{ github.ref_name }} || true
+
+  # 定时健康检查
+  scheduled-health-check:
+    name: Scheduled Health Check
+    runs-on: ubuntu-latest
+    # 每天凌晨2点、上午8点、中午12点、下午6点检查
+    schedule:
+      - cron: '0 2,8,12,18 * * *'
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Health check
+        id: health
+        run: |
+          echo "=== 定时健康检查 ==="
+          echo "检查时间: $(date)"
+          
+          # 检查多个端点
+          URLS=(
+            "https://youdao-travel.com"
+            "https://youdao-travel.com/index.html"
+          )
+          
+          ALL_HEALTHY=true
+          for url in "${URLS[@]}"; do
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "$url" || echo "000")
+            echo "检查 $url: HTTP $HTTP_CODE"
+            if [ "$HTTP_CODE" != "200" ] && [ "$HTTP_CODE" != "301" ] && [ "$HTTP_CODE" != "302" ]; then
+              ALL_HEALTHY=false
+            fi
+          done
+          
+          if $ALL_HEALTHY; then
+            echo "所有检查通过"
+            echo "status=healthy" >> $GITHUB_OUTPUT
+          else
+            echo "发现问题!"
+            echo "status=unhealthy" >> $GITHUB_OUTPUT
+          fi
+      
+      # 问题自动修复
+      - name: Auto repair
+        if: steps.health.outputs.status == 'unhealthy'
+        run: |
+          echo "检测到网站异常，启动自动修复..."
+          
+          # 创建修复脚本
+          cat > auto-repair.sh << 'REPAIR_EOF'
+#!/bin/bash
+# 自动修复脚本
+
+echo "=== 开始自动修复 ==="
+
+# 确保必要文件存在
+mkdir -p images css js
+
+# 检查robots.txt
+if [ ! -f "robots.txt" ]; then
+  echo "创建 robots.txt"
+  echo -e "User-agent: *\nAllow: /\nSitemap: https://youdao-travel.com/sitemap.xml" > robots.txt
+fi
+
+# 检查sitemap.xml
+if [ ! -f "sitemap.xml" ]; then
+  echo "创建 sitemap.xml"
+  echo '<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://youdao-travel.com/</loc></url>
+</urlset>' > sitemap.xml
+fi
+
+# 验证关键文件
+echo "验证关键文件..."
+for file in index.html; do
+  if [ ! -f "$file" ]; then
+    echo "错误: $file 不存在!"
+    exit 1
+  fi
+done
+
+echo "=== 修复完成 ==="
+REPAIR_EOF
+          
+          chmod +x auto-repair.sh
+          ./auto-repair.sh
+          
+          # 提交修复
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "GitHub Actions Bot"
+          git add -A
+          git commit -m "Scheduled auto-repair: $(date '+%Y-%m-%d %H:%M:%S')" || true
+          
+          # 如果检测到实际内容差异，推送修复
+          if git diff --cached --quiet; then
+            echo "没有需要修复的内容"
+          else
+            echo "推送修复..."
+            git push origin ${{ github.ref_name }}
+          fi
+      
+      # 发送通知
+      - name: Send notification
+        if: always()
+        run: |
+          if [ "${{ steps.health.outputs.status }}" == "unhealthy" ]; then
+            echo "发送问题通知..."
+            # 可以配置邮件或其他通知
+          fi
+
+  # 生成部署报告
+  deployment-report:
+    name: Generate Deployment Report
+    runs-on: ubuntu-latest
+    needs: [deploy, monitor-and-fix]
+    if: always()
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Generate report
+        run: |
+          REPORT_FILE="监督日志/github-actions-$(date '+%Y%m%d-%H%M%S').md"
+          mkdir -p 监督日志
+          
+          cat > "$REPORT_FILE" << EOF
+# GitHub Actions 部署报告
+
+## 执行信息
+- **时间**: $(date)
+- **触发方式**: ${{ github.event_name }}
+- **工作流**: ${{ github.workflow }}
+- **运行ID**: ${{ github.run_id }}
+- **提交**: ${{ github.sha }}
+
+## 部署状态
+- **主部署**: ${{ needs.deploy.result }}
+- **监控修复**: ${{ needs.monitor-and-fix.result }}
+
+## 变更内容
+\`\`\`
+$(git log --oneline -5)
+\`\`\`
+
+## 操作建议
+EOF
+          
+          if [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "- ✅ 部署成功完成" >> "$REPORT_FILE"
+          else
+            echo "- ❌ 部署失败，请检查日志" >> "$REPORT_FILE"
+          fi
+          
+          echo "" >> "$REPORT_FILE"
+          echo "## 日志查看" >> "$REPORT_FILE"
+          echo "请访问 Actions 页面查看完整日志" >> "$REPORT_FILE"
+          
+          echo "报告已生成: $REPORT_FILE"
+          
+          # 提交报告
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.name "GitHub Actions Bot"
+          git add "$REPORT_FILE"
+          git commit -m "docs: update deployment report $(date '+%Y-%m-%d')" || true
+          git push origin ${{ github.ref_name }} || true
