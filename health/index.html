@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行健康管家 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#10b981',
+            secondary: '#059669',
+            accent: '#34d399',
+            medical: '#0ea5e9',
+            medicalDark: '#0284c7',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-health { background: linear-gradient(135deg, #10b981 0%, #059669 50%, #0ea5e9 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .pulse-green { animation: pulseGreen 2s infinite; }
+    @keyframes pulseGreen { 0%, 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); } }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-health text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="../destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="../routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="index.html" class="font-semibold border-b-2 border-white pb-1 flex items-center gap-1">
+            🏥 健康管家
+          </a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="../destinations.html" class="block py-2">目的地</a>
+        <a href="../routes.html" class="block py-2">路线</a>
+        <a href="index.html" class="block py-2 font-semibold">🏥 健康管家</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="gradient-health text-white py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 text-center fade-in">
+      <div class="inline-block px-4 py-1.5 bg-white/20 rounded-full text-sm mb-6">
+        🏥 您的旅行健康助手
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold mb-6">旅行健康管家</h1>
+      <p class="text-lg md:text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+        为您的每一次旅行提供全方位的健康保障，从出发前的健康评估到旅途中的用药指导
+      </p>
+      <a href="assessment.html" class="inline-flex items-center gap-2 px-8 py-4 bg-white text-primary rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg pulse-green">
+        🩺 开始健康评估
+      </a>
+    </div>
+  </section>
+
+  <!-- Quick Features -->
+  <section class="max-w-7xl mx-auto px-4 -mt-8 mb-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <a href="assessment.html" class="card-hover bg-white rounded-2xl p-6 text-center shadow-xl border-2 border-transparent hover:border-primary">
+        <div class="text-4xl mb-3">📋</div>
+        <h3 class="font-bold text-gray-800 mb-1">健康评估</h3>
+        <p class="text-sm text-gray-500">旅行前风险评估</p>
+      </a>
+      <a href="vaccines.html" class="card-hover bg-white rounded-2xl p-6 text-center shadow-xl border-2 border-transparent hover:border-primary">
+        <div class="text-4xl mb-3">💉</div>
+        <h3 class="font-bold text-gray-800 mb-1">疫苗指南</h3>
+        <p class="text-sm text-gray-500">各国疫苗要求</p>
+      </a>
+      <a href="medicine-kit.html" class="card-hover bg-white rounded-2xl p-6 text-center shadow-xl border-2 border-transparent hover:border-primary">
+        <div class="text-4xl mb-3">💊</div>
+        <h3 class="font-bold text-gray-800 mb-1">旅行药箱</h3>
+        <p class="text-sm text-gray-500">必备药品清单</p>
+      </a>
+      <a href="destination.html" class="card-hover bg-white rounded-2xl p-6 text-center shadow-xl border-2 border-transparent hover:border-primary">
+        <div class="text-4xl mb-3">🌍</div>
+        <h3 class="font-bold text-gray-800 mb-1">目的地健康</h3>
+        <p class="text-sm text-gray-500">当地健康信息</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Health Topics -->
+    <div class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span class="text-2xl">📚</span> 健康知识专题
+      </h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- High Altitude -->
+        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center text-2xl">🏔️</div>
+            <div>
+              <h3 class="font-bold text-gray-800">高原反应预防</h3>
+              <p class="text-sm text-gray-500">海拔3000米以上</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 到达后充分休息</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 避免剧烈运动</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 多喝水补充水分</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 提前服用红景天</li>
+          </ul>
+          <button onclick="showDetail('highAltitude')" class="mt-4 text-primary font-medium text-sm hover:underline">查看详细指南 →</button>
+        </div>
+
+        <!-- Motion Sickness -->
+        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center text-2xl">🚗</div>
+            <div>
+              <h3 class="font-bold text-gray-800">晕机晕车应对</h3>
+              <p class="text-sm text-gray-500">出行必备技巧</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 选择靠窗座位</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 注视远方地平线</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 避免空腹或过饱</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 提前服用晕车药</li>
+          </ul>
+          <button onclick="showDetail('motionSickness')" class="mt-4 text-primary font-medium text-sm hover:underline">查看详细指南 →</button>
+        </div>
+
+        <!-- Sun Protection -->
+        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center text-2xl">☀️</div>
+            <div>
+              <h3 class="font-bold text-gray-800">中暑防晒指南</h3>
+              <p class="text-sm text-gray-500">炎热天气必备</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 使用SPF50+防晒</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 穿戴遮阳帽和墨镜</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 避免高温时段外出</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 及时补充水分</li>
+          </ul>
+          <button onclick="showDetail('sunProtection')" class="mt-4 text-primary font-medium text-sm hover:underline">查看详细指南 →</button>
+        </div>
+
+        <!-- Water Safety -->
+        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center text-2xl">💧</div>
+            <div>
+              <h3 class="font-bold text-gray-800">饮水安全</h3>
+              <p class="text-sm text-gray-500">避免肠胃问题</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 饮用瓶装水</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 避免加冰冷饮</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 注意水源地标识</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 随身携带水壶</li>
+          </ul>
+          <button onclick="showDetail('waterSafety')" class="mt-4 text-primary font-medium text-sm hover:underline">查看详细指南 →</button>
+        </div>
+
+        <!-- Food Safety -->
+        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center text-2xl">🍽️</div>
+            <div>
+              <h3 class="font-bold text-gray-800">食物安全</h3>
+              <p class="text-sm text-gray-500">预防食物中毒</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 选择正规餐厅</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 食物彻底煮熟</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 水果削皮食用</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 避免街边摊贩</li>
+          </ul>
+          <button onclick="showDetail('foodSafety')" class="mt-4 text-primary font-medium text-sm hover:underline">查看详细指南 →</button>
+        </div>
+
+        <!-- Common Diseases -->
+        <div class="card-hover bg-white rounded-2xl p-6 shadow-lg">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-rose-500 rounded-xl flex items-center justify-center text-2xl">🦠</div>
+            <div>
+              <h3 class="font-bold text-gray-800">常见旅行疾病</h3>
+              <p class="text-sm text-gray-500">预防与应对</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-sm text-gray-600">
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 旅行者腹泻</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 流感与感冒</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 蚊虫传播疾病</li>
+            <li class="flex items-start gap-2"><span class="text-green-500">✓</span> 过敏反应</li>
+          </ul>
+          <a href="destination.html" class="mt-4 text-primary font-medium text-sm hover:underline block">查看疾病详情 →</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Tools -->
+    <div class="mb-12">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span class="text-2xl">🛠️</span> 健康工具
+      </h2>
+      <div class="grid md:grid-cols-2 gap-6">
+        <a href="assessment.html" class="card-hover bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-bold mb-2">📋 健康评估问卷</h3>
+              <p class="opacity-90 text-sm">完成简单的问卷，获取个性化的旅行健康建议</p>
+            </div>
+            <div class="text-5xl opacity-80">→</div>
+          </div>
+        </a>
+        <a href="medicine-kit.html" class="card-hover bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-bold mb-2">💊 药品清单生成</h3>
+              <p class="opacity-90 text-sm">根据目的地和个人情况，生成专属药品清单</p>
+            </div>
+            <div class="text-5xl opacity-80">→</div>
+          </div>
+        </a>
+        <a href="vaccines.html" class="card-hover bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-bold mb-2">💉 疫苗接种提醒</h3>
+              <p class="opacity-90 text-sm">查看目的地疫苗要求，规划接种时间</p>
+            </div>
+            <div class="text-5xl opacity-80">→</div>
+          </div>
+        </a>
+        <a href="records.html" class="card-hover bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-6 text-white shadow-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-bold mb-2">📁 健康记录管理</h3>
+              <p class="opacity-90 text-sm">记录个人健康信息，方便就医参考</p>
+            </div>
+            <div class="text-5xl opacity-80">→</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- Health Reminders -->
+    <div class="bg-white rounded-2xl p-8 shadow-lg">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span class="text-2xl">⚠️</span> 重要健康提醒
+      </h2>
+      <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="text-center p-4 bg-yellow-50 rounded-xl">
+          <div class="text-3xl mb-2">🕐</div>
+          <h3 class="font-semibold text-gray-800 mb-1">提前规划</h3>
+          <p class="text-sm text-gray-600">建议出发前4-6周开始准备健康事宜</p>
+        </div>
+        <div class="text-center p-4 bg-blue-50 rounded-xl">
+          <div class="text-3xl mb-2">💊</div>
+          <h3 class="font-semibold text-gray-800 mb-1">带足药品</h3>
+          <p class="text-sm text-gray-600">带够行程用量加备用，留出富余量</p>
+        </div>
+        <div class="text-center p-4 bg-green-50 rounded-xl">
+          <div class="text-3xl mb-2">📄</div>
+          <h3 class="font-semibold text-gray-800 mb-1">携带证明</h3>
+          <p class="text-sm text-gray-600">携带处方和健康证明以备不时之需</p>
+        </div>
+        <div class="text-center p-4 bg-red-50 rounded-xl">
+          <div class="text-3xl mb-2">🏥</div>
+          <h3 class="font-semibold text-gray-800 mb-1">了解就医</h3>
+          <p class="text-sm text-gray-600">提前了解目的地医疗资源位置</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detail Modal -->
+  <div id="detailModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-lg w-full max-h-[80vh] overflow-auto">
+      <div class="p-6">
+        <div class="flex items-center justify-between mb-4">
+          <h3 id="modalTitle" class="text-xl font-bold text-gray-800"></h3>
+          <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+        </div>
+        <div id="modalContent" class="text-gray-600"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-2xl">🧭</span>
+            <span class="text-xl font-bold">游导旅游</span>
+          </div>
+          <p class="text-gray-400 text-sm">您的贴心旅行助手，让每一次出行都轻松愉快</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">旅行工具</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="assessment.html" class="hover:text-white">健康评估</a></li>
+            <li><a href="vaccines.html" class="hover:text-white">疫苗指南</a></li>
+            <li><a href="medicine-kit.html" class="hover:text-white">旅行药箱</a></li>
+            <li><a href="records.html" class="hover:text-white">健康记录</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">帮助链接</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="../help.html" class="hover:text-white">帮助中心</a></li>
+            <li><a href="../contact.html" class="hover:text-white">联系我们</a></li>
+            <li><a href="../emergency.html" class="hover:text-white">紧急求助</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">联系方式</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li>📧 support@youdao-travel.com</li>
+            <li>📞 13631149834</li>
+            <li>🕐 24小时客服</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400 text-sm">
+        <p>© 2024 游导旅游 youdao-travel.com 版权所有 | <a href="../privacy.html" class="hover:text-white">隐私政策</a></p>
+        <p class="mt-2 text-xs">温馨提示：本页面健康信息仅供参考，不构成医疗建议。如有身体不适，请及时就医。</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    const healthTips = {
+      highAltitude: {
+        title: '🏔️ 高原反应预防指南',
+        content: `
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">什么是高原反应？</h4>
+              <p class="text-sm">高原反应是人体到达高海拔地区后，因缺氧而出现的各种不适症状。常见于海拔3000米以上的地区。</p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">常见症状</h4>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>头痛、头晕</li>
+                <li>气短、呼吸困难</li>
+                <li>食欲不振、恶心</li>
+                <li>失眠、睡眠障碍</li>
+                <li>疲劳、乏力</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">预防措施</h4>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>出发前5-10天开始服用红景天</li>
+                <li>到达后充分休息，避免剧烈运动</li>
+                <li>缓慢上升海拔，每天上升不超过500米</li>
+                <li>多喝水，保持身体水分充足</li>
+                <li>避免吸烟饮酒</li>
+                <li>注意保暖，防止感冒</li>
+              </ul>
+            </div>
+            <div class="bg-red-50 p-4 rounded-xl">
+              <h4 class="font-semibold text-red-700 mb-2">⚠️ 紧急情况</h4>
+              <p class="text-sm text-red-600">如出现剧烈头痛、意识模糊、呼吸困难等症状，可能是高原肺水肿或脑水肿，请立即就医并下撤到低海拔地区！</p>
+            </div>
+          </div>
+        `
+      },
+      motionSickness: {
+        title: '🚗 晕车晕船应对指南',
+        content: `
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">为什么会晕车？</h4>
+              <p class="text-sm">晕车是由于视觉与内耳平衡感受器信息冲突导致的身体反应，与个人体质有关。</p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">预防措施</h4>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>选择靠窗座位，保持通风</li>
+                <li>注视远方地平线，避免看手机或书</li>
+                <li>避免空腹或过饱乘车</li>
+                <li>提前30分钟服用晕车药</li>
+                <li>保持充足睡眠</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">缓解方法</h4>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>含姜片或薄荷糖</li>
+                <li>按压内关穴（手腕内侧）</li>
+                <li>开窗通风，呼吸新鲜空气</li>
+                <li>闭眼休息</li>
+              </ul>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-xl">
+              <h4 class="font-semibold text-blue-700 mb-2">💡 常用药物</h4>
+              <p class="text-sm text-blue-600">茶苯海明片：乘车前30分钟服用，每4小时可重复。晕车贴可持续72小时。</p>
+            </div>
+          </div>
+        `
+      },
+      sunProtection: {
+        title: '☀️ 中暑防晒指南',
+        content: `
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">防晒的重要性</h4>
+              <p class="text-sm">过度紫外线暴露会导致晒伤、皮肤老化甚至皮肤癌。旅行中更易忽视防晒。</p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">防晒措施</h4>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>使用SPF50+防晒霜，每2小时补涂</li>
+                <li>穿戴宽檐帽和太阳镜</li>
+                <li>穿着长袖衣物遮挡</li>
+                <li>避免10-14点强紫外线时段外出</li>
+                <li>阴天也需要使用防晒</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">中暑症状</h4>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>头晕、乏力</li>
+                <li>恶心、呕吐</li>
+                <li>大量出汗或无汗</li>
+                <li>体温升高</li>
+                <li>意识模糊（严重）</li>
+              </ul>
+            </div>
+            <div class="bg-orange-50 p-4 rounded-xl">
+              <h4 class="font-semibold text-orange-700 mb-2">🚨 中暑急救</h4>
+              <p class="text-sm text-orange-600">立即转移到阴凉处，解开衣物，用冷水擦拭全身降温，补充水分。严重者立即拨打急救电话！</p>
+            </div>
+          </div>
+        `
+      },
+      waterSafety: {
+        title: '💧 饮水安全指南',
+        content: `
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">为什么要注意饮水安全？</h4>
+              <p class="text-sm">不洁饮水可能导致旅行者腹泻、霍乱、伤寒等疾病。在陌生地区更需注意。</p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">安全饮水原则</h4>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>饮用正规品牌的瓶装水</li>
+                <li>确认瓶盖密封完好</li>
+                <li>避免加冰块的冷饮</li>
+                <li>刷牙漱口也使用瓶装水</li>
+                <li>游泳时避免吞咽池水</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">野外水源处理</h4>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>煮沸5分钟以上</li>
+                <li>使用便携净水器</li>
+                <li>添加碘片或净水片</li>
+                <li>避免直接饮用溪流、泉水</li>
+              </ul>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-xl">
+              <h4 class="font-semibold text-blue-700 mb-2">💡 建议装备</h4>
+              <p class="text-sm text-blue-600">随身携带可折叠水壶和便携净水器，在野外探险时尤为重要。</p>
+            </div>
+          </div>
+        `
+      },
+      foodSafety: {
+        title: '🍽️ 食物安全指南',
+        content: `
+          <div class="space-y-4">
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">旅行者腹泻的预防</h4>
+              <p class="text-sm">旅行者腹泻是最常见的旅行疾病，约30%的旅行者会受到影响。预防是关键。</p>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">安全饮食原则</h4>
+              <ul class="list-disc list-inside text-sm space-y-1">
+                <li>选择干净正规的餐厅就餐</li>
+                <li>食物要彻底煮熟，避免生食</li>
+                <li>水果要削皮或用安全水清洗</li>
+                <li>避免街边摊贩的不洁食物</li>
+                <li>乳制品要确保经过巴氏消毒</li>
+                <li>不吃超过保质期的食品</li>
+              </ul>
+            </div>
+            <div>
+              <h4 class="font-semibold text-gray-800 mb-2">"煮、烧、剥、洗"原则</h4>
+              <p class="text-sm">无法以上原则时：<br>煮 = 煮沸的水<br>烧 = 彻底加热的食物<br>剥 = 剥皮的水果<br>洗 = 用安全水清洗</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded-xl">
+              <h4 class="font-semibold text-green-700 mb-2">💊 应急准备</h4>
+              <p class="text-sm text-green-600">随身携带蒙脱石散和口服补液盐，一旦出现腹泻及时补充水分和电解质。</p>
+            </div>
+          </div>
+        `
+      }
+    };
+
+    function showDetail(key) {
+      const modal = document.getElementById('detailModal');
+      const data = healthTips[key];
+      document.getElementById('modalTitle').textContent = data.title;
+      document.getElementById('modalContent').innerHTML = data.content;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('detailModal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Close modal on outside click
+    document.getElementById('detailModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+  </script>
+</body>
+</html>
