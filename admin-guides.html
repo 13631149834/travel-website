@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>导游管理 - 游导旅游管理后台</title>
   <meta name="robots" content="noindex, nofollow">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
     <style>
         * {
             margin: 0;
@@ -360,6 +366,259 @@
             to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
 
+        /* 添加导游按钮 */
+        .add-guide-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .add-guide-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* 模态框基础样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        /* 添加导游模态框 */
+        .add-guide-modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            width: 600px;
+            max-width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #F3F4F6;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #F3F4F6;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: #E5E7EB;
+            transform: rotate(90deg);
+        }
+
+        .modal-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .modal-form label span {
+            color: #EF4444;
+        }
+
+        .modal-form input,
+        .modal-form select,
+        .modal-form textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .modal-form input:focus,
+        .modal-form select:focus,
+        .modal-form textarea:focus {
+            outline: none;
+            border-color: #10B981;
+        }
+
+        .modal-form textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* 语言选择复选框组 */
+        .language-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .language-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: #F3F4F6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .language-option:hover {
+            background: #E5E7EB;
+        }
+
+        .language-option input {
+            width: auto;
+            margin: 0;
+        }
+
+        .language-option.selected {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10B981;
+        }
+
+        /* 头像选择 */
+        .avatar-select {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .avatar-option {
+            width: 50px;
+            height: 50px;
+            border: 2px solid #E5E7EB;
+            border-radius: 10px;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #F9FAFB;
+        }
+
+        .avatar-option:hover {
+            border-color: #10B981;
+            transform: scale(1.1);
+        }
+
+        .avatar-option.selected {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #F3F4F6;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+            justify-content: center;
+            padding: 14px;
+            font-size: 1rem;
+        }
+
+        /* 快速操作卡片 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .quick-action-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .quick-action-card:hover {
+            border-color: #10B981;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .quick-action-card .icon {
+            font-size: 2rem;
+        }
+
+        .quick-action-card .info h4 {
+            font-size: 1rem;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .quick-action-card .info p {
+            font-size: 0.85rem;
+            color: #666;
+            margin: 0;
+        }
+
         /* 响应式 */
         @media (max-width: 768px) {
             .admin-header {
@@ -376,6 +635,13 @@
             }
             .search-bar {
                 flex-direction: column;
+            }
+            .add-guide-modal {
+                width: 95%;
+                padding: 20px;
+            }
+            .quick-actions {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -442,9 +708,114 @@
             padding: 14px;
             font-size: 1rem;
         }
-    </style>
+    
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
     <!-- 登录模态框 -->
     <div id="loginModal" class="login-modal">
         <div class="login-box">
@@ -464,7 +835,7 @@
         <div class="logo">
             <a href="admin.html">⚙️ 游导旅游管理后台</a>
         </div>
-        <nav class="admin-nav">
+        <nav class="admin-nav" aria-label="主导航">
             <a href="admin.html">📊 仪表盘</a>
             <a href="admin-guides.html" class="active">🎤 导游管理</a>
             <a href="admin-users.html">👥 用户管理</a>
@@ -475,7 +846,44 @@
 
     <!-- 主容器 -->
     <main class="admin-container">
-        <h1 class="page-title">🎤 导游管理</h1>
+        <h1 class="page-title">
+            🎤 导游管理
+            <button class="add-guide-btn" onclick="openAddGuideModal()">
+                ➕ 添加导游
+            </button>
+        </h1>
+
+        <!-- 快速操作卡片 -->
+        <div class="quick-actions content-card">
+            <div class="quick-action-card" onclick="goToTab('pending')">
+                <div class="icon">⏳</div>
+                <div class="info">
+                    <h4>待审核</h4>
+                    <p>处理导游申请</p>
+                </div>
+            </div>
+            <div class="quick-action-card" onclick="goToTab('approved')">
+                <div class="icon">✅</div>
+                <div class="info">
+                    <h4>已通过</h4>
+                    <p>查看认证导游</p>
+                </div>
+            </div>
+            <div class="quick-action-card" onclick="openAddGuideModal()">
+                <div class="icon">➕</div>
+                <div class="info">
+                    <h4>手动添加</h4>
+                    <p>添加新导游</p>
+                </div>
+            </div>
+            <div class="quick-action-card" onclick="exportGuides()">
+                <div class="icon">📤</div>
+                <div class="info">
+                    <h4>导出数据</h4>
+                    <p>导出导游列表</p>
+                </div>
+            </div>
+        </div>
 
         <!-- 标签页切换 -->
         <div class="tabs">
@@ -504,8 +912,14 @@
                     <option value="欧洲">欧洲</option>
                     <option value="海岛">海岛</option>
                     <option value="国内">国内</option>
+                    <option value="历史文化">历史文化</option>
+                    <option value="美食探店">美食探店</option>
+                    <option value="户外探险">户外探险</option>
+                    <option value="摄影打卡">摄影打卡</option>
+                    <option value="亲子研学">亲子研学</option>
                 </select>
                 <button class="btn btn-primary" onclick="loadGuides()">🔍 搜索</button>
+                <button class="btn btn-secondary" onclick="resetSearch()">🔄 重置</button>
             </div>
 
             <!-- 导游列表 -->
@@ -537,6 +951,171 @@
         </div>
     </main>
 
+    <!-- 添加导游模态框 -->
+    <div id="addGuideModal" class="modal-overlay">
+        <div class="add-guide-modal">
+            <div class="modal-header">
+                <h2>➕ 添加新导游</h2>
+                <button class="modal-close" onclick="closeAddGuideModal()">✕</button>
+            </div>
+            
+            <form id="addGuideForm" class="modal-form" onsubmit="handleAddGuide(event)">
+                <!-- 基本信息 -->
+                <div style="background: #F9FAFB; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="font-size: 1rem; margin-bottom: 15px; color: #667eea;">📋 基本信息</h3>
+                    
+                    <!-- 头像选择 -->
+                    <div class="form-group">
+                        <label>导游头像 <span>*</span></label>
+                        <div class="avatar-select" id="avatarSelect">
+                            <div class="avatar-option" data-avatar="👨‍🏫" onclick="selectAvatar(this)">👨‍🏫</div>
+                            <div class="avatar-option" data-avatar="👩‍🏫" onclick="selectAvatar(this)">👩‍🏫</div>
+                            <div class="avatar-option" data-avatar="🧔" onclick="selectAvatar(this)">🧔</div>
+                            <div class="avatar-option" data-avatar="👨‍💼" onclick="selectAvatar(this)">👨‍💼</div>
+                            <div class="avatar-option" data-avatar="👩‍💼" onclick="selectAvatar(this)">👩‍💼</div>
+                            <div class="avatar-option" data-avatar="🧑‍🎓" onclick="selectAvatar(this)">🧑‍🎓</div>
+                            <div class="avatar-option" data-avatar="👨‍🎨" onclick="selectAvatar(this)">👨‍🎨</div>
+                            <div class="avatar-option" data-avatar="👩‍🎨" onclick="selectAvatar(this)">👩‍🎨</div>
+                            <div class="avatar-option" data-avatar="🧑‍✈️" onclick="selectAvatar(this)">🧑‍✈️</div>
+                            <div class="avatar-option" data-avatar="👨‍🍳" onclick="selectAvatar(this)">👨‍🍳</div>
+                        </div>
+                        <input type="hidden" id="guideAvatar" name="avatar" value="👨‍🏫" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>导游昵称 <span>*</span></label>
+                        <input type="text" id="guideNickname" name="nickname" placeholder="请输入导游昵称" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>真实姓名</label>
+                        <input type="text" id="guideRealname" name="realname" placeholder="请输入真实姓名（选填）">
+                    </div>
+
+                    <div class="form-group">
+                        <label>联系电话 <span>*</span></label>
+                        <input type="tel" id="guidePhone" name="phone" placeholder="请输入联系电话" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>电子邮箱 <span>*</span></label>
+                        <input type="email" id="guideEmail" name="email" placeholder="请输入电子邮箱" required>
+                    </div>
+                </div>
+
+                <!-- 专业信息 -->
+                <div style="background: #F9FAFB; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="font-size: 1rem; margin-bottom: 15px; color: #667eea;">🎯 专业信息</h3>
+                    
+                    <div class="form-group">
+                        <label>专业领域 <span>*</span></label>
+                        <select id="guideExpertise" name="expertise" required>
+                            <option value="">请选择专业领域</option>
+                            <option value="日本">🇯🇵 日本</option>
+                            <option value="泰国">🇹🇭 泰国</option>
+                            <option value="欧洲">🇪🇺 欧洲</option>
+                            <option value="海岛">🏝️ 海岛度假</option>
+                            <option value="国内">🇨🇳 国内游</option>
+                            <option value="历史文化">🏛️ 历史文化</option>
+                            <option value="美食探店">🍜 美食探店</option>
+                            <option value="户外探险">🏔️ 户外探险</option>
+                            <option value="摄影打卡">📸 摄影打卡</option>
+                            <option value="亲子研学">👨‍👩‍👧 亲子研学</option>
+                            <option value="商务考察">💼 商务考察</option>
+                            <option value="医疗旅游">🏥 医疗旅游</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>语言能力 <span>*</span></label>
+                        <div class="language-group">
+                            <label class="language-option">
+                                <input type="checkbox" name="languages" value="普通话" checked onchange="updateLanguages()" id="languages">
+                                普通话
+                            </label>
+                            <label class="language-option">
+                                <input type="checkbox" name="languages" value="英语" onchange="updateLanguages()" id="languages">
+                                英语
+                            </label>
+                            <label class="language-option">
+                                <input type="checkbox" name="languages" value="日语" onchange="updateLanguages()" id="languages">
+                                日语
+                            </label>
+                            <label class="language-option">
+                                <input type="checkbox" name="languages" value="韩语" onchange="updateLanguages()" id="languages">
+                                韩语
+                            </label>
+                            <label class="language-option">
+                                <input type="checkbox" name="languages" value="粤语" onchange="updateLanguages()" id="languages">
+                                粤语
+                            </label>
+                            <label class="language-option">
+                                <input type="checkbox" name="languages" value="法语" onchange="updateLanguages()" id="languages">
+                                法语
+                            </label>
+                            <label class="language-option">
+                                <input type="checkbox" name="languages" value="德语" onchange="updateLanguages()" id="languages">
+                                德语
+                            </label>
+                            <label class="language-option">
+                                <input type="checkbox" name="languages" value="西班牙语" onchange="updateLanguages()" id="languages">
+                                西班牙语
+                            </label>
+                        </div>
+                        <input type="hidden" id="guideLanguages" name="languages_hidden" value="普通话">
+                    </div>
+
+                    <div class="form-group">
+                        <label>从业年限</label>
+                        <select id="guideExperience" name="experience">
+                            <option value="">请选择从业年限</option>
+                            <option value="1年以下">1年以下</option>
+                            <option value="1-3年">1-3年</option>
+                            <option value="3-5年">3-5年</option>
+                            <option value="5-10年">5-10年</option>
+                            <option value="10年以上">10年以上</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 详细介绍 -->
+                <div style="background: #F9FAFB; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="font-size: 1rem; margin-bottom: 15px; color: #667eea;">📝 详细介绍</h3>
+                    
+                    <div class="form-group">
+                        <label>导游简介 <span>*</span></label>
+                        <textarea id="guideBio" name="bio" placeholder="请输入导游简介，介绍您的专业背景、带团风格、服务特色等..." required></textarea>
+                        <div class="form-hint">建议字数在50-500字之间</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>服务特色</label>
+                        <input type="text" id="guideFeatures" name="features" placeholder="例如：擅长亲子游、美食达人、摄影指导等">
+                    </div>
+                </div>
+
+                <!-- 认证设置 -->
+                <div style="background: #F9FAFB; padding: 20px; border-radius: 12px; margin-bottom: 20px;">
+                    <h3 style="font-size: 1rem; margin-bottom: 15px; color: #667eea;">🔐 认证设置</h3>
+                    
+                    <div class="form-group">
+                        <label>初始状态</label>
+                        <select id="guideStatus" name="status">
+                            <option value="approved">✅ 直接通过（已认证）</option>
+                            <option value="pending" selected>⏳ 待审核</option>
+                        </select>
+                        <div class="form-hint">选择"直接通过"则导游立即可用，选择"待审核"则需要手动审核</div>
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeAddGuideModal()">取消</button>
+                    <button type="submit" class="btn btn-success">💾 保存导游</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         const ADMIN_PASSWORD = 'admin123';
         let currentTab = 'pending';
@@ -554,9 +1133,9 @@
             }
         };
 
-        // 模拟数据
+        // 导游数据存储（从localStorage读取，无假数据）
         const mockData = {
-            guideProfiles: JSON.parse(localStorage.getItem('admin_guideProfiles') || '[{"id":"g1","user_id":"u2","nickname":"李四导游","avatar":"👨‍🏫","expertise":"历史文化","languages":"普通话,英语","status":"approved","created_at":"2024-02-20T10:30:00Z"},{"id":"g2","user_id":"u4","nickname":"赵六导游","avatar":"👩‍🏫","expertise":"美食探店","languages":"普通话,粤语","status":"pending","created_at":"2024-04-01T09:00:00Z"},{"id":"g3","user_id":"u5","nickname":"钱七导游","avatar":"🧔","expertise":"户外探险","languages":"普通话","status":"pending","created_at":"2024-04-05T11:00:00Z"},{"id":"g4","user_id":"u6","nickname":"孙八导游","avatar":"👨‍💼","expertise":"摄影打卡","languages":"普通话,日语","status":"approved","created_at":"2024-03-15T14:00:00Z"},{"id":"g5","user_id":"u7","nickname":"周九导游","avatar":"👩‍💼","expertise":"亲子研学","languages":"普通话,英语","status":"rejected","created_at":"2024-03-20T16:00:00Z"}]')
+            guideProfiles: JSON.parse(localStorage.getItem('admin_guideProfiles') || '[]')
         };
 
         function saveMockData() {
@@ -600,9 +1179,24 @@
         function switchTab(tab, btn) {
             currentTab = tab;
             currentPage = 1;
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tabs .tab').forEach(t => t.classList.remove('active'));
             btn.classList.add('active');
             loadGuides();
+        }
+
+        // 快速跳转到指定标签
+        function goToTab(tab) {
+            const tabMap = {
+                'pending': 0,
+                'approved': 1,
+                'rejected': 2,
+                'all': 3
+            };
+            const tabs = document.querySelectorAll('.tabs .tab');
+            const index = tabMap[tab];
+            if (tabs[index]) {
+                switchTab(tab, tabs[index]);
+            }
         }
 
         // 加载导游数量统计
@@ -786,6 +1380,184 @@
         }
 
         document.addEventListener('DOMContentLoaded', init);
+
+        // ========== 添加导游功能 ==========
+
+        // 打开添加导游模态框
+        function openAddGuideModal() {
+            document.getElementById('addGuideModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+            // 默认选中第一个头像
+            const firstAvatar = document.querySelector('.avatar-option');
+            if (firstAvatar) {
+                selectAvatar(firstAvatar);
+            }
+            // 重置表单
+            resetGuideForm();
+        }
+
+        // 关闭添加导游模态框
+        function closeAddGuideModal() {
+            document.getElementById('addGuideModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // 重置导游表单
+        function resetGuideForm() {
+            document.getElementById('addGuideForm').reset();
+            document.getElementById('guideAvatar').value = '👨‍🏫';
+            document.getElementById('guideLanguages').value = '普通话';
+            
+            // 重置头像选中状态
+            document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+            const firstAvatar = document.querySelector('.avatar-option');
+            if (firstAvatar) {
+                firstAvatar.classList.add('selected');
+            }
+        }
+
+        // 选择头像
+        function selectAvatar(element) {
+            document.querySelectorAll('.avatar-option').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            const avatar = element.getAttribute('data-avatar');
+            document.getElementById('guideAvatar').value = avatar;
+        }
+
+        // 更新语言选择
+        function updateLanguages() {
+            const checkboxes = document.querySelectorAll('input[name="languages"]:checked');
+            const languages = Array.from(checkboxes).map(cb => cb.value).join(',');
+            document.getElementById('guideLanguages').value = languages || '普通话';
+        }
+
+        // 处理添加导游表单提交
+        function handleAddGuide(event) {
+            event.preventDefault();
+            
+            // 获取表单数据
+            const guideData = {
+                id: 'g' + Date.now(), // 生成唯一ID
+                user_id: 'u' + Date.now(), // 生成用户ID
+                nickname: document.getElementById('guideNickname').value.trim(),
+                realname: document.getElementById('guideRealname').value.trim(),
+                phone: document.getElementById('guidePhone').value.trim(),
+                email: document.getElementById('guideEmail').value.trim(),
+                avatar: document.getElementById('guideAvatar').value,
+                expertise: document.getElementById('guideExpertise').value,
+                languages: document.getElementById('guideLanguages').value,
+                experience: document.getElementById('guideExperience').value,
+                bio: document.getElementById('guideBio').value.trim(),
+                features: document.getElementById('guideFeatures').value.trim(),
+                status: document.getElementById('guideStatus').value,
+                created_at: new Date().toISOString()
+            };
+
+            // 验证必填项
+            if (!guideData.nickname) {
+                Utils.showToast('请输入导游昵称', 'error');
+                return;
+            }
+            if (!guideData.phone) {
+                Utils.showToast('请输入联系电话', 'error');
+                return;
+            }
+            if (!guideData.email) {
+                Utils.showToast('请输入电子邮箱', 'error');
+                return;
+            }
+            if (!guideData.expertise) {
+                Utils.showToast('请选择专业领域', 'error');
+                return;
+            }
+            if (!guideData.bio) {
+                Utils.showToast('请输入导游简介', 'error');
+                return;
+            }
+
+            // 保存到数据数组
+            mockData.guideProfiles.unshift(guideData);
+            saveMockData();
+
+            // 关闭模态框并显示成功消息
+            closeAddGuideModal();
+            Utils.showToast(`导游"${guideData.nickname}"添加成功！`, 'success');
+
+            // 刷新列表
+            loadCounts();
+            loadGuides();
+        }
+
+        // 重置搜索
+        function resetSearch() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('expertiseFilter').value = '';
+            currentPage = 1;
+            loadGuides();
+        }
+
+        // 导出导游数据
+        function exportGuides() {
+            if (mockData.guideProfiles.length === 0) {
+                Utils.showToast('暂无导游数据可导出', 'warning');
+                return;
+            }
+
+            const exportData = mockData.guideProfiles.map(g => ({
+                '导游昵称': g.nickname,
+                '真实姓名': g.realname || '-',
+                '联系电话': g.phone || '-',
+                '电子邮箱': g.email || '-',
+                '专业领域': g.expertise || '-',
+                '语言能力': g.languages || '-',
+                '从业年限': g.experience || '-',
+                '服务特色': g.features || '-',
+                '导游简介': g.bio || '-',
+                '状态': g.status === 'approved' ? '已通过' : (g.status === 'pending' ? '待审核' : '已拒绝'),
+                '添加时间': new Date(g.created_at).toLocaleDateString('zh-CN')
+            }));
+
+            // 转换为CSV格式
+            const headers = Object.keys(exportData[0]);
+            const csvContent = [
+                headers.join(','),
+                ...exportData.map(row => headers.map(h => `"${(row[h] || '').toString().replace(/"/g, '""')}"`).join(','))
+            ].join('\n');
+
+            // 下载文件
+            const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `导游列表_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            Utils.showToast('导游数据导出成功！', 'success');
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('addGuideModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddGuideModal();
+            }
+        });
+
+        // ESC键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAddGuideModal();
+            }
+        });
     </script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
 </body>
 </html>

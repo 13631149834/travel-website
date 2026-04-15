@@ -1,227 +1,268 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <style>
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+  </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>签证中心 - 游导旅游</title>
+  <meta name="description" content="各国签证攻略，包括签证类型、所需材料、办理流程、注意事项等。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 页面过渡加载动画 -->
+  <div class="page-transition-overlay">
+    <div class="page-transition-content">
+      <div class="page-transition-logo">🌍</div>
+      <div class="loading-progress">
+        <div class="loading-progress-bar"></div>
+      </div>
+    </div>
+  </div>
   <!-- 导航栏 -->
-  <nav class="navbar">
+  <nav class="navbar" aria-label="主导航">
     <div class="container">
+</nav>
+<main id="main-content" role="main">
       <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html" class="active">签证</a>
+        <a href="routes.html">线路</a>
+        <a href="knowledge.html">知识</a>
+        <a href="tools.html">工具</a>
+      </div>
       <div class="nav-toggle" onclick="toggleNav()">
         <span></span><span></span><span></span>
       </div>
-      <div class="nav-links">
-        <a href="index.html">首页</a>
-        <a href="visa.html" class="active">签证中心</a>
-        <a href="pitfall.html">避坑指南</a>
-        <a href="routes.html">精品线路</a>
-        <a href="tips.html">旅行经验</a>
-        <a href="stories.html">旅行故事</a>
-        <a href="wonders.html">世界奇趣</a>
-        <a href="emergency.html">应急资源</a>
-        <a href="faq.html">常见问题</a>
-        <a href="contact.html">联系我们</a>
-      </div>
     </div>
-  </nav>
+  
 
   <!-- 页面标题 -->
-  <section class="hero" style="padding:40px 0">
-    <div class="container">
-      <h1>📋 签证中心</h1>
-      <p>全球热门国家签证一网打尽</p>
-    </div>
-  </section>
+  <div class="page-hero">
+    <h1>签证中心</h1>
+    <p>各国签证攻略，助你顺利出行</p>
+  </div>
 
-  <!-- 标签页切换区域 -->
-  <section class="container">
-    <div class="tabs">
-      <button class="tab active" onclick="switchTab('asia', this)">🌏 亚洲</button>
-      <button class="tab" onclick="switchTab('europe', this)">🏰 欧洲</button>
-      <button class="tab" onclick="switchTab('americas', this)">🗽 美洲</button>
-      <button class="tab" onclick="switchTab('oceania', this)">🏝️ 大洋洲</button>
-      <button class="tab" onclick="switchTab('africa', this)">🦁 非洲</button>
-    </div>
+  <!-- 快速入口 -->
+  <div class="container" style="padding: 0 0 32px;">
+    <a href="visa-checklist.html" class="quick-entry" style="display:flex;align-items:center;justify-content:center;gap:12px;padding:20px;background:linear-gradient(135deg,#4F86F7 0%,#10B981 100%);border-radius:12px;color:white;text-decoration:none;font-weight:500;">
+      <span style="font-size:1.5rem;">📋</span>
+      <div>
+        <div style="font-size:1.1rem;">签证材料清单工具</div>
+        <div style="font-size:0.85rem;opacity:0.9;">选择目的地，一键生成材料清单</div>
+      </div>
+      <span style="margin-left:auto;font-size:1.5rem;">→</span>
+    </a>
+  </div>
 
-    <!-- 亚洲 -->
-    <div id="asia" class="tab-content active">
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-icon">🗾</div>
-          <h3>日本</h3>
-          <p>单次/三年多次/五年多次签证</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：7-10工作日</li>
-            <li>💰 费用：500元起</li>
-            <li>📝 材料：护照、照片、申请表</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-icon">🇹🇭</div>
-          <h3>泰国</h3>
-          <p>落地签/贴纸签</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：落地即办/3-5日</li>
-            <li>💰 费用：230元起</li>
-            <li>📝 材料：护照、照片、往返机票</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-icon">🇰🇷</div>
-          <h3>韩国</h3>
-          <p>单次/多次签证</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：5-7工作日</li>
-            <li>💰 费用：280元起</li>
-            <li>📝 材料：护照、身份证、在职证明</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-icon">🇸🇬</div>
-          <h3>新加坡</h3>
-          <p>旅游签证</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：3-5工作日</li>
-            <li>💰 费用：300元起</li>
-            <li>📝 材料：护照、Form 14A</li>
-          </ul>
-        </div>
+  <!-- 签证内容 -->
+  <div class="container" style="padding: 48px 0 80px;">
+    <div class="grid-cards">
+      <div class="grid-card">
+        <div class="grid-card-icon">🗾</div>
+        <h4>日本签证</h4>
+        <p>单次/多次往返，材料简单，出签快</p>
+      </div>
+      <div class="grid-card">
+        <div class="grid-card-icon">🏝️</div>
+        <h4>泰国签证</h4>
+        <p>落地签/贴纸签，海岛度假首选</p>
+      </div>
+      <div class="grid-card">
+        <div class="grid-card-icon">🗼</div>
+        <h4>申根签证</h4>
+        <p>欧洲多国通行，资料准备指南</p>
+      </div>
+      <div class="grid-card">
+        <div class="grid-card-icon">🦘</div>
+        <h4>澳洲签证</h4>
+        <p>旅游签/探亲签，审理时间参考</p>
+      </div>
+      <div class="grid-card">
+        <div class="grid-card-icon">🏯</div>
+        <h4>韩国签证</h4>
+        <p>团签/个签，首尔济州岛</p>
+      </div>
+      <div class="grid-card">
+        <div class="grid-card-icon">🌉</div>
+        <h4>美国签证</h4>
+        <p>B1/B2签证，面签技巧分享</p>
       </div>
     </div>
 
-    <!-- 欧洲 -->
-    <div id="europe" class="tab-content">
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-icon">🇫🇷</div>
-          <h3>法国申根</h3>
-          <p>申根签证，可通行26国</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：10-15工作日</li>
-            <li>💰 费用：650元+服务费</li>
-            <li>📝 材料：护照、行程单、保险</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-icon">🇩🇪</div>
-          <h3>德国申根</h3>
-          <p>申根签证，审核较严格</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：10-15工作日</li>
-            <li>💰 费用：650元+服务费</li>
-            <li>📝 材料：银行流水、在职证明</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-icon">🇬🇧</div>
-          <h3>英国</h3>
-          <p>独立签证系统</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：15-20工作日</li>
-            <li>💰 费用：约1200元</li>
-            <li>📝 材料：护照、资金证明</li>
-          </ul>
-        </div>
-      </div>
+    <!-- 签证知识 -->
+    <div class="section-header" style="text-align: left; margin-top: 48px;">
+      <h2 class="section-title" style="font-size: 1.5rem;">📚 签证知识</h2>
+      <p class="section-desc">签证办理的常见问题和小技巧</p>
     </div>
 
-    <!-- 美洲 -->
-    <div id="americas" class="tab-content">
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-icon">🇺🇸</div>
-          <h3>美国</h3>
-          <p>B1/B2旅游签证</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：面签后5-7日</li>
-            <li>💰 费用：185美元</li>
-            <li>📝 材料：DS-160、面试</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-icon">🇨🇦</div>
-          <h3>加拿大</h3>
-          <p>访客签证</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：2-4周</li>
-            <li>💰 费用：约1000元</li>
-            <li>📝 材料：护照、申请表、资金证明</li>
-          </ul>
-        </div>
-      </div>
+    <div class="content-card">
+      <h2>📋 签证办理流程</h2>
+      <ul>
+        <li>确定签证类型和所需材料</li>
+        <li>准备完整的申请材料</li>
+        <li>在线预约递交时间</li>
+        <li>前往领事馆/签证中心递交材料</li>
+        <li>支付签证费用</li>
+        <li>等待审核结果</li>
+        <li>领取护照和签证</li>
+      </ul>
     </div>
 
-    <!-- 大洋洲 -->
-    <div id="oceania" class="tab-content">
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-icon">🇦🇺</div>
-          <h3>澳大利亚</h3>
-          <p>访客签证（600类）</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：20-30工作日</li>
-            <li>💰 费用：约800元</li>
-            <li>📝 材料：护照、资金证明、行程</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-icon">🇳🇿</div>
-          <h3>新西兰</h3>
-          <p>访客签证</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：15-25工作日</li>
-            <li>💰 费用：约900元</li>
-            <li>📝 材料：护照、资金证明</li>
-          </ul>
-        </div>
-      </div>
+    <div class="content-card">
+      <h2>⚠️ 注意事项</h2>
+      <ul class="warning">
+        <li>提前准备，留出足够办理时间</li>
+        <li>材料真实完整，避免虚假信息</li>
+        <li>护照有效期需超过6个月</li>
+        <li>酒店和机票订单最好在出签后再预订</li>
+      </ul>
     </div>
+  </div>
 
-    <!-- 非洲 -->
-    <div id="africa" class="tab-content">
-      <div class="card-grid">
-        <div class="card">
-          <div class="card-icon">🇿🇦</div>
-          <h3>南非</h3>
-          <p>访客签证</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：5-10工作日</li>
-            <li>💰 费用：约400元</li>
-            <li>📝 材料：护照、邀请函、黄热疫苗</li>
-          </ul>
-        </div>
-        <div class="card">
-          <div class="card-icon">🇪🇬</div>
-          <h3>埃及</h3>
-          <p>落地签/贴纸签</p>
-          <ul style="margin-top:12px;color:var(--gray-600);font-size:0.9rem">
-            <li>📅 办理周期：落地即办</li>
-            <li>💰 费用：25美元</li>
-            <li>📝 材料：护照、往返机票</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 页脚 -->
-  <footer class="footer">
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
     <div class="container">
       <div class="footer-grid">
-        <div>
-          <h4>快速导航</h4>
-          <a href="visa.html">签证中心</a>
-          <a href="pitfall.html">避坑指南</a>
-          <a href="emergency.html">应急资源</a>
+        <div class="footer-col">
+          <h4>关于游导</h4>
+          <a href="about.html">关于我们</a>
+          <a href="contact.html">联系我们</a>
+          <a href="guide-apply.html">导游入驻</a>
         </div>
-        <div>
+        <div class="footer-col">
+          <h4>游客服务</h4>
+          <a href="guides.html">找导游</a>
+          <a href="visa.html">签证攻略</a>
+          <a href="routes.html">精品线路</a>
+        </div>
+        <div class="footer-col">
+          <h4>导游工具</h4>
+          <a href="tools.html">效率工具</a>
+          <a href="knowledge-base.html">知识库</a>
+          <a href="finance.html">财务管理</a>
+        </div>
+        <div class="footer-col">
           <h4>帮助支持</h4>
           <a href="faq.html">常见问题</a>
-          <a href="contact.html">联系我们</a>
+          <a href="disclaimer.html">使用条款</a>
+        </div>
+        <div class="footer-col">
+          <h4>联系我们</h4>
+          <p style="font-size:0.85rem;margin:4px 0">📧 2173381363@qq.com</p>
+          <p style="font-size:0.85rem;margin:4px 0">💬 微信：ximao101</p>
         </div>
       </div>
       <div class="footer-bottom">
@@ -230,21 +271,12 @@
     </div>
   </footer>
 
-  <!-- 智能客服 -->
-  <div class="chatbot-btn" onclick="toggleChatbot()">💬</div>
-  <div id="chatbotPopup" class="chatbot-popup">
-    <div class="chatbot-header">
-      <span>🧳 旅行小助手</span>
-      <span class="chatbot-close" onclick="closeChatbot()">×</span>
-    </div>
-    <div id="chatbotBody" class="chatbot-body"></div>
-    <div class="chatbot-input">
-      <input id="chatbotInput" type="text" placeholder="输入问题..." onkeydown="handleEnter(event)">
-      <button onclick="sendMessage()">发送</button>
-    </div>
-  </div>
+  <script src="js/common.js" defer></script>
 
-  <script src="js/common.js"></script>
-  <script src="js/chatbot.js"></script>
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/animations.js" defer>
+  <script src="js/customer-service.js" defer></script>
 </body>
 </html>

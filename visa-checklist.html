@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>签证材料清单 - 游导旅游</title>
+  <meta name="description" content="帮助您准备各国签证所需材料，支持勾选、存储和打印清单。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    /* ===== 签证材料清单页面专用样式 ===== */
+    .checklist-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    /* 目的地选择 */
+    .destination-select {
+      margin-bottom: 32px;
+    }
+    .destination-select label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--gray-800);
+    }
+    .destination-select select {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-size: 1rem;
+      color: var(--gray-800);
+      background: white;
+      transition: var(--transition);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 20px;
+    }
+    .destination-select select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.1);
+    }
+
+    /* 进度指示 */
+    .progress-bar {
+      background: var(--gray-100);
+      border-radius: 20px;
+      height: 12px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      height: 100%;
+      border-radius: 20px;
+      transition: width 0.3s ease;
+    }
+    .progress-text {
+      text-align: center;
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+    }
+
+    /* 材料分类卡片 */
+    .category-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .category-card:hover {
+      box-shadow: var(--shadow);
+    }
+    .category-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .category-header:hover {
+      background: var(--gray-50);
+    }
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+      color: var(--gray-800);
+    }
+    .category-icon {
+      font-size: 1.5rem;
+    }
+    .category-progress {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      background: var(--gray-100);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+    .category-progress.complete {
+      background: var(--secondary);
+      color: white;
+    }
+
+    /* 材料清单项 */
+    .checklist-items {
+      padding: 0 20px 16px;
+      display: none;
+    }
+    .category-card.expanded .checklist-items {
+      display: block;
+    }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .checklist-item:last-child {
+      border-bottom: none;
+    }
+    .checklist-item input[type="checkbox"] {
+      width: 22px;
+      height: 22px;
+      margin-right: 14px;
+      cursor: pointer;
+      accent-color: var(--primary);
+      flex-shrink: 0;
+    }
+    .checklist-item label {
+      flex: 1;
+      cursor: pointer;
+      color: var(--gray-700);
+      transition: var(--transition);
+    }
+    .checklist-item input:checked + label {
+      color: var(--gray-400);
+      text-decoration: line-through;
+    }
+    .checklist-item .item-note {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      margin-left: 8px;
+    }
+
+    /* 操作按钮 */
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 500;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: var(--transition);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: var(--gray-100);
+      color: var(--gray-700);
+    }
+    .btn-secondary:hover {
+      background: var(--gray-200);
+    }
+    .btn-outline {
+      background: white;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+    }
+    .btn-outline:hover {
+      background: var(--primary-light);
+    }
+
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--gray-500);
+    }
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    .empty-state h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+      color: var(--gray-600);
+    }
+
+    /* 打印样式 */
+    @media print {
+      .navbar, .footer, .action-buttons, .destination-select, .page-hero {
+        display: none !important;
+      }
+      body {
+        background: white;
+      }
+      .checklist-container {
+        max-width: 100%;
+      }
+      .category-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+      }
+      .checklist-items {
+        display: block !important;
+      }
+      .checklist-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+      }
+      .print-header {
+        display: block !important;
+        text-align: center;
+        margin-bottom: 24px;
+        padding-bottom: 16px;
+        border-bottom: 2px solid #333;
+      }
+      .print-date {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 8px;
+      }
+    }
+    .print-header {
+      display: none;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .action-buttons {
+        flex-direction: column;
+      }
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container">
+</nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html" class="active">签证</a>
+        <a href="routes.html">线路</a>
+        <a href="knowledge.html">知识</a>
+        <a href="tools.html">工具</a>
+      </div>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  
+
+  <!-- 页面标题 -->
+  <div class="page-hero">
+    <h1>📋 签证材料清单</h1>
+    <p>选择目的地，轻松准备签证材料</p>
+  </div>
+
+  <!-- 主要内容 -->
+  <div class="container" style="padding: 32px 0 80px;">
+    <div class="checklist-container">
+      <!-- 目的地选择 -->
+      <div class="destination-select">
+        <label for="country">选择目的地</label>
+        <select id="country" onchange="loadChecklist()">
+          <option value="">-- 请选择国家/地区 --</option>
+          <optgroup label="🆓 免签国家">
+            <option value="singapore">新加坡</option>
+            <option value="malaysia">马来西亚</option>
+            <option value="uae">阿联酋（迪拜）</option>
+            <option value="morocco">摩洛哥</option>
+            <option value="seychelles">塞舌尔</option>
+          </optgroup>
+          <optgroup label="✈️ 落地签国家">
+            <option value="thailand">泰国</option>
+            <option value="vietnam">越南</option>
+            <option value="cambodia">柬埔寨</option>
+            <option value="maldives">马尔代夫</option>
+            <option value="indonesia">印度尼西亚</option>
+            <option value="egypt">埃及</option>
+          </optgroup>
+          <optgroup label="📱 电子签国家">
+            <option value="turkey">土耳其</option>
+            <option value="india">印度</option>
+            <option value="australia">澳大利亚</option>
+            <option value="newzealand">新西兰</option>
+            <option value="kenya">肯尼亚</option>
+            <option value="srilanka">斯里兰卡</option>
+          </optgroup>
+          <optgroup label="🏛️ 面签国家">
+            <option value="usa">美国</option>
+            <option value="uk">英国</option>
+            <option value="canada">加拿大</option>
+            <option value="japan">日本</option>
+            <option value="korea">韩国</option>
+            <option value="schengen">申根（欧洲）</option>
+            <option value="austria">澳大利亚</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <!-- 进度条 -->
+      <div class="progress-bar" id="progressBar" style="display:none;">
+        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+      </div>
+      <div class="progress-text" id="progressText" style="display:none;">已准备 0 / 0 项材料</div>
+
+      <!-- 材料清单容器 -->
+      <div id="checklistContainer">
+        <div class="empty-state">
+          <div class="empty-state-icon">🗂️</div>
+          <h3>请选择目的地</h3>
+          <p>选择一个国家或地区，即可查看所需签证材料清单</p>
+        </div>
+      </div>
+
+      <!-- 操作按钮 -->
+      <div class="action-buttons" id="actionButtons" style="display:none;">
+        <button class="btn btn-primary" onclick="resetChecklist()">
+          🔄 重置清单
+        </button>
+        <button class="btn btn-secondary" onclick="checkAll()">
+          ☑️ 全部选中
+        </button>
+        <button class="btn btn-outline" onclick="printChecklist()">
+          🖨️ 打印清单
+        </button>
+      </div>
+    </div>
+  </div>
+
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>关于游导</h4>
+          <a href="about.html">关于我们</a>
+          <a href="contact.html">联系我们</a>
+          <a href="guide-apply.html">导游入驻</a>
+        </div>
+        <div class="footer-col">
+          <h4>游客服务</h4>
+          <a href="guides.html">找导游</a>
+          <a href="visa.html">签证攻略</a>
+          <a href="routes.html">精品线路</a>
+        </div>
+        <div class="footer-col">
+          <h4>导游工具</h4>
+          <a href="tools.html">效率工具</a>
+          <a href="knowledge-base.html">知识库</a>
+          <a href="finance.html">财务管理</a>
+        </div>
+        <div class="footer-col">
+          <h4>帮助支持</h4>
+          <a href="faq.html">常见问题</a>
+          <a href="disclaimer.html">使用条款</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 游导旅游 · 让旅行更简单</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/common.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+
+  <script>
+    // 签证材料数据
+    const visaChecklistData = {
+      // 免签国家
+      singapore: {
+        name: '新加坡',
+        type: '免签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'sg-1', name: '护照（有效期6个月以上）', note: '确保护照有足够空白页' },
+              { id: 'sg-2', name: '往返机票行程单', note: '英文版' },
+              { id: 'sg-3', name: '酒店预订确认单', note: '或亲友邀请函' }
+            ]
+          }
+        ]
+      },
+      malaysia: {
+        name: '马来西亚',
+        type: '免签 (eNTRI)',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'my-1', name: '护照（有效期6个月以上）' },
+              { id: 'my-2', name: '往返机票行程单' },
+              { id: 'my-3', name: '酒店预订确认单' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'my-4', name: '电子入境卡（MDAC）', note: '出发前3天填写' }
+            ]
+          }
+        ]
+      },
+      uae: {
+        name: '阿联酋（迪拜）',
+        type: '免签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'uae-1', name: '护照（有效期6个月以上）' },
+              { id: 'uae-2', name: '往返机票' },
+              { id: 'uae-3', name: '酒店预订' }
+            ]
+          }
+        ]
+      },
+      morocco: {
+        name: '摩洛哥',
+        type: '免签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'ma-1', name: '护照（有效期6个月以上）' },
+              { id: 'ma-2', name: '往返机票' },
+              { id: 'ma-3', name: '酒店预订' }
+            ]
+          }
+        ]
+      },
+      seychelles: {
+        name: '塞舌尔',
+        type: '免签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'sc-1', name: '护照（有效期6个月以上）' },
+              { id: 'sc-2', name: '往返机票' },
+              { id: 'sc-3', name: '酒店预订' },
+              { id: 'sc-4', name: '足够资金证明' }
+            ]
+          }
+        ]
+      },
+
+      // 落地签国家
+      thailand: {
+        name: '泰国',
+        type: '落地签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'th-1', name: '护照（有效期6个月以上）' },
+              { id: 'th-2', name: '落地签证申请表' },
+              { id: 'th-3', name: '2寸白底证件照', note: '近6个月拍摄' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'th-4', name: '现金', note: '个人20,000泰铢或家庭40,000泰铢' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'th-5', name: '往返机票行程单' },
+              { id: 'th-6', name: '酒店预订确认单' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'th-7', name: '签证费用', note: '2,000泰铢（可付人民币）' }
+            ]
+          }
+        ]
+      },
+      vietnam: {
+        name: '越南',
+        type: '落地签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'vn-1', name: '护照（有效期6个月以上）' },
+              { id: 'vn-2', name: '批文（VOA许可函）', note: '需提前通过旅行社办理' },
+              { id: 'vn-3', name: '2寸白底证件照', note: '2张' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'vn-4', name: '现金', note: '25美元签证费' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'vn-5', name: '往返机票' },
+              { id: 'vn-6', name: '酒店预订' }
+            ]
+          }
+        ]
+      },
+      cambodia: {
+        name: '柬埔寨',
+        type: '落地签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'kh-1', name: '护照（有效期6个月以上）' },
+              { id: 'kh-2', name: '签证申请表' },
+              { id: 'kh-3', name: '2寸白底证件照', note: '2张' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '费用',
+            items: [
+              { id: 'kh-4', name: '签证费', note: '30美元（旅游签）' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'kh-5', name: '往返机票' },
+              { id: 'kh-6', name: '酒店预订' }
+            ]
+          }
+        ]
+      },
+      maldives: {
+        name: '马尔代夫',
+        type: '落地签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'mv-1', name: '护照（有效期6个月以上）' },
+              { id: 'mv-2', name: '入境卡' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'mv-3', name: '往返机票' },
+              { id: 'mv-4', name: '酒店预订确认单' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'mv-5', name: '足够旅行资金', note: '每天50美元以上' }
+            ]
+          }
+        ]
+      },
+      indonesia: {
+        name: '印度尼西亚',
+        type: '落地签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'id-1', name: '护照（有效期6个月以上）' },
+              { id: 'id-2', name: '落地签证申请表' },
+              { id: 'id-3', name: '2寸白底证件照' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '费用',
+            items: [
+              { id: 'id-4', name: '签证费', note: '约35美元' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'id-5', name: '往返机票' },
+              { id: 'id-6', name: '酒店预订' }
+            ]
+          }
+        ]
+      },
+      egypt: {
+        name: '埃及',
+        type: '落地签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'eg-1', name: '护照（有效期6个月以上）' },
+              { id: 'eg-2', name: '落地签证申请表' },
+              { id: 'eg-3', name: '2寸白底证件照', note: '2张' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '费用',
+            items: [
+              { id: 'eg-4', name: '签证费', note: '25美元' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'eg-5', name: '往返机票' },
+              { id: 'eg-6', name: '酒店预订' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '特殊要求',
+            items: [
+              { id: 'eg-7', name: '邀请函或旅行计划' },
+              { id: 'eg-8', name: '随身现金', note: '2000美元或等值货币' }
+            ]
+          }
+        ]
+      },
+
+      // 电子签国家
+      turkey: {
+        name: '土耳其',
+        type: '电子签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'tr-1', name: '护照（有效期6个月以上）' },
+              { id: 'tr-2', name: '电子签证打印件' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'tr-3', name: '旅行资金证明' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'tr-4', name: '往返机票' },
+              { id: 'tr-5', name: '酒店预订' }
+            ]
+          }
+        ]
+      },
+      india: {
+        name: '印度',
+        type: '电子签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'in-1', name: '护照（有效期6个月以上）' },
+              { id: 'in-2', name: '电子签证（e-Visa）打印件' },
+              { id: 'in-3', name: '护照照片页扫描件' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'in-4', name: '电子照片', note: '正方形白底，5cm×5cm' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'in-5', name: '往返机票' },
+              { id: 'in-6', name: '酒店预订' }
+            ]
+          }
+        ]
+      },
+      australia: {
+        name: '澳大利亚',
+        type: '电子签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'au-1', name: '护照（有效期6个月以上）' },
+              { id: 'au-2', name: '身份证原件及复印件' },
+              { id: 'au-3', name: '户口本原件及复印件' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'au-4', name: '白底证件照', note: '2张，35mm×45mm' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'au-5', name: '银行流水', note: '近6个月，需盖银行章' },
+              { id: 'au-6', name: '存款证明' },
+              { id: 'au-7', name: '房产证/车产证明（如有）' }
+            ]
+          },
+          {
+            id: 'work',
+            icon: '💼',
+            name: '工作证明',
+            items: [
+              { id: 'au-8', name: '在职证明', note: '中英文，盖公司章' },
+              { id: 'au-9', name: '营业执照复印件（加盖公章）' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'au-10', name: '往返机票预订单' },
+              { id: 'au-11', name: '酒店预订单' },
+              { id: 'au-12', name: '行程安排' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'au-13', name: '境外旅游保险' },
+              { id: 'au-14', name: '结婚证（如适用）' }
+            ]
+          }
+        ]
+      },
+      newzealand: {
+        name: '新西兰',
+        type: '电子签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'nz-1', name: '护照（有效期6个月以上）' },
+              { id: 'nz-2', name: '身份证原件及复印件' },
+              { id: 'nz-3', name: '户口本原件及复印件' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'nz-4', name: '白底证件照', note: '2张' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'nz-5', name: '银行流水', note: '近6个月' },
+              { id: 'nz-6', name: '存款证明' },
+              { id: 'nz-7', name: '工资单' }
+            ]
+          },
+          {
+            id: 'work',
+            icon: '💼',
+            name: '工作证明',
+            items: [
+              { id: 'nz-8', name: '在职证明' },
+              { id: 'nz-9', name: '请假批准信' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'nz-10', name: '往返机票预订单' },
+              { id: 'nz-11', name: '酒店预订单' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'nz-12', name: '境外旅游保险' }
+            ]
+          }
+        ]
+      },
+      kenya: {
+        name: '肯尼亚',
+        type: '电子签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'ke-1', name: '护照（有效期6个月以上）' },
+              { id: 'ke-2', name: '电子签证打印件' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'ke-3', name: '电子照片', note: '白底，护照尺寸' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'ke-4', name: '往返机票' },
+              { id: 'ke-5', name: '酒店预订' },
+              { id: 'ke-6', name: '行程安排' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'ke-7', name: '黄热病疫苗接种证明', note: '推荐接种' }
+            ]
+          }
+        ]
+      },
+      srilanka: {
+        name: '斯里兰卡',
+        type: '电子签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'lk-1', name: '护照（有效期6个月以上）' },
+              { id: 'lk-2', name: '电子签证（ETA）打印件' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'lk-3', name: '往返机票' },
+              { id: 'lk-4', name: '酒店预订' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'lk-5', name: '旅行资金证明' }
+            ]
+          }
+        ]
+      },
+
+      // 面签国家
+      usa: {
+        name: '美国',
+        type: '面签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'us-1', name: '护照（有效期6个月以上）' },
+              { id: 'us-2', name: '身份证原件及复印件' },
+              { id: 'us-3', name: '户口本原件及复印件' },
+              { id: 'us-4', name: '旧护照（如有）' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'us-5', name: '白底证件照', note: '5.1cm×5.1cm，2张，近6个月拍摄' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'us-6', name: '银行流水', note: '近3-6个月，需银行盖章' },
+              { id: 'us-7', name: '存款证明' },
+              { id: 'us-8', name: '房产证原件及复印件' },
+              { id: 'us-9', name: '车产证明（如有）' },
+              { id: 'us-10', name: '股票/基金对账单（如有）' }
+            ]
+          },
+          {
+            id: 'work',
+            icon: '💼',
+            name: '工作证明',
+            items: [
+              { id: 'us-11', name: '在职证明', note: '中英文，盖公司章' },
+              { id: 'us-12', name: '营业执照复印件（加盖公章）' },
+              { id: 'us-13', name: '名片（如有）' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'us-14', name: '往返机票预订单' },
+              { id: 'us-15', name: '酒店预订单' },
+              { id: 'us-16', name: '行程安排' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'us-17', name: 'DS-160表格确认页' },
+              { id: 'us-18', name: '签证预约确认页' },
+              { id: 'us-19', name: '境外旅游保险' },
+              { id: 'us-20', name: '结婚证（如适用）' }
+            ]
+          }
+        ]
+      },
+      uk: {
+        name: '英国',
+        type: '面签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'gb-1', name: '护照（有效期6个月以上）' },
+              { id: 'gb-2', name: '身份证原件及复印件' },
+              { id: 'gb-3', name: '旧护照（如有）' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'gb-4', name: '白底证件照', note: '45mm×35mm，2张' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'gb-5', name: '银行流水', note: '近6个月，需银行盖章' },
+              { id: 'gb-6', name: '存款证明', note: '建议30天以上存款' },
+              { id: 'gb-7', name: '房产证' },
+              { id: 'gb-8', name: '其他资产证明' }
+            ]
+          },
+          {
+            id: 'work',
+            icon: '💼',
+            name: '工作证明',
+            items: [
+              { id: 'gb-9', name: '在职证明', note: '英文，盖公司章' },
+              { id: 'gb-10', name: '请假批准信' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'gb-11', name: '往返机票预订单' },
+              { id: 'gb-12', name: '酒店预订单' },
+              { id: 'gb-13', name: '行程安排' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'gb-14', name: '申请表(Online)' },
+              { id: 'gb-15', name: '预约确认单' },
+              { id: 'gb-16', name: '结婚证（如适用）' }
+            ]
+          }
+        ]
+      },
+      canada: {
+        name: '加拿大',
+        type: '面签',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'ca-1', name: '护照（有效期6个月以上）' },
+              { id: 'ca-2', name: '身份证原件及复印件' },
+              { id: 'ca-3', name: '户口本原件及复印件' },
+              { id: 'ca-4', name: '旧护照（如有）' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'ca-5', name: '白底证件照', note: '35mm×45mm，2张' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'ca-6', name: '银行流水', note: '近6个月' },
+              { id: 'ca-7', name: '存款证明' },
+              { id: 'ca-8', name: '房产证' },
+              { id: 'ca-9', name: '车产证明' }
+            ]
+          },
+          {
+            id: 'work',
+            icon: '💼',
+            name: '工作证明',
+            items: [
+              { id: 'ca-10', name: '在职证明', note: '英文/法文，盖公司章' },
+              { id: 'ca-11', name: '营业执照复印件' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'ca-12', name: '往返机票预订单' },
+              { id: 'ca-13', name: '酒店预订单' },
+              { id: 'ca-14', name: '行程安排' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'ca-15', name: 'IMM5257表格' },
+              { id: 'ca-16', name: '结婚证（如适用）' }
+            ]
+          }
+        ]
+      },
+      japan: {
+        name: '日本',
+        type: '单次/多次签证',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'jp-1', name: '护照（有效期6个月以上）' },
+              { id: 'jp-2', name: '身份证原件' },
+              { id: 'jp-3', name: '户口本原件' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'jp-4', name: '白底证件照', note: '4.5cm×4.5cm，2张' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'jp-5', name: '银行流水', note: '近6个月，年流水10万以上' },
+              { id: 'jp-6', name: '存款证明', note: '10万以上' },
+              { id: 'jp-7', name: '房产证（如有）' }
+            ]
+          },
+          {
+            id: 'work',
+            icon: '💼',
+            name: '工作证明',
+            items: [
+              { id: 'jp-8', name: '在职证明', note: '盖公司章' },
+              { id: 'jp-9', name: '营业执照复印件' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'jp-10', name: '往返机票预订单' },
+              { id: 'jp-11', name: '酒店预订单' },
+              { id: 'jp-12', name: '行程安排' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'jp-13', name: '签证申请表' },
+              { id: 'jp-14', name: '结婚证（如有配偶随行）' }
+            ]
+          }
+        ]
+      },
+      korea: {
+        name: '韩国',
+        type: '单次/多次签证',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'kr-1', name: '护照（有效期6个月以上）' },
+              { id: 'kr-2', name: '身份证原件及复印件' },
+              { id: 'kr-3', name: '户口本原件及复印件' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'kr-4', name: '白底证件照', note: '3.5cm×4.5cm，2张' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'kr-5', name: '银行流水', note: '近6个月' },
+              { id: 'kr-6', name: '存款证明' },
+              { id: 'kr-7', name: '房产证（如有）' }
+            ]
+          },
+          {
+            id: 'work',
+            icon: '💼',
+            name: '工作证明',
+            items: [
+              { id: 'kr-8', name: '在职证明', note: '盖公司章' },
+              { id: 'kr-9', name: '营业执照复印件' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'kr-10', name: '往返机票预订单' },
+              { id: 'kr-11', name: '酒店预订单' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'kr-12', name: '签证申请表' }
+            ]
+          }
+        ]
+      },
+      schengen: {
+        name: '申根（欧洲）',
+        type: '申根签证',
+        categories: [
+          {
+            id: 'identity',
+            icon: '🪪',
+            name: '身份证明',
+            items: [
+              { id: 'eu-1', name: '护照（有效期6个月以上）', note: '至少2页空白页' },
+              { id: 'eu-2', name: '身份证原件及复印件' },
+              { id: 'eu-3', name: '户口本原件及复印件' },
+              { id: 'eu-4', name: '旧护照（如有）' }
+            ]
+          },
+          {
+            id: 'photo',
+            icon: '📷',
+            name: '照片',
+            items: [
+              { id: 'eu-5', name: '白底证件照', note: '3.5cm×4cm，2张' }
+            ]
+          },
+          {
+            id: 'finance',
+            icon: '💰',
+            name: '资产证明',
+            items: [
+              { id: 'eu-6', name: '银行流水', note: '近3-6个月，需银行盖章' },
+              { id: 'eu-7', name: '存款证明' },
+              { id: 'eu-8', name: '房产证（如有）' },
+              { id: 'eu-9', name: '车产证明（如有）' }
+            ]
+          },
+          {
+            id: 'work',
+            icon: '💼',
+            name: '工作证明',
+            items: [
+              { id: 'eu-10', name: '在职证明', note: '英文/前往国语言，盖公司章' },
+              { id: 'eu-11', name: '营业执照复印件（加盖公章）' },
+              { id: 'eu-12', name: '请假批准信' }
+            ]
+          },
+          {
+            id: 'trip',
+            icon: '✈️',
+            name: '行程证明',
+            items: [
+              { id: 'eu-13', name: '往返机票预订单' },
+              { id: 'eu-14', name: '酒店预订单', note: '覆盖全程' },
+              { id: 'eu-15', name: '行程计划表' },
+              { id: 'eu-16', name: '旅行保险', note: '保额3万欧元以上' }
+            ]
+          },
+          {
+            id: 'other',
+            icon: '📎',
+            name: '其他材料',
+            items: [
+              { id: 'eu-17', name: '申根签证申请表' },
+              { id: 'eu-18', name: '预约确认单' },
+              { id: 'eu-19', name: '结婚证（如适用）' }
+            ]
+          }
+        ]
+      }
+    };
+
+    let currentCountry = '';
+    let savedStates = {};
+
+    // 页面加载时恢复数据
+    document.addEventListener('DOMContentLoaded', function() {
+      // 从localStorage恢复选择的国家
+      const savedCountry = localStorage.getItem('visa-checklist-country');
+      if (savedCountry) {
+        document.getElementById('country').value = savedCountry;
+        loadChecklist();
+      }
+
+      // 从localStorage恢复勾选状态
+      const savedChecks = localStorage.getItem('visa-checklist-checks');
+      if (savedChecks) {
+        savedStates = JSON.parse(savedChecks);
+      }
+    });
+
+    // 加载材料清单
+    function loadChecklist() {
+      const countrySelect = document.getElementById('country');
+      currentCountry = countrySelect.value;
+
+      const container = document.getElementById('checklistContainer');
+      const progressBar = document.getElementById('progressBar');
+      const progressText = document.getElementById('progressText');
+      const actionButtons = document.getElementById('actionButtons');
+
+      if (!currentCountry) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🗂️</div>
+            <h3>请选择目的地</h3>
+            <p>选择一个国家或地区，即可查看所需签证材料清单</p>
+          </div>
+        `;
+        progressBar.style.display = 'none';
+        progressText.style.display = 'none';
+        actionButtons.style.display = 'none';
+        return;
+      }
+
+      const countryData = visaChecklistData[currentCountry];
+      if (!countryData) return;
+
+      // 保存选择到localStorage
+      localStorage.setItem('visa-checklist-country', currentCountry);
+
+      let html = `
+        <div class="print-header">
+          <h2>📋 签证材料清单</h2>
+          <p>目的地：${countryData.name}（${countryData.type}）</p>
+          <p class="print-date">生成日期：${new Date().toLocaleDateString('zh-CN')}</p>
+        </div>
+      `;
+
+      countryData.categories.forEach((category, catIndex) => {
+        const categoryId = `cat-${catIndex}`;
+        const allItemIds = category.items.map(item => item.id);
+        const savedCategoryState = savedStates[currentCountry]?.[categoryId];
+
+        // 检查是否有已保存的状态
+        const hasSavedState = savedCategoryState !== undefined;
+        const isExpanded = hasSavedState ? savedCategoryState : (catIndex === 0);
+
+        html += `
+          <div class="category-card ${isExpanded ? 'expanded' : ''}" data-category="${categoryId}">
+            <div class="category-header" onclick="toggleCategory('${categoryId}')">
+              <div class="category-title">
+                <span class="category-icon">${category.icon}</span>
+                <span>${category.name}</span>
+              </div>
+              <span class="category-progress" data-progress="${categoryId}">0/${category.items.length}</span>
+            </div>
+            <div class="checklist-items">
+              ${category.items.map(item => {
+                const isChecked = savedStates[currentCountry]?.[item.id] === true;
+                return `
+                  <div class="checklist-item">
+                    <input type="checkbox" 
+                           id="${item.id}" 
+                           ${isChecked ? 'checked' : ''} 
+                           onchange="updateChecklist('${item.id}', this.checked)">
+                    <label for="${item.id}">${item.name}${item.note ? `<span class="item-note">(${item.note})</span>` : ''}</label>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      progressBar.style.display = 'block';
+      progressText.style.display = 'block';
+      actionButtons.style.display = 'flex';
+
+      updateProgress();
+    }
+
+    // 切换分类展开/收起
+    function toggleCategory(categoryId) {
+      const card = document.querySelector(`[data-category="${categoryId}"]`);
+      if (card) {
+        card.classList.toggle('expanded');
+        // 保存展开状态
+        if (!savedStates[currentCountry]) {
+          savedStates[currentCountry] = {};
+        }
+        savedStates[currentCountry][categoryId] = card.classList.contains('expanded');
+        localStorage.setItem('visa-checklist-checks', JSON.stringify(savedStates));
+      }
+    }
+
+    // 更新勾选状态
+    function updateChecklist(itemId, isChecked) {
+      if (!savedStates[currentCountry]) {
+        savedStates[currentCountry] = {};
+      }
+      savedStates[currentCountry][itemId] = isChecked;
+      localStorage.setItem('visa-checklist-checks', JSON.stringify(savedStates));
+      updateProgress();
+    }
+
+    // 更新进度
+    function updateProgress() {
+      if (!currentCountry) return;
+
+      const countryData = visaChecklistData[currentCountry];
+      if (!countryData) return;
+
+      let totalItems = 0;
+      let checkedItems = 0;
+
+      countryData.categories.forEach((category, catIndex) => {
+        const categoryId = `cat-${catIndex}`;
+        let catChecked = 0;
+
+        category.items.forEach(item => {
+          totalItems++;
+          if (savedStates[currentCountry]?.[item.id]) {
+            checkedItems++;
+            catChecked++;
+          }
+        });
+
+        // 更新分类进度
+        const progressEl = document.querySelector(`[data-progress="${categoryId}"]`);
+        if (progressEl) {
+          progressEl.textContent = `${catChecked}/${category.items.length}`;
+          if (catChecked === category.items.length) {
+            progressEl.classList.add('complete');
+            progressEl.textContent = '✓ 完成';
+          } else {
+            progressEl.classList.remove('complete');
+          }
+        }
+      });
+
+      // 更新总进度
+      const percentage = totalItems > 0 ? Math.round((checkedItems / totalItems) * 100) : 0;
+      document.getElementById('progressFill').style.width = percentage + '%';
+      document.getElementById('progressText').textContent = `已准备 ${checkedItems} / ${totalItems} 项材料`;
+    }
+
+    // 重置清单
+    function resetChecklist() {
+      if (!confirm('确定要重置所有勾选吗？')) return;
+
+      if (savedStates[currentCountry]) {
+        // 只清除当前国家的勾选状态，保留展开状态
+        const countryData = visaChecklistData[currentCountry];
+        if (countryData) {
+          countryData.categories.forEach(category => {
+            category.items.forEach(item => {
+              delete savedStates[currentCountry][item.id];
+            });
+          });
+        }
+      }
+
+      localStorage.setItem('visa-checklist-checks', JSON.stringify(savedStates));
+      loadChecklist();
+    }
+
+    // 全选
+    function checkAll() {
+      if (!currentCountry) return;
+
+      const countryData = visaChecklistData[currentCountry];
+      if (!countryData) return;
+
+      if (!savedStates[currentCountry]) {
+        savedStates[currentCountry] = {};
+      }
+
+      // 检查是否已全部选中
+      let allChecked = true;
+      countryData.categories.forEach(category => {
+        category.items.forEach(item => {
+          if (!savedStates[currentCountry][item.id]) {
+            allChecked = false;
+          }
+        });
+      });
+
+      // 切换全选/取消全选
+      countryData.categories.forEach(category => {
+        category.items.forEach(item => {
+          savedStates[currentCountry][item.id] = !allChecked;
+        });
+      });
+
+      localStorage.setItem('visa-checklist-checks', JSON.stringify(savedStates));
+      loadChecklist();
+    }
+
+    // 打印清单
+    function printChecklist() {
+      window.print();
+    }
+  </script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

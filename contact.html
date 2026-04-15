@@ -3,153 +3,426 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>联系我们 - 游导伴旅</title>
+  <title>联系我们 - 游导旅游</title>
+  <meta name="description" content="联系游导旅游客服团队，获取旅行帮助、商务合作、导游入驻等服务支持。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    .contact-section {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 48px 0 80px;
+    }
+    .contact-card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      padding: 40px;
+    }
+    .contact-card h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+      text-align: center;
+    }
+    .contact-card > p {
+      color: var(--gray-500);
+      text-align: center;
+      margin-bottom: 32px;
+      font-size: 0.95rem;
+    }
+    .contact-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--gray-50);
+      border-radius: var(--radius-md);
+    }
+    .info-item .icon {
+      font-size: 1.5rem;
+    }
+    .info-item .text strong {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--gray-900);
+    }
+    .info-item .text span {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+    
+    /* 表单增强样式 */
+    .contact-form .form-input {
+      transition: all 0.3s ease;
+    }
+    .contact-form .form-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(79, 134, 247, 0.15);
+      background: #fff;
+    }
+    .contact-form .form-input.success {
+      border-color: var(--secondary);
+      background: rgba(16, 185, 129, 0.03);
+    }
+    .contact-form .form-input.error {
+      border-color: var(--error, #EF4444);
+      animation: formShake 0.4s ease;
+    }
+    @keyframes formShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-4px); }
+      75% { transform: translateX(4px); }
+    }
+    .contact-form .form-textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+    .contact-form .btn-submit {
+      position: relative;
+      overflow: hidden;
+    }
+    .contact-form .btn-submit::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: -100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+    .contact-form .btn-submit:hover::after {
+      left: 100%;
+    }
+    .contact-form .btn-submit.loading {
+      pointer-events: none;
+    }
+    .contact-form .btn-submit.loading::after {
+      display: none;
+    }
+    
+    @media (max-width: 480px) {
+      .contact-info {
+        grid-template-columns: 1fr;
+      }
+      .contact-card {
+        padding: 24px 16px;
+      }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
-  <nav class="navbar">
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
     <div class="container">
-      <a href="index.html" class="logo">🌍 游导伴旅</a>
-      <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+</nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
       <div class="nav-links">
         <a href="index.html">首页</a>
-        <a href="visa.html">签证中心</a>
-        <a href="pitfall.html">避坑指南</a>
-        <a href="routes.html">精品线路</a>
-        <a href="tips.html">旅行经验</a>
-        <a href="stories.html">旅行故事</a>
-        <a href="wonders.html">世界奇趣</a>
-        <a href="emergency.html">应急资源</a>
-        <a href="faq.html">常见问题</a>
-        <a href="contact.html" class="active">联系我们</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html">签证</a>
+        <a href="routes.html">线路</a>
+        <a href="knowledge.html">知识</a>
+        <a href="tools.html">工具</a>
+      </div>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
       </div>
     </div>
-  </nav>
+  
 
-  <section class="hero" style="padding:40px 0">
-    <div class="container">
-      <h1>📞 联系我们</h1>
-      <p>有问题或建议？我们随时为您服务</p>
-    </div>
-  </section>
+  <!-- 页面标题 -->
+  <div class="page-hero">
+    <h1>联系我们</h1>
+    <p>有问题或建议？我们随时为您服务</p>
+  </div>
 
-  <section class="container" style="max-width:800px">
-    <div class="layout" style="flex-direction:column">
-      <div class="content-card">
+  <!-- 联系内容 -->
+  <div class="container">
+    <div class="contact-section">
+      <div class="contact-card">
         <h2>💬 留言咨询</h2>
-        <p style="color:var(--gray-600);margin-bottom:24px">填写以下表单，我们会尽快回复您</p>
+        <p>填写以下表单，我们会尽快回复您</p>
         
-        <form onsubmit="handleSubmit(event)">
+        <!-- 联系信息 -->
+        <div class="contact-info">
+          <div class="info-item">
+            <span class="icon">📧</span>
+            <div class="text">
+              <strong>邮箱</strong>
+              <span>2173381363@qq.com</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <span class="icon">💬</span>
+            <div class="text">
+              <strong>微信</strong>
+              <span>ximao101</span>
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contactForm">
           <div class="form-group">
             <label>您的称呼</label>
-            <input type="text" placeholder="请输入您的称呼" required>
+            <input type="text" class="form-input" data-validate="name" placeholder="请输入您的称呼" required id="input-5960">
           </div>
           
           <div class="form-group">
             <label>电子邮箱</label>
-            <input type="email" placeholder="请输入您的邮箱" required>
+            <input type="email" class="form-input" data-type="email" placeholder="请输入您的邮箱" required id="input-6158">
           </div>
           
           <div class="form-group">
             <label>咨询类型</label>
-            <select style="width:100%;padding:12px 16px;border:2px solid var(--gray-200);border-radius:8px;font-size:1rem">
+            <select class="form-input form-select" required>
               <option value="">请选择</option>
               <option>签证咨询</option>
               <option>路线推荐</option>
               <option>内容纠错</option>
               <option>商务合作</option>
+              <option>导游入驻</option>
               <option>其他问题</option>
             </select>
           </div>
           
           <div class="form-group">
             <label>留言内容</label>
-            <textarea placeholder="请详细描述您的问题..." required></textarea>
+            <textarea class="form-input form-textarea" maxlength="500" placeholder="请详细描述您的问题..." required></textarea>
           </div>
           
-          <button type="submit" class="btn btn-primary">
+          <button type="submit" class="btn btn-primary btn-submit" style="width: 100%;">
             ✈️ 提交留言
           </button>
         </form>
       </div>
-
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:20px">
-        <div class="content-card" style="text-align:center">
-          <div style="font-size:2rem;margin-bottom:12px">📧</div>
-          <h3>邮箱</h3>
-          <p style="color:var(--gray-600)">2173381363@qq.com</p>
-        </div>
-        <div class="content-card" style="text-align:center">
-          <div style="font-size:2rem;margin-bottom:12px">💬</div>
-          <h3>微信</h3>
-          <p style="color:var(--gray-600)">游导伴旅_2024</p>
-        </div>
-        <div class="content-card" style="text-align:center">
-          <div style="font-size:2rem;margin-bottom:12px">🕐</div>
-          <h3>工作时间</h3>
-          <p style="color:var(--gray-600)">周一至周五<br>9:00-18:00</p>
-        </div>
-      </div>
-
-      <div class="content-card" style="margin-top:20px">
-        <h2>🤝 商务合作</h2>
-        <p style="color:var(--gray-600)">我们长期招募以下合作伙伴：</p>
-        <ul style="margin-top:16px">
-          <li>📸 旅行内容创作者</li>
-          <li>🏨 酒店/民宿合作方</li>
-          <li>✈️ 旅行社/地接社</li>
-          <li>📢 媒体/社群合作</li>
-          <li>💰 品牌赞助商</li>
-        </ul>
-        <p style="margin-top:16px;color:var(--gray-600)">有意合作请发送邮件至：<strong>business@travelhub.com</strong></p>
-      </div>
-    </div>
-  </section>
-
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div><h4>快速导航</h4><a href="visa.html">签证中心</a><a href="pitfall.html">避坑指南</a><a href="emergency.html">应急资源</a></div>
-        <div><h4>帮助支持</h4><a href="faq.html">常见问题</a><a href="contact.html">联系我们</a></div>
-      </div>
-      <div class="footer-bottom"><p>© 2024 游导伴旅 · 让旅行更简单</p></div>
-    </div>
-  </footer>
-
-  <div class="chatbot-btn" onclick="toggleChatbot()">💬</div>
-  <div id="chatbotPopup" class="chatbot-popup">
-    <div class="chatbot-header"><span>🧳 旅行小助手</span><span class="chatbot-close" onclick="closeChatbot()">×</span></div>
-    <div id="chatbotBody" class="chatbot-body"></div>
-    <div class="chatbot-input">
-      <input id="chatbotInput" type="text" placeholder="输入问题..." onkeydown="handleEnter(event)">
-      <button onclick="sendMessage()">发送</button>
     </div>
   </div>
 
-  <script src="js/common.js"></script>
-  <script src="js/chatbot.js"></script>
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>关于游导</h4>
+          <a href="about.html">关于我们</a>
+          <a href="contact.html">联系我们</a>
+          <a href="guide-apply.html">导游入驻</a>
+        </div>
+        <div class="footer-col">
+          <h4>游客服务</h4>
+          <a href="guides.html">找导游</a>
+          <a href="visa.html">签证攻略</a>
+          <a href="routes.html">精品线路</a>
+        </div>
+        <div class="footer-col">
+          <h4>导游工具</h4>
+          <a href="tools.html">效率工具</a>
+          <a href="knowledge-base.html">知识库</a>
+          <a href="finance.html">财务管理</a>
+        </div>
+        <div class="footer-col">
+          <h4>帮助支持</h4>
+          <a href="help.html">帮助中心</a>
+          <a href="faq.html">常见问题</a>
+          <a href="disclaimer.html">使用条款</a>
+        </div>
+        <div class="footer-col">
+          <h4>联系我们</h4>
+          <p style="font-size:0.85rem;margin:4px 0">📧 2173381363@qq.com</p>
+          <p style="font-size:0.85rem;margin:4px 0">💬 微信：ximao101</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 游导旅游 · 让旅行更简单</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/common.js" defer></script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+  <script src="js/form-enhance.js" defer></script>
   <script>
-    function handleSubmit(event) {
-      event.preventDefault();
-      const form = event.target;
-      const btn = form.querySelector('button[type="submit"]');
+    // 联系表单提交处理
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('.btn-submit');
       const originalText = btn.innerHTML;
       
+      // 验证表单
+      const inputs = form.querySelectorAll('.form-input[required]');
+      let isValid = true;
+      
+      inputs.forEach(input => {
+        if (!input.value.trim()) {
+          input.classList.add('error');
+          isValid = false;
+        } else {
+          input.classList.remove('error');
+        }
+      });
+      
+      if (!isValid) {
+        if (typeof FormEnhance !== 'undefined') {
+          FormEnhance.showToast && FormEnhance.showToast('请填写完整信息', 'error');
+        }
+        return;
+      }
+      
+      // 添加loading状态
+      btn.classList.add('loading');
       btn.innerHTML = '⏳ 提交中...';
       btn.disabled = true;
       
+      // 模拟提交
       setTimeout(() => {
-        btn.innerHTML = '✅ 提交成功！';
-        btn.style.background = 'var(--success)';
-        form.reset();
+        btn.classList.remove('loading');
+        btn.innerHTML = '✓ 提交成功';
+        btn.style.background = '#10B981';
         
+        // 重置表单
         setTimeout(() => {
+          form.reset();
           btn.innerHTML = originalText;
           btn.style.background = '';
           btn.disabled = false;
+          
+          // 显示成功提示
+          if (typeof Utils !== 'undefined' && Utils.showToast) {
+            Utils.showToast('感谢您的留言，我们会尽快回复！', 'success');
+          } else {
+            alert('感谢您的留言，我们会尽快回复！');
+          }
         }, 2000);
-      }, 1000);
+      }, 1500);
     }
   </script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
 </body>
 </html>

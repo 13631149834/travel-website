@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<!-- 无障碍样式 -->
+<style>
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+a:focus,button:focus,[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+input:focus,textarea:focus,select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>分享功能演示 - 游导旅游</title>
+  <link rel="stylesheet" href="css/share.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f6fa; min-height: 100vh; }
+    .demo-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 40px 20px; text-align: center; }
+    .demo-header h1 { font-size: 32px; margin-bottom: 12px; }
+    .demo-header p { opacity: 0.9; font-size: 16px; }
+    .demo-container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+    .demo-section { background: #fff; border-radius: 16px; padding: 32px; margin-bottom: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+    .demo-section h2 { font-size: 20px; color: #333; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #f0f0f0; }
+    .demo-section h2 span { font-size: 14px; font-weight: normal; color: #888; margin-left: 12px; }
+    .demo-card { display: flex; gap: 20px; padding: 20px; background: #f8f9fa; border-radius: 12px; margin-bottom: 20px; }
+    .demo-card-img { width: 120px; height: 120px; border-radius: 12px; object-fit: cover; background: #e0e0e0; }
+    .demo-card-info h3 { font-size: 18px; color: #333; margin-bottom: 8px; }
+    .demo-card-info p { font-size: 14px; color: #666; line-height: 1.6; }
+    .demo-card-tag { display: inline-block; background: #667eea; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; margin-top: 10px; }
+    .demo-code { background: #1e1e1e; border-radius: 8px; padding: 16px; margin-top: 16px; overflow-x: auto; }
+    .demo-code pre { color: #d4d4d4; font-family: 'Monaco', 'Menlo', monospace; font-size: 13px; line-height: 1.5; margin: 0; white-space: pre-wrap; word-break: break-all; }
+    .demo-code .keyword { color: #569cd6; }
+    .demo-code .string { color: #ce9178; }
+    .demo-code .tag { color: #4ec9b0; }
+    .demo-btn-group { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 16px; }
+    .demo-type-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+    .demo-type-tab { padding: 10px 20px; border: none; background: #f0f0f0; border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.3s; }
+    .demo-type-tab.active { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; }
+    .demo-type-tab:hover:not(.active) { background: #e0e0e0; }
+    .demo-content { display: none; }
+    .demo-content.active { display: block; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 20px; }
+    .stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; padding: 20px; border-radius: 12px; text-align: center; }
+    .stat-card.wechat { background: linear-gradient(135deg, #07c160 0%, #06ad56 100%); }
+    .stat-card.weibo { background: linear-gradient(135deg, #e6162d 0%, #ff6633 100%); }
+    .stat-card.qq { background: linear-gradient(135deg, #1296db 0%, #1e88e5 100%); }
+    .stat-card.copy { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .stat-value { font-size: 32px; font-weight: 700; }
+    .stat-label { font-size: 13px; opacity: 0.9; margin-top: 4px; }
+    .demo-footer { text-align: center; padding: 40px 20px; color: #888; font-size: 14px; }
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .demo-card { flex-direction: column; }
+      .demo-card-img { width: 100%; height: 160px; }
+    }
+  </style>
+</head>
+<body>
+<!-- 无障碍ARIA区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+
+  <header class="demo-header">
+    <h1>👐 分享功能演示</h1>
+    <p>支持微信、微博、QQ、复制链接等多平台分享</p>
+  </header>
+
+  <main class="demo-container">
+    <!-- 分享类型切换 -->
+    <section id="main-content" class="demo-section">
+      <h2>分享类型预览</h2>
+      <div class="demo-type-tabs">
+        <button class="demo-type-tab active" data-type="guide">导游分享</button>
+        <button class="demo-type-tab" data-type="destination">目的地分享</button>
+        <button class="demo-type-tab" data-type="route">线路分享</button>
+        <button class="demo-type-tab" data-type="knowledge">攻略分享</button>
+      </div>
+
+      <!-- 导游分享 -->
+      <div class="demo-content active" data-type="guide">
+        <div class="demo-card">
+          <img src="images/avatar-default.png" alt="导游头像" class="demo-card-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 40px;">😎
+          <div class="demo-card-info">
+            <h3>金牌导游 - 李明</h3>
+            <p>10年导游经验，精通英语、日语，曾带领500+旅行团，足迹遍布30+国家。</p>
+            <span class="demo-card-tag">金牌导游</span>
+          </div>
+        </div>
+        <div class="share-buttons" id="guide-share"></div>
+      </div>
+
+      <!-- 目的地分享 -->
+      <div class="demo-content" data-type="destination">
+        <div class="demo-card">
+          <img src="images/placeholder.png" alt="目的地图片" class="demo-card-img">
+          <div class="demo-card-info">
+            <h3>日本京都</h3>
+            <p>千年古都，传统与现代完美融合的旅游胜地，感受日式禅意与文化之美。</p>
+            <span class="demo-card-tag">热门目的地</span>
+          </div>
+        </div>
+        <div class="share-buttons" id="destination-share"></div>
+      </div>
+
+      <!-- 线路分享 -->
+      <div class="demo-content" data-type="route">
+        <div class="demo-card">
+          <img src="images/placeholder.png" alt="线路图片" class="demo-card-img">
+          <div class="demo-card-info">
+            <h3>日本7日深度游</h3>
+            <p>东京-京都-大阪经典路线，涵盖富士山、奈良小鹿、环球影城等热门景点。</p>
+            <span class="demo-card-tag">精选路线</span>
+          </div>
+        </div>
+        <div class="share-buttons" id="route-share"></div>
+      </div>
+
+      <!-- 攻略分享 -->
+      <div class="demo-content" data-type="knowledge">
+        <div class="demo-card">
+          <img src="images/placeholder.png" alt="攻略图片" class="demo-card-img">
+          <div class="demo-card-info">
+            <h3>日本签证办理全攻略</h3>
+            <p>从材料准备到出签时间，详细讲解单次/多次签证办理流程及注意事项。</p>
+            <span class="demo-card-tag">实用攻略</span>
+          </div>
+        </div>
+        <div class="share-buttons" id="knowledge-share"></div>
+      </div>
+    </section>
+
+    <!-- 分享卡片预览 -->
+    <section class="demo-section">
+      <h2>分享卡片样式</h2>
+      <p style="color: #666; margin-bottom: 20px;">分享时在各平台显示的卡片预览效果</p>
+      <div id="share-card-preview"></div>
+    </section>
+
+    <!-- 分享统计 -->
+    <section class="demo-section">
+      <h2>分享统计</h2>
+      <p style="color: #666; margin-bottom: 10px;">本地存储的分享数据统计</p>
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card wechat">
+          <div class="stat-value" id="stat-wechat">0</div>
+          <div class="stat-label">微信扫码</div>
+        </div>
+        <div class="stat-card weibo">
+          <div class="stat-value" id="stat-weibo">0</div>
+          <div class="stat-label">微博分享</div>
+        </div>
+        <div class="stat-card qq">
+          <div class="stat-value" id="stat-qq">0</div>
+          <div class="stat-label">QQ分享</div>
+        </div>
+        <div class="stat-card copy">
+          <div class="stat-value" id="stat-copy">0</div>
+          <div class="stat-label">复制链接</div>
+        </div>
+      </div>
+      <div style="margin-top: 20px; text-align: center;">
+        <button onclick="clearStats()" style="padding: 10px 24px; background: #f0f0f0; border: none; border-radius: 8px; cursor: pointer; font-size: 14px;">🗑️ 清空统计</button>
+        <button onclick="loadStats()" style="padding: 10px 24px; background: #667eea; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; margin-left: 12px;">🔄 刷新统计</button>
+      </div>
+    </section>
+
+    <!-- 使用方法 -->
+    <section class="demo-section">
+      <h2>使用方法</h2>
+      
+      <h3 style="font-size: 16px; color: #333; margin: 20px 0 12px;">1. 引入文件</h3>
+      <div class="demo-code">
+        <pre><span class="tag">&lt;link</span> <span class="keyword">rel</span>=<span class="string">"stylesheet"</span> <span class="keyword">href</span>=<span class="string">"css/share.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;script</span> <span class="keyword">src</span>=<span class="string">"js/share.js"</span><span class="tag">&gt;&lt;/script&gt;</span></pre>
+      </div>
+
+      <h3 style="font-size: 16px; color: #333; margin: 20px 0 12px;">2. 在页面中添加分享容器</h3>
+      <div class="demo-code">
+        <pre><span class="comment">&lt;!-- 自动初始化，data-type 指定分享类型 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="keyword">class</span>=<span class="string">"share-container"</span> <span class="keyword">data-type</span>=<span class="string">"guide"</span> <span class="keyword">data-id</span>=<span class="string">"123"</span><span class="tag">&gt;&lt;/div&gt;</span>
+
+<span class="comment">&lt;!-- 或手动初始化 --&gt;</span>
+<span class="tag">&lt;div</span> <span class="keyword">class</span>=<span class="string">"share-buttons"</span> <span class="keyword">id</span>=<span class="string">"my-share"</span><span class="tag">&gt;&lt;/div&gt;</span></pre>
+      </div>
+
+      <h3 style="font-size: 16px; color: #333; margin: 20px 0 12px;">3. JavaScript 初始化</h3>
+      <div class="demo-code">
+        <pre><span class="comment">// 自动初始化（容器需有 share-container 类）</span>
+<span class="comment">// 页面加载后自动生成按钮并绑定事件</span>
+
+<span class="comment">// 手动初始化</span>
+ShareModule.<span class="keyword">init</span>(<span class="string">'#my-share'</span>, {
+  url: <span class="string">'https://example.com/page'</span>,
+  title: <span class="string">'页面标题'</span>,
+  description: <span class="string">'页面描述'</span>,
+  image: <span class="string">'images/cover.jpg'</span>
+});
+
+<span class="comment">// 或直接调用分享方法</span>
+ShareModule.<span class="keyword">shareToWechat</span>({ url: location.href, title: <span class="string">'标题'</span> });
+ShareModule.<span class="keyword">shareToWeibo</span>({ url: location.href, title: <span class="string">'标题'</span> });
+ShareModule.<span class="keyword">shareToQQ</span>({ url: location.href, title: <span class="string">'标题'</span> });
+ShareModule.<span class="keyword">copyLink</span>({ url: location.href });
+
+<span class="comment">// 为详情页生成分享数据</span>
+<span class="keyword">const</span> data = ShareModule.<span class="keyword">generateShareData</span>(<span class="string">'guide'</span>, { id: <span class="string">'123'</span>, name: <span class="string">'导游名称'</span> });
+
+<span class="comment">// 获取分享统计</span>
+<span class="keyword">const</span> stats = ShareModule.<span class="keyword">getStats</span>();
+console.log(stats); <span class="comment">// { wechat: 0, weibo: 0, qq: 0, copy: 0, total: 0 }</span></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer id="main-footer" class="demo-footer">
+    <p>游导旅游分享功能模块 · 支持多平台分享</p>
+  </footer>
+
+  <script src="js/share.js"></script>
+  <script>
+    // 分享类型数据
+    const shareData = {
+      guide: {
+        url: 'https://youdao-travel.com/guide-detail.html?id=123',
+        title: '金牌导游李明 - 游导旅游',
+        description: '10年导游经验，精通英语、日语，曾带领500+旅行团',
+        image: 'images/avatar-default.png'
+      },
+      destination: {
+        url: 'https://youdao-travel.com/destinations.html?city=京都',
+        title: '日本京都旅游攻略 - 游导旅游',
+        description: '千年古都，传统与现代完美融合的旅游胜地',
+        image: 'images/placeholder.png'
+      },
+      route: {
+        url: 'https://youdao-travel.com/route-detail.html?id=456',
+        title: '日本7日深度游 - 游导旅游',
+        description: '东京-京都-大阪经典路线，精选热门景点',
+        image: 'images/placeholder.png'
+      },
+      knowledge: {
+        url: 'https://youdao-travel.com/knowledge-detail.html?id=789',
+        title: '日本签证办理全攻略 - 游导旅游',
+        description: '从材料准备到出签时间，详细讲解签证办理流程',
+        image: 'images/placeholder.png'
+      }
+    };
+
+    // 初始化各类型分享按钮
+    Object.keys(shareData).forEach(type => {
+      const container = document.getElementById(`${type}-share`);
+      if (container) {
+        ShareModule.init(`#${type}-share`, shareData[type]);
+      }
+    });
+
+    // 渲染分享卡片预览
+    function renderShareCard(data) {
+      const preview = document.getElementById('share-card-preview');
+      preview.innerHTML = ShareModule.generateShareCard(data);
+    }
+    renderShareCard(shareData.guide);
+
+    // 类型切换
+    document.querySelectorAll('.demo-type-tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.demo-type-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.demo-content').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        const type = this.dataset.type;
+        document.querySelector(`.demo-content[data-type="${type}"]`).classList.add('active');
+        renderShareCard(shareData[type]);
+      });
+    });
+
+    // 加载统计数据
+    function loadStats() {
+      const stats = ShareModule.getStats();
+      document.getElementById('stat-wechat').textContent = stats.wechat;
+      document.getElementById('stat-weibo').textContent = stats.weibo;
+      document.getElementById('stat-qq').textContent = stats.qq;
+      document.getElementById('stat-copy').textContent = stats.copy;
+    }
+    loadStats();
+
+    // 清空统计
+    function clearStats() {
+      localStorage.removeItem('travel_share_stats');
+      loadStats();
+    }
+
+    // 每秒刷新统计（用于观察分享效果）
+    setInterval(loadStats, 1000);
+  </script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

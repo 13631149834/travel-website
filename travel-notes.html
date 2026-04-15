@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行记事本 - 游导旅游</title>
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    /* 记事本专属样式 */
+    .notes-page {
+      min-height: 100vh;
+      background: linear-gradient(180deg, #F8FAFC 0%, #fff 100%);
+      padding-bottom: 60px;
+    }
+    
+    .notes-header {
+      background: var(--primary);
+      color: white;
+      padding: 40px 0 60px;
+      text-align: center;
+    }
+    .notes-header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    .notes-header p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    
+    .notes-container {
+      max-width: 900px;
+      margin: -30px auto 0;
+      padding: 0 20px;
+      position: relative;
+      z-index: 10;
+    }
+    
+    /* 搜索和操作栏 */
+    .notes-toolbar {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-md);
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+    .search-box::before {
+      content: "🔍";
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+    }
+    
+    .filter-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .filter-tag {
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .filter-tag:hover, .filter-tag.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    /* 统计信息 */
+    .notes-stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .stat-item {
+      background: white;
+      padding: 16px 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .stat-icon {
+      font-size: 1.5rem;
+    }
+    .stat-info span {
+      display: block;
+    }
+    .stat-info .num {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    .stat-info .label {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+    }
+    
+    /* 笔记列表 */
+    .notes-list {
+      display: grid;
+      gap: 16px;
+    }
+    
+    .note-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .note-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--primary);
+    }
+    .note-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+    
+    .note-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .note-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+    .note-date {
+      font-size: 0.8rem;
+      color: var(--gray-400);
+    }
+    
+    .note-destination {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: var(--primary-light);
+      color: var(--primary);
+      border-radius: 12px;
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+    }
+    
+    .note-content {
+      color: var(--gray-600);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    
+    .note-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+    .note-tag {
+      padding: 4px 10px;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      border-radius: 10px;
+      font-size: 0.75rem;
+    }
+    .note-tag.color-1 { background: #FEF3C7; color: #D97706; }
+    .note-tag.color-2 { background: #D1FAE5; color: #059669; }
+    .note-tag.color-3 { background: #E0E7FF; color: #4F46E5; }
+    .note-tag.color-4 { background: #FCE7F3; color: #DB2777; }
+    
+    .note-actions {
+      display: flex;
+      gap: 8px;
+      padding-top: 12px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .note-actions button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .btn-edit {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .btn-edit:hover { background: var(--primary); color: white; }
+    .btn-delete {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+    .btn-delete:hover { background: #DC2626; color: white; }
+    
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: white;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .empty-state .icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    .empty-state h3 {
+      font-size: 1.2rem;
+      color: var(--gray-700);
+      margin-bottom: 8px;
+    }
+    .empty-state p {
+      color: var(--gray-500);
+      font-size: 0.95rem;
+    }
+    
+    /* 模态框 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    
+    .modal {
+      background: white;
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h2 {
+      font-size: 1.2rem;
+      color: var(--gray-900);
+    }
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: var(--gray-100);
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+    .modal-close:hover {
+      background: var(--gray-200);
+    }
+    
+    .modal-body {
+      padding: 24px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--gray-700);
+      margin-bottom: 8px;
+    }
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-light);
+    }
+    
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    
+    /* 标签选择 */
+    .tag-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag-option {
+      padding: 8px 14px;
+      border: 1px solid var(--gray-200);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.85rem;
+    }
+    .tag-option:hover {
+      border-color: var(--primary);
+    }
+    .tag-option.selected {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--gray-100);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+    .btn-secondary {
+      background: var(--gray-100);
+      color: var(--gray-700);
+    }
+    .btn-secondary:hover {
+      background: var(--gray-200);
+    }
+    
+    /* 添加按钮 */
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition);
+      z-index: 100;
+    }
+    .fab:hover {
+      transform: scale(1.1);
+      background: var(--primary-dark);
+    }
+    
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .notes-header { padding: 30px 0 50px; }
+      .notes-header h1 { font-size: 1.6rem; }
+      .notes-toolbar { flex-direction: column; }
+      .search-box { width: 100%; }
+      .filter-tags { width: 100%; justify-content: center; }
+      .form-row { grid-template-columns: 1fr; }
+      .modal { margin: 10px; }
+      .fab { bottom: 20px; right: 20px; width: 56px; height: 56px; }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <div class="notes-page">
+    <!-- 导航栏 -->
+    <nav class="navbar" aria-label="主导航">
+      <div class="container nav-container">
+    </div>
+  </nav>
+<main id="main-content" role="main">
+        <a href="index.html" class="logo">🧭 游导旅游</a>
+        <div class="nav-links">
+          <a href="index.html">首页</a>
+          <a href="guides.html">找导游</a>
+          <a href="routes.html">精品路线</a>
+          <a href="visa.html">签证服务</a>
+          <a href="tools.html">实用工具</a>
+          <a href="travel-notes.html" class="active">📝 旅行记事本</a>
+        </div>
+        <div class="nav-toggle" onclick="toggleNav()">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    
+    
+    <!-- 头部 -->
+    <div class="notes-header">
+      <h1>📝 旅行记事本</h1>
+      <p>记录每一次旅程的美好瞬间</p>
+    </div>
+    
+    <!-- 内容区 -->
+    <div class="notes-container">
+      <!-- 工具栏 -->
+      <div class="notes-toolbar">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="搜索笔记标题或内容...">
+        </div>
+        <div class="filter-tags" id="filterTags">
+          <button class="filter-tag active" data-filter="all">全部</button>
+          <button class="filter-tag" data-filter="行程">行程</button>
+          <button class="filter-tag" data-filter="美食">美食</button>
+          <button class="filter-tag" data-filter="景点">景点</button>
+          <button class="filter-tag" data-filter="住宿">住宿</button>
+          <button class="filter-tag" data-filter="购物">购物</button>
+          <button class="filter-tag" data-filter="备忘">备忘</button>
+        </div>
+      </div>
+      
+      <!-- 统计 -->
+      <div class="notes-stats">
+        <div class="stat-item">
+          <span class="stat-icon">📒</span>
+          <div class="stat-info">
+            <span class="num" id="totalNotes">0</span>
+            <span class="label">总笔记</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-icon">📅</span>
+          <div class="stat-info">
+            <span class="num" id="upcomingTrips">0</span>
+            <span class="label">即将出行</span>
+          </div>
+        </div>
+        <div class="stat-item">
+          <span class="stat-icon">✅</span>
+          <div class="stat-info">
+            <span class="num" id="completedTrips">0</span>
+            <span class="label">已完成</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 笔记列表 -->
+      <div class="notes-list" id="notesList"></div>
+      
+      <!-- 空状态 -->
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="icon">📒</div>
+        <h3>还没有笔记</h3>
+        <p>点击下方按钮创建第一条旅行笔记</p>
+      </div>
+    </div>
+    
+    <!-- 悬浮添加按钮 -->
+    <button class="fab" onclick="openModal()">+</button>
+  </div>
+  
+  <!-- 模态框 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">新建笔记</h2>
+        <button class="modal-close" onclick="closeModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <form id="noteForm">
+          <input type="hidden" id="noteId">
+          
+          <div class="form-group">
+            <label>笔记标题 *</label>
+            <input type="text" id="noteTitle" placeholder="给笔记起个名字" required>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label>目的地</label>
+              <input type="text" id="noteDestination" placeholder="例如：东京">
+            </div>
+            <div class="form-group">
+              <label>旅行日期</label>
+              <input type="date" id="noteDate">
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label>笔记内容 *</label>
+            <textarea id="noteContent" placeholder="记录你的旅行计划、感受、攻略..." required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>标签（可多选）</label>
+            <div class="tag-selector" id="tagSelector">
+              <span class="tag-option" data-tag="行程">🚗 行程</span>
+              <span class="tag-option" data-tag="美食">🍜 美食</span>
+              <span class="tag-option" data-tag="景点">🏛️ 景点</span>
+              <span class="tag-option" data-tag="住宿">🏨 住宿</span>
+              <span class="tag-option" data-tag="购物">🛍️ 购物</span>
+              <span class="tag-option" data-tag="备忘">📌 备忘</span>
+              <span class="tag-option" data-tag="省钱">💰 省钱</span>
+              <span class="tag-option" data-tag="避坑">⚠️ 避坑</span>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">取消</button>
+        <button class="btn btn-primary" onclick="saveNote()">保存笔记</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 数据管理
+    const STORAGE_KEY = 'travel_notes';
+    let notes = [];
+    let currentFilter = 'all';
+    let editingId = null;
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      loadNotes();
+      renderNotes();
+      setupEventListeners();
+    });
+    
+    // 加载笔记
+    function loadNotes() {
+      const data = localStorage.getItem(STORAGE_KEY);
+      notes = data ? JSON.parse(data) : [];
+    }
+    
+    // 保存笔记
+    function saveNotes() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    }
+    
+    // 设置事件监听
+    function setupEventListeners() {
+      // 搜索
+      document.getElementById('searchInput').addEventListener('input', renderNotes);
+      
+      // 筛选标签
+      document.querySelectorAll('.filter-tag').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          renderNotes();
+        });
+      });
+      
+      // 标签选择
+      document.querySelectorAll('.tag-option').forEach(tag => {
+        tag.addEventListener('click', () => {
+          tag.classList.toggle('selected');
+        });
+      });
+      
+      // 点击遮罩关闭
+      document.getElementById('modalOverlay').addEventListener('click', (e) => {
+        if (e.target.id === 'modalOverlay') closeModal();
+      });
+    }
+    
+    // 渲染笔记列表
+    function renderNotes() {
+      const searchText = document.getElementById('searchInput').value.toLowerCase();
+      const list = document.getElementById('notesList');
+      const emptyState = document.getElementById('emptyState');
+      
+      // 筛选笔记
+      let filtered = notes.filter(note => {
+        const matchSearch = !searchText || 
+          note.title.toLowerCase().includes(searchText) || 
+          note.content.toLowerCase().includes(searchText);
+        const matchFilter = currentFilter === 'all' || 
+          (note.tags && note.tags.includes(currentFilter));
+        return matchSearch && matchFilter;
+      });
+      
+      // 按日期倒序
+      filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+      
+      // 更新统计
+      updateStats();
+      
+      // 渲染
+      if (filtered.length === 0) {
+        list.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      list.innerHTML = filtered.map(note => {
+        const colorIndex = ['color-1','color-2','color-3','color-4'];
+        const tagsHtml = note.tags && note.tags.length > 0 
+          ? note.tags.map((t, i) => `<span class="note-tag ${colorIndex[i % 4]}">${t}</span>`).join('')
+          : '';
+        
+        return `
+          <div class="note-card" data-id="${note.id}">
+            <div class="note-header">
+              <div>
+                <div class="note-title">${escapeHtml(note.title)}</div>
+                <div class="note-date">${formatDate(note.createdAt)}</div>
+              </div>
+            </div>
+            ${note.destination ? `<div class="note-destination">📍 ${escapeHtml(note.destination)}</div>` : ''}
+            ${note.date ? `<div class="note-date" style="margin-bottom:8px;">📅 ${note.date}</div>` : ''}
+            <div class="note-content">${escapeHtml(note.content)}</div>
+            ${tagsHtml ? `<div class="note-tags">${tagsHtml}</div>` : ''}
+            <div class="note-actions">
+              <button class="btn-edit" onclick="editNote('${note.id}')">✏️ 编辑</button>
+              <button class="btn-delete" onclick="deleteNote('${note.id}')">🗑️ 删除</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+    
+    // 更新统计
+    function updateStats() {
+      document.getElementById('totalNotes').textContent = notes.length;
+      
+      const today = new Date().toISOString().split('T')[0];
+      const upcoming = notes.filter(n => n.date && n.date >= today).length;
+      const completed = notes.filter(n => n.date && n.date < today).length;
+      
+      document.getElementById('upcomingTrips').textContent = upcoming;
+      document.getElementById('completedTrips').textContent = completed;
+    }
+    
+    // 打开模态框
+    function openModal(id = null) {
+      editingId = id;
+      const modal = document.getElementById('modalOverlay');
+      const form = document.getElementById('noteForm');
+      
+      // 重置表单
+      form.reset();
+      document.querySelectorAll('.tag-option').forEach(t => t.classList.remove('selected'));
+      
+      if (id) {
+        // 编辑模式
+        const note = notes.find(n => n.id === id);
+        if (note) {
+          document.getElementById('modalTitle').textContent = '编辑笔记';
+          document.getElementById('noteId').value = note.id;
+          document.getElementById('noteTitle').value = note.title;
+          document.getElementById('noteDestination').value = note.destination || '';
+          document.getElementById('noteDate').value = note.date || '';
+          document.getElementById('noteContent').value = note.content;
+          
+          // 选中已有标签
+          if (note.tags) {
+            note.tags.forEach(tag => {
+              const el = document.querySelector(`.tag-option[data-tag="${tag}"]`);
+              if (el) el.classList.add('selected');
+            });
+          }
+        }
+      } else {
+        // 新建模式
+        document.getElementById('modalTitle').textContent = '新建笔记';
+        document.getElementById('noteId').value = '';
+      }
+      
+      modal.classList.add('active');
+    }
+    
+    // 关闭模态框
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+      editingId = null;
+    }
+    
+    // 保存笔记
+    function saveNote() {
+      const title = document.getElementById('noteTitle').value.trim();
+      const destination = document.getElementById('noteDestination').value.trim();
+      const date = document.getElementById('noteDate').value;
+      const content = document.getElementById('noteContent').value.trim();
+      
+      if (!title || !content) {
+        alert('请填写标题和内容');
+        return;
+      }
+      
+      // 获取选中的标签
+      const selectedTags = [];
+      document.querySelectorAll('.tag-option.selected').forEach(t => {
+        selectedTags.push(t.dataset.tag);
+      });
+      
+      if (editingId) {
+        // 更新
+        const index = notes.findIndex(n => n.id === editingId);
+        if (index !== -1) {
+          notes[index] = {
+            ...notes[index],
+            title,
+            destination,
+            date,
+            content,
+            tags: selectedTags,
+            updatedAt: new Date().toISOString()
+          };
+        }
+      } else {
+        // 新建
+        const note = {
+          id: Date.now().toString(),
+          title,
+          destination,
+          date,
+          content,
+          tags: selectedTags,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+        notes.unshift(note);
+      }
+      
+      saveNotes();
+      renderNotes();
+      closeModal();
+    }
+    
+    // 编辑笔记
+    function editNote(id) {
+      openModal(id);
+    }
+    
+    // 删除笔记
+    function deleteNote(id) {
+      if (confirm('确定要删除这条笔记吗？')) {
+        notes = notes.filter(n => n.id !== id);
+        saveNotes();
+        renderNotes();
+      }
+    }
+    
+    // 工具函数
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+    
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}`;
+    }
+    
+    // 移动端导航
+    function toggleNav() {
+      const navLinks = document.querySelector('.nav-links');
+      const navToggle = document.querySelector('.nav-toggle');
+      navLinks.classList.toggle('active');
+      navToggle.classList.toggle('active');
+    }
+  </script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

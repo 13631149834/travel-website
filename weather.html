@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px 0;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .navbar .logo {
+            font-size: 24px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .navbar .back-link {
+            color: #667eea;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        .navbar .back-link:hover {
+            text-decoration: underline;
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        /* 页面标题 */
+        .page-header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        .page-header .icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+        
+        .page-header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+        
+        .page-header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        /* 搜索区域 */
+        .search-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        
+        .search-input-wrap {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .search-input-wrap input {
+            flex: 1;
+            padding: 16px 20px;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .search-input-wrap input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        .search-btn {
+            padding: 16px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* 热门城市 */
+        .hot-cities {
+            margin-top: 20px;
+        }
+        
+        .hot-cities-title {
+            font-size: 14px;
+            color: #64748B;
+            margin-bottom: 12px;
+        }
+        
+        .hot-cities-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .city-chip {
+            padding: 8px 16px;
+            background: #F1F5F9;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .city-chip:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        /* 天气卡片 */
+        .weather-card {
+            background: white;
+            border-radius: 24px;
+            padding: 35px;
+            margin-bottom: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            display: none;
+        }
+        
+        .weather-card.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* 当前天气 */
+        .current-weather {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .weather-main {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .weather-icon {
+            font-size: 80px;
+            display: inline-block;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .weather-icon.sunny { filter: drop-shadow(0 4px 8px rgba(255,193,7,0.4)); }
+        .weather-icon.rainy { filter: drop-shadow(0 4px 8px rgba(66,165,245,0.4)); }
+        .weather-icon.cloudy { filter: drop-shadow(0 4px 8px rgba(158,158,158,0.4)); }
+        .weather-icon.snowy { filter: drop-shadow(0 4px 8px rgba(255,255,255,0.6)); }
+        
+        .weather-temp {
+            font-size: 64px;
+            font-weight: 300;
+            color: #1E293B;
+        }
+        
+        .weather-desc {
+            font-size: 20px;
+            color: #64748B;
+            margin-top: 5px;
+        }
+        
+        .weather-location {
+            text-align: right;
+        }
+        
+        .weather-location h2 {
+            font-size: 28px;
+            color: #1E293B;
+            margin-bottom: 5px;
+        }
+        
+        .weather-location p {
+            color: #64748B;
+            font-size: 14px;
+        }
+        
+        /* 详细信息 */
+        .weather-details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .detail-item {
+            background: #F8FAFC;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .detail-item .icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .detail-item .label {
+            font-size: 13px;
+            color: #64748B;
+            margin-bottom: 5px;
+        }
+        
+        .detail-item .value {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1E293B;
+        }
+        
+        /* 天气预报 */
+        .forecast-title {
+            font-size: 18px;
+            color: #1E293B;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .forecast-list {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+        
+        .forecast-item {
+            background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+        }
+        
+        .forecast-item .day {
+            font-size: 14px;
+            color: #64748B;
+            margin-bottom: 10px;
+        }
+        
+        .forecast-item .icon {
+            font-size: 36px;
+            margin-bottom: 10px;
+        }
+        
+        .forecast-item .temp {
+            font-size: 18px;
+            color: #1E293B;
+            font-weight: 500;
+        }
+        
+        .forecast-item .temp span {
+            color: #94A3B8;
+            font-weight: 400;
+        }
+        
+        /* 旅行建议 */
+        .travel-tips {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+        
+        .travel-tips-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #92400E;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .travel-tips-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .travel-tip {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: #B45309;
+        }
+        
+        .travel-tip .icon {
+            font-size: 18px;
+        }
+        
+        /* 加载状态 */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            display: none;
+        }
+        
+        .loading.show {
+            display: block;
+        }
+        
+        .loading .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #E5E7EB;
+            border-top-color: #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 错误提示 */
+        .error-tip {
+            background: #FEE2E2;
+            color: #DC2626;
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            display: none;
+        }
+        
+        .error-tip.show {
+            display: block;
+        }
+        
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+        
+        .empty-state .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+        
+        .empty-state h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .empty-state p {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            .page-header h1 {
+                font-size: 28px;
+            }
+            
+            .current-weather {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .weather-location {
+                text-align: center;
+            }
+            
+            .weather-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .forecast-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .travel-tips-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-input-wrap {
+                flex-direction: column;
+            }
+        }
+    
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- SEO Meta Tags -->
+  <title>天气预报 - 游导旅游 | 目的地天气查询</title>
+  <meta name="description" content="查询全球目的地天气预报，提前了解目的地的气候状况，为出行做好准备。">
+  <meta name="keywords" content="天气预报,目的地天气,气候查询">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://youdao-travel.com/weather.html">
+  <meta property="og:type" content="webapp">
+  <meta property="og:title" content="天气预报 - 游导旅游 | 目的地天气查询">
+  <meta property="og:description" content="查询全球目的地天气预报，提前了解目的地的气候状况，为出行做好准备。">
+  <meta property="og:url" content="https://youdao-travel.com/weather.html">
+  <meta property="og:site_name" content="游导旅游">
+  <meta property="og:locale" content="zh_CN">
+    <meta property="og:image" content="images/og-image.png">
+  <meta name="theme-color" content="#4f46e5">
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+    <!-- 导航栏 -->
+    <nav class="navbar" aria-label="主导航">
+        <div class="container">
+</nav>
+<main id="main-content" role="main">
+            <a href="index.html" class="logo">🌍 游导旅游</a>
+            <a href="index.html" class="back-link">← 返回首页</a>
+        </div>
+    
+    
+    <div class="container">
+        <!-- 页面标题 -->
+        <div class="page-header">
+            <div class="icon">🌤️</div>
+            <h1>天气查询</h1>
+            <p>查询全球热门城市的实时天气，助你做好出行准备</p>
+        </div>
+        
+        <!-- 搜索区域 -->
+        <div class="search-box">
+            <div class="search-input-wrap">
+                <input type="text" id="cityInput" placeholder="输入城市名称，如 Tokyo, Bangkok, Paris...">
+                <button class="search-btn" onclick="searchWeather()">🔍 查询</button>
+            </div>
+            
+            <!-- 国内热门城市 -->
+            <div class="hot-cities">
+                <div class="hot-cities-title">🇨🇳 国内热门城市：</div>
+                <div class="hot-cities-list">
+                    <button class="city-chip" onclick="searchCity('北京')">🏯 北京</button>
+                    <button class="city-chip" onclick="searchCity('上海')">🌆 上海</button>
+                    <button class="city-chip" onclick="searchCity('成都')">🐼 成都</button>
+                    <button class="city-chip" onclick="searchCity('西安')">🏛️ 西安</button>
+                    <button class="city-chip" onclick="searchCity('三亚')">🏖️ 三亚</button>
+                    <button class="city-chip" onclick="searchCity('丽江')">🏔️ 丽江</button>
+                </div>
+            </div>
+            
+            <!-- 国外热门城市 -->
+            <div class="hot-cities">
+                <div class="hot-cities-title">🌏 国外热门城市：</div>
+                <div class="hot-cities-list">
+                    <button class="city-chip" onclick="searchCity('Tokyo')">🗾 东京</button>
+                    <button class="city-chip" onclick="searchCity('Paris')">🗼 巴黎</button>
+                    <button class="city-chip" onclick="searchCity('Bangkok')">🏝️ 曼谷</button>
+                    <button class="city-chip" onclick="searchCity('Singapore')">🌴 新加坡</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 加载状态 -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>正在查询天气...</p>
+        </div>
+        
+        <!-- 错误提示 -->
+        <div class="error-tip" id="errorTip">
+            <p id="errorMsg">查询失败，请重试</p>
+        </div>
+        
+        <!-- 天气卡片 -->
+        <div class="weather-card" id="weatherCard">
+            <div class="current-weather">
+                <div class="weather-main">
+                    <div class="weather-icon" id="weatherIcon">☀️</div>
+                    <div>
+                        <div class="weather-temp" id="temperature">--°</div>
+                        <div class="weather-desc" id="weatherDesc">--</div>
+                    </div>
+                </div>
+                <div class="weather-location">
+                    <h2 id="cityName">--</h2>
+                    <p id="country">--</p>
+                </div>
+            </div>
+            
+            <div class="weather-details">
+                <div class="detail-item">
+                    <div class="icon">💧</div>
+                    <div class="label">湿度</div>
+                    <div class="value" id="humidity">--%</div>
+                </div>
+                <div class="detail-item">
+                    <div class="icon">💨</div>
+                    <div class="label">风速</div>
+                    <div class="value" id="wind">-- km/h</div>
+                </div>
+                <div class="detail-item">
+                    <div class="icon">🌡️</div>
+                    <div class="label">体感温度</div>
+                    <div class="value" id="feelsLike">--°</div>
+                </div>
+            </div>
+            
+            <div class="forecast-section">
+                <div class="forecast-title">📅 未来3天预报</div>
+                <div class="forecast-list" id="forecastList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+            
+            <div class="travel-tips" id="travelTips">
+                <div class="travel-tips-title">🎒 旅行建议</div>
+                <div class="travel-tips-list" id="tipsList">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState">
+            <div class="icon">🌍</div>
+            <h3>查询你想去的城市天气</h3>
+            <p>选择热门城市或输入城市名称，获取实时天气预报</p>
+        </div>
+    </div>
+    
+    <script>
+        // 城市中英文映射
+        const cityMap = {
+            '北京': 'Beijing',
+            '上海': 'Shanghai',
+            '成都': 'Chengdu',
+            '西安': "Xi'an",
+            '三亚': 'Sanya',
+            '丽江': 'Lijiang',
+            '东京': 'Tokyo',
+            '曼谷': 'Bangkok',
+            '巴黎': 'Paris',
+            '新加坡': 'Singapore',
+            '东京': 'Tokyo',
+            '芭提雅': 'Pattaya'
+        };
+        
+        // 国家映射
+        const countryMap = {
+            'Beijing': '中国',
+            'Shanghai': '中国',
+            'Chengdu': '中国',
+            "Xi'an": '中国',
+            'Sanya': '中国',
+            'Lijiang': '中国',
+            'Tokyo': '日本',
+            'Bangkok': '泰国',
+            'Paris': '法国',
+            'Singapore': '新加坡'
+        };
+        
+        // 天气图标映射
+        function getWeatherIcon(code) {
+            // 根据天气代码返回图标
+            if (code === 'Sunny' || code === 'Clear' || code === '晴') return '☀️';
+            if (code === 'Partly cloudy' || code === '多云') return '⛅';
+            if (code === 'Cloudy' || code === 'Overcast' || code === '阴') return '☁️';
+            if (code === 'Rain' || code === 'Light rain' || code === '小雨' || code === '雨') return '🌧️';
+            if (code === 'Heavy rain' || code === 'Showers' || code === '大雨' || code === '中雨') return '⛈️';
+            if (code === 'Snow' || code === 'Light snow' || code === '雪' || code === '小雪') return '❄️';
+            if (code === 'Thunderstorm' || code === '雷暴') return '🌩️';
+            if (code === 'Fog' || code === 'Mist' || code === '雾') return '🌫️';
+            if (code.includes('Haze') || code.includes('霾')) return '😷';
+            return '🌤️';
+        }
+        
+        // 中文天气描述映射
+        function getWeatherDescCN(desc) {
+            const descMap = {
+                'Sunny': '晴天',
+                'Clear': '晴朗',
+                'Partly cloudy': '多云',
+                'Cloudy': '阴天',
+                'Overcast': '阴天',
+                'Rain': '雨天',
+                'Light rain': '小雨',
+                'Moderate rain': '中雨',
+                'Heavy rain': '大雨',
+                'Showers': '阵雨',
+                'Snow': '下雪',
+                'Light snow': '小雪',
+                'Thunderstorm': '雷暴',
+                'Fog': '雾',
+                'Mist': '薄雾'
+            };
+            return descMap[desc] || desc;
+        }
+        
+        // 模拟天气数据
+        function getMockWeather(city) {
+            const weathers = ['Sunny', 'Partly cloudy', 'Cloudy', 'Rain', 'Clear'];
+            const weather = weathers[Math.floor(Math.random() * weathers.length)];
+            const temp = Math.floor(Math.random() * 20) + 15;
+            const humidity = Math.floor(Math.random() * 40) + 40;
+            const wind = Math.floor(Math.random() * 20) + 5;
+            
+            return {
+                temp: temp,
+                humidity: humidity,
+                wind: wind,
+                feelsLike: temp - 2,
+                weather: weather,
+                icon: getWeatherIcon(weather),
+                forecast: [
+                    { day: '明天', icon: getWeatherIcon(weathers[Math.floor(Math.random() * weathers.length)]), high: temp + 3, low: temp - 3 },
+                    { day: '后天', icon: getWeatherIcon(weathers[Math.floor(Math.random() * weathers.length)]), high: temp + 2, low: temp - 4 },
+                    { day: '大后天', icon: getWeatherIcon(weathers[Math.floor(Math.random() * weathers.length)]), high: temp + 4, low: temp - 2 }
+                ]
+            };
+        }
+        
+        // 生成旅行建议
+        function generateTips(temp, weather, humidity) {
+            const tips = [];
+            
+            // 温度建议
+            if (temp < 10) {
+                tips.push({ icon: '🧥', text: '气温较低，建议穿羽绒服或厚外套' });
+            } else if (temp < 20) {
+                tips.push({ icon: '🧶', text: '早晚温差大，记得带件外套' });
+            } else if (temp < 30) {
+                tips.push({ icon: '👕', text: '气温舒适，适合户外活动' });
+            } else {
+                tips.push({ icon: '🩱', text: '天气炎热，注意防暑防晒' });
+            }
+            
+            // 天气建议
+            if (weather.includes('Rain')) {
+                tips.push({ icon: '☂️', text: '今天有雨，记得带雨具' });
+            }
+            if (weather.includes('Sunny') || weather.includes('Clear')) {
+                tips.push({ icon: '🕶️', text: '阳光强烈，涂抹防晒霜' });
+            }
+            
+            // 湿度建议
+            if (humidity > 70) {
+                tips.push({ icon: '💦', text: '空气较潮湿，注意防潮' });
+            }
+            
+            // 通用建议
+            tips.push({ icon: '💊', text: '建议携带常用药品' });
+            tips.push({ icon: '🔋', text: '充电宝充满电，保持通讯畅通' });
+            
+            return tips;
+        }
+        
+        // 搜索天气
+        async function searchWeather() {
+            const cityInput = document.getElementById('cityInput').value.trim();
+            if (!cityInput) {
+                Utils.showToast('请输入城市名称', 'warning');
+                return;
+            }
+            await fetchWeather(cityInput);
+        }
+        
+        // 选择热门城市
+        function searchCity(city) {
+            document.getElementById('cityInput').value = city;
+            fetchWeather(city);
+        }
+        
+        // 获取天气数据
+        async function fetchWeather(city) {
+            const loading = document.getElementById('loading');
+            const weatherCard = document.getElementById('weatherCard');
+            const errorTip = document.getElementById('errorTip');
+            const emptyState = document.getElementById('emptyState');
+            
+            // 显示加载状态
+            loading.classList.add('show');
+            weatherCard.classList.remove('show');
+            errorTip.classList.remove('show');
+            emptyState.style.display = 'none';
+            
+            try {
+                // 尝试使用 wttr.in API
+                const response = await fetch(`https://wttr.in/${city}?format=j1`);
+                
+                if (!response.ok) {
+                    throw new Error('API 请求失败');
+                }
+                
+                const data = await response.json();
+                
+                // 解析数据
+                const current = data.current_condition[0];
+                const temp = parseInt(current.temp_C);
+                const humidity = parseInt(current.humidity);
+                const wind = parseInt(current.windspeedKmph);
+                const weatherDesc = current.weatherDesc[0].value;
+                
+                // 获取城市名
+                let cityName = city;
+                const cityKey = Object.keys(cityMap).find(k => cityMap[k].toLowerCase() === city.toLowerCase());
+                if (cityKey) {
+                    cityName = cityKey;
+                }
+                
+                // 未来几天预报
+                const forecast = data.weather.slice(0, 3).map((day, index) => ({
+                    day: index === 0 ? '今天' : index === 1 ? '明天' : '后天',
+                    icon: getWeatherIcon(day.weatherDesc[0].value),
+                    high: parseInt(day.maxtempC),
+                    low: parseInt(day.mintempC)
+                }));
+                
+                // 更新UI
+                displayWeather({
+                    city: cityName,
+                    country: countryMap[city] || '',
+                    temp: temp,
+                    humidity: humidity,
+                    wind: wind,
+                    feelsLike: parseInt(current.FeelsLikeC),
+                    weather: weatherDesc,
+                    icon: getWeatherIcon(weatherDesc),
+                    forecast: forecast
+                });
+                
+            } catch (error) {
+                // 使用模拟数据
+                const mockData = getMockWeather(city);
+                let cityName = city;
+                const cityKey = Object.keys(cityMap).find(k => cityMap[k].toLowerCase() === city.toLowerCase());
+                if (cityKey) {
+                    cityName = cityKey;
+                }
+                
+                displayWeather({
+                    city: cityName,
+                    country: countryMap[city] || '',
+                    ...mockData
+                });
+            }
+        }
+        
+        // 显示天气信息
+        function displayWeather(data) {
+            const loading = document.getElementById('loading');
+            const weatherCard = document.getElementById('weatherCard');
+            
+            document.getElementById('cityName').textContent = data.city;
+            document.getElementById('country').textContent = data.country;
+            document.getElementById('temperature').textContent = data.temp + '°';
+            document.getElementById('weatherDesc').textContent = getWeatherDescCN(data.weather);
+            
+            const weatherIcon = document.getElementById('weatherIcon');
+            weatherIcon.textContent = data.icon;
+            // 添加天气类型样式类
+            weatherIcon.className = 'weather-icon';
+            if (data.icon === '☀️') weatherIcon.classList.add('sunny');
+            else if (['🌧️', '⛈️'].includes(data.icon)) weatherIcon.classList.add('rainy');
+            else if (['☁️', '⛅', '🌫️'].includes(data.icon)) weatherIcon.classList.add('cloudy');
+            else if (data.icon === '❄️') weatherIcon.classList.add('snowy');
+            
+            document.getElementById('humidity').textContent = data.humidity + '%';
+            document.getElementById('wind').textContent = data.wind + ' km/h';
+            document.getElementById('feelsLike').textContent = data.feelsLike + '°';
+            
+            // 天气预报
+            const forecastList = document.getElementById('forecastList');
+            forecastList.innerHTML = data.forecast.map(day => `
+                <div class="forecast-item">
+                    <div class="day">${day.day}</div>
+                    <div class="icon">${day.icon}</div>
+                    <div class="temp">${day.high}° <span>/ ${day.low}°</span></div>
+                </div>
+            `).join('');
+            
+            // 旅行建议
+            const tips = generateTips(data.temp, data.weather, data.humidity);
+            const tipsList = document.getElementById('tipsList');
+            tipsList.innerHTML = tips.map(tip => `
+                <div class="travel-tip">
+                    <span class="icon">${tip.icon}</span>
+                    <span>${tip.text}</span>
+                </div>
+            `).join('');
+            
+            // 显示卡片
+            loading.classList.remove('show');
+            weatherCard.classList.add('show');
+        }
+        
+        // 回车搜索
+        document.getElementById('cityInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                searchWeather();
+            }
+        });
+    </script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

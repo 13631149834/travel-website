@@ -1,853 +1,304 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <style>
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+  </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>精选路线 - 游导伴旅</title>
+  
+  <!-- 性能优化 -->
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  
+  <title>精品线路 - 游导旅游</title>
+  <meta name="description" content="精选旅行线路，覆盖全球热门目的地，提供详细行程安排和费用预算。">
   <link rel="stylesheet" href="css/style.css">
-  <style>
-    /* 路线列表页专用样式 */
-    .page-header {
-      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-      color: #fff;
-      padding: 40px 0;
-      text-align: center;
-    }
-    .page-header h1 {
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
-    .page-header p {
-      opacity: 0.9;
-      font-size: 1.1rem;
-    }
-
-    /* 筛选栏 */
-    .filter-section {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-      margin-bottom: 30px;
-    }
-    .filter-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      align-items: center;
-      margin-bottom: 16px;
-    }
-    .filter-row:last-child {
-      margin-bottom: 0;
-    }
-    .filter-label {
-      font-weight: 600;
-      color: var(--gray-600);
-      min-width: 60px;
-    }
-    .filter-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .filter-tag {
-      padding: 8px 16px;
-      background: var(--gray-100);
-      border: 1px solid var(--gray-200);
-      border-radius: 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 0.9rem;
-    }
-    .filter-tag:hover {
-      border-color: #f97316;
-      color: #f97316;
-    }
-    .filter-tag.active {
-      background: #f97316;
-      color: #fff;
-      border-color: #f97316;
-    }
-    .filter-sort {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .filter-sort select {
-      padding: 8px 12px;
-      border: 1px solid var(--gray-200);
-      border-radius: 8px;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-
-    /* 路线卡片 */
-    .route-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 24px;
-      padding: 20px 0;
-    }
-    .route-card {
-      background: #fff;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      transition: all 0.3s;
-      cursor: pointer;
-    }
-    .route-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-    }
-    .route-card-image {
-      position: relative;
-      height: 200px;
-      overflow: hidden;
-    }
-    .route-card-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.3s;
-    }
-    .route-card:hover .route-card-image img {
-      transform: scale(1.05);
-    }
-    .route-card-badges {
-      position: absolute;
-      top: 12px;
-      left: 12px;
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-    .route-badge {
-      padding: 4px 10px;
-      background: rgba(255,255,255,0.95);
-      border-radius: 12px;
-      font-size: 0.75rem;
-      font-weight: 600;
-    }
-    .route-badge.featured {
-      background: #f97316;
-      color: #fff;
-    }
-    .route-badge.hot {
-      background: #ef4444;
-      color: #fff;
-    }
-    .route-badge-new {
-      background: #10b981;
-      color: #fff;
-    }
-    .route-favorite {
-      position: absolute;
-      top: 12px;
-      right: 12px;
-      width: 36px;
-      height: 36px;
-      background: rgba(255,255,255,0.95);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-size: 1.1rem;
-    }
-    .route-favorite:hover {
-      transform: scale(1.15);
-    }
-    .route-favorite.active {
-      color: #ef4444;
-    }
-    .route-card-content {
-      padding: 20px;
-    }
-    .route-card-destination {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #f97316;
-      font-size: 0.85rem;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-    .route-card-title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--gray-900);
-      margin-bottom: 8px;
-      line-height: 1.4;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .route-card-subtitle {
-      color: var(--gray-600);
-      font-size: 0.9rem;
-      margin-bottom: 12px;
-      display: -webkit-box;
-      -webkit-line-clamp: 1;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-    .route-card-highlights {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 16px;
-    }
-    .route-highlight-tag {
-      padding: 4px 8px;
-      background: #fff7ed;
-      color: #ea580c;
-      border-radius: 4px;
-      font-size: 0.75rem;
-    }
-    .route-card-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 12px;
-      border-top: 1px solid var(--gray-100);
-    }
-    .route-card-days {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      color: var(--gray-600);
-      font-size: 0.9rem;
-    }
-    .route-card-price {
-      text-align: right;
-    }
-    .route-price {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #f97316;
-    }
-    .route-price-note {
-      font-size: 0.75rem;
-      color: var(--gray-500);
-    }
-
-    /* 加载状态 */
-    .loading-spinner {
-      text-align: center;
-      padding: 60px 20px;
-    }
-    .loading-spinner .spinner {
-      width: 48px;
-      height: 48px;
-      border: 4px solid var(--gray-200);
-      border-top-color: #f97316;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 16px;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* 空状态 */
-    .empty-state {
-      text-align: center;
-      padding: 80px 20px;
-      background: #fff;
-      border-radius: 16px;
-    }
-    .empty-state .icon {
-      font-size: 4rem;
-      margin-bottom: 16px;
-    }
-    .empty-state h3 {
-      font-size: 1.25rem;
-      color: var(--gray-700);
-      margin-bottom: 8px;
-    }
-    .empty-state p {
-      color: var(--gray-500);
-    }
-
-    /* 移动端适配 */
-    @media (max-width: 768px) {
-      .page-header {
-        padding: 30px 0;
-      }
-      .page-header h1 {
-        font-size: 1.5rem;
-      }
-      .filter-section {
-        padding: 16px;
-      }
-      .filter-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .filter-sort {
-        margin-left: 0;
-        width: 100%;
-      }
-      .filter-sort select {
-        width: 100%;
-      }
-      .route-grid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-      .route-card-image {
-        height: 180px;
-      }
-    }
-
-    /* 响应式筛选器 */
-    .filter-toggle {
-      display: none;
-      width: 100%;
-      padding: 12px;
-      background: var(--gray-100);
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.95rem;
-      margin-bottom: 12px;
-    }
-    @media (max-width: 768px) {
-      .filter-section {
-        display: none;
-      }
-      .filter-section.mobile-open {
-        display: block;
-      }
-      .filter-toggle {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="css/animations.css">
+  <link rel="stylesheet" href="css/onboarding.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media='all'">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 页面过渡加载动画 -->
+  <div class="page-transition-overlay">
+    <div class="page-transition-content">
+      <div class="page-transition-logo">🌍</div>
+      <div class="loading-progress">
+        <div class="loading-progress-bar"></div>
+      </div>
+    </div>
+  </div>
   <!-- 导航栏 -->
-  <nav class="navbar">
+  <nav class="navbar" aria-label="主导航">
     <div class="container">
-      <a href="index.html" class="logo">🌍 游导伴旅</a>
+</nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html">签证</a>
+        <a href="routes.html" class="active">线路</a>
+        <a href="safety-tips.html">安全</a>
+        <a href="knowledge.html">知识</a>
+        <a href="tools.html">工具</a>
+      </div>
       <div class="nav-toggle" onclick="toggleNav()">
         <span></span><span></span><span></span>
       </div>
-      <div class="nav-links">
-        <a href="index.html">首页</a>
-        <a href="guides.html">🎤 找导游</a>
-        <a href="visa.html">签证中心</a>
-        <a href="pitfall.html">避坑指南</a>
-        <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
-        <a href="routes.html" class="active">精品线路</a>
-        <a href="tips.html">旅行经验</a>
-        <a href="stories.html">旅行故事</a>
-        <a href="wonders.html">世界奇趣</a>
-        <a href="emergency.html">应急资源</a>
-        <a href="faq.html">常见问题</a>
-        <a href="contact.html">联系我们</a>
-        <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
-      </div>
     </div>
-  </nav>
+  
 
   <!-- 页面标题 -->
-  <section class="page-header">
-    <div class="container">
-      <h1>🗺️ 精选路线</h1>
-      <p>专业导游带团，精选主题路线，让旅行更简单</p>
-    </div>
-  </section>
+  <div class="page-hero">
+    <h1>精品线路</h1>
+    <p>精心设计，覆盖全球热门目的地</p>
+  </div>
 
-  <!-- 主内容 -->
-  <main class="container" style="padding-top: 30px; padding-bottom: 60px;">
-    <!-- 筛选栏 -->
-    <div class="filter-section" id="filterSection">
-      <!-- 移动端筛选切换 -->
-      <button class="filter-toggle" onclick="toggleMobileFilter()">
-        <span>🎯 筛选条件</span>
-        <span>▼</span>
-      </button>
-      
-      <div class="filter-row">
-        <span class="filter-label">目的地</span>
-        <div class="filter-tags" id="destinationFilters">
-          <span class="filter-tag active" data-region="all">全部</span>
-          <span class="filter-tag" data-region="oceania">🌊 澳新</span>
-          <span class="filter-tag" data-region="western_europe">🏰 西欧</span>
-          <span class="filter-tag" data-region="spain">💃 西班牙</span>
-          <span class="filter-tag" data-region="egypt">🏛️ 埃及</span>
-          <span class="filter-tag" data-region="other">🌍 其他</span>
+  <!-- 线路内容 -->
+  <div class="container" style="padding: 48px 0 80px;">
+    
+    <!-- 线路卡片 -->
+    <div class="grid-cards">
+      <div class="card">
+        <div style="height: 140px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: var(--radius) var(--radius) 0 0; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+          🗾
+        </div>
+        <div class="card-body">
+          <h3>日本7日深度游</h3>
+          <p>东京-京都-大阪经典路线，赏樱泡汤体验和风文化</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <span class="guide-tag">7天</span>
+            <span class="guide-tag">经典</span>
+          </div>
         </div>
       </div>
       
-      <div class="filter-row">
-        <span class="filter-label">行程天数</span>
-        <div class="filter-tags" id="daysFilters">
-          <span class="filter-tag active" data-days="all">全部</span>
-          <span class="filter-tag" data-days="short">7天以下</span>
-          <span class="filter-tag" data-days="medium">7-10天</span>
-          <span class="filter-tag" data-days="long">10-15天</span>
-          <span class="filter-tag" data-days="very-long">15天以上</span>
+      <div class="card">
+        <div style="height: 140px; background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%); border-radius: var(--radius) var(--radius) 0 0; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+          🏝️
+        </div>
+        <div class="card-body">
+          <h3>泰国海岛5日游</h3>
+          <p>普吉岛-清迈，阳光沙滩佛教文化之旅</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <span class="guide-tag">5天</span>
+            <span class="guide-tag">海岛</span>
+          </div>
         </div>
       </div>
       
-      <div class="filter-row">
-        <span class="filter-label">价格排序</span>
-        <div class="filter-sort">
-          <select id="priceSort" onchange="applyFilters()">
-            <option value="default">默认排序</option>
-            <option value="price-asc">价格从低到高</option>
-            <option value="price-desc">价格从高到低</option>
-          </select>
+      <div class="card">
+        <div style="height: 140px; background: linear-gradient(135deg, #3498db 0%, #2980b9 100%); border-radius: var(--radius) var(--radius) 0 0; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+          🗼
+        </div>
+        <div class="card-body">
+          <h3>欧洲10日经典游</h3>
+          <p>法国-意大利-瑞士，艺术与浪漫的完美融合</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <span class="guide-tag">10天</span>
+            <span class="guide-tag">经典</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div style="height: 140px; background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); border-radius: var(--radius) var(--radius) 0 0; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+          🦘
+        </div>
+        <div class="card-body">
+          <h3>澳新12日自然之旅</h3>
+          <p>悉尼-墨尔本-大堡礁，感受南半球自然风光</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <span class="guide-tag">12天</span>
+            <span class="guide-tag">自然</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div style="height: 140px; background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%); border-radius: var(--radius) var(--radius) 0 0; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+          🌴
+        </div>
+        <div class="card-body">
+          <h3>新马泰8日美食游</h3>
+          <p>新加坡-马来西亚-泰国，亚洲美食全覆盖</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <span class="guide-tag">8天</span>
+            <span class="guide-tag">美食</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <div style="height: 140px; background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); border-radius: var(--radius) var(--radius) 0 0; display: flex; align-items: center; justify-content: center; font-size: 3.5rem;">
+          🏯
+        </div>
+        <div class="card-body">
+          <h3>韩国5日潮流游</h3>
+          <p>首尔-釜山，购物追星韩剧取景地</p>
+          <div style="margin-top: 12px; display: flex; gap: 8px;">
+            <span class="guide-tag">5天</span>
+            <span class="guide-tag">购物</span>
+          </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- 路线列表 -->
-    <div id="routeList">
-      <div class="loading-spinner">
-        <div class="spinner"></div>
-        <p>加载中...</p>
-      </div>
-    </div>
-  </main>
-
-  <!-- 页脚 -->
-  <footer class="footer">
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
     <div class="container">
       <div class="footer-grid">
-        <div>
-          <h4>关于游导伴旅</h4>
+        <div class="footer-col">
+          <h4>关于游导</h4>
           <a href="about.html">关于我们</a>
           <a href="contact.html">联系我们</a>
-          <a href="join.html">加入我们</a>
+          <a href="guide-apply.html">导游入驻</a>
         </div>
-        <div>
-          <h4>旅行服务</h4>
-          <a href="routes.html">精选路线</a>
+        <div class="footer-col">
+          <h4>游客服务</h4>
           <a href="guides.html">找导游</a>
-          <a href="visa.html">签证服务</a>
+          <a href="visa.html">签证攻略</a>
+          <a href="routes.html">精品线路</a>
         </div>
-        <div>
-          <h4>帮助中心</h4>
+        <div class="footer-col">
+          <h4>导游工具</h4>
+          <a href="tools.html">效率工具</a>
+          <a href="knowledge-base.html">知识库</a>
+          <a href="finance.html">财务管理</a>
+        </div>
+        <div class="footer-col">
+          <h4>帮助支持</h4>
           <a href="faq.html">常见问题</a>
-          <a href="user-agreement.html">用户协议</a>
-          <a href="privacy.html">隐私政策</a>
+          <a href="disclaimer.html">使用条款</a>
         </div>
-        <div>
-          <h4>关注我们</h4>
-          <a href="#">微信公众号</a>
-          <a href="#">微博</a>
-          <a href="#">小红书</a>
+        <div class="footer-col">
+          <h4>联系我们</h4>
+          <p style="font-size:0.85rem;margin:4px 0">📧 2173381363@qq.com</p>
+          <p style="font-size:0.85rem;margin:4px 0">💬 微信：ximao101</p>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2024 游导伴旅 youdao-travel.com | 让旅行更简单</p>
+        <p>© 2024 游导旅游 · 让旅行更简单</p>
       </div>
     </div>
   </footer>
 
-  <!-- 引入Supabase SDK -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/supabase-config.js"></script>
-  <script src="js/common.js"></script>
-  <script>
-    // 全局变量
-    let allRoutes = [];
-    let currentFilters = {
-      region: 'all',
-      days: 'all',
-      sort: 'default'
-    };
+  <script src="js/performance.js" defer></script>
+  <script src="js/common.js" defer></script>
 
-    // 初始化
-    document.addEventListener('DOMContentLoaded', async () => {
-      // 加载路线数据
-      await loadRoutes();
-      
-      // 绑定筛选事件
-      bindFilterEvents();
-      
-      // 更新登录状态
-      updateAuthStatus();
-    });
-
-    // 加载路线数据
-    async function loadRoutes() {
-      const routeList = document.getElementById('routeList');
-      
-      try {
-        if (!supabaseClient) initSupabase();
-        
-        const { data, error } = await supabaseClient
-          .from('routes')
-          .select('*')
-          .eq('status', 'published')
-          .order('is_featured', { ascending: false })
-          .order('sort_order', { ascending: true })
-          .order('created_at', { ascending: false });
-        
-        if (error) throw error;
-        
-        allRoutes = data || [];
-        renderRoutes(allRoutes);
-      } catch (error) {
-        console.error('加载路线失败:', error);
-        // 使用示例数据
-        allRoutes = getSampleRoutes();
-        renderRoutes(allRoutes);
-      }
-    }
-
-    // 示例数据
-    function getSampleRoutes() {
-      return [
-        {
-          id: 1,
-          title: '澳大利亚大堡礁深度9日游',
-          subtitle: '悉尼进凯恩斯出，一次玩遍澳东精华',
-          destination: '澳大利亚',
-          region: 'oceania',
-          days: 9,
-          price: 18999,
-          price_note: '起/人',
-          highlights: ['悉尼歌剧院入内参观', '大堡礁出海浮潜', '蓝山国家公园', '热带雨林缆车', '澳式BBQ体验'],
-          cover_image: 'https://images.unsplash.com/photo-1523482580672-f109ba8cb9be?w=800',
-          is_featured: true,
-          is_hot: false,
-          departure_dates: [{ date: '2024-06-15', status: 'available', places_left: 15 }]
-        },
-        {
-          id: 2,
-          title: '新西兰南北岛全景12日',
-          subtitle: '纯净中土世界，峡湾冰川雪山一次揽尽',
-          destination: '新西兰',
-          region: 'oceania',
-          days: 12,
-          price: 25800,
-          price_note: '起/人',
-          highlights: ['皇后镇缆车360°观景', '米尔福德峡湾游船', '弗朗茨约瑟夫冰川', '霍比特人村', '萤火虫洞'],
-          cover_image: 'https://images.unsplash.com/photo-1507699622108-4be3abd695ad?w=800',
-          is_featured: true,
-          is_hot: true,
-          departure_dates: [{ date: '2024-08-10', status: 'available', places_left: 12 }]
-        },
-        {
-          id: 3,
-          title: '法意瑞三国12日经典游',
-          subtitle: '浪漫欧洲，从埃菲尔铁塔到阿尔卑斯山',
-          destination: '欧洲',
-          region: 'western_europe',
-          days: 12,
-          price: 29800,
-          price_note: '起/人',
-          highlights: ['巴黎埃菲尔铁塔', '卢浮宫专业讲解', '瑞士金色山口列车', '意大利罗马斗兽场', '威尼斯贡多拉'],
-          cover_image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=800',
-          is_featured: true,
-          is_hot: false,
-          departure_dates: [{ date: '2024-09-15', status: 'available', places_left: 18 }]
-        },
-        {
-          id: 4,
-          title: '西班牙全景10日深度游',
-          subtitle: '弗拉门戈与高迪，邂逅热情伊比利亚',
-          destination: '西班牙',
-          region: 'spain',
-          days: 10,
-          price: 22800,
-          price_note: '起/人',
-          highlights: ['圣家堂入内', '普拉多美术馆', '弗拉门戈表演', '阿尔罕布拉宫', '西班牙海鲜饭体验'],
-          cover_image: 'https://images.unsplash.com/photo-1583422409516-2895a77efded?w=800',
-          is_featured: false,
-          is_hot: true,
-          departure_dates: [{ date: '2024-07-20', status: 'available', places_left: 16 }]
-        },
-        {
-          id: 5,
-          title: '埃及尼罗河10日探秘',
-          subtitle: '金字塔与神庙，穿越四千年的文明',
-          destination: '埃及',
-          region: 'egypt',
-          days: 10,
-          price: 16800,
-          price_note: '起/人',
-          highlights: ['吉萨金字塔群', '狮身人面像', '埃及博物馆', '尼罗河游轮', '阿布辛贝勒神庙'],
-          cover_image: 'https://images.unsplash.com/photo-1539650116574-8efeb43e2750?w=800',
-          is_featured: true,
-          is_hot: false,
-          departure_dates: [{ date: '2024-10-10', status: 'available', places_left: 20 }]
-        },
-        {
-          id: 6,
-          title: '希腊爱琴海8日浪漫之旅',
-          subtitle: '蓝白小镇圣托里尼，探寻古希腊文明',
-          destination: '希腊',
-          region: 'western_europe',
-          days: 8,
-          price: 19800,
-          price_note: '起/人',
-          highlights: ['圣托里尼日落', '雅典卫城', '米克诺斯岛', '伊亚小镇', '爱琴海游轮'],
-          cover_image: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?w=800',
-          is_featured: false,
-          is_hot: true,
-          departure_dates: [{ date: '2024-06-01', status: 'available', places_left: 14 }]
-        },
-        {
-          id: 7,
-          title: '摩洛哥北非花园12日',
-          subtitle: '撒哈拉沙漠与蓝色小镇，穿越千年时光',
-          destination: '摩洛哥',
-          region: 'other',
-          days: 12,
-          price: 17800,
-          price_note: '起/人',
-          highlights: ['撒哈拉沙漠骆驼骑行', '舍夫沙万蓝色小镇', '马拉喀什老城', '菲斯古城', '卡萨布兰卡哈桑二世清真寺'],
-          cover_image: 'https://images.unsplash.com/photo-1489749798305-4fea3ae63d43?w=800',
-          is_featured: false,
-          is_hot: false,
-          departure_dates: [{ date: '2024-09-20', status: 'available', places_left: 18 }]
-        },
-        {
-          id: 8,
-          title: '日本本州经典6日游',
-          subtitle: '东京-京都-大阪，动漫与和风的完美融合',
-          destination: '日本',
-          region: 'other',
-          days: 6,
-          price: 8999,
-          price_note: '起/人',
-          highlights: ['东京迪士尼', '京都岚山竹林', '大阪环球影城', '富士山', '和服体验'],
-          cover_image: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=800',
-          is_featured: true,
-          is_hot: true,
-          departure_dates: [{ date: '2024-05-20', status: 'available', places_left: 22 }]
-        }
-      ];
-    }
-
-    // 渲染路线列表
-    function renderRoutes(routes) {
-      const routeList = document.getElementById('routeList');
-      
-      if (routes.length === 0) {
-        routeList.innerHTML = `
-          <div class="empty-state">
-            <div class="icon">🗺️</div>
-            <h3>暂无符合条件的路线</h3>
-            <p>试试调整筛选条件，或看看其他目的地</p>
-          </div>
-        `;
-        return;
-      }
-      
-      const html = `
-        <div class="route-grid">
-          ${routes.map(route => createRouteCard(route)).join('')}
-        </div>
-      `;
-      
-      routeList.innerHTML = html;
-      
-      // 绑定卡片点击事件
-      document.querySelectorAll('.route-card').forEach(card => {
-        card.addEventListener('click', () => {
-          const routeId = card.dataset.id;
-          window.location.href = `route-detail.html?id=${routeId}`;
-        });
-      });
-      
-      // 绑定收藏按钮
-      document.querySelectorAll('.route-favorite').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          toggleFavorite(btn, btn.dataset.id);
-        });
-      });
-    }
-
-    // 创建路线卡片
-    function createRouteCard(route) {
-      const badges = [];
-      if (route.is_featured) badges.push('<span class="route-badge featured">精选</span>');
-      if (route.is_hot) badges.push('<span class="route-badge hot">热门</span>');
-      
-      const regionMap = {
-        'oceania': '澳新',
-        'western_europe': '西欧',
-        'spain': '西班牙',
-        'egypt': '埃及',
-        'other': '其他'
-      };
-      
-      const highlights = Array.isArray(route.highlights) 
-        ? route.highlights.slice(0, 3) 
-        : [];
-      
-      return `
-        <article class="route-card" data-id="${route.id}">
-          <div class="route-card-image">
-            <img src="${route.cover_image || 'https://via.placeholder.com/400x200?text=路线图片'}" alt="${route.title}" loading="lazy">
-            <div class="route-card-badges">
-              ${badges.join('')}
-              <span class="route-badge">${regionMap[route.region] || route.region}</span>
-            </div>
-            <div class="route-favorite ${isFavorited(route.id) ? 'active' : ''}" data-id="${route.id}" title="收藏">
-              ${isFavorited(route.id) ? '❤️' : '🤍'}
-            </div>
-          </div>
-          <div class="route-card-content">
-            <div class="route-card-destination">
-              📍 ${route.destination}
-            </div>
-            <h3 class="route-card-title">${route.title}</h3>
-            <p class="route-card-subtitle">${route.subtitle || ''}</p>
-            <div class="route-card-highlights">
-              ${highlights.map(h => `<span class="route-highlight-tag">${h}</span>`).join('')}
-            </div>
-            <div class="route-card-meta">
-              <div class="route-card-days">
-                ⏱️ ${route.days}天${route.nights || (route.days - 1)}晚
-              </div>
-              <div class="route-card-price">
-                <span class="route-price">¥${formatPrice(route.price)}</span>
-                <div class="route-price-note">${route.price_note || '起/人'}</div>
-              </div>
-            </div>
-          </div>
-        </article>
-      `;
-    }
-
-    // 格式化价格
-    function formatPrice(price) {
-      return Number(price).toLocaleString('zh-CN');
-    }
-
-    // 绑定筛选事件
-    function bindFilterEvents() {
-      // 目的地筛选
-      document.querySelectorAll('#destinationFilters .filter-tag').forEach(tag => {
-        tag.addEventListener('click', () => {
-          document.querySelectorAll('#destinationFilters .filter-tag').forEach(t => t.classList.remove('active'));
-          tag.classList.add('active');
-          currentFilters.region = tag.dataset.region;
-          applyFilters();
-        });
-      });
-      
-      // 天数筛选
-      document.querySelectorAll('#daysFilters .filter-tag').forEach(tag => {
-        tag.addEventListener('click', () => {
-          document.querySelectorAll('#daysFilters .filter-tag').forEach(t => t.classList.remove('active'));
-          tag.classList.add('active');
-          currentFilters.days = tag.dataset.days;
-          applyFilters();
-        });
-      });
-    }
-
-    // 应用筛选
-    function applyFilters() {
-      const sortSelect = document.getElementById('priceSort');
-      currentFilters.sort = sortSelect.value;
-      
-      let filtered = [...allRoutes];
-      
-      // 目的地筛选
-      if (currentFilters.region !== 'all') {
-        filtered = filtered.filter(r => r.region === currentFilters.region);
-      }
-      
-      // 天数筛选
-      if (currentFilters.days !== 'all') {
-        filtered = filtered.filter(r => {
-          switch (currentFilters.days) {
-            case 'short': return r.days < 7;
-            case 'medium': return r.days >= 7 && r.days <= 10;
-            case 'long': return r.days > 10 && r.days <= 15;
-            case 'very-long': return r.days > 15;
-            default: return true;
-          }
-        });
-      }
-      
-      // 排序
-      switch (currentFilters.sort) {
-        case 'price-asc':
-          filtered.sort((a, b) => a.price - b.price);
-          break;
-        case 'price-desc':
-          filtered.sort((a, b) => b.price - a.price);
-          break;
-      }
-      
-      renderRoutes(filtered);
-    }
-
-    // 移动端筛选切换
-    function toggleMobileFilter() {
-      document.getElementById('filterSection').classList.toggle('mobile-open');
-    }
-
-    // 收藏功能
-    function isFavorited(routeId) {
-      const favorites = JSON.parse(localStorage.getItem('routeFavorites') || '[]');
-      return favorites.includes(routeId);
-    }
-
-    function toggleFavorite(btn, routeId) {
-      let favorites = JSON.parse(localStorage.getItem('routeFavorites') || '[]');
-      const index = favorites.indexOf(routeId);
-      
-      if (index > -1) {
-        favorites.splice(index, 1);
-        btn.classList.remove('active');
-        btn.innerHTML = '🤍';
-      } else {
-        favorites.push(routeId);
-        btn.classList.add('active');
-        btn.innerHTML = '❤️';
-      }
-      
-      localStorage.setItem('routeFavorites', JSON.stringify(favorites));
-      showToast(index > -1 ? '已取消收藏' : '已添加收藏', 'success');
-    }
-
-    // 更新登录状态
-    async function updateAuthStatus() {
-      try {
-        const isLoggedIn = await Auth.isLoggedIn();
-        const authLink = document.getElementById('authLink');
-        
-        if (isLoggedIn) {
-          authLink.textContent = '👤 个人中心';
-          authLink.href = 'user-center.html';
-          authLink.classList.add('logged-in');
-        }
-      } catch (e) {
-        console.error('检查登录状态失败:', e);
-      }
-    }
-
-    // Toast提示
-    function showToast(message, type = 'info') {
-      const toast = document.createElement('div');
-      toast.className = `toast toast-${type}`;
-      toast.textContent = message;
-      document.body.appendChild(toast);
-      
-      setTimeout(() => {
-        toast.remove();
-      }, 2500);
-    }
-  </script>
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/animations.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+  <!-- 新用户引导系统 -->
+  <script src="js/onboarding.js" defer></script>
 </body>
 </html>

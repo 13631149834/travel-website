@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行书单 - 游导旅游</title>
+  <meta name="description" content="精选旅行类书籍推荐，涵盖旅行游记、旅行指南、文化探索、摄影集、美食旅行，助您开启阅读式旅行之旅。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    .books-hero {
+      background: linear-gradient(135deg, var(--primary) 0%, #8b5cf6 100%);
+      color: #fff;
+      padding: 48px 0;
+      text-align: center;
+    }
+    .books-hero h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .books-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .books-hero .hero-icon {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+    }
+
+    .books-content {
+      padding: 48px 0 80px;
+    }
+
+    /* 分类导航 */
+    .category-nav {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+      justify-content: center;
+    }
+    .category-btn {
+      padding: 12px 24px;
+      background: #fff;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-full);
+      font-size: 0.95rem;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .category-btn:hover, .category-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
+    /* 经典书籍区 */
+    .classic-section {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 48px;
+    }
+    .classic-section h2 {
+      font-size: 1.4rem;
+      color: var(--gray-900);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .classic-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .classic-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      gap: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: var(--transition);
+    }
+    .classic-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+    }
+    .classic-cover {
+      width: 80px;
+      height: 110px;
+      background: linear-gradient(135deg, var(--primary) 0%, #6366f1 100%);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      flex-shrink: 0;
+    }
+    .classic-info h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 6px;
+    }
+    .classic-info .author {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      margin-bottom: 10px;
+    }
+    .classic-info p {
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+
+    /* 书籍分类区块 */
+    .book-category {
+      margin-bottom: 48px;
+    }
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .category-header .icon {
+      width: 48px;
+      height: 48px;
+      background: var(--primary);
+      color: #fff;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .category-header h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+    .category-header .count {
+      padding: 4px 12px;
+      background: var(--gray-100);
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      color: var(--gray-500);
+    }
+    .category-desc {
+      color: var(--gray-600);
+      margin-bottom: 20px;
+      font-size: 0.95rem;
+    }
+
+    /* 书籍网格 */
+    .book-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 24px;
+    }
+    .book-card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .book-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary);
+      transform: translateY(-4px);
+    }
+    .book-cover {
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      position: relative;
+    }
+    .book-cover::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.1) 100%);
+    }
+    .book-content {
+      padding: 20px;
+    }
+    .book-content h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    .book-content .book-author {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+    .book-content .book-desc {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+    .book-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .book-tag {
+      padding: 4px 10px;
+      background: var(--gray-100);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      color: var(--gray-600);
+    }
+    .book-tag.destination {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+    .book-tag.value {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    /* 阅读价值区块 */
+    .value-section {
+      background: var(--gray-50);
+      border-radius: var(--radius-xl);
+      padding: 40px;
+      margin-top: 48px;
+    }
+    .value-section h2 {
+      font-size: 1.4rem;
+      text-align: center;
+      margin-bottom: 32px;
+      color: var(--gray-900);
+    }
+    .value-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+    }
+    .value-item {
+      text-align: center;
+      padding: 24px;
+      background: #fff;
+      border-radius: var(--radius-lg);
+    }
+    .value-item .icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+    .value-item h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+    }
+    .value-item p {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.5;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .books-hero {
+        padding: 32px 16px;
+      }
+      .books-hero h1 {
+        font-size: 1.5rem;
+      }
+      .classic-section {
+        padding: 20px;
+      }
+      .classic-card {
+        flex-direction: column;
+        text-align: center;
+      }
+      .classic-cover {
+        margin: 0 auto;
+      }
+      .book-grid {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      }
+      .value-section {
+        padding: 24px;
+      }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container">
+</nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html">签证</a>
+        <a href="routes.html">线路</a>
+        <a href="knowledge.html">知识</a>
+        <a href="tools.html">工具</a>
+      </div>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  
+
+  <!-- 页面头部 -->
+  <div class="books-hero">
+    <div class="hero-icon">📚</div>
+    <h1>旅行书单推荐</h1>
+    <p>精选旅行类书籍，从游记到指南，从文化探索到美食之旅，让阅读带您先一步丈量世界</p>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="books-content">
+    <div class="container">
+      
+      <!-- 分类筛选 -->
+      <div class="category-nav">
+        <button class="category-btn active" onclick="filterBooks('all')">全部</button>
+        <button class="category-btn" onclick="filterBooks('journal')">旅行游记</button>
+        <button class="category-btn" onclick="filterBooks('guide')">旅行指南</button>
+        <button class="category-btn" onclick="filterBooks('culture')">文化探索</button>
+        <button class="category-btn" onclick="filterBooks('photo')">摄影集</button>
+        <button class="category-btn" onclick="filterBooks('food')">美食旅行</button>
+      </div>
+
+      <!-- 经典必读 -->
+      <div class="classic-section">
+        <h2>🏆 经典必读</h2>
+        <div class="classic-grid">
+          <div class="classic-card" data-category="journal">
+            <div class="classic-cover">🚌</div>
+            <div class="classic-info">
+              <h3>《在路上》</h3>
+              <div class="author">杰克·凯鲁亚克</div>
+              <p>"我还年轻，我渴望上路。" 垮掉的一代灵魂之作，公路旅行的圣经，影响了无数人踏上旅途。</p>
+            </div>
+          </div>
+          <div class="classic-card" data-category="journal">
+            <div class="classic-cover">💰</div>
+            <div class="classic-info">
+              <h3>《不去会死》</h3>
+              <div class="author">石田裕辅</div>
+              <p>日本骑行探险家环游世界的真实记录。7年半，96400公里，只因"不去会死"的信念。</p>
+            </div>
+          </div>
+          <div class="classic-card" data-category="journal">
+            <div class="classic-cover">🎒</div>
+            <div class="classic-info">
+              <h3>《背包十年》</h3>
+              <div class="author">小鹏</div>
+              <p>中国职业旅行家十年背包生涯的真实记录。从职场逃离，在路上找到人生方向。</p>
+            </div>
+          </div>
+          <div class="classic-card" data-category="journal">
+            <div class="classic-cover">🚗</div>
+            <div class="classic-info">
+              <h3>《搭车去柏林》</h3>
+              <div class="author">谷岳 / 刘畅</div>
+              <p>一个北京青年和一位纪录片导演，用搭顺风车的方式，从北京一路搭到柏林，只为见女友一面。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 旅行游记 -->
+      <div class="book-category" data-category="journal">
+        <div class="category-header">
+          <div class="icon">✈️</div>
+          <h2>旅行游记</h2>
+          <span class="count">4本</span>
+        </div>
+        <p class="category-desc">跟随作者的脚步，体验世界各地的风土人情，感受不同文化的碰撞与融合。</p>
+        <div class="book-grid">
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%); color: #fff;">
+              🌊
+            </div>
+            <div class="book-content">
+              <h3>《万水千山走遍》</h3>
+              <div class="book-author">三毛</div>
+              <p class="book-desc">三毛深入中南美洲的见闻录，文字优美细腻，带您感受拉美大陆的神秘与热情。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">南美洲</span>
+                <span class="book-tag">文学性</span>
+                <span class="book-tag value">文化沉浸</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff;">
+              🏔️
+            </div>
+            <div class="book-content">
+              <h3>《最好的人生在路上》</h3>
+              <div class="book-author">慕容莲生</div>
+              <p class="book-desc">20座城市的行走笔记，关于旅行、生活与成长的思考，在路上遇见最好的自己。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">欧洲·亚洲</span>
+                <span class="book-tag">治愈系</span>
+                <span class="book-tag value">心灵成长</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff;">
+              🕌
+            </div>
+            <div class="book-content">
+              <h3>《世界那么大，我想去看看》</h3>
+              <div class="book-author">顾老师</div>
+              <p class="book-desc">一位老师的辞职信引发的旅行故事，用脚步丈量世界，用心感受生活。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">全球</span>
+                <span class="book-tag">随性</span>
+                <span class="book-tag value">勇气激励</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: #fff;">
+              🌸
+            </div>
+            <div class="book-content">
+              <h3>《日本，一个旅行者的四季》</h3>
+              <div class="book-author">梁晓雪</div>
+              <p class="book-desc">深度游历日本四季，春赏樱花，夏看烟火，秋观红叶，冬泡温泉。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">日本</span>
+                <span class="book-tag">四季</span>
+                <span class="book-tag value">深度体验</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 旅行指南 -->
+      <div class="book-category" data-category="guide">
+        <div class="category-header">
+          <div class="icon">🗺️</div>
+          <h2>旅行指南</h2>
+          <span class="count">4本</span>
+        </div>
+        <p class="category-desc">实用的旅行工具书，涵盖行程规划、实用技巧、预算控制等，让您的旅行更加从容。</p>
+        <div class="book-grid">
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff;">
+              🌍
+            </div>
+            <div class="book-content">
+              <h3>《孤独星球》系列</h3>
+              <div class="book-author">Lonely Planet</div>
+              <p class="book-desc">全球最权威的旅行指南，涵盖目的地信息、交通住宿、美食餐厅、实用贴士。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">全球</span>
+                <span class="book-tag">权威</span>
+                <span class="book-tag value">实用全面</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); color: #fff;">
+              🎒
+            </div>
+            <div class="book-content">
+              <h3>《出国自助游超实用指南》</h3>
+              <div class="book-author">小鹏</div>
+              <p class="book-desc">资深背包客的经验总结，从签证到保险，从机票到住宿，全面覆盖出国旅行要点。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">全球</span>
+                <span class="book-tag">入门</span>
+                <span class="book-tag value">实战经验</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: #fff;">
+              💰
+            </div>
+            <div class="book-content">
+              <h3>《穷游欧洲》</h3>
+              <div class="book-author">低烧</div>
+              <p class="book-desc">穷游欧洲的省钱秘籍，机票、酒店、青旅、美食，让你用最少的钱玩转欧洲。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">欧洲</span>
+                <span class="book-tag">省钱</span>
+                <span class="book-tag value">高性价比</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%); color: #fff;">
+              📱
+            </div>
+            <div class="book-content">
+              <h3>《一个人穷游世界》</h3>
+              <div class="book-author">青年客栈</div>
+              <p class="book-desc">独自旅行的完全攻略，安全事项、社交技巧、摄影分享，一个人也能精彩。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">全球</span>
+                <span class="book-tag">独行</span>
+                <span class="book-tag value">安全指南</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 文化探索 -->
+      <div class="book-category" data-category="culture">
+        <div class="category-header">
+          <div class="icon">🏛️</div>
+          <h2>文化探索</h2>
+          <span class="count">4本</span>
+        </div>
+        <p class="category-desc">深入了解目的地历史文化，从建筑、艺术、宗教到民俗，旅行不仅是看风景，更是读故事。</p>
+        <div class="book-grid">
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #92400e 0%, #78350f 100%); color: #fff;">
+              🏯
+            </div>
+            <div class="book-content">
+              <h3>《千年一叹》</h3>
+              <div class="book-author">余秋雨</div>
+              <p class="book-desc">余秋雨文化考察随笔，走访人类文明遗迹，探寻失落的古老文明与文明兴衰。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">中东·北非</span>
+                <span class="book-tag">深度</span>
+                <span class="book-tag value">历史解读</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #be123c 0%, #9f1239 100%); color: #fff;">
+              🎭
+            </div>
+            <div class="book-content">
+              <h3>《印度，漂浮的次大陆》</h3>
+              <div class="book-author">郭建龙</div>
+              <p class="book-desc">深入印度次大陆的文明探索，从宗教到政治，从贫民窟到IT中心，全面了解印度。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">印度</span>
+                <span class="book-tag">社会</span>
+                <span class="book-tag value">深度观察</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #0d9488 0%, #0f766e 100%); color: #fff;">
+              🗿
+            </div>
+            <div class="book-content">
+              <h3>《大丝路》</h3>
+              <div class="book-author">月垂</div>
+              <p class="book-desc">重走丝绸之路，见证东西方文明交融的历史，感受古老商道的沧桑与魅力。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">中亚·中东</span>
+                <span class="book-tag">历史</span>
+                <span class="book-tag value">文明探索</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #4338ca 0%, #3730a3 100%); color: #fff;">
+              ⚱️
+            </div>
+            <div class="book-content">
+              <h3>《罗马人的故事》</h3>
+              <div class="book-author">盐野七生</div>
+              <p class="book-desc">日本女作家笔下的罗马史，理解古罗马就是理解西方文明，非常适合赴欧旅行前阅读。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">欧洲</span>
+                <span class="book-tag">历史</span>
+                <span class="book-tag value">文明解读</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 摄影集 -->
+      <div class="book-category" data-category="photo">
+        <div class="category-header">
+          <div class="icon">📷</div>
+          <h2>摄影集</h2>
+          <span class="count">4本</span>
+        </div>
+        <p class="category-desc">用眼睛旅行，透过摄影师的镜头捕捉世界的壮美与细腻，提升审美与摄影技巧。</p>
+        <div class="book-grid">
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); color: #fff;">
+              🌅
+            </div>
+            <div class="book-content">
+              <h3>《国家地理》摄影集</h3>
+              <div class="book-author">National Geographic</div>
+              <p class="book-desc">百年经典摄影集，收录全球最震撼的自然风光、人文影像，每一页都是视觉盛宴。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">全球</span>
+                <span class="book-tag">精选</span>
+                <span class="book-tag value">视觉震撼</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #7c2d12 0%, #6b21a8 100%); color: #fff;">
+              🏜️
+            </div>
+            <div class="book-content">
+              <h3>《极致之美》</h3>
+              <div class="book-author">李建声</div>
+              <p class="book-desc">世界自然遗产摄影集，拍摄足迹遍布七大洲，用镜头记录地球最后的净土。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">全球</span>
+                <span class="book-tag">自然</span>
+                <span class="book-tag value">大开眼界</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); color: #fff;">
+              🌆
+            </div>
+            <div class="book-content">
+              <h3>《城市光影》</h3>
+              <div class="book-author">陈曦</div>
+              <p class="book-desc">全球城市建筑摄影集，白天与黑夜的都市美学，感受建筑的力与美。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">全球城市</span>
+                <span class="book-tag">建筑</span>
+                <span class="book-tag value">城市美学</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%); color: #fff;">
+              👤
+            </div>
+            <div class="book-content">
+              <h3>《面孔：世界人物摄影》</h3>
+              <div class="book-author">史蒂夫·麦凯瑞</div>
+              <p class="book-desc">著名摄影师的肖像摄影集，记录世界各地人物的独特表情与故事。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">全球</span>
+                <span class="book-tag">人文</span>
+                <span class="book-tag value">人文关怀</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 美食旅行 -->
+      <div class="book-category" data-category="food">
+        <div class="category-header">
+          <div class="icon">🍜</div>
+          <h2>美食旅行</h2>
+          <span class="count">4本</span>
+        </div>
+        <p class="category-desc">美食是了解一个地方最直接的方式，这些书籍将带您的味蕾环游世界。</p>
+        <div class="book-grid">
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #fff;">
+              🍜
+            </div>
+            <div class="book-content">
+              <h3>《蔡澜旅行食记》</h3>
+              <div class="book-author">蔡澜</div>
+              <p class="book-desc">美食家蔡澜的旅行美食笔记，寻访各地风味小吃，从街头摊贩到米其林餐厅。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">全球</span>
+                <span class="book-tag">美食</span>
+                <span class="book-tag value">舌尖之旅</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #ca8a04 0%, #a16207 100%); color: #fff;">
+              🍣
+            </div>
+            <div class="book-content">
+              <h3>《日本の味》</h3>
+              <div class="book-author">陈婷</div>
+              <p class="book-desc">日本美食深度探索，从怀石料理到拉面文化，探寻日本饮食背后的文化内涵。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">日本</span>
+                <span class="book-tag">日料</span>
+                <span class="book-tag value">文化解读</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #fff;">
+              🥘
+            </div>
+            <div class="book-content">
+              <h3>《地中海的味道》</h3>
+              <div class="book-author">叶子</div>
+              <p class="book-desc">环地中海美食之旅，意大利、西班牙、法国、希腊，品味阳光与海风的味道。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">地中海</span>
+                <span class="book-tag">西餐</span>
+                <span class="book-tag value">生活方式</span>
+              </div>
+            </div>
+          </div>
+          <div class="book-card">
+            <div class="book-cover" style="background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%); color: #fff;">
+              🌶️
+            </div>
+            <div class="book-content">
+              <h3>《川菜的冒险》</h3>
+              <div class="book-author">扶霞·邓洛普</div>
+              <p class="book-desc">英国美食作家在中国学厨的经历，深入了解川菜的精髓与背后的文化故事。</p>
+              <div class="book-meta">
+                <span class="book-tag destination">中国</span>
+                <span class="book-tag">中餐</span>
+                <span class="book-tag value">跨文化视角</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 阅读价值 -->
+      <div class="value-section">
+        <h2>📖 阅读旅行书籍的价值</h2>
+        <div class="value-grid">
+          <div class="value-item">
+            <div class="icon">💡</div>
+            <h3>激发旅行灵感</h3>
+            <p>发现未知的Destination，让书籍成为您下一次旅行的起点</p>
+          </div>
+          <div class="value-item">
+            <div class="icon">📚</div>
+            <h3>丰富旅行知识</h3>
+            <p>了解目的地历史文化，让旅行不再走马观花</p>
+          </div>
+          <div class="value-item">
+            <div class="icon">🎯</div>
+            <h3>实用出行参考</h3>
+            <p>获取签证、住宿、美食等一手信息，旅行更从容</p>
+          </div>
+          <div class="value-item">
+            <div class="icon">🌟</div>
+            <h3>心灵成长陪伴</h3>
+            <p>在阅读中思考，找到自己想要的旅行方式与生活态度</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <p>&copy; 2024 游导旅游 - 让每一次旅行都有意义</p>
+    </div>
+  </footer>
+
+  <script>
+    // 分类筛选功能
+    function filterBooks(category) {
+      // 更新按钮状态
+      document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      // 筛选书籍分类
+      document.querySelectorAll('.book-category, .classic-section').forEach(section => {
+        if (category === 'all') {
+          section.style.display = 'block';
+        } else {
+          if (section.dataset.category === category) {
+            section.style.display = 'block';
+          } else if (section.classList.contains('classic-section')) {
+            // 经典书籍区只显示匹配的书籍
+            section.style.display = 'block';
+            const cards = section.querySelectorAll('.classic-card');
+            cards.forEach(card => {
+              if (card.dataset.category === category) {
+                card.style.display = 'flex';
+              } else {
+                card.style.display = 'none';
+              }
+            });
+          } else {
+            section.style.display = 'none';
+          }
+        }
+      });
+    }
+
+    // 导航切换
+    function toggleNav() {
+      const navLinks = document.querySelector('.nav-links');
+      navLinks.classList.toggle('active');
+    }
+  </script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

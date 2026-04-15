@@ -1,362 +1,268 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <style>
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+  </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>应急预案库 - 导游工具</title>
+  <title>应急资源 - 游导旅游</title>
+  <meta name="description" content="旅行应急资源，包括紧急电话、大使馆信息、保险攻略等。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/guide/guide-tools.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
   <!-- 导航栏 -->
-  <nav class="navbar">
+  <nav class="navbar" aria-label="主导航">
     <div class="container">
+</nav>
+<main id="main-content" role="main">
       <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html">签证</a>
+        <a href="routes.html">线路</a>
+        <a href="safety-tips.html">安全须知</a>
+        <a href="knowledge.html">知识</a>
+        <a href="tools.html">工具</a>
+      </div>
       <div class="nav-toggle" onclick="toggleNav()">
         <span></span><span></span><span></span>
       </div>
-      <div class="nav-links">
-        <a href="index.html">首页</a>
-        <a href="guide-tools.html">导游工具</a>
-        <a href="knowledge-base.html">景点知识库</a>
-        <a href="emergency.html" class="active">应急预案</a>
-        <a href="route-planner.html">路线规划</a>
+    </div>
+  
+
+  <!-- 页面标题 -->
+  <div class="page-hero">
+    <h1>应急资源</h1>
+    <p>旅行安全指南，请务必提前了解</p>
+  </div>
+
+  <!-- 应急内容 -->
+  <div class="container" style="padding: 48px 0 80px;">
+    
+    <!-- 紧急电话 -->
+    <div class="section-header" style="text-align: left; margin-bottom: 24px;">
+      <h2 class="section-title" style="font-size: 1.5rem;">📞 全球紧急电话</h2>
+    </div>
+    
+    <div class="grid-cards" style="margin-bottom: 48px;">
+      <div class="grid-card">
+        <div class="grid-card-icon">🚨</div>
+        <h4>通用急救</h4>
+        <p style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">120</p>
+        <p>医疗急救</p>
       </div>
-    </div>
-  </nav>
-
-  <!-- 页面头部 -->
-  <header class="tool-header" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-    <div class="container">
-      <h1>🆘 应急预案库</h1>
-      <p>7大类突发情况 · 详细处理步骤 · 紧急联系方式</p>
-    </div>
-  </header>
-
-  <!-- 主内容区 -->
-  <section class="tool-container">
-    <!-- 搜索栏 -->
-    <div class="search-bar">
-      <input type="text" class="search-input" id="searchInput" placeholder="搜索应急预案...">
-      <select class="search-input" id="severityFilter" style="max-width: 180px;">
-        <option value="">全部严重程度</option>
-        <option value="high">🔴 紧急</option>
-        <option value="medium">🟡 一般</option>
-        <option value="low">🟢 轻微</option>
-      </select>
-    </div>
-
-    <!-- 紧急电话速查 -->
-    <div class="content-card" style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); color: #fff; margin-bottom: 30px;">
-      <h2 style="color: #fff;">
-        📞 全国紧急电话速查
-      </h2>
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; margin-top: 16px;">
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🚔</div>
-          <div style="font-weight: 600;">报警电话</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">110</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🚑</div>
-          <div style="font-weight: 600;">急救电话</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">120</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🚒</div>
-          <div style="font-weight: 600;">火灾电话</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">119</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🚗</div>
-          <div style="font-weight: 600;">交通事故</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">122</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🌤️</div>
-          <div style="font-weight: 600;">天气预报</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">12121</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🛣️</div>
-          <div style="font-weight: 600;">高速路况</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">12122</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🏥</div>
-          <div style="font-weight: 600;">卫生热线</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">12320</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🧳</div>
-          <div style="font-weight: 600;">旅游投诉</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">12301</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">👤</div>
-          <div style="font-weight: 600;">领事保护</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">12308</div>
-        </div>
-        <div style="text-align: center;">
-          <div style="font-size: 2rem; margin-bottom: 8px;">🛒</div>
-          <div style="font-weight: 600;">消费者投诉</div>
-          <div style="font-size: 1.5rem; font-weight: 700;">12315</div>
-        </div>
+      <div class="grid-card">
+        <div class="grid-card-icon">🚔</div>
+        <h4>报警电话</h4>
+        <p style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">110</p>
+        <p>公安报警</p>
+      </div>
+      <div class="grid-card">
+        <div class="grid-card-icon">🔥</div>
+        <h4>火警电话</h4>
+        <p style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">119</p>
+        <p>火灾救援</p>
+      </div>
+      <div class="grid-card">
+        <div class="grid-card-icon">🌐</div>
+        <h4>全球通用</h4>
+        <p style="font-size: 1.5rem; font-weight: 600; color: var(--primary);">112</p>
+        <p>手机紧急呼叫</p>
       </div>
     </div>
 
-    <!-- 应急预案列表 -->
-    <div id="emergencyList" class="data-list">
-      <!-- 动态渲染 -->
+    <!-- 安全提示 -->
+    <div class="content-card">
+      <h2>🛡️ 旅行安全提示</h2>
+      <ul>
+        <li>提前了解目的地安全状况，避免前往高风险地区</li>
+        <li>保持护照、签证等重要证件安全，复印备份</li>
+        <li>与家人朋友保持联系，定期报平安</li>
+        <li>购买适合的旅行保险，覆盖医疗和意外</li>
+        <li>遵守当地法律法规，尊重当地风俗习惯</li>
+        <li>保管好个人财物，避免携带大量现金</li>
+      </ul>
     </div>
 
-    <!-- 空状态 -->
-    <div class="empty-state" id="emptyState" style="display: none;">
-      <div class="icon">🔍</div>
-      <h3>没有找到匹配的应急预案</h3>
-      <p>试试调整搜索条件</p>
+    <!-- 保险攻略 -->
+    <div class="content-card">
+      <h2>🏥 保险攻略</h2>
+      <p style="color: var(--gray-600); margin-bottom: 16px;">
+        建议出行前购买旅行保险，重点关注以下保障：
+      </p>
+      <ul>
+        <li><strong>医疗保障</strong> - 覆盖意外受伤和突发疾病的医疗费用</li>
+        <li><strong>意外保障</strong> - 航空意外、交通事故等意外伤害</li>
+        <li><strong>行程保障</strong> - 航班延误、取消、行李丢失等</li>
+        <li><strong>救援服务</strong> - 紧急医疗转运、遗体送返等</li>
+      </ul>
     </div>
-  </section>
 
-  <!-- 详情模态框 -->
-  <div class="modal" id="detailModal">
-    <div class="modal-content" style="max-width: 700px;">
-      <div class="modal-header">
-        <h3 id="detailTitle">应急预案详情</h3>
-        <button class="modal-close" onclick="closeDetailModal()">&times;</button>
-      </div>
-      <div class="modal-body" id="detailBody">
-        <!-- 动态内容 -->
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="closeDetailModal()">关闭</button>
-        <button class="btn btn-primary" onclick="copyPlan()">复制方案</button>
-      </div>
+    <!-- 使领馆信息 -->
+    <div class="content-card">
+      <h2>🏛️ 中国使领馆</h2>
+      <p style="color: var(--gray-600); margin-bottom: 16px;">
+        海外遇到紧急情况，可联系当地中国使领馆：
+      </p>
+      <ul>
+        <li>日本 - 中国驻日本大使馆：+81-3-3403-3388</li>
+        <li>韩国 - 中国驻韩国大使馆：+82-2-738-1038</li>
+        <li>泰国 - 中国驻泰国大使馆：+66-2-245-0088</li>
+        <li>美国 - 中国驻美国大使馆：+1-202-328-2500</li>
+        <li>欧洲 - 中国驻欧盟使团：+32-2-771-3309</li>
+      </ul>
     </div>
   </div>
 
-  <!-- Toast提示 -->
-  <div class="toast" id="toast"></div>
-
-  <!-- 页脚 -->
-  <footer class="footer">
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
     <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>关于游导</h4>
+          <a href="about.html">关于我们</a>
+          <a href="contact.html">联系我们</a>
+          <a href="guide-apply.html">导游入驻</a>
+        </div>
+        <div class="footer-col">
+          <h4>游客服务</h4>
+          <a href="guides.html">找导游</a>
+          <a href="visa.html">签证攻略</a>
+          <a href="routes.html">精品线路</a>
+        </div>
+        <div class="footer-col">
+          <h4>导游工具</h4>
+          <a href="tools.html">效率工具</a>
+          <a href="knowledge-base.html">知识库</a>
+          <a href="finance.html">财务管理</a>
+        </div>
+        <div class="footer-col">
+          <h4>帮助支持</h4>
+          <a href="faq.html">常见问题</a>
+          <a href="disclaimer.html">使用条款</a>
+        </div>
+      <div><h4>联系我们</h4><p>📧 2173381363@qq.com</p><p>💬 微信：ximao101</p></div></div>
       <div class="footer-bottom">
-        <p>© 2024 游导Travel (youdao-travel.com) 版权所有</p>
+        <p>© 2024 游导旅游 · 让旅行更简单</p>
       </div>
     </div>
   </footer>
 
-  <script>
-    // 全局变量
-    let emergencies = [];
-    let currentSearch = '';
-    let currentSeverity = '';
-    let currentDetailId = '';
+  <script src="js/common.js" defer></script>
 
-    // 页面加载完成后获取数据
-    document.addEventListener('DOMContentLoaded', async () => {
-      await loadEmergencies();
-      setupEventListeners();
-      renderEmergencies();
-    });
-
-    // 加载应急预案数据
-    async function loadEmergencies() {
-      try {
-        const response = await fetch('data/emergency.json');
-        emergencies = await response.json();
-      } catch (error) {
-        console.error('加载应急预案数据失败:', error);
-        emergencies = [];
-      }
-    }
-
-    // 设置事件监听
-    function setupEventListeners() {
-      document.getElementById('searchInput').addEventListener('input', (e) => {
-        currentSearch = e.target.value.toLowerCase();
-        renderEmergencies();
-      });
-
-      document.getElementById('severityFilter').addEventListener('change', (e) => {
-        currentSeverity = e.target.value;
-        renderEmergencies();
-      });
-    }
-
-    // 获取严重程度标签
-    function getSeverityBadge(severity) {
-      const badges = {
-        high: '<span style="padding: 4px 10px; background: #fef2f2; color: #ef4444; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">🔴 紧急</span>',
-        medium: '<span style="padding: 4px 10px; background: #fffbeb; color: #f59e0b; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">🟡 一般</span>',
-        low: '<span style="padding: 4px 10px; background: #ecfdf5; color: #10b981; border-radius: 12px; font-size: 0.8rem; font-weight: 600;">🟢 轻微</span>'
-      };
-      return badges[severity] || '';
-    }
-
-    // 筛选应急预案
-    function filterEmergencies() {
-      return emergencies.filter(item => {
-        const matchSearch = !currentSearch || 
-          item.type.toLowerCase().includes(currentSearch) ||
-          item.description.toLowerCase().includes(currentSearch);
-        const matchSeverity = !currentSeverity || item.severity === currentSeverity;
-        return matchSearch && matchSeverity;
-      });
-    }
-
-    // 渲染应急预案列表
-    function renderEmergencies() {
-      const list = document.getElementById('emergencyList');
-      const emptyState = document.getElementById('emptyState');
-      const filtered = filterEmergencies();
-
-      if (filtered.length === 0) {
-        list.innerHTML = '';
-        emptyState.style.display = 'block';
-        return;
-      }
-
-      emptyState.style.display = 'none';
-      list.innerHTML = filtered.map(item => `
-        <div class="emergency-card ${item.severity}" onclick="showDetail('${item.id}')">
-          <div class="emergency-card-header">
-            <div class="icon">${item.icon}</div>
-            <div style="flex: 1;">
-              <h3>${item.type}</h3>
-              <p>${item.description}</p>
-            </div>
-            ${getSeverityBadge(item.severity)}
-            <span class="arrow">▼</span>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // 显示详情
-    function showDetail(id) {
-      const item = emergencies.find(e => e.id === id);
-      if (!item) return;
-
-      currentDetailId = id;
-
-      document.getElementById('detailTitle').textContent = `${item.icon} ${item.type}`;
-      document.getElementById('detailBody').innerHTML = `
-        <div style="margin-bottom: 20px;">
-          ${getSeverityBadge(item.severity)}
-          <p style="color: var(--gray-600); margin-top: 12px;">${item.description}</p>
-        </div>
-
-        <h4 style="font-size: 1.1rem; margin-bottom: 16px;">📋 处理步骤</h4>
-        <div class="step-list">
-          ${item.steps.map((step, index) => `
-            <div class="step-item">
-              <span class="step-number">${index + 1}</span>
-              <span class="step-text">${step}</span>
-            </div>
-          `).join('')}
-        </div>
-
-        ${item.tips ? `
-          <div class="tips-section" style="margin-top: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-            <h4>💡 预防措施</h4>
-            <p style="font-size: 0.9rem; line-height: 1.7;">${item.tips}</p>
-          </div>
-        ` : ''}
-
-        <div class="contact-section">
-          <h4>📞 紧急联系方式</h4>
-          <div class="contact-badges">
-            ${Object.entries(item.contacts).map(([key, value]) => `
-              <div class="contact-badge">
-                <span>${getContactLabel(key)}</span>
-                <span class="phone">${value}</span>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      `;
-
-      document.getElementById('detailModal').classList.add('open');
-    }
-
-    // 获取联系方式标签
-    function getContactLabel(key) {
-      const labels = {
-        police: '🚔 报警',
-        emergency: '🚑 急救',
-        ambulance: '🚑 救护车',
-        traffic: '🚗 交通',
-        weather: '🌤️ 天气',
-        highway: '🛣️ 高速',
-        health_hotline: '🏥 卫生热线',
-        tourism_hotline: '🧳 旅游热线',
-        tourism_bureau: '🏛️ 旅游局',
-        insurance: '📋 保险公司',
-        travel_insurance: '🧳 旅游保险',
-        consular_protection: '👤 领事保护',
-        consumer_protection: '🛒 消费者热线'
-      };
-      return labels[key] || key;
-    }
-
-    // 复制方案
-    function copyPlan() {
-      const item = emergencies.find(e => e.id === currentDetailId);
-      if (!item) return;
-
-      let text = `${item.icon} ${item.type}\n`;
-      text += `严重程度: ${getSeverityText(item.severity)}\n\n`;
-      text += `【处理步骤】\n`;
-      item.steps.forEach((step, index) => {
-        text += `${index + 1}. ${step}\n`;
-      });
-      if (item.tips) {
-        text += `\n【预防措施】\n${item.tips}\n`;
-      }
-      text += `\n【紧急联系方式】\n`;
-      Object.entries(item.contacts).forEach(([key, value]) => {
-        text += `${getContactLabel(key)}: ${value}\n`;
-      });
-
-      navigator.clipboard.writeText(text).then(() => {
-        showToast('预案已复制到剪贴板', 'success');
-        closeDetailModal();
-      });
-    }
-
-    // 获取严重程度文本
-    function getSeverityText(severity) {
-      const texts = {
-        high: '紧急',
-        medium: '一般',
-        low: '轻微'
-      };
-      return texts[severity] || severity;
-    }
-
-    // 关闭详情模态框
-    function closeDetailModal() {
-      document.getElementById('detailModal').classList.remove('open');
-    }
-
-    // 显示Toast
-    function showToast(message, type = '') {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.className = `toast ${type} show`;
-      setTimeout(() => {
-        toast.className = 'toast';
-      }, 3000);
-    }
-
-    // 点击模态框外部关闭
-    document.getElementById('detailModal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        closeDetailModal();
-      }
-    });
-  </script>
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
 </body>
 </html>

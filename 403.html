@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>403 - 权限不足 | 游导旅游</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔒</text></svg>">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 50%, #a855f7 100%);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .bg-decoration {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .bg-decoration span {
+      position: absolute;
+      display: block;
+      width: 20px;
+      height: 20px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 50%;
+      animation: floatUp 25s linear infinite;
+    }
+
+    .bg-decoration span:nth-child(1) { left: 10%; animation-delay: 0s; }
+    .bg-decoration span:nth-child(2) { left: 20%; animation-delay: 5s; }
+    .bg-decoration span:nth-child(3) { left: 30%; animation-delay: 10s; }
+    .bg-decoration span:nth-child(4) { left: 40%; animation-delay: 15s; }
+    .bg-decoration span:nth-child(5) { left: 50%; animation-delay: 20s; }
+    .bg-decoration span:nth-child(6) { left: 60%; animation-delay: 2s; }
+    .bg-decoration span:nth-child(7) { left: 70%; animation-delay: 7s; }
+    .bg-decoration span:nth-child(8) { left: 80%; animation-delay: 12s; }
+    .bg-decoration span:nth-child(9) { left: 90%; animation-delay: 17s; }
+    .bg-decoration span:nth-child(10) { left: 95%; animation-delay: 22s; }
+
+    @keyframes floatUp {
+      0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+    }
+
+    .error-container {
+      text-align: center;
+      padding: 40px;
+      max-width: 600px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .error-emoji {
+      font-size: 120px;
+      margin-bottom: 20px;
+      animation: shake 2s ease-in-out infinite;
+      filter: drop-shadow(0 10px 30px rgba(0,0,0,0.2));
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(-10deg); }
+      75% { transform: rotate(10deg); }
+    }
+
+    .error-code {
+      font-size: 100px;
+      font-weight: 800;
+      color: white;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      line-height: 1;
+      margin-bottom: 15px;
+      letter-spacing: -5px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.95);
+      margin-bottom: 35px;
+      line-height: 1.8;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 32px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: white;
+      color: #6c5ce7;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 2px solid rgba(255,255,255,0.8);
+      backdrop-filter: blur(5px);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.2);
+      transform: translateY(-3px);
+    }
+
+    .help-section {
+      margin-top: 40px;
+      padding: 25px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+
+    .help-section h3 {
+      color: white;
+      font-size: 1rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .quick-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .quick-link {
+      padding: 8px 18px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 20px;
+      color: white;
+      font-size: 0.9rem;
+      transition: all 0.3s;
+      text-decoration: none;
+    }
+
+    .quick-link:hover {
+      background: rgba(255,255,255,0.4);
+      transform: translateY(-2px);
+    }
+
+    .deco-cloud {
+      position: absolute;
+      font-size: 40px;
+      opacity: 0.3;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .deco-cloud:nth-child(1) { top: 15%; left: 10%; animation-delay: 0s; }
+    .deco-cloud:nth-child(2) { top: 20%; right: 15%; animation-delay: 2s; }
+    .deco-cloud:nth-child(3) { bottom: 20%; left: 15%; animation-delay: 4s; }
+    .deco-cloud:nth-child(4) { bottom: 25%; right: 10%; animation-delay: 1s; }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(5deg); }
+    }
+
+    @media (max-width: 600px) {
+      .error-code { font-size: 80px; letter-spacing: -3px; }
+      .error-emoji { font-size: 80px; }
+      h1 { font-size: 1.4rem; }
+      p { font-size: 1rem; }
+      .btn { padding: 12px 24px; font-size: 0.95rem; }
+      .deco-cloud { display: none; }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <meta name="theme-color" content="#6c5ce7">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <div class="bg-decoration">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+  </div>
+
+  <div class="deco-cloud">☁️</div>
+  <div class="deco-cloud">☁️</div>
+  <div class="deco-cloud">☁️</div>
+  <div class="deco-cloud">☁️</div>
+
+  <div class="error-container">
+<main id="main-content" role="main">
+    <div class="error-emoji">🔒</div>
+    <div class="error-code">403</div>
+    <h1>哎呀，这个区域需要VIP通行证~</h1>
+    <p>看起来您没有权限访问这个页面<br>别担心，这里还有很多精彩等着您！✨</p>
+    
+    <div class="btn-group">
+      <a href="index.html" class="btn btn-primary">
+        🏠 返回首页
+      </a>
+      <a href="contact.html" class="btn btn-outline">
+        📞 联系客服
+      </a>
+    </div>
+
+    <div class="help-section">
+      <h3>💡 您可以试试</h3>
+      <div class="quick-links">
+        <a href="search.html" class="quick-link">🔍 搜索目的地</a>
+        <a href="guides.html" class="quick-link">👨‍🏫 浏览导游</a>
+        <a href="routes.html" class="quick-link">🗺️ 查看路线</a>
+        <a href="community.html" class="quick-link">👥 社区交流</a>
+      </div>
+    </div>
+  </div>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

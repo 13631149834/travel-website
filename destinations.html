@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>目的地百科 - 游导旅游</title>
+  <meta name="description" content="游导旅游目的地百科，收录全球热门国家的旅行信息，包括签证要求、最佳季节、必去景点等。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    .dest-hero {
+      background: var(--primary);
+      color: #fff;
+      padding: 40px 0;
+      text-align: center;
+    }
+    .dest-hero h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .dest-hero p {
+      opacity: 0.85;
+      font-size: 1rem;
+    }
+    .dest-search {
+      max-width: 500px;
+      margin: 24px auto 0;
+    }
+    .dest-search input {
+      width: 100%;
+      padding: 14px 18px;
+      border: none;
+      border-radius: var(--radius-lg);
+      font-size: 1rem;
+      outline: none;
+    }
+    
+    .dest-content {
+      padding: 40px 0 64px;
+    }
+    
+    /* 洲际标签 */
+    .continent-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+      justify-content: center;
+    }
+    .continent-tab {
+      padding: 10px 20px;
+      background: var(--gray-100);
+      border: none;
+      border-radius: var(--radius-full);
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .continent-tab:hover, .continent-tab.active {
+      background: var(--primary);
+      color: #fff;
+    }
+    
+    /* 国家网格 */
+    .country-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .country-card {
+      background: #fff;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+    .country-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--gray-300);
+    }
+    .country-cover {
+      height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+    .country-info {
+      padding: 20px;
+    }
+    .country-info h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .country-info p {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+    .country-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .country-tag {
+      padding: 4px 12px;
+      background: var(--gray-100);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      color: var(--gray-600);
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container">
+</nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="visa.html">签证</a>
+        <a href="routes.html">线路</a>
+        <a href="knowledge.html">知识</a>
+        <a href="tools.html">工具</a>
+      </div>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  
+
+  <!-- 页面头部 -->
+  <div class="dest-hero">
+    <h1>🌍 目的地百科</h1>
+    <p>收录全球30+热门国家的旅行信息</p>
+    <div class="dest-search">
+      <input type="text" placeholder="搜索国家或目的地..." id="input-4928">
+    </div>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="dest-content">
+    <div class="container">
+      <!-- 洲际筛选 -->
+      <div class="continent-tabs">
+        <button class="continent-tab active">全部</button>
+        <button class="continent-tab">亚洲</button>
+        <button class="continent-tab">欧洲</button>
+        <button class="continent-tab">美洲</button>
+        <button class="continent-tab">大洋洲</button>
+        <button class="continent-tab">非洲</button>
+      </div>
+
+      <!-- 国家列表 -->
+      <div class="country-grid">
+        <a href="#" class="country-card">
+          <div class="country-cover" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">🗾</div>
+          <div class="country-info">
+            <h3>🇯🇵 日本</h3>
+            <p>签证 · 樱花季 · 温泉</p>
+            <div class="country-tags">
+              <span class="country-tag">自由行</span>
+              <span class="country-tag">团队游</span>
+            </div>
+          </div>
+        </a>
+        
+        <a href="#" class="country-card">
+          <div class="country-cover" style="background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);">🏝️</div>
+          <div class="country-info">
+            <h3>🇹🇭 泰国</h3>
+            <p>落地签 · 海岛 · 美食</p>
+            <div class="country-tags">
+              <span class="country-tag">自由行</span>
+              <span class="country-tag">购物</span>
+            </div>
+          </div>
+        </a>
+        
+        <a href="#" class="country-card">
+          <div class="country-cover" style="background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);">🗼</div>
+          <div class="country-info">
+            <h3>🇫🇷 法国</h3>
+            <p>申根签 · 浪漫 · 艺术</p>
+            <div class="country-tags">
+              <span class="country-tag">深度游</span>
+              <span class="country-tag">红酒</span>
+            </div>
+          </div>
+        </a>
+        
+        <a href="#" class="country-card">
+          <div class="country-cover" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);">🦘</div>
+          <div class="country-info">
+            <h3>🇦🇺 澳大利亚</h3>
+            <p>旅游签 · 自然 · 萌宠</p>
+            <div class="country-tags">
+              <span class="country-tag">自驾</span>
+              <span class="country-tag">摄影</span>
+            </div>
+          </div>
+        </a>
+        
+        <a href="#" class="country-card">
+          <div class="country-cover" style="background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);">🌴</div>
+          <div class="country-info">
+            <h3>🇸🇬 新加坡</h3>
+            <p>电子签 · 亲子 · 美食</p>
+            <div class="country-tags">
+              <span class="country-tag">城市</span>
+              <span class="country-tag">乐园</span>
+            </div>
+          </div>
+        </a>
+        
+        <a href="#" class="country-card">
+          <div class="country-cover" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);">🏯</div>
+          <div class="country-info">
+            <h3>🇰🇷 韩国</h3>
+            <p>团签 · 购物 · K-POP</p>
+            <div class="country-tags">
+              <span class="country-tag">自由行</span>
+              <span class="country-tag">医美</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>关于游导</h4>
+          <a href="about.html">关于我们</a>
+          <a href="contact.html">联系我们</a>
+          <a href="guide-apply.html">导游入驻</a>
+        </div>
+        <div class="footer-col">
+          <h4>游客服务</h4>
+          <a href="guides.html">找导游</a>
+          <a href="visa.html">签证攻略</a>
+          <a href="routes.html">精品线路</a>
+        </div>
+        <div class="footer-col">
+          <h4>导游工具</h4>
+          <a href="tools.html">效率工具</a>
+          <a href="knowledge-base.html">知识库</a>
+          <a href="finance.html">财务管理</a>
+        </div>
+        <div class="footer-col">
+          <h4>帮助支持</h4>
+          <a href="help.html">帮助中心</a>
+          <a href="faq.html">常见问题</a>
+          <a href="disclaimer.html">使用条款</a>
+        </div>
+      </div>
+      <div class="footer-col">
+          <h4>联系我们</h4>
+          <p style="font-size:0.85rem;margin:4px 0">📧 2173381363@qq.com</p>
+          <p style="font-size:0.85rem;margin:4px 0">💬 微信：ximao101</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 游导旅游 · 让旅行更简单</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/common.js" defer></script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

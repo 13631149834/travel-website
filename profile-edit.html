@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号设置 - 游导旅游 | 个人资料管理</title>
+    <meta name="description" content="管理您的游导旅游账号，设置个人信息、上传头像、修改密码、绑定手机和邮箱。">
+    <meta name="keywords" content="账号设置,个人资料,修改密码,头像上传">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://youdao-travel.com/profile-edit.html">
+    <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+    <style>
+        .profile-edit-page {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #3B82F6 0%, #667EEA 50%, #764BA2 100%);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .page-header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .page-header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .settings-section {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: #1f2937;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 头像上传区域 */
+        .avatar-section {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .avatar-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+        }
+
+        .avatar-display {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            border: 4px solid white;
+            box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .avatar-display:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(102,126,234,0.4);
+        }
+        .avatar-display img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 36px;
+            height: 36px;
+            background: #3B82F6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59,130,246,0.4);
+            transition: all 0.3s;
+        }
+        .avatar-upload-btn:hover {
+            background: #2563EB;
+            transform: scale(1.1);
+        }
+        .avatar-upload-btn input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* Emoji选择器 */
+        .emoji-picker {
+            display: none;
+            position: absolute;
+            top: 130px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            z-index: 100;
+            width: 280px;
+        }
+        .emoji-picker.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+        .emoji-picker-title {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .emoji-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+        }
+        .emoji-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f3f4f6;
+        }
+        .emoji-option:hover {
+            background: #e5e7eb;
+            transform: scale(1.15);
+        }
+        .emoji-close {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            color: #4b5563;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 15px;
+            transition: all 0.3s;
+            background: #f9fafb;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667EEA;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(102,126,234,0.1);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* 性别选择 */
+        .gender-options {
+            display: flex;
+            gap: 15px;
+        }
+        .gender-option {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 15px;
+        }
+        .gender-option:hover {
+            border-color: #667EEA;
+            background: #f9fafb;
+        }
+        .gender-option.selected {
+            border-color: #667EEA;
+            background: rgba(102,126,234,0.1);
+            color: #667EEA;
+        }
+        .gender-option input {
+            display: none;
+        }
+
+        /* 按钮样式 */
+        .btn-save {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667EEA 0%, #764BA2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102,126,234,0.4);
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            box-shadow: none;
+        }
+
+        /* 安全设置 */
+        .security-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .security-item:last-child {
+            border-bottom: none;
+        }
+        .security-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .security-icon {
+            width: 40px;
+            height: 40px;
+            background: #f3f4f6;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        .security-text h4 {
+            font-size: 15px;
+            color: #1f2937;
+            margin-bottom: 2px;
+        }
+        .security-text p {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+        .security-status {
+            font-size: 13px;
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+        .security-status.binded {
+            background: #d1fae5;
+            color: #059669;
+        }
+        .security-status.unbind {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        .btn-bind {
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-bind:hover {
+            background: #e5e7eb;
+        }
+
+        /* 退出登录 */
+        .logout-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+        .btn-logout {
+            padding: 14px 40px;
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-logout:hover {
+            background: #fecaca;
+            transform: translateY(-2px);
+        }
+
+        /* Toast提示 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            z-index: 9999;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        @keyframes slideUp {
+            from { opacity: 1; transform: translateX(-50%) translateY(0); }
+            to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .page-header {
+                padding: 25px 20px;
+            }
+            .page-header h1 {
+                font-size: 24px;
+            }
+        }
+    
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+    <nav class="navbar" aria-label="主导航">
+        <div class="container">
+</nav>
+<main id="main-content" role="main">
+            <a href="index.html" class="logo">🌍 游导旅游</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">首页</a>
+                <a href="guides.html">🎤 找导游</a>
+                <a href="routes.html">精品线路</a>
+                <a href="guide-tools.html" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff;">🎒 导游工具</a>
+                <a href="user-center.html" id="authLink">👤 用户中心</a>
+            </div>
+        </div>
+    
+
+    <div class="profile-edit-page">
+        <div class="page-header">
+            <h1>⚙️ 账号设置</h1>
+            <p>管理您的个人信息和账号安全</p>
+        </div>
+
+        <!-- 基本信息 -->
+        <div class="settings-section">
+            <h2 class="section-title">👤 基本信息</h2>
+            
+            <div class="avatar-section">
+                <div class="avatar-wrapper">
+                    <div class="avatar-display" id="avatarDisplay" onclick="toggleEmojiPicker()">
+                        <span id="avatarEmoji">👤</span>
+                    </div>
+                    <label class="avatar-upload-btn">
+                        📷
+                        <input type="file" id="avatarInput" accept="image/*" onchange="handleAvatarUpload(event)">
+                    </label>
+                </div>
+                
+                <!-- Emoji选择器 -->
+                <div class="emoji-picker" id="emojiPicker">
+                    <span class="emoji-close" onclick="toggleEmojiPicker()">✕</span>
+                    <div class="emoji-picker-title">选择头像</div>
+                    <div class="emoji-grid" id="emojiGrid"></div>
+                </div>
+                
+                <p style="font-size: 13px; color: #9ca3af;">点击选择emoji或上传图片作为头像</p>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>昵称</label>
+                    <input type="text" id="nickname" placeholder="请输入昵称" maxlength="20">
+                </div>
+                <div class="form-group">
+                    <label>真实姓名</label>
+                    <input type="text" id="realname" placeholder="请输入真实姓名">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>性别</label>
+                <div class="gender-options">
+                    <label class="gender-option selected" onclick="selectGender(this, 'male')">
+                        <input type="radio" name="gender" value="male" checked id="gender">
+                        👨 男士
+                    </label>
+                    <label class="gender-option" onclick="selectGender(this, 'female')">
+                        <input type="radio" name="gender" value="female" id="gender">
+                        👩 女士
+                    </label>
+                    <label class="gender-option" onclick="selectGender(this, 'secret')">
+                        <input type="radio" name="gender" value="secret" id="gender">
+                        🙈 保密
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>生日</label>
+                    <input type="date" id="birthday">
+                </div>
+                <div class="form-group">
+                    <label>所在城市</label>
+                    <input type="text" id="city" placeholder="如：北京、上海">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>个人简介</label>
+                <textarea id="bio" placeholder="向大家介绍一下自己吧~" maxlength="200"></textarea>
+            </div>
+
+            <button class="btn-save" onclick="saveProfile()">💾 保存修改</button>
+        </div>
+
+        <!-- 联系方式 -->
+        <div class="settings-section">
+            <h2 class="section-title">📱 联系方式</h2>
+            
+            <div class="form-group">
+                <label>手机号码</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="tel" id="phone" placeholder="请输入手机号" style="flex: 1;">
+                    <button class="btn-bind" style="padding: 14px 20px;" onclick="bindPhone()">绑定</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>电子邮箱</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="email" id="email" placeholder="请输入邮箱" style="flex: 1;">
+                    <button class="btn-bind" style="padding: 14px 20px;" onclick="bindEmail()">绑定</button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>微信号（选填）</label>
+                <input type="text" id="wechat" placeholder="用于导游联系您">
+            </div>
+
+            <button class="btn-save btn-secondary" onclick="saveContact()">💾 保存联系方式</button>
+        </div>
+
+        <!-- 安全设置 -->
+        <div class="settings-section">
+            <h2 class="section-title">🔒 安全设置</h2>
+            
+            <div class="security-item">
+                <div class="security-info">
+                    <div class="security-icon">🔑</div>
+                    <div class="security-text">
+                        <h4>登录密码</h4>
+                        <p>定期修改密码可以保护账号安全</p>
+                    </div>
+                </div>
+                <button class="btn-bind" onclick="changePassword()">修改</button>
+            </div>
+
+            <div class="security-item">
+                <div class="security-info">
+                    <div class="security-icon">📱</div>
+                    <div class="security-text">
+                        <h4>手机绑定</h4>
+                        <p id="phoneStatus">未绑定</p>
+                    </div>
+                </div>
+                <span class="security-status unbind" id="phoneBadge">未绑定</span>
+            </div>
+
+            <div class="security-item">
+                <div class="security-info">
+                    <div class="security-icon">✉️</div>
+                    <div class="security-text">
+                        <h4>邮箱绑定</h4>
+                        <p id="emailStatus">未绑定</p>
+                    </div>
+                </div>
+                <span class="security-status unbind" id="emailBadge">未绑定</span>
+            </div>
+
+            <div class="security-item">
+                <div class="security-info">
+                    <div class="security-icon">💾</div>
+                    <div class="security-text">
+                        <h4>数据备份</h4>
+                        <p>导出、导入或清除本地数据</p>
+                    </div>
+                </div>
+                <a href="data-backup.html" class="btn-bind" style="text-decoration: none;">管理</a>
+            </div>
+        </div>
+
+        <!-- 退出登录 -->
+        <div class="logout-section">
+            <button class="btn-logout" onclick="logout()">🚪 退出登录</button>
+        </div>
+    </div>
+
+    <script>
+        // Emoji列表
+        const emojis = ['👨', '👩', '👦', '👧', '🧑', '👴', '👵', '🧔', '👱', '🤴', '👸', '🦸', '🧙', '🧚', '🦊', '🐱', '🐶', '🐰', '🐼', '🐨', '🦁', '🐯', '🦄', '🌟', '⭐', '🌙', '☀️', '🌈', '🏖️', '✈️', '🚗', '🎒', '🎯', '🎨', '🎭', '🎪'];
+
+        let selectedAvatar = localStorage.getItem('userAvatar') || '👤';
+
+        function init() {
+            loadUserData();
+            renderEmojiGrid();
+            checkAuth();
+        }
+
+        async function checkAuth() {
+            const userStr = localStorage.getItem('user');
+            if (!userStr) {
+                window.location.href = 'login.html?redirect=profile-edit.html';
+            }
+        }
+
+        function loadUserData() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+
+            document.getElementById('nickname').value = profile.nickname || user.nickname || '旅行者_' + Math.random().toString(36).substr(2, 5);
+            document.getElementById('realname').value = profile.realname || '';
+            document.getElementById('birthday').value = profile.birthday || '';
+            document.getElementById('city').value = profile.city || '';
+            document.getElementById('bio').value = profile.bio || '';
+            document.getElementById('phone').value = profile.phone || '';
+            document.getElementById('email').value = profile.email || user.email || '';
+            document.getElementById('wechat').value = profile.wechat || '';
+
+            // 加载头像
+            const avatarEmoji = profile.avatarEmoji || localStorage.getItem('userAvatar') || '👤';
+            document.getElementById('avatarEmoji').textContent = avatarEmoji;
+            
+            // 检查性别
+            if (profile.gender) {
+                document.querySelectorAll('.gender-option').forEach(opt => {
+                    opt.classList.remove('selected');
+                    if (opt.querySelector('input').value === profile.gender) {
+                        opt.classList.add('selected');
+                        opt.querySelector('input').checked = true;
+                    }
+                });
+            }
+
+            // 更新安全状态
+            if (profile.phone) {
+                document.getElementById('phoneStatus').textContent = profile.phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+                document.getElementById('phoneBadge').textContent = '已绑定';
+                document.getElementById('phoneBadge').className = 'security-status binded';
+            }
+            if (profile.email) {
+                document.getElementById('emailStatus').textContent = profile.email.replace(/(.{2}).+(@.+)/, '$1***$2');
+                document.getElementById('emailBadge').textContent = '已绑定';
+                document.getElementById('emailBadge').className = 'security-status binded';
+            }
+        }
+
+        function renderEmojiGrid() {
+            const grid = document.getElementById('emojiGrid');
+            grid.innerHTML = emojis.map(e => `
+                <div class="emoji-option" onclick="selectEmoji('${e}')">${e}</div>
+            `).join('');
+        }
+
+        function toggleEmojiPicker() {
+            const picker = document.getElementById('emojiPicker');
+            picker.classList.toggle('show');
+        }
+
+        function selectEmoji(emoji) {
+            document.getElementById('avatarEmoji').textContent = emoji;
+            document.getElementById('emojiPicker').classList.remove('show');
+            localStorage.setItem('userAvatar', emoji);
+            selectedAvatar = emoji;
+            
+            // 清除图片头像
+            const img = document.querySelector('#avatarDisplay img');
+            if (img) img.remove();
+        }
+
+        function handleAvatarUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const avatarDisplay = document.getElementById('avatarDisplay');
+                    avatarDisplay.innerHTML = `<img src="${e.target.result}" alt="头像">`;
+                    localStorage.setItem('userAvatarUrl', e.target.result);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function selectGender(element, value) {
+            document.querySelectorAll('.gender-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+            element.querySelector('input').checked = true;
+        }
+
+        function saveProfile() {
+            const profile = {
+                nickname: document.getElementById('nickname').value,
+                realname: document.getElementById('realname').value,
+                gender: document.querySelector('input[name="gender"]:checked').value,
+                birthday: document.getElementById('birthday').value,
+                city: document.getElementById('city').value,
+                bio: document.getElementById('bio').value,
+                avatarEmoji: document.getElementById('avatarEmoji').textContent
+            };
+
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+            showToast('✅ 基本信息已保存', 'success');
+        }
+
+        function saveContact() {
+            const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+            profile.phone = document.getElementById('phone').value;
+            profile.email = document.getElementById('email').value;
+            profile.wechat = document.getElementById('wechat').value;
+            localStorage.setItem('userProfile', JSON.stringify(profile));
+            
+            loadUserData(); // 重新加载更新状态
+            showToast('✅ 联系方式已保存', 'success');
+        }
+
+        function bindPhone() {
+            const phone = document.getElementById('phone').value;
+            if (!phone) {
+                showToast('请先输入手机号', 'warning');
+                return;
+            }
+            if (!/^1[3-9]\d{9}$/.test(phone)) {
+                showToast('请输入正确的手机号', 'error');
+                return;
+            }
+            showToast('验证码已发送', 'success');
+            setTimeout(() => {
+                const code = prompt('请输入收到的验证码（模拟：123456）：');
+                if (code === '123456') {
+                    const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+                    profile.phone = phone;
+                    localStorage.setItem('userProfile', JSON.stringify(profile));
+                    loadUserData();
+                    showToast('✅ 手机绑定成功', 'success');
+                }
+            }, 1000);
+        }
+
+        function bindEmail() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                showToast('请先输入邮箱', 'warning');
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast('请输入正确的邮箱', 'error');
+                return;
+            }
+            showToast('验证链接已发送到邮箱', 'success');
+        }
+
+        function changePassword() {
+            window.location.href = 'login.html?action=reset';
+        }
+
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('user');
+                localStorage.removeItem('userProfile');
+                showToast('已退出登录', 'info');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1000);
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const colors = {
+                success: '#10B981',
+                error: '#EF4444',
+                warning: '#F59E0B',
+                info: '#3B82F6'
+            };
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.style.backgroundColor = colors[type];
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.animation = 'slideUp 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

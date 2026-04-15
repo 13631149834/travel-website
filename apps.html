@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行APP推荐 - 游导旅游</title>
+  <meta name="description" content="精选旅行必备APP推荐，涵盖订票、导航、翻译、社交等各类实用工具，让您的旅行更加便捷高效。">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <style>
+    /* 页面特定样式 */
+    .page-hero {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      color: white;
+      padding: 60px 0;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+    .page-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    /* 分类筛选 */
+    .category-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 48px;
+      padding: 24px;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .category-tabs .tab-btn {
+      padding: 10px 20px;
+      border: 2px solid #e5e7eb;
+      border-radius: 24px;
+      background: white;
+      color: #6b7280;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .category-tabs .tab-btn:hover {
+      border-color: #3b82f6;
+      color: #3b82f6;
+    }
+    .category-tabs .tab-btn.active {
+      background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      border-color: transparent;
+      color: white;
+    }
+
+    /* APP卡片 */
+    .app-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+      margin-bottom: 60px;
+    }
+    .app-card {
+      background: white;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .app-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+    }
+    .app-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--cat-color, #3b82f6) 0%, var(--cat-color-end, #60a5fa) 100%);
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .app-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--cat-color, #3b82f6) 0%, var(--cat-color-end, #60a5fa) 100%);
+      color: white;
+      flex-shrink: 0;
+    }
+    .app-info h3 {
+      font-size: 1.25rem;
+      color: #1f2937;
+      margin-bottom: 4px;
+    }
+    .app-info .developer {
+      font-size: 0.85rem;
+      color: #9ca3af;
+    }
+
+    .app-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .stars {
+      color: #fbbf24;
+      font-size: 1rem;
+      letter-spacing: 2px;
+    }
+    .rating-text {
+      font-size: 0.9rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .app-description {
+      font-size: 0.95rem;
+      color: #6b7280;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .app-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .feature-tag {
+      padding: 4px 12px;
+      background: #f3f4f6;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      color: #4b5563;
+    }
+
+    .app-scenes {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    .app-scenes h4 {
+      font-size: 0.9rem;
+      color: #374151;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .scene-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .scene-item {
+      font-size: 0.8rem;
+      color: #6b7280;
+      background: white;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .app-platforms {
+      display: flex;
+      gap: 12px;
+    }
+    .platform-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
+    .platform-badge .icon {
+      font-size: 1rem;
+    }
+
+    .recommend-badge {
+      position: absolute;
+      top: 20px;
+      right: -28px;
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 32px;
+      transform: rotate(45deg);
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+    }
+
+    /* 分类标题 */
+    .category-section {
+      margin-bottom: 60px;
+    }
+    .category-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+    .category-title .icon {
+      font-size: 1.8rem;
+    }
+    .category-title h2 {
+      font-size: 1.5rem;
+      color: #1f2937;
+    }
+    .category-title .count {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      background: #f3f4f6;
+      padding: 4px 12px;
+      border-radius: 12px;
+    }
+
+    /* 隐藏状态 */
+    .app-card.hidden {
+      display: none;
+    }
+
+    /* 小贴士 */
+    .tips-section {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 60px;
+    }
+    .tips-section h3 {
+      font-size: 1.25rem;
+      color: #92400e;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .tip-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .tip-card h4 {
+      font-size: 1rem;
+      color: #78350f;
+      margin-bottom: 8px;
+    }
+    .tip-card p {
+      font-size: 0.9rem;
+      color: #92400e;
+      line-height: 1.6;
+    }
+
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .page-hero h1 {
+        font-size: 1.8rem;
+      }
+      .app-grid {
+        grid-template-columns: 1fr;
+      }
+      .category-tabs {
+        padding: 16px;
+      }
+      .category-tabs .tab-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+      }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container nav-container">
+    </div>
+  </nav>
+<main id="main-content" role="main">
+      <a href="index.html" class="logo">
+        <span style="font-size: 1.8rem;">🧭</span>
+        <span>游导旅游</span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">找导游</a>
+        <a href="routes.html">精品路线</a>
+        <a href="visa.html">签证服务</a>
+        <a href="knowledge.html">旅行知识</a>
+        <a href="tools.html">实用工具</a>
+        <a href="apps.html" class="active">APP推荐</a>
+      </div>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  
+
+  <!-- 页面标题 -->
+  <div class="page-hero">
+    <h1>📱 旅行APP推荐</h1>
+    <p>精选实用旅行工具，让您的旅途更加便捷高效</p>
+  </div>
+
+  <!-- 主内容 -->
+  <div class="container" style="padding: 48px 0 80px;">
+    
+    <!-- 分类筛选 -->
+    <div class="category-tabs">
+      <button class="tab-btn active" data-category="all">全部推荐</button>
+      <button class="tab-btn" data-category="booking">📋 订票类</button>
+      <button class="tab-btn" data-category="navigation">🗺️ 导航类</button>
+      <button class="tab-btn" data-category="translation">🌐 翻译类</button>
+      <button class="tab-btn" data-category="social">📱 社交类</button>
+      <button class="tab-btn" data-category="tools">🛠️ 工具类</button>
+    </div>
+
+    <!-- 订票类APP -->
+    <div class="category-section" data-category="booking">
+      <div class="category-title">
+        <span class="icon">📋</span>
+        <h2>订票类APP</h2>
+        <span class="count">3个推荐</span>
+      </div>
+      <div class="app-grid">
+        
+        <!-- 携程 -->
+        <div class="app-card" style="--cat-color: #e50914; --cat-color-end: #b20710;">
+          <div class="recommend-badge">⭐ 强烈推荐</div>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #e50914 0%, #b20710 100%);">🏨</div>
+            <div class="app-info">
+              <h3>携程旅行</h3>
+              <p class="developer">携程集团</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.8分 · 1.5亿下载</span>
+          </div>
+          <p class="app-description">国内领先的综合性旅行平台，提供机票、酒店、火车票、旅游度假等全方位服务，覆盖全球200+国家和地区。</p>
+          <div class="app-features">
+            <span class="feature-tag">机票预订</span>
+            <span class="feature-tag">酒店民宿</span>
+            <span class="feature-tag">火车票</span>
+            <span class="feature-tag">旅游团</span>
+            <span class="feature-tag">门票</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">国内/出境游</span>
+              <span class="scene-item">商务出差</span>
+              <span class="scene-item">自由行</span>
+              <span class="scene-item">团队游</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+        <!-- 飞猪 -->
+        <div class="app-card" style="--cat-color: #00d2b4; --cat-color-end: #00a896;">
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #00d2b4 0%, #00a896 100%);">✈️</div>
+            <div class="app-info">
+              <h3>飞猪旅行</h3>
+              <p class="developer">阿里巴巴集团</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7分 · 8000万下载</span>
+          </div>
+          <p class="app-description">依托阿里生态优势，提供国内外机票、酒店、门票、签证等服务，经常有超值的会员专享价和红包优惠。</p>
+          <div class="app-features">
+            <span class="feature-tag">会员专享</span>
+            <span class="feature-tag">红包优惠</span>
+            <span class="feature-tag">信用住</span>
+            <span class="feature-tag">先用后付</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">88会员优惠</span>
+              <span class="scene-item">出境游</span>
+              <span class="scene-item">抢特价票</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+        <!-- 去哪儿 -->
+        <div class="app-card" style="--cat-color: #1da1f2; --cat-color-end: #0d8ed9;">
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #1da1f2 0%, #0d8ed9 100%);">🔍</div>
+            <div class="app-info">
+              <h3>去哪儿旅行</h3>
+              <p class="developer">去哪网</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-text">4.6分 · 6000万下载</span>
+          </div>
+          <p class="app-description">擅长机票比价搜索，价格透明，经常能发现全网最低价。酒店、门票、租车等服务也很全面。</p>
+          <div class="app-features">
+            <span class="feature-tag">比价搜索</span>
+            <span class="feature-tag">低价提醒</span>
+            <span class="feature-tag">特价机票</span>
+            <span class="feature-tag">火车票</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">机票比价</span>
+              <span class="scene-item">穷游首选</span>
+              <span class="scene-item">学生党</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 导航类APP -->
+    <div class="category-section" data-category="navigation">
+      <div class="category-title">
+        <span class="icon">🗺️</span>
+        <h2>导航类APP</h2>
+        <span class="count">3个推荐</span>
+      </div>
+      <div class="app-grid">
+        
+        <!-- 高德地图 -->
+        <div class="app-card" style="--cat-color: #07c160; --cat-color-end: #06ad56;">
+          <div class="recommend-badge">⭐ 强烈推荐</div>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #07c160 0%, #06ad56 100%);">📍</div>
+            <div class="app-info">
+              <h3>高德地图</h3>
+              <p class="developer">阿里巴巴集团</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.7分 · 2亿下载</span>
+          </div>
+          <p class="app-description">国内精准度最高的导航软件，支持驾车、公交、步行、骑行等多种出行方式，实时路况、限行提醒、拥堵预测一应俱全。</p>
+          <div class="app-features">
+            <span class="feature-tag">AR导航</span>
+            <span class="feature-tag">实时路况</span>
+            <span class="feature-tag">公交地铁</span>
+            <span class="feature-tag">离线地图</span>
+            <span class="feature-tag">语音导航</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">自驾游</span>
+              <span class="scene-item">城市出行</span>
+              <span class="scene-item">找停车场</span>
+              <span class="scene-item">步行导航</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+        <!-- 百度地图 -->
+        <div class="app-card" style="--cat-color: #2932e1; --cat-color-end: #1c25c9;">
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #2932e1 0%, #1c25c9 100%);">🧭</div>
+            <div class="app-info">
+              <h3>百度地图</h3>
+              <p class="developer">百度公司</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-text">4.6分 · 1.8亿下载</span>
+          </div>
+          <p class="app-description">AI技术加持的智能导航，智能语音助手、小度助手、AR实景导航体验出色，室内导航功能强大。</p>
+          <div class="app-features">
+            <span class="feature-tag">AI助手</span>
+            <span class="feature-tag">AR实景</span>
+            <span class="feature-tag">室内导航</span>
+            <span class="feature-tag">智能推荐</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">大型商场</span>
+              <span class="scene-item">机场车站</span>
+              <span class="scene-item">语音操控</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+        <!-- Google Maps -->
+        <div class="app-card" style="--cat-color: #4285f4; --cat-color-end: #3367d6;">
+          <div class="recommend-badge">⭐ 出境必备</div>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #4285f4 0%, #3367d6 100%);">🌍</div>
+            <div class="app-info">
+              <h3>Google Maps</h3>
+              <p class="developer">Google</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.5分 · 10亿+下载</span>
+          </div>
+          <p class="app-description">出境旅行必备神器，全球覆盖最广的地图服务，街景视图、离线地图、公交路线规划精准，是海外自驾和自由行的最佳选择。</p>
+          <div class="app-features">
+            <span class="feature-tag">全球地图</span>
+            <span class="feature-tag">街景视图</span>
+            <span class="feature-tag">离线下载</span>
+            <span class="feature-tag">公交规划</span>
+            <span class="feature-tag">时间轴</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">出境旅行</span>
+              <span class="scene-item">海外自驾</span>
+              <span class="scene-item">自由行</span>
+              <span class="scene-item">找餐厅</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 翻译类APP -->
+    <div class="category-section" data-category="translation">
+      <div class="category-title">
+        <span class="icon">🌐</span>
+        <h2>翻译类APP</h2>
+        <span class="count">2个推荐</span>
+      </div>
+      <div class="app-grid">
+        
+        <!-- 谷歌翻译 -->
+        <div class="app-card" style="--cat-color: #4285f4; --cat-color-end: #34a853;">
+          <div class="recommend-badge">⭐ 强烈推荐</div>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);">🔤</div>
+            <div class="app-info">
+              <h3>Google翻译</h3>
+              <p class="developer">Google</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.6分 · 5亿下载</span>
+          </div>
+          <p class="app-description">支持109种语言互译，拍照翻译、实时对话翻译、离线翻译功能强大，是出国旅行最可靠的翻译助手。</p>
+          <div class="app-features">
+            <span class="feature-tag">拍照翻译</span>
+            <span class="feature-tag">实时对话</span>
+            <span class="feature-tag">离线翻译</span>
+            <span class="feature-tag">语音输入</span>
+            <span class="feature-tag">收藏夹</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">菜单翻译</span>
+              <span class="scene-item">问路交流</span>
+              <span class="scene-item">无网络环境</span>
+              <span class="scene-item">多语言切换</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+        <!-- 有道翻译 -->
+        <div class="app-card" style="--cat-color: #00a4e4; --cat-color-end: #0081ce;">
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #00a4e4 0%, #0081ce 100%);">📝</div>
+            <div class="app-info">
+              <h3>有道翻译官</h3>
+              <p class="developer">网易有道</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-text">4.5分 · 1亿下载</span>
+          </div>
+          <p class="app-description">支持107种语言翻译，AI神经机器翻译技术让翻译更准确，AR实时翻译、语音同传等功能深受用户喜爱。</p>
+          <div class="app-features">
+            <span class="feature-tag">AI翻译</span>
+            <span class="feature-tag">AR翻译</span>
+            <span class="feature-tag">语音同传</span>
+            <span class="feature-tag">取词翻译</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">出境旅游</span>
+              <span class="scene-item">留学翻译</span>
+              <span class="scene-item">商务洽谈</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 社交类APP -->
+    <div class="category-section" data-category="social">
+      <div class="category-title">
+        <span class="icon">📱</span>
+        <h2>社交类APP</h2>
+        <span class="count">2个推荐</span>
+      </div>
+      <div class="app-grid">
+        
+        <!-- 小红书 -->
+        <div class="app-card" style="--cat-color: #ff2442; --cat-color-end: #ff6b81;">
+          <div class="recommend-badge">⭐ 旅行必备</div>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #ff2442 0%, #ff6b81 100%);">📕</div>
+            <div class="app-info">
+              <h3>小红书</h3>
+              <p class="developer">行吟信息科技</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★★</span>
+            <span class="rating-text">4.8分 · 3亿下载</span>
+          </div>
+          <p class="app-description">旅行攻略圣地，用户分享真实的景点打卡、美食推荐、购物心得、出行避坑经验，是做旅行攻略的绝佳参考。</p>
+          <div class="app-features">
+            <span class="feature-tag">旅行攻略</span>
+            <span class="feature-tag">景点打卡</span>
+            <span class="feature-tag">美食推荐</span>
+            <span class="feature-tag">购物指南</span>
+            <span class="feature-tag">避坑指南</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">找攻略</span>
+              <span class="scene-item">种草美食</span>
+              <span class="scene-item">看测评</span>
+              <span class="scene-item">分享行程</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+        <!-- 马蜂窝 -->
+        <div class="app-card" style="--cat-color: #ff9933; --cat-color-end: #ff8800;">
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #ff9933 0%, #ff8800 100%);">🐝</div>
+            <div class="app-info">
+              <h3>马蜂窝</h3>
+              <p class="developer">马蜂窝旅游</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-text">4.6分 · 5000万下载</span>
+          </div>
+          <p class="app-description">专业的旅行社区，提供详细的旅行攻略、游记分享、问答互动，目的地页面信息丰富，是深度游的好帮手。</p>
+          <div class="app-features">
+            <span class="feature-tag">旅行攻略</span>
+            <span class="feature-tag">游记分享</span>
+            <span class="feature-tag">问答社区</span>
+            <span class="feature-tag">定制行程</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">深度攻略</span>
+              <span class="scene-item">自由行规划</span>
+              <span class="scene-item">写游记</span>
+              <span class="scene-item">问答求助</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 工具类APP -->
+    <div class="category-section" data-category="tools">
+      <div class="category-title">
+        <span class="icon">🛠️</span>
+        <h2>工具类APP</h2>
+        <span class="count">4个推荐</span>
+      </div>
+      <div class="app-grid">
+        
+        <!-- 汇率换算 -->
+        <div class="app-card" style="--cat-color: #10b981; --cat-color-end: #059669;">
+          <div class="recommend-badge">⭐ 强烈推荐</div>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">💱</div>
+            <div class="app-info">
+              <h3>汇率换算</h3>
+              <p class="developer">实用工具</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-text">4.5分</span>
+          </div>
+          <p class="app-description">支持全球160+货币实时汇率查询，换算速度快，界面简洁直观，支持离线使用，是出境购物的得力助手。</p>
+          <div class="app-features">
+            <span class="feature-tag">实时汇率</span>
+            <span class="feature-tag">多货币</span>
+            <span class="feature-tag">历史走势</span>
+            <span class="feature-tag">离线可用</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">境外购物</span>
+              <span class="scene-item">货币换算</span>
+              <span class="scene-item">比价参考</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+        <!-- 天气预报 -->
+        <div class="app-card" style="--cat-color: #6366f1; --cat-color-end: #4f46e5;">
+          <div class="recommend-badge">⭐ 必备</div>
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">⛅</div>
+            <div class="app-info">
+              <h3>天气预报</h3>
+              <p class="developer">实用工具</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-text">4.6分</span>
+          </div>
+          <p class="app-description">提供全球城市未来15天天气预报，实时更新，分钟级降雨预测，空气质量、紫外线指数一目了然。</p>
+          <div class="app-features">
+            <span class="feature-tag">15天预报</span>
+            <span class="feature-tag">小时预报</span>
+            <span class="feature-tag">降雨提醒</span>
+            <span class="feature-tag">空气质量</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">出行规划</span>
+              <span class="scene-item">穿衣建议</span>
+              <span class="scene-item">行程调整</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+        <!-- 航旅纵横 -->
+        <div class="app-card" style="--cat-color: #0ea5e9; --cat-color-end: #0284c7;">
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);">🛫</div>
+            <div class="app-info">
+              <h3>航旅纵横</h3>
+              <p class="developer">中国民航信息集团</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-text">4.5分 · 3000万下载</span>
+          </div>
+          <p class="app-description">中国民航官方出品，实时查询航班动态、电子登机牌、航站楼信息，是商务出行和常旅客的必备工具。</p>
+          <div class="app-features">
+            <span class="feature-tag">航班动态</span>
+            <span class="feature-tag">电子登机牌</span>
+            <span class="feature-tag">值机选座</span>
+            <span class="feature-tag">行李追踪</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">航班查询</span>
+              <span class="scene-item">值机选座</span>
+              <span class="scene-item">常旅客</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+        <!-- 十六番旅行 -->
+        <div class="app-card" style="--cat-color: #f97316; --cat-color-end: #ea580c;">
+          <div class="app-header">
+            <div class="app-icon" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">🎯</div>
+            <div class="app-info">
+              <h3>十六番旅行</h3>
+              <p class="developer">旅行工具</p>
+            </div>
+          </div>
+          <div class="app-rating">
+            <span class="stars">★★★★☆</span>
+            <span class="rating-text">4.4分</span>
+          </div>
+          <p class="app-description">专注于旅行工具聚合，提供时区转换、签证查询、行李清单、旅行记账等实用功能，一站式解决旅行小需求。</p>
+          <div class="app-features">
+            <span class="feature-tag">时区转换</span>
+            <span class="feature-tag">签证查询</span>
+            <span class="feature-tag">行李清单</span>
+            <span class="feature-tag">旅行记账</span>
+          </div>
+          <div class="app-scenes">
+            <h4>🎯 适用场景</h4>
+            <div class="scene-list">
+              <span class="scene-item">出发准备</span>
+              <span class="scene-item">行程管理</span>
+              <span class="scene-item">多国旅行</span>
+            </div>
+          </div>
+          <div class="app-platforms">
+            <span class="platform-badge"><span class="icon">🍎</span> iOS</span>
+            <span class="platform-badge"><span class="icon">🤖</span> Android</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 使用小贴士 -->
+    <div class="tips-section">
+      <h3>💡 旅行APP使用小贴士</h3>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <h4>📶 出国前做好准备</h4>
+          <p>出国前务必下载好Google Maps并提前下载离线地图，谷歌翻译也要下载离线语言包，确保在没有网络的情况下也能正常使用。</p>
+        </div>
+        <div class="tip-card">
+          <h4>💰 比价很重要</h4>
+          <p>机票、酒店建议在携程、飞猪、去哪儿三个平台同时比价，往往能找到意想不到的优惠价格。</p>
+        </div>
+        <div class="tip-card">
+          <h4>📱 小红书做攻略</h4>
+          <p>用小红书搜索目的地名称，可以找到大量真实用户的分享，包括避坑指南、拍照机位、美食推荐等一手信息。</p>
+        </div>
+        <div class="tip-card">
+          <h4>🔄 保持APP更新</h4>
+          <p>出发前检查并更新所有旅行相关APP，确保使用的是最新版本，以获得最佳的功能和安全性体验。</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  
+</main>
+<!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <span style="font-size: 1.5rem;">🧭</span>
+            <span>游导旅游</span>
+          </div>
+          <p>专业的导游与游客一站式旅行平台<br>让旅行更简单，让体验更美好</p>
+          <div class="footer-social">
+            <a href="#" title="微信公众号"><span aria-hidden="true">💬</span><span class="sr-only">链接</span></a>
+            <a href="#" title="微博"><span aria-hidden="true">📱</span><span class="sr-only">链接</span></a>
+            <a href="#" title="小红书"><span aria-hidden="true">📕</span><span class="sr-only">链接</span></a>
+          </div>
+        </div>
+        <div class="footer-links">
+          <h4>快速链接</h4>
+          <ul>
+            <li><a href="guides.html">找导游</a></li>
+            <li><a href="routes.html">精品路线</a></li>
+            <li><a href="visa.html">签证服务</a></li>
+            <li><a href="apps.html">APP推荐</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>帮助中心</h4>
+          <ul>
+            <li><a href="faq.html">常见问题</a></li>
+            <li><a href="guide-apply.html">导游入驻</a></li>
+            <li><a href="contact.html">联系我们</a></li>
+            <li><a href="user-center.html">用户中心</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>实用工具</h4>
+          <ul>
+            <li><a href="weather.html">天气预报</a></li>
+            <li><a href="exchange.html">汇率换算</a></li>
+            <li><a href="world-clock.html">世界时钟</a></li>
+            <li><a href="tools.html">更多工具</a></li>
+          </ul>
+        </div>
+        <div class="footer-contact">
+          <h4>联系我们</h4>
+          <p>📞 400-888-8888</p>
+          <p>📧 support@youdautravel.com</p>
+          <p>🕐 工作时间: 9:00-21:00</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 游导旅游 All Rights Reserved</p>
+        <div class="footer-legal">
+          <a href="privacy.html">隐私政策</a>
+          <a href="terms.html">服务条款</a>
+          <a href="disclaimer.html">免责声明</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script>
+    // 分类筛选功能
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const category = this.dataset.category;
+        
+        // 更新按钮状态
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        
+        // 筛选卡片
+        document.querySelectorAll('.category-section').forEach(section => {
+          if (category === 'all' || section.dataset.category === category) {
+            section.style.display = 'block';
+            section.querySelectorAll('.app-card').forEach(card => {
+              card.classList.remove('hidden');
+            });
+          } else {
+            section.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // 移动端导航
+    function toggleNav() {
+      const navLinks = document.querySelector('.nav-links');
+      const navToggle = document.querySelector('.nav-toggle');
+      if (navLinks && navToggle) {
+        navLinks.classList.toggle('active');
+        navToggle.classList.toggle('active');
+      }
+    }
+  </script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

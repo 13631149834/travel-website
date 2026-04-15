@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <title>旅行常用语翻译 - 游导旅游</title>
+  <meta name="description" content="旅行常用语多语言翻译工具，支持英语、日语、韩语、泰语、法语等常用旅行短语对照。">
+  <link rel="canonical" href="https://youdao-travel.com/translator.html">
+  
+  <style>
+    /* 页面特定样式 */
+    .page-header {
+      background: linear-gradient(135deg, #4F86F7 0%, #10B981 100%);
+      color: white;
+      padding: 48px 0;
+      text-align: center;
+    }
+    .page-header h1 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      opacity: 0.9;
+      font-size: 1rem;
+    }
+    
+    /* 工具栏 */
+    .translator-toolbar {
+      background: white;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--gray-200);
+      position: sticky;
+      top: 64px;
+      z-index: 90;
+    }
+    .lang-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+    }
+    .lang-btn {
+      padding: 10px 20px;
+      border: 2px solid var(--gray-200);
+      border-radius: 24px;
+      background: white;
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .lang-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+    .lang-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: white;
+    }
+    
+    /* 分类标签 */
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      padding: 24px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .category-tabs::-webkit-scrollbar {
+      display: none;
+    }
+    .category-tab {
+      padding: 10px 20px;
+      border-radius: var(--radius);
+      background: var(--gray-100);
+      color: var(--gray-600);
+      font-size: 0.9rem;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    .category-tab:hover {
+      background: var(--primary-light);
+      color: var(--primary);
+    }
+    .category-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+    
+    /* 短语卡片 */
+    .phrase-list {
+      display: grid;
+      gap: 16px;
+      padding-bottom: 48px;
+    }
+    .phrase-card {
+      background: white;
+      border-radius: var(--radius-md);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      transition: all 0.2s;
+    }
+    .phrase-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--primary-light);
+    }
+    .phrase-original {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 16px;
+    }
+    .phrase-translations {
+      display: grid;
+      gap: 12px;
+    }
+    .translation-item {
+      display: grid;
+      grid-template-columns: 60px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      background: var(--gray-50);
+      border-radius: var(--radius);
+    }
+    .lang-tag {
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .lang-tag.en { background: #E3F2FD; color: #1565C0; }
+    .lang-tag.ja { background: #FCE4EC; color: #C2185B; }
+    .lang-tag.ko { background: #E8F5E9; color: #2E7D32; }
+    .lang-tag.th { background: #FFF3E0; color: #E65100; }
+    .lang-tag.fr { background: #F3E5F5; color: #7B1FA2; }
+    
+    .translation-text {
+      font-size: 0.95rem;
+      color: var(--gray-800);
+    }
+    .pronunciation {
+      font-size: 0.8rem;
+      color: var(--gray-500);
+      font-style: italic;
+    }
+    .copy-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+    .copy-btn.copied {
+      background: var(--secondary);
+      color: white;
+    }
+    
+    /* 搜索框 */
+    .search-box {
+      max-width: 500px;
+      margin: 0 auto 24px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 12px 20px;
+      border: 2px solid var(--gray-200);
+      border-radius: 24px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-box input:focus {
+      border-color: var(--primary);
+    }
+    
+    /* 空状态 */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--gray-500);
+    }
+    .empty-state .icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+    
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .page-header {
+        padding: 32px 0;
+      }
+      .page-header h1 {
+        font-size: 1.5rem;
+      }
+      .lang-btn {
+        padding: 8px 16px;
+        font-size: 0.85rem;
+      }
+      .translation-item {
+        grid-template-columns: 50px 1fr;
+        gap: 8px;
+      }
+      .pronunciation {
+        grid-column: 2;
+      }
+      .copy-btn {
+        grid-column: 2;
+        justify-self: start;
+      }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container">
+      <a href="index.html" class="logo">🧭 游导旅游</a>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="routes.html">线路</a>
+        <a href="guides.html">导游</a>
+        <a href="tools.html">工具</a>
+        <a href="help.html">帮助</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 页面标题 -->
+  <header class="page-header">
+    <div class="container">
+      <h1>🌐 旅行常用语翻译</h1>
+      <p>6大场景 · 5种语言 · 轻松出行</p>
+    </div>
+  </header>
+
+  <!-- 语言选择器 -->
+  <section id="main-content" class="translator-toolbar">
+    <div class="container">
+      <div class="lang-selector">
+        <button class="lang-btn active" data-lang="en">🇬🇧 英语</button>
+        <button class="lang-btn" data-lang="ja">🇯🇵 日语</button>
+        <button class="lang-btn" data-lang="ko">🇰🇷 韩语</button>
+        <button class="lang-btn" data-lang="th">🇹🇭 泰语</button>
+        <button class="lang-btn" data-lang="fr">🇫🇷 法语</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 主内容 -->
+  <main class="container">
+    <!-- 搜索框 -->
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="搜索短语...">
+    </div>
+    
+    <!-- 分类标签 -->
+    <div class="category-tabs">
+      <button class="category-tab active" data-category="all">全部</button>
+      <button class="category-tab" data-category="greetings">👋 问候语</button>
+      <button class="category-tab" data-category="directions">🧭 问路</button>
+      <button class="category-tab" data-category="shopping">🛒 购物</button>
+      <button class="category-tab" data-category="restaurant">🍽️ 餐厅</button>
+      <button class="category-tab" data-category="hotel">🏨 酒店</button>
+      <button class="category-tab" data-category="emergency">🚨 紧急情况</button>
+    </div>
+    
+    <!-- 短语列表 -->
+    <div class="phrase-list" id="phraseList">
+      <!-- 动态生成 -->
+    </div>
+    
+    <!-- 空状态 -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="icon">🔍</div>
+      <p>未找到相关短语</p>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <p>&copy; 2024 游导旅游 · 让旅行更简单</p>
+    </div>
+  </footer>
+
+  <script>
+    // 短语数据
+    const phrases = [
+      // 问候语
+      {
+        id: 1,
+        category: 'greetings',
+        original: '你好',
+        translations: {
+          en: { text: 'Hello', pron: 'həˈloʊ' },
+          ja: { text: 'こんにちは', pron: 'konnichiwa' },
+          ko: { text: '안녕하세요', pron: 'annyeonghaseyo' },
+          th: { text: 'สวัสดี', pron: 'sawasdee' },
+          fr: { text: 'Bonjour', pron: 'bɔ̃ʒuʀ' }
+        }
+      },
+      {
+        id: 2,
+        category: 'greetings',
+        original: '早上好',
+        translations: {
+          en: { text: 'Good morning', pron: 'ɡʊd ˈmɔːrnɪŋ' },
+          ja: { text: 'おはようございます', pron: 'ohayou gozaimasu' },
+          ko: { text: '좋은 아침', pron: 'joeun achim' },
+          th: { text: 'สวัสดีตอนเช้า', pron: 'sawasdee tao chao' },
+          fr: { text: 'Bonjour', pron: 'bɔ̃ʒuʀ' }
+        }
+      },
+      {
+        id: 3,
+        category: 'greetings',
+        original: '晚上好',
+        translations: {
+          en: { text: 'Good evening', pron: 'ɡʊd ˈiːvnɪŋ' },
+          ja: { text: 'こんばんは', pron: 'konbanwa' },
+          ko: { text: '좋은 저녁', pron: 'joeun jeonyeok' },
+          th: { text: 'สวัสดีตอนเย็น', pron: 'sawasdee tao yen' },
+          fr: { text: 'Bonsoir', pron: 'bɔ̃swaʀ' }
+        }
+      },
+      {
+        id: 4,
+        category: 'greetings',
+        original: '再见',
+        translations: {
+          en: { text: 'Goodbye', pron: 'ɡʊdˈbaɪ' },
+          ja: { text: 'さようなら', pron: 'sayounara' },
+          ko: { text: '안녕히 가세요', pron: 'annyeonghi gaseyo' },
+          th: { text: 'ลาก่อน', pron: 'la kon' },
+          fr: { text: 'Au revoir', pron: 'o ʀəvwaʀ' }
+        }
+      },
+      {
+        id: 5,
+        category: 'greetings',
+        original: '谢谢',
+        translations: {
+          en: { text: 'Thank you', pron: 'θæŋk juː' },
+          ja: { text: 'ありがとうございます', pron: 'arigatou gozaimasu' },
+          ko: { text: '감사합니다', pron: 'gamsahamnida' },
+          th: { text: 'ขอบคุณ', pron: 'khob khun' },
+          fr: { text: 'Merci', pron: 'mɛʀsi' }
+        }
+      },
+      {
+        id: 6,
+        category: 'greetings',
+        original: '请',
+        translations: {
+          en: { text: 'Please', pron: 'pliːz' },
+          ja: { text: 'お願いします', pron: 'onegaishimasu' },
+          ko: { text: '제발 / 말씀하세요', pron: 'jebal' },
+          th: { text: 'กรุณา', pron: 'karuna' },
+          fr: { text: "S'il vous plaît", pron: 'sil vu plɛ' }
+        }
+      },
+      {
+        id: 7,
+        category: 'greetings',
+        original: '对不起',
+        translations: {
+          en: { text: "I'm sorry", pron: 'aɪm ˈsɒri' },
+          ja: { text: 'ごめんなさい', pron: 'gomen nasai' },
+          ko: { text: '죄송합니다', pron: 'joesonghamnida' },
+          th: { text: 'ขอโทษ', pron: 'kho thot' },
+          fr: { text: 'Je suis désolé(e)', pron: 'ʒə sɥi dezo' }
+        }
+      },
+      {
+        id: 8,
+        category: 'greetings',
+        original: '没关系',
+        translations: {
+          en: { text: "It's okay / No problem", pron: 'ɪts oʊˈkeɪ' },
+          ja: { text: '大丈夫ですよ', pron: 'daijoubu desu yo' },
+          ko: { text: '괜찮아요', pron: 'gwaenchanayo' },
+          th: { text: 'ไม่เป็นไร', pron: 'mai pen rai' },
+          fr: { text: 'Ce n\'est rien', pron: 'sə nɛ ʀjɛ̃' }
+        }
+      },
+      
+      // 问路
+      {
+        id: 9,
+        category: 'directions',
+        original: '请问...在哪里？',
+        translations: {
+          en: { text: 'Where is...?', pron: 'weər ɪz' },
+          ja: { text: '...はどこですか？', pron: '...wa doko desu ka' },
+          ko: { text: '...어디에 있나요?', pron: '...eodie innayo' },
+          th: { text: '...อยู่ที่ไหน?', pron: '...yuu tii nai' },
+          fr: { text: 'Où est...?', pron: 'u ɛ' }
+        }
+      },
+      {
+        id: 10,
+        category: 'directions',
+        original: '火车站',
+        translations: {
+          en: { text: 'Train station', pron: 'treɪn ˈsteɪʃn' },
+          ja: { text: '駅', pron: 'eki' },
+          ko: { text: '기차역', pron: 'gichayeok' },
+          th: { text: 'สถานีรถไฟ', pron: 'satani rot fai' },
+          fr: { text: 'Gare', pron: 'ɡaʀ' }
+        }
+      },
+      {
+        id: 11,
+        category: 'directions',
+        original: '机场',
+        translations: {
+          en: { text: 'Airport', pron: 'ˈeərpɔːrt' },
+          ja: { text: '空港', pron: 'kuukou' },
+          ko: { text: '공항', pron: 'gonghang' },
+          th: { text: 'สนามบิน', pron: 'sanam bin' },
+          fr: { text: 'Aéroport', pron: 'aɛʀɔpɔʀ' }
+        }
+      },
+      {
+        id: 12,
+        category: 'directions',
+        original: '银行',
+        translations: {
+          en: { text: 'Bank', pron: 'bæŋk' },
+          ja: { text: '銀行', pron: 'ginkou' },
+          ko: { text: '은행', pron: 'eunhaeng' },
+          th: { text: 'ธนาคาร', pron: 'tanakhan' },
+          fr: { text: 'Banque', pron: 'bɑ̃k' }
+        }
+      },
+      {
+        id: 13,
+        category: 'directions',
+        original: '医院',
+        translations: {
+          en: { text: 'Hospital', pron: 'ˈhɒspɪtl' },
+          ja: { text: '病院', pron: 'byouin' },
+          ko: { text: '병원', pron: 'byeongwon' },
+          th: { text: 'โรงพยาบาล', pron: 'rong payaban' },
+          fr: { text: 'Hôpital', pron: 'ɔpital' }
+        }
+      },
+      {
+        id: 14,
+        category: 'directions',
+        original: '一直走',
+        translations: {
+          en: { text: 'Go straight', pron: 'ɡoʊ streɪt' },
+          ja: { text: 'まっすぐ行ってください', pron: 'massugu itte kudasai' },
+          ko: { text: '쭉 가세요', pron: 'jjuk gaseyo' },
+          th: { text: 'เดินตรงไป', pron: 'doen trong pai' },
+          fr: { text: 'Allez tout droit', pron: 'ale tu dʀwa' }
+        }
+      },
+      {
+        id: 15,
+        category: 'directions',
+        original: '左转 / 右转',
+        translations: {
+          en: { text: 'Turn left / Turn right', pron: 'tɜːrn left' },
+          ja: { text: '左に曲がる / 右に曲がる', pron: 'hidari ni magaru / migi ni magaru' },
+          ko: { text: '왼쪽으로 / 오른쪽으로', pron: 'oenjjogeuro / oreunjjogeuro' },
+          th: { text: 'เลี้ยวซ้าย / เลี้ยวขวา', pron: 'liaw sai / liaw khwa' },
+          fr: { text: 'Tournez à gauche / droite', pron: 'tuʀne a ɡoʃ / dʀwat' }
+        }
+      },
+      
+      // 购物
+      {
+        id: 16,
+        category: 'shopping',
+        original: '这个多少钱？',
+        translations: {
+          en: { text: 'How much is this?', pron: 'haʊ mʌtʃ ɪz ðɪs' },
+          ja: { text: 'これはいくらですか？', pron: 'kore wa ikura desu ka' },
+          ko: { text: '이거 얼마예요?', pron: 'igeo eolmayeyo' },
+          th: { text: 'นี่ราคาเท่าไหร่?', pron: 'nii raka tao rai' },
+          fr: { text: 'Combien ça coûte?', pron: 'kɔ̃bjɛ̃ sa kut' }
+        }
+      },
+      {
+        id: 17,
+        category: 'shopping',
+        original: '太贵了',
+        translations: {
+          en: { text: "It's too expensive", pron: 'ɪts tuː ɪkˈspensɪv' },
+          ja: { text: '高すぎます', pron: 'takasugimasu' },
+          ko: { text: '너무 비싸요', pron: 'neomu bissayo' },
+          th: { text: 'แพงเกินไป', pron: 'paeng koen pai' },
+          fr: { text: "C'est trop cher", pron: 'sɛ tʀo ʃɛʀ' }
+        }
+      },
+      {
+        id: 18,
+        category: 'shopping',
+        original: '能便宜点吗？',
+        translations: {
+          en: { text: 'Can you give me a discount?', pron: 'kæn juː ɡɪv mi ə ˈdɪskaʊnt' },
+          ja: { text: 'やすくしていただけますか？', pron: 'yasuku shite itadakemasu ka' },
+          ko: { text: '깎아 주실 수 있어요?', pron: 'kkaka jusil su isseoyo' },
+          th: { text: 'ลดได้ไหม?', pron: 'lot dai mai' },
+          fr: { text: 'Vous pouvez faire une remise?', pron: 'vu puve fɛʀ yn ʀəmiz' }
+        }
+      },
+      {
+        id: 19,
+        category: 'shopping',
+        original: '我要买这个',
+        translations: {
+          en: { text: "I'll take this one", pron: 'aɪl teɪk ðɪs wʌn' },
+          ja: { text: 'これをください', pron: 'kore wo kudasai' },
+          ko: { text: '이거 주세요', pron: 'igeo juseyo' },
+          th: { text: 'เอาอันนี้', pron: 'ao an nii' },
+          fr: { text: 'Je prends celui-ci', pron: 'ʒə pʀɑ̃ səlɥi si' }
+        }
+      },
+      {
+        id: 20,
+        category: 'shopping',
+        original: '可以刷卡吗？',
+        translations: {
+          en: { text: 'Do you accept cards?', pron: 'duː juː əkˈsept kɑːrdz' },
+          ja: { text: 'カードで払えますか？', pron: 'kaado de haraemasu ka' },
+          ko: { text: '카드 결제 되나요?', pron: 'kadeu gyeolje doenayo' },
+          th: { text: 'จ่ายบัตรได้ไหม?', pron: 'jaay bat dai mai' },
+          fr: { text: 'Acceptez-vous les cartes?', pron: 'aksepte vu le kaʀt' }
+        }
+      },
+      
+      // 餐厅
+      {
+        id: 21,
+        category: 'restaurant',
+        original: '我想预订座位',
+        translations: {
+          en: { text: 'I would like to reserve a table', pron: 'aɪ wʊd laɪk tuː rɪˈzɜːrv ə ˈteɪbl' },
+          ja: { text: '席を予約したいです', pron: 'seki wo yoyaku shitai desu' },
+          ko: { text: '자리 예약하고 싶어요', pron: 'jari yeyakhago sipeoyo' },
+          th: { text: 'อยากจองโต๊ะ', pron: 'yaak jong to' },
+          fr: { text: 'Je voudrais réserver une table', pron: 'ʒə vudʀɛ ʀezɛʀve yn tabəl' }
+        }
+      },
+      {
+        id: 22,
+        category: 'restaurant',
+        original: '菜单在哪里？',
+        translations: {
+          en: { text: 'Where is the menu?', pron: 'weər ɪz ðə ˈmenjuː' },
+          ja: { text: 'メニューはどこですか？', pron: 'menyuu wa doko desu ka' },
+          ko: { text: '메뉴 어디에 있어요?', pron: 'menyu eodie isseoyo' },
+          th: { text: 'เมนูอยู่ที่ไหน?', pron: 'menu yuu tii nai' },
+          fr: { text: 'Où est le menu?', pron: 'u ɛ lə məny' }
+        }
+      },
+      {
+        id: 23,
+        category: 'restaurant',
+        original: '请给我水',
+        translations: {
+          en: { text: 'Please give me some water', pron: 'pliːz ɡɪv miː sʌm ˈwɔːtər' },
+          ja: { text: 'お水をください', pron: 'omizu wo kudasai' },
+          ko: { text: '물 주세요', pron: 'mul juseyo' },
+          th: { text: 'ขอน้ำหน่อย', pron: 'kho naam nnoi' },
+          fr: { text: "De l'eau, s'il vous plaît", pron: 'də lo sil vu plɛ' }
+        }
+      },
+      {
+        id: 24,
+        category: 'restaurant',
+        original: '好吃',
+        translations: {
+          en: { text: 'Delicious', pron: 'dɪˈlɪʃəs' },
+          ja: { text: 'おいしい', pron: 'oishii' },
+          ko: { text: '맛있어요', pron: 'masisseoyo' },
+          th: { text: 'อร่อย', pron: 'a roi' },
+          fr: { text: 'Délicieux', pron: 'delisjø' }
+        }
+      },
+      {
+        id: 25,
+        category: 'restaurant',
+        original: '买单',
+        translations: {
+          en: { text: 'Check, please / Bill, please', pron: 'tʃek pliːz' },
+          ja: { text: 'お会計お願いします', pron: 'okaikei onegaishimasu' },
+          ko: { text: '계산해 주세요', pron: 'gyesanhae juseyo' },
+          th: { text: 'เก็บเงินด้วย', pron: 'kep ngoen duay' },
+          fr: { text: "L'addition, s'il vous plaît", pron: 'ladisjɔ̃ sil vu plɛ' }
+        }
+      },
+      
+      // 酒店
+      {
+        id: 26,
+        category: 'hotel',
+        original: '我想办理入住',
+        translations: {
+          en: { text: 'I would like to check in', pron: 'aɪ wʊd laɪk tuː tʃek ɪn' },
+          ja: { text: 'チェックインお願いします', pron: 'chekkuin onegaishimasu' },
+          ko: { text: '체크인 하고 싶어요', pron: 'chekeuin hado sipeoyo' },
+          th: { text: 'อยากเช็คอิน', pron: 'yaak chek in' },
+          fr: { text: 'Je voudrais enregistrer', pron: 'ʒə vudʀɛ ɑ̃ʀəʒistʀe' }
+        }
+      },
+      {
+        id: 27,
+        category: 'hotel',
+        original: '房间钥匙',
+        translations: {
+          en: { text: 'Room key', pron: 'ruːm kiː' },
+          ja: { text: '部屋の鍵', pron: 'heya no kagi' },
+          ko: { text: '방 열쇠', pron: 'bang yeolsoe' },
+          th: { text: 'กุญแจห้อง', pron: 'kunjae hong' },
+          fr: { text: 'Clé de la chambre', pron: 'kle də la ʃɑ̃bʀə' }
+        }
+      },
+      {
+        id: 28,
+        category: 'hotel',
+        original: 'Wi-Fi密码是多少？',
+        translations: {
+          en: { text: "What's the Wi-Fi password?", pron: 'wɒts ðə waɪfaɪ ˈpæswɜːrd' },
+          ja: { text: 'Wi-Fiのパスワードは何ですか？', pron: 'wifi no pasuwaado wa nan desu ka' },
+          ko: { text: 'Wi-Fi 비밀번호 뭐예요?', pron: 'wifi bimilbeonho mwoyeyo' },
+          th: { text: 'รหัส Wi-Fi คืออะไร?', pron: 'rahat wifi khue a rai' },
+          fr: { text: 'Quel est le mot de passe Wi-Fi?', pron: 'kɛl ɛ lə mo də pas wifi' }
+        }
+      },
+      {
+        id: 29,
+        category: 'hotel',
+        original: '退房时间是几点？',
+        translations: {
+          en: { text: 'What time is checkout?', pron: 'wɒt taɪm ɪz ˈtʃekaʊt' },
+          ja: { text: 'チェックアウトは何時ですか？', pron: 'chekkuauto wa nanji desu ka' },
+          ko: { text: '체크아웃 몇 시예요?', pron: 'chekeauto myeons siyeyo' },
+          th: { text: 'เช็คเอาต์กี่โมง?', pron: 'chek ao tii moong' },
+          fr: { text: 'À quelle heure est le départ?', pron: 'a kɛl œʀ ɛ lə depaʀ' }
+        }
+      },
+      {
+        id: 30,
+        category: 'hotel',
+        original: '有热水吗？',
+        translations: {
+          en: { text: 'Is there hot water?', pron: 'ɪz ðeər hɒt ˈwɔːtər' },
+          ja: { text: 'お湯はありますか？', pron: 'oyu wa arimasu ka' },
+          ko: { text: '따뜻한 물 있어요?', pron: 'tttteuthan mul isseoyo' },
+          th: { text: 'มีน้ำร้อนไหม?', pron: 'mii naam ron mai' },
+          fr: { text: 'Y a-t-il de l\'eau chaude?', pron: 'ja til də lo ʃod' }
+        }
+      },
+      
+      // 紧急情况
+      {
+        id: 31,
+        category: 'emergency',
+        original: '救命！',
+        translations: {
+          en: { text: 'Help!', pron: 'help' },
+          ja: { text: '助けて！', pron: 'tasukete' },
+          ko: { text: '도와주세요!', pron: 'dowajuseyo' },
+          th: { text: 'ช่วยด้วย!', pron: 'chuay duay' },
+          fr: { text: 'Au secours!', pron: 'o səkuʀ' }
+        }
+      },
+      {
+        id: 32,
+        category: 'emergency',
+        original: '叫救护车',
+        translations: {
+          en: { text: 'Call an ambulance', pron: 'kɔːl æn ˈæmbjələns' },
+          ja: { text: '救急車を呼んでください', pron: 'kyuukyuusha wo yonde kudasai' },
+          ko: { text: '구급차 불러주세요', pron: 'gugeubcha bulgeojuseyo' },
+          th: { text: 'เรียกรถพยาบาล', pron: 'riak rot payaban' },
+          fr: { text: 'Appelez une ambulance', pron: 'aple yn ambyylɑ̃s' }
+        }
+      },
+      {
+        id: 33,
+        category: 'emergency',
+        original: '我迷路了',
+        translations: {
+          en: { text: "I'm lost", pron: 'aɪm lɒst' },
+          ja: { text: '道に迷いました', pron: 'michi ni mayoimashita' },
+          ko: { text: '길을 잃었어요', pron: 'gireul ileosseoyo' },
+          th: { text: 'หลงทาง', pron: 'long thang' },
+          fr: { text: 'Je suis perdu(e)', pron: 'ʒə sɥi pɛʀdy' }
+        }
+      },
+      {
+        id: 34,
+        category: 'emergency',
+        original: '我东西丢了',
+        translations: {
+          en: { text: 'I lost my belongings', pron: 'aɪ lɒst maɪ bɪˈlɒŋɪŋz' },
+          ja: { text: '荷物をなくしました', pron: 'nimotsu wo nakushimashita' },
+          ko: { text: '짐을 잃어버렸어요', pron: 'jimeul ileobeoryeosseoyo' },
+          th: { text: 'ของหาย', pron: 'khong haai' },
+          fr: { text: "J'ai perdu mes affaires", pron: 'ʒe pɛʀdy me zafɛʀ' }
+        }
+      },
+      {
+        id: 35,
+        category: 'emergency',
+        original: '我需要帮助',
+        translations: {
+          en: { text: 'I need help', pron: 'aɪ niːd help' },
+          ja: { text: '助けが必要です', pron: 'tasuke ga hitsuyou desu' },
+          ko: { text: '도움 필요해요', pron: 'doum pilyohayeyo' },
+          th: { text: 'ต้องการความช่วยเหลือ', pron: 'tongkan khwaam chuam luea' },
+          fr: { text: "J'ai besoin d'aide", pron: 'ʒe bəzwɛ̃ dɛd' }
+        }
+      },
+      {
+        id: 36,
+        category: 'emergency',
+        original: '在哪里可以买到药？',
+        translations: {
+          en: { text: 'Where can I buy medicine?', pron: 'weər kæn aɪ baɪ ˈmedɪsn' },
+          ja: { text: 'はどこで買えますか？', pron: 'kusuri wa doko de kaemasu ka' },
+          ko: { text: '약은 어디서 살 수 있어요?', pron: 'yageun eodiseo sal su isseoyo' },
+          th: { text: 'ซื้อยาได้ที่ไหน?', pron: 'sue yaa dai tii nai' },
+          fr: { text: 'Où puis-je acheter des médicaments?', pron: 'u pɥiʒ aʃte de medikamɑ̃' }
+        }
+      }
+    ];
+
+    // 当前状态
+    let currentCategory = 'all';
+    let currentLang = 'en';
+    let searchQuery = '';
+
+    // DOM元素
+    const phraseList = document.getElementById('phraseList');
+    const emptyState = document.getElementById('emptyState');
+    const searchInput = document.getElementById('searchInput');
+
+    // 渲染短语列表
+    function renderPhrases() {
+      const filtered = phrases.filter(phrase => {
+        const matchCategory = currentCategory === 'all' || phrase.category === currentCategory;
+        const matchSearch = searchQuery === '' || 
+          phrase.original.toLowerCase().includes(searchQuery) ||
+          phrase.translations[currentLang].text.toLowerCase().includes(searchQuery);
+        return matchCategory && matchSearch;
+      });
+
+      if (filtered.length === 0) {
+        phraseList.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      phraseList.innerHTML = filtered.map(phrase => `
+        <div class="phrase-card" data-id="${phrase.id}">
+          <div class="phrase-original">${phrase.original}</div>
+          <div class="phrase-translations">
+            ${['en', 'ja', 'ko', 'th', 'fr'].map(lang => {
+              const t = phrase.translations[lang];
+              const langNames = { en: '英语', ja: '日语', ko: '韩语', th: '泰语', fr: '法语' };
+              const langFlags = { en: '🇬🇧', ja: '🇯🇵', ko: '🇰🇷', th: '🇹🇭', fr: '🇫🇷' };
+              return `
+                <div class="translation-item">
+                  <span class="lang-tag ${lang}">${langFlags[lang]}</span>
+                  <div>
+                    <div class="translation-text">${t.text}</div>
+                    <div class="pronunciation">${t.pron}</div>
+                  </div>
+                  <button class="copy-btn" data-text="${t.text}">复制</button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+
+      // 绑定复制按钮事件
+      document.querySelectorAll('.copy-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const text = btn.dataset.text;
+          await navigator.clipboard.writeText(text);
+          btn.textContent = '已复制';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = '复制';
+            btn.classList.remove('copied');
+          }, 1500);
+        });
+      });
+    }
+
+    // 语言切换
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentLang = btn.dataset.lang;
+        renderPhrases();
+      });
+    });
+
+    // 分类切换
+    document.querySelectorAll('.category-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentCategory = tab.dataset.category;
+        renderPhrases();
+      });
+    });
+
+    // 搜索
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase();
+      renderPhrases();
+    });
+
+    // 初始渲染
+    renderPhrases();
+  </script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>

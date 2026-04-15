@@ -8,7 +8,14 @@
     <meta name="keywords" content="注册,账号注册,新用户注册,导游注册,游客注册">
     <meta name="robots" content="noindex, follow">
     <link rel="canonical" href="https://youdao-travel.com/register.html">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+    <!-- i18n 语言配置 -->
+    <script src="js/i18n.js" defer></script>
     <style>
         * {
             margin: 0;
@@ -519,21 +526,132 @@
                 font-size: 12px;
             }
         }
-    </style>
+    
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body class="tourist-mode">
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
     <div class="auth-container">
+<main id="main-content" role="main">
         <div class="auth-box">
             <!-- Tab切换 -->
             <div class="auth-tabs">
                 <button class="auth-tab tourist-tab active" onclick="switchTab('tourist')">
                     <span class="tab-icon">🎬</span>
-                    <span class="tab-text">游客注册</span>
+                    <span class="tab-text" data-i18n="register.touristTab">游客注册</span>
                 </button>
                 <button class="auth-tab guide-tab" onclick="switchTab('guide')">
                     <span class="tab-icon">🎒</span>
-                    <span class="tab-text">导游入驻</span>
+                    <span class="tab-text" data-i18n="register.guideTab">导游入驻</span>
                 </button>
+                <!-- 语言切换 -->
+                <div class="lang-switcher" style="margin-left: auto; margin-right: 10px;">
+                  <button class="lang-btn active" data-lang="zh" data-lang-btn>中文</button>
+                  <button class="lang-btn" data-lang="en" data-lang-btn>EN</button>
+                </div>
             </div>
             
             <div class="auth-form-wrap">
@@ -541,72 +659,48 @@
                 <div class="form-section tourist-section active" id="touristSection">
                     <div class="auth-header">
                         <div class="logo">🎬</div>
-                        <h1>游客注册</h1>
-                        <p>开启你的精彩旅行</p>
-                    </div>
-                    
-                    <!-- 礼包预览 -->
-                    <div class="register-gift-preview" id="touristGiftPreview">
-                        <h4>🎁 注册即享新人礼包</h4>
-                        <div class="gift-preview-items">
-                            <div class="gift-preview-item">
-                                <span>📋</span>
-                                <span>出行清单生成器</span>
-                            </div>
-                            <div class="gift-preview-item">
-                                <span>🗺️</span>
-                                <span>行程规划工具</span>
-                            </div>
-                            <div class="gift-preview-item">
-                                <span>📚</span>
-                                <span>旅行知识库</span>
-                            </div>
-                            <div class="gift-preview-item">
-                                <span>🔧</span>
-                                <span>实用工具集</span>
-                            </div>
-                        </div>
+                        <h1 data-i18n="register.touristTitle">游客注册</h1>
+                        <p data-i18n="register.touristSubtitle">开启你的精彩旅行</p>
                     </div>
                     
                     <form id="touristRegisterForm">
                         <div class="form-group">
-                            <label for="touristPhone">手机号 <span class="required">*</span></label>
-                            <input type="tel" id="touristPhone" placeholder="请输入手机号" required>
-                            <div class="error-message" id="touristPhoneError"></div>
+                            <label for="touristPhone" data-i18n="register.phone">手机号 <span class="required">*</span></label>
+                            <input type="tel" id="touristPhone" data-type="phone" placeholder="请输入11位手机号" required>
                         </div>
                         
                         <div class="form-group">
-                            <label for="touristCode">验证码 <span class="required">*</span></label>
+                            <label for="touristCode" data-i18n="register.verifyCode">验证码 <span class="required">*</span></label>
                             <div class="input-with-btn">
-                                <input type="text" id="touristCode" placeholder="请输入任意4位数字" required>
-                                <button type="button" class="verify-btn" onclick="sendVerifyCode(this)">获取验证码</button>
+                                <input type="text" id="touristCode" data-type="captcha" placeholder="请输入4-6位验证码" required maxlength="6">
+                                <button type="button" class="verify-btn" data-i18n="register.sendCode" onclick="sendVerifyCode(this)">获取验证码</button>
                             </div>
-                            <div class="field-note" style="font-size:12px;color:#7C3AED;margin-top:5px;">💡 演示模式：可输入任意数字</div>
-                            <div class="error-message" id="touristCodeError"></div>
+                            <div class="field-note" style="font-size:12px;color:#7C3AED;margin-top:5px;">💡 演示模式：可输入任意4-6位数字</div>
                         </div>
                         
                         <div class="form-group">
-                            <label for="touristPassword">设置密码 <span class="required">*</span></label>
-                            <input type="password" id="touristPassword" placeholder="请设置密码（至少6位）" required minlength="6">
-                            <div class="error-message" id="touristPasswordError"></div>
+                            <label for="touristPassword" data-i18n="register.password">设置密码 <span class="required">*</span></label>
+                            <input type="password" id="touristPassword" data-validate="password" placeholder="请设置密码（6-20位）" required minlength="6" maxlength="20">
                         </div>
                         
                         <div class="form-group">
-                            <label for="touristConfirm">确认密码 <span class="required">*</span></label>
+                            <label for="touristConfirm" data-i18n="register.confirmPassword">确认密码 <span class="required">*</span></label>
                             <input type="password" id="touristConfirm" placeholder="请再次输入密码" required>
-                            <div class="error-message" id="touristConfirmError"></div>
                         </div>
                         
                         <div class="agreement-check">
                             <input type="checkbox" id="touristAgree" required>
-                            <label for="touristAgree">我已阅读并同意 <a href="user-agreement.html">《用户协议》</a> 和 <a href="privacy-policy.html">《隐私政策》</a></label>
+                            <label for="touristAgree" data-i18n="register.agreeTerms">我已阅读并同意</label>
+                            <a href="user-agreement.html" data-i18n="register.terms">《用户协议》</a>
+                            <span>和</span>
+                            <a href="privacy-policy.html" data-i18n="register.privacy">《隐私政策》</a>
                         </div>
                         
-                        <button type="submit" class="btn-primary" id="touristRegisterBtn">游客注册</button>
+                        <button type="submit" class="btn-primary" id="touristRegisterBtn" data-i18n="register.registerBtn">游客注册</button>
                     </form>
                     
                     <div class="auth-footer">
-                        已有账号？<a href="login.html">立即登录</a>
+                        <span data-i18n="register.hasAccount">已有账号？</span><a href="login.html" data-i18n="register.goLogin">立即登录</a>
                     </div>
                 </div>
                 
@@ -660,23 +754,20 @@
                             
                             <div class="form-group">
                                 <label for="guideName">真实姓名 <span class="required">*</span></label>
-                                <input type="text" id="guideName" placeholder="请输入真实姓名（与证件一致）" required>
-                                <div class="error-message" id="guideNameError"></div>
+                                <input type="text" id="guideName" data-validate="name" placeholder="请输入真实姓名（与证件一致）" required>
                             </div>
                             
                             <div class="form-group">
                                 <label for="guidePhone">手机号 <span class="required">*</span></label>
-                                <input type="tel" id="guidePhone" placeholder="请输入手机号" required>
-                                <div class="error-message" id="guidePhoneError"></div>
+                                <input type="tel" id="guidePhone" data-type="phone" placeholder="请输入11位手机号" required>
                             </div>
                             
                             <div class="form-group">
                                 <label for="guideCert">导游证号 <span class="required">*</span></label>
-                                <input type="text" id="guideCert" placeholder="请输入您的导游证号" required>
+                                <input type="text" id="guideCert" data-validate="certCode" placeholder="请输入您的导游证号" required>
                                 <div class="field-note" id="guideCertNote">
                                     ✏️ 请填写真实的导游证号，用于身份验证
                                 </div>
-                                <div class="error-message" id="guideCertError"></div>
                             </div>
                             
                             <div class="input-row">
@@ -689,7 +780,6 @@
                                         <option value="5">5-10年</option>
                                         <option value="10">10年以上</option>
                                     </select>
-                                    <div class="error-message" id="guideYearsError"></div>
                                 </div>
                                 
                                 <div class="form-group">
@@ -701,7 +791,6 @@
                                         <option value="75">50-100团</option>
                                         <option value="100">100团以上</option>
                                     </select>
-                                    <div class="error-message" id="guideExpError"></div>
                                 </div>
                             </div>
                         </div>
@@ -717,69 +806,69 @@
                                 <label>擅长目的地（可多选）<span class="required">*</span></label>
                                 <div class="checkbox-group" id="regionsGroup">
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="region" value="europe">
+                                        <input type="checkbox" name="region" value="europe" required id="region">
                                         <span class="checkmark"></span>
                                         欧洲
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="region" value="japan">
+                                        <input type="checkbox" name="region" value="japan" required id="region">
                                         <span class="checkmark"></span>
                                         日本
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="region" value="southeast">
+                                        <input type="checkbox" name="region" value="southeast" required id="region">
                                         <span class="checkmark"></span>
                                         东南亚
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="region" value="oceania">
+                                        <input type="checkbox" name="region" value="oceania" required id="region">
                                         <span class="checkmark"></span>
                                         澳新
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="region" value="mideast">
+                                        <input type="checkbox" name="region" value="mideast" required id="region">
                                         <span class="checkmark"></span>
                                         中东
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="region" value="china">
+                                        <input type="checkbox" name="region" value="china" required id="region">
                                         <span class="checkmark"></span>
                                         国内
                                     </label>
                                 </div>
-                                <div class="error-message" id="regionsError"></div>
+                                <div class="field-note" style="font-size:12px;color:#7C3AED;margin-top:8px;">💡 至少选择一个目的地</div>
                             </div>
                             
                             <div class="form-group">
                                 <label>服务语言（可多选）<span class="required">*</span></label>
                                 <div class="checkbox-group" id="languagesGroup">
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="language" value="chinese">
+                                        <input type="checkbox" name="language" value="chinese" required id="language">
                                         <span class="checkmark"></span>
                                         中文
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="language" value="english">
+                                        <input type="checkbox" name="language" value="english" required id="language">
                                         <span class="checkmark"></span>
                                         英语
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="language" value="japanese">
+                                        <input type="checkbox" name="language" value="japanese" required id="language">
                                         <span class="checkmark"></span>
                                         日语
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="language" value="korean">
+                                        <input type="checkbox" name="language" value="korean" required id="language">
                                         <span class="checkmark"></span>
                                         韩语
                                     </label>
                                     <label class="checkbox-item">
-                                        <input type="checkbox" name="language" value="thai">
+                                        <input type="checkbox" name="language" value="thai" required id="language">
                                         <span class="checkmark"></span>
                                         泰语
                                     </label>
                                 </div>
-                                <div class="error-message" id="languagesError"></div>
+                                <div class="field-note" style="font-size:12px;color:#7C3AED;margin-top:8px;">💡 至少选择一个服务语言</div>
                             </div>
                         </div>
                         
@@ -804,14 +893,12 @@
                         <!-- 设置密码 -->
                         <div class="form-group">
                             <label for="guidePassword">设置密码 <span class="required">*</span></label>
-                            <input type="password" id="guidePassword" placeholder="请设置密码（至少6位）" required minlength="6">
-                            <div class="error-message" id="guidePasswordError"></div>
+                            <input type="password" id="guidePassword" data-validate="password" placeholder="请设置密码（6-20位）" required minlength="6" maxlength="20">
                         </div>
                         
                         <div class="form-group">
                             <label for="guideConfirm">确认密码 <span class="required">*</span></label>
                             <input type="password" id="guideConfirm" placeholder="请再次输入密码" required>
-                            <div class="error-message" id="guideConfirmError"></div>
                         </div>
                         
                         <div class="agreement-check">
@@ -1145,5 +1232,13 @@
             }
         }
     </script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+  <script src="js/form-enhance.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
 </body>
 </html>

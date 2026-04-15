@@ -5,7 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>管理后台 - 游导旅游平台管理</title>
   <meta name="robots" content="noindex, nofollow">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
     <style>
         * {
             margin: 0;
@@ -501,9 +507,159 @@
             padding: 14px;
             font-size: 1rem;
         }
+    
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+<link rel="icon" href="images/favicon.svg" type="image/svg+xml">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+    <style>
+        /* 图表容器样式 */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .chart-card h3 {
+            font-size: 1.1rem;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 280px;
+        }
+
+        .chart-full {
+            grid-column: 1 / -1;
+        }
+
+        .chart-full .chart-wrapper {
+            height: 320px;
+        }
+
+        @media (max-width: 1024px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导旅游">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="images/icon-192.png">
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
 </head>
 <body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
     <!-- 登录模态框 -->
     <div id="loginModal" class="login-modal">
         <div class="login-box">
@@ -523,7 +679,7 @@
         <div class="logo">
             <a href="admin.html">⚙️ 游导旅游管理后台</a>
         </div>
-        <nav class="admin-nav">
+        <nav class="admin-nav" aria-label="主导航">
             <a href="admin.html" class="active">📊 仪表盘</a>
             <a href="admin-guides.html">🎤 导游管理</a>
             <a href="admin-users.html">👥 用户管理</a>
@@ -557,6 +713,49 @@
                 <div class="icon">⭐</div>
                 <div class="value" id="statReviews">-</div>
                 <div class="label">总评价数</div>
+            </div>
+        </div>
+
+        <!-- 数据图表 -->
+        <div class="charts-grid">
+            <!-- 用户注册趋势 -->
+            <div class="chart-card chart-full">
+                <h3>📈 用户注册趋势</h3>
+                <div class="chart-wrapper">
+                    <canvas id="userTrendChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 导游申请统计 -->
+            <div class="chart-card">
+                <h3>🎤 导游申请统计</h3>
+                <div class="chart-wrapper">
+                    <canvas id="guideStatsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 访问量统计 -->
+            <div class="chart-card">
+                <h3>👁️ 访问量统计</h3>
+                <div class="chart-wrapper">
+                    <canvas id="visitStatsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 热门目的地排行 -->
+            <div class="chart-card">
+                <h3>🏆 热门目的地 TOP 5</h3>
+                <div class="chart-wrapper">
+                    <canvas id="topDestinationsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- 评分分布 -->
+            <div class="chart-card">
+                <h3>⭐ 评价评分分布</h3>
+                <div class="chart-wrapper">
+                    <canvas id="ratingDistChart"></canvas>
+                </div>
             </div>
         </div>
 
@@ -808,14 +1007,245 @@
             }
         }
 
+        // 初始化图表
+        function initCharts() {
+            // 颜色配置
+            const colors = {
+                primary: 'rgba(102, 126, 234, 1)',
+                primaryLight: 'rgba(102, 126, 234, 0.2)',
+                success: 'rgba(16, 185, 129, 1)',
+                successLight: 'rgba(16, 185, 129, 0.2)',
+                warning: 'rgba(245, 158, 11, 1)',
+                warningLight: 'rgba(245, 158, 11, 0.2)',
+                danger: 'rgba(239, 68, 68, 1)',
+                dangerLight: 'rgba(239, 68, 68, 0.2)',
+                info: 'rgba(59, 130, 246, 1)',
+                infoLight: 'rgba(59, 130, 246, 0.2)',
+                purple: 'rgba(139, 92, 246, 1)',
+                pink: 'rgba(236, 72, 153, 1)'
+            };
+
+            // Chart.js 全局配置
+            Chart.defaults.font.family = "'PingFang SC', 'Microsoft YaHei', sans-serif";
+            Chart.defaults.color = '#666';
+
+            // 1. 用户注册趋势 - 折线图
+            const userTrendCtx = document.getElementById('userTrendChart').getContext('2d');
+            new Chart(userTrendCtx, {
+                type: 'line',
+                data: {
+                    labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月'],
+                    datasets: [{
+                        label: '新用户注册',
+                        data: [12, 19, 25, 38, 42, 55, 63],
+                        borderColor: colors.primary,
+                        backgroundColor: colors.primaryLight,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: colors.primary,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }, {
+                        label: '导游申请',
+                        data: [3, 5, 8, 12, 10, 15, 18],
+                        borderColor: colors.success,
+                        backgroundColor: 'transparent',
+                        tension: 0.4,
+                        borderDash: [5, 5],
+                        pointBackgroundColor: colors.success,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { usePointStyle: true, padding: 20 }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 2. 导游申请统计 - 柱状图
+            const guideStatsCtx = document.getElementById('guideStatsChart').getContext('2d');
+            new Chart(guideStatsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['历史文化', '美食探店', '户外探险', '城市观光', '亲子游'],
+                    datasets: [{
+                        label: '申请人数',
+                        data: [28, 35, 18, 42, 15],
+                        backgroundColor: [
+                            colors.primary,
+                            colors.success,
+                            colors.warning,
+                            colors.info,
+                            colors.purple
+                        ],
+                        borderRadius: 8,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 3. 访问量统计 - 环形图
+            const visitStatsCtx = document.getElementById('visitStatsChart').getContext('2d');
+            new Chart(visitStatsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['首页', '导游列表', '目的地', '游记攻略', '关于我们'],
+                    datasets: [{
+                        data: [35, 28, 18, 12, 7],
+                        backgroundColor: [
+                            colors.primary,
+                            colors.success,
+                            colors.warning,
+                            colors.info,
+                            colors.purple
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: { usePointStyle: true, padding: 15, font: { size: 12 } }
+                        }
+                    }
+                }
+            });
+
+            // 4. 热门目的地排行 - 水平柱状图
+            const topDestinationsCtx = document.getElementById('topDestinationsChart').getContext('2d');
+            new Chart(topDestinationsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['北京故宫', '杭州西湖', '成都熊猫基地', '西安兵马俑', '上海外滩'],
+                    datasets: [{
+                        label: '访问热度',
+                        data: [98, 92, 85, 78, 72],
+                        backgroundColor: [
+                            colors.danger,
+                            colors.success,
+                            colors.warning,
+                            colors.primary,
+                            colors.info
+                        ],
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        y: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 5. 评分分布 - 柱状图
+            const ratingDistCtx = document.getElementById('ratingDistChart').getContext('2d');
+            new Chart(ratingDistCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['5星', '4星', '3星', '2星', '1星'],
+                    datasets: [{
+                        label: '评价数量',
+                        data: [156, 89, 34, 12, 8],
+                        backgroundColor: [
+                            colors.success,
+                            colors.success,
+                            colors.warning,
+                            colors.danger,
+                            colors.danger
+                        ],
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
         function init() {
             if (!checkLogin()) return;
             loadStats();
             loadPendingGuides();
             loadRecentReviews();
+            initCharts();
         }
 
         document.addEventListener('DOMContentLoaded', init);
     </script>
+  <script src="js/performance.js" defer></script>
+  <script src="js/enhanced-common.js" defer></script>
+
+  <!-- PWA Service Worker -->
+  <script src="js/pwa.js" defer></script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
 </body>
 </html>

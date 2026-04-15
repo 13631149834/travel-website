@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" href="css/style.css" as="style">
+  <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/customer-service.css">
+  <link rel="stylesheet" href="css/enhanced.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <link rel="stylesheet" href="css/performance.css" media="print" onload="this.media=\'all\'">
+  <title>旅行问答社区 - 游导旅游</title>
+  <meta name="description" content="旅行问答社区，解答签证、交通、住宿、餐饮、购物、安全等各类旅行问题，与旅行达人交流经验。">
+  
+  <style>
+    /* 问答页面专属样式 */
+    :root {
+      --qa-primary: #6366F1;
+      --qa-secondary: #8B5CF6;
+      --qa-accent: #F59E0B;
+      --qa-success: #10B981;
+      --qa-bg: #F8FAFC;
+      --qa-card-bg: #FFFFFF;
+      --qa-border: #E5E7EB;
+    }
+
+    /* 页面顶部 Hero */
+    .qa-hero {
+      background: linear-gradient(180deg, #F5F3FF 0%, #fff 100%);
+      padding: 56px 0 48px;
+      text-align: center;
+    }
+    .qa-hero .icon-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--qa-primary), var(--qa-secondary));
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+    }
+    .qa-hero h1 {
+      font-size: 2.2rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .qa-hero p {
+      font-size: 1rem;
+      color: var(--gray-500);
+      max-width: 500px;
+      margin: 0 auto 28px;
+    }
+
+    /* 搜索区域 */
+    .qa-search-section {
+      max-width: 640px;
+      margin: 0 auto;
+    }
+    .qa-search-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .qa-search-bar input {
+      flex: 1;
+      padding: 14px 20px;
+      border: 2px solid var(--qa-border);
+      border-radius: 50px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+      background: #fff;
+    }
+    .qa-search-bar input:focus {
+      border-color: var(--qa-primary);
+      box-shadow: 0 0 0 4px rgba(99,102,241,0.1);
+    }
+    .qa-search-bar button {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--qa-primary), var(--qa-secondary));
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .qa-search-bar button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+    }
+
+    /* 提问按钮 */
+    .ask-btn-wrapper {
+      margin-top: 16px;
+    }
+    .ask-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: #fff;
+      border: 2px dashed var(--qa-primary);
+      border-radius: 50px;
+      color: var(--qa-primary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .ask-btn:hover {
+      background: #F5F3FF;
+      transform: translateY(-2px);
+    }
+    .ask-btn .coming-soon {
+      font-size: 0.75rem;
+      background: var(--qa-accent);
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* 主内容区 */
+    .qa-main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 32px 80px;
+    }
+
+    /* 布局 */
+    .qa-layout {
+      display: grid;
+      grid-template-columns: 1fr 280px;
+      gap: 32px;
+    }
+
+    /* 左侧问答列表 */
+    .qa-list-section {
+      min-width: 0;
+    }
+
+    /* 筛选区域 */
+    .qa-filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--qa-border);
+    }
+    .qa-tabs {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .qa-tab {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      background: var(--gray-100);
+      cursor: pointer;
+      transition: var(--transition);
+      border: none;
+    }
+    .qa-tab:hover {
+      background: var(--gray-200);
+      color: var(--gray-800);
+    }
+    .qa-tab.active {
+      background: linear-gradient(135deg, var(--qa-primary), var(--qa-secondary));
+      color: #fff;
+      font-weight: 500;
+    }
+    .qa-sort {
+      display: flex;
+      gap: 4px;
+    }
+    .qa-sort-btn {
+      padding: 8px 14px;
+      border: 1px solid var(--qa-border);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--gray-600);
+      background: #fff;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .qa-sort-btn:hover, .qa-sort-btn.active {
+      border-color: var(--qa-primary);
+      color: var(--qa-primary);
+      background: #F5F3FF;
+    }
+
+    /* 问答卡片 */
+    .qa-card {
+      background: var(--qa-card-bg);
+      border: 1px solid var(--qa-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 16px;
+      transition: var(--transition);
+    }
+    .qa-card:hover {
+      border-color: var(--qa-primary);
+      box-shadow: var(--shadow-md);
+    }
+    .qa-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .qa-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--qa-primary), var(--qa-secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 600;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .qa-meta {
+      flex: 1;
+      min-width: 0;
+    }
+    .qa-author-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+    .qa-author {
+      font-weight: 500;
+      color: var(--gray-800);
+      font-size: 0.9rem;
+    }
+    .qa-time {
+      font-size: 0.8rem;
+      color: var(--gray-400);
+    }
+    .qa-category-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    .qa-category-tag.visa { background: #FEF3C7; color: #D97706; }
+    .qa-category-tag.transport { background: #DBEAFE; color: #2563EB; }
+    .qa-category-tag.accommodation { background: #D1FAE5; color: #059669; }
+    .qa-category-tag.food { background: #FEE2E2; color: #DC2626; }
+    .qa-category-tag.shopping { background: #FCE7F3; color: #DB2777; }
+    .qa-category-tag.safety { background: #E0E7FF; color: #4F46E5; }
+
+    .qa-question {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      line-height: 1.5;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .qa-question:hover {
+      color: var(--qa-primary);
+    }
+    .qa-excerpt {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 问答统计 */
+    .qa-stats {
+      display: flex;
+      gap: 20px;
+      padding-top: 14px;
+      border-top: 1px solid var(--gray-100);
+    }
+    .qa-stat {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+    .qa-stat-icon {
+      font-size: 1rem;
+    }
+    .qa-stat.highlight {
+      color: var(--qa-success);
+      font-weight: 500;
+    }
+    .qa-stat.highlight .qa-stat-icon {
+      color: var(--qa-success);
+    }
+
+    /* 热门推荐标签 */
+    .qa-hot-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      background: #FEE2E2;
+      color: #EF4444;
+      border-radius: 10px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    /* 右侧边栏 */
+    .qa-sidebar {
+      position: sticky;
+      top: 88px;
+      height: fit-content;
+    }
+
+    /* 侧边栏卡片 */
+    .sidebar-card {
+      background: var(--qa-card-bg);
+      border: 1px solid var(--qa-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .sidebar-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--gray-800);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .sidebar-card h3 .icon {
+      font-size: 1.1rem;
+    }
+
+    /* 热门问题列表 */
+    .hot-question-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hot-question-item {
+      display: flex;
+      gap: 10px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--gray-100);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .hot-question-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .hot-question-item:hover .hot-q-text {
+      color: var(--qa-primary);
+    }
+    .hot-q-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, var(--qa-primary), var(--qa-secondary));
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .hot-q-num.top {
+      background: linear-gradient(135deg, #F59E0B, #EF4444);
+    }
+    .hot-q-text {
+      font-size: 0.85rem;
+      color: var(--gray-700);
+      line-height: 1.4;
+      transition: var(--transition);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* 活跃用户 */
+    .active-user-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .active-user-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .active-user-item:hover .user-name {
+      color: var(--qa-primary);
+    }
+    .active-user-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--qa-secondary), var(--qa-primary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+    .active-user-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .user-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--gray-800);
+      transition: var(--transition);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .user-badge {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+    .user-answers {
+      font-size: 0.8rem;
+      color: var(--qa-success);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* 统计数字 */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .stats-item {
+      text-align: center;
+      padding: 12px 8px;
+      background: var(--gray-50);
+      border-radius: var(--radius);
+    }
+    .stats-num {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--qa-primary);
+      margin-bottom: 2px;
+    }
+    .stats-label {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+    }
+
+    /* 加载更多 */
+    .load-more-wrapper {
+      text-align: center;
+      margin-top: 32px;
+    }
+    .load-more-btn {
+      padding: 12px 36px;
+      background: #fff;
+      border: 2px solid var(--qa-primary);
+      border-radius: 50px;
+      color: var(--qa-primary);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .load-more-btn:hover {
+      background: var(--qa-primary);
+      color: #fff;
+    }
+
+    /* 无结果状态 */
+    .no-results {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .no-results .icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+    .no-results h3 {
+      font-size: 1.1rem;
+      color: var(--gray-700);
+      margin-bottom: 8px;
+    }
+    .no-results p {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+    }
+
+    /* 移动端响应式 */
+    @media (max-width: 900px) {
+      .qa-layout {
+        grid-template-columns: 1fr;
+      }
+      .qa-sidebar {
+        position: static;
+        order: -1;
+      }
+      .sidebar-card:first-child {
+        display: none;
+      }
+    }
+    @media (max-width: 600px) {
+      .qa-main {
+        padding: 24px 16px 60px;
+      }
+      .qa-hero {
+        padding: 40px 0 32px;
+      }
+      .qa-hero h1 {
+        font-size: 1.6rem;
+      }
+      .qa-search-bar {
+        flex-direction: column;
+      }
+      .qa-search-bar button {
+        width: 100%;
+      }
+      .qa-filter-bar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .qa-sort {
+        width: 100%;
+        justify-content: flex-end;
+      }
+      .qa-tabs {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 8px;
+      }
+      .qa-tab {
+        white-space: nowrap;
+      }
+    }
+  
+/* 无障碍 - 焦点可见样式 (WCAG 2.1 AA) */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--primary);
+  color: #fff !important;
+  padding: 12px 24px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  font-weight: 600;
+  transition: top 0.2s;
+}
+.skip-link:focus {
+  top: 0;
+  outline: 3px solid var(--primary-dark);
+  outline-offset: 2px;
+}
+
+/* 全局焦点样式 */
+:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* 链接焦点样式 */
+a:focus,
+button:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* 输入框焦点 */
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--primary);
+  outline-offset: 0;
+  border-color: var(--primary);
+}
+
+</style>
+  <!-- Favicon & App Icons -->
+  <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="images/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="64x64" href="images/icons/favicon-64x64.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <meta name="msapplication-TileImage" content="images/icon-192.png">
+  <meta name="msapplication-TileColor" content="#4F86F7">
+  <meta name="theme-color" content="#4F86F7">
+  <link rel="manifest" href="manifest.json">
+</head>
+<body>
+
+<!-- 无障碍 - 状态消息区域 -->
+<div id="status-message" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="alert-message" class="sr-only" aria-live="assertive" aria-atomic="true"></div>
+
+<!-- 无障碍 - 屏幕阅读器专用样式 -->
+<style>
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+</style>
+
+  <!-- 跳转到主内容链接 - 屏幕阅读器用户快速导航 -->
+  <a href="#main-content" class="skip-link">跳转到主内容</a>
+  <a href="#main-nav" class="skip-link">跳转到导航</a>
+  <a href="#main-footer" class="skip-link">跳转到页脚</a>
+
+  <!-- 导航栏 -->
+  <nav class="navbar" aria-label="主导航">
+    <div class="container nav-container">
+      <a href="index.html" class="logo">🌍 游导旅游</a>
+      <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+      <div class="nav-links">
+        <a href="index.html">🏠 首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="visa.html">📋 签证中心</a>
+        <a href="routes.html">🗺️ 线路</a>
+        <a href="knowledge.html">📚 知识</a>
+        <a href="qa.html" class="active">💬 问答</a>
+        <a href="community.html">📖 社区</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero 区域 -->
+  <section class="qa-hero" id="main-content">
+    <div class="icon-badge">
+      <span>💬</span>
+      <span>旅行问答社区</span>
+    </div>
+    <h1>有问题，来这里找答案</h1>
+    <p>签证怎么办？交通怎么走？住宿哪家好？旅行中的各种疑问，旅行达人来帮你解答</p>
+    
+    <!-- 搜索框 -->
+    <div class="qa-search-section">
+      <div class="qa-search-bar">
+        <input type="text" id="searchInput" placeholder="搜索你关心的问题..." autocomplete="off">
+        <button onclick="performSearch()">🔍 搜索</button>
+      </div>
+      <div class="ask-btn-wrapper">
+        <button class="ask-btn" onclick="showComingSoon()">
+          <span>✏️</span>
+          <span>我要提问</span>
+          <span class="coming-soon">即将上线</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 主内容区 -->
+  <main class="qa-main">
+    <div class="qa-layout">
+      <!-- 左侧问答列表 -->
+      <section class="qa-list-section">
+        <!-- 筛选栏 -->
+        <div class="qa-filter-bar">
+          <div class="qa-tabs">
+            <button class="qa-tab active" data-category="all">全部问题</button>
+            <button class="qa-tab" data-category="visa">📋 签证</button>
+            <button class="qa-tab" data-category="transport">🚆 交通</button>
+            <button class="qa-tab" data-category="accommodation">🏨 住宿</button>
+            <button class="qa-tab" data-category="food">🍜 餐饮</button>
+            <button class="qa-tab" data-category="shopping">🛍️ 购物</button>
+            <button class="qa-tab" data-category="safety">🔒 安全</button>
+          </div>
+          <div class="qa-sort">
+            <button class="qa-sort-btn active" data-sort="recommended">推荐</button>
+            <button class="qa-sort-btn" data-sort="latest">最新</button>
+            <button class="qa-sort-btn" data-sort="hottest">最热</button>
+          </div>
+        </div>
+
+        <!-- 问答列表容器 -->
+        <div id="qaListContainer">
+          <!-- 动态生成 -->
+        </div>
+
+        <!-- 加载更多 -->
+        <div class="load-more-wrapper">
+          <button class="load-more-btn" onclick="loadMoreQuestions()">加载更多问题 ↓</button>
+        </div>
+      </section>
+
+      <!-- 右侧边栏 -->
+      <aside class="qa-sidebar">
+        <!-- 社区统计 -->
+        <div class="sidebar-card">
+          <h3><span class="icon">📊</span>社区数据</h3>
+          <div class="stats-grid">
+            <div class="stats-item">
+              <div class="stats-num">2,847</div>
+              <div class="stats-label">问题总数</div>
+            </div>
+            <div class="stats-item">
+              <div class="stats-num">8,521</div>
+              <div class="stats-label">回答总数</div>
+            </div>
+            <div class="stats-item">
+              <div class="stats-num">1,256</div>
+              <div class="stats-label">活跃用户</div>
+            </div>
+            <div class="stats-item">
+              <div class="stats-num">96%</div>
+              <div class="stats-label">解决率</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 热门问题 -->
+        <div class="sidebar-card">
+          <h3><span class="icon">🔥</span>热门问题</h3>
+          <div class="hot-question-list" id="hotQuestionsList">
+            <!-- 动态生成 -->
+          </div>
+        </div>
+
+        <!-- 问答达人 -->
+        <div class="sidebar-card">
+          <h3><span class="icon">🏆</span>问答达人</h3>
+          <div class="active-user-list">
+            <div class="active-user-item">
+              <div class="active-user-avatar">林</div>
+              <div class="active-user-info">
+                <div class="user-name">林导游在日本</div>
+                <div class="user-badge">日本旅行专家</div>
+              </div>
+              <div class="user-answers">386回答</div>
+            </div>
+            <div class="active-user-item">
+              <div class="active-user-avatar">张</div>
+              <div class="active-user-info">
+                <div class="user-name">张欧巴游欧洲</div>
+                <div class="user-badge">签证达人</div>
+              </div>
+              <div class="user-answers">312回答</div>
+            </div>
+            <div class="active-user-item">
+              <div class="active-user-avatar">王</div>
+              <div class="active-user-info">
+                <div class="user-name">王背包客</div>
+                <div class="user-badge">穷游专家</div>
+              </div>
+              <div class="user-answers">268回答</div>
+            </div>
+            <div class="active-user-item">
+              <div class="active-user-avatar">陈</div>
+              <div class="active-user-info">
+                <div class="user-name">陈旅途</div>
+                <div class="user-badge">摄影旅行家</div>
+              </div>
+              <div class="user-answers">245回答</div>
+            </div>
+            <div class="active-user-item">
+              <div class="active-user-avatar">李</div>
+              <div class="active-user-info">
+                <div class="user-name">李签证顾问</div>
+                <div class="user-badge">签证专家</div>
+              </div>
+              <div class="user-answers">198回答</div>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer id="main-footer" class="footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我们</a>
+        <a href="contact.html">联系我们</a>
+        <a href="privacy.html">隐私政策</a>
+        <a href="terms.html">用户协议</a>
+      </div>
+      <p class="footer-copy">© 2024 游导旅游 · 让旅行更简单</p>
+    </div>
+  </footer>
+
+  <script>
+    // 问答数据
+    const questionsData = [
+      {
+        id: 1,
+        category: 'visa',
+        categoryName: '签证',
+        author: '旅行小白',
+        avatar: '旅',
+        time: '2小时前',
+        title: '日本单次旅游签证需要准备哪些材料？',
+        excerpt: '计划下个月去日本自由行，第一次办理日本签证，听说单次签证比较简单，想问问具体需要准备哪些材料？需要资产证明吗？',
+        answers: 23,
+        views: 1586,
+        isHot: true
+      },
+      {
+        id: 2,
+        category: 'transport',
+        categoryName: '交通',
+        author: '背包客阿明',
+        avatar: '背',
+        time: '5小时前',
+        title: '从东京到大阪，新干线值不值得坐？',
+        excerpt: '听说新干线很贵但很快，有没有性价比更高的方式？大概需要多长时间？',
+        answers: 45,
+        views: 3267,
+        isHot: true
+      },
+      {
+        id: 3,
+        category: 'accommodation',
+        categoryName: '住宿',
+        author: '省钱达人',
+        avatar: '省',
+        time: '8小时前',
+        title: '东京住宿推荐住在哪个区域比较方便？',
+        excerpt: '第一次去东京，想住在交通便利的地方，方便逛景点和购物，有什么区域推荐吗？预算每晚500-800元。',
+        answers: 31,
+        views: 2134,
+        isHot: false
+      },
+      {
+        id: 4,
+        category: 'food',
+        categoryName: '餐饮',
+        author: '吃货一枚',
+        avatar: '吃',
+        time: '12小时前',
+        title: '在日本如何用日语点餐？有什么必学的日语？',
+        excerpt: '日语不太好，担心点餐的时候沟通有障碍，有没有简单实用的日语点餐用语推荐？',
+        answers: 18,
+        views: 987,
+        isHot: false
+      },
+      {
+        id: 5,
+        category: 'shopping',
+        categoryName: '购物',
+        author: '购物狂',
+        avatar: '购',
+        time: '1天前',
+        title: '日本购物哪里最划算？药妆店怎么选？',
+        excerpt: '听说日本的药妆店很多，价格也不一样，想知道松本清、大国药妆、堂吉诃德哪家更便宜？有什么购物攻略吗？',
+        answers: 52,
+        views: 4521,
+        isHot: true
+      },
+      {
+        id: 6,
+        category: 'safety',
+        categoryName: '安全',
+        author: '家长一枚',
+        avatar: '家',
+        time: '1天前',
+        title: '带孩子去日本旅行，有什么安全注意事项？',
+        excerpt: '准备暑假带孩子去日本6天，第一次带小孩出国，想了解下在日本需要注意哪些安全事项，有什么坑要避开？',
+        answers: 27,
+        views: 1654,
+        isHot: false
+      },
+      {
+        id: 7,
+        category: 'visa',
+        categoryName: '签证',
+        author: '留学生家长',
+        avatar: '学',
+        time: '1天前',
+        title: '申根签证录指纹要本人去吗？有什么注意事项？',
+        excerpt: '打算去欧洲探亲，需要办理申根签证，听说要录指纹，必须本人去吗？有什么需要注意的地方？',
+        answers: 15,
+        views: 892,
+        isHot: false
+      },
+      {
+        id: 8,
+        category: 'transport',
+        categoryName: '交通',
+        author: '自驾游爱好者',
+        avatar: '驾',
+        time: '2天前',
+        title: '在美国自驾需要什么驾照？国际驾照怎么申请？',
+        excerpt: '计划去美国自驾游，中国驾照可以用吗？需要翻译件还是国际驾照？在哪里办理？',
+        answers: 38,
+        views: 2876,
+        isHot: true
+      },
+      {
+        id: 9,
+        category: 'accommodation',
+        categoryName: '住宿',
+        author: '民宿控',
+        avatar: '民',
+        time: '2天前',
+        title: '曼谷民宿推荐哪家好？有什么避雷建议？',
+        excerpt: '准备去曼谷自由行，想体验当地民宿，有没有推荐？住民宿有什么需要注意的事项？',
+        answers: 21,
+        views: 1432,
+        isHot: false
+      },
+      {
+        id: 10,
+        category: 'food',
+        categoryName: '餐饮',
+        author: '美食家',
+        avatar: '美',
+        time: '2天前',
+        title: '泰国曼谷必吃的街头美食有哪些？在哪里能吃到正宗美食？',
+        excerpt: '听说曼谷街头美食超级好吃，想要一份美食攻略，哪些地方最值得去？有什么必吃的推荐？',
+        answers: 34,
+        views: 2156,
+        isHot: true
+      },
+      {
+        id: 11,
+        category: 'shopping',
+        categoryName: '购物',
+        author: '代购新手',
+        avatar: '代',
+        time: '3天前',
+        title: '韩国免税店购物有什么技巧？怎么买最划算？',
+        excerpt: '要去韩国旅游，顺便帮朋友代购，免税店购物有什么技巧？如何获得更多优惠？积分怎么用？',
+        answers: 42,
+        views: 3567,
+        isHot: true
+      },
+      {
+        id: 12,
+        category: 'safety',
+        categoryName: '安全',
+        author: '独行侠',
+        avatar: '独',
+        time: '3天前',
+        title: '女生一个人出国旅行安全吗？有什么自保建议？',
+        excerpt: '想一个人去东南亚背包旅行，作为女生需要注意什么？有什么安全建议和自保措施？',
+        answers: 56,
+        views: 4532,
+        isHot: true
+      }
+    ];
+
+    // 热门问题数据
+    const hotQuestions = [
+      { id: 1, title: '日本单次旅游签证需要准备哪些材料？', category: 'visa' },
+      { id: 2, title: '从东京到大阪，新干线值不值得坐？', category: 'transport' },
+      { id: 3, title: '日本购物哪里最划算？药妆店怎么选？', category: 'shopping' },
+      { id: 4, title: '在美国自驾需要什么驾照？', category: 'transport' },
+      { id: 5, title: '女生一个人出国旅行安全吗？', category: 'safety' }
+    ];
+
+    // 当前状态
+    let currentCategory = 'all';
+    let currentSort = 'recommended';
+    let currentPage = 1;
+    const pageSize = 5;
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      renderHotQuestions();
+      renderQuestions();
+      initFilters();
+      initSearch();
+    });
+
+    // 渲染热门问题
+    function renderHotQuestions() {
+      const container = document.getElementById('hotQuestionsList');
+      container.innerHTML = hotQuestions.map((q, index) => `
+        <div class="hot-question-item" onclick="goToQuestion(${q.id})">
+          <div class="hot-q-num ${index < 3 ? 'top' : ''}">${index + 1}</div>
+          <div class="hot-q-text">${q.title}</div>
+        </div>
+      `).join('');
+    }
+
+    // 渲染问答列表
+    function renderQuestions() {
+      const container = document.getElementById('qaListContainer');
+      
+      // 筛选
+      let filtered = questionsData.filter(q => {
+        if (currentCategory !== 'all' && q.category !== currentCategory) return false;
+        return true;
+      });
+
+      // 排序
+      if (currentSort === 'recommended') {
+        filtered.sort((a, b) => b.isHot - a.isHot || b.views - a.views);
+      } else if (currentSort === 'latest') {
+        // 已按时间排序（数据已按时间排列）
+      } else if (currentSort === 'hottest') {
+        filtered.sort((a, b) => b.views - a.views);
+      }
+
+      // 分页
+      const start = 0;
+      const end = currentPage * pageSize;
+      const pageData = filtered.slice(start, end);
+
+      if (pageData.length === 0) {
+        container.innerHTML = `
+          <div class="no-results">
+            <div class="icon">🔍</div>
+            <h3>没有找到相关问题</h3>
+            <p>试试其他关键词或筛选条件</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = pageData.map(q => `
+        <div class="qa-card">
+          <div class="qa-card-header">
+            <div class="qa-avatar">${q.avatar}</div>
+            <div class="qa-meta">
+              <div class="qa-author-info">
+                <span class="qa-author">${q.author}</span>
+                <span class="qa-time">${q.time}</span>
+                ${q.isHot ? '<span class="qa-hot-badge">🔥 热门</span>' : ''}
+              </div>
+              <span class="qa-category-tag ${q.category}">${q.categoryName}</span>
+            </div>
+          </div>
+          <h3 class="qa-question" onclick="goToQuestion(${q.id})">${q.title}</h3>
+          <p class="qa-excerpt">${q.excerpt}</p>
+          <div class="qa-stats">
+            <div class="qa-stat highlight">
+              <span class="qa-stat-icon">💬</span>
+              <span>${q.answers} 回答</span>
+            </div>
+            <div class="qa-stat">
+              <span class="qa-stat-icon">👁️</span>
+              <span>${q.views} 浏览</span>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // 更新加载更多按钮
+      const loadMoreWrapper = document.querySelector('.load-more-wrapper');
+      loadMoreWrapper.style.display = end >= filtered.length ? 'none' : 'block';
+    }
+
+    // 初始化筛选功能
+    function initFilters() {
+      // 分类筛选
+      document.querySelectorAll('.qa-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          document.querySelectorAll('.qa-tab').forEach(t => t.classList.remove('active'));
+          this.classList.add('active');
+          currentCategory = this.dataset.category;
+          currentPage = 1;
+          renderQuestions();
+        });
+      });
+
+      // 排序筛选
+      document.querySelectorAll('.qa-sort-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.qa-sort-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentSort = this.dataset.sort;
+          currentPage = 1;
+          renderQuestions();
+        });
+      });
+    }
+
+    // 初始化搜索功能
+    function initSearch() {
+      const searchInput = document.getElementById('searchInput');
+      
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          performSearch();
+        }
+      });
+    }
+
+    // 执行搜索
+    function performSearch() {
+      const keyword = document.getElementById('searchInput').value.trim();
+      if (!keyword) return;
+      
+      // 实际应用中这里会跳转到搜索结果页
+      alert(`搜索功能即将上线，敬请期待！\n\n您搜索的关键词：${keyword}`);
+    }
+
+    // 加载更多
+    function loadMoreQuestions() {
+      currentPage++;
+      renderQuestions();
+    }
+
+    // 跳转问题详情
+    function goToQuestion(id) {
+      // 实际应用中跳转到问题详情页
+      alert(`问题详情页即将上线！\n\n问题ID：${id}`);
+    }
+
+    // 显示即将上线提示
+    function showComingSoon() {
+      alert('💬 提问功能即将上线！\n\n敬请期待，我们很快会开放用户提问功能，让你可以向旅行达人们请教问题。');
+    }
+
+    // 移动端导航
+    function toggleNav() {
+      document.querySelector('.nav-links').classList.toggle('active');
+    }
+  </script>
+  <script src="js/mobile.js" defer></script>
+  <script src="js/customer-service.js" defer></script>
+</body>
+</html>
