@@ -40,7 +40,7 @@ function showWelcomeMessage() {
   const body = document.getElementById('chatbotBody');
   if (!body) return;
   body.innerHTML = `
-    <div class="msg msg-bot"><p>👋 您好！我是游导伴旅智能助手</p></div>
+    <div class="msg msg-bot"><p>👋 您好！我是游导旅游智能助手</p></div>
     <div class="msg msg-bot">
       <p>我可以帮您解答：</p>
       <ul style="margin:8px 0 0 0;padding-left:20px;text-align:left">
@@ -312,10 +312,192 @@ ${wechatCard}`,
 • 五年多次：有效期5年，每次停留90天<br>
 • 十年多次：有效期10年（需满足特定条件）<br><br>
 <strong>【简化政策】</strong><br>北京、上海户籍可简化材料<br><br>
+<strong>【所需材料】</strong><br>
+• 护照原件（有效期6个月以上）<br>
+• 2寸白底照片1张<br>
+• 身份证、户口本复印件<br>
+• 在职证明或营业执照<br>
+• 银行流水（余额3-5万以上）<br><br>
 <strong>【费用参考】</strong><br>
 • 单次：280元<br>
-• 五年多次：560元<br><br>
+• 五年多次：560元<br>
+• 十年多次：约1000元<br><br>
 <strong>【办理周期】</strong><br>5-7个工作日<br>
+<strong>【注意事项】</strong><br>首次办理需录指纹<br>
+${wechatCard}`,
+  
+  singapore: `<strong>🇸🇬 新加坡签证详情</strong><br><br>
+<strong>【签证类型】</strong><br>电子签证，有效期9周-2年，停留30天<br><br>
+<strong>【所需材料】</strong><br>
+• 护照扫描件<br>
+• 2寸白底照片<br>
+• 在职证明（英文）<br>
+• 银行流水（余额1-2万以上）<br>
+• 身份证、户口本复印件<br><br>
+<strong>【费用参考】</strong><br>约160元人民币<br><br>
+<strong>【办理周期】</strong><br>3-5个工作日<br>
+<strong>【特点】</strong><br>全程在线办理，收到邮件后打印即可<br>
+${wechatCard}`,
+  
+  malaysia: `<strong>🇲🇾 马来西亚签证详情</strong><br><br>
+<strong>【签证类型】</strong><br>
+• 电子签（eVISA）：3个月有效期，停留30天<br>
+• 部分游客可免签15天<br><br>
+<strong>【所需材料】</strong><br>
+• 护照扫描件<br>
+• 2寸白底照片<br>
+• 往返机票预订单<br>
+• 酒店预订单<br><br>
+<strong>【费用参考】</strong><br>约200元人民币<br><br>
+<strong>【办理周期】</strong><br>1-3个工作日<br>
+<strong>【特点】</strong><br>全程在线办理，无需前往领事馆<br>
+${wechatCard}`,
+  
+  canada: `<strong>🇨🇦 加拿大签证详情</strong><br><br>
+<strong>【签证类型】</strong><br>旅游签证，有效期最长10年，每次停留6个月<br><br>
+<strong>【所需材料】</strong><br>
+• 护照原件<br>
+• 申请表和家属表<br>
+• 2寸白底照片<br>
+• 在职证明（英文）<br>
+• 银行流水（余额5万以上）<br>
+• 行程单<br>
+• 旅游保险（保额10万加元以上）<br><br>
+<strong>【费用参考】</strong><br>约530元人民币（100加元）<br><br>
+<strong>【办理周期】</strong><br>15-20个工作日<br>
+<strong>【注意事项】</strong><br>必须前往签证中心录指纹<br>
+${wechatCard}`,
+  
+  uk: `<strong>🇬🇧 英国签证详情</strong><br><br>
+<strong>【签证类型】</strong><br>标准访客签证，6个月/2年/5年/10年可选<br><br>
+<strong>【所需材料】</strong><br>
+• 护照原件<br>
+• 签证申请表<br>
+• 2寸白底照片<br>
+• 在职证明（英文）<br>
+• 银行流水（余额3-5万以上）<br>
+• 行程单、住宿证明<br><br>
+<strong>【费用参考】</strong><br>
+• 6个月：约1000元<br>
+• 2年：约3800元<br>
+• 5年：约6800元<br>
+• 10年：约10800元<br><br>
+<strong>【办理周期】</strong><br>2-3周<br>
+${wechatCard}`,
+  
+  france: `<strong>🇫🇷 法国（申根）签证详情</strong><br><br>
+<strong>【签证类型】</strong><br>申根签证，可通行27国，停留90天内<br><br>
+<strong>【覆盖国家】</strong><br>法国、德国、意大利、瑞士、西班牙、荷兰、比利时等27国<br><br>
+<strong>【所需材料】</strong><br>
+• 护照原件（有效期6个月以上）<br>
+• 2寸白底照片2张<br>
+• 在职证明（中英文）<br>
+• 银行流水（余额3-5万以上）<br>
+• 行程单、机票预订单、酒店预订单<br>
+• 保险（保额3万欧元以上）<br><br>
+<strong>【费用参考】</strong><br>约650元（80欧元）<br><br>
+<strong>【办理周期】</strong><br>10-15个工作日<br>
+<strong>【注意事项】</strong><br>首次办理需录指纹<br>
+${wechatCard}`,
+  
+  italy: `<strong>🇮🇹 意大利（申根）签证详情</strong><br><br>
+<strong>【签证类型】</strong><br>申根签证，可通行27国，停留90天内<br><br>
+<strong>【覆盖国家】</strong><br>意大利、法国、德国、瑞士、西班牙等27国<br><br>
+<strong>【所需材料】</strong><br>
+• 护照原件（有效期6个月以上）<br>
+• 2寸白底照片2张<br>
+• 在职证明（中英文）<br>
+• 银行流水（余额3-5万以上）<br>
+• 行程单、机票预订单、酒店预订单<br>
+• 保险（保额3万欧元以上）<br><br>
+<strong>【费用参考】</strong><br>约650元（80欧元）<br><br>
+<strong>【办理周期】</strong><br>10-15个工作日<br>
+<strong>【注意事项】</strong><br>首次办理需录指纹，审核相对严格<br>
+${wechatCard}`,
+  
+  germany: `<strong>🇩🇪 德国（申根）签证详情</strong><br><br>
+<strong>【签证类型】</strong><br>申根签证，可通行27国，停留90天内<br><br>
+<strong>【覆盖国家】</strong><br>德国、法国、意大利、瑞士、西班牙等27国<br><br>
+<strong>【所需材料】</strong><br>
+• 护照原件（有效期6个月以上）<br>
+• 2寸白底照片2张<br>
+• 在职证明（中英文）<br>
+• 银行流水（余额3-5万以上）<br>
+• 行程单、机票预订单、酒店预订单<br>
+• 保险（保额3万欧元以上）<br><br>
+<strong>【费用参考】</strong><br>约650元（80欧元）<br><br>
+<strong>【办理周期】</strong><br>10-15个工作日<br>
+<strong>【注意事项】</strong><br>首次办理需录指纹，审核相对严格<br>
+${wechatCard}`,
+  
+  australia: `<strong>🇦🇺 澳大利亚签证详情</strong><br><br>
+<strong>【签证类型】</strong><br>访客签证（600类别），1年/3年/10年可选<br><br>
+<strong>【所需材料】</strong><br>
+• 护照扫描件<br>
+• 2寸白底照片<br>
+• 在职证明（英文）<br>
+• 银行流水（余额3-5万以上）<br>
+• 行程计划<br>
+• 户口本、身份证扫描件<br><br>
+<strong>【费用参考】</strong><br>约900元人民币（190澳元）<br><br>
+<strong>【办理周期】</strong><br>15-20个工作日<br>
+<strong>【特点】</strong><br>全程在线办理，无需面签<br>
+${wechatCard}`,
+  
+  newzealand: `<strong>🇳🇿 新西兰签证详情</strong><br><br>
+<strong>【签证类型】</strong><br>访客签证，有效期根据申请决定，每次可停留9个月<br><br>
+<strong>【所需材料】</strong><br>
+• 护照扫描件<br>
+• 2寸白底照片<br>
+• 在职证明（英文）<br>
+• 银行流水（余额3-5万以上）<br>
+• 行程计划<br>
+• 资金证明<br><br>
+<strong>【费用参考】</strong><br>约1100元人民币（250纽币）<br><br>
+<strong>【办理周期】</strong><br>10-15个工作日<br>
+<strong>【特点】</strong><br>电子签，通过率较高<br>
+${wechatCard}`,
+  
+  hongkong: `<strong>🇭🇰 港澳通行证（香港）</strong><br><br>
+<strong>【签证类型】</strong><br>
+• 个人旅游G签：可自由行<br>
+• 团队旅游L签：需跟团或找旅行社送关<br><br>
+<strong>【所需材料】</strong><br>
+• 身份证原件<br>
+• 2寸白底照片<br>
+• 户口本复印件<br><br>
+<strong>【费用参考】</strong><br>工本费60元 + 签注费15元/次<br><br>
+<strong>【办理周期】</strong><br>7个工作日<br>
+<strong>【停留时间】</strong><br>每次最多7天<br>
+<strong>【注意事项】</strong><br>需确认户籍是否开放G签<br>
+${wechatCard}`,
+  
+  macau: `<strong>🇲🇴 港澳通行证（澳门）</strong><br><br>
+<strong>【签证类型】</strong><br>个人旅游G签（全国基本开放）<br><br>
+<strong>【所需材料】</strong><br>
+• 身份证原件<br>
+• 2寸白底照片<br>
+• 户口本复印件<br><br>
+<strong>【费用参考】</strong><br>工本费60元 + 签注费15元/次<br><br>
+<strong>【办理周期】</strong><br>7个工作日<br>
+<strong>【停留时间】</strong><br>每次最多7天<br>
+<strong>【特点】</strong><br>全国基本开放个人旅游，非常方便<br>
+${wechatCard}`,
+  
+  taiwan: `<strong>🇹🇼 台湾通行证 + 入台证</strong><br><br>
+<strong>【所需证件】</strong><br>"两证一签注"：通行证 + 签注 + 入台证<br><br>
+<strong>【办理流程】</strong><br>
+1️⃣ 办理《大陆居民往来台湾通行证》<br>
+2️⃣ 申请个人旅游签注（G签）<br>
+3️⃣ 通过有资质旅行社申请入台证<br><br>
+<strong>【所需材料】</strong><br>
+• 身份证、户口本<br>
+• 2寸白底照片<br>
+• 在职证明、银行流水<br>
+• 返程机票预订单<br><br>
+<strong>【费用参考】</strong><br>通行证30元 + 签注15元 + 入台证约200元<br><br>
+<strong>【停留时间】</strong><br>每次15天<br>
+<strong>【注意事项】</strong><br>仅开放部分城市自由行，入台证需旅行社代办<br>
 ${wechatCard}`
 };
 
@@ -414,17 +596,59 @@ function getBotReply(message) {
     if (msg.includes('韩国签证') || msg.includes('韩国签')) {
       return visaInfo.korea;
     }
+    if (msg.includes('新加坡签证') || msg.includes('新加坡签')) {
+      return visaInfo.singapore;
+    }
+    if (msg.includes('马来西亚签证') || msg.includes('马来西亚签')) {
+      return visaInfo.malaysia;
+    }
+    if (msg.includes('加拿大签证') || msg.includes('加拿大签')) {
+      return visaInfo.canada;
+    }
+    if (msg.includes('英国签证') || msg.includes('英国签')) {
+      return visaInfo.uk;
+    }
+    if (msg.includes('法国签证') || msg.includes('法国签')) {
+      return visaInfo.france;
+    }
+    if (msg.includes('意大利签证') || msg.includes('意大利签')) {
+      return visaInfo.italy;
+    }
+    if (msg.includes('德国签证') || msg.includes('德国签')) {
+      return visaInfo.germany;
+    }
+    if (msg.includes('澳洲签证') || msg.includes('澳大利亚签证') || msg.includes('澳大利亚签') || msg.includes('澳洲签')) {
+      return visaInfo.australia;
+    }
+    if (msg.includes('新西兰签证') || msg.includes('新西兰签')) {
+      return visaInfo.newzealand;
+    }
+    if (msg.includes('香港签证') || msg.includes('香港签') || msg.includes('港澳通行证')) {
+      return visaInfo.hongkong;
+    }
+    if (msg.includes('澳门签证') || msg.includes('澳门签')) {
+      return visaInfo.macau;
+    }
+    if (msg.includes('台湾签证') || msg.includes('台湾签') || msg.includes('入台证') || msg.includes('台湾通行证')) {
+      return visaInfo.taiwan;
+    }
     if (msg.includes('泰国签证') || msg.includes('泰国签')) {
       return `🇹🇭 <strong>泰国签证信息</strong><br><br>🎉 <strong>好消息！泰国对中国游客免签！</strong><br><br>• 停留期：最多30天<br>• 需携带：护照（有效期6个月以上）、往返机票<br>• 无需提前申请签证<br><br>${wechatCard}`;
     }
     
     return `<strong>📋 签证咨询</strong><br><br>请告诉我想去哪个国家，我提供详细签证攻略：<br><br>
     🇯🇵 日本签证 - 单次/三年/五年多次<br>
-    🇪🇺 申根签证 - 27国通用<br>
-    🇺🇸 美国签证 - 10年多次<br>
-    🇰🇷 韩国签证 - 五年多次<br>
-    🇹🇭 泰国签证 - 免签！<br>
-    🇦🇺 澳新签证 - 电子签<br><br>
+    🇰🇷 韩国签证 - 单次/五年多次<br>
+    🇸🇬 新加坡签证 - 电子签<br>
+    🇲🇾 马来西亚签证 - 电子签/免签<br>
+    🇪🇺 申根签证 - 27国通用（法/德/意/英等）<br>
+    🇺🇸 美国签证 - 10年多次，需面签<br>
+    🇨🇦 加拿大签证 - 10年有效<br>
+    🇦🇺 澳大利亚签证 - 电子签<br>
+    🇳🇿 新西兰签证 - 电子签<br>
+    🇭🇰 港澳通行证 - 香港/澳门<br>
+    🇹🇼 台湾通行证 - 两证一签注<br>
+    🇹🇭 泰国签证 - 免签！<br><br>
     ${wechatCard}`;
   }
   
@@ -559,7 +783,7 @@ function getBotReply(message) {
   
   // === 问候 ===
   if (msg.includes('你好') || msg.includes('您好') || msg.includes('在吗') || msg.includes('hi') || msg.includes('hello')) {
-    return `😊 您好！我是游导伴旅智能助手，很高兴为您服务！<br><br>我可以帮您解答：<br>
+    return `😊 您好！我是游导旅游智能助手，很高兴为您服务！<br><br>我可以帮您解答：<br>
     📋 签证政策与办理<br>
     🗺️ 行程规划与景点攻略<br>
     🎤 导游推荐与服务<br>
