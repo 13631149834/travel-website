@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行知识问答 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .pulse { animation: pulse 1.5s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    .category-btn { transition: all 0.3s ease; }
+    .category-btn:hover { transform: translateY(-4px); }
+    .category-btn.selected { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .option-btn { transition: all 0.3s ease; }
+    .option-btn:hover:not(.disabled) { transform: translateX(8px); background: linear-gradient(90deg, rgba(14, 165, 233, 0.1) 0%, transparent 100%); }
+    .option-correct { background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; color: white !important; transform: scale(1.02) !important; }
+    .option-wrong { background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important; color: white !important; }
+    .shake { animation: shake 0.4s ease-in-out; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+    .bounce { animation: bounce 0.5s ease; }
+    @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    .streak-fire { animation: streakFire 0.5s ease infinite; }
+    @keyframes streakFire { 0%, 100% { transform: scale(1) rotate(-5deg); } 50% { transform: scale(1.1) rotate(5deg); } }
+    .perfect-badge { animation: perfectGlow 1s ease-in-out infinite; }
+    @keyframes perfectGlow { 0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); } 50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.8); } }
+    .category-icon { transition: all 0.3s ease; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-2xl">←</span>
+          <span class="text-xl font-bold">返回游戏中心</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
+            <span>⭐</span>
+            <span id="navPoints">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Game Header -->
+  <div id="gameHeader" class="bg-white/80 backdrop-blur-sm shadow-sm hidden">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div class="flex items-center gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-primary" id="currentScore">0</div>
+            <div class="text-xs text-gray-500">当前得分</div>
+          </div>
+          <div class="w-px h-10 bg-gray-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-orange-500 flex items-center gap-1" id="streakContainer">
+              <span id="streakCount">0</span>
+              <span id="streakFire" class="hidden text-xl">🔥</span>
+            </div>
+            <div class="text-xs text-gray-500">连胜</div>
+          </div>
+          <div class="w-px h-10 bg-gray-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-500" id="roundScore">0</div>
+            <div class="text-xs text-gray-500">本轮得分</div>
+          </div>
+        </div>
+        <div id="categoryBadge" class="bg-emerald-100 text-emerald-700 px-4 py-2 rounded-full font-medium flex items-center gap-2">
+          <span id="categoryIcon">🗾</span>
+          <span id="currentCategory">日本</span>
+        </div>
+      </div>
+      <!-- Progress Bar -->
+      <div class="mt-4 h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div class="h-full bg-gradient-to-r from-emerald-500 to-teal-500 transition-all duration-300" id="progressBar" style="width: 0%"></div>
+      </div>
+      <div class="flex justify-between text-xs text-gray-500 mt-1">
+        <span>第 <span id="questionNum">0</span> 题</span>
+        <span>目标: 10 题/轮</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Category Selection Screen -->
+    <div id="categoryScreen" class="fade-in">
+      <div class="text-center mb-8">
+        <div class="text-6xl mb-4">🧠</div>
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">旅行知识问答</h1>
+        <p class="text-gray-500">选择一个国家，测试你的旅行知识</p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <button onclick="selectCategory('日本', '🗾')" class="category-btn bg-gradient-to-br from-pink-400 to-red-500 text-white rounded-2xl p-6 text-center shadow-lg">
+          <div class="text-5xl mb-2">🗾</div>
+          <div class="font-bold text-lg">日本</div>
+          <div class="text-sm opacity-80">Japan</div>
+        </button>
+        
+        <button onclick="selectCategory('韩国', '🇰🇷')" class="category-btn bg-gradient-to-br from-blue-400 to-indigo-500 text-white rounded-2xl p-6 text-center shadow-lg">
+          <div class="text-5xl mb-2">🇰🇷</div>
+          <div class="font-bold text-lg">韩国</div>
+          <div class="text-sm opacity-80">Korea</div>
+        </button>
+        
+        <button onclick="selectCategory('泰国', '🇹🇭')" class="category-btn bg-gradient-to-br from-orange-400 to-amber-500 text-white rounded-2xl p-6 text-center shadow-lg">
+          <div class="text-5xl mb-2">🇹🇭</div>
+          <div class="font-bold text-lg">泰国</div>
+          <div class="text-sm opacity-80">Thailand</div>
+        </button>
+        
+        <button onclick="selectCategory('新加坡', '🇸🇬')" class="category-btn bg-gradient-to-br from-red-400 to-rose-500 text-white rounded-2xl p-6 text-center shadow-lg">
+          <div class="text-5xl mb-2">🇸🇬</div>
+          <div class="font-bold text-lg">新加坡</div>
+          <div class="text-sm opacity-80">Singapore</div>
+        </button>
+      </div>
+
+      <div class="bg-white rounded-3xl p-6 shadow-xl max-w-lg mx-auto">
+        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <span>📋</span> 游戏规则
+        </h3>
+        <ul class="text-gray-600 space-y-2 text-sm">
+          <li class="flex items-start gap-2">
+            <span class="text-green-500">✓</span>
+            每轮10道选择题，答对得分
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-green-500">✓</span>
+            连续答对可获得连胜加成
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-green-500">✓</span>
+            全对完成一轮可获得额外奖励
+          </li>
+          <li class="flex items-start gap-2">
+            <span class="text-green-500">✓</span>
+            每题基础得分：10分
+          </li>
+        </ul>
+        
+        <div class="mt-6 p-4 bg-amber-50 rounded-xl">
+          <div class="flex items-center gap-2 text-amber-700 font-medium mb-2">
+            <span>💡</span>
+            小贴士
+          </div>
+          <p class="text-sm text-amber-600">每天完成多个国家的问答挑战，可解锁特殊成就！</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Question Screen -->
+    <div id="questionScreen" class="hidden">
+      <div class="bg-white rounded-3xl p-6 md:p-8 shadow-xl fade-in">
+        <!-- Question Header -->
+        <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center gap-2">
+            <span class="text-3xl" id="qCategoryIcon">🗾</span>
+            <span class="text-lg font-medium text-gray-600" id="qCategory">日本</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm">
+            <span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full">
+              难度: <span id="difficulty" class="font-bold">简单</span>
+            </span>
+          </div>
+        </div>
+
+        <!-- Question -->
+        <div class="mb-8">
+          <h2 class="text-xl md:text-2xl font-bold text-gray-800 leading-relaxed" id="questionText">
+            日本的国花是什么？
+          </h2>
+        </div>
+
+        <!-- Options -->
+        <div class="space-y-3" id="optionsContainer">
+          <!-- Options will be rendered here -->
+        </div>
+
+        <!-- Next Button -->
+        <div id="nextButtonContainer" class="hidden mt-6">
+          <button onclick="nextQuestion()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-2xl font-bold text-lg hover:opacity-90 transition">
+            下一题 →
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="mt-6 grid grid-cols-3 gap-4">
+        <div class="bg-white rounded-2xl p-4 text-center shadow">
+          <div class="text-2xl font-bold text-emerald-500" id="roundCorrect">0</div>
+          <div class="text-xs text-gray-500">本轮答对</div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 text-center shadow">
+          <div class="text-2xl font-bold text-orange-500" id="maxStreakDisplay">0</div>
+          <div class="text-xs text-gray-500">最高连胜</div>
+        </div>
+        <div class="bg-white rounded-2xl p-4 text-center shadow">
+          <div class="text-2xl font-bold text-blue-500" id="totalAnswered">0</div>
+          <div class="text-xs text-gray-500">已答题目</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Round Complete Screen -->
+    <div id="roundCompleteScreen" class="hidden fade-in">
+      <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl max-w-lg mx-auto text-center">
+        <div id="roundResultIcon" class="text-7xl mb-4">🎉</div>
+        <h2 id="roundResultTitle" class="text-2xl font-bold text-gray-800 mb-2">本轮完成！</h2>
+        <p id="roundResultSubtitle" class="text-gray-500 mb-6">你的旅行知识真丰富！</p>
+        
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-emerald-50 rounded-xl p-4">
+            <div class="text-3xl font-bold text-emerald-600" id="roundPointsEarned">0</div>
+            <div class="text-sm text-gray-500">本轮积分</div>
+          </div>
+          <div class="bg-orange-50 rounded-xl p-4">
+            <div class="text-3xl font-bold text-orange-600" id="roundAccuracy">0%</div>
+            <div class="text-sm text-gray-500">正确率</div>
+          </div>
+        </div>
+
+        <div id="perfectRoundBadge" class="hidden mb-6 bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-3 rounded-2xl inline-block perfect-badge">
+          <span class="text-2xl mr-2">🏆</span>
+          <span class="font-bold">完美一轮！+50 额外积分</span>
+        </div>
+        
+        <div class="space-y-3">
+          <button onclick="continueGame()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-2xl font-bold text-lg hover:opacity-90 transition">
+            继续挑战 →
+          </button>
+          <button onclick="goBackToCategories()" class="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition">
+            选择其他类别
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overall Stats Screen -->
+    <div id="statsScreen" class="hidden fade-in">
+      <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl max-w-lg mx-auto">
+        <div class="text-center mb-8">
+          <div class="text-6xl mb-4">📊</div>
+          <h2 class="text-2xl font-bold text-gray-800">本次游戏统计</h2>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-gradient-to-br from-blue-100 to-cyan-100 rounded-xl p-4 text-center">
+            <div class="text-3xl font-bold text-blue-600" id="totalQuestionsAnswered">0</div>
+            <div class="text-sm text-gray-600">回答题目</div>
+          </div>
+          <div class="bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl p-4 text-center">
+            <div class="text-3xl font-bold text-green-600" id="totalCorrectAnswers">0</div>
+            <div class="text-sm text-gray-600">答对题数</div>
+          </div>
+          <div class="bg-gradient-to-br from-orange-100 to-amber-100 rounded-xl p-4 text-center">
+            <div class="text-3xl font-bold text-orange-600" id="totalPointsEarned">0</div>
+            <div class="text-sm text-gray-600">获得积分</div>
+          </div>
+          <div class="bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl p-4 text-center">
+            <div class="text-3xl font-bold text-purple-600" id="totalMaxStreak">0</div>
+            <div class="text-sm text-gray-600">最高连胜</div>
+          </div>
+        </div>
+
+        <div class="bg-gray-50 rounded-xl p-4 mb-6">
+          <h3 class="font-bold text-gray-800 mb-3">各类别表现</h3>
+          <div id="categoryStats" class="space-y-2">
+            <!-- Category stats will be rendered here -->
+          </div>
+        </div>
+        
+        <div class="space-y-3">
+          <button onclick="restartGame()" class="w-full py-4 bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-2xl font-bold text-lg hover:opacity-90 transition">
+            再玩一轮 🚀
+          </button>
+          <button onclick="goToGames()" class="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition">
+            返回游戏中心 🏠
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Game State
+    let gameState = {
+      currentCategory: '日本',
+      questions: [],
+      currentIndex: 0,
+      score: 0,
+      roundScore: 0,
+      correctCount: 0,
+      roundCorrect: 0,
+      streak: 0,
+      maxStreak: 0,
+      totalQuestions: 0,
+      totalCorrect: 0,
+      totalScore: 0,
+      roundComplete: false,
+      categoryStats: {}
+    };
+
+    let gamesData = null;
+
+    async function loadGamesData() {
+      try {
+        const response = await fetch('../data/games.json');
+        gamesData = await response.json();
+        loadUserData();
+      } catch (error) {
+        console.error('Failed to load games data:', error);
+      }
+    }
+
+    function loadUserData() {
+      const userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      document.getElementById('navPoints').textContent = userData.totalPoints || 0;
+    }
+
+    function selectCategory(category, icon) {
+      gameState.currentCategory = category;
+      gameState.questions = getQuestionsByCategory(category);
+      gameState.currentIndex = 0;
+      gameState.roundScore = 0;
+      gameState.roundCorrect = 0;
+      gameState.streak = 0;
+      gameState.maxStreak = 0;
+      gameState.categoryStats[category] = { correct: 0, total: 0 };
+
+      // Update UI
+      document.getElementById('categoryScreen').classList.add('hidden');
+      document.getElementById('questionScreen').classList.remove('hidden');
+      document.getElementById('gameHeader').classList.remove('hidden');
+      document.getElementById('categoryIcon').textContent = icon;
+      document.getElementById('currentCategory').textContent = category;
+      
+      loadQuestion();
+    }
+
+    function getQuestionsByCategory(category) {
+      const allQuestions = gamesData?.triviaQuestions || [];
+      const filtered = allQuestions.filter(q => q.category === category);
+      // Shuffle and take 10
+      return shuffleArray(filtered).slice(0, 10);
+    }
+
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    function loadQuestion() {
+      if (gameState.currentIndex >= gameState.questions.length) {
+        endRound();
+        return;
+      }
+
+      const question = gameState.questions[gameState.currentIndex];
+      const categoryIcons = {
+        '日本': '🗾',
+        '韩国': '🇰🇷',
+        '泰国': '🇹🇭',
+        '新加坡': '🇸🇬'
+      };
+
+      // Update header
+      document.getElementById('currentScore').textContent = gameState.score;
+      document.getElementById('roundScore').textContent = gameState.roundScore;
+      document.getElementById('streakCount').textContent = gameState.streak;
+      document.getElementById('streakFire').classList.toggle('hidden', gameState.streak < 2);
+      document.getElementById('streakFire').classList.toggle('streak-fire', gameState.streak >= 2);
+      document.getElementById('categoryIcon').textContent = categoryIcons[gameState.currentCategory];
+      document.getElementById('currentCategory').textContent = gameState.currentCategory;
+      document.getElementById('questionNum').textContent = gameState.currentIndex + 1;
+      document.getElementById('progressBar').style.width = `${((gameState.currentIndex) / gameState.questions.length) * 100}%`;
+      
+      // Update question screen
+      document.getElementById('qCategoryIcon').textContent = categoryIcons[gameState.currentCategory];
+      document.getElementById('qCategory').textContent = gameState.currentCategory;
+      document.getElementById('questionText').textContent = question.question;
+      document.getElementById('difficulty').textContent = ['简单', '中等', '困难'][question.difficulty - 1] || '简单';
+      
+      // Render options
+      renderOptions(question);
+      
+      // Hide next button
+      document.getElementById('nextButtonContainer').classList.add('hidden');
+    }
+
+    function renderOptions(question) {
+      const container = document.getElementById('optionsContainer');
+      const letters = ['A', 'B', 'C', 'D'];
+      
+      container.innerHTML = question.options.map((opt, idx) => `
+        <button onclick="selectAnswer(${idx}, ${question.answer})" 
+                class="option-btn w-full text-left p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border-2 border-transparent hover:border-emerald-400 transition font-medium text-gray-700 flex items-center gap-3"
+                data-index="${idx}">
+          <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 font-bold text-lg flex-shrink-0">${letters[idx]}</span>
+          <span class="flex-1">${opt}</span>
+        </button>
+      `).join('');
+    }
+
+    function selectAnswer(selectedIndex, correctIndex) {
+      const buttons = document.querySelectorAll('.option-btn');
+      buttons.forEach(btn => {
+        btn.classList.add('disabled');
+        btn.onclick = null;
+      });
+
+      const isCorrect = selectedIndex === correctIndex;
+      gameState.totalQuestions++;
+      gameState.categoryStats[gameState.currentCategory].total++;
+
+      if (isCorrect) {
+        gameState.correctCount++;
+        gameState.roundCorrect++;
+        gameState.totalCorrect++;
+        gameState.streak++;
+        gameState.maxStreak = Math.max(gameState.maxStreak, gameState.streak);
+        gameState.categoryStats[gameState.currentCategory].correct++;
+        
+        // Calculate score
+        const baseScore = 10;
+        const streakBonus = gameState.streak > 1 ? (gameState.streak - 1) * 3 : 0;
+        const totalPoints = baseScore + streakBonus;
+        
+        gameState.score += totalPoints;
+        gameState.roundScore += totalPoints;
+        gameState.totalScore += totalPoints;
+        
+        // Mark correct
+        buttons.forEach(btn => {
+          if (parseInt(btn.dataset.index) === correctIndex) {
+            btn.classList.add('option-correct', 'bounce');
+          }
+        });
+        
+        showFeedback(true, totalPoints);
+      } else {
+        gameState.streak = 0;
+        
+        buttons.forEach(btn => {
+          if (parseInt(btn.dataset.index) === selectedIndex) {
+            btn.classList.add('option-wrong', 'shake');
+          }
+          if (parseInt(btn.dataset.index) === correctIndex) {
+            btn.classList.add('option-correct');
+          }
+        });
+        
+        showFeedback(false);
+      }
+
+      // Update displays
+      updateDisplays();
+      
+      // Show next button or end round
+      setTimeout(() => {
+        document.getElementById('nextButtonContainer').classList.remove('hidden');
+      }, 500);
+    }
+
+    function updateDisplays() {
+      document.getElementById('currentScore').textContent = gameState.score;
+      document.getElementById('roundScore').textContent = gameState.roundScore;
+      document.getElementById('streakCount').textContent = gameState.streak;
+      document.getElementById('streakFire').classList.toggle('hidden', gameState.streak < 2);
+      document.getElementById('streakFire').classList.toggle('streak-fire', gameState.streak >= 2);
+      document.getElementById('roundCorrect').textContent = gameState.roundCorrect;
+      document.getElementById('maxStreakDisplay').textContent = gameState.maxStreak;
+      document.getElementById('totalAnswered').textContent = gameState.totalQuestions;
+    }
+
+    function showFeedback(isCorrect, points = 0) {
+      const feedback = document.createElement('div');
+      feedback.className = 'fixed top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center z-50 fade-in';
+      feedback.innerHTML = `
+        <div class="text-6xl mb-2">${isCorrect ? '✅' : '❌'}</div>
+        ${isCorrect ? `<div class="text-2xl font-bold text-green-500">+${points} 分！</div>` : '<div class="text-xl text-red-500">再接再厉~</div>'}
+        ${isCorrect && gameState.streak >= 3 ? `<div class="text-lg text-orange-500 mt-1">🔥 ${gameState.streak} 连胜！</div>` : ''}
+      `;
+      document.body.appendChild(feedback);
+      
+      setTimeout(() => feedback.remove(), 1200);
+    }
+
+    function nextQuestion() {
+      gameState.currentIndex++;
+      loadQuestion();
+    }
+
+    function endRound() {
+      document.getElementById('questionScreen').classList.add('hidden');
+      document.getElementById('roundCompleteScreen').classList.remove('hidden');
+      
+      const accuracy = (gameState.roundCorrect / gameState.questions.length) * 100;
+      const isPerfect = gameState.roundCorrect === gameState.questions.length;
+      
+      // Update result display
+      if (isPerfect) {
+        document.getElementById('roundResultIcon').textContent = '🏆';
+        document.getElementById('roundResultTitle').textContent = '完美通关！';
+        document.getElementById('roundResultSubtitle').textContent = `恭喜你全部答对${gameState.currentCategory}的知识！`;
+        document.getElementById('perfectRoundBadge').classList.remove('hidden');
+        
+        // Add perfect round bonus
+        gameState.score += 50;
+        gameState.totalScore += 50;
+      } else {
+        document.getElementById('roundResultIcon').textContent = accuracy >= 80 ? '🌟' : accuracy >= 60 ? '👍' : '📚';
+        document.getElementById('roundResultTitle').textContent = accuracy >= 80 ? '太棒了！' : accuracy >= 60 ? '还不错！' : '继续加油！';
+        document.getElementById('roundResultSubtitle').textContent = `${gameState.roundCorrect}/${gameState.questions.length} 正确`;
+        document.getElementById('perfectRoundBadge').classList.add('hidden');
+      }
+      
+      document.getElementById('roundPointsEarned').textContent = gameState.roundScore + (isPerfect ? 50 : 0);
+      document.getElementById('roundAccuracy').textContent = `${Math.round(accuracy)}%`;
+      
+      // Save progress
+      saveProgress();
+    }
+
+    function saveProgress() {
+      const userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      userData.totalPoints = (userData.totalPoints || 0) + gameState.totalScore;
+      userData.triviaGames = (userData.triviaGames || 0) + 1;
+      userData.triviaPoints = (userData.triviaPoints || 0) + gameState.totalScore;
+      
+      // Update achievements
+      if (userData.triviaGames === 1) {
+        unlockAchievement('trivia_expert_start');
+      }
+      
+      localStorage.setItem('gameUserData', JSON.stringify(userData));
+      loadUserData();
+    }
+
+    function unlockAchievement(achievementId) {
+      const userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      userData.achievements = userData.achievements || [];
+      if (!userData.achievements.includes(achievementId)) {
+        userData.achievements.push(achievementId);
+        // Show notification
+        setTimeout(() => {
+          alert(`🏆 新成就解锁！`);
+        }, 500);
+      }
+      localStorage.setItem('gameUserData', JSON.stringify(userData));
+    }
+
+    function continueGame() {
+      document.getElementById('roundCompleteScreen').classList.add('hidden');
+      document.getElementById('categoryScreen').classList.remove('hidden');
+      document.getElementById('gameHeader').classList.add('hidden');
+      
+      // Reset round state
+      gameState.roundScore = 0;
+      gameState.roundCorrect = 0;
+      gameState.streak = 0;
+      gameState.maxStreak = 0;
+    }
+
+    function goBackToCategories() {
+      // Show overall stats first
+      showOverallStats();
+    }
+
+    function showOverallStats() {
+      document.getElementById('roundCompleteScreen').classList.add('hidden');
+      document.getElementById('statsScreen').classList.remove('hidden');
+      
+      document.getElementById('totalQuestionsAnswered').textContent = gameState.totalQuestions;
+      document.getElementById('totalCorrectAnswers').textContent = gameState.totalCorrect;
+      document.getElementById('totalPointsEarned').textContent = gameState.totalScore;
+      document.getElementById('totalMaxStreak').textContent = gameState.maxStreak;
+      
+      // Render category stats
+      const categoryStatsHtml = Object.entries(gameState.categoryStats)
+        .map(([category, stats]) => {
+          const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
+          const categoryIcons = { '日本': '🗾', '韩国': '🇰🇷', '泰国': '🇹🇭', '新加坡': '🇸🇬' };
+          return `
+            <div class="flex items-center justify-between">
+              <span class="flex items-center gap-2">
+                <span>${categoryIcons[category] || '🌍'}</span>
+                <span>${category}</span>
+              </span>
+              <span class="font-bold ${accuracy >= 80 ? 'text-green-600' : accuracy >= 60 ? 'text-orange-600' : 'text-gray-600'}">${stats.correct}/${stats.total} (${accuracy}%)</span>
+            </div>
+          `;
+        }).join('');
+      
+      document.getElementById('categoryStats').innerHTML = categoryStatsHtml || '<div class="text-gray-500 text-center">暂无数据</div>';
+      
+      // Update leaderboard
+      updateLeaderboard();
+    }
+
+    function updateLeaderboard() {
+      let leaderboard = JSON.parse(localStorage.getItem('gameLeaderboard') || '[]');
+      
+      const existingIndex = leaderboard.findIndex(entry => entry.id === 'currentUser');
+      const newEntry = {
+        id: 'currentUser',
+        name: '你',
+        points: gameState.totalScore,
+        weeklyPoints: gameState.totalScore,
+        avatar: '😊'
+      };
+      
+      if (existingIndex >= 0) {
+        leaderboard[existingIndex].points += gameState.totalScore;
+        leaderboard[existingIndex].weeklyPoints += gameState.totalScore;
+      } else {
+        leaderboard.push(newEntry);
+      }
+      
+      leaderboard.sort((a, b) => b.weeklyPoints - a.weeklyPoints);
+      leaderboard = leaderboard.slice(0, 20);
+      
+      localStorage.setItem('gameLeaderboard', JSON.stringify(leaderboard));
+    }
+
+    function restartGame() {
+      // Reset all state
+      gameState = {
+        currentCategory: '日本',
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        roundScore: 0,
+        correctCount: 0,
+        roundCorrect: 0,
+        streak: 0,
+        maxStreak: 0,
+        totalQuestions: 0,
+        totalCorrect: 0,
+        totalScore: 0,
+        roundComplete: false,
+        categoryStats: {}
+      };
+      
+      document.getElementById('statsScreen').classList.add('hidden');
+      document.getElementById('gameHeader').classList.add('hidden');
+      document.getElementById('categoryScreen').classList.remove('hidden');
+    }
+
+    function goToGames() {
+      window.location.href = 'index.html';
+    }
+
+    // Initialize
+    loadGamesData();
+  </script>
+</body>
+</html>

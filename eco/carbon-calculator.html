@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>碳足迹计算器 - 游导旅游</title>
+  <meta name="description" content="计算旅行碳足迹，了解减排建议，获取碳抵消方式。">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#10b981',
+            secondary: '#059669',
+            accent: '#34d399'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-eco { background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(16, 185, 129, 0.15); }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .progress-ring { transition: stroke-dashoffset 0.5s ease; }
+    .carbon-low { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); }
+    .carbon-medium { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); }
+    .carbon-high { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); }
+    .step-active { background: #10b981; color: white; }
+    .step-inactive { background: #e5e7eb; color: #6b7280; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-green-50 to-emerald-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-eco text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="index.html" class="hover:opacity-80 transition">环保指南</a>
+          <a href="carbon-calculator.html" class="font-semibold border-b-2 border-white pb-1">碳计算器</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="index.html" class="block py-2">环保指南</a>
+        <a href="carbon-calculator.html" class="block py-2 font-semibold">碳计算器</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="gradient-eco text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 text-center fade-in">
+      <div class="inline-block px-4 py-1.5 bg-white/20 rounded-full text-sm mb-4">
+        📊 了解你的碳足迹
+      </div>
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">碳足迹计算器</h1>
+      <p class="text-lg opacity-90 max-w-2xl mx-auto">计算你的旅行碳排放，了解环保出行方式，获取减排建议。</p>
+    </div>
+  </section>
+
+  <!-- Calculator Section -->
+  <section class="max-w-4xl mx-auto px-4 -mt-6 mb-16">
+    <div class="bg-white rounded-3xl shadow-xl p-8 border border-green-100">
+      <!-- Progress Steps -->
+      <div class="flex items-center justify-center mb-8">
+        <div class="flex items-center">
+          <div id="step1" class="w-10 h-10 rounded-full step-active flex items-center justify-center font-bold">1</div>
+          <div class="w-16 md:w-24 h-1 bg-gray-200" id="progress1"></div>
+          <div id="step2" class="w-10 h-10 rounded-full step-inactive flex items-center justify-center font-bold">2</div>
+          <div class="w-16 md:w-24 h-1 bg-gray-200" id="progress2"></div>
+          <div id="step3" class="w-10 h-10 rounded-full step-inactive flex items-center justify-center font-bold">3</div>
+        </div>
+      </div>
+
+      <!-- Step 1: Transportation -->
+      <div id="step-content-1" class="step-content">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">🚗 交通出行</h2>
+        <p class="text-gray-600 text-center mb-6">请选择你的主要出行方式</p>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">出行方式</label>
+            <select id="transportType" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none" onchange="updateTransportFields()">
+              <option value="plane">✈️ 飞机</option>
+              <option value="car">🚗 自驾</option>
+              <option value="train">🚄 火车</option>
+              <option value="bus">🚌 长途汽车</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">距离（公里）</label>
+            <input type="number" id="distance" placeholder="请输入行驶距离" value="500" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+          </div>
+        </div>
+
+        <!-- Plane options -->
+        <div id="planeOptions" class="mb-6 p-4 bg-blue-50 rounded-xl">
+          <label class="block text-sm font-medium text-gray-700 mb-2">航程类型</label>
+          <div class="flex gap-4">
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="flightType" value="short" checked class="text-primary focus:ring-primary">
+              <span>短途 (&lt; 800km)</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="flightType" value="medium" class="text-primary focus:ring-primary">
+              <span>中途 (800-2500km)</span>
+            </label>
+            <label class="flex items-center gap-2 cursor-pointer">
+              <input type="radio" name="flightType" value="long" class="text-primary focus:ring-primary">
+              <span>长途 (&gt; 2500km)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Car options -->
+        <div id="carOptions" class="mb-6 p-4 bg-blue-50 rounded-xl hidden">
+          <label class="block text-sm font-medium text-gray-700 mb-2">车型</label>
+          <select id="carType" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+            <option value="petrol">⛽ 汽油车</option>
+            <option value="diesel">🛢️ 柴油车</option>
+            <option value="hybrid">🔋 混合动力</option>
+            <option value="electric">⚡ 纯电动车</option>
+          </select>
+        </div>
+
+        <div class="mb-6">
+          <label class="block text-sm font-medium text-gray-700 mb-2">出行人数</label>
+          <input type="number" id="passengers" value="1" min="1" max="50" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+        </div>
+
+        <div class="bg-green-50 rounded-xl p-4 mb-6">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-700">预估交通碳排放：</span>
+            <span id="transportEmission" class="text-2xl font-bold text-green-600">0 kg CO₂</span>
+          </div>
+        </div>
+
+        <button onclick="nextStep(2)" class="w-full py-4 gradient-eco text-white rounded-xl font-bold hover:opacity-90 transition">
+          下一步：住宿 →
+        </button>
+      </div>
+
+      <!-- Step 2: Accommodation -->
+      <div id="step-content-2" class="step-content hidden">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">🏨 住宿情况</h2>
+        <p class="text-gray-600 text-center mb-6">请选择你的住宿类型和天数</p>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">住宿类型</label>
+            <select id="accommodationType" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+              <option value="hotel_standard">🏨 标准酒店</option>
+              <option value="hotel_luxury">🏰 豪华酒店</option>
+              <option value="hostel">🏠 青年旅社/民宿</option>
+              <option value="camping">⛺ 露营</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">住宿天数</label>
+            <input type="number" id="stayDays" value="3" min="1" max="30" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 mb-6">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">用餐习惯</label>
+            <select id="foodType" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+              <option value="meat_heavy">🍖 以肉食为主</option>
+              <option value="balanced" selected>⚖️ 均衡饮食</option>
+              <option value="vegetarian">🥗 素食</option>
+              <option value="local_seasonal">🌿 本地应季食材</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">住宿人数</label>
+            <input type="number" id="stayPeople" value="1" min="1" max="10" class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none">
+          </div>
+        </div>
+
+        <div class="bg-green-50 rounded-xl p-4 mb-6">
+          <div class="flex items-center justify-between">
+            <span class="text-gray-700">预估住宿碳排放：</span>
+            <span id="accommodationEmission" class="text-2xl font-bold text-green-600">0 kg CO₂</span>
+          </div>
+        </div>
+
+        <div class="flex gap-4">
+          <button onclick="prevStep(1)" class="flex-1 py-4 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition">
+            ← 上一步
+          </button>
+          <button onclick="nextStep(3)" class="flex-1 py-4 gradient-eco text-white rounded-xl font-bold hover:opacity-90 transition">
+            下一步：结果 →
+          </button>
+        </div>
+      </div>
+
+      <!-- Step 3: Results -->
+      <div id="step-content-3" class="step-content hidden">
+        <h2 class="text-2xl font-bold text-gray-800 mb-2 text-center">📊 碳足迹报告</h2>
+        <p class="text-gray-600 text-center mb-6">你的旅行碳排放分析</p>
+
+        <!-- Total Carbon -->
+        <div id="carbonResult" class="text-center mb-8">
+          <div class="relative inline-block">
+            <svg class="w-48 h-48 transform -rotate-90">
+              <circle cx="96" cy="96" r="80" stroke="#e5e7eb" stroke-width="16" fill="none"></circle>
+              <circle id="carbonRing" cx="96" cy="96" r="80" stroke="#10b981" stroke-width="16" fill="none" 
+                stroke-dasharray="502.65" stroke-dashoffset="502.65" stroke-linecap="round" class="progress-ring"></circle>
+            </svg>
+            <div class="absolute inset-0 flex flex-col items-center justify-center">
+              <span id="totalCarbon" class="text-4xl font-bold text-gray-800">0</span>
+              <span class="text-sm text-gray-500">kg CO₂</span>
+            </div>
+          </div>
+          <p id="carbonLevel" class="mt-4 text-lg font-medium">碳排放等级：<span id="carbonLevelText">低</span></p>
+        </div>
+
+        <!-- Breakdown -->
+        <div class="grid md:grid-cols-3 gap-4 mb-8">
+          <div class="bg-blue-50 rounded-xl p-4 text-center">
+            <div class="text-3xl mb-2">🚗</div>
+            <div class="text-sm text-gray-600 mb-1">交通</div>
+            <div id="resultTransport" class="text-2xl font-bold text-blue-600">0 kg</div>
+          </div>
+          <div class="bg-green-50 rounded-xl p-4 text-center">
+            <div class="text-3xl mb-2">🏨</div>
+            <div class="text-sm text-gray-600 mb-1">住宿</div>
+            <div id="resultAccommodation" class="text-2xl font-bold text-green-600">0 kg</div>
+          </div>
+          <div class="bg-yellow-50 rounded-xl p-4 text-center">
+            <div class="text-3xl mb-2">🍽️</div>
+            <div class="text-sm text-gray-600 mb-1">餐饮</div>
+            <div id="resultFood" class="text-2xl font-bold text-yellow-600">0 kg</div>
+          </div>
+        </div>
+
+        <!-- Comparison -->
+        <div class="bg-gray-50 rounded-xl p-4 mb-8">
+          <div class="text-sm text-gray-600 mb-2">相当于</div>
+          <div class="flex flex-wrap gap-4">
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">🚗</span>
+              <span id="carEquivalent" class="font-bold text-gray-800">0 公里</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">💡</span>
+              <span id="electricityEquivalent" class="font-bold text-gray-800">0 度电</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-2xl">🌲</span>
+              <span id="treeEquivalent" class="font-bold text-gray-800">需要 0 棵树吸收</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reduction Tips -->
+        <div class="mb-8">
+          <h3 class="text-lg font-bold text-gray-800 mb-4">💡 减排建议</h3>
+          <div id="reductionTips" class="space-y-3">
+            <!-- Tips will be inserted here -->
+          </div>
+        </div>
+
+        <!-- Offset Methods -->
+        <div class="mb-8">
+          <h3 class="text-lg font-bold text-gray-800 mb-4">♻️ 碳抵消方式</h3>
+          <div class="grid md:grid-cols-2 gap-4">
+            <div class="bg-green-50 rounded-xl p-4">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-2xl">🌲</span>
+                <span class="font-bold text-gray-800">植树造林</span>
+              </div>
+              <p class="text-sm text-gray-600 mb-2">每种植一棵树，平均每年可吸收约22kg CO₂</p>
+              <div class="text-primary font-bold" id="treeCost">约需种植 <span id="treeCount">0</span> 棵</div>
+            </div>
+            <div class="bg-blue-50 rounded-xl p-4">
+              <div class="flex items-center gap-3 mb-2">
+                <span class="text-2xl">⚡</span>
+                <span class="font-bold text-gray-800">购买绿电</span>
+              </div>
+              <p class="text-sm text-gray-600 mb-2">支持可再生能源项目</p>
+              <div class="text-primary font-bold" id="greenPowerCost">约需 <span id="greenPowerCostValue">0</span> 元</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-4">
+          <button onclick="prevStep(2)" class="flex-1 py-4 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition">
+            ← 重新计算
+          </button>
+          <a href="activities.html" class="flex-1 py-4 gradient-eco text-white rounded-xl font-bold hover:opacity-90 transition text-center">
+            🤝 参与环保活动
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Achievements Section -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="text-center mb-8">
+      <h2 class="text-3xl font-bold text-gray-800 mb-4">🏆 环保成就</h2>
+      <p class="text-gray-600">完成环保行动，解锁成就徽章</p>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div id="badge-eco_beginner" class="card-hover bg-white rounded-2xl p-4 text-center shadow-lg border border-green-100 opacity-50">
+        <div class="text-4xl mb-2">🌱</div>
+        <h3 class="font-bold text-sm text-gray-800">环保新手</h3>
+        <p class="text-xs text-gray-500 mt-1">完成首次碳计算</p>
+      </div>
+      <div id="badge-plastic_reducer" class="card-hover bg-white rounded-2xl p-4 text-center shadow-lg border border-green-100 opacity-50">
+        <div class="text-4xl mb-2">🚫</div>
+        <h3 class="font-bold text-sm text-gray-800">减塑达人</h3>
+        <p class="text-xs text-gray-500 mt-1">7天不使用一次性塑料</p>
+      </div>
+      <div id="badge-green_traveler" class="card-hover bg-white rounded-2xl p-4 text-center shadow-lg border border-green-100 opacity-50">
+        <div class="text-4xl mb-2">🚲</div>
+        <h3 class="font-bold text-sm text-gray-800">绿色行者</h3>
+        <p class="text-xs text-gray-500 mt-1">累计骑行500公里</p>
+      </div>
+      <div id="badge-tree_friend" class="card-hover bg-white rounded-2xl p-4 text-center shadow-lg border border-green-100 opacity-50">
+        <div class="text-4xl mb-2">🌳</div>
+        <h3 class="font-bold text-sm text-gray-800">护树之友</h3>
+        <p class="text-xs text-gray-500 mt-1">参与植树活动</p>
+      </div>
+      <div id="badge-eco_warrior" class="card-hover bg-white rounded-2xl p-4 text-center shadow-lg border border-green-100 opacity-50">
+        <div class="text-4xl mb-2">🛡️</div>
+        <h3 class="font-bold text-sm text-gray-800">环保卫士</h3>
+        <p class="text-xs text-gray-500 mt-1">累计减排100kg</p>
+      </div>
+      <div id="badge-carbon_zero" class="card-hover bg-white rounded-2xl p-4 text-center shadow-lg border border-green-100 opacity-50">
+        <div class="text-4xl mb-2">🌍</div>
+        <h3 class="font-bold text-sm text-gray-800">碳中和旅行者</h3>
+        <p class="text-xs text-gray-500 mt-1">完成3次碳抵消</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Links -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="grid md:grid-cols-3 gap-6">
+      <a href="tips.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-green-100 flex items-center gap-4">
+        <div class="text-4xl">💡</div>
+        <div>
+          <h3 class="font-bold text-gray-800">环保技巧</h3>
+          <p class="text-sm text-gray-600">学习更多环保知识</p>
+        </div>
+      </a>
+      <a href="destinations.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-green-100 flex items-center gap-4">
+        <div class="text-4xl">🏞️</div>
+        <div>
+          <h3 class="font-bold text-gray-800">环保目的地</h3>
+          <p class="text-sm text-gray-600">探索生态友好景点</p>
+        </div>
+      </a>
+      <a href="activities.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-green-100 flex items-center gap-4">
+        <div class="text-4xl">🤝</div>
+        <div>
+          <h3 class="font-bold text-gray-800">参与活动</h3>
+          <p class="text-sm text-gray-600">加入环保志愿活动</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-3 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-2xl">🧭</span>
+            <span class="text-xl font-bold">游导旅游</span>
+          </div>
+          <p class="text-gray-400 text-sm">您的贴心旅行助手，让每一次出行都轻松愉快。</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">环保服务</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li><a href="tips.html" class="hover:text-white transition">环保技巧</a></li>
+            <li><a href="destinations.html" class="hover:text-white transition">环保目的地</a></li>
+            <li><a href="carbon-calculator.html" class="hover:text-white transition">碳足迹计算</a></li>
+            <li><a href="activities.html" class="hover:text-white transition">环保活动</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">联系我们</h4>
+          <ul class="space-y-2 text-sm text-gray-400">
+            <li>📧 eco@youdao-travel.com</li>
+            <li>📞 13631149834</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-400">
+        <p>&copy; 2024 游导旅游 youdao-travel.com | 环保旅行，从我做起</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Carbon emission factors (kg CO2 per km or per unit)
+    const carbonFactors = {
+      transport: {
+        plane: { short: 0.255, medium: 0.196, long: 0.147 },
+        car: { petrol: 0.171, diesel: 0.168, hybrid: 0.112, electric: 0.053 },
+        train: { electric: 0.041, diesel: 0.089 },
+        bus: 0.069
+      },
+      accommodation: {
+        hotel_standard: 20.6,
+        hotel_luxury: 33.4,
+        hostel: 8.4,
+        camping: 3.2
+      },
+      food: {
+        meat_heavy: 5.4,
+        balanced: 3.8,
+        vegetarian: 2.5,
+        local_seasonal: 2.0
+      }
+    };
+
+    let currentStep = 1;
+    let totalEmission = 0;
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    function updateTransportFields() {
+      const transportType = document.getElementById('transportType').value;
+      document.getElementById('planeOptions').classList.add('hidden');
+      document.getElementById('carOptions').classList.add('hidden');
+
+      if (transportType === 'plane') {
+        document.getElementById('planeOptions').classList.remove('hidden');
+      } else if (transportType === 'car') {
+        document.getElementById('carOptions').classList.remove('hidden');
+      }
+      calculateTransportEmission();
+    }
+
+    function calculateTransportEmission() {
+      const transportType = document.getElementById('transportType').value;
+      const distance = parseFloat(document.getElementById('distance').value) || 0;
+      const passengers = parseInt(document.getElementById('passengers').value) || 1;
+
+      let emission = 0;
+
+      if (transportType === 'plane') {
+        const flightType = document.querySelector('input[name="flightType"]:checked').value;
+        emission = distance * carbonFactors.transport.plane[flightType] / passengers;
+      } else if (transportType === 'car') {
+        const carType = document.getElementById('carType').value;
+        emission = distance * carbonFactors.transport.car[carType];
+      } else if (transportType === 'train') {
+        emission = distance * carbonFactors.transport.train.electric;
+      } else if (transportType === 'bus') {
+        emission = distance * carbonFactors.transport.bus;
+      }
+
+      document.getElementById('transportEmission').textContent = emission.toFixed(1) + ' kg CO₂';
+      return emission;
+    }
+
+    function calculateAccommodationEmission() {
+      const accommodationType = document.getElementById('accommodationType').value;
+      const stayDays = parseInt(document.getElementById('stayDays').value) || 1;
+      const stayPeople = parseInt(document.getElementById('stayPeople').value) || 1;
+
+      const accommodationEmission = carbonFactors.accommodation[accommodationType] * stayDays / stayPeople;
+      document.getElementById('accommodationEmission').textContent = accommodationEmission.toFixed(1) + ' kg CO₂';
+
+      const foodType = document.getElementById('foodType').value;
+      const foodEmission = carbonFactors.food[foodType] * stayDays;
+
+      return { accommodation: accommodationEmission, food: foodEmission };
+    }
+
+    function updateResults() {
+      const transportEmission = calculateTransportEmission();
+      const { accommodation: accommodationEmission, food: foodEmission } = calculateAccommodationEmission();
+
+      totalEmission = transportEmission + accommodationEmission + foodEmission;
+
+      document.getElementById('totalCarbon').textContent = totalEmission.toFixed(1);
+      document.getElementById('resultTransport').textContent = transportEmission.toFixed(1) + ' kg';
+      document.getElementById('resultAccommodation').textContent = accommodationEmission.toFixed(1) + ' kg';
+      document.getElementById('resultFood').textContent = foodEmission.toFixed(1) + ' kg';
+
+      // Update carbon ring
+      const maxCarbon = 500; // Max expected carbon for the ring
+      const percentage = Math.min(totalEmission / maxCarbon, 1);
+      const circumference = 2 * Math.PI * 80; // 502.65
+      const offset = circumference * (1 - percentage);
+      document.getElementById('carbonRing').style.strokeDashoffset = offset;
+
+      // Update carbon level
+      let level, levelText, levelColor;
+      if (totalEmission < 100) {
+        level = 'low';
+        levelText = '低';
+        levelColor = 'text-green-600';
+        document.getElementById('carbonRing').style.stroke = '#10b981';
+      } else if (totalEmission < 300) {
+        level = 'medium';
+        levelText = '中等';
+        levelColor = 'text-yellow-600';
+        document.getElementById('carbonRing').style.stroke = '#f59e0b';
+      } else {
+        level = 'high';
+        levelText = '高';
+        levelColor = 'text-red-600';
+        document.getElementById('carbonRing').style.stroke = '#ef4444';
+      }
+      document.getElementById('carbonLevelText').textContent = levelText;
+      document.getElementById('carbonLevelText').className = levelColor;
+
+      // Equivalents
+      document.getElementById('carEquivalent').textContent = (totalEmission / 0.171).toFixed(0) + ' 公里';
+      document.getElementById('electricityEquivalent').textContent = (totalEmission / 0.8).toFixed(0) + ' 度电';
+      document.getElementById('treeEquivalent').textContent = '需要 ' + Math.ceil(totalEmission / 22) + ' 棵';
+
+      // Offset calculations
+      document.getElementById('treeCount').textContent = Math.ceil(totalEmission / 22);
+      document.getElementById('greenPowerCostValue').textContent = Math.ceil(totalEmission * 0.1);
+
+      // Reduction tips
+      const tips = generateReductionTips(transportEmission, accommodationEmission, foodEmission);
+      document.getElementById('reductionTips').innerHTML = tips.map(tip => 
+        `<div class="flex items-start gap-3 p-3 bg-green-50 rounded-xl">
+          <span class="text-lg">${tip.icon}</span>
+          <div>
+            <span class="font-medium text-gray-800">${tip.title}</span>
+            <p class="text-sm text-gray-600">${tip.desc}</p>
+          </div>
+        </div>`
+      ).join('');
+
+      // Unlock badge
+      unlockBadge('eco_beginner');
+      if (totalEmission > 100) {
+        unlockBadge('eco_warrior');
+      }
+
+      // Save to localStorage
+      saveCalculation();
+    }
+
+    function generateReductionTips(transport, accommodation, food) {
+      const tips = [];
+      const total = transport + accommodation + food;
+
+      if (transport / total > 0.5) {
+        tips.push({
+          icon: '🚄',
+          title: '优先选择火车',
+          desc: '火车碳排放约为飞机的1/4，中短途旅行首选'
+        });
+      }
+
+      if (document.getElementById('transportType').value === 'car') {
+        tips.push({
+          icon: '👥',
+          title: '尝试拼车出行',
+          desc: '与同行者拼车可减少约50%的碳排放'
+        });
+      }
+
+      tips.push({
+        icon: '🏨',
+        title: '选择环保住宿',
+        desc: '入住获得环保认证的酒店，支持可持续发展'
+      });
+
+      tips.push({
+        icon: '🥗',
+        title: '尝试素食或本地食材',
+        desc: '减少肉类摄入，选择当地食材，降低饮食碳足迹'
+      });
+
+      return tips;
+    }
+
+    function unlockBadge(badgeId) {
+      const badge = document.getElementById('badge-' + badgeId);
+      if (badge) {
+        badge.classList.remove('opacity-50');
+        badge.classList.add('opacity-100', 'ring-2', 'ring-green-400');
+      }
+    }
+
+    function saveCalculation() {
+      const calculations = JSON.parse(localStorage.getItem('carbonCalculations') || '[]');
+      calculations.push({
+        date: new Date().toISOString(),
+        total: totalEmission
+      });
+      localStorage.setItem('carbonCalculations', JSON.stringify(calculations));
+    }
+
+    function nextStep(step) {
+      document.getElementById('step-content-' + currentStep).classList.add('hidden');
+      document.getElementById('step-content-' + step).classList.remove('hidden');
+
+      // Update step indicators
+      for (let i = 1; i <= 3; i++) {
+        const stepEl = document.getElementById('step' + i);
+        const progressEl = document.getElementById('progress' + (i - 1));
+        if (i < step) {
+          stepEl.classList.remove('step-inactive');
+          stepEl.classList.add('step-active');
+          if (progressEl) progressEl.classList.add('bg-green-500');
+        } else if (i === step) {
+          stepEl.classList.remove('step-inactive');
+          stepEl.classList.add('step-active');
+        }
+      }
+
+      currentStep = step;
+
+      if (step === 3) {
+        updateResults();
+      }
+    }
+
+    function prevStep(step) {
+      document.getElementById('step-content-' + currentStep).classList.add('hidden');
+      document.getElementById('step-content-' + step).classList.remove('hidden');
+
+      document.getElementById('step' + currentStep).classList.remove('step-active');
+      document.getElementById('step' + currentStep).classList.add('step-inactive');
+
+      currentStep = step;
+    }
+
+    // Initialize
+    document.getElementById('distance').addEventListener('input', calculateTransportEmission);
+    document.getElementById('passengers').addEventListener('input', calculateTransportEmission);
+    document.getElementById('transportType').addEventListener('change', calculateTransportEmission);
+    document.querySelectorAll('input[name="flightType"]').forEach(el => el.addEventListener('change', calculateTransportEmission));
+    document.getElementById('carType').addEventListener('change', calculateTransportEmission);
+    document.getElementById('accommodationType').addEventListener('change', calculateAccommodationEmission);
+    document.getElementById('stayDays').addEventListener('input', calculateAccommodationEmission);
+    document.getElementById('stayPeople').addEventListener('input', calculateAccommodationEmission);
+    document.getElementById('foodType').addEventListener('change', calculateAccommodationEmission);
+
+    // Initial calculation
+    calculateTransportEmission();
+    calculateAccommodationEmission();
+  </script>
+</body>
+</html>

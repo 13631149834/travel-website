@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>积分与排行榜 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .rank-badge { transition: all 0.3s ease; }
+    .rank-badge:hover { transform: scale(1.1); }
+    .achievement-badge { transition: all 0.3s ease; }
+    .achievement-badge:hover { transform: scale(1.1) rotate(5deg); }
+    .achievement-locked { filter: grayscale(100%); opacity: 0.5; }
+    .tab-active { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%); color: white; }
+    .float-animation { animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    .pulse-glow { animation: pulseGlow 2s ease-in-out infinite; }
+    @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 20px rgba(245, 158, 11, 0.3); } 50% { box-shadow: 0 0 40px rgba(245, 158, 11, 0.6); } }
+    .progress-fill { transition: width 0.5s ease; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-2xl">←</span>
+          <span class="text-xl font-bold">返回游戏中心</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 bg-white/20 backdrop-blur px-4 py-2 rounded-full">
+            <span class="text-xl">⭐</span>
+            <span class="text-xl font-bold" id="userPoints">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- User Stats Banner -->
+  <div class="bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 text-white py-6">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div>
+          <div class="text-3xl md:text-4xl font-bold" id="totalPoints">0</div>
+          <div class="text-sm opacity-80 mt-1">总积分</div>
+        </div>
+        <div>
+          <div class="text-3xl md:text-4xl font-bold" id="totalGames">0</div>
+          <div class="text-sm opacity-80 mt-1">游戏次数</div>
+        </div>
+        <div>
+          <div class="text-3xl md:text-4xl font-bold" id="currentRank">-</div>
+          <div class="text-sm opacity-80 mt-1">当前排名</div>
+        </div>
+        <div>
+          <div class="text-3xl md:text-4xl font-bold" id="achievementCount">0</div>
+          <div class="text-sm opacity-80 mt-1">已获成就</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <!-- Tabs -->
+    <div class="flex gap-2 mb-8 overflow-x-auto pb-2">
+      <button onclick="switchTab('weekly')" class="tab-btn px-6 py-3 rounded-full font-medium transition whitespace-nowrap tab-active" data-tab="weekly">
+        🏆 周排行榜
+      </button>
+      <button onclick="switchTab('total')" class="tab-btn px-6 py-3 rounded-full font-medium transition whitespace-nowrap bg-white text-gray-600 hover:bg-gray-100" data-tab="total">
+        👑 总排行榜
+      </button>
+      <button onclick="switchTab('achievements')" class="tab-btn px-6 py-3 rounded-full font-medium transition whitespace-nowrap bg-white text-gray-600 hover:bg-gray-100" data-tab="achievements">
+        🎖️ 成就中心
+      </button>
+      <button onclick="switchTab('rewards')" class="tab-btn px-6 py-3 rounded-full font-medium transition whitespace-nowrap bg-white text-gray-600 hover:bg-gray-100" data-tab="rewards">
+        🎁 积分商城
+      </button>
+    </div>
+
+    <!-- Weekly Leaderboard -->
+    <div id="weeklyTab" class="tab-content fade-in">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">本周排行榜</h2>
+          <p class="text-gray-500 text-sm">每周一凌晨重置，竞争激烈！</p>
+        </div>
+        <div class="bg-amber-100 text-amber-700 px-4 py-2 rounded-full font-medium">
+          ⏰ 重置倒计时：<span id="resetCountdown">6天</span>
+        </div>
+      </div>
+
+      <!-- Top 3 -->
+      <div class="grid md:grid-cols-3 gap-4 mb-8" id="topThree">
+        <!-- Top 3 will be rendered here -->
+      </div>
+
+      <!-- Rest of Leaderboard -->
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-4 bg-gray-50 border-b">
+          <h3 class="font-bold text-gray-800">排名详情</h3>
+        </div>
+        <div id="leaderboardList" class="divide-y">
+          <!-- Leaderboard items will be rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Total Leaderboard -->
+    <div id="totalTab" class="tab-content hidden fade-in">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold text-gray-800">总排行榜</h2>
+          <p class="text-gray-500 text-sm">历史累计积分排名</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div id="totalLeaderboardList" class="divide-y">
+          <!-- Total leaderboard items will be rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Achievements -->
+    <div id="achievementsTab" class="tab-content hidden">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">成就中心</h2>
+        <p class="text-gray-500 text-sm">完成各种挑战，解锁专属成就</p>
+      </div>
+
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="achievementsList">
+        <!-- Achievements will be rendered here -->
+      </div>
+
+      <!-- Progress Section -->
+      <div class="mt-8 bg-white rounded-2xl shadow-lg p-6">
+        <h3 class="font-bold text-gray-800 mb-4">🏅 成就进度</h3>
+        <div id="achievementProgress" class="space-y-4">
+          <!-- Progress items will be rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Rewards Store -->
+    <div id="rewardsTab" class="tab-content hidden">
+      <div class="mb-6">
+        <h2 class="text-2xl font-bold text-gray-800">积分商城</h2>
+        <p class="text-gray-500 text-sm">用积分兑换精美旅行周边</p>
+      </div>
+
+      <div class="bg-gradient-to-r from-amber-100 to-orange-100 rounded-2xl p-6 mb-8">
+        <div class="flex items-center justify-between">
+          <div>
+            <div class="text-sm text-amber-700">我的积分</div>
+            <div class="text-3xl font-bold text-amber-600" id="shopPoints">0</div>
+          </div>
+          <div class="text-4xl">🎁</div>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="rewardsList">
+        <!-- Rewards will be rendered here -->
+      </div>
+
+      <!-- Redeemed History -->
+      <div class="mt-8 bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="p-4 bg-gray-50 border-b">
+          <h3 class="font-bold text-gray-800">兑换记录</h3>
+        </div>
+        <div id="redeemHistory" class="p-4 text-center text-gray-500">
+          暂无兑换记录
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Redeem Modal -->
+  <div id="redeemModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full text-center">
+      <div class="text-6xl mb-4" id="modalIcon">🎁</div>
+      <h3 class="text-2xl font-bold text-gray-800 mb-2" id="modalTitle">确认兑换</h3>
+      <p class="text-gray-500 mb-6" id="modalDescription">确定要兑换这个奖励吗？</p>
+      <div class="bg-gray-50 rounded-xl p-4 mb-6">
+        <div class="text-sm text-gray-500">所需积分</div>
+        <div class="text-2xl font-bold text-amber-500" id="modalPoints">0</div>
+      </div>
+      <div class="flex gap-3">
+        <button onclick="closeModal()" class="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition">
+          取消
+        </button>
+        <button onclick="confirmRedeem()" class="flex-1 py-3 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-xl font-medium hover:opacity-90 transition">
+          确认兑换
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg hidden z-50">
+    <span id="toastMessage"></span>
+  </div>
+
+  <script>
+    let gamesData = null;
+    let userData = null;
+    let selectedReward = null;
+
+    async function loadGamesData() {
+      try {
+        const response = await fetch('../data/games.json');
+        gamesData = await response.json();
+        loadUserData();
+        initPage();
+      } catch (error) {
+        console.error('Failed to load games data:', error);
+      }
+    }
+
+    function loadUserData() {
+      userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      userData.achievements = userData.achievements || [];
+      userData.redeemedRewards = userData.redeemedRewards || [];
+    }
+
+    function initPage() {
+      updateUserStats();
+      renderLeaderboards();
+      renderAchievements();
+      renderRewards();
+      renderRedeemHistory();
+      calculateResetCountdown();
+    }
+
+    function updateUserStats() {
+      const totalPoints = userData.totalPoints || 0;
+      const totalGames = (userData.quizGames || 0) + (userData.triviaGames || 0) + (userData.puzzleGames || 0) + (userData.memoryGames || 0);
+      const achievementCount = userData.achievements.length;
+      
+      document.getElementById('totalPoints').textContent = totalPoints.toLocaleString();
+      document.getElementById('userPoints').textContent = totalPoints.toLocaleString();
+      document.getElementById('shopPoints').textContent = totalPoints.toLocaleString();
+      document.getElementById('totalGames').textContent = totalGames;
+      document.getElementById('achievementCount').textContent = `${achievementCount}/${gamesData?.achievements?.length || 8}`;
+      
+      // Calculate rank
+      const leaderboard = JSON.parse(localStorage.getItem('gameLeaderboard') || '[]');
+      const userEntry = leaderboard.find(entry => entry.id === 'currentUser');
+      const rank = userEntry ? leaderboard.indexOf(userEntry) + 1 : '-';
+      document.getElementById('currentRank').textContent = rank !== '-' ? `#${rank}` : '-';
+    }
+
+    function renderLeaderboards() {
+      const leaderboard = JSON.parse(localStorage.getItem('gameLeaderboard') || '[]');
+      
+      // Sample data if empty
+      if (leaderboard.length === 0) {
+        const sampleData = [
+          { id: 's1', name: '旅行达人小明', points: 2850, weeklyPoints: 850, avatar: '🐼', games: 45 },
+          { id: 's2', name: '世界漫游者', points: 2420, weeklyPoints: 720, avatar: '🦊', games: 38 },
+          { id: 's3', name: '旅途中的我', points: 1980, weeklyPoints: 650, avatar: '🐨', games: 32 },
+          { id: 's4', name: '背包客老王', points: 1650, weeklyPoints: 480, avatar: '🦁', games: 28 },
+          { id: 's5', name: '风景摄影师', points: 1420, weeklyPoints: 390, avatar: '🦅', games: 24 },
+          { id: 's6', name: '美食探索家', points: 1280, weeklyPoints: 320, avatar: '🐯', games: 21 },
+          { id: 's7', name: '文化追寻者', points: 1150, weeklyPoints: 280, avatar: '🐻', games: 18 },
+          { id: 's8', name: '海岛爱好者', points: 980, weeklyPoints: 220, avatar: '🐬', games: 15 }
+        ];
+        
+        renderLeaderboardWithData(sampleData);
+      } else {
+        // Sort by weekly points for weekly tab
+        const weeklySorted = [...leaderboard].sort((a, b) => (b.weeklyPoints || 0) - (a.weeklyPoints || 0));
+        renderLeaderboardWithData(weeklySorted);
+        
+        // Sort by total points for total tab
+        const totalSorted = [...leaderboard].sort((a, b) => (b.points || 0) - (a.points || 0));
+        renderTotalLeaderboard(totalSorted);
+      }
+    }
+
+    function renderLeaderboardWithData(data) {
+      const topThree = data.slice(0, 3);
+      const rest = data.slice(3);
+      
+      // Top 3
+      const topThreeHtml = `
+        ${topThree.map((player, index) => {
+          const rank = index + 1;
+          const bgClass = rank === 1 ? 'from-amber-300 to-yellow-400' : rank === 2 ? 'from-gray-200 to-gray-400' : 'from-orange-300 to-orange-500';
+          const crown = rank === 1 ? '👑' : '';
+          
+          return `
+            <div class="bg-gradient-to-br ${bgClass} rounded-2xl p-6 text-center relative card-hover ${rank === 1 ? 'order-2 md:-mt-4' : rank === 2 ? 'order-1' : 'order-3'}">
+              ${crown ? `<div class="absolute -top-3 left-1/2 transform -translate-x-1/2 text-3xl">${crown}</div>` : ''}
+              <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl mx-auto mb-3 shadow-lg">
+                ${player.avatar || '👤'}
+              </div>
+              <div class="font-bold text-gray-800 mb-1">${player.name}</div>
+              <div class="text-2xl font-bold text-white">${(player.weeklyPoints || 0).toLocaleString()}</div>
+              <div class="text-sm opacity-80">本周积分</div>
+            </div>
+          `;
+        }).join('')}
+      `;
+      document.getElementById('topThree').innerHTML = topThreeHtml;
+      
+      // Rest of leaderboard
+      const listHtml = rest.map((player, index) => {
+        const rank = index + 4;
+        const isCurrentUser = player.id === 'currentUser';
+        
+        return `
+          <div class="leaderboard-item flex items-center gap-4 p-4 ${isCurrentUser ? 'bg-blue-50' : 'hover:bg-gray-50'} transition">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${rank <= 10 ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}">
+              ${rank}
+            </div>
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-400 to-cyan-400 rounded-full flex items-center justify-center text-2xl text-white">
+              ${player.avatar || '👤'}
+            </div>
+            <div class="flex-1">
+              <div class="font-bold text-gray-800">${player.name} ${isCurrentUser ? '<span class="text-xs text-primary">(你)</span>' : ''}</div>
+              <div class="text-sm text-gray-500">${player.games || 0} 场游戏</div>
+            </div>
+            <div class="text-xl font-bold text-amber-500">${(player.weeklyPoints || 0).toLocaleString()}</div>
+          </div>
+        `;
+      }).join('');
+      
+      document.getElementById('leaderboardList').innerHTML = listHtml || '<div class="p-8 text-center text-gray-500">暂无数据</div>';
+    }
+
+    function renderTotalLeaderboard(data) {
+      const listHtml = data.map((player, index) => {
+        const rank = index + 1;
+        const isCurrentUser = player.id === 'currentUser';
+        const medals = ['🥇', '🥈', '🥉'];
+        
+        return `
+          <div class="leaderboard-item flex items-center gap-4 p-4 ${isCurrentUser ? 'bg-blue-50' : 'hover:bg-gray-50'} transition">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-lg ${rank <= 3 ? 'bg-amber-100 text-amber-700' : 'bg-gray-100 text-gray-600'}">
+              ${rank <= 3 ? medals[rank - 1] : rank}
+            </div>
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full flex items-center justify-center text-2xl text-white">
+              ${player.avatar || '👤'}
+            </div>
+            <div class="flex-1">
+              <div class="font-bold text-gray-800">${player.name} ${isCurrentUser ? '<span class="text-xs text-primary">(你)</span>' : ''}</div>
+              <div class="text-sm text-gray-500">本周 ${(player.weeklyPoints || 0).toLocaleString()} 积分</div>
+            </div>
+            <div class="text-right">
+              <div class="text-xl font-bold text-amber-500">${(player.points || 0).toLocaleString()}</div>
+              <div class="text-xs text-gray-500">总积分</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      document.getElementById('totalLeaderboardList').innerHTML = listHtml || '<div class="p-8 text-center text-gray-500">暂无数据</div>';
+    }
+
+    function renderAchievements() {
+      const achievements = gamesData?.achievements || [
+        { id: 'first_quiz', name: '初出茅庐', description: '完成第一次猜谜游戏', icon: '🎯', points: 50 },
+        { id: 'quiz_master', name: '猜谜大师', description: '连续答对10题', icon: '🏆', points: 200 },
+        { id: 'trivia_expert', name: '旅行知识达人', description: '完成100道问答', icon: '🧠', points: 300 },
+        { id: 'puzzle_master', name: '拼图高手', description: '完成10次拼图', icon: '🧩', points: 150 },
+        { id: 'memory_champion', name: '记忆冠军', description: '完美通关记忆游戏', icon: '🧠', points: 200 },
+        { id: 'point_collector', name: '积分收藏家', description: '累计1000积分', icon: '💎', points: 500 },
+        { id: 'weekly_winner', name: '周冠军', description: '登上周排行榜榜首', icon: '👑', points: 1000 },
+        { id: 'streak_master', name: '连胜大师', description: '连续7天游戏', icon: '🔥', points: 400 }
+      ];
+      
+      const unlocked = userData.achievements || [];
+      
+      const html = achievements.map(achievement => {
+        const isUnlocked = unlocked.includes(achievement.id);
+        
+        return `
+          <div class="achievement-badge bg-white rounded-2xl p-4 shadow-lg ${isUnlocked ? '' : 'achievement-locked'} cursor-pointer" 
+               onclick="showAchievementDetail('${achievement.id}')">
+            <div class="text-4xl mb-3 ${isUnlocked ? '' : 'grayscale'}">${achievement.icon}</div>
+            <div class="font-bold text-gray-800 mb-1 ${isUnlocked ? '' : 'text-gray-400'}">${achievement.name}</div>
+            <div class="text-xs text-gray-500 mb-2">${achievement.description}</div>
+            <div class="text-sm font-medium ${isUnlocked ? 'text-green-500' : 'text-gray-400'}">
+              ${isUnlocked ? '✓ 已解锁' : `+${achievement.points} 积分`}
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      document.getElementById('achievementsList').innerHTML = html;
+      
+      // Progress
+      const progressHtml = [
+        { name: '猜谜大师', progress: Math.min(100, (userData.quizGames || 0) * 10), target: 10 },
+        { name: '拼图高手', progress: Math.min(100, (userData.puzzleGames || 0) * 10), target: 10 },
+        { name: '积分收藏家', progress: Math.min(100, ((userData.totalPoints || 0) / 1000) * 100), target: 1000 },
+        { name: '连胜大师', progress: Math.min(100, ((userData.streakDays || 0) / 7) * 100), target: 7 }
+      ].map(item => `
+        <div>
+          <div class="flex justify-between text-sm mb-1">
+            <span class="font-medium text-gray-700">${item.name}</span>
+            <span class="text-gray-500">${item.progress >= 100 ? '已完成 ✓' : `${Math.round(item.progress)}%`}</span>
+          </div>
+          <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-500 progress-fill rounded-full" style="width: ${item.progress}%"></div>
+          </div>
+        </div>
+      `).join('');
+      
+      document.getElementById('achievementProgress').innerHTML = progressHtml;
+    }
+
+    function showAchievementDetail(achievementId) {
+      const achievement = gamesData?.achievements?.find(a => a.id === achievementId);
+      if (!achievement) return;
+      
+      const isUnlocked = userData.achievements?.includes(achievementId);
+      
+      showToast(`${achievement.icon} ${achievement.name}: ${achievement.description}${isUnlocked ? ' (已解锁)' : ` (奖励 +${achievement.points} 积分)`}`);
+    }
+
+    function renderRewards() {
+      const rewards = gamesData?.rewards || [
+        { id: 'r1', name: '旅行贴纸包', description: '可爱的旅行主题贴纸', points: 100, icon: '🏷️' },
+        { id: 'r2', name: '旅行笔记本', description: '精美旅行笔记本', points: 300, icon: '📔' },
+        { id: 'r3', name: '背包挂件', description: '精致的旅行背包挂件', points: 200, icon: '🎒' },
+        { id: 'r4', name: '便携收纳袋', description: '防水收纳袋套装', points: 500, icon: '🛍️' },
+        { id: 'r5', name: '护照保护套', description: '皮质护照保护套', points: 400, icon: '📗' },
+        { id: 'r6', name: '旅行颈枕', description: '记忆棉便携颈枕', points: 350, icon: '🛫' }
+      ];
+      
+      const canAfford = (userData.totalPoints || 0);
+      
+      const html = rewards.map(reward => {
+        const affordable = canAfford >= reward.points;
+        
+        return `
+          <div class="bg-white rounded-2xl overflow-hidden shadow-lg card-hover">
+            <div class="h-32 bg-gradient-to-br from-amber-100 to-orange-100 flex items-center justify-center">
+              <span class="text-6xl ${affordable ? '' : 'grayscale opacity-50'}">${reward.icon}</span>
+            </div>
+            <div class="p-4">
+              <h4 class="font-bold text-gray-800 mb-1">${reward.name}</h4>
+              <p class="text-sm text-gray-500 mb-3">${reward.description}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-lg font-bold text-amber-500">⭐ ${reward.points}</span>
+                <button onclick="openRedeemModal('${reward.id}')" 
+                        class="px-4 py-2 rounded-full text-sm font-medium ${affordable ? 'bg-gradient-to-r from-amber-500 to-orange-500 text-white hover:opacity-90' : 'bg-gray-100 text-gray-400 cursor-not-allowed'} transition"
+                        ${affordable ? '' : 'disabled'}>
+                  ${affordable ? '立即兑换' : '积分不足'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      document.getElementById('rewardsList').innerHTML = html;
+    }
+
+    function renderRedeemHistory() {
+      const history = userData.redeemedRewards || [];
+      
+      if (history.length === 0) {
+        document.getElementById('redeemHistory').innerHTML = '<div class="text-center text-gray-500 py-8">暂无兑换记录</div>';
+        return;
+      }
+      
+      const html = history.slice().reverse().map(item => `
+        <div class="flex items-center gap-4 py-3 border-b last:border-0">
+          <span class="text-3xl">${item.icon}</span>
+          <div class="flex-1">
+            <div class="font-medium text-gray-800">${item.name}</div>
+            <div class="text-sm text-gray-500">${new Date(item.redeemedAt).toLocaleDateString()}</div>
+          </div>
+          <span class="text-amber-500 font-medium">-${item.points}</span>
+        </div>
+      `).join('');
+      
+      document.getElementById('redeemHistory').innerHTML = html;
+    }
+
+    function openRedeemModal(rewardId) {
+      const reward = gamesData?.rewards?.find(r => r.id === rewardId);
+      if (!reward) return;
+      
+      selectedReward = reward;
+      
+      document.getElementById('modalIcon').textContent = reward.icon;
+      document.getElementById('modalTitle').textContent = `确认兑换「${reward.name}」`;
+      document.getElementById('modalDescription').textContent = reward.description;
+      document.getElementById('modalPoints').textContent = reward.points;
+      document.getElementById('redeemModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('redeemModal').classList.add('hidden');
+      selectedReward = null;
+    }
+
+    function confirmRedeem() {
+      if (!selectedReward) return;
+      
+      if ((userData.totalPoints || 0) >= selectedReward.points) {
+        userData.totalPoints -= selectedReward.points;
+        userData.redeemedRewards = userData.redeemedRewards || [];
+        userData.redeemedRewards.push({
+          ...selectedReward,
+          redeemedAt: new Date().toISOString()
+        });
+        
+        localStorage.setItem('gameUserData', JSON.stringify(userData));
+        
+        closeModal();
+        updateUserStats();
+        renderRewards();
+        renderRedeemHistory();
+        
+        showToast(`🎉 成功兑换「${selectedReward.name}」！`);
+      } else {
+        showToast('积分不足，兑换失败');
+      }
+    }
+
+    function switchTab(tabName) {
+      // Update tab buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.toggle('tab-active', btn.dataset.tab === tabName);
+        btn.classList.toggle('bg-white', btn.dataset.tab !== tabName);
+        btn.classList.toggle('text-gray-600', btn.dataset.tab !== tabName);
+      });
+      
+      // Update tab content
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+      document.getElementById(`${tabName}Tab`).classList.remove('hidden');
+    }
+
+    function calculateResetCountdown() {
+      const now = new Date();
+      const nextMonday = new Date();
+      nextMonday.setDate(now.getDate() + ((1 + 7 - now.getDay()) % 7 || 7));
+      nextMonday.setHours(0, 0, 0, 0);
+      
+      const diff = nextMonday - now;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      
+      document.getElementById('resetCountdown').textContent = `${days}天 ${hours}小时`;
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastMessage').textContent = message;
+      toast.classList.remove('hidden');
+      
+      setTimeout(() => {
+        toast.classList.add('hidden');
+      }, 3000);
+    }
+
+    // Initialize
+    loadGamesData();
+  </script>
+</body>
+</html>

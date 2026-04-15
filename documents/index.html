@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文档下载中心 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    .doc-card { transition: all 0.25s ease; }
+    .doc-card:hover { transform: translateY(-6px); }
+    .download-btn { transition: all 0.2s ease; }
+    .download-btn:hover { transform: scale(1.05); }
+    .format-badge { font-size: 10px; font-weight: 600; letter-spacing: 0.5px; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="../destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="../routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="index.html" class="font-semibold border-b-2 border-white pb-1">📥 文档中心</a>
+          <a href="../tools/index.html" class="hover:opacity-80 transition">工具箱</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="../destinations.html" class="block py-2">目的地</a>
+        <a href="../routes.html" class="block py-2">路线</a>
+        <a href="index.html" class="block py-2 font-semibold">📥 文档中心</a>
+        <a href="../tools/index.html" class="block py-2">工具箱</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="gradient-hero text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center fade-in">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/20 rounded-full text-sm mb-4">
+        📥 资源丰富
+      </div>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">旅游文档下载中心</h1>
+      <p class="text-lg opacity-90 max-w-2xl mx-auto">签证表格、行程模板、旅游攻略、实用表格...所有旅行必备文档，一站式下载</p>
+    </div>
+  </section>
+
+  <!-- Stats Bar -->
+  <section class="bg-white shadow-md -mt-6 relative z-10 mx-4 md:mx-auto max-w-6xl rounded-2xl">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6">
+      <div class="text-center">
+        <div class="text-2xl md:text-3xl font-bold text-primary" id="totalDocs">238</div>
+        <div class="text-sm text-gray-500">文档总数</div>
+      </div>
+      <div class="text-center border-l border-gray-100">
+        <div class="text-2xl md:text-3xl font-bold text-green-500" id="totalDownloads">28.6万+</div>
+        <div class="text-sm text-gray-500">总下载量</div>
+      </div>
+      <div class="text-center border-l border-gray-100">
+        <div class="text-2xl md:text-3xl font-bold text-purple-500" id="categories">5</div>
+        <div class="text-sm text-gray-500">文档分类</div>
+      </div>
+      <div class="text-center border-l border-gray-100">
+        <div class="text-2xl md:text-3xl font-bold text-orange-500" id="weekly">4520</div>
+        <div class="text-sm text-gray-500">本周下载</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Search Section -->
+  <section class="max-w-7xl mx-auto px-4 py-8">
+    <div class="bg-white rounded-2xl shadow-lg p-6">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1 relative">
+          <input type="text" id="searchInput" placeholder="搜索文档名称、标签或内容..." 
+            class="w-full px-5 py-4 pl-12 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition text-lg">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-xl">🔍</span>
+        </div>
+        <div class="flex gap-3">
+          <select id="formatFilter" class="px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none bg-white">
+            <option value="">全部格式</option>
+            <option value="PDF">PDF</option>
+            <option value="Excel">Excel</option>
+            <option value="Word">Word</option>
+          </select>
+          <select id="sortFilter" class="px-4 py-4 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none bg-white">
+            <option value="popular">最多下载</option>
+            <option value="newest">最新上传</option>
+            <option value="name">按名称</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Navigation -->
+  <section class="max-w-7xl mx-auto px-4 pb-8">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+      <span>📂</span> 文档分类
+    </h2>
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-4" id="categoryGrid">
+      <!-- Categories will be loaded dynamically -->
+    </div>
+  </section>
+
+  <!-- Hot Downloads -->
+  <section class="max-w-7xl mx-auto px-4 pb-8">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span>🔥</span> 热门下载
+      </h2>
+      <a href="#" class="text-primary hover:underline flex items-center gap-1">
+        查看更多 <span>→</span>
+      </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="hotDocsGrid">
+      <!-- Hot documents will be loaded dynamically -->
+    </div>
+  </section>
+
+  <!-- New Updates -->
+  <section class="max-w-7xl mx-auto px-4 pb-8">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span>✨</span> 最新更新
+        <span class="ml-2 px-2 py-0.5 bg-green-100 text-green-600 text-xs rounded-full">本周新增 8 个</span>
+      </h2>
+      <a href="#" class="text-primary hover:underline flex items-center gap-1">
+        查看全部 <span>→</span>
+      </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" id="newDocsGrid">
+      <!-- New documents will be loaded dynamically -->
+    </div>
+  </section>
+
+  <!-- All Documents -->
+  <section class="max-w-7xl mx-auto px-4 pb-16">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-800 flex items-center gap-2">
+        <span>📄</span> 全部文档
+      </h2>
+      <div class="text-sm text-gray-500" id="docCount">共 25 个文档</div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="allDocsGrid">
+      <!-- All documents will be loaded dynamically -->
+    </div>
+  </section>
+
+  <!-- Quick Access -->
+  <section class="bg-gradient-to-r from-blue-600 to-cyan-500 py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="text-center text-white">
+        <h2 class="text-2xl md:text-3xl font-bold mb-4">需要定制化文档服务？</h2>
+        <p class="text-lg opacity-90 mb-6">联系我们，为您的团队或企业定制专属旅行文档模板</p>
+        <a href="../contact.html" class="inline-flex items-center gap-2 px-8 py-4 bg-white text-primary rounded-full font-bold hover:bg-gray-100 transition shadow-lg">
+          <span>📧</span> 联系我们
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <h3 class="text-white font-bold mb-4 flex items-center gap-2">
+            <span class="text-2xl">🧭</span> 游导旅游
+          </h3>
+          <p class="text-sm">您的贴心旅行助手，让每一次出行都轻松愉快</p>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">快速链接</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="../index.html" class="hover:text-white transition">首页</a></li>
+            <li><a href="../destinations.html" class="hover:text-white transition">目的地</a></li>
+            <li><a href="../routes.html" class="hover:text-white transition">旅行路线</a></li>
+            <li><a href="index.html" class="hover:text-white transition">文档中心</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">实用工具</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="../tools/budget-calculator.html" class="hover:text-white transition">预算计算器</a></li>
+            <li><a href="../tools/packing-list.html" class="hover:text-white transition">行李清单</a></li>
+            <li><a href="../tools/currency-converter.html" class="hover:text-white transition">汇率换算</a></li>
+            <li><a href="../tools/timezone-converter.html" class="hover:text-white transition">时区转换</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">帮助与支持</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="../help.html" class="hover:text-white transition">帮助中心</a></li>
+            <li><a href="../faq.html" class="hover:text-white transition">常见问题</a></li>
+            <li><a href="../contact.html" class="hover:text-white transition">联系我们</a></li>
+            <li><a href="../about.html" class="hover:text-white transition">关于我们</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 text-center text-sm">
+        <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Download Modal -->
+  <div id="downloadModal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 transform scale-95 opacity-0 transition-all duration-300" id="modalContent">
+      <div class="text-center mb-6">
+        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="text-3xl">📥</span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800" id="modalTitle">准备下载</h3>
+        <p class="text-gray-500 mt-2" id="modalDesc">即将开始下载文档</p>
+      </div>
+      <div class="space-y-3">
+        <button onclick="confirmDownload()" class="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-blue-600 transition flex items-center justify-center gap-2">
+          <span>⬇️</span> 确认下载
+        </button>
+        <button onclick="addToFavorites()" class="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition flex items-center justify-center gap-2">
+          <span>⭐</span> 收藏文档
+        </button>
+        <button onclick="closeModal()" class="w-full py-3 text-gray-500 hover:text-gray-700 transition">
+          取消
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let documents = [];
+    let categories = [];
+    let currentDoc = null;
+
+    // Load data
+    async function loadData() {
+      try {
+        const response = await fetch('../data/documents.json');
+        const data = await response.json();
+        documents = data.documents;
+        categories = data.categories;
+        renderCategories();
+        renderHotDocs();
+        renderNewDocs();
+        renderAllDocs();
+      } catch (error) {
+        console.error('Failed to load documents data:', error);
+      }
+    }
+
+    // Render categories
+    function renderCategories() {
+      const grid = document.getElementById('categoryGrid');
+      const colorMap = {
+        blue: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-600', icon: '🔵' },
+        green: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-600', icon: '🟢' },
+        purple: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-600', icon: '🟣' },
+        orange: { bg: 'bg-orange-50', border: 'border-orange-200', text: 'text-orange-600', icon: '🟠' },
+        red: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-600', icon: '🔴' }
+      };
+
+      grid.innerHTML = categories.map(cat => {
+        const colors = colorMap[cat.color] || colorMap.blue;
+        return `
+          <a href="${cat.id}.html" class="card-hover ${colors.bg} ${colors.border} border-2 rounded-2xl p-5 text-center">
+            <div class="text-4xl mb-3">${cat.icon}</div>
+            <h3 class="font-bold ${colors.text} mb-1">${cat.name}</h3>
+            <p class="text-sm text-gray-500 mb-2">${cat.description}</p>
+            <span class="inline-block px-3 py-1 ${colors.bg} ${colors.text} text-xs font-medium rounded-full">
+              ${cat.documentCount} 个文档
+            </span>
+          </a>
+        `;
+      }).join('');
+    }
+
+    // Render hot documents
+    function renderHotDocs() {
+      const grid = document.getElementById('hotDocsGrid');
+      const hotDocs = documents.filter(doc => doc.isHot).slice(0, 4);
+      grid.innerHTML = hotDocs.map(doc => createDocCard(doc)).join('');
+    }
+
+    // Render new documents
+    function renderNewDocs() {
+      const grid = document.getElementById('newDocsGrid');
+      const newDocs = documents.filter(doc => doc.isNew).slice(0, 4);
+      grid.innerHTML = newDocs.map(doc => createDocCard(doc)).join('');
+    }
+
+    // Render all documents
+    function renderAllDocs() {
+      const grid = document.getElementById('allDocsGrid');
+      document.getElementById('docCount').textContent = `共 ${documents.length} 个文档`;
+      grid.innerHTML = documents.map(doc => createDocCard(doc)).join('');
+    }
+
+    // Create document card
+    function createDocCard(doc) {
+      const formatColors = {
+        'PDF': { bg: 'bg-red-100', text: 'text-red-600' },
+        'Excel': { bg: 'bg-green-100', text: 'text-green-600' },
+        'Word': { bg: 'bg-blue-100', text: 'text-blue-600' }
+      };
+      const fmt = formatColors[doc.format] || formatColors['PDF'];
+
+      return `
+        <div class="doc-card bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300">
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-3">
+              <div class="${fmt.bg} ${fmt.text} px-3 py-1 rounded-lg format-badge">
+                ${doc.format}
+              </div>
+              <div class="flex items-center gap-2">
+                ${doc.isHot ? '<span class="text-orange-500 text-sm">🔥</span>' : ''}
+                ${doc.isNew ? '<span class="text-green-500 text-sm">✨</span>' : ''}
+              </div>
+            </div>
+            <h3 class="font-bold text-gray-800 mb-2 line-clamp-2">${doc.title}</h3>
+            <p class="text-sm text-gray-500 mb-3 line-clamp-2">${doc.description}</p>
+            <div class="flex items-center gap-2 text-xs text-gray-400 mb-4">
+              <span>📦 ${doc.size}</span>
+              <span>•</span>
+              <span>⬇️ ${formatDownloads(doc.downloads)}</span>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="openDownloadModal('${doc.id}')" class="download-btn flex-1 py-2.5 bg-primary text-white rounded-xl font-medium text-sm hover:bg-blue-600 transition flex items-center justify-center gap-2">
+                <span>⬇️</span> 下载
+              </button>
+              <button onclick="toggleFavorite('${doc.id}')" class="px-3 py-2.5 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition favorite-btn" id="fav-${doc.id}">
+                ⭐
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Format downloads number
+    function formatDownloads(num) {
+      if (num >= 10000) return (num / 10000).toFixed(1) + '万';
+      return num.toLocaleString();
+    }
+
+    // Download modal functions
+    function openDownloadModal(docId) {
+      currentDoc = documents.find(d => d.id === docId);
+      if (currentDoc) {
+        document.getElementById('modalTitle').textContent = currentDoc.title;
+        document.getElementById('modalDesc').textContent = `${currentDoc.format} · ${currentDoc.size}`;
+        document.getElementById('downloadModal').classList.remove('hidden');
+        document.getElementById('downloadModal').classList.add('flex');
+        setTimeout(() => {
+          document.getElementById('modalContent').classList.remove('scale-95', 'opacity-0');
+          document.getElementById('modalContent').classList.add('scale-100', 'opacity-100');
+        }, 10);
+      }
+    }
+
+    function closeModal() {
+      document.getElementById('modalContent').classList.add('scale-95', 'opacity-0');
+      document.getElementById('modalContent').classList.remove('scale-100', 'opacity-100');
+      setTimeout(() => {
+        document.getElementById('downloadModal').classList.add('hidden');
+        document.getElementById('downloadModal').classList.remove('flex');
+      }, 300);
+    }
+
+    function confirmDownload() {
+      if (currentDoc) {
+        // Simulate download
+        alert(`正在下载: ${currentDoc.title}\n格式: ${currentDoc.format}\n大小: ${currentDoc.size}\n\n(演示模式：实际下载功能需连接后端服务)`);
+        closeModal();
+      }
+    }
+
+    function addToFavorites() {
+      if (currentDoc) {
+        const btn = document.getElementById(`fav-${currentDoc.id}`);
+        if (btn) {
+          btn.classList.add('text-yellow-500');
+        }
+        alert(`已收藏: ${currentDoc.title}`);
+        closeModal();
+      }
+    }
+
+    function toggleFavorite(docId) {
+      const btn = document.getElementById(`fav-${docId}`);
+      if (btn) {
+        btn.classList.toggle('text-yellow-500');
+        btn.classList.toggle('text-gray-500');
+      }
+    }
+
+    // Search and filter
+    document.getElementById('searchInput').addEventListener('input', filterDocs);
+    document.getElementById('formatFilter').addEventListener('change', filterDocs);
+    document.getElementById('sortFilter').addEventListener('change', filterDocs);
+
+    function filterDocs() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const format = document.getElementById('formatFilter').value;
+      const sort = document.getElementById('sortFilter').value;
+
+      let filtered = documents.filter(doc => {
+        const matchSearch = doc.title.toLowerCase().includes(search) || 
+                          doc.description.toLowerCase().includes(search) ||
+                          doc.tags.some(tag => tag.toLowerCase().includes(search));
+        const matchFormat = !format || doc.format === format;
+        return matchSearch && matchFormat;
+      });
+
+      if (sort === 'popular') {
+        filtered.sort((a, b) => b.downloads - a.downloads);
+      } else if (sort === 'newest') {
+        filtered.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+      } else if (sort === 'name') {
+        filtered.sort((a, b) => a.title.localeCompare(b.title, 'zh'));
+      }
+
+      const grid = document.getElementById('allDocsGrid');
+      document.getElementById('docCount').textContent = `共 ${filtered.length} 个文档`;
+      grid.innerHTML = filtered.map(doc => createDocCard(doc)).join('');
+    }
+
+    // Mobile menu toggle
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Initialize
+    loadData();
+  </script>
+</body>
+</html>

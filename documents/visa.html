@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>签证文档下载 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+    .doc-card { transition: all 0.25s ease; }
+    .doc-card:hover { transform: translateY(-6px); }
+    .tab-btn.active { background-color: #0ea5e9; color: white; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="../destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="index.html" class="font-semibold border-b-2 border-white pb-1">📥 文档中心</a>
+          <a href="../tools/index.html" class="hover:opacity-80 transition">工具箱</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="../index.html" class="block py-2">首页</a>
+        <a href="../destinations.html" class="block py-2">目的地</a>
+        <a href="index.html" class="block py-2 font-semibold">📥 文档中心</a>
+        <a href="../tools/index.html" class="block py-2">工具箱</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Breadcrumb -->
+  <div class="max-w-7xl mx-auto px-4 py-4">
+    <div class="flex items-center gap-2 text-sm text-gray-500">
+      <a href="index.html" class="hover:text-primary transition">📥 文档中心</a>
+      <span>/</span>
+      <span class="text-gray-700 font-medium">签证文档</span>
+    </div>
+  </div>
+
+  <!-- Page Header -->
+  <section class="bg-gradient-to-r from-blue-600 to-blue-400 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-5xl">📋</span>
+        <div>
+          <h1 class="text-3xl md:text-4xl font-bold">签证文档</h1>
+          <p class="text-blue-100 mt-1">各国签证申请表、材料清单、填写模板一应俱全</p>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-4 mt-6">
+        <span class="px-4 py-2 bg-white/20 rounded-full text-sm">📄 48 个文档</span>
+        <span class="px-4 py-2 bg-white/20 rounded-full text-sm">⬇️ 12,340+ 下载</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Category Tabs -->
+  <section class="max-w-7xl mx-auto px-4 py-6">
+    <div class="flex flex-wrap gap-3">
+      <button class="tab-btn active px-5 py-2.5 bg-white rounded-full font-medium text-sm shadow-sm hover:bg-blue-50 transition" data-tab="all">
+        全部
+      </button>
+      <button class="tab-btn px-5 py-2.5 bg-gray-100 rounded-full font-medium text-sm shadow-sm hover:bg-blue-50 transition" data-tab="申请表">
+        📝 申请表
+      </button>
+      <button class="tab-btn px-5 py-2.5 bg-gray-100 rounded-full font-medium text-sm shadow-sm hover:bg-blue-50 transition" data-tab="材料清单">
+        📋 材料清单
+      </button>
+      <button class="tab-btn px-5 py-2.5 bg-gray-100 rounded-full font-medium text-sm shadow-sm hover:bg-blue-50 transition" data-tab="模板">
+        📄 填写模板
+      </button>
+      <button class="tab-btn px-5 py-2.5 bg-gray-100 rounded-full font-medium text-sm shadow-sm hover:bg-blue-50 transition" data-tab="须知">
+        ⚠️ 注意事项
+      </button>
+    </div>
+  </section>
+
+  <!-- Search -->
+  <section class="max-w-7xl mx-auto px-4 pb-6">
+    <div class="bg-white rounded-2xl shadow-md p-4">
+      <div class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1 relative">
+          <input type="text" id="searchInput" placeholder="搜索签证文档..." 
+            class="w-full px-4 py-3 pl-11 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none transition">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-lg">🔍</span>
+        </div>
+        <select id="countryFilter" class="px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none bg-white">
+          <option value="">全部国家</option>
+          <option value="日本">🇯🇵 日本</option>
+          <option value="美国">🇺🇸 美国</option>
+          <option value="申根">🇪🇺 申根区</option>
+          <option value="英国">🇬🇧 英国</option>
+          <option value="泰国">🇹🇭 泰国</option>
+          <option value="澳洲">🇦🇺 澳大利亚</option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Documents Grid -->
+  <section class="max-w-7xl mx-auto px-4 pb-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="docsGrid">
+      <!-- Documents will be rendered here -->
+    </div>
+  </section>
+
+  <!-- Popular Countries -->
+  <section class="bg-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span>🌍</span> 热门签证国家
+      </h2>
+      <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        <div class="card-hover bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-5 text-center cursor-pointer">
+          <span class="text-4xl">🇯🇵</span>
+          <h3 class="font-bold text-gray-800 mt-2">日本</h3>
+          <p class="text-xs text-gray-500 mt-1">单次/多次签证</p>
+        </div>
+        <div class="card-hover bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-5 text-center cursor-pointer">
+          <span class="text-4xl">🇺🇸</span>
+          <h3 class="font-bold text-gray-800 mt-2">美国</h3>
+          <p class="text-xs text-gray-500 mt-1">B1/B2旅游签证</p>
+        </div>
+        <div class="card-hover bg-gradient-to-br from-blue-50 to-indigo-100 rounded-2xl p-5 text-center cursor-pointer">
+          <span class="text-4xl">🇬🇧</span>
+          <h3 class="font-bold text-gray-800 mt-2">英国</h3>
+          <p class="text-xs text-gray-500 mt-1">标准访客签证</p>
+        </div>
+        <div class="card-hover bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-5 text-center cursor-pointer">
+          <span class="text-4xl">🇹🇭</span>
+          <h3 class="font-bold text-gray-800 mt-2">泰国</h3>
+          <p class="text-xs text-gray-500 mt-1">落地签/贴纸签</p>
+        </div>
+        <div class="card-hover bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-5 text-center cursor-pointer">
+          <span class="text-4xl">🇦🇺</span>
+          <h3 class="font-bold text-gray-800 mt-2">澳大利亚</h3>
+          <p class="text-xs text-gray-500 mt-1">访客签证600</p>
+        </div>
+        <div class="card-hover bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl p-5 text-center cursor-pointer">
+          <span class="text-4xl">🇪🇺</span>
+          <h3 class="font-bold text-gray-800 mt-2">申根区</h3>
+          <p class="text-xs text-gray-500 mt-1">26国通用签证</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tips Section -->
+  <section class="bg-gradient-to-r from-blue-50 to-cyan-50 py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+        <span>💡</span> 签证申请小贴士
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl p-6 shadow-md">
+          <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mb-4">
+            <span class="text-2xl">📅</span>
+          </div>
+          <h3 class="font-bold text-gray-800 mb-2">提前规划时间</h3>
+          <p class="text-sm text-gray-600">建议提前1-3个月申请签证，预留充足时间准备材料和面试</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-md">
+          <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mb-4">
+            <span class="text-2xl">📑</span>
+          </div>
+          <h3 class="font-bold text-gray-800 mb-2">材料真实完整</h3>
+          <p class="text-sm text-gray-600">确保所有材料真实、完整、有效，虚假材料将导致拒签</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-md">
+          <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mb-4">
+            <span class="text-2xl">✈️</span>
+          </div>
+          <h3 class="font-bold text-gray-800 mb-2">行程安排合理</h3>
+          <p class="text-sm text-gray-600">机票、酒店预订单与申请行程一致，避免时间矛盾</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-gray-400 py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <h3 class="text-white font-bold mb-4 flex items-center gap-2">
+            <span class="text-2xl">🧭</span> 游导旅游
+          </h3>
+          <p class="text-sm">您的贴心旅行助手</p>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">快速链接</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="../index.html" class="hover:text-white transition">首页</a></li>
+            <li><a href="index.html" class="hover:text-white transition">文档中心</a></li>
+            <li><a href="itinerary.html" class="hover:text-white transition">行程规划</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">实用工具</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="../tools/budget-calculator.html" class="hover:text-white transition">预算计算器</a></li>
+            <li><a href="../tools/packing-list.html" class="hover:text-white transition">行李清单</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-semibold mb-4">帮助支持</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="../help.html" class="hover:text-white transition">帮助中心</a></li>
+            <li><a href="../contact.html" class="hover:text-white transition">联系我们</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 text-center text-sm">
+        <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    const visaDocs = [
+      {
+        id: 'v001',
+        title: '日本旅游签证申请表',
+        description: '日本单次/多次旅游签证申请表空白表格，含填写范本',
+        format: 'PDF',
+        size: '256 KB',
+        downloads: 15680,
+        isHot: true,
+        isNew: false,
+        updatedAt: '2024-03-15',
+        country: '日本',
+        tags: ['申请表', '日本', '单次', '多次']
+      },
+      {
+        id: 'v002',
+        title: '申根签证申请表',
+        description: '欧洲申根区26国通用签证申请表，多语言版本',
+        format: 'PDF',
+        size: '320 KB',
+        downloads: 12350,
+        isHot: true,
+        isNew: false,
+        updatedAt: '2024-03-10',
+        country: '申根',
+        tags: ['申请表', '申根', '欧洲']
+      },
+      {
+        id: 'v003',
+        title: '美国旅游签证DS-160表',
+        description: '美国B1/B2签证在线申请表填写指南及中文模板',
+        format: 'PDF',
+        size: '1.2 MB',
+        downloads: 18540,
+        isHot: true,
+        isNew: true,
+        updatedAt: '2024-03-20',
+        country: '美国',
+        tags: ['DS-160', '美国', 'B2签证']
+      },
+      {
+        id: 'v004',
+        title: '日本签证材料清单(单次)',
+        description: '日本单次旅游签证所需材料完整清单及模板',
+        format: 'PDF',
+        size: '180 KB',
+        downloads: 8920,
+        isHot: false,
+        isNew: false,
+        updatedAt: '2024-02-28',
+        country: '日本',
+        tags: ['材料清单', '日本', '单次']
+      },
+      {
+        id: 'v005',
+        title: '泰国落地签表格',
+        description: '泰国落地签证申请表TM.88中英文对照版，可直接填写',
+        format: 'PDF',
+        size: '145 KB',
+        downloads: 7650,
+        isHot: false,
+        isNew: false,
+        updatedAt: '2024-03-01',
+        country: '泰国',
+        tags: ['落地签', '泰国', '表格']
+      },
+      {
+        id: 'v006',
+        title: '英国访客签证申请表',
+        description: '英国标准访客签证(Standard Visitor Visa)申请表',
+        format: 'PDF',
+        size: '420 KB',
+        downloads: 5430,
+        isHot: false,
+        isNew: false,
+        updatedAt: '2024-02-15',
+        country: '英国',
+        tags: ['申请表', '英国', '访客']
+      },
+      {
+        id: 'v007',
+        title: '澳大利亚签证材料清单',
+        description: '澳洲600访客签证材料清单，中文说明',
+        format: 'PDF',
+        size: '198 KB',
+        downloads: 4320,
+        isHot: false,
+        isNew: false,
+        updatedAt: '2024-03-05',
+        country: '澳洲',
+        tags: ['材料清单', '澳大利亚', '600签证']
+      },
+      {
+        id: 'v008',
+        title: '日本签证申请表填写范本',
+        description: '日本旅游签证申请表填写示例，供参考',
+        format: 'PDF',
+        size: '2.3 MB',
+        downloads: 9870,
+        isHot: true,
+        isNew: false,
+        updatedAt: '2024-03-12',
+        country: '日本',
+        tags: ['填写范本', '日本', '模板']
+      },
+      {
+        id: 'v009',
+        title: '申根签证申请材料清单',
+        description: '申根签证申请所需材料完整清单及注意事项',
+        format: 'PDF',
+        size: '234 KB',
+        downloads: 6540,
+        isHot: false,
+        isNew: false,
+        updatedAt: '2024-02-20',
+        country: '申根',
+        tags: ['材料清单', '申根', '欧洲']
+      },
+      {
+        id: 'v010',
+        title: '美国签证面试问题汇总',
+        description: '美国B1/B2签证面试常见问题及回答技巧',
+        format: 'PDF',
+        size: '1.5 MB',
+        downloads: 11230,
+        isHot: true,
+        isNew: true,
+        updatedAt: '2024-03-18',
+        country: '美国',
+        tags: ['面试', '美国', '技巧']
+      },
+      {
+        id: 'v011',
+        title: '泰国旅游签证材料清单',
+        description: '泰国贴纸签所需材料完整清单',
+        format: 'PDF',
+        size: '156 KB',
+        downloads: 3980,
+        isHot: false,
+        isNew: false,
+        updatedAt: '2024-03-08',
+        country: '泰国',
+        tags: ['材料清单', '泰国', '贴纸签']
+      },
+      {
+        id: 'v012',
+        title: '签证申请委托书模板',
+        description: '代他人申请签证的授权委托书模板',
+        format: 'Word',
+        size: '45 KB',
+        downloads: 2870,
+        isHot: false,
+        isNew: true,
+        updatedAt: '2024-03-20',
+        country: '通用',
+        tags: ['委托书', '模板', '通用']
+      }
+    ];
+
+    let currentTab = 'all';
+    let currentCountry = '';
+    let currentSearch = '';
+
+    function renderDocs() {
+      const grid = document.getElementById('docsGrid');
+      let filtered = visaDocs;
+
+      if (currentTab !== 'all') {
+        filtered = filtered.filter(doc => doc.tags.some(tag => tag.includes(currentTab)));
+      }
+
+      if (currentCountry) {
+        filtered = filtered.filter(doc => doc.country === currentCountry);
+      }
+
+      if (currentSearch) {
+        filtered = filtered.filter(doc => 
+          doc.title.toLowerCase().includes(currentSearch.toLowerCase()) ||
+          doc.description.toLowerCase().includes(currentSearch.toLowerCase())
+        );
+      }
+
+      grid.innerHTML = filtered.map(doc => createDocCard(doc)).join('');
+    }
+
+    function createDocCard(doc) {
+      return `
+        <div class="doc-card bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300">
+          <div class="p-5">
+            <div class="flex items-start justify-between mb-3">
+              <div class="bg-red-100 text-red-600 px-3 py-1 rounded-lg format-badge">${doc.format}</div>
+              <div class="flex items-center gap-2">
+                ${doc.isHot ? '<span class="text-orange-500 text-sm">🔥</span>' : ''}
+                ${doc.isNew ? '<span class="text-green-500 text-sm">✨</span>' : ''}
+              </div>
+            </div>
+            <h3 class="font-bold text-gray-800 mb-2">${doc.title}</h3>
+            <p class="text-sm text-gray-500 mb-3 line-clamp-2">${doc.description}</p>
+            <div class="flex items-center gap-3 text-xs text-gray-400 mb-4">
+              <span>📦 ${doc.size}</span>
+              <span>⬇️ ${doc.downloads.toLocaleString()}</span>
+              <span>📅 ${doc.updatedAt}</span>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="downloadDoc('${doc.id}')" class="flex-1 py-2.5 bg-primary text-white rounded-xl font-medium text-sm hover:bg-blue-600 transition flex items-center justify-center gap-2">
+                <span>⬇️</span> 下载
+              </button>
+              <button class="px-3 py-2.5 bg-gray-100 text-gray-500 rounded-xl hover:bg-gray-200 transition">
+                ⭐
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function downloadDoc(docId) {
+      const doc = visaDocs.find(d => d.id === docId);
+      if (doc) {
+        alert(`正在下载: ${doc.title}\n格式: ${doc.format}\n大小: ${doc.size}\n\n(演示模式)`);
+      }
+    }
+
+    // Tab handling
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => {
+          b.classList.remove('active', 'bg-blue-500', 'text-white');
+          b.classList.add('bg-gray-100');
+        });
+        btn.classList.add('active');
+        currentTab = btn.dataset.tab;
+        renderDocs();
+      });
+    });
+
+    // Search and filter
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      currentSearch = e.target.value;
+      renderDocs();
+    });
+
+    document.getElementById('countryFilter').addEventListener('change', (e) => {
+      currentCountry = e.target.value;
+      renderDocs();
+    });
+
+    function toggleMenu() {
+      document.getElementById('mobileMenu').classList.toggle('hidden');
+    }
+
+    // Initialize
+    renderDocs();
+  </script>
+</body>
+</html>

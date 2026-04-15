@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>记忆配对 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    .card { transition: all 0.3s ease; perspective: 1000px; }
+    .card-inner { transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); transform-style: preserve-3d; }
+    .card.flipped .card-inner { transform: rotateY(180deg); }
+    .card-front, .card-back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .card-front { transform: rotateY(180deg); }
+    .card.matched { animation: matchPulse 0.5s ease; }
+    @keyframes matchPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+    .card.matched .card-front { background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important; }
+    .card.shake { animation: cardShake 0.5s ease; }
+    @keyframes cardShake { 0%, 100% { transform: rotateY(180deg) translateX(0); } 25% { transform: rotateY(180deg) translateX(-5px); } 75% { transform: rotateY(180deg) translateX(5px); } }
+    .difficulty-btn { transition: all 0.3s ease; }
+    .difficulty-btn:hover:not(.selected) { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+    .difficulty-btn.selected { transform: scale(1.05); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .match-effect { animation: matchEffect 0.8s ease forwards; }
+    @keyframes matchEffect { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 1; transform: scale(1.2); } 100% { opacity: 0; transform: scale(0); } }
+    .float { animation: float 3s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-amber-50 via-orange-50 to-red-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-2xl">←</span>
+          <span class="text-xl font-bold">返回游戏中心</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <div class="flex items-center gap-2 bg-white/20 backdrop-blur px-3 py-1.5 rounded-full">
+            <span>⭐</span>
+            <span id="navPoints">0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Game Header -->
+  <div id="gameHeader" class="bg-white/80 backdrop-blur-sm shadow-sm hidden">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div class="flex items-center gap-4">
+          <div class="text-center">
+            <div class="text-2xl font-bold text-primary" id="currentScore">0</div>
+            <div class="text-xs text-gray-500">当前得分</div>
+          </div>
+          <div class="w-px h-10 bg-gray-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-orange-500" id="movesCount">0</div>
+            <div class="text-xs text-gray-500">翻牌次数</div>
+          </div>
+          <div class="w-px h-10 bg-gray-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-green-500" id="pairsFound">0</div>
+            <div class="text-xs text-gray-500">已配对</div>
+          </div>
+          <div class="w-px h-10 bg-gray-200"></div>
+          <div class="text-center">
+            <div class="text-2xl font-bold text-purple-500" id="pairsTotal">0</div>
+            <div class="text-xs text-gray-500">总对数</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="bg-orange-100 text-orange-700 px-4 py-2 rounded-full font-medium" id="difficultyBadge">
+            4 对
+          </span>
+          <button onclick="restartGame()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition text-sm">
+            🔄 重新开始
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <!-- Start Screen -->
+    <div id="startScreen" class="fade-in">
+      <div class="text-center mb-8">
+        <div class="text-7xl mb-4 float">🧠</div>
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">记忆配对</h1>
+        <p class="text-gray-500">找出所有配对的旅行图标，挑战你的记忆力！</p>
+      </div>
+
+      <!-- Difficulty Selection -->
+      <div class="mb-8">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 text-center">选择难度</h3>
+        <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+          <button onclick="selectDifficulty('easy')" class="difficulty-btn bg-gradient-to-br from-green-400 to-emerald-500 text-white rounded-2xl p-6 text-center" data-difficulty="easy">
+            <div class="text-3xl mb-2">😊</div>
+            <div class="font-bold">简单</div>
+            <div class="text-sm opacity-80">4 对 (8张)</div>
+          </button>
+          <button onclick="selectDifficulty('medium')" class="difficulty-btn bg-gradient-to-br from-orange-400 to-amber-500 text-white rounded-2xl p-6 text-center" data-difficulty="medium">
+            <div class="text-3xl mb-2">🤔</div>
+            <div class="font-bold">中等</div>
+            <div class="text-sm opacity-80">6 对 (12张)</div>
+          </button>
+          <button onclick="selectDifficulty('hard')" class="difficulty-btn bg-gradient-to-br from-red-400 to-rose-500 text-white rounded-2xl p-6 text-center" data-difficulty="hard">
+            <div class="text-3xl mb-2">😰</div>
+            <div class="font-bold">困难</div>
+            <div class="text-sm opacity-80">8 对 (16张)</div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Start Button -->
+      <div class="text-center">
+        <button onclick="startGame()" id="startBtn" class="px-12 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold text-xl hover:opacity-90 transition shadow-xl disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+          开始挑战 🧠
+        </button>
+        <p class="text-gray-400 text-sm mt-2" id="selectHint">请先选择难度</p>
+      </div>
+
+      <!-- Tips -->
+      <div class="mt-12 max-w-lg mx-auto">
+        <div class="bg-white rounded-2xl p-6 shadow-lg">
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span>💡</span> 游戏技巧
+          </h3>
+          <ul class="text-gray-600 space-y-2 text-sm">
+            <li class="flex items-start gap-2">
+              <span class="text-orange-500">1.</span>
+              记住每张卡片的图案位置
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-orange-500">2.</span>
+              先找出明显不同的图案配对
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-orange-500">3.</span>
+              翻牌次数越少，得分越高
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-orange-500">4.</span>
+              保持专注，不要急于翻牌
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Game Screen -->
+    <div id="gameScreen" class="hidden">
+      <div class="grid gap-4" id="gameGrid">
+        <!-- Cards will be rendered here -->
+      </div>
+    </div>
+
+    <!-- Complete Screen -->
+    <div id="completeScreen" class="hidden fade-in">
+      <div class="bg-white rounded-3xl p-8 md:p-12 shadow-xl max-w-lg mx-auto text-center">
+        <div class="relative mb-6">
+          <div class="text-8xl">🎉</div>
+        </div>
+        <h2 class="text-3xl font-bold text-gray-800 mb-2">全部配对完成！</h2>
+        <p class="text-gray-500 mb-6">你的记忆力真棒！</p>
+        
+        <div class="grid grid-cols-2 gap-4 mb-6">
+          <div class="bg-orange-50 rounded-xl p-4">
+            <div class="text-3xl font-bold text-orange-600" id="finalMoves">0</div>
+            <div class="text-sm text-gray-500">总翻牌次数</div>
+          </div>
+          <div class="bg-green-50 rounded-xl p-4">
+            <div class="text-3xl font-bold text-green-600" id="finalScore">0</div>
+            <div class="text-sm text-gray-500">获得积分</div>
+          </div>
+        </div>
+
+        <div id="perfectBadge" class="hidden bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-3 rounded-2xl inline-block mb-4 font-bold">
+          🌟 完美通关！翻牌次数最少！
+        </div>
+        
+        <div id="newRecordBadge" class="hidden bg-amber-100 text-amber-700 px-4 py-2 rounded-full inline-block mb-4 font-bold">
+          🏆 创造新纪录！
+        </div>
+        
+        <div class="space-y-3">
+          <button onclick="playAgain()" class="w-full py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-2xl font-bold text-lg hover:opacity-90 transition">
+            再玩一次 🔄
+          </button>
+          <button onclick="goBack()" class="w-full py-4 bg-gray-100 text-gray-700 rounded-2xl font-bold hover:bg-gray-200 transition">
+            返回选择难度
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Game State
+    let gameState = {
+      difficulty: null,
+      cards: [],
+      flippedCards: [],
+      matchedPairs: 0,
+      moves: 0,
+      isLocked: false,
+      totalPairs: 0
+    };
+
+    let gamesData = null;
+
+    async function loadGamesData() {
+      try {
+        const response = await fetch('../data/games.json');
+        gamesData = await response.json();
+        loadUserData();
+      } catch (error) {
+        console.error('Failed to load games data:', error);
+      }
+    }
+
+    function loadUserData() {
+      const userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      document.getElementById('navPoints').textContent = userData.totalPoints || 0;
+    }
+
+    function selectDifficulty(difficulty) {
+      gameState.difficulty = difficulty;
+      
+      const pairCount = { easy: 4, medium: 6, hard: 8 };
+      const difficultyNames = { easy: '简单', medium: '中等', hard: '困难' };
+      
+      document.querySelectorAll('.difficulty-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.difficulty === difficulty);
+      });
+      
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('selectHint').textContent = `${pairCount[difficulty]} 对卡片，准备挑战！`;
+    }
+
+    function startGame() {
+      const pairCount = { easy: 4, medium: 6, hard: 8 };
+      const pairs = pairCount[gameState.difficulty];
+      
+      // Get icons for this game
+      const allIcons = gamesData?.memoryIcons || [
+        { id: 'japan', emoji: '🗾', name: '日本' },
+        { id: 'korea', emoji: '🇰🇷', name: '韩国' },
+        { id: 'thailand', emoji: '🇹🇭', name: '泰国' },
+        { id: 'singapore', emoji: '🇸🇬', name: '新加坡' },
+        { id: 'china', emoji: '🇨🇳', name: '中国' },
+        { id: 'beach', emoji: '🏖️', name: '海滩' },
+        { id: 'mountain', emoji: '⛰️', name: '山地' },
+        { id: 'temple', emoji: '🛕', name: '寺庙' }
+      ];
+      
+      // Select random pairs
+      const selectedIcons = shuffleArray([...allIcons]).slice(0, pairs);
+      
+      // Create card pairs
+      gameState.cards = [];
+      selectedIcons.forEach((icon, index) => {
+        gameState.cards.push({ ...icon, pairId: index, uniqueId: index * 2 });
+        gameState.cards.push({ ...icon, pairId: index, uniqueId: index * 2 + 1 });
+      });
+      
+      // Shuffle cards
+      gameState.cards = shuffleArray(gameState.cards);
+      
+      // Reset state
+      gameState.flippedCards = [];
+      gameState.matchedPairs = 0;
+      gameState.moves = 0;
+      gameState.isLocked = false;
+      gameState.totalPairs = pairs;
+      
+      // Update UI
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      document.getElementById('completeScreen').classList.add('hidden');
+      document.getElementById('gameHeader').classList.remove('hidden');
+      document.getElementById('difficultyBadge').textContent = `${pairs} 对`;
+      
+      updateDisplays();
+      renderCards();
+    }
+
+    function shuffleArray(array) {
+      const newArray = [...array];
+      for (let i = newArray.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+      }
+      return newArray;
+    }
+
+    function renderCards() {
+      const grid = document.getElementById('gameGrid');
+      const cols = { easy: 4, medium: 4, hard: 4 };
+      const currentCols = cols[gameState.difficulty];
+      
+      grid.style.gridTemplateColumns = `repeat(${currentCols}, 1fr)`;
+      grid.innerHTML = gameState.cards.map((card, index) => `
+        <div class="card aspect-square cursor-pointer" onclick="flipCard(${index})" data-index="${index}">
+          <div class="card-inner w-full h-full relative">
+            <div class="card-front absolute inset-0 bg-gradient-to-br from-orange-400 to-red-500 rounded-xl flex items-center justify-center">
+              <span class="text-3xl">❓</span>
+            </div>
+            <div class="card-back absolute inset-0 bg-white rounded-xl flex items-center justify-center shadow-md">
+              <div class="text-center">
+                <div class="text-4xl mb-1">${card.emoji}</div>
+                <div class="text-xs text-gray-500">${card.name}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function flipCard(index) {
+      if (gameState.isLocked) return;
+      
+      const card = gameState.cards[index];
+      const cardElement = document.querySelector(`.card[data-index="${index}"]`);
+      
+      // Don't flip if already flipped or matched
+      if (cardElement.classList.contains('flipped') || cardElement.classList.contains('matched')) return;
+      
+      // Flip the card
+      cardElement.classList.add('flipped');
+      gameState.flippedCards.push({ index, card, element: cardElement });
+      
+      // Check for match when 2 cards are flipped
+      if (gameState.flippedCards.length === 2) {
+        gameState.moves++;
+        updateDisplays();
+        
+        const [first, second] = gameState.flippedCards;
+        
+        if (first.card.pairId === second.card.pairId) {
+          // Match found!
+          handleMatch(first, second);
+        } else {
+          // No match
+          handleMismatch(first, second);
+        }
+      }
+    }
+
+    function handleMatch(first, second) {
+      gameState.matchedPairs++;
+      gameState.flippedCards = [];
+      
+      first.element.classList.add('matched');
+      second.element.classList.add('matched');
+      
+      updateDisplays();
+      
+      // Check for game completion
+      if (gameState.matchedPairs === gameState.totalPairs) {
+        setTimeout(() => {
+          showCompleteScreen();
+        }, 500);
+      }
+    }
+
+    function handleMismatch(first, second) {
+      gameState.isLocked = true;
+      
+      setTimeout(() => {
+        first.element.classList.remove('flipped');
+        second.element.classList.remove('flipped');
+        first.element.classList.add('shake');
+        second.element.classList.add('shake');
+        
+        setTimeout(() => {
+          first.element.classList.remove('shake');
+          second.element.classList.remove('shake');
+          gameState.flippedCards = [];
+          gameState.isLocked = false;
+        }, 500);
+      }, 1000);
+    }
+
+    function updateDisplays() {
+      document.getElementById('movesCount').textContent = gameState.moves;
+      document.getElementById('pairsFound').textContent = gameState.matchedPairs;
+      document.getElementById('pairsTotal').textContent = gameState.totalPairs;
+      document.getElementById('currentScore').textContent = calculateScore();
+    }
+
+    function calculateScore() {
+      const baseScore = gameState.matchedPairs * 10;
+      const perfectMoves = gameState.totalPairs; // Minimum possible moves
+      const moveEfficiency = Math.max(0, perfectMoves - gameState.moves);
+      const efficiencyBonus = moveEfficiency * 5;
+      const perfectBonus = (gameState.moves === perfectMoves) ? 50 : 0;
+      
+      return baseScore + efficiencyBonus + perfectBonus;
+    }
+
+    function showCompleteScreen() {
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('completeScreen').classList.remove('hidden');
+      
+      document.getElementById('finalMoves').textContent = gameState.moves;
+      document.getElementById('finalScore').textContent = calculateScore();
+      
+      const perfectMoves = gameState.totalPairs;
+      const isPerfect = gameState.moves === perfectMoves;
+      document.getElementById('perfectBadge').classList.toggle('hidden', !isPerfect);
+      
+      // Check for new record
+      const userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      const key = `memory_${gameState.difficulty}`;
+      const isNewRecord = !userData.memoryRecords || !userData.memoryRecords[key] || gameState.moves < userData.memoryRecords[key];
+      
+      document.getElementById('newRecordBadge').classList.toggle('hidden', !isNewRecord);
+      
+      if (isNewRecord) {
+        userData.memoryRecords = userData.memoryRecords || {};
+        userData.memoryRecords[key] = gameState.moves;
+      }
+      
+      // Save progress
+      userData.totalPoints = (userData.totalPoints || 0) + calculateScore();
+      userData.memoryGames = (userData.memoryGames || 0) + 1;
+      userData.memoryPoints = (userData.memoryPoints || 0) + calculateScore();
+      
+      if (isPerfect) {
+        unlockAchievement('memory_champion');
+      }
+      
+      localStorage.setItem('gameUserData', JSON.stringify(userData));
+      loadUserData();
+      updateLeaderboard(calculateScore());
+    }
+
+    function unlockAchievement(achievementId) {
+      const userData = JSON.parse(localStorage.getItem('gameUserData') || '{}');
+      userData.achievements = userData.achievements || [];
+      if (!userData.achievements.includes(achievementId)) {
+        userData.achievements.push(achievementId);
+        setTimeout(() => {
+          alert(`🏆 成就解锁：记忆冠军！`);
+        }, 500);
+      }
+      localStorage.setItem('gameUserData', JSON.stringify(userData));
+    }
+
+    function updateLeaderboard(score) {
+      let leaderboard = JSON.parse(localStorage.getItem('gameLeaderboard') || '[]');
+      const existingIndex = leaderboard.findIndex(entry => entry.id === 'currentUser');
+      
+      if (existingIndex >= 0) {
+        leaderboard[existingIndex].points += score;
+        leaderboard[existingIndex].weeklyPoints += score;
+      } else {
+        leaderboard.push({
+          id: 'currentUser',
+          name: '你',
+          points: score,
+          weeklyPoints: score,
+          avatar: '😊'
+        });
+      }
+      
+      leaderboard.sort((a, b) => b.weeklyPoints - a.weeklyPoints);
+      leaderboard = leaderboard.slice(0, 20);
+      
+      localStorage.setItem('gameLeaderboard', JSON.stringify(leaderboard));
+    }
+
+    function playAgain() {
+      document.getElementById('completeScreen').classList.add('hidden');
+      startGame();
+    }
+
+    function restartGame() {
+      startGame();
+    }
+
+    function goBack() {
+      document.getElementById('completeScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.add('hidden');
+      document.getElementById('gameHeader').classList.add('hidden');
+      document.getElementById('startScreen').classList.remove('hidden');
+      
+      gameState.difficulty = null;
+      document.querySelectorAll('.difficulty-btn').forEach(btn => btn.classList.remove('selected'));
+      document.getElementById('startBtn').disabled = true;
+      document.getElementById('selectHint').textContent = '请先选择难度';
+    }
+
+    // Initialize
+    loadGamesData();
+  </script>
+</body>
+</html>

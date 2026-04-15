@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>泰国美食攻略 - 游导旅游|泰式料理、街边小吃推荐</title>
+  <meta name="description" content="泰国美食全攻略：泰式料理、芒果糯米饭、街边小吃，附带曼谷清迈美食推荐和旅行注意事项。">
+  <link rel="preload" href="../css/style.css" as="style">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/mobile.css">
+  <style>
+    :root {
+      --th-gold: #a52a2a;
+      --th-white: #ffffff;
+      --th-light: #fff9f0;
+    }
+
+    /* Hero */
+    .thailand-hero {
+      background: linear-gradient(135deg, #a52a2a 0%, #d4382a 50%, #ff6b35 100%);
+      color: #fff;
+      padding: 60px 0 80px;
+      text-align: center;
+      position: relative;
+    }
+    .thailand-hero::before {
+      content: '🇹🇭';
+      position: absolute;
+      top: 20px;
+      right: 10%;
+      font-size: 5rem;
+      opacity: 0.2;
+    }
+    .thailand-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .thailand-hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Content */
+    .thailand-content {
+      padding: 50px 0 80px;
+      background: var(--th-light);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Tabs */
+    .detail-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 40px;
+      border-bottom: 2px solid var(--gray-200);
+      overflow-x: auto;
+    }
+    .detail-tab {
+      padding: 14px 24px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: var(--gray-500);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+    .detail-tab:hover {
+      color: var(--th-gold);
+    }
+    .detail-tab.active {
+      color: var(--th-gold);
+      border-bottom-color: var(--th-gold);
+    }
+
+    /* Thai Cuisine Section */
+    .thai-cuisine-section {
+      margin-bottom: 60px;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .cuisine-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .cuisine-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .cuisine-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    }
+    .cuisine-icon {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+    }
+    .cuisine-details {
+      padding: 20px;
+    }
+    .cuisine-details h3 {
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+    .cuisine-details p {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+    .cuisine-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .cuisine-price {
+      color: var(--th-gold);
+      font-weight: 600;
+    }
+    .cuisine-rating {
+      color: #ff9800;
+    }
+
+    /* Street Food Section */
+    .street-food-section {
+      margin-bottom: 60px;
+    }
+    .street-food-banner {
+      background: linear-gradient(135deg, #ff6b35 0%, #ff9800 100%);
+      color: #fff;
+      padding: 30px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .street-food-banner-icon {
+      font-size: 3rem;
+    }
+    .street-food-banner h3 {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+    }
+    .street-food-banner p {
+      opacity: 0.9;
+    }
+    .street-food-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .street-food-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 20px;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+    }
+    .street-food-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+    .street-food-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+    .street-food-card h4 {
+      font-size: 1rem;
+      margin-bottom: 8px;
+    }
+    .street-food-card .price {
+      color: var(--th-gold);
+      font-weight: 600;
+    }
+
+    /* Restaurant Section */
+    .restaurant-section {
+      margin-bottom: 60px;
+    }
+    .restaurant-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .restaurant-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+    }
+    .restaurant-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    }
+    .restaurant-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: var(--th-gold);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      margin-bottom: 12px;
+    }
+    .restaurant-card h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .restaurant-meta {
+      display: flex;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: var(--gray-500);
+      margin-bottom: 12px;
+    }
+    .restaurant-rating {
+      color: #ff9800;
+      font-weight: 600;
+    }
+    .restaurant-desc {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+    .restaurant-highlights {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .highlight-tag {
+      padding: 4px 10px;
+      background: #fff3e0;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      color: var(--th-gold);
+    }
+
+    /* Tips Section */
+    .tips-section {
+      margin-bottom: 60px;
+    }
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .tips-card {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow);
+    }
+    .tips-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 16px;
+    }
+    .tips-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+    .tips-card ul {
+      list-style: none;
+      font-size: 0.9rem;
+      color: var(--gray-600);
+    }
+    .tips-card li {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .tips-card li:last-child {
+      border-bottom: none;
+    }
+    .tips-card li::before {
+      content: '✓';
+      color: var(--th-gold);
+      font-weight: bold;
+    }
+
+    /* Warning Banner */
+    .warning-banner {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      color: #856404;
+      padding: 24px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 60px;
+    }
+    .warning-banner h3 {
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .warning-banner ul {
+      list-style: none;
+      font-size: 0.9rem;
+    }
+    .warning-banner li {
+      padding: 6px 0;
+    }
+
+    /* Back Link */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--th-gold);
+      font-weight: 500;
+      margin-bottom: 24px;
+      text-decoration: none;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <nav class="nav container">
+      <a href="../index.html" class="logo">游导旅游</a>
+      <div class="nav-links">
+        <a href="../index.html">首页</a>
+        <a href="../destinations.html">目的地</a>
+        <a href="../routes.html">路线</a>
+        <a href="index.html" class="active">美食</a>
+        <a href="../guide.html">导游</a>
+      </div>
+      <div class="header-actions">
+        <a href="../login.html" class="btn-outline">登录</a>
+        <a href="../register.html" class="btn-primary">注册</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="thailand-hero">
+    <div class="container">
+      <h1>🇹🇭 泰国美食攻略</h1>
+      <p>从曼谷的街边小吃到清迈的夜市，探索酸辣鲜香的泰式美味</p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="thailand-content">
+    <div class="container">
+      <a href="index.html" class="back-link">← 返回美食首页</a>
+
+      <!-- Tabs -->
+      <div class="detail-tabs">
+        <span class="detail-tab active" data-tab="cuisine">泰式料理</span>
+        <span class="detail-tab" data-tab="street">街边小吃</span>
+        <span class="detail-tab" data-tab="restaurants">餐厅推荐</span>
+        <span class="detail-tab" data-tab="tips">注意事项</span>
+      </div>
+
+      <!-- Thai Cuisine -->
+      <section class="thai-cuisine-section" id="cuisine">
+        <h2 class="section-title">🍛 泰式料理</h2>
+        <div class="cuisine-grid">
+          <div class="cuisine-card">
+            <div class="cuisine-icon">🍜</div>
+            <div class="cuisine-details">
+              <h3>泰式炒河粉</h3>
+              <p>酸甜辣咸四味俱全的经典泰式炒粉，Pad Thai是每个游客必尝的美食。</p>
+              <div class="cuisine-meta">
+                <span class="cuisine-price">¥30-80</span>
+                <span class="cuisine-rating">⭐ 4.7</span>
+              </div>
+            </div>
+          </div>
+          <div class="cuisine-card">
+            <div class="cuisine-icon">🍛</div>
+            <div class="cuisine-details">
+              <h3>绿咖喱</h3>
+              <p>浓郁椰奶咖喱搭配蔬菜和肉类，香气扑鼻。辣度可根据口味调整。</p>
+              <div class="cuisine-meta">
+                <span class="cuisine-price">¥40-100</span>
+                <span class="cuisine-rating">⭐ 4.6</span>
+              </div>
+            </div>
+          </div>
+          <div class="cuisine-card">
+            <div class="cuisine-icon">🥘</div>
+            <div class="cuisine-details">
+              <h3>冬阴功汤</h3>
+              <p>泰国国汤，酸辣鲜香配大虾，是泰式料理的代表之一。</p>
+              <div class="cuisine-meta">
+                <span class="cuisine-price">¥50-120</span>
+                <span class="cuisine-rating">⭐ 4.8</span>
+              </div>
+            </div>
+          </div>
+          <div class="cuisine-card">
+            <div class="cuisine-icon">🍲</div>
+            <div class="cuisine-details">
+              <h3>泰式红咖喱</h3>
+              <p>浓郁椰奶底配牛肉或鸡肉，香辣可口，配上一碗茉莉香米饭完美。</p>
+              <div class="cuisine-meta">
+                <span class="cuisine-price">¥40-100</span>
+                <span class="cuisine-rating">⭐ 4.6</span>
+              </div>
+            </div>
+          </div>
+          <div class="cuisine-card">
+            <div class="cuisine-icon">🥗</div>
+            <div class="cuisine-details">
+              <h3>青木瓜沙拉</h3>
+              <p>清爽酸辣的青木瓜丝，是泰式开胃佳品，也有炸猪颈肉版本。</p>
+              <div class="cuisine-meta">
+                <span class="cuisine-price">¥25-60</span>
+                <span class="cuisine-rating">⭐ 4.5</span>
+              </div>
+            </div>
+          </div>
+          <div class="cuisine-card">
+            <div class="cuisine-icon">🍖</div>
+            <div class="cuisine-details">
+              <h3>烤猪颈肉</h3>
+              <p>泰式炭火烤猪肉，外焦里嫩，配上特制蘸酱超级美味。</p>
+              <div class="cuisine-meta">
+                <span class="cuisine-price">¥40-90</span>
+                <span class="cuisine-rating">⭐ 4.7</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Street Food -->
+      <section class="street-food-section" id="street">
+        <h2 class="section-title">🍡 街边小吃</h2>
+        <div class="street-food-banner">
+          <span class="street-food-banner-icon">🚶</span>
+          <div>
+            <h3>曼谷街边美食体验</h3>
+            <p>在曼谷和清迈的夜市、街边，你会发现最地道的泰国味道</p>
+          </div>
+        </div>
+        <div class="street-food-grid">
+          <div class="street-food-card">
+            <span class="street-food-icon">🥭</span>
+            <h4>芒果糯米饭</h4>
+            <p>香甜芒果配椰香糯米饭</p>
+            <span class="price">¥25-50</span>
+          </div>
+          <div class="street-food-card">
+            <span class="street-food-icon">🍢</span>
+            <h4>沙爹烤肉串</h4>
+            <p>香浓花生酱腌制的鸡肉串</p>
+            <span class="price">¥15-35</span>
+          </div>
+          <div class="street-food-card">
+            <span class="street-food-icon">🦐</span>
+            <h4>泰式生腌虾</h4>
+            <p>新鲜虾肉配辣椒柠檬</p>
+            <span class="price">¥30-60</span>
+          </div>
+          <div class="street-food-card">
+            <span class="street-food-icon">🥤</span>
+            <h4>泰式奶茶</h4>
+            <p>浓郁泰式红茶加炼乳</p>
+            <span class="price">¥10-20</span>
+          </div>
+          <div class="street-food-card">
+            <span class="street-food-icon">🍦</span>
+            <h4>椰子冰淇淋</h4>
+            <p>新鲜椰肉配椰汁冰淇淋</p>
+            <span class="price">¥15-30</span>
+          </div>
+          <div class="street-food-card">
+            <span class="street-food-icon">🍌</span>
+            <h4>香蕉煎饼</h4>
+            <p>酥脆煎饼配香蕉和巧克力</p>
+            <span class="price">¥10-25</span>
+          </div>
+          <div class="street-food-card">
+            <span class="street-food-icon">🦑</span>
+            <h4>烤鱿鱼</h4>
+            <p>炭火烤制配泰式酱料</p>
+            <span class="price">¥20-40</span>
+          </div>
+          <div class="street-food-card">
+            <span class="street-food-icon">🍗</span>
+            <h4>海南鸡饭</h4>
+            <p>嫩滑鸡肉配香米饭</p>
+            <span class="price">¥25-50</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Restaurants -->
+      <section class="restaurant-section" id="restaurants">
+        <h2 class="section-title">🏪 餐厅推荐</h2>
+        <div class="restaurant-cards">
+          <div class="restaurant-card">
+            <span class="restaurant-badge">老字号</span>
+            <h3>建兴酒家</h3>
+            <div class="restaurant-meta">
+              <span class="restaurant-rating">⭐ 4.7</span>
+              <span>📍 曼谷·辉煌</span>
+              <span>💰 ¥80-200</span>
+            </div>
+            <p class="restaurant-desc">曼谷老字号中餐厅，泰式咖喱蟹是招牌，众多明星打卡。</p>
+            <div class="restaurant-highlights">
+              <span class="highlight-tag">咖喱蟹</span>
+              <span class="highlight-tag">明星同款</span>
+              <span class="highlight-tag">中文服务</span>
+            </div>
+          </div>
+          <div class="restaurant-card">
+            <span class="restaurant-badge">网红夜市</span>
+            <h3>火车夜市美食</h3>
+            <div class="restaurant-meta">
+              <span class="restaurant-rating">⭐ 4.6</span>
+              <span>📍 曼谷·拉差达</span>
+              <span>💰 ¥20-80</span>
+            </div>
+            <p class="restaurant-desc">曼谷最大的夜市之一，生腌海鲜、烧烤、甜品应有尽有。</p>
+            <div class="restaurant-highlights">
+              <span class="highlight-tag">网红夜市</span>
+              <span class="highlight-tag">生腌海鲜</span>
+              <span class="highlight-tag">水果西施</span>
+            </div>
+          </div>
+          <div class="restaurant-card">
+            <span class="restaurant-badge">泰北美食</span>
+            <h3>清迈周末夜市</h3>
+            <div class="restaurant-meta">
+              <span class="restaurant-rating">⭐ 4.8</span>
+              <span>📍 清迈·塔佩门</span>
+              <span>💰 ¥15-60</span>
+            </div>
+            <p class="restaurant-desc">清迈最大的周末夜市，手工艺品和泰北美食的完美结合。</p>
+            <div class="restaurant-highlights">
+              <span class="highlight-tag">泰北美食</span>
+              <span class="highlight-tag">氛围绝佳</span>
+              <span class="highlight-tag">手工艺</span>
+            </div>
+          </div>
+          <div class="restaurant-card">
+            <span class="restaurant-badge">海边餐厅</span>
+            <h3>普吉岛海边餐厅</h3>
+            <div class="restaurant-meta">
+              <span class="restaurant-rating">⭐ 4.7</span>
+              <span>📍 普吉岛·芭东</span>
+              <span>💰 ¥100-300</span>
+            </div>
+            <p class="restaurant-desc">海景餐厅，新鲜海鲜配日落，是浪漫晚餐的首选。</p>
+            <div class="restaurant-highlights">
+              <span class="highlight-tag">海景</span>
+              <span class="highlight-tag">新鲜海鲜</span>
+              <span class="highlight-tag">浪漫氛围</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tips -->
+      <section class="tips-section" id="tips">
+        <h2 class="section-title">📋 注意事项</h2>
+        <div class="tips-grid">
+          <div class="tips-card">
+            <div class="tips-icon">🌶️</div>
+            <h3>口味提醒</h3>
+            <ul>
+              <li>泰式料理普遍偏辣，点餐时可说"ไม่เผ็ด"（不太辣）</li>
+              <li>街边小吃可要求少放辣椒</li>
+              <li>调味品普遍偏甜偏咸</li>
+              <li>很多菜偏酸，胃不好的人注意</li>
+            </ul>
+          </div>
+          <div class="tips-card">
+            <div class="tips-icon">💰</div>
+            <h3>消费提示</h3>
+            <ul>
+              <li>街边小吃每份 ¥10-50</li>
+              <li>普通餐厅每餐 ¥50-150</li>
+              <li>高级餐厅每人 ¥200-500</li>
+              <li>大部分地方接受支付宝微信</li>
+            </ul>
+          </div>
+          <div class="tips-card">
+            <div class="tips-icon">🧹</div>
+            <h3>卫生建议</h3>
+            <ul>
+              <li>选择人流量大的摊位更新鲜</li>
+              <li>观察制作过程确保食材新鲜</li>
+              <li>携带肠胃药以防万一</li>
+              <li>瓶装水是最安全的选择</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Warning Banner -->
+      <div class="warning-banner">
+        <h3>⚠️ 重要提醒</h3>
+        <ul>
+          <li>• 部分街边小吃可能使用生食或半熟食材，肠胃敏感者请谨慎</li>
+          <li>• 榴莲和山竹禁止携带进入酒店和公共交通</li>
+          <li>• 泰铢兑换建议在正规兑换点进行，不要相信路边的私人兑换</li>
+          <li>• 参加"水灯节"等活动时，请尊重当地习俗</li>
+        </ul>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h4>游导旅游</h4>
+          <p>您的专属旅行伙伴</p>
+        </div>
+        <div class="footer-col">
+          <h4>快速链接</h4>
+          <a href="../about.html">关于我们</a>
+          <a href="../services.html">服务项目</a>
+          <a href="../help.html">帮助中心</a>
+        </div>
+        <div class="footer-col">
+          <h4>联系我们</h4>
+          <p>客服电话：400-123-4567</p>
+          <p>邮箱：info@youdao-travel.com</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 游导旅游 youdao-travel.com</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('.detail-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const targetId = tab.dataset.tab;
+        document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
