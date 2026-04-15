@@ -1,10 +1,10 @@
-# 游导伴旅 - 导游与游客的全平台
+# 游导旅游 - 导游与游客的全平台
 
-<p align="center">
+<p align   对齐="center">
   <img src="https://img.shields.io/badge/version-1.0.0-blue.svg" alt="Version">
   <img src="https://img.shields.io/badge/license-MIT-green.svg" alt="License">
   <img src="https://img.shields.io/badge/deploy-vercel-000000.svg" alt="Deploy">
-</p>
+</   & lt;p>
 
 > 一站式旅行知识平台，为导游和游客提供全方位的服务支持
 
