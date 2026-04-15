@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>货币识别与换算 - 游导旅游</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        body { font-family: 'Noto Sans SC', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .float-animation { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .pulse-ring { animation: pulse-ring 2s infinite; }
+        @keyframes pulse-ring { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(1.3); opacity: 0; } }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="gradient-bg text-white py-6 shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4">
+            <div class="flex items-center justify-between">
+                <a href="/" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+                        <i class="fas fa-paper-plane text-purple-600 text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold">游导旅游</span>
+                </a>
+                <nav class="hidden md:flex items-center space-x-6">
+                    <a href="/" class="hover:text-purple-200 transition">首页</a>
+                    <a href="/currency/index.html" class="text-white font-semibold border-b-2 border-white pb-1">货币工具</a>
+                    <a href="#" class="hover:text-purple-200 transition">目的地</a>
+                    <a href="#" class="hover:text-purple-200 transition">攻略</a>
+                </nav>
+                <button class="md:hidden text-2xl"><i class="fas fa-bars"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white py-16 md:py-24">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6 float-animation">
+                    <i class="fas fa-coins mr-3"></i>货币识别与换算
+                </h1>
+                <p class="text-xl md:text-2xl text-purple-100 mb-8">
+                    出境旅行必备工具 · 支持多货币实时换算 · 货币图鉴识别
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="#tools" class="bg-white text-purple-600 px-8 py-3 rounded-full font-semibold hover:bg-purple-50 transition shadow-lg">
+                        <i class="fas fa-tools mr-2"></i>开始使用
+                    </a>
+                    <a href="guide.html" class="border-2 border-white text-white px-8 py-3 rounded-full font-semibold hover:bg-white hover:text-purple-600 transition">
+                        <i class="fas fa-book mr-2"></i>查看货币图鉴
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Currency Recognition Demo -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-camera text-purple-500 mr-2"></i>货币识别（概念展示）
+                </h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">
+                    上传货币图片，AI智能识别货币类型、面额和汇率信息
+                </p>
+            </div>
+            
+            <div class="max-w-3xl mx-auto">
+                <div id="uploadArea" class="border-3 border-dashed border-purple-300 rounded-2xl p-12 text-center bg-gradient-to-br from-purple-50 to-pink-50 hover:border-purple-500 transition cursor-pointer">
+                    <div class="relative inline-block mb-6">
+                        <div class="w-24 h-24 bg-purple-100 rounded-full flex items-center justify-center">
+                            <i class="fas fa-cloud-upload-alt text-4xl text-purple-500"></i>
+                        </div>
+                        <div class="absolute -top-2 -right-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center pulse-ring">
+                            <i class="fas fa-magic text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-700 mb-2">拖拽货币图片到这里</h3>
+                    <p class="text-gray-500 mb-4">或点击选择图片文件</p>
+                    <p class="text-sm text-gray-400">支持 JPG、PNG 格式，最大 5MB</p>
+                    <input type="file" id="fileInput" accept="image/*" class="hidden">
+                </div>
+
+                <!-- Demo Result -->
+                <div id="demoResult" class="hidden mt-8 bg-white rounded-2xl shadow-xl p-8 border border-purple-100">
+                    <div class="flex items-start gap-6">
+                        <div class="w-32 h-40 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-2 border-2 border-blue-300 rounded-lg"></div>
+                            <div class="text-center">
+                                <div class="text-5xl font-bold text-blue-800">¥</div>
+                                <div class="text-2xl font-bold text-blue-700">1,000</div>
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                                    <i class="fas fa-check-circle mr-1"></i>识别成功
+                                </span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">日本日元 (JPY)</h3>
+                            <p class="text-gray-600 mb-4">面额：1,000 円</p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-purple-50 rounded-lg p-3">
+                                    <p class="text-sm text-gray-500">当前汇率</p>
+                                    <p class="text-lg font-bold text-purple-600">1 JPY ≈ 0.0505 CNY</p>
+                                </div>
+                                <div class="bg-green-50 rounded-lg p-3">
+                                    <p class="text-sm text-gray-500">换算金额</p>
+                                    <p class="text-lg font-bold text-green-600">¥50.5</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tools Grid -->
+    <section id="tools" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-calculator text-purple-500 mr-2"></i>实用工具
+                </h2>
+                <p class="text-gray-600">一站式解决旅行中的货币问题</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                <!-- Converter -->
+                <a href="converter.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-exchange-alt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">汇率换算</h3>
+                    <p class="text-gray-600 text-sm mb-4">实时汇率，支持多货币互转</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-blue-100 text-blue-600 px-2 py-1 rounded text-xs">¥ CNY</span>
+                        <span class="bg-red-100 text-red-600 px-2 py-1 rounded text-xs">¥ JPY</span>
+                        <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded text-xs">$ USD</span>
+                    </div>
+                </a>
+
+                <!-- Guide -->
+                <a href="guide.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-book-open text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">货币图鉴</h3>
+                    <p class="text-gray-600 text-sm mb-4">各国货币样式与防伪特征</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-green-100 text-green-600 px-2 py-1 rounded text-xs">日元</span>
+                        <span class="bg-pink-100 text-pink-600 px-2 py-1 rounded text-xs">韩元</span>
+                        <span class="bg-orange-100 text-orange-600 px-2 py-1 rounded text-xs">泰铢</span>
+                    </div>
+                </a>
+
+                <!-- Tip Calculator -->
+                <a href="tip-calculator.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-receipt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">小费计算器</h3>
+                    <p class="text-gray-600 text-sm mb-4">各国小费文化与金额计算</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-yellow-100 text-yellow-600 px-2 py-1 rounded text-xs">美国</span>
+                        <span class="bg-teal-100 text-teal-600 px-2 py-1 rounded text-xs">泰国</span>
+                        <span class="bg-indigo-100 text-indigo-600 px-2 py-1 rounded text-xs">欧洲</span>
+                    </div>
+                </a>
+
+                <!-- Exchange Guide -->
+                <a href="exchange.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="w-14 h-14 bg-gradient-to-br from-purple-400 to-pink-500 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-map-marker-alt text-2xl text-white"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">ATM/换汇指南</h3>
+                    <p class="text-gray-600 text-sm mb-4">各国换汇点与手续费对比</p>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-purple-100 text-purple-600 px-2 py-1 rounded text-xs">银行</span>
+                        <span class="bg-cyan-100 text-cyan-600 px-2 py-1 rounded text-xs">ATM</span>
+                        <span class="bg-rose-100 text-rose-600 px-2 py-1 rounded text-xs">换汇所</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Convert Widget -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                        <i class="fas fa-bolt text-yellow-500 mr-2"></i>快速换算
+                    </h2>
+                </div>
+
+                <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-8 shadow-2xl">
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <!-- From -->
+                        <div>
+                            <label class="text-gray-400 text-sm mb-2 block">从</label>
+                            <div class="relative">
+                                <select id="fromCurrency" class="w-full bg-gray-700 text-white rounded-xl px-4 py-4 pr-12 appearance-none focus:ring-2 focus:ring-purple-500">
+                                    <option value="CNY">🇨🇳 人民币 (CNY)</option>
+                                    <option value="USD">🇺🇸 美元 (USD)</option>
+                                    <option value="JPY" selected>🇯🇵 日元 (JPY)</option>
+                                    <option value="KRW">🇰🇷 韩元 (KRW)</option>
+                                    <option value="THB">🇹🇭 泰铢 (THB)</option>
+                                    <option value="SGD">🇸🇬 新加坡元 (SGD)</option>
+                                    <option value="EUR">🇪🇺 欧元 (EUR)</option>
+                                    <option value="GBP">🇬🇧 英镑 (GBP)</option>
+                                    <option value="HKD">🇭🇰 港币 (HKD)</option>
+                                    <option value="AUD">🇦🇺 澳元 (AUD)</option>
+                                </select>
+                                <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <input type="number" id="fromAmount" value="10000" class="w-full bg-gray-600 text-white rounded-xl px-4 py-3 mt-3 text-2xl font-bold focus:ring-2 focus:ring-purple-500" placeholder="输入金额">
+                        </div>
+
+                        <!-- Swap Button -->
+                        <div class="flex items-center justify-center">
+                            <button id="swapBtn" class="w-14 h-14 bg-purple-600 hover:bg-purple-500 rounded-full flex items-center justify-center transition shadow-lg">
+                                <i class="fas fa-exchange-alt text-white text-xl"></i>
+                            </button>
+                        </div>
+
+                        <!-- To -->
+                        <div>
+                            <label class="text-gray-400 text-sm mb-2 block">到</label>
+                            <div class="relative">
+                                <select id="toCurrency" class="w-full bg-gray-700 text-white rounded-xl px-4 py-4 pr-12 appearance-none focus:ring-2 focus:ring-purple-500">
+                                    <option value="CNY" selected>🇨🇳 人民币 (CNY)</option>
+                                    <option value="USD">🇺🇸 美元 (USD)</option>
+                                    <option value="JPY">🇯🇵 日元 (JPY)</option>
+                                    <option value="KRW">🇰🇷 韩元 (KRW)</option>
+                                    <option value="THB">🇹🇭 泰铢 (THB)</option>
+                                    <option value="SGD">🇸🇬 新加坡元 (SGD)</option>
+                                    <option value="EUR">🇪🇺 欧元 (EUR)</option>
+                                    <option value="GBP">🇬🇧 英镑 (GBP)</option>
+                                    <option value="HKD">🇭🇰 港币 (HKD)</option>
+                                    <option value="AUD">🇦🇺 澳元 (AUD)</option>
+                                </select>
+                                <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                            </div>
+                            <div class="bg-gray-600 rounded-xl px-4 py-3 mt-3">
+                                <span id="toAmount" class="text-2xl font-bold text-green-400">505.05</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Rate Info -->
+                    <div class="bg-gray-700/50 rounded-xl p-4 flex items-center justify-between">
+                        <div>
+                            <span class="text-gray-400 text-sm">当前汇率</span>
+                            <p id="rateInfo" class="text-white font-medium">1 JPY = 0.0505 CNY</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-gray-400 text-sm">更新时间</span>
+                            <p class="text-white font-medium">实时更新</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Amount Buttons -->
+                <div class="mt-6">
+                    <p class="text-gray-600 text-sm mb-3">快捷金额</p>
+                    <div class="flex flex-wrap gap-2">
+                        <button class="quick-amount bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-600 px-4 py-2 rounded-lg transition font-medium" data-amount="100">¥100</button>
+                        <button class="quick-amount bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-600 px-4 py-2 rounded-lg transition font-medium" data-amount="1000">¥1,000</button>
+                        <button class="quick-amount bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-600 px-4 py-2 rounded-lg transition font-medium" data-amount="5000">¥5,000</button>
+                        <button class="quick-amount bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-600 px-4 py-2 rounded-lg transition font-medium" data-amount="10000">¥10,000</button>
+                        <button class="quick-amount bg-gray-100 hover:bg-purple-100 text-gray-700 hover:text-purple-600 px-4 py-2 rounded-lg transition font-medium" data-amount="50000">¥50,000</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Popular Currencies -->
+    <section class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-gray-800 mb-4">
+                    <i class="fas fa-globe text-purple-500 mr-2"></i>热门货币
+                </h2>
+                <p class="text-gray-600">出境旅行常用货币一览</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-4 max-w-6xl mx-auto">
+                <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition cursor-pointer" onclick="selectCurrency('JPY')">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-3xl">🇯🇵</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800">日元</h4>
+                            <p class="text-sm text-gray-500">JPY</p>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p><span class="text-purple-600 font-medium">1 JPY</span> = ¥0.0505 CNY</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition cursor-pointer" onclick="selectCurrency('KRW')">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-3xl">🇰🇷</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800">韩元</h4>
+                            <p class="text-sm text-gray-500">KRW</p>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p><span class="text-purple-600 font-medium">1 KRW</span> = ¥0.0054 CNY</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition cursor-pointer" onclick="selectCurrency('THB')">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-3xl">🇹🇭</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800">泰铢</h4>
+                            <p class="text-sm text-gray-500">THB</p>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p><span class="text-purple-600 font-medium">1 THB</span> = ¥0.2041 CNY</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition cursor-pointer" onclick="selectCurrency('SGD')">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-3xl">🇸🇬</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800">新加坡元</h4>
+                            <p class="text-sm text-gray-500">SGD</p>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p><span class="text-purple-600 font-medium">1 SGD</span> = ¥5.5172 CNY</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition cursor-pointer" onclick="selectCurrency('USD')">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="text-3xl">🇺🇸</span>
+                        <div>
+                            <h4 class="font-bold text-gray-800">美元</h4>
+                            <p class="text-sm text-gray-500">USD</p>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-600">
+                        <p><span class="text-purple-600 font-medium">1 USD</span> = ¥7.24 CNY</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-paper-plane text-white text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold">游导旅游</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">您的出境旅行好帮手</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">工具</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="converter.html" class="hover:text-white transition">汇率换算</a></li>
+                        <li><a href="guide.html" class="hover:text-white transition">货币图鉴</a></li>
+                        <li><a href="tip-calculator.html" class="hover:text-white transition">小费计算</a></li>
+                        <li><a href="exchange.html" class="hover:text-white transition">换汇指南</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">热门目的地</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#" class="hover:text-white transition">日本</a></li>
+                        <li><a href="#" class="hover:text-white transition">韩国</a></li>
+                        <li><a href="#" class="hover:text-white transition">泰国</a></li>
+                        <li><a href="#" class="hover:text-white transition">新加坡</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">联系我们</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+                            <i class="fab fa-weixin"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+                            <i class="fab fa-weibo"></i>
+                        </a>
+                        <a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-purple-600 transition">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm">
+                <p>&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Exchange rates (relative to CNY)
+        const rates = {
+            CNY: 1,
+            USD: 7.24,
+            JPY: 19.8,
+            KRW: 185.5,
+            THB: 4.9,
+            SGD: 1.45,
+            EUR: 7.8,
+            GBP: 9.1,
+            HKD: 0.92,
+            AUD: 4.7
+        };
+
+        const fromCurrency = document.getElementById('fromCurrency');
+        const toCurrency = document.getElementById('toCurrency');
+        const fromAmount = document.getElementById('fromAmount');
+        const toAmount = document.getElementById('toAmount');
+        const rateInfo = document.getElementById('rateInfo');
+        const swapBtn = document.getElementById('swapBtn');
+
+        function convert() {
+            const from = fromCurrency.value;
+            const to = toCurrency.value;
+            const amount = parseFloat(fromAmount.value) || 0;
+            
+            // Convert to CNY first, then to target currency
+            const inCNY = amount / rates[from];
+            const result = inCNY * rates[to];
+            
+            toAmount.textContent = result.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            
+            const rate = rates[to] / rates[from];
+            rateInfo.textContent = `1 ${from} = ${rate.toFixed(4)} ${to}`;
+        }
+
+        fromCurrency.addEventListener('change', convert);
+        toCurrency.addEventListener('change', convert);
+        fromAmount.addEventListener('input', convert);
+
+        swapBtn.addEventListener('click', () => {
+            const temp = fromCurrency.value;
+            fromCurrency.value = toCurrency.value;
+            toCurrency.value = temp;
+            convert();
+        });
+
+        // Quick amount buttons
+        document.querySelectorAll('.quick-amount').forEach(btn => {
+            btn.addEventListener('click', () => {
+                fromAmount.value = btn.dataset.amount;
+                convert();
+            });
+        });
+
+        // File upload demo
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const demoResult = document.getElementById('demoResult');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('border-purple-500', 'bg-purple-100');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('border-purple-500', 'bg-purple-100');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('border-purple-500', 'bg-purple-100');
+            demoResult.classList.remove('hidden');
+        });
+
+        fileInput.addEventListener('change', () => {
+            demoResult.classList.remove('hidden');
+        });
+
+        function selectCurrency(code) {
+            fromCurrency.value = code;
+            convert();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initial conversion
+        convert();
+    </script>
+</body>
+</html>

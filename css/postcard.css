@@ -1,0 +1,229 @@
+/* 明信片服务专用样式 */
+
+/* ========================================
+   明信片卡片样式
+   ======================================== */
+.postcard-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.postcard-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.postcard-card img {
+  transition: transform 0.5s ease;
+}
+
+.postcard-card:hover img {
+  transform: scale(1.1);
+}
+
+/* 明信片预览框 */
+.postcard-preview {
+  background: #f0f0f0;
+  border: 8px solid #fff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem;
+}
+
+/* 印章边框 */
+.stamp-border {
+  border: 3px dashed #ccc;
+  border-radius: 4px;
+  position: relative;
+}
+
+.stamp-border::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  pointer-events: none;
+}
+
+/* ========================================
+   编辑器样式
+   ======================================== */
+
+/* 标签页按钮 */
+.tab-btn {
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.tab-btn:hover:not(.tab-active) {
+  background: #e5e7eb;
+}
+
+.tab-active {
+  background: #0ea5e9;
+  color: white;
+}
+
+/* 贴纸项 */
+.sticker-item {
+  cursor: grab;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.sticker-item:hover {
+  transform: scale(1.2);
+}
+
+.sticker-item:active {
+  cursor: grabbing;
+}
+
+.sticker-item.placed {
+  position: absolute;
+  pointer-events: auto;
+}
+
+/* 颜色选择器 */
+.color-swatch {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 3px solid transparent;
+}
+
+.color-swatch:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch.selected {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.3);
+}
+
+/* 滤镜预览 */
+.filter-preview {
+  transition: filter 0.3s ease;
+}
+
+/* ========================================
+   分类卡片
+   ======================================== */
+.category-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.category-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 100%);
+  z-index: 1;
+}
+
+.category-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.category-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* ========================================
+   动画效果
+   ======================================== */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+@keyframes stampIn {
+  0% { transform: scale(0) rotate(-20deg); opacity: 0; }
+  50% { transform: scale(1.2) rotate(5deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-stamp {
+  animation: stampIn 0.5s ease-out forwards;
+}
+
+/* 加载动画 */
+.shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* 淡入效果 */
+.fade-in {
+  animation: fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+/* ========================================
+   响应式调整
+   ======================================== */
+@media (max-width: 768px) {
+  .postcard-preview {
+    border-width: 4px;
+  }
+  
+  .sticker-item {
+    font-size: 1.5rem;
+  }
+}
+
+/* ========================================
+   打印样式
+   ======================================== */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .postcard-preview {
+    box-shadow: none;
+    border: 2px solid #333;
+  }
+}
