@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>每日签到 - 游导旅游</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/checkin/checkin.css">
+  <style>
+    :root {
+      --primary: #ff6b35;
+      --primary-dark: #e55a2b;
+      --secondary: #1e3a5f;
+      --accent: #ffd23f;
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="../index.html" class="logo">
+          <span class="logo-icon">🧭</span>
+          <span>游导旅游</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../destinations.html">目的地</a></li>
+          <li><a href="../routes.html">路线</a></li>
+          <li><a href="../guide.html">导游</a></li>
+          <li><a href="index.html" class="active">打卡签到</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="btn-icon" title="通知">🔔</button>
+          <button class="btn-icon" title="个人中心">👤</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 签到首页 -->
+  <main>
+    <!-- Hero区域 -->
+    <section class="checkin-hero">
+      <div class="container">
+        <div class="flex justify-between items-start">
+          <div>
+            <span class="hero-badge">📍 每日签到</span>
+            <h1 class="text-4xl font-bold mb-2">欢迎回来，旅行者！</h1>
+            <p class="text-lg opacity-90">记录每一段美好旅程</p>
+          </div>
+          <div class="text-right">
+            <div class="text-6xl font-bold" id="totalPoints">0</div>
+            <div class="text-sm opacity-80">我的积分</div>
+          </div>
+        </div>
+        
+        <!-- 统计数据 -->
+        <div class="checkin-stats">
+          <div class="checkin-stat-card">
+            <div class="checkin-stat-number" id="totalCheckins">0</div>
+            <div class="checkin-stat-label">累计签到</div>
+          </div>
+          <div class="checkin-stat-card">
+            <div class="checkin-stat-number" id="currentStreak">0</div>
+            <div class="checkin-stat-label">连续签到</div>
+          </div>
+          <div class="checkin-stat-card">
+            <div class="checkin-stat-number" id="spotCount">0</div>
+            <div class="checkin-stat-label">打卡景点</div>
+          </div>
+          <div class="checkin-stat-card">
+            <div class="checkin-stat-number" id="achievementCount">0</div>
+            <div class="checkin-stat-label">获得成就</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 签到区域 -->
+    <section class="container py-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- 签到按钮 -->
+        <div class="lg:col-span-2">
+          <div class="bg-white rounded-3xl p-8 shadow-lg">
+            <h2 class="text-2xl font-bold mb-6 flex items-center gap-3">
+              <span class="text-3xl">📅</span>
+              今日签到
+            </h2>
+            
+            <!-- 签到按钮 -->
+            <div class="sign-btn-wrapper">
+              <button class="sign-btn" id="signBtn" onclick="handleSignIn()">
+                <span class="icon">✍️</span>
+                <span class="text" id="signBtnText">立即签到</span>
+                <span class="points" id="signPoints">+10 积分</span>
+              </button>
+            </div>
+            
+            <!-- 连续签到提示 -->
+            <div class="streak-banner" id="streakBanner" style="display: none;">
+              <span class="fire-icon">🔥</span>
+              <div class="streak-info">
+                <h3>连续签到 <span id="streakDays">0</span> 天</h3>
+                <p class="text-sm opacity-80">再签到 <span id="nextMilestone">7</span> 天可获得 <span id="nextReward">100</span> 积分</p>
+                <div class="streak-progress">
+                  <div class="streak-progress-bar" id="streakProgressBar" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+            
+            <!-- 心情选择 -->
+            <div class="mt-8" id="moodSection" style="display: none;">
+              <h3 class="font-semibold mb-4">分享你的心情</h3>
+              <div class="flex flex-wrap gap-3" id="moodPicker">
+                <!-- 动态生成 -->
+              </div>
+            </div>
+            
+            <!-- 快速链接 -->
+            <div class="mt-8 pt-8 border-t border-gray-100">
+              <h3 class="font-semibold mb-4">更多功能</h3>
+              <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <a href="calendar.html" class="flex flex-col items-center p-4 rounded-xl bg-orange-50 hover:bg-orange-100 transition">
+                  <span class="text-3xl mb-2">📅</span>
+                  <span class="text-sm font-medium">签到日历</span>
+                </a>
+                <a href="spots.html" class="flex flex-col items-center p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition">
+                  <span class="text-3xl mb-2">📍</span>
+                  <span class="text-sm font-medium">景点打卡</span>
+                </a>
+                <a href="records.html" class="flex flex-col items-center p-4 rounded-xl bg-green-50 hover:bg-green-100 transition">
+                  <span class="text-3xl mb-2">📸</span>
+                  <span class="text-sm font-medium">打卡记录</span>
+                </a>
+                <a href="achievements.html" class="flex flex-col items-center p-4 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition">
+                  <span class="text-3xl mb-2">🏆</span>
+                  <span class="text-sm font-medium">我的成就</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 右侧栏 -->
+        <div class="space-y-6">
+          <!-- 积分卡片 -->
+          <div class="points-card">
+            <div class="points-header">
+              <div>
+                <div class="text-sm opacity-80">我的积分</div>
+                <div class="points-value" id="sidebarPoints">0</div>
+              </div>
+              <span class="text-4xl">💰</span>
+            </div>
+            <div class="points-history" id="pointsHistory">
+              <h4 class="font-semibold mb-3">最近积分变动</h4>
+              <!-- 动态生成 -->
+            </div>
+          </div>
+          
+          <!-- 积分规则 -->
+          <div class="bg-white rounded-2xl p-6 shadow-lg">
+            <h3 class="font-bold mb-4 flex items-center gap-2">
+              <span>📜</span> 积分规则
+            </h3>
+            <ul class="space-y-3 text-sm">
+              <li class="flex items-start gap-2">
+                <span class="text-green-500">✓</span>
+                <span>每日签到：+10 基础积分</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-500">✓</span>
+                <span>连续签到：最高 +200 额外积分</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-500">✓</span>
+                <span>景点打卡：+20~50 积分</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-500">✓</span>
+                <span>周末签到：1.5 倍积分</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-500">✓</span>
+                <span>节假日签到：2~3 倍积分</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-green-500">✓</span>
+                <span>分享打卡：+5 积分</span>
+              </li>
+            </ul>
+          </div>
+          
+          <!-- 连签奖励 -->
+          <div class="bg-white rounded-2xl p-6 shadow-lg">
+            <h3 class="font-bold mb-4 flex items-center gap-2">
+              <span>🎁</span> 连签奖励
+            </h3>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between p-3 rounded-lg bg-orange-50">
+                <div class="flex items-center gap-2">
+                  <span>🔥</span>
+                  <span class="font-medium">7天</span>
+                </div>
+                <span class="text-orange-500 font-bold">+100</span>
+              </div>
+              <div class="flex items-center justify-between p-3 rounded-lg bg-yellow-50">
+                <div class="flex items-center gap-2">
+                  <span>🏆</span>
+                  <span class="font-medium">30天</span>
+                </div>
+                <span class="text-yellow-600 font-bold">+500</span>
+              </div>
+              <div class="flex items-center justify-between p-3 rounded-lg bg-purple-50">
+                <div class="flex items-center gap-2">
+                  <span>👑</span>
+                  <span class="font-medium">100天</span>
+                </div>
+                <span class="text-purple-500 font-bold">+1000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- 签到动画容器 -->
+  <div class="checkin-animation" id="checkinAnimation"></div>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-12 mt-12">
+    <div class="container">
+      <div class="grid grid-cols-4 gap-8">
+        <div>
+          <h4 class="font-bold mb-4">关于游导</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="../about.html" class="hover:text-white">关于我们</a></li>
+            <li><a href="../contact.html" class="hover:text-white">联系我们</a></li>
+            <li><a href="../careers.html" class="hover:text-white">加入我们</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">帮助服务</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="../help.html" class="hover:text-white">帮助中心</a></li>
+            <li><a href="../faq.html" class="hover:text-white">常见问题</a></li>
+            <li><a href="../terms.html" class="hover:text-white">用户协议</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">旅行目的地</h4>
+          <ul class="space-y-2 text-gray-400">
+            <li><a href="../destinations.html" class="hover:text-white">热门目的地</a></li>
+            <li><a href="../routes.html" class="hover:text-white">精选路线</a></li>
+            <li><a href="../festivals.html" class="hover:text-white">节日活动</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4">关注我们</h4>
+          <div class="flex gap-4">
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-gray-600">微</a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-gray-600">微</a>
+            <a href="#" class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center hover:bg-gray-600">抖</a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-700 mt-8 pt-8 text-center text-gray-400">
+        <p>© 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../js/checkin/checkin-core.js"></script>
+  <script>
+    // 全局打卡系统实例
+    let checkinSystem;
+    let checkinData;
+
+    // 页面初始化
+    document.addEventListener('DOMContentLoaded', async () => {
+      checkinSystem = new CheckinSystem();
+      checkinData = await checkinSystem.loadData();
+      
+      if (!checkinData) {
+        showToast('加载数据失败，请刷新重试', 'error');
+        return;
+      }
+      
+      updateUI();
+      loadMoodPicker();
+    });
+
+    // 更新UI
+    function updateUI() {
+      const data = checkinSystem.checkinData;
+      
+      // 更新统计
+      document.getElementById('totalPoints').textContent = data.points;
+      document.getElementById('sidebarPoints').textContent = data.points;
+      document.getElementById('totalCheckins').textContent = data.totalCheckins;
+      document.getElementById('currentStreak').textContent = checkinSystem.calculateStreak();
+      document.getElementById('spotCount').textContent = data.spotCheckins.length;
+      document.getElementById('achievementCount').textContent = data.achievements.length;
+      
+      // 更新签到按钮状态
+      const signBtn = document.getElementById('signBtn');
+      const signBtnText = document.getElementById('signBtnText');
+      const signPoints = document.getElementById('signPoints');
+      
+      if (checkinSystem.isCheckedInToday()) {
+        signBtn.classList.add('signed');
+        signBtn.disabled = true;
+        signBtnText.textContent = '已签到';
+        signPoints.textContent = '明日再来';
+        document.getElementById('moodSection').style.display = 'block';
+      } else {
+        const points = checkinSystem.calculatePoints(checkinSystem.calculateStreak() + 1);
+        signPoints.textContent = `+${points} 积分`;
+      }
+      
+      // 更新连续签到提示
+      updateStreakBanner();
+      
+      // 更新积分历史
+      updatePointsHistory();
+    }
+
+    // 更新连续签到提示
+    function updateStreakBanner() {
+      const progress = checkinSystem.getStreakProgress();
+      const banner = document.getElementById('streakBanner');
+      
+      if (progress.current >= 1 || checkinSystem.isCheckedInToday()) {
+        banner.style.display = 'flex';
+        document.getElementById('streakDays').textContent = progress.current;
+        
+        if (progress.next) {
+          document.getElementById('nextMilestone').textContent = progress.next - progress.current;
+          document.getElementById('nextReward').textContent = progress.reward ? progress.reward.points : '';
+          document.getElementById('streakProgressBar').style.width = progress.progress + '%';
+        }
+      }
+    }
+
+    // 更新积分历史
+    function updatePointsHistory() {
+      const history = checkinSystem.checkinData.checkinHistory.slice(-5).reverse();
+      const container = document.getElementById('pointsHistory');
+      
+      let html = '<h4 class="font-semibold mb-3">最近积分变动</h4>';
+      
+      if (history.length === 0) {
+        html += '<p class="text-gray-400 text-sm">暂无记录</p>';
+      } else {
+        history.forEach(item => {
+          const date = new Date(item.date).toLocaleDateString('zh-CN', { month: 'short', day: 'numeric' });
+          html += `
+            <div class="points-history-item">
+              <div>
+                <div class="font-medium">${date}</div>
+                <div class="text-xs text-gray-400">${item.retro ? '补签' : '签到'}</div>
+              </div>
+              <span class="points-change ${item.points < 0 ? 'negative' : ''}">${item.points > 0 ? '+' : ''}${item.points}</span>
+            </div>
+          `;
+        });
+      }
+      
+      container.innerHTML = html;
+    }
+
+    // 加载心情选择器
+    function loadMoodPicker() {
+      if (!checkinData) return;
+      
+      const container = document.getElementById('moodPicker');
+      let html = '';
+      
+      checkinData.moods.forEach(mood => {
+        html += `
+          <button class="mood-btn px-4 py-2 rounded-full border-2 border-gray-200 flex items-center gap-2 hover:border-orange-400 transition" 
+                  onclick="selectMood('${mood.id}')">
+            <span>${mood.icon}</span>
+            <span>${mood.name}</span>
+          </button>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    // 选择心情
+    function selectMood(moodId) {
+      const mood = checkinData.moods.find(m => m.id === moodId);
+      if (!mood) return;
+      
+      // 高亮选中的心情
+      document.querySelectorAll('.mood-btn').forEach(btn => {
+        btn.classList.remove('border-orange-400', 'bg-orange-50');
+      });
+      event.currentTarget.classList.add('border-orange-400', 'bg-orange-50');
+      
+      showToast(`已选择心情：${mood.icon} ${mood.name}`);
+    }
+
+    // 处理签到
+    function handleSignIn() {
+      const result = checkinSystem.doCheckin();
+      
+      if (result.success) {
+        // 播放签到动画
+        playCheckinAnimation();
+        
+        // 显示成功消息
+        let message = `签到成功！+${result.points}积分`;
+        if (result.streak > 1) {
+          message += `，连续签到${result.streak}天`;
+        }
+        
+        if (result.newAchievements && result.newAchievements.length > 0) {
+          message += `\n🎉 解锁成就：${result.newAchievements.map(a => a.name).join('、')}`;
+        }
+        
+        showToast(message, 'success');
+        
+        // 更新UI
+        updateUI();
+      } else {
+        showToast(result.message, 'error');
+      }
+    }
+
+    // 签到动画
+    function playCheckinAnimation() {
+      const container = document.getElementById('checkinAnimation');
+      const colors = ['#FF6B35', '#FFD93D', '#4CAF50', '#42A5F5', '#AB47BC'];
+      
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.top = '-20px';
+        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        container.appendChild(confetti);
+      }
+      
+      setTimeout(() => {
+        container.innerHTML = '';
+      }, 3000);
+    }
+
+    // Toast提示
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

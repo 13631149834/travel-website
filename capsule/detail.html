@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>胶囊详情 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/capsule.css">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            capsule: {
+              primary: '#6366f1',
+              secondary: '#8b5cf6',
+              accent: '#f59e0b',
+              mystery: '#1e1b4b',
+              glow: '#a78bfa'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #16213e 100%); }
+    .text-gradient { background: linear-gradient(135deg, #a78bfa, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .capsule-container { 
+      background: linear-gradient(145deg, #2d2d44, #1a1a2e); 
+      border: 2px solid rgba(99, 102, 241, 0.4); 
+      border-radius: 24px; 
+    }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .shake { animation: shake 0.5s ease-in-out; }
+    @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+    .glow-pulse { animation: glowPulse 2s ease-in-out infinite; }
+    @keyframes glowPulse { 0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); } 50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); } }
+    .light-burst { animation: lightBurst 1s ease-out forwards; }
+    @keyframes lightBurst { 0% { transform: scale(0); opacity: 1; } 100% { transform: scale(3); opacity: 0; } }
+    .content-reveal { animation: contentReveal 1s ease-out forwards; }
+    @keyframes contentReveal { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body class="gradient-hero min-h-screen">
+  <!-- 导航栏 -->
+  <nav class="bg-black/30 backdrop-blur-lg border-b border-white/10 sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <a href="index.html" class="text-white/80 hover:text-white transition text-2xl">←</a>
+          <span class="text-xl font-bold text-white">胶囊详情</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <button class="share-btn" onclick="shareCapsule()" title="分享">📤</button>
+          <button class="share-btn" onclick="deleteCapsule()" title="删除">🗑️</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 主内容 -->
+  <main class="max-w-4xl mx-auto px-4 py-8">
+    <!-- 加载状态 -->
+    <div id="loadingState" class="text-center py-20">
+      <div class="loading-spinner mx-auto mb-4"></div>
+      <p class="text-gray-400">加载中...</p>
+    </div>
+
+    <!-- 胶囊不存在 -->
+    <div id="notFoundState" class="empty-state hidden">
+      <div class="empty-state-icon">🔍</div>
+      <h3 class="empty-state-title">胶囊不存在</h3>
+      <p class="empty-state-desc">这个时间胶囊可能已被删除或链接无效</p>
+      <a href="index.html" class="btn-capsule btn-capsule-secondary mt-4">返回首页</a>
+    </div>
+
+    <!-- 胶囊内容 -->
+    <div id="capsuleContent" class="hidden">
+      <!-- 胶囊头部 -->
+      <div class="text-center mb-8 fade-in">
+        <div id="capsuleStatus" class="inline-block mb-4">
+          <!-- 状态标签 -->
+        </div>
+        <h1 id="capsuleTitle" class="text-3xl md:text-4xl font-bold text-white mb-4"></h1>
+        <p id="capsuleDesc" class="text-gray-400 text-lg"></p>
+        
+        <!-- 标签 -->
+        <div id="capsuleTags" class="flex flex-wrap justify-center gap-2 mt-4">
+        </div>
+      </div>
+
+      <!-- 未开启状态 -->
+      <div id="sealedState">
+        <!-- 胶囊容器视觉 -->
+        <div class="capsule-container mx-auto mb-8 p-12 text-center glow-pulse max-w-md" id="capsuleVisual">
+          <div class="text-8xl mb-6">⏳</div>
+          <p class="text-xl text-gray-300 mb-4">时间胶囊封印中</p>
+          <p class="text-gray-500">等待开启条件满足...</p>
+        </div>
+
+        <!-- 开启条件 -->
+        <div class="memory-content mb-8 fade-in">
+          <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <span>🔮</span>
+            <span>开启条件</span>
+          </h3>
+          <div id="openConditions" class="space-y-4">
+            <!-- 动态渲染 -->
+          </div>
+        </div>
+
+        <!-- 倒计时 -->
+        <div id="countdownSection" class="memory-content mb-8 fade-in">
+          <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+            <span>⏰</span>
+            <span>距离开启</span>
+          </h3>
+          <div id="countdownTimer" class="countdown-timer">
+            <!-- 动态渲染 -->
+          </div>
+        </div>
+
+        <!-- 位置信息 -->
+        <div id="locationSection" class="memory-content mb-8 fade-in hidden">
+          <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <span>📍</span>
+            <span>胶囊位置</span>
+          </h3>
+          <div class="location-preview">
+            <div class="location-preview-icon">📍</div>
+            <div class="location-preview-info">
+              <div class="location-preview-name" id="locationName">-</div>
+              <div class="location-preview-address" id="locationCoords">-</div>
+            </div>
+          </div>
+          <a href="map.html" class="btn-capsule btn-capsule-secondary mt-4 inline-flex">
+            <span>🗺️</span>
+            <span>在地图中查看</span>
+          </a>
+        </div>
+
+        <!-- 预览提示 -->
+        <div class="memory-content fade-in">
+          <div class="flex items-center gap-3 text-gray-400">
+            <span class="text-2xl">💭</span>
+            <p>胶囊内容将在条件满足后显示，请耐心等待...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 已开启状态 -->
+      <div id="openedState" class="hidden">
+        <!-- 开启动画容器 -->
+        <div id="openAnimation" class="text-center py-12 hidden">
+          <div class="relative inline-block">
+            <div class="w-32 h-32 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center mx-auto mb-6">
+              <span class="text-6xl">✨</span>
+            </div>
+            <div class="absolute inset-0 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 light-burst"></div>
+          </div>
+          <h2 class="text-2xl font-bold text-white mb-2">🎉 恭喜开启！</h2>
+          <p class="text-gray-400">你的时间胶囊已成功开启</p>
+        </div>
+
+        <!-- 记忆内容 -->
+        <div id="memoryContent" class="memory-content content-reveal">
+          <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>📜</span>
+              <span>记忆内容</span>
+            </h3>
+            <span class="text-gray-500 text-sm" id="createdDate"></span>
+          </div>
+          
+          <div id="capsuleContentText" class="text-gray-300 text-lg leading-relaxed whitespace-pre-wrap mb-8">
+            <!-- 内容 -->
+          </div>
+
+          <!-- 照片 -->
+          <div id="photosSection" class="hidden">
+            <h4 class="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+              <span>📸</span>
+              <span>照片回忆</span>
+            </h4>
+            <div id="photoGallery" class="photo-grid">
+              <!-- 照片 -->
+            </div>
+          </div>
+        </div>
+
+        <!-- 位置信息 -->
+        <div id="openedLocationSection" class="memory-content mt-6 fade-in hidden">
+          <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
+            <span>📍</span>
+            <span>记忆发生地</span>
+          </h3>
+          <div class="location-preview">
+            <div class="location-preview-icon">📍</div>
+            <div class="location-preview-info">
+              <div class="location-preview-name" id="openedLocationName">-</div>
+              <div class="location-preview-address" id="openedLocationCoords">-</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+          <a href="create.html" class="btn-capsule">
+            <span>✨</span>
+            <span>创建新胶囊</span>
+          </a>
+          <a href="map.html" class="btn-capsule btn-capsule-secondary">
+            <span>🗺️</span>
+            <span>探索其他胶囊</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 密码验证弹窗 -->
+      <div id="passwordModal" class="modal-overlay">
+        <div class="modal-content">
+          <h3 class="text-xl font-bold text-white mb-4 text-center">🔐 输入密码</h3>
+          <p class="text-gray-400 text-center mb-6" id="passwordHint">请输入开启密码</p>
+          <div class="form-group">
+            <div class="password-input-container">
+              <input type="password" id="passwordInput" class="form-input pr-12" placeholder="请输入密码">
+              <span class="password-toggle" onclick="togglePassword()">👁️</span>
+            </div>
+          </div>
+          <p id="passwordError" class="text-red-400 text-sm text-center hidden">密码错误，请重试</p>
+          <div class="flex gap-4 mt-6">
+            <button type="button" class="btn-capsule btn-capsule-secondary flex-1" onclick="closePasswordModal()">取消</button>
+            <button type="button" class="btn-capsule btn-capsule-gold flex-1" onclick="verifyPassword()">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 分享模态框 -->
+  <div id="shareModal" class="modal-overlay">
+    <div class="modal-content">
+      <h3 class="text-xl font-bold text-white mb-6 text-center">📤 分享胶囊</h3>
+      <div class="flex justify-center gap-4 mb-6">
+        <button class="share-btn" onclick="shareTo('wechat')" title="微信">💬</button>
+        <button class="share-btn" onclick="shareTo('weibo')" title="微博">📱</button>
+        <button class="share-btn" onclick="shareTo('copy')" title="复制链接">🔗</button>
+      </div>
+      <div class="form-group">
+        <input type="text" id="shareLink" class="form-input text-sm" readonly value="">
+      </div>
+      <button type="button" class="btn-capsule w-full mt-4" onclick="closeShareModal()">关闭</button>
+    </div>
+  </div>
+
+  <script>
+    let currentCapsule = null;
+
+    // 页面初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const capsuleId = urlParams.get('id');
+      
+      if (!capsuleId) {
+        showNotFound();
+        return;
+      }
+      
+      loadCapsule(capsuleId);
+    });
+
+    // 加载胶囊
+    function loadCapsule(id) {
+      const capsules = JSON.parse(localStorage.getItem('travelCapsules') || '[]');
+      currentCapsule = capsules.find(c => c.id === id);
+      
+      if (!currentCapsule) {
+        showNotFound();
+        return;
+      }
+      
+      renderCapsule();
+    }
+
+    // 渲染胶囊
+    function renderCapsule() {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('capsuleContent').classList.remove('hidden');
+      
+      // 基本信息
+      document.getElementById('capsuleTitle').textContent = currentCapsule.title;
+      document.getElementById('capsuleDesc').textContent = currentCapsule.description || '';
+      
+      // 标签
+      if (currentCapsule.tags?.length) {
+        document.getElementById('capsuleTags').innerHTML = currentCapsule.tags.map(tag => 
+          `<span class="tag">${tag}</span>`
+        ).join('');
+      }
+      
+      // 状态
+      const conditionType = currentCapsule.openConditions?.type || 'time';
+      const conditionIcons = { time: '⏰', location: '📍', password: '🔐', combination: '🔮' };
+      const conditionNames = { time: '时间开启', location: '地点开启', password: '密码开启', combination: '组合条件' };
+      
+      if (currentCapsule.status === 'opened') {
+        document.getElementById('capsuleStatus').innerHTML = `
+          <span class="status-opened">✨ 已开启</span>
+        `;
+        showOpenedState();
+      } else {
+        document.getElementById('capsuleStatus').innerHTML = `
+          <span class="condition-badge ${conditionType}">
+            ${conditionIcons[conditionType]} ${conditionNames[conditionType]}
+          </span>
+          <span class="status-sealed ml-2">封印中</span>
+        `;
+        showSealedState();
+      }
+    }
+
+    // 显示封印状态
+    function showSealedState() {
+      document.getElementById('sealedState').classList.remove('hidden');
+      document.getElementById('openedState').classList.add('hidden');
+      
+      const conditions = currentCapsule.openConditions?.conditions || [];
+      const conditionsContainer = document.getElementById('openConditions');
+      
+      conditionsContainer.innerHTML = conditions.map(cond => {
+        if (cond.type === 'time') {
+          return `
+            <div class="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
+              <span class="text-2xl">⏰</span>
+              <div>
+                <p class="text-white font-medium">${cond.date} ${cond.time || ''}</p>
+                <p class="text-gray-500 text-sm">${cond.description || '到达指定时间自动开启'}</p>
+              </div>
+            </div>
+          `;
+        } else if (cond.type === 'location') {
+          return `
+            <div class="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
+              <span class="text-2xl">📍</span>
+              <div>
+                <p class="text-white font-medium">${cond.description || '指定位置'}</p>
+                <p class="text-gray-500 text-sm">${cond.latitude}, ${cond.longitude}</p>
+              </div>
+            </div>
+          `;
+        } else if (cond.type === 'password') {
+          return `
+            <div class="flex items-center gap-3 p-4 bg-white/5 rounded-lg">
+              <span class="text-2xl">🔐</span>
+              <div class="flex-1">
+                <p class="text-white font-medium">密码验证</p>
+                <p class="text-gray-500 text-sm">${cond.hint || '输入密码即可开启'}</p>
+              </div>
+              <button class="btn-capsule btn-capsule-secondary text-sm" onclick="showPasswordModal()">
+                解锁
+              </button>
+            </div>
+          `;
+        }
+        return '';
+      }).join('');
+      
+      // 倒计时
+      const timeCondition = conditions.find(c => c.type === 'time');
+      if (timeCondition) {
+        updateCountdown(timeCondition.date, timeCondition.time);
+        setInterval(() => updateCountdown(timeCondition.date, timeCondition.time), 1000);
+      } else {
+        document.getElementById('countdownSection').classList.add('hidden');
+      }
+      
+      // 位置
+      if (currentCapsule.location) {
+        document.getElementById('locationSection').classList.remove('hidden');
+        document.getElementById('locationName').textContent = currentCapsule.location.name;
+        document.getElementById('locationCoords').textContent = 
+          `${currentCapsule.location.latitude}, ${currentCapsule.location.longitude}`;
+      }
+    }
+
+    // 显示已开启状态
+    function showOpenedState() {
+      document.getElementById('sealedState').classList.add('hidden');
+      document.getElementById('openedState').classList.remove('hidden');
+      
+      // 显示开启动画
+      document.getElementById('openAnimation').classList.remove('hidden');
+      setTimeout(() => {
+        document.getElementById('openAnimation').classList.add('hidden');
+        document.getElementById('memoryContent').classList.remove('hidden');
+      }, 1500);
+      
+      // 内容
+      document.getElementById('capsuleContentText').textContent = currentCapsule.content;
+      document.getElementById('createdDate').textContent = `创建于 ${new Date(currentCapsule.createdAt).toLocaleDateString('zh-CN')}`;
+      
+      // 照片
+      if (currentCapsule.photos?.length) {
+        document.getElementById('photosSection').classList.remove('hidden');
+        document.getElementById('photoGallery').innerHTML = currentCapsule.photos.map(photo => `
+          <div class="photo-item">
+            <img src="${photo.data}" alt="${photo.description || ''}">
+          </div>
+        `).join('');
+      }
+      
+      // 位置
+      if (currentCapsule.location) {
+        document.getElementById('openedLocationSection').classList.remove('hidden');
+        document.getElementById('openedLocationName').textContent = currentCapsule.location.name;
+        document.getElementById('openedLocationCoords').textContent = 
+          `${currentCapsule.location.latitude}, ${currentCapsule.location.longitude}`;
+      }
+    }
+
+    // 更新倒计时
+    function updateCountdown(dateStr, timeStr) {
+      const now = new Date();
+      let target;
+      
+      if (timeStr) {
+        target = new Date(`${dateStr}T${timeStr}`);
+      } else {
+        target = new Date(dateStr);
+      }
+      
+      const diff = target - now;
+      
+      if (diff <= 0) {
+        document.getElementById('countdownTimer').innerHTML = `
+          <div class="text-center py-4">
+            <p class="text-2xl text-green-400 mb-2">🎉 可以开启了！</p>
+            <button class="btn-capsule btn-capsule-gold" onclick="openCapsule('time')">
+              立即开启
+            </button>
+          </div>
+        `;
+        return;
+      }
+      
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+      
+      document.getElementById('countdownTimer').innerHTML = `
+        <div class="countdown-item">
+          <div class="countdown-value">${days}</div>
+          <div class="countdown-label">天</div>
+        </div>
+        <div class="countdown-item">
+          <div class="countdown-value">${hours}</div>
+          <div class="countdown-label">时</div>
+        </div>
+        <div class="countdown-item">
+          <div class="countdown-value">${minutes}</div>
+          <div class="countdown-label">分</div>
+        </div>
+        <div class="countdown-item">
+          <div class="countdown-value">${seconds}</div>
+          <div class="countdown-label">秒</div>
+        </div>
+      `;
+    }
+
+    // 开启胶囊
+    function openCapsule(type) {
+      if (type === 'location') {
+        checkLocationCondition();
+      } else {
+        doOpenCapsule();
+      }
+    }
+
+    // 检查位置条件
+    function checkLocationCondition() {
+      if (!navigator.geolocation) {
+        alert('浏览器不支持定位');
+        return;
+      }
+      
+      navigator.geolocation.getCurrentPosition(
+        function(position) {
+          const cond = currentCapsule.openConditions.conditions.find(c => c.type === 'location');
+          if (cond) {
+            const distance = getDistance(
+              position.coords.latitude, position.coords.longitude,
+              cond.latitude, cond.longitude
+            );
+            
+            if (distance <= cond.radius) {
+              doOpenCapsule();
+            } else {
+              alert(`距离开启位置还有 ${Math.round(distance)} 米`);
+            }
+          }
+        },
+        function() {
+          alert('无法获取位置');
+        }
+      );
+    }
+
+    // 计算距离（米）
+    function getDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371000;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
+    }
+
+    // 执行开启
+    function doOpenCapsule() {
+      currentCapsule.status = 'opened';
+      currentCapsule.openedAt = new Date().toISOString();
+      
+      const capsules = JSON.parse(localStorage.getItem('travelCapsules') || '[]');
+      const index = capsules.findIndex(c => c.id === currentCapsule.id);
+      if (index !== -1) {
+        capsules[index] = currentCapsule;
+        localStorage.setItem('travelCapsules', JSON.stringify(capsules));
+      }
+      
+      // 震动反馈
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200]);
+      }
+      
+      showOpenedState();
+    }
+
+    // 密码模态框
+    function showPasswordModal() {
+      const cond = currentCapsule.openConditions.conditions.find(c => c.type === 'password');
+      if (cond?.hint) {
+        document.getElementById('passwordHint').textContent = `提示：${cond.hint}`;
+      }
+      document.getElementById('passwordModal').classList.add('active');
+      document.getElementById('passwordInput').focus();
+    }
+
+    function closePasswordModal() {
+      document.getElementById('passwordModal').classList.remove('active');
+      document.getElementById('passwordInput').value = '';
+      document.getElementById('passwordError').classList.add('hidden');
+    }
+
+    function verifyPassword() {
+      const input = document.getElementById('passwordInput').value;
+      const cond = currentCapsule.openConditions.conditions.find(c => c.type === 'password');
+      
+      if (cond && input === cond.password) {
+        closePasswordModal();
+        doOpenCapsule();
+      } else {
+        document.getElementById('passwordError').classList.remove('hidden');
+        document.getElementById('capsuleVisual').classList.add('shake');
+        setTimeout(() => {
+          document.getElementById('capsuleVisual').classList.remove('shake');
+        }, 500);
+      }
+    }
+
+    function togglePassword() {
+      const input = document.getElementById('passwordInput');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    // 分享
+    function shareCapsule() {
+      const link = `${window.location.origin}${window.location.pathname}?id=${currentCapsule.id}`;
+      document.getElementById('shareLink').value = link;
+      document.getElementById('shareModal').classList.add('active');
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.remove('active');
+    }
+
+    function shareTo(platform) {
+      const link = document.getElementById('shareLink').value;
+      
+      if (platform === 'copy') {
+        navigator.clipboard.writeText(link).then(() => {
+          alert('链接已复制');
+        });
+      } else if (platform === 'wechat') {
+        alert('请截图分享到微信');
+      } else if (platform === 'weibo') {
+        window.open(`https://service.weibo.com/share/share.php?url=${encodeURIComponent(link)}&title=${encodeURIComponent(currentCapsule.title)}`);
+      }
+    }
+
+    // 删除
+    function deleteCapsule() {
+      if (confirm('确定要删除这个时间胶囊吗？删除后无法恢复。')) {
+        let capsules = JSON.parse(localStorage.getItem('travelCapsules') || '[]');
+        capsules = capsules.filter(c => c.id !== currentCapsule.id);
+        localStorage.setItem('travelCapsules', JSON.stringify(capsules));
+        window.location.href = 'index.html';
+      }
+    }
+
+    // 显示未找到
+    function showNotFound() {
+      document.getElementById('loadingState').classList.add('hidden');
+      document.getElementById('notFoundState').classList.remove('hidden');
+    }
+
+    // 回车键提交密码
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter' && document.getElementById('passwordModal').classList.contains('active')) {
+        verifyPassword();
+      }
+    });
+  </script>
+</body>
+</html>

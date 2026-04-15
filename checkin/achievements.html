@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>打卡成就 - 游导旅游</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/checkin/checkin.css">
+  <style>
+    .achievement-card {
+      transition: all 0.3s ease;
+    }
+    .achievement-card:not(.locked):hover {
+      transform: translateY(-8px) scale(1.02);
+    }
+    .achievement-card.locked {
+      filter: grayscale(100%);
+      opacity: 0.7;
+    }
+    .achievement-card.unlocked {
+      animation: achievementGlow 2s ease-in-out;
+    }
+    @keyframes achievementGlow {
+      0%, 100% { box-shadow: 0 0 0 rgba(255, 215, 0, 0); }
+      50% { box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); }
+    }
+    .rarity-common { background: linear-gradient(135deg, #B0BEC5, #90A4AE); }
+    .rarity-rare { background: linear-gradient(135deg, #42A5F5, #1E88E5); }
+    .rarity-epic { background: linear-gradient(135deg, #AB47BC, #8E24AA); }
+    .rarity-legendary { background: linear-gradient(135deg, #FFD700, #FFA500); box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <header class="header">
+    <div class="container">
+      <nav class="nav">
+        <a href="../index.html" class="logo">
+          <span class="logo-icon">🧭</span>
+          <span>游导旅游</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="../destinations.html">目的地</a></li>
+          <li><a href="../routes.html">路线</a></li>
+          <li><a href="../guide.html">导游</a></li>
+          <li><a href="index.html" class="active">打卡签到</a></li>
+        </ul>
+        <div class="nav-actions">
+          <button class="btn-icon" title="通知">🔔</button>
+          <button class="btn-icon" title="个人中心">👤</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- 主内容 -->
+  <main class="container py-8">
+    <!-- 面包屑 -->
+    <nav class="breadcrumb">
+      <a href="../index.html">首页</a>
+      <span>›</span>
+      <a href="index.html">打卡签到</a>
+      <span>›</span>
+      <span>打卡成就</span>
+    </nav>
+
+    <!-- 成就概览 -->
+    <div class="bg-gradient-to-r from-orange-400 via-yellow-400 to-orange-400 rounded-3xl p-8 mb-8 text-white relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-10 rounded-full -mr-32 -mt-32"></div>
+      <div class="absolute bottom-0 left-0 w-48 h-48 bg-white opacity-10 rounded-full -ml-24 -mb-24"></div>
+      
+      <div class="relative z-10">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="text-6xl">🏆</span>
+          <div>
+            <h1 class="text-3xl font-bold">我的成就</h1>
+            <p class="opacity-90">记录每一次突破</p>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div class="text-center">
+            <div class="text-4xl font-bold" id="totalAchievements">0</div>
+            <div class="text-sm opacity-80">已解锁</div>
+          </div>
+          <div class="text-center">
+            <div class="text-4xl font-bold" id="totalPoints">0</div>
+            <div class="text-sm opacity-80">成就积分</div>
+          </div>
+          <div class="text-center">
+            <div class="text-4xl font-bold" id="completionRate">0%</div>
+            <div class="text-sm opacity-80">完成度</div>
+          </div>
+          <div class="text-center">
+            <div class="text-4xl font-bold" id="nextAchievement">-</div>
+            <div class="text-sm opacity-80">下一个目标</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 标签筛选 -->
+    <div class="bg-white rounded-2xl p-4 mb-6 shadow-lg">
+      <div class="flex flex-wrap gap-2">
+        <button class="tab-btn active" onclick="filterAchievements('all')" data-filter="all">
+          全部
+        </button>
+        <button class="tab-btn" onclick="filterAchievements('新人')" data-filter="新人">
+          🌱 新人
+        </button>
+        <button class="tab-btn" onclick="filterAchievements('连续签到')" data-filter="连续签到">
+          🔥 连续签到
+        </button>
+        <button class="tab-btn" onclick="filterAchievements('景点打卡')" data-filter="景点打卡">
+          📍 景点打卡
+        </button>
+        <button class="tab-btn" onclick="filterAchievements('特殊成就')" data-filter="特殊成就">
+          ⭐ 特殊成就
+        </button>
+        <button class="tab-btn" onclick="filterAchievements('unlocked')" data-filter="unlocked">
+          ✓ 已解锁
+        </button>
+        <button class="tab-btn" onclick="filterAchievements('locked')" data-filter="locked">
+          🔒 未解锁
+        </button>
+      </div>
+    </div>
+
+    <!-- 稀有度图例 -->
+    <div class="bg-white rounded-2xl p-4 mb-6 shadow-lg">
+      <div class="flex flex-wrap items-center justify-center gap-6 text-sm">
+        <div class="flex items-center gap-2">
+          <span class="w-4 h-4 rounded-full rarity-common"></span>
+          <span>普通</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-4 h-4 rounded-full rarity-rare"></span>
+          <span>稀有</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-4 h-4 rounded-full rarity-epic"></span>
+          <span>史诗</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="w-4 h-4 rounded-full rarity-legendary"></span>
+          <span>传说</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 成就网格 -->
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" id="achievementsGrid">
+      <!-- 动态生成 -->
+    </div>
+
+    <!-- 空状态 -->
+    <div class="text-center py-12" id="emptyAchievements" style="display: none;">
+      <div class="text-6xl mb-4">🔍</div>
+      <h3 class="text-xl font-bold mb-2">没有找到符合条件的成就</h3>
+      <p class="text-gray-500">继续努力解锁更多成就吧</p>
+    </div>
+  </main>
+
+  <!-- 成就详情弹窗 -->
+  <div class="modal-overlay" id="achievementModal">
+    <div class="modal text-center">
+      <div id="modalAchievementIcon" class="w-24 h-24 rounded-full flex items-center justify-center text-5xl mx-auto mb-4 rarity-common">
+        🏆
+      </div>
+      <h3 class="modal-title" id="modalAchievementName">成就名称</h3>
+      <p class="text-gray-500 mb-4" id="modalAchievementDesc">成就描述</p>
+      
+      <div class="bg-gray-50 rounded-xl p-4 mb-4">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-500">奖励积分</span>
+          <span class="text-xl font-bold text-orange-500" id="modalAchievementPoints">+100</span>
+        </div>
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-gray-500">稀有度</span>
+          <span id="modalAchievementRarity" class="px-3 py-1 rounded-full text-white text-sm rarity-common">普通</span>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-gray-500">解锁条件</span>
+          <span id="modalAchievementCondition" class="text-sm">签到1次</span>
+        </div>
+      </div>
+      
+      <div class="mb-4" id="modalProgressSection">
+        <p class="text-sm text-gray-500 mb-2">当前进度</p>
+        <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full transition-all" 
+               id="modalProgressBar" style="width: 0%"></div>
+        </div>
+        <p class="text-sm text-gray-500 mt-1"><span id="modalProgressCurrent">0</span> / <span id="modalProgressTarget">1</span></p>
+      </div>
+      
+      <div id="modalUnlockedSection" class="mb-4" style="display: none;">
+        <div class="inline-flex items-center gap-2 bg-green-100 text-green-600 px-4 py-2 rounded-full">
+          <span>✓</span>
+          <span>已解锁</span>
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button class="modal-confirm" onclick="closeAchievementModal()">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-12 mt-12">
+    <div class="container text-center text-gray-400">
+      <p>© 2024 游导旅游 youdao-travel.com</p>
+    </div>
+  </footer>
+
+  <script src="../js/checkin/checkin-core.js"></script>
+  <script>
+    let checkinSystem;
+    let checkinData;
+    let currentFilter = 'all';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      checkinSystem = new CheckinSystem();
+      checkinData = await checkinSystem.loadData();
+      
+      updateOverview();
+      renderAchievements();
+    });
+
+    function updateOverview() {
+      const unlocked = checkinSystem.checkinData.achievements;
+      const total = checkinData.achievements.length;
+      const completionRate = Math.round((unlocked.length / total) * 100);
+      
+      // 计算成就积分
+      let achievementPoints = 0;
+      unlocked.forEach(id => {
+        const achievement = checkinData.achievements.find(a => a.id === id);
+        if (achievement) achievementPoints += achievement.points;
+      });
+      
+      // 找到下一个可解锁的成就
+      let nextTarget = '-';
+      for (const achievement of checkinData.achievements) {
+        if (!unlocked.includes(achievement.id)) {
+          nextTarget = achievement.name;
+          break;
+        }
+      }
+      
+      document.getElementById('totalAchievements').textContent = unlocked.length;
+      document.getElementById('totalPoints').textContent = achievementPoints;
+      document.getElementById('completionRate').textContent = completionRate + '%';
+      document.getElementById('nextAchievement').textContent = nextTarget;
+    }
+
+    function renderAchievements() {
+      const container = document.getElementById('achievementsGrid');
+      const emptyState = document.getElementById('emptyAchievements');
+      const unlocked = checkinSystem.checkinData.achievements;
+      
+      let achievements = checkinData.achievements;
+      
+      // 应用筛选
+      if (currentFilter === 'unlocked') {
+        achievements = achievements.filter(a => unlocked.includes(a.id));
+      } else if (currentFilter === 'locked') {
+        achievements = achievements.filter(a => !unlocked.includes(a.id));
+      } else if (currentFilter !== 'all') {
+        achievements = achievements.filter(a => a.category === currentFilter);
+      }
+      
+      if (achievements.length === 0) {
+        container.style.display = 'none';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      container.style.display = 'grid';
+      emptyState.style.display = 'none';
+      
+      let html = '';
+      achievements.forEach(achievement => {
+        const isUnlocked = unlocked.includes(achievement.id);
+        const progress = calculateProgress(achievement);
+        
+        html += `
+          <div class="achievement-card ${isUnlocked ? 'unlocked' : 'locked'} bg-white rounded-2xl p-6 cursor-pointer"
+               onclick="showAchievementModal('${achievement.id}')">
+            <div class="achievement-icon rounded-full flex items-center justify-center text-4xl mb-4 rarity-${achievement.rarity}">
+              ${achievement.icon}
+            </div>
+            <h3 class="font-bold text-center mb-1">${achievement.name}</h3>
+            <p class="text-xs text-gray-500 text-center mb-2">${achievement.description}</p>
+            <div class="text-center">
+              <span class="text-orange-500 font-bold">+${achievement.points}</span>
+              <span class="text-gray-400 text-xs ml-1">积分</span>
+            </div>
+            ${!isUnlocked ? `
+              <div class="mt-3">
+                <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+                  <div class="h-full bg-orange-400 rounded-full transition-all" style="width: ${progress}%"></div>
+                </div>
+                <p class="text-xs text-gray-400 text-center mt-1">${progress}%</p>
+              </div>
+            ` : `
+              <div class="mt-3 flex justify-center">
+                <span class="text-green-500 text-sm">✓ 已解锁</span>
+              </div>
+            `}
+          </div>
+        `;
+      });
+      
+      container.innerHTML = html;
+    }
+
+    function calculateProgress(achievement) {
+      const data = checkinSystem.checkinData;
+      
+      switch (achievement.id) {
+        case 'first_checkin':
+          return Math.min((data.totalCheckins / achievement.requirement) * 100, 100);
+        case 'week_streak':
+          return Math.min((data.currentStreak / achievement.requirement) * 100, 100);
+        case 'month_streak':
+          return Math.min((data.currentStreak / achievement.requirement) * 100, 100);
+        case 'spot_10':
+        case 'spot_50':
+        case 'spot_100':
+          return Math.min((data.spotCheckins.length / achievement.requirement) * 100, 100);
+        case 'photo_master':
+          return Math.min((data.photos.length / achievement.requirement) * 100, 100);
+        case 'share_master':
+          return Math.min(((data.shareCount || 0) / achievement.requirement) * 100, 100);
+        case 'mood_collector':
+          return Math.min((data.moods.length / achievement.requirement) * 100, 100);
+        case 'spot_explorer':
+          const provinces = [...new Set(data.spotCheckins.map(s => s.province))];
+          return Math.min((provinces.length / achievement.requirement) * 100, 100);
+        case 'century_streak':
+          return Math.min((data.currentStreak / achievement.requirement) * 100, 100);
+        default:
+          return 0;
+      }
+    }
+
+    function filterAchievements(filter) {
+      currentFilter = filter;
+      
+      // 更新按钮状态
+      document.querySelectorAll('[data-filter]').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      event.currentTarget.classList.add('active');
+      
+      renderAchievements();
+    }
+
+    function showAchievementModal(achievementId) {
+      const achievement = checkinData.achievements.find(a => a.id === achievementId);
+      if (!achievement) return;
+      
+      const isUnlocked = checkinSystem.checkinData.achievements.includes(achievementId);
+      const progress = calculateProgress(achievement);
+      
+      document.getElementById('modalAchievementIcon').textContent = achievement.icon;
+      document.getElementById('modalAchievementIcon').className = `w-24 h-24 rounded-full flex items-center justify-center text-5xl mx-auto mb-4 rarity-${achievement.rarity}`;
+      document.getElementById('modalAchievementName').textContent = achievement.name;
+      document.getElementById('modalAchievementDesc').textContent = achievement.description;
+      document.getElementById('modalAchievementPoints').textContent = '+' + achievement.points;
+      
+      const rarityNames = { common: '普通', rare: '稀有', epic: '史诗', legendary: '传说' };
+      document.getElementById('modalAchievementRarity').textContent = rarityNames[achievement.rarity];
+      document.getElementById('modalAchievementRarity').className = `px-3 py-1 rounded-full text-white text-sm rarity-${achievement.rarity}`;
+      
+      // 解锁条件显示
+      const conditionNames = {
+        'checkin_count >= 1': '完成1次签到',
+        'streak >= 7': '连续签到7天',
+        'streak >= 30': '连续签到30天',
+        'streak >= 100': '连续签到100天',
+        'spot_count >= 10': '打卡10个景点',
+        'spot_count >= 50': '打卡50个景点',
+        'spot_count >= 100': '打卡100个景点',
+        'photo_count >= 50': '上传50张照片',
+        'share_count >= 10': '分享10次',
+        'mood_diversity >= 10': '记录10种心情',
+        'province_count >= 5': '打卡5个省份'
+      };
+      document.getElementById('modalAchievementCondition').textContent = conditionNames[achievement.condition] || achievement.description;
+      
+      // 进度显示
+      if (isUnlocked) {
+        document.getElementById('modalProgressSection').style.display = 'none';
+        document.getElementById('modalUnlockedSection').style.display = 'block';
+      } else {
+        document.getElementById('modalProgressSection').style.display = 'block';
+        document.getElementById('modalUnlockedSection').style.display = 'none';
+        document.getElementById('modalProgressBar').style.width = progress + '%';
+        
+        const currentValue = getCurrentValue(achievement);
+        document.getElementById('modalProgressCurrent').textContent = currentValue;
+        document.getElementById('modalProgressTarget').textContent = achievement.requirement;
+      }
+      
+      document.getElementById('achievementModal').classList.add('show');
+    }
+
+    function getCurrentValue(achievement) {
+      const data = checkinSystem.checkinData;
+      
+      switch (achievement.id) {
+        case 'first_checkin':
+          return data.totalCheckins;
+        case 'week_streak':
+        case 'month_streak':
+        case 'century_streak':
+          return data.currentStreak;
+        case 'spot_10':
+        case 'spot_50':
+        case 'spot_100':
+          return data.spotCheckins.length;
+        case 'photo_master':
+          return data.photos.length;
+        case 'share_master':
+          return data.shareCount || 0;
+        case 'mood_collector':
+          return data.moods.length;
+        case 'spot_explorer':
+          const provinces = [...new Set(data.spotCheckins.map(s => s.province))];
+          return provinces.length;
+        default:
+          return 0;
+      }
+    }
+
+    function closeAchievementModal() {
+      document.getElementById('achievementModal').classList.remove('show');
+    }
+
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
