@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>明信片模板库 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .postcard-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .category-btn.active {
+      background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+      color: white;
+    }
+    .template-card:hover .template-overlay {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <a href="create.html" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full font-medium transition flex items-center gap-2">
+            ✨ 创建明信片
+          </a>
+          <a href="index.html" class="hover:opacity-80 transition">返回</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Header -->
+  <section class="gradient-hero text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h1 class="text-4xl font-bold mb-2">📚 明信片模板库</h1>
+      <p class="text-lg opacity-90">精选全球热门目的地模板，总有一款适合您</p>
+    </div>
+  </section>
+
+  <!-- Category Filter -->
+  <section class="max-w-7xl mx-auto px-4 -mt-6 mb-8">
+    <div class="bg-white rounded-2xl shadow-xl p-4">
+      <div class="flex flex-wrap gap-3 justify-center">
+        <button onclick="filterByCategory('all')" class="category-btn active px-6 py-2 rounded-full font-medium transition">
+          全部模板
+        </button>
+        <button onclick="filterByCategory('tokyo')" class="category-btn px-6 py-2 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-blue-50 transition flex items-center gap-1">
+          🗼 东京
+        </button>
+        <button onclick="filterByCategory('osaka')" class="category-btn px-6 py-2 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-orange-50 transition flex items-center gap-1">
+          🏯 大阪
+        </button>
+        <button onclick="filterByCategory('seoul')" class="category-btn px-6 py-2 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-purple-50 transition flex items-center gap-1">
+          🏙️ 首尔
+        </button>
+        <button onclick="filterByCategory('bangkok')" class="category-btn px-6 py-2 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-yellow-50 transition flex items-center gap-1">
+          🛕 曼谷
+        </button>
+        <button onclick="filterByCategory('singapore')" class="category-btn px-6 py-2 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-teal-50 transition flex items-center gap-1">
+          🦁 新加坡
+        </button>
+        <button onclick="filterByCategory('festivals')" class="category-btn px-6 py-2 rounded-full font-medium bg-gray-100 text-gray-700 hover:bg-pink-50 transition flex items-center gap-1">
+          🎉 节日
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Templates Grid -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-2xl font-bold text-gray-800">
+        <span id="categoryTitle">全部模板</span>
+        <span id="templateCount" class="text-gray-400 font-normal text-lg ml-2"></span>
+      </h2>
+      <div class="flex items-center gap-4">
+        <select id="sortSelect" class="px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" onchange="sortTemplates()">
+          <option value="default">默认排序</option>
+          <option value="newest">最新添加</option>
+          <option value="name">按名称</option>
+        </select>
+      </div>
+    </div>
+    
+    <div id="templatesGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Templates will be loaded here -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="hidden text-center py-16">
+      <div class="text-6xl mb-4">🔍</div>
+      <h3 class="text-xl font-bold text-gray-800 mb-2">未找到模板</h3>
+      <p class="text-gray-500">该分类下暂无模板</p>
+    </div>
+  </section>
+
+  <!-- Featured Categories -->
+  <section class="max-w-7xl mx-auto px-4 mb-16">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">🌟 特色分类</h2>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="card-hover bg-gradient-to-br from-red-400 to-pink-500 rounded-2xl p-6 text-white">
+        <div class="text-5xl mb-3">🗼</div>
+        <h3 class="text-xl font-bold mb-2">日本风情</h3>
+        <p class="opacity-90 mb-4">东京、大阪、京都...感受东瀛之美</p>
+        <a href="#" onclick="filterByCategory('tokyo'); return false;" class="inline-flex items-center gap-1 bg-white/20 px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition">
+          浏览模板 →
+        </a>
+      </div>
+      <div class="card-hover bg-gradient-to-br from-purple-400 to-indigo-500 rounded-2xl p-6 text-white">
+        <div class="text-5xl mb-3">🏙️</div>
+        <h3 class="text-xl font-bold mb-2">韩国潮流</h3>
+        <p class="opacity-90 mb-4">首尔、济州岛...体验韩流文化</p>
+        <a href="#" onclick="filterByCategory('seoul'); return false;" class="inline-flex items-center gap-1 bg-white/20 px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition">
+          浏览模板 →
+        </a>
+      </div>
+      <div class="card-hover bg-gradient-to-br from-green-400 to-teal-500 rounded-2xl p-6 text-white">
+        <div class="text-5xl mb-3">🦁</div>
+        <h3 class="text-xl font-bold mb-2">狮城魅力</h3>
+        <p class="opacity-90 mb-4">花园城市，现代与自然的完美融合</p>
+        <a href="#" onclick="filterByCategory('singapore'); return false;" class="inline-flex items-center gap-1 bg-white/20 px-4 py-2 rounded-full text-sm font-medium hover:bg-white/30 transition">
+          浏览模板 →
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Template Detail Modal -->
+  <div id="templateModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-2xl w-full overflow-hidden">
+      <div id="modalContent">
+        <!-- Modal content will be loaded here -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-gray-400 text-sm">&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+    </div>
+  </footer>
+
+  <script>
+    let postcardData = null;
+    let currentCategory = 'all';
+
+    // Initialize
+    async function init() {
+      await loadPostcardData();
+      
+      // Check URL params
+      const params = new URLSearchParams(window.location.search);
+      const category = params.get('category');
+      if (category) {
+        filterByCategory(category);
+      } else {
+        renderTemplates();
+      }
+    }
+
+    // Load postcard data
+    async function loadPostcardData() {
+      try {
+        const response = await fetch('../data/postcard.json');
+        postcardData = await response.json();
+      } catch (error) {
+        console.error('Failed to load postcard data:', error);
+      }
+    }
+
+    // Filter by category
+    function filterByCategory(category) {
+      currentCategory = category;
+      
+      // Update buttons
+      document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.classList.remove('active');
+        btn.classList.add('bg-gray-100', 'text-gray-700');
+      });
+      event?.target?.classList?.add('active');
+      event?.target?.classList?.remove('bg-gray-100', 'text-gray-700');
+      
+      // Update title
+      const categoryNames = {
+        'all': '全部模板',
+        'tokyo': '🗼 东京',
+        'osaka': '🏯 大阪',
+        'seoul': '🏙️ 首尔',
+        'bangkok': '🛕 曼谷',
+        'singapore': '🦁 新加坡',
+        'festivals': '🎉 节日'
+      };
+      document.getElementById('categoryTitle').textContent = categoryNames[category] || '全部模板';
+      
+      renderTemplates();
+    }
+
+    // Render templates
+    function renderTemplates() {
+      const grid = document.getElementById('templatesGrid');
+      const emptyState = document.getElementById('emptyState');
+      
+      let templates = [];
+      if (currentCategory === 'all') {
+        templates = Object.values(postcardData.templates).flat();
+      } else {
+        templates = postcardData.templates[currentCategory] || [];
+      }
+      
+      if (templates.length === 0) {
+        grid.classList.add('hidden');
+        emptyState.classList.remove('hidden');
+        document.getElementById('templateCount').textContent = '';
+        return;
+      }
+      
+      grid.classList.remove('hidden');
+      emptyState.classList.add('hidden');
+      document.getElementById('templateCount').textContent = `(${templates.length}款)`;
+      
+      grid.innerHTML = templates.map(t => `
+        <div class="template-card card-hover group cursor-pointer" onclick="openTemplateModal('${t.id}')">
+          <div class="relative overflow-hidden rounded-2xl shadow-lg postcard-shadow">
+            <img src="${t.thumbnail}" alt="${t.name}" class="w-full aspect-[4/3] object-cover group-hover:scale-110 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-4">
+              <h4 class="text-white font-bold text-lg">${t.name}</h4>
+              <p class="text-white/80 text-sm mt-1">${t.description}</p>
+            </div>
+            <div class="template-overlay absolute inset-0 bg-black/50 opacity-0 transition flex items-center justify-center">
+              <button class="px-6 py-3 bg-white text-gray-800 rounded-full font-bold hover:bg-gray-100 transition flex items-center gap-2">
+                ✨ 使用此模板
+              </button>
+            </div>
+            <div class="absolute top-3 right-3">
+              <button class="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition shadow-lg" onclick="event.stopPropagation(); toggleFavorite('${t.id}')">
+                <span class="text-xl">🤍</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Sort templates
+    function sortTemplates() {
+      const sortBy = document.getElementById('sortSelect').value;
+      let templates = currentCategory === 'all' 
+        ? Object.values(postcardData.templates).flat()
+        : postcardData.templates[currentCategory] || [];
+      
+      switch(sortBy) {
+        case 'name':
+          templates.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'newest':
+          templates.reverse();
+          break;
+        default:
+          // Keep original order
+          break;
+      }
+      
+      const grid = document.getElementById('templatesGrid');
+      grid.innerHTML = templates.map(t => `
+        <div class="template-card card-hover group cursor-pointer" onclick="openTemplateModal('${t.id}')">
+          <div class="relative overflow-hidden rounded-2xl shadow-lg postcard-shadow">
+            <img src="${t.thumbnail}" alt="${t.name}" class="w-full aspect-[4/3] object-cover group-hover:scale-110 transition duration-500">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent"></div>
+            <div class="absolute bottom-0 left-0 right-0 p-4">
+              <h4 class="text-white font-bold text-lg">${t.name}</h4>
+              <p class="text-white/80 text-sm mt-1">${t.description}</p>
+            </div>
+            <div class="template-overlay absolute inset-0 bg-black/50 opacity-0 transition flex items-center justify-center">
+              <button class="px-6 py-3 bg-white text-gray-800 rounded-full font-bold hover:bg-gray-100 transition flex items-center gap-2">
+                ✨ 使用此模板
+              </button>
+            </div>
+            <div class="absolute top-3 right-3">
+              <button class="w-10 h-10 bg-white/90 rounded-full flex items-center justify-center hover:bg-white transition shadow-lg" onclick="event.stopPropagation(); toggleFavorite('${t.id}')">
+                <span class="text-xl">🤍</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Open template modal
+    function openTemplateModal(templateId) {
+      const allTemplates = Object.values(postcardData.templates).flat();
+      const template = allTemplates.find(t => t.id === templateId);
+      
+      if (!template) return;
+      
+      const modalContent = document.getElementById('modalContent');
+      modalContent.innerHTML = `
+        <div class="relative">
+          <img src="${template.background}" alt="${template.name}" class="w-full aspect-video object-cover">
+          <button onclick="closeTemplateModal()" class="absolute top-4 right-4 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition text-xl">
+            ✕
+          </button>
+          <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+            <h3 class="text-white text-2xl font-bold">${template.name}</h3>
+            <p class="text-white/80 mt-1">${template.description}</p>
+          </div>
+        </div>
+        <div class="p-6">
+          <div class="flex flex-wrap gap-2 mb-4">
+            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">📍 ${template.category}</span>
+            <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">🎨 ${template.color}</span>
+          </div>
+          <p class="text-gray-600 mb-6">${template.description} - 这款精美的明信片模板非常适合用于分享您的旅行故事。</p>
+          <div class="flex gap-3">
+            <a href="create.html?template=${template.id}" class="flex-1 py-3 bg-primary text-white rounded-xl font-bold text-center hover:bg-blue-600 transition flex items-center justify-center gap-2">
+              ✨ 使用此模板
+            </a>
+            <button onclick="toggleFavorite('${template.id}')" class="px-4 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition">
+              🤍 收藏
+            </button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('templateModal').classList.remove('hidden');
+    }
+
+    // Close template modal
+    function closeTemplateModal() {
+      document.getElementById('templateModal').classList.add('hidden');
+    }
+
+    // Toggle favorite
+    function toggleFavorite(templateId) {
+      const favorites = JSON.parse(localStorage.getItem('favoriteTemplates') || '[]');
+      const index = favorites.indexOf(templateId);
+      
+      if (index > -1) {
+        favorites.splice(index, 1);
+      } else {
+        favorites.push(templateId);
+      }
+      
+      localStorage.setItem('favoriteTemplates', JSON.stringify(favorites));
+      
+      // Update UI (simplified)
+      alert(index > -1 ? '已取消收藏' : '已添加到收藏');
+    }
+
+    // Close modal on background click
+    document.getElementById('templateModal')?.addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeTemplateModal();
+      }
+    });
+
+    // Initialize
+    init();
+  </script>
+</body>
+</html>

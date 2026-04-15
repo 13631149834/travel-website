@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>创建明信片 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .postcard-shadow { box-shadow: 0 4px 20px rgba(0,0,0,0.15); }
+    .stamp-border {
+      border: 3px dashed #ccc;
+      border-radius: 4px;
+    }
+    .sticker-item {
+      cursor: move;
+      user-select: none;
+      transition: transform 0.2s;
+    }
+    .sticker-item:hover {
+      transform: scale(1.2);
+    }
+    .sticker-item.placed {
+      position: absolute;
+      cursor: move;
+    }
+    .canvas-container {
+      background: #f0f0f0;
+      border: 8px solid #fff;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+    .tab-active {
+      background: #0ea5e9;
+      color: white;
+    }
+    .color-swatch {
+      transition: transform 0.2s;
+    }
+    .color-swatch:hover {
+      transform: scale(1.2);
+    }
+    .filter-preview {
+      transition: filter 0.3s ease;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="flex items-center gap-4">
+          <a href="index.html" class="hover:opacity-80 transition flex items-center gap-1">
+            ← 返回明信片
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="grid lg:grid-cols-3 gap-8">
+      <!-- Editor Panel -->
+      <div class="lg:col-span-2">
+        <div class="bg-white rounded-3xl shadow-xl p-6 mb-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">📝 编辑明信片</h2>
+          
+          <!-- Tab Navigation -->
+          <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+            <button onclick="switchTab('template')" id="tab-template" class="tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap tab-active">
+              🖼️ 背景
+            </button>
+            <button onclick="switchTab('photo')" id="tab-photo" class="tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200">
+              📷 照片
+            </button>
+            <button onclick="switchTab('sticker')" id="tab-sticker" class="tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200">
+              🎀 贴纸
+            </button>
+            <button onclick="switchTab('filter')" id="tab-filter" class="tab-btn px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap bg-gray-100 text-gray-700 hover:bg-gray-200">
+              ✨ 滤镜
+            </button>
+          </div>
+
+          <!-- Template Selection -->
+          <div id="panel-template" class="tab-panel">
+            <div class="grid grid-cols-4 gap-3" id="templateGrid">
+              <!-- Templates will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Photo Upload -->
+          <div id="panel-photo" class="tab-panel hidden">
+            <div class="text-center">
+              <label class="block w-full p-8 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:border-primary transition">
+                <input type="file" id="photoInput" accept="image/*" class="hidden" onchange="handlePhotoUpload(event)">
+                <div class="text-5xl mb-3">📷</div>
+                <p class="text-gray-600 font-medium">点击上传照片</p>
+                <p class="text-gray-400 text-sm mt-1">支持 JPG、PNG 格式</p>
+              </label>
+              <p class="text-gray-400 text-sm mt-4">或从模板背景中选择</p>
+            </div>
+          </div>
+
+          <!-- Stickers -->
+          <div id="panel-sticker" class="tab-panel hidden">
+            <div class="mb-4">
+              <div class="flex gap-2 flex-wrap">
+                <button onclick="filterStickers('all')" class="sticker-filter px-3 py-1 rounded-full text-sm bg-primary text-white">全部</button>
+                <button onclick="filterStickers('stamp')" class="sticker-filter px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700">📮 印章</button>
+                <button onclick="filterStickers('deco')" class="sticker-filter px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700">🎀 装饰</button>
+                <button onclick="filterStickers('food')" class="sticker-filter px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700">🍜 美食</button>
+                <button onclick="filterStickers('emoji')" class="sticker-filter px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700">😊 表情</button>
+              </div>
+            </div>
+            <div class="grid grid-cols-8 gap-2" id="stickerGrid">
+              <!-- Stickers will be loaded here -->
+            </div>
+          </div>
+
+          <!-- Filters -->
+          <div id="panel-filter" class="tab-panel hidden">
+            <div class="grid grid-cols-4 gap-3" id="filterGrid">
+              <!-- Filters will be loaded here -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Message Editor -->
+        <div class="bg-white rounded-3xl shadow-xl p-6">
+          <h3 class="font-bold text-gray-800 mb-4">💬 祝福语</h3>
+          <textarea id="messageText" 
+                    class="w-full p-4 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none resize-none"
+                    rows="4" 
+                    placeholder="写下您的祝福..."
+                    maxlength="200"
+                    oninput="updateCharCount()"></textarea>
+          <div class="flex justify-between items-center mt-2">
+            <span class="text-sm text-gray-400">最多200字</span>
+            <span id="charCount" class="text-sm text-gray-400">0/200</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview Panel -->
+      <div class="lg:col-span-1">
+        <div class="sticky top-24">
+          <!-- Postcard Preview -->
+          <div class="bg-white rounded-3xl shadow-xl p-6 mb-6">
+            <h3 class="font-bold text-gray-800 mb-4 text-center">📬 预览效果</h3>
+            <div class="canvas-container rounded-lg overflow-hidden mx-auto" style="max-width: 400px;">
+              <div id="postcardCanvas" class="relative w-full aspect-[3/2]">
+                <!-- Background -->
+                <div id="postcardBg" class="absolute inset-0 bg-cover bg-center" 
+                     style="background-image: url('https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=600');">
+                </div>
+                <!-- Photo Overlay -->
+                <div id="photoOverlay" class="absolute inset-0 flex items-center justify-center">
+                  <div id="photoContainer" class="hidden w-3/4 h-3/4 rounded-lg overflow-hidden border-4 border-white shadow-lg">
+                    <img id="uploadedPhoto" src="" alt="" class="w-full h-full object-cover filter-preview">
+                  </div>
+                </div>
+                <!-- Stickers Container -->
+                <div id="stickersContainer" class="absolute inset-0 pointer-events-none">
+                  <!-- Placed stickers will appear here -->
+                </div>
+                <!-- Message Overlay -->
+                <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent">
+                  <p id="previewMessage" class="text-white text-sm font-medium text-center drop-shadow-lg">在这里预览您的明信片</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="space-y-3">
+            <button onclick="savePostcard()" class="w-full py-3 bg-primary text-white rounded-xl font-bold hover:bg-blue-600 transition flex items-center justify-center gap-2">
+              💾 保存草稿
+            </button>
+            <button onclick="sendPostcard()" class="w-full py-3 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-xl font-bold hover:from-green-600 hover:to-emerald-600 transition flex items-center justify-center gap-2">
+              ✉️ 发送明信片
+            </button>
+            <button onclick="sharePostcard()" class="w-full py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition flex items-center justify-center gap-2">
+              📤 分享明信片
+            </button>
+          </div>
+
+          <!-- Quick Tips -->
+          <div class="bg-blue-50 rounded-xl p-4 mt-6">
+            <h4 class="font-bold text-primary mb-2">💡 创作提示</h4>
+            <ul class="text-sm text-gray-600 space-y-1">
+              <li>• 点击模板选择背景</li>
+              <li>• 上传您的照片叠加在背景上</li>
+              <li>• 拖拽贴纸添加装饰</li>
+              <li>• 使用滤镜调整照片风格</li>
+              <li>• 编写个性化祝福语</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Send Modal -->
+  <div id="sendModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6">
+      <h3 class="text-xl font-bold text-gray-800 mb-4">✉️ 发送明信片</h3>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">收件人邮箱</label>
+          <input type="email" id="recipientEmail" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" placeholder="friend@example.com">
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">发送时间</label>
+          <select id="sendTime" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none">
+            <option value="now">立即发送</option>
+            <option value="tomorrow">明天</option>
+            <option value="week">一周后</option>
+            <option value="custom">自定义时间</option>
+          </select>
+        </div>
+        <div id="customTimeContainer" class="hidden">
+          <input type="datetime-local" id="customTime" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none">
+        </div>
+        <div>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="enablePassword" class="w-5 h-5 text-primary rounded" onchange="togglePassword()">
+            <span class="text-sm font-medium text-gray-700">启用密码保护</span>
+          </label>
+        </div>
+        <div id="passwordContainer" class="hidden">
+          <input type="password" id="postcardPassword" class="w-full px-4 py-2 border-2 border-gray-200 rounded-xl focus:border-primary focus:outline-none" placeholder="设置明信片密码">
+          <p class="text-xs text-gray-400 mt-1">收件人需要输入密码才能查看明信片</p>
+        </div>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button onclick="closeSendModal()" class="flex-1 py-2 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition">
+          取消
+        </button>
+        <button onclick="confirmSend()" class="flex-1 py-2 bg-primary text-white rounded-xl font-medium hover:bg-blue-600 transition">
+          确认发送
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global state
+    let postcardData = null;
+    let currentTemplate = 'tokyo-001';
+    let currentFilter = 'none';
+    let placedStickers = [];
+    let postcardTitle = '我的明信片';
+
+    // Initialize
+    async function init() {
+      await loadPostcardData();
+      renderTemplates();
+      renderStickers();
+      renderFilters();
+      
+      // Check URL params
+      const params = new URLSearchParams(window.location.search);
+      const templateId = params.get('template');
+      if (templateId) {
+        selectTemplate(templateId);
+      }
+    }
+
+    // Load postcard data
+    async function loadPostcardData() {
+      try {
+        const response = await fetch('../data/postcard.json');
+        postcardData = await response.json();
+      } catch (error) {
+        console.error('Failed to load postcard data:', error);
+      }
+    }
+
+    // Tab switching
+    function switchTab(tabName) {
+      // Update buttons
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('tab-active');
+        btn.classList.add('bg-gray-100', 'text-gray-700');
+      });
+      document.getElementById(`tab-${tabName}`).classList.add('tab-active');
+      document.getElementById(`tab-${tabName}`).classList.remove('bg-gray-100', 'text-gray-700');
+      
+      // Update panels
+      document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+      document.getElementById(`panel-${tabName}`).classList.remove('hidden');
+    }
+
+    // Render templates
+    function renderTemplates() {
+      const grid = document.getElementById('templateGrid');
+      const allTemplates = Object.values(postcardData.templates).flat();
+      
+      grid.innerHTML = allTemplates.map(t => `
+        <div class="cursor-pointer rounded-lg overflow-hidden border-2 ${currentTemplate === t.id ? 'border-primary' : 'border-transparent'} hover:border-primary transition" onclick="selectTemplate('${t.id}')">
+          <img src="${t.thumbnail}" alt="${t.name}" class="w-full aspect-[4/3] object-cover">
+        </div>
+      `).join('');
+    }
+
+    // Select template
+    function selectTemplate(templateId) {
+      currentTemplate = templateId;
+      const allTemplates = Object.values(postcardData.templates).flat();
+      const template = allTemplates.find(t => t.id === templateId);
+      
+      if (template) {
+        document.getElementById('postcardBg').style.backgroundImage = `url('${template.background}')`;
+        renderTemplates();
+      }
+    }
+
+    // Render stickers
+    function renderStickers(category = 'all') {
+      const grid = document.getElementById('stickerGrid');
+      const stickers = category === 'all' 
+        ? postcardData.stickers 
+        : postcardData.stickers.filter(s => s.category === category);
+      
+      grid.innerHTML = stickers.map(s => `
+        <div class="sticker-item text-center p-2 bg-gray-50 rounded-lg hover:bg-gray-100" onclick="addSticker('${s.emoji}', '${s.name}')">
+          <span class="text-2xl">${s.emoji}</span>
+        </div>
+      `).join('');
+    }
+
+    // Filter stickers
+    function filterStickers(category) {
+      // Update buttons
+      document.querySelectorAll('.sticker-filter').forEach(btn => {
+        btn.classList.remove('bg-primary', 'text-white');
+        btn.classList.add('bg-gray-100', 'text-gray-700');
+      });
+      event.target.classList.remove('bg-gray-100', 'text-gray-700');
+      event.target.classList.add('bg-primary', 'text-white');
+      
+      renderStickers(category);
+    }
+
+    // Add sticker to postcard
+    function addSticker(emoji, name) {
+      const container = document.getElementById('stickersContainer');
+      const id = `sticker-${Date.now()}`;
+      
+      const sticker = document.createElement('div');
+      sticker.id = id;
+      sticker.className = 'sticker-item placed text-4xl cursor-move';
+      sticker.style.left = Math.random() * 60 + 20 + '%';
+      sticker.style.top = Math.random() * 60 + 20 + '%';
+      sticker.textContent = emoji;
+      sticker.onclick = () => removeSticker(id);
+      sticker.title = '点击删除';
+      
+      container.appendChild(sticker);
+      placedStickers.push({ id, emoji, name });
+    }
+
+    // Remove sticker
+    function removeSticker(id) {
+      document.getElementById(id)?.remove();
+      placedStickers = placedStickers.filter(s => s.id !== id);
+    }
+
+    // Render filters
+    function renderFilters() {
+      const grid = document.getElementById('filterGrid');
+      const photoContainer = document.getElementById('photoContainer');
+      const currentSrc = document.getElementById('uploadedPhoto').src;
+      const previewBg = document.getElementById('postcardBg');
+      
+      grid.innerHTML = postcardData.filters.map(f => `
+        <div class="cursor-pointer rounded-lg overflow-hidden border-2 ${currentFilter === f.id ? 'border-primary' : 'border-transparent'} hover:border-primary transition" onclick="applyFilter('${f.id}', '${f.filter}')">
+          <div class="aspect-square ${f.id === 'none' ? 'bg-gray-200' : ''}" ${f.id !== 'none' ? `style="background-image: url('${currentSrc || previewBg.style.backgroundImage.slice(5, -2)}'); background-size: cover; background-position: center; filter: ${f.filter};"` : ''}>
+            ${f.id === 'none' ? '<div class="w-full h-full flex items-center justify-center text-gray-400">原图</div>' : ''}
+          </div>
+          <p class="text-xs text-center py-1 ${currentFilter === f.id ? 'text-primary font-medium' : 'text-gray-600'}">${f.name}</p>
+        </div>
+      `).join('');
+    }
+
+    // Apply filter
+    function applyFilter(filterId, filterValue) {
+      currentFilter = filterId;
+      const photo = document.getElementById('uploadedPhoto');
+      photo.style.filter = filterValue === 'none' ? '' : filterValue;
+      renderFilters();
+    }
+
+    // Handle photo upload
+    function handlePhotoUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const photo = document.getElementById('uploadedPhoto');
+        photo.src = e.target.result;
+        document.getElementById('photoContainer').classList.remove('hidden');
+        
+        // Apply current filter
+        const filter = postcardData.filters.find(f => f.id === currentFilter);
+        if (filter && currentFilter !== 'none') {
+          photo.style.filter = filter.filter;
+        }
+        
+        renderFilters();
+        switchTab('filter');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Update char count
+    function updateCharCount() {
+      const text = document.getElementById('messageText').value;
+      document.getElementById('charCount').textContent = `${text.length}/200`;
+      document.getElementById('previewMessage').textContent = text || '在这里预览您的明信片';
+    }
+
+    // Save postcard
+    function savePostcard() {
+      const postcard = {
+        id: `postcard-${Date.now()}`,
+        title: postcardTitle,
+        background: document.getElementById('postcardBg').style.backgroundImage,
+        photo: document.getElementById('uploadedPhoto').src,
+        message: document.getElementById('messageText').value,
+        stickers: placedStickers,
+        filter: currentFilter,
+        createdAt: new Date().toISOString(),
+        status: 'draft'
+      };
+      
+      // Save to localStorage
+      const myCards = JSON.parse(localStorage.getItem('myPostcards') || '[]');
+      myCards.push(postcard);
+      localStorage.setItem('myPostcards', JSON.stringify(myCards));
+      
+      alert('明信片已保存到草稿箱！');
+    }
+
+    // Send postcard
+    function sendPostcard() {
+      document.getElementById('sendModal').classList.remove('hidden');
+    }
+
+    // Close send modal
+    function closeSendModal() {
+      document.getElementById('sendModal').classList.add('hidden');
+    }
+
+    // Toggle password
+    function togglePassword() {
+      const enabled = document.getElementById('enablePassword').checked;
+      document.getElementById('passwordContainer').classList.toggle('hidden', !enabled);
+    }
+
+    // Confirm send
+    function confirmSend() {
+      const email = document.getElementById('recipientEmail').value;
+      if (!email) {
+        alert('请输入收件人邮箱');
+        return;
+      }
+      
+      // Simulate sending
+      const postcard = {
+        id: `postcard-${Date.now()}`,
+        title: postcardTitle,
+        background: document.getElementById('postcardBg').style.backgroundImage,
+        photo: document.getElementById('uploadedPhoto').src,
+        message: document.getElementById('messageText').value,
+        stickers: placedStickers,
+        filter: currentFilter,
+        recipientEmail: email,
+        createdAt: new Date().toISOString(),
+        status: 'sent'
+      };
+      
+      const myCards = JSON.parse(localStorage.getItem('myPostcards') || '[]');
+      myCards.push(postcard);
+      localStorage.setItem('myPostcards', JSON.stringify(myCards));
+      
+      closeSendModal();
+      alert(`明信片已发送到 ${email}！`);
+      
+      // Redirect to my cards
+      window.location.href = 'my-cards.html';
+    }
+
+    // Share postcard
+    function sharePostcard() {
+      if (navigator.share) {
+        navigator.share({
+          title: '我的旅行明信片',
+          text: '看看我创建的精美明信片！',
+          url: window.location.href
+        });
+      } else {
+        // Fallback: copy link
+        navigator.clipboard.writeText(window.location.href);
+        alert('链接已复制到剪贴板！');
+      }
+    }
+
+    // Send time change
+    document.getElementById('sendTime')?.addEventListener('change', function() {
+      document.getElementById('customTimeContainer').classList.toggle('hidden', this.value !== 'custom');
+    });
+
+    // Initialize on load
+    init();
+  </script>
+</body>
+</html>

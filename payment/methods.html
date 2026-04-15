@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>支付方式 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-hero { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.12); }
+    .fade-in { animation: fadeIn 0.6s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .tab-active { border-bottom: 3px solid #0ea5e9; color: #0ea5e9; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-hero text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="destinations.html" class="hover:opacity-80 transition">目的地</a>
+          <a href="routes.html" class="hover:opacity-80 transition">路线</a>
+          <a href="payment/index.html" class="hover:opacity-80 transition flex items-center gap-1 border-b-2 border-white pb-1">
+            💳 支付帮助
+          </a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-2 space-y-3">
+        <a href="index.html" class="block py-2">首页</a>
+        <a href="destinations.html" class="block py-2">目的地</a>
+        <a href="routes.html" class="block py-2">路线</a>
+        <a href="payment/index.html" class="block py-2 font-semibold">💳 支付帮助</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <section class="gradient-hero text-white py-16 md:py-20">
+    <div class="max-w-7xl mx-auto px-4 fade-in">
+      <div class="flex items-center gap-3 text-sm opacity-80 mb-4">
+        <a href="index.html" class="hover:opacity-70">首页</a>
+        <span>/</span>
+        <a href="payment/index.html" class="hover:opacity-70">支付帮助</a>
+        <span>/</span>
+        <span>支付方式</span>
+      </div>
+      <h1 class="text-3xl md:text-5xl font-bold mb-4">支付方式</h1>
+      <p class="text-lg opacity-90 max-w-2xl">多种支付方式，满足您的不同需求</p>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <section class="bg-white shadow-sm sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex overflow-x-auto gap-1">
+        <button class="tab-btn px-6 py-4 font-medium text-gray-600 hover:text-primary transition whitespace-nowrap tab-active" onclick="switchTab('alipay')">
+          💙 支付宝
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-600 hover:text-primary transition whitespace-nowrap" onclick="switchTab('wechat')">
+          💚 微信支付
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-600 hover:text-primary transition whitespace-nowrap" onclick="switchTab('unionpay')">
+          💳 银联支付
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-600 hover:text-primary transition whitespace-nowrap" onclick="switchTab('card')">
+          🌍 国际信用卡
+        </button>
+        <button class="tab-btn px-6 py-4 font-medium text-gray-600 hover:text-primary transition whitespace-nowrap" onclick="switchTab('compare')">
+          📊 支付对比
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Alipay Section -->
+  <section id="alipay" class="tab-content max-w-7xl mx-auto px-4 py-12">
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12">
+      <div class="flex flex-col md:flex-row items-start gap-8 mb-10">
+        <div class="w-24 h-24 bg-blue-100 rounded-3xl flex items-center justify-center flex-shrink-0">
+          <span class="text-6xl">💙</span>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-3">支付宝支付</h2>
+          <p class="text-gray-600 text-lg">中国领先的第三方支付平台，为您提供安全、便捷的支付体验</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 mb-10">
+        <div>
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">✓</span>
+            支持功能
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              扫码支付
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              APP支付
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              花呗分期
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              信用卡支付
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">💰</span>
+            费用说明
+          </h3>
+          <div class="bg-gray-50 rounded-xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">常规支付</span>
+              <span class="text-green-600 font-bold">免手续费</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">花呗分期</span>
+              <span class="text-blue-600 font-medium">部分免息</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">到账时间</span>
+              <span class="text-primary font-medium">即时到账</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-r from-blue-50 to-blue-100 rounded-2xl p-6 mb-8">
+        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-2xl">📊</span> 支付限额
+        </h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500 mb-1">单笔限额</div>
+            <div class="text-2xl font-bold text-blue-600">最高 50万元</div>
+          </div>
+          <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500 mb-1">日累计</div>
+            <div class="text-2xl font-bold text-blue-600">不限额</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t pt-8">
+        <h3 class="font-bold text-gray-800 mb-4">使用步骤</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">1</div>
+            <h4 class="font-semibold text-gray-800 mb-2">选择支付宝</h4>
+            <p class="text-sm text-gray-500">在支付页面选择支付宝支付方式</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">2</div>
+            <h4 class="font-semibold text-gray-800 mb-2">打开支付宝</h4>
+            <p class="text-sm text-gray-500">使用支付宝APP扫描二维码或跳转支付</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">3</div>
+            <h4 class="font-semibold text-gray-800 mb-2">确认支付</h4>
+            <p class="text-sm text-gray-500">在支付宝中确认付款即可完成</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WeChat Pay Section -->
+  <section id="wechat" class="tab-content max-w-7xl mx-auto px-4 py-12 hidden">
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12">
+      <div class="flex flex-col md:flex-row items-start gap-8 mb-10">
+        <div class="w-24 h-24 bg-green-100 rounded-3xl flex items-center justify-center flex-shrink-0">
+          <span class="text-6xl">💚</span>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-3">微信支付</h2>
+          <p class="text-gray-600 text-lg">腾讯旗下移动支付品牌，便捷的社交支付体验</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 mb-10">
+        <div>
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center">✓</span>
+            支持功能
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              扫码支付
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              APP支付
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              小程序支付
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              亲属卡支付
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-green-500/10 rounded-lg flex items-center justify-center">💰</span>
+            费用说明
+          </h3>
+          <div class="bg-gray-50 rounded-xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">常规支付</span>
+              <span class="text-green-600 font-bold">免手续费</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">分阶段</span>
+              <span class="text-green-500 font-medium">部分免息</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">到账时间</span>
+              <span class="text-primary font-medium">即时到账</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-r from-green-50 to-green-100 rounded-2xl p-6 mb-8">
+        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-2xl">📊</span> 支付限额
+        </h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500 mb-1">单笔限额</div>
+            <div class="text-2xl font-bold text-green-600">最高 20万元</div>
+          </div>
+          <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500 mb-1">日累计</div>
+            <div class="text-2xl font-bold text-green-600">不限额</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t pt-8">
+        <h3 class="font-bold text-gray-800 mb-4">使用步骤</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">1</div>
+            <h4 class="font-semibold text-gray-800 mb-2">选择微信支付</h4>
+            <p class="text-sm text-gray-500">在支付页面选择微信支付方式</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">2</div>
+            <h4 class="font-semibold text-gray-800 mb-2">打开微信</h4>
+            <p class="text-sm text-gray-500">使用微信扫描二维码完成支付</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">3</div>
+            <h4 class="font-semibold text-gray-800 mb-2">确认支付</h4>
+            <p class="text-sm text-gray-500">在微信中确认付款即可完成</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- UnionPay Section -->
+  <section id="unionpay" class="tab-content max-w-7xl mx-auto px-4 py-12 hidden">
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12">
+      <div class="flex flex-col md:flex-row items-start gap-8 mb-10">
+        <div class="w-24 h-24 bg-red-100 rounded-3xl flex items-center justify-center flex-shrink-0">
+          <span class="text-6xl">💳</span>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-3">银联支付</h2>
+          <p class="text-gray-600 text-lg">覆盖全国的银行卡支付网络，安全可靠</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 mb-10">
+        <div>
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center">✓</span>
+            支持功能
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              支持所有银联卡
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              云闪付
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              一键绑卡
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              分期付款
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-red-500/10 rounded-lg flex items-center justify-center">💰</span>
+            费用说明
+          </h3>
+          <div class="bg-gray-50 rounded-xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">常规支付</span>
+              <span class="text-green-600 font-bold">免手续费</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">分期利率</span>
+              <span class="text-red-500 font-medium">银行优惠</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">到账时间</span>
+              <span class="text-primary font-medium">1-3个工作日</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-6 mb-8">
+        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-2xl">📊</span> 支付限额
+        </h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500 mb-1">单笔限额</div>
+            <div class="text-2xl font-bold text-red-600">最高 100万元</div>
+          </div>
+          <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500 mb-1">日累计</div>
+            <div class="text-2xl font-bold text-red-600">依银行规定</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t pt-8">
+        <h3 class="font-bold text-gray-800 mb-4">使用步骤</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">1</div>
+            <h4 class="font-semibold text-gray-800 mb-2">选择银联支付</h4>
+            <p class="text-sm text-gray-500">选择银行卡或云闪付支付</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">2</div>
+            <h4 class="font-semibold text-gray-800 mb-2">输入卡信息</h4>
+            <p class="text-sm text-gray-500">输入银行卡号或选择已绑定卡</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-red-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">3</div>
+            <h4 class="font-semibold text-gray-800 mb-2">安全验证</h4>
+            <p class="text-sm text-gray-500">输入短信验证码完成支付</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- International Card Section -->
+  <section id="card" class="tab-content max-w-7xl mx-auto px-4 py-12 hidden">
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12">
+      <div class="flex flex-col md:flex-row items-start gap-8 mb-10">
+        <div class="w-24 h-24 bg-purple-100 rounded-3xl flex items-center justify-center flex-shrink-0">
+          <span class="text-6xl">🌍</span>
+        </div>
+        <div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-3">国际信用卡</h2>
+          <p class="text-gray-600 text-lg">支持Visa、Mastercard等国际主流信用卡</p>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-8 mb-10">
+        <div>
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-purple-500/10 rounded-lg flex items-center justify-center">✓</span>
+            支持卡种
+          </h3>
+          <ul class="space-y-3">
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              Visa
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              Mastercard
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              American Express
+            </li>
+            <li class="flex items-center gap-3 text-gray-600">
+              <span class="w-6 h-6 bg-green-100 rounded-full flex items-center justify-center text-green-600 text-sm">✓</span>
+              3D安全验证
+            </li>
+          </ul>
+        </div>
+        <div>
+          <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <span class="w-8 h-8 bg-purple-500/10 rounded-lg flex items-center justify-center">💰</span>
+            费用说明
+          </h3>
+          <div class="bg-gray-50 rounded-xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">货币转换费</span>
+              <span class="text-orange-600 font-medium">1.5%</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">分期费率</span>
+              <span class="text-gray-500 font-medium">依发卡行</span>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-gray-600">到账时间</span>
+              <span class="text-primary font-medium">2-5个工作日</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6 mb-8">
+        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-2xl">📊</span> 支付限额
+        </h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500 mb-1">单笔限额</div>
+            <div class="text-2xl font-bold text-purple-600">依信用卡额度</div>
+          </div>
+          <div class="bg-white rounded-xl p-4">
+            <div class="text-sm text-gray-500 mb-1">日累计</div>
+            <div class="text-2xl font-bold text-purple-600">依信用卡额度</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mb-8">
+        <div class="flex items-start gap-3">
+          <span class="text-2xl">⚠️</span>
+          <div>
+            <h4 class="font-bold text-yellow-800 mb-2">温馨提示</h4>
+            <ul class="text-sm text-yellow-700 space-y-1">
+              <li>• 外币交易会产生货币转换费用，具体费率以发卡银行规定为准</li>
+              <li>• 部分银行可能需要开通网上支付功能</li>
+              <li>• 3D验证可有效防止信用卡盗刷，建议开通</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t pt-8">
+        <h3 class="font-bold text-gray-800 mb-4">使用步骤</h3>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">1</div>
+            <h4 class="font-semibold text-gray-800 mb-2">选择信用卡</h4>
+            <p class="text-sm text-gray-500">选择国际信用卡支付</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">2</div>
+            <h4 class="font-semibold text-gray-800 mb-2">填写信息</h4>
+            <p class="text-sm text-gray-500">输入卡号、有效期、CVV</p>
+          </div>
+          <div class="text-center">
+            <div class="w-12 h-12 bg-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">3</div>
+            <h4 class="font-semibold text-gray-800 mb-2">3D验证</h4>
+            <p class="text-sm text-gray-500">通过短信或银行APP验证</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comparison Section -->
+  <section id="compare" class="tab-content max-w-7xl mx-auto px-4 py-12 hidden">
+    <div class="bg-white rounded-3xl shadow-xl p-8 md:p-12">
+      <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">支付方式对比</h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full min-w-[600px]">
+          <thead>
+            <tr class="border-b-2 border-gray-200">
+              <th class="text-left py-4 px-4 font-bold text-gray-700">支付方式</th>
+              <th class="text-center py-4 px-4 font-bold text-gray-700">手续费</th>
+              <th class="text-center py-4 px-4 font-bold text-gray-700">到账时间</th>
+              <th class="text-center py-4 px-4 font-bold text-gray-700">单笔限额</th>
+              <th class="text-center py-4 px-4 font-bold text-gray-700">推荐场景</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-b border-gray-100 hover:bg-blue-50 transition">
+              <td class="py-4 px-4">
+                <div class="flex items-center gap-3">
+                  <span class="text-2xl">💙</span>
+                  <span class="font-medium">支付宝</span>
+                </div>
+              </td>
+              <td class="text-center py-4 px-4 text-green-600 font-medium">免手续费</td>
+              <td class="text-center py-4 px-4 text-primary">即时</td>
+              <td class="text-center py-4 px-4">50万元</td>
+              <td class="text-center py-4 px-4 text-sm text-gray-600">日常消费、大额支付</td>
+            </tr>
+            <tr class="border-b border-gray-100 hover:bg-green-50 transition">
+              <td class="py-4 px-4">
+                <div class="flex items-center gap-3">
+                  <span class="text-2xl">💚</span>
+                  <span class="font-medium">微信支付</span>
+                </div>
+              </td>
+              <td class="text-center py-4 px-4 text-green-600 font-medium">免手续费</td>
+              <td class="text-center py-4 px-4 text-primary">即时</td>
+              <td class="text-center py-4 px-4">20万元</td>
+              <td class="text-center py-4 px-4 text-sm text-gray-600">日常社交支付</td>
+            </tr>
+            <tr class="border-b border-gray-100 hover:bg-red-50 transition">
+              <td class="py-4 px-4">
+                <div class="flex items-center gap-3">
+                  <span class="text-2xl">💳</span>
+                  <span class="font-medium">银联支付</span>
+                </div>
+              </td>
+              <td class="text-center py-4 px-4 text-green-600 font-medium">免手续费</td>
+              <td class="text-center py-4 px-4 text-orange-500">1-3日</td>
+              <td class="text-center py-4 px-4">100万元</td>
+              <td class="text-center py-4 px-4 text-sm text-gray-600">大额转账、企业付款</td>
+            </tr>
+            <tr class="hover:bg-purple-50 transition">
+              <td class="py-4 px-4">
+                <div class="flex items-center gap-3">
+                  <span class="text-2xl">🌍</span>
+                  <span class="font-medium">国际信用卡</span>
+                </div>
+              </td>
+              <td class="text-center py-4 px-4 text-orange-500 font-medium">1.5%货币转换费</td>
+              <td class="text-center py-4 px-4 text-orange-500">2-5日</td>
+              <td class="text-center py-4 px-4">依信用卡额度</td>
+              <td class="text-center py-4 px-4 text-sm text-gray-600">境外支付、海淘</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mt-10 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6">
+        <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <span class="text-2xl">💡</span> 选择建议
+        </h3>
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl p-4">
+            <h4 class="font-semibold text-blue-600 mb-2">国内用户首选</h4>
+            <p class="text-sm text-gray-600">推荐使用支付宝或微信支付，免手续费且即时到账</p>
+          </div>
+          <div class="bg-white rounded-xl p-4">
+            <h4 class="font-semibold text-purple-600 mb-2">境外用户首选</h4>
+            <p class="text-sm text-gray-600">推荐使用国际信用卡，方便快捷，支持多种货币</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Related Links -->
+  <section class="max-w-7xl mx-auto px-4 pb-16">
+    <div class="grid md:grid-cols-3 gap-6">
+      <a href="security.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-green-500">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+            <span class="text-3xl">🔒</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800">支付安全</h3>
+            <p class="text-sm text-gray-500">了解安全措施</p>
+          </div>
+        </div>
+      </a>
+      <a href="refund.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-orange-500">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center">
+            <span class="text-3xl">💰</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800">退款政策</h3>
+            <p class="text-sm text-gray-500">查看退款流程</p>
+          </div>
+        </div>
+      </a>
+      <a href="invoice.html" class="card-hover bg-white rounded-2xl p-6 shadow-lg border-2 border-transparent hover:border-purple-500">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+            <span class="text-3xl">📄</span>
+          </div>
+          <div>
+            <h3 class="font-bold text-gray-800">发票服务</h3>
+            <p class="text-sm text-gray-500">申请电子/纸质发票</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div>
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-3xl">🧭</span>
+            <span class="text-xl font-bold">游导旅游</span>
+          </div>
+          <p class="text-gray-400 text-sm">您的贴心旅行助手，让每一次出行都轻松愉快</p>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">快速链接</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="index.html" class="hover:text-white transition">首页</a></li>
+            <li><a href="destinations.html" class="hover:text-white transition">目的地</a></li>
+            <li><a href="routes.html" class="hover:text-white transition">路线</a></li>
+            <li><a href="tools.html" class="hover:text-white transition">工具箱</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">支付帮助</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li><a href="payment/index.html" class="hover:text-white transition">支付帮助</a></li>
+            <li><a href="payment/methods.html" class="hover:text-white transition">支付方式</a></li>
+            <li><a href="payment/security.html" class="hover:text-white transition">支付安全</a></li>
+            <li><a href="payment/refund.html" class="hover:text-white transition">退款政策</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-semibold mb-4">联系我们</h4>
+          <ul class="space-y-2 text-gray-400 text-sm">
+            <li>📧 2173381363@qq.com</li>
+            <li>💬 微信：ximao101</li>
+            <li>📞 13631149834</li>
+          </ul>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-6 text-center text-gray-400 text-sm">
+        <p>© 2024 游导旅游 youdao-travel.com 版权所有</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function switchTab(tabName) {
+      // Hide all tab contents
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      // Remove active class from all tabs
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('tab-active'));
+      
+      // Show selected tab content
+      document.getElementById(tabName).classList.remove('hidden');
+      // Add active class to selected tab
+      event.target.classList.add('tab-active');
+      
+      // Scroll to top of content
+      window.scrollTo({ top: 300, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

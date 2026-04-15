@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>资讯详情 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#667eea',
+            secondary: '#764ba2',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../css/news/news.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .article-content h2 { font-size: 1.25rem; font-weight: 700; margin: 1.5rem 0 1rem; color: #1f2937; }
+    .article-content p { margin-bottom: 1rem; line-height: 1.8; }
+    .article-content ul { margin: 1rem 0; padding-left: 1.5rem; }
+    .article-content li { margin-bottom: 0.5rem; line-height: 1.8; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="text-gray-600 hover:text-primary transition">首页</a>
+          <a href="index.html" class="text-primary font-semibold border-b-2 border-primary pb-1">资讯</a>
+          <a href="../tools/index.html" class="text-gray-600 hover:text-primary transition">工具箱</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 space-y-3 border-t pt-4">
+        <a href="../index.html" class="block py-2 text-gray-600">首页</a>
+        <a href="index.html" class="block py-2 text-primary font-semibold">资讯</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <nav class="flex items-center gap-2 text-sm">
+        <a href="index.html" class="text-gray-500 hover:text-primary transition">资讯中心</a>
+        <span class="text-gray-400">/</span>
+        <span id="breadcrumbCategory" class="text-gray-500">加载中...</span>
+        <span class="text-gray-400">/</span>
+        <span id="breadcrumbTitle" class="text-gray-700 truncate max-w-xs">加载中...</span>
+      </nav>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <article class="flex-1">
+        <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <header class="p-6 md:p-8 border-b">
+            <div class="flex flex-wrap items-center gap-3 mb-4">
+              <span id="articleCategory" class="news-tag text-white text-sm">加载中</span>
+              <span id="articleTime" class="text-gray-500 text-sm">2024年1月1日</span>
+              <span class="text-gray-300">|</span>
+              <span id="articleSource" class="text-gray-500 text-sm">来源：</span>
+            </div>
+            <h1 id="articleTitle" class="text-2xl md:text-3xl font-bold text-gray-900 mb-4">加载中...</h1>
+            <p id="articleSummary" class="text-gray-600 text-lg leading-relaxed">加载中...</p>
+            <div id="articleTags" class="flex flex-wrap gap-2 mt-4"></div>
+          </header>
+
+          <div class="relative">
+            <img id="articleImage" src="" alt="" class="w-full h-64 md:h-96 object-cover">
+          </div>
+
+          <div class="p-6 md:p-8">
+            <div id="articleContent" class="article-content">加载中...</div>
+
+            <div class="flex items-center justify-between py-6 border-t border-b mt-8">
+              <div class="flex items-center gap-6">
+                <button onclick="handleLike()" class="flex items-center gap-2 text-gray-500 hover:text-red-500 transition" id="likeBtn">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                  </svg>
+                  <span id="likeCount">0</span>
+                </button>
+                <div class="flex items-center gap-2 text-gray-500">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  <span id="viewCount">0</span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-500">
+                  <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                  </svg>
+                  <span id="commentCount">0</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-gray-500 text-sm hidden sm:inline">分享到：</span>
+                <button onclick="shareTo('wechat')" class="share-btn bg-green-500 text-white hover:bg-green-600">微</button>
+                <button onclick="shareTo('weibo')" class="share-btn bg-red-500 text-white hover:bg-red-600">博</button>
+                <button onclick="copyLink()" class="share-btn bg-gray-500 text-white hover:bg-gray-600" title="复制链接">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm mt-8 p-6 md:p-8">
+          <h3 class="font-bold text-xl text-gray-800 mb-6 flex items-center gap-2">
+            <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+            </svg>
+            评论 <span id="commentTotal" class="text-gray-400 font-normal">(0)</span>
+          </h3>
+
+          <div class="flex gap-4 mb-8">
+            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold">我</div>
+            <div class="flex-1">
+              <textarea id="commentInput" placeholder="发表你的看法..." class="w-full p-4 border rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent resize-none" rows="3"></textarea>
+              <div class="flex justify-end mt-3">
+                <button onclick="submitComment()" class="px-6 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded-lg font-medium hover:opacity-90 transition">发布评论</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="commentsList" class="space-y-6"></div>
+        </div>
+      </article>
+
+      <aside class="lg:w-80">
+        <div class="article-sidebar">
+          <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <h3 class="font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+              </svg>
+              相关资讯
+            </h3>
+            <div id="relatedArticles" class="space-y-4"></div>
+          </div>
+
+          <a href="index.html" class="flex items-center justify-center gap-2 w-full py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            返回资讯列表
+          </a>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div id="toast" class="fixed bottom-8 left-1/2 -translate-x-1/2 px-6 py-3 bg-gray-900 text-white rounded-lg shadow-lg opacity-0 transition-opacity duration-300 pointer-events-none z-50">
+    <span id="toastMessage">操作成功</span>
+  </div>
+
+  <footer class="bg-gray-900 text-white py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+      <p>&copy; 2024 游导旅游 youdao-travel.com</p>
+    </div>
+  </footer>
+
+  <script src="js/detail.js"></script>
+</body>
+</html>

@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传图片 - 游导旅游</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+        * { font-family: 'Noto Sans SC', sans-serif; }
+        
+        .upload-zone {
+            border: 2px dashed #d1d5db;
+            transition: all 0.3s ease;
+        }
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: #3b82f6;
+            background: #eff6ff;
+        }
+        
+        .upload-zone img {
+            transition: transform 0.3s ease;
+        }
+        .upload-zone:hover img {
+            transform: scale(1.05);
+        }
+        
+        .step-indicator {
+            transition: all 0.3s ease;
+        }
+        .step-indicator.active {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+        }
+        .step-indicator.completed {
+            background: #10b981;
+            color: white;
+        }
+        
+        .preview-card {
+            transition: all 0.3s ease;
+        }
+        .preview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+        
+        .tag-input {
+            transition: all 0.2s ease;
+        }
+        .tag-input:focus-within {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-arrow-left text-xl"></i>
+                    </a>
+                    <a href="../index.html" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-compass text-white text-lg"></i>
+                        </div>
+                        <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">游导旅游</span>
+                    </a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-500 text-sm">上传您的旅游照片</span>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="py-8">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Progress Steps -->
+            <div class="flex items-center justify-center mb-12">
+                <div class="flex items-center">
+                    <div class="step-indicator active w-10 h-10 rounded-full flex items-center justify-center font-bold" id="step1">1</div>
+                    <div class="w-20 md:w-32 h-1 bg-gray-200 mx-2" id="progress1">
+                        <div class="h-full bg-blue-500 w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center font-bold bg-gray-200 text-gray-500" id="step2">2</div>
+                    <div class="w-20 md:w-32 h-1 bg-gray-200 mx-2" id="progress2">
+                        <div class="h-full bg-blue-500 w-0 transition-all duration-500"></div>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <div class="step-indicator w-10 h-10 rounded-full flex items-center justify-center font-bold bg-gray-200 text-gray-500" id="step3">3</div>
+                </div>
+            </div>
+            <div class="flex justify-between text-sm text-gray-500 mb-8 px-4">
+                <span>上传图片</span>
+                <span class="md:px-8">填写信息</span>
+                <span>确认提交</span>
+            </div>
+            
+            <!-- Step 1: Upload -->
+            <div id="stepContent1" class="bg-white rounded-2xl shadow-sm p-6 md:p-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-cloud-upload-alt mr-3 text-blue-500"></i>上传旅游照片
+                </h2>
+                
+                <!-- Upload Zone -->
+                <div class="upload-zone rounded-2xl p-8 md:p-12 text-center cursor-pointer mb-6" 
+                     id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <input type="file" id="fileInput" class="hidden" accept="image/*" multiple onchange="handleFiles(this.files)">
+                    <div class="mb-6">
+                        <div class="w-24 h-24 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                            <i class="fas fa-cloud-upload-alt text-5xl text-blue-500"></i>
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">点击或拖拽上传图片</h3>
+                        <p class="text-gray-500 mb-4">支持 JPG、PNG、WebP 格式，单张不超过 20MB</p>
+                        <button type="button" class="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors">
+                            选择文件
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Preview Area -->
+                <div id="previewArea" class="hidden">
+                    <h3 class="font-semibold text-gray-900 mb-4">已选择的图片 (<span id="fileCount">0</span>)</h3>
+                    <div id="fileList" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6"></div>
+                    <div class="flex justify-between items-center">
+                        <button onclick="clearFiles()" class="text-red-500 hover:text-red-600 font-medium">
+                            <i class="fas fa-trash mr-2"></i>清除全部
+                        </button>
+                        <button onclick="goToStep(2)" class="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors">
+                            下一步 <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Tips -->
+                <div class="bg-yellow-50 rounded-xl p-4 mt-6">
+                    <h4 class="font-medium text-yellow-800 mb-2">
+                        <i class="fas fa-lightbulb mr-2"></i>上传提示
+                    </h4>
+                    <ul class="text-sm text-yellow-700 space-y-1">
+                        <li>• 请确保您拥有图片的版权或已获得授权</li>
+                        <li>• 图片越清晰、构图越好，获得的关注越多</li>
+                        <li>• 建议上传 1920x1080 以上分辨率的图片</li>
+                        <li>• 可一次性上传最多 9 张图片</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Step 2: Info Form -->
+            <div id="stepContent2" class="bg-white rounded-2xl shadow-sm p-6 md:p-8 hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-edit mr-3 text-purple-500"></i>填写图片信息
+                </h2>
+                
+                <form id="infoForm" class="space-y-6">
+                    <!-- Title -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            图片标题 <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="photoTitle" required maxlength="50"
+                               placeholder="例如：京都清水寺樱花季"
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 transition-all">
+                        <p class="mt-1 text-xs text-gray-500">最多 50 个字符</p>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            图片描述 <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="photoDesc" required rows="3" maxlength="200"
+                                  placeholder="描述这张图片的内容、拍摄地点或背后的故事..."
+                                  class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 transition-all resize-none"></textarea>
+                        <p class="mt-1 text-xs text-gray-500">最多 200 个字符</p>
+                    </div>
+                    
+                    <!-- Destination -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                目的地 <span class="text-red-500">*</span>
+                            </label>
+                            <select id="destination" required onchange="updateCities()"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 transition-all">
+                                <option value="">选择目的地</option>
+                                <option value="japan">🗾 日本</option>
+                                <option value="korea">🇰🇷 韩国</option>
+                                <option value="thailand">🇹🇭 泰国</option>
+                                <option value="singapore">🇸🇬 新加坡</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                城市/地区 <span class="text-red-500">*</span>
+                            </label>
+                            <select id="city" required
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 transition-all">
+                                <option value="">请先选择目的地</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Theme & Season -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                图片主题 <span class="text-red-500">*</span>
+                            </label>
+                            <select id="theme" required
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 transition-all">
+                                <option value="">选择主题</option>
+                                <option value="landscape">🏔️ 风景</option>
+                                <option value="food">🍜 美食</option>
+                                <option value="architecture">🏛️ 建筑</option>
+                                <option value="culture">🎎 人文</option>
+                                <option value="night">🌃 夜景</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                拍摄季节
+                            </label>
+                            <select id="season"
+                                    class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 transition-all">
+                                <option value="all">📅 全年</option>
+                                <option value="spring">🌸 春季 (3-5月)</option>
+                                <option value="summer">☀️ 夏季 (6-8月)</option>
+                                <option value="autumn">🍂 秋季 (9-11月)</option>
+                                <option value="winter">❄️ 冬季 (12-2月)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Tags -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            相关标签
+                        </label>
+                        <div class="tag-input flex flex-wrap items-center gap-2 p-3 border border-gray-200 rounded-xl min-h-[50px]">
+                            <div id="tagContainer" class="flex flex-wrap gap-2"></div>
+                            <input type="text" id="tagInput" placeholder="输入标签后按回车添加"
+                                   class="flex-1 min-w-[120px] border-none outline-none bg-transparent"
+                                   onkeydown="handleTagInput(event)">
+                        </div>
+                        <p class="mt-1 text-xs text-gray-500">最多添加 5 个标签，每个标签不超过 10 个字符</p>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="text-xs text-gray-500">推荐标签：</span>
+                            <button type="button" onclick="addQuickTag('樱花')" class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full hover:bg-gray-200">樱花</button>
+                            <button type="button" onclick="addQuickTag('日落')" class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full hover:bg-gray-200">日落</button>
+                            <button type="button" onclick="addQuickTag('海滩')" class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full hover:bg-gray-200">海滩</button>
+                            <button type="button" onclick="addQuickTag('美食')" class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full hover:bg-gray-200">美食</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Camera Info -->
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                拍摄设备
+                            </label>
+                            <input type="text" id="camera" placeholder="例如：Canon EOS R5"
+                                   class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">
+                                拍摄参数
+                            </label>
+                            <input type="text" id="settings" placeholder="例如：f/2.8, 1/500s, ISO 400"
+                                   class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-blue-500 transition-all">
+                        </div>
+                    </div>
+                    
+                    <!-- Navigation -->
+                    <div class="flex justify-between pt-4 border-t border-gray-100">
+                        <button type="button" onclick="goToStep(1)" class="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors">
+                            <i class="fas fa-arrow-left mr-2"></i>上一步
+                        </button>
+                        <button type="button" onclick="goToStep(3)" class="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors">
+                            下一步 <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Step 3: Confirm -->
+            <div id="stepContent3" class="bg-white rounded-2xl shadow-sm p-6 md:p-8 hidden">
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                    <i class="fas fa-check-circle mr-3 text-green-500"></i>确认提交
+                </h2>
+                
+                <!-- Preview -->
+                <div class="bg-gray-50 rounded-xl p-6 mb-6">
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="w-full md:w-1/3">
+                            <img id="confirmImage" src="" alt="" class="w-full rounded-xl object-cover aspect-video">
+                        </div>
+                        <div class="flex-1">
+                            <h3 id="confirmTitle" class="text-xl font-bold text-gray-900 mb-2"></h3>
+                            <p id="confirmDesc" class="text-gray-600 text-sm mb-4"></p>
+                            <div class="flex flex-wrap gap-4 text-sm text-gray-500">
+                                <span><i class="fas fa-map-marker-alt mr-1 text-red-400"></i><span id="confirmLocation"></span></span>
+                                <span><i class="fas fa-tag mr-1 text-blue-400"></i><span id="confirmTheme"></span></span>
+                            </div>
+                            <div id="confirmTags" class="flex flex-wrap gap-2 mt-3"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Agreement -->
+                <div class="bg-blue-50 rounded-xl p-4 mb-6">
+                    <label class="flex items-start cursor-pointer">
+                        <input type="checkbox" id="agreement" required class="mt-1 mr-3 w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                        <span class="text-sm text-gray-700">
+                            我已阅读并同意 <a href="#" class="text-blue-600 hover:underline">《图片上传协议》</a> 和 <a href="#" class="text-blue-600 hover:underline">《版权声明》</a>，确认图片为原创或已获得授权。
+                        </span>
+                    </label>
+                </div>
+                
+                <!-- Navigation -->
+                <div class="flex justify-between">
+                    <button type="button" onclick="goToStep(2)" class="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-arrow-left mr-2"></i>返回修改
+                    </button>
+                    <button type="button" onclick="submitPhotos()" class="px-8 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:shadow-lg transition-all">
+                        <i class="fas fa-paper-plane mr-2"></i>提交审核
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Success -->
+            <div id="stepSuccess" class="bg-white rounded-2xl shadow-sm p-6 md:p-8 text-center hidden">
+                <div class="w-24 h-24 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-6">
+                    <i class="fas fa-check text-5xl text-green-500"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-4">上传成功！</h2>
+                <p class="text-gray-600 mb-8">您的图片已提交审核，预计 1-2 个工作日内完成审核</p>
+                <div class="flex justify-center gap-4">
+                    <a href="my-photos.html" class="px-6 py-3 bg-blue-500 text-white rounded-xl hover:bg-blue-600 transition-colors">
+                        <i class="fas fa-images mr-2"></i>查看我的图库
+                    </a>
+                    <button onclick="resetUpload()" class="px-6 py-3 border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors">
+                        <i class="fas fa-plus mr-2"></i>继续上传
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 py-8 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-sm text-gray-500">&copy; 2024 游导旅游 youdao-travel.com 版权所有</p>
+        </div>
+    </footer>
+
+    <script>
+        let currentFiles = [];
+        let currentStep = 1;
+        let tags = [];
+        
+        const cityData = {
+            japan: [
+                { id: 'tokyo', name: '东京' },
+                { id: 'kyoto', name: '京都' },
+                { id: 'osaka', name: '大阪' },
+                { id: 'yamanashi', name: '山梨' },
+                { id: 'nara', name: '奈良' },
+                { id: 'hokkaido', name: '北海道' }
+            ],
+            korea: [
+                { id: 'seoul', name: '首尔' },
+                { id: 'busan', name: '釜山' },
+                { id: 'jeju', name: '济州岛' },
+                { id: 'incheon', name: '仁川' }
+            ],
+            thailand: [
+                { id: 'bangkok', name: '曼谷' },
+                { id: 'chiangmai', name: '清迈' },
+                { id: 'phuket', name: '普吉岛' },
+                { id: 'pattaya', name: '芭提雅' }
+            ],
+            singapore: [
+                { id: 'singapore', name: '新加坡' }
+            ]
+        };
+        
+        // Drag and drop
+        const uploadZone = document.getElementById('uploadZone');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadZone.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadZone.addEventListener(eventName, () => uploadZone.classList.add('dragover'), false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadZone.addEventListener(eventName, () => uploadZone.classList.remove('dragover'), false);
+        });
+        
+        uploadZone.addEventListener('drop', (e) => {
+            const files = e.dataTransfer.files;
+            handleFiles(files);
+        }, false);
+        
+        function handleFiles(files) {
+            currentFiles = Array.from(files).slice(0, 9);
+            if (currentFiles.length > 0) {
+                renderFileList();
+            }
+        }
+        
+        function renderFileList() {
+            const previewArea = document.getElementById('previewArea');
+            const fileList = document.getElementById('fileList');
+            const fileCount = document.getElementById('fileCount');
+            
+            previewArea.classList.remove('hidden');
+            fileCount.textContent = currentFiles.length;
+            
+            fileList.innerHTML = currentFiles.map((file, index) => `
+                <div class="preview-card bg-white rounded-xl overflow-hidden shadow-sm">
+                    <div class="relative">
+                        <img src="${URL.createObjectURL(file)}" alt="" class="w-full aspect-square object-cover">
+                        <button onclick="removeFile(${index})" class="absolute top-2 right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function removeFile(index) {
+            currentFiles.splice(index, 1);
+            if (currentFiles.length > 0) {
+                renderFileList();
+            } else {
+                clearFiles();
+            }
+        }
+        
+        function clearFiles() {
+            currentFiles = [];
+            document.getElementById('previewArea').classList.add('hidden');
+            document.getElementById('fileInput').value = '';
+        }
+        
+        function goToStep(step) {
+            if (step === 2 && currentFiles.length === 0) {
+                alert('请先上传图片');
+                return;
+            }
+            
+            if (step === 3) {
+                if (!validateForm()) return;
+                renderConfirmInfo();
+            }
+            
+            // Update step indicators
+            for (let i = 1; i <= 3; i++) {
+                const indicator = document.getElementById(`step${i}`);
+                const progress = document.getElementById(`progress${i}`);
+                
+                if (i < step) {
+                    indicator.classList.add('completed');
+                    indicator.classList.remove('active');
+                    indicator.innerHTML = '<i class="fas fa-check"></i>';
+                    if (progress) progress.querySelector('div').style.width = '100%';
+                } else if (i === step) {
+                    indicator.classList.add('active');
+                    indicator.classList.remove('completed', 'bg-gray-200', 'text-gray-500');
+                    if (progress) progress.querySelector('div').style.width = '50%';
+                } else {
+                    indicator.classList.remove('active', 'completed');
+                    indicator.classList.add('bg-gray-200', 'text-gray-500');
+                    if (progress) progress.querySelector('div').style.width = '0%';
+                }
+            }
+            
+            // Show/hide content
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`stepContent${i}`).classList.toggle('hidden', i !== step);
+            }
+            
+            currentStep = step;
+        }
+        
+        function updateCities() {
+            const destination = document.getElementById('destination').value;
+            const citySelect = document.getElementById('city');
+            
+            if (destination && cityData[destination]) {
+                citySelect.innerHTML = '<option value="">选择城市</option>' +
+                    cityData[destination].map(city => 
+                        `<option value="${city.id}">${city.name}</option>`
+                    ).join('');
+            } else {
+                citySelect.innerHTML = '<option value="">请先选择目的地</option>';
+            }
+        }
+        
+        function handleTagInput(e) {
+            if (e.key === 'Enter' && tags.length < 5) {
+                e.preventDefault();
+                const value = e.target.value.trim();
+                if (value && value.length <= 10 && !tags.includes(value)) {
+                    tags.push(value);
+                    renderTags();
+                    e.target.value = '';
+                }
+            }
+        }
+        
+        function addQuickTag(tag) {
+            if (tags.length < 5 && !tags.includes(tag)) {
+                tags.push(tag);
+                renderTags();
+            }
+        }
+        
+        function removeTag(tag) {
+            tags = tags.filter(t => t !== tag);
+            renderTags();
+        }
+        
+        function renderTags() {
+            document.getElementById('tagContainer').innerHTML = tags.map(tag => `
+                <span class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 text-sm rounded-full">
+                    ${tag}
+                    <button type="button" onclick="removeTag('${tag}')" class="ml-1 hover:text-blue-900">
+                        <i class="fas fa-times text-xs"></i>
+                    </button>
+                </span>
+            `).join('');
+        }
+        
+        function validateForm() {
+            const title = document.getElementById('photoTitle').value.trim();
+            const desc = document.getElementById('photoDesc').value.trim();
+            const destination = document.getElementById('destination').value;
+            const city = document.getElementById('city').value;
+            const theme = document.getElementById('theme').value;
+            
+            if (!title) { alert('请输入图片标题'); return false; }
+            if (!desc) { alert('请输入图片描述'); return false; }
+            if (!destination) { alert('请选择目的地'); return false; }
+            if (!city) { alert('请选择城市'); return false; }
+            if (!theme) { alert('请选择图片主题'); return false; }
+            
+            return true;
+        }
+        
+        function renderConfirmInfo() {
+            document.getElementById('confirmImage').src = URL.createObjectURL(currentFiles[0]);
+            document.getElementById('confirmTitle').textContent = document.getElementById('photoTitle').value;
+            document.getElementById('confirmDesc').textContent = document.getElementById('photoDesc').value;
+            
+            const destName = document.getElementById('destination').selectedOptions[0].textContent;
+            const cityName = document.getElementById('city').selectedOptions[0].textContent;
+            document.getElementById('confirmLocation').textContent = destName + ' · ' + cityName;
+            
+            const themeName = document.getElementById('theme').selectedOptions[0].textContent;
+            document.getElementById('confirmTheme').textContent = themeName;
+            
+            document.getElementById('confirmTags').innerHTML = tags.map(tag => 
+                `<span class="px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-full">${tag}</span>`
+            ).join('');
+        }
+        
+        function submitPhotos() {
+            if (!document.getElementById('agreement').checked) {
+                alert('请阅读并同意图片上传协议');
+                return;
+            }
+            
+            // Show loading
+            const btn = event.target;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>提交中...';
+            btn.disabled = true;
+            
+            // Simulate upload
+            setTimeout(() => {
+                // Hide all steps
+                for (let i = 1; i <= 3; i++) {
+                    document.getElementById(`stepContent${i}`).classList.add('hidden');
+                }
+                document.getElementById('stepSuccess').classList.remove('hidden');
+                
+                // Save to localStorage
+                const uploads = JSON.parse(localStorage.getItem('uploads') || '[]');
+                uploads.push({
+                    id: 'up' + Date.now(),
+                    title: document.getElementById('photoTitle').value,
+                    date: new Date().toISOString().split('T')[0],
+                    status: 'pending'
+                });
+                localStorage.setItem('uploads', JSON.stringify(uploads));
+            }, 2000);
+        }
+        
+        function resetUpload() {
+            currentFiles = [];
+            currentStep = 1;
+            tags = [];
+            
+            // Reset form
+            document.getElementById('infoForm').reset();
+            document.getElementById('tagContainer').innerHTML = '';
+            
+            // Hide success, show step 1
+            document.getElementById('stepSuccess').classList.add('hidden');
+            document.getElementById('previewArea').classList.add('hidden');
+            document.getElementById('fileInput').value = '';
+            
+            // Reset step indicators
+            for (let i = 1; i <= 3; i++) {
+                const indicator = document.getElementById(`step${i}`);
+                const progress = document.getElementById(`progress${i}`);
+                
+                indicator.classList.remove('active', 'completed');
+                indicator.classList.add('bg-gray-200', 'text-gray-500');
+                indicator.textContent = i;
+                if (progress) progress.querySelector('div').style.width = '0%';
+            }
+            
+            document.getElementById('step1').classList.add('active');
+            document.getElementById('step1').classList.remove('bg-gray-200', 'text-gray-500');
+            document.getElementById('stepContent1').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>

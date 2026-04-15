@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>签证资讯 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#10b981',
+            category: '#10b981',
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="../css/news/news.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+  </style>
+</head>
+<body class="bg-gray-50">
+  <!-- Navigation -->
+  <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold bg-gradient-to-r from-emerald-500 to-teal-400 bg-clip-text text-transparent">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="text-gray-600 hover:text-primary transition">首页</a>
+          <a href="../destinations.html" class="text-gray-600 hover:text-primary transition">目的地</a>
+          <a href="../routes.html" class="text-gray-600 hover:text-primary transition">路线</a>
+          <a href="index.html" class="text-primary font-semibold border-b-2 border-primary pb-1">资讯</a>
+          <a href="../tools/index.html" class="text-gray-600 hover:text-primary transition">工具箱</a>
+        </div>
+        <button class="md:hidden text-2xl" onclick="toggleMenu()">☰</button>
+      </div>
+      <div id="mobileMenu" class="hidden md:hidden mt-4 pb-4 space-y-3 border-t pt-4">
+        <a href="../index.html" class="block py-2 text-gray-600">首页</a>
+        <a href="../destinations.html" class="block py-2 text-gray-600">目的地</a>
+        <a href="../routes.html" class="block py-2 text-gray-600">路线</a>
+        <a href="index.html" class="block py-2 text-primary font-semibold">资讯</a>
+        <a href="../tools/index.html" class="block py-2 text-gray-600">工具箱</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Category Header -->
+  <section class="bg-gradient-to-r from-emerald-500 to-teal-500 py-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center gap-4 mb-4">
+        <span class="text-5xl">📋</span>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-bold text-white">签证资讯</h1>
+          <p class="text-emerald-100">签证办理、要求更新、免签政策</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Breadcrumb -->
+  <div class="bg-white border-b">
+    <div class="max-w-7xl mx-auto px-4 py-3">
+      <nav class="flex items-center gap-2 text-sm">
+        <a href="index.html" class="text-gray-500 hover:text-primary transition">资讯中心</a>
+        <span class="text-gray-400">/</span>
+        <span class="text-primary">签证资讯</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Category Navigation -->
+  <div class="bg-white border-b sticky top-16 z-40">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex items-center gap-2 py-3 overflow-x-auto">
+        <a href="policy.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">政策资讯</a>
+        <a href="visa.html" class="px-4 py-2 bg-primary text-white rounded-full text-sm font-medium whitespace-nowrap">签证资讯</a>
+        <a href="transport.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">交通资讯</a>
+        <a href="deals.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">优惠资讯</a>
+        <a href="events.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">活动资讯</a>
+        <a href="safety.html" class="px-4 py-2 bg-gray-100 text-gray-600 rounded-full text-sm font-medium hover:bg-gray-200 whitespace-nowrap">安全资讯</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+      <div class="flex-1">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-xl font-bold text-gray-800">资讯列表</h2>
+          <span id="articleCount" class="text-gray-500 text-sm">0 篇资讯</span>
+        </div>
+        <div id="articlesList" class="space-y-4"></div>
+        <div id="emptyState" class="hidden text-center py-16">
+          <div class="text-6xl mb-4">📋</div>
+          <h3 class="text-xl font-semibold text-gray-800 mb-2">暂无签证资讯</h3>
+          <p class="text-gray-500 mb-6">稍后再来看看吧</p>
+          <a href="index.html" class="inline-block px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-emerald-600 transition">返回资讯首页</a>
+        </div>
+      </div>
+
+      <aside class="lg:w-80">
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+          <h3 class="font-bold text-gray-800 mb-4">其他分类</h3>
+          <div class="space-y-3">
+            <a href="policy.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+              <span class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-lg">📜</span>
+              <div><p class="font-medium text-gray-800">政策资讯</p><p class="text-xs text-gray-500">出入境政策变化</p></div>
+            </a>
+            <a href="transport.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+              <span class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-lg">✈️</span>
+              <div><p class="font-medium text-gray-800">交通资讯</p><p class="text-xs text-gray-500">航班、铁路信息</p></div>
+            </a>
+            <a href="deals.html" class="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-50 transition">
+              <span class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-lg">🎫</span>
+              <div><p class="font-medium text-gray-800">优惠资讯</p><p class="text-xs text-gray-500">特价机票、酒店促销</p></div>
+            </a>
+          </div>
+        </div>
+
+        <div class="bg-gradient-to-br from-emerald-500 to-teal-400 rounded-xl p-6 text-white">
+          <h3 class="font-bold mb-2 flex items-center gap-2"><span class="text-xl">🔔</span>订阅推送</h3>
+          <p class="text-white/80 text-sm mb-4">第一时间获取最新签证信息</p>
+          <a href="subscribe.html" class="block w-full py-2.5 bg-white text-primary text-center rounded-lg font-semibold hover:bg-gray-100 transition">立即订阅</a>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="bg-gray-900 text-white py-12 mt-12">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="grid md:grid-cols-4 gap-8 mb-8">
+        <div><div class="flex items-center gap-2 mb-4"><span class="text-2xl">🧭</span><span class="text-xl font-bold">游导旅游</span></div><p class="text-gray-400 text-sm">您的贴心旅行助手</p></div>
+        <div><h4 class="font-semibold mb-3">快速链接</h4><ul class="space-y-2 text-gray-400 text-sm"><li><a href="index.html" class="hover:text-white transition">资讯中心</a></li></ul></div>
+        <div><h4 class="font-semibold mb-3">帮助</h4><ul class="space-y-2 text-gray-400 text-sm"><li><a href="../faq.html" class="hover:text-white transition">常见问题</a></li></ul></div>
+        <div><h4 class="font-semibold mb-3">关注我们</h4><div class="flex gap-4"><a href="#" class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary transition">微</a></div></div>
+      </div>
+      <div class="border-t border-gray-800 pt-8 text-center text-gray-500 text-sm"><p>&copy; 2024 游导旅游 youdao-travel.com</p></div>
+    </div>
+  </footer>
+
+  <script>
+    const CATEGORY_ID = 'visa';
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        const response = await fetch('../data/news.json');
+        const data = await response.json();
+        const articles = (data.articles || []).filter(a => a.category === CATEGORY_ID);
+        document.getElementById('articleCount').textContent = articles.length + ' 篇资讯';
+        if (articles.length === 0) {
+          document.getElementById('articlesList').classList.add('hidden');
+          document.getElementById('emptyState').classList.remove('hidden');
+          return;
+        }
+        document.getElementById('articlesList').innerHTML = articles.map(article => `
+          <a href="detail.html?id=${article.id}" class="news-card bg-white rounded-xl p-4 flex gap-4 shadow-sm hover:shadow-md transition">
+            <div class="w-32 h-24 rounded-lg overflow-hidden flex-shrink-0"><img src="${article.image}" alt="${article.title}" class="w-full h-full object-cover"></div>
+            <div class="flex-1 min-w-0">
+              <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2 hover:text-primary transition">${article.title}</h3>
+              <p class="text-sm text-gray-500 line-clamp-2 mb-3">${article.summary}</p>
+              <div class="flex items-center gap-4 text-xs text-gray-400"><span>${formatTime(article.publishTime)}</span><span>👁 ${formatNumber(article.viewCount)}</span></div>
+            </div>
+          </a>
+        `).join('');
+      } catch (error) { console.error('加载失败:', error); }
+    });
+    function formatTime(d) { const date = new Date(d), now = new Date(), diff = now - date; if (diff < 3600000) return Math.floor(diff/60000) + '分钟前'; if (diff < 86400000) return Math.floor(diff/3600000) + '小时前'; if (diff < 604800000) return Math.floor(diff/86400000) + '天前'; return date.toLocaleDateString('zh-CN', {month:'short',day:'numeric'}); }
+    function formatNumber(n) { return n >= 10000 ? (n/10000).toFixed(1) + '万' : n.toString(); }
+    function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('hidden'); }
+  </script>
+</body>
+</html>
