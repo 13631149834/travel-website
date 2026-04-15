@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>壁纸详情 - 游导旅游</title>
+  <link rel="stylesheet" href="../css/wallpapers.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { margin: 0; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+  </style>
+</head>
+<body class="wp-page">
+  <!-- Navigation -->
+  <nav style="background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); color: white; padding: 16px 0; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 20px rgba(0,0,0,0.1);">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center;">
+      <a href="index.html" style="color: white; text-decoration: none; font-size: 24px; font-weight: bold; display: flex; align-items: center; gap: 8px;">
+        <span style="font-size: 28px;">🧭</span>
+        <span>游导旅游</span>
+      </a>
+      <div style="display: flex; gap: 24px; align-items: center;">
+        <a href="index.html" style="color: white; text-decoration: none; opacity: 0.9;">返回壁纸首页</a>
+        <a href="favorites.html" style="color: white; text-decoration: none; display: flex; align-items: center; gap: 6px;">
+          <i class="fas fa-heart"></i> 我的收藏
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wp-detail">
+    <!-- 面包屑 -->
+    <div style="margin-bottom: 24px; font-size: 14px; color: #64748b;">
+      <a href="index.html" style="color: #0ea5e9; text-decoration: none;">壁纸首页</a>
+      <span style="margin: 0 8px;">/</span>
+      <a href="#" id="categoryLink" style="color: #0ea5e9; text-decoration: none;"></a>
+      <span style="margin: 0 8px;">/</span>
+      <span id="currentTitle"></span>
+    </div>
+
+    <div class="wp-detail-grid">
+      <!-- 左侧预览区 -->
+      <div class="wp-preview">
+        <img id="mainImage" src="" alt="" style="width: 100%; aspect-ratio: 16/10; object-fit: cover;">
+        <div class="wp-thumbnails" id="thumbnails"></div>
+      </div>
+
+      <!-- 右侧信息区 -->
+      <div class="wp-sidebar">
+        <!-- 壁纸信息 -->
+        <div class="wp-info-card">
+          <h2 id="wallpaperTitle"></h2>
+          <p class="location">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="wallpaperLocation"></span>
+          </p>
+          
+          <ul class="wp-meta-list">
+            <li>
+              <span class="label">摄影师</span>
+              <span class="value" id="photographer"></span>
+            </li>
+            <li>
+              <span class="label">上传日期</span>
+              <span class="value" id="uploadDate"></span>
+            </li>
+            <li>
+              <span class="label">下载次数</span>
+              <span class="value" id="downloads"><i class="fas fa-download" style="color: #0ea5e9;"></i> <span id="downloadCount"></span></span>
+            </li>
+            <li>
+              <span class="label">收藏数</span>
+              <span class="value" id="favorites"><i class="fas fa-heart" style="color: #ef4444;"></i> <span id="favoriteCount"></span></span>
+            </li>
+          </ul>
+
+          <div class="wp-tags" id="tagsContainer" style="margin-top: 16px;"></div>
+        </div>
+
+        <!-- 下载选项 -->
+        <div class="wp-download-options">
+          <h3><i class="fas fa-download" style="color: #0ea5e9;"></i> 选择下载尺寸</h3>
+          
+          <!-- 手机尺寸 -->
+          <div class="wp-size-group">
+            <h4><i class="fas fa-mobile-alt"></i> 手机</h4>
+            <div class="wp-size-buttons" id="mobileSizes"></div>
+          </div>
+
+          <!-- 平板尺寸 -->
+          <div class="wp-size-group">
+            <h4><i class="fas fa-tablet-alt"></i> 平板</h4>
+            <div class="wp-size-buttons" id="tabletSizes"></div>
+          </div>
+
+          <!-- 桌面尺寸 -->
+          <div class="wp-size-group">
+            <h4><i class="fas fa-desktop"></i> 桌面</h4>
+            <div class="wp-size-buttons" id="desktopSizes"></div>
+          </div>
+
+          <button class="wp-download-btn" id="downloadBtn" onclick="downloadSelected()">
+            <i class="fas fa-download"></i>
+            <span id="downloadBtnText">下载原图</span>
+          </button>
+
+          <button class="wp-batch-btn" style="width: 100%; margin-top: 12px; justify-content: center;" onclick="toggleFavorite()">
+            <i class="fas fa-heart" id="favoriteIcon"></i>
+            <span id="favoriteBtnText">添加收藏</span>
+          </button>
+        </div>
+
+        <!-- 分享 -->
+        <div class="wp-info-card" style="text-align: center;">
+          <h3 style="font-size: 14px; color: #64748b; margin-bottom: 12px;">分享到</h3>
+          <div style="display: flex; justify-content: center; gap: 16px;">
+            <button onclick="shareTo('wechat')" style="background: #07c160; color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 20px;">
+              <i class="fab fa-weixin"></i>
+            </button>
+            <button onclick="shareTo('weibo')" style="background: #e6162d; color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 20px;">
+              <i class="fab fa-weibo"></i>
+            </button>
+            <button onclick="shareTo('qq')" style="background: #12b7f5; color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 20px;">
+              <i class="fab fa-qq"></i>
+            </button>
+            <button onclick="copyLink()" style="background: #64748b; color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 20px;">
+              <i class="fas fa-link"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 相关推荐 -->
+    <section class="wp-related">
+      <h2><i class="fas fa-images" style="color: #0ea5e9;"></i> 相关壁纸推荐</h2>
+      <div class="wp-grid" id="relatedWallpapers"></div>
+    </section>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background: #1e293b; color: white; padding: 40px 20px; margin-top: 60px;">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+      <p style="opacity: 0.8;">© 2024 游导旅游 All Rights Reserved</p>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toastContainer"></div>
+
+  <script>
+    let wallpapersData = null;
+    let currentWallpaper = null;
+    let favorites = JSON.parse(localStorage.getItem('wpFavorites') || '[]');
+    let selectedSize = null;
+
+    // 获取URL参数
+    function getUrlParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    // 加载数据
+    async function loadData() {
+      try {
+        const response = await fetch('../data/wallpapers.json');
+        wallpapersData = await response.json();
+        
+        const id = getUrlParam('id');
+        if (id) {
+          currentWallpaper = wallpapersData.wallpapers.find(w => w.id === id);
+          if (currentWallpaper) {
+            renderDetail();
+            renderRelated();
+          } else {
+            showToast('壁纸不存在', 'error');
+            setTimeout(() => window.location.href = 'index.html', 1500);
+          }
+        } else {
+          window.location.href = 'index.html';
+        }
+      } catch (error) {
+        console.error('加载数据失败:', error);
+        showToast('数据加载失败', 'error');
+      }
+    }
+
+    // 渲染详情
+    function renderDetail() {
+      const wp = currentWallpaper;
+      
+      // 更新页面标题
+      document.title = `${wp.title} - 游导旅游`;
+      
+      // 面包屑
+      document.getElementById('currentTitle').textContent = wp.title;
+      const categoryLink = document.getElementById('categoryLink');
+      categoryLink.textContent = getCategoryName(wp.category);
+      categoryLink.href = `${wp.category}.html`;
+      
+      // 主图
+      document.getElementById('mainImage').src = wp.preview;
+      document.getElementById('mainImage').alt = wp.title;
+      
+      // 缩略图
+      const thumbsContainer = document.getElementById('thumbnails');
+      thumbsContainer.innerHTML = wp.thumbnails.map((thumb, index) => `
+        <img src="${thumb}" alt="缩略图 ${index + 1}" class="${index === 0 ? 'active' : ''}" 
+             onclick="changeMainImage('${thumb}', this)">
+      `).join('');
+      
+      // 信息
+      document.getElementById('wallpaperTitle').textContent = wp.title;
+      document.getElementById('wallpaperLocation').textContent = wp.location;
+      document.getElementById('photographer').textContent = wp.photographer;
+      document.getElementById('uploadDate').textContent = wp.uploadDate;
+      document.getElementById('downloadCount').textContent = wp.downloads.toLocaleString();
+      document.getElementById('favoriteCount').textContent = wp.favorites.toLocaleString();
+      
+      // 标签
+      document.getElementById('tagsContainer').innerHTML = wp.tags.map(tag => 
+        `<span class="wp-tag">${tag}</span>`
+      ).join('');
+      
+      // 尺寸选项
+      renderSizeOptions('mobileSizes', wp.sizes.mobile);
+      renderSizeOptions('tabletSizes', wp.sizes.tablet);
+      renderSizeOptions('desktopSizes', wp.sizes.desktop);
+      
+      // 收藏状态
+      updateFavoriteButton();
+    }
+
+    // 渲染尺寸选项
+    function renderSizeOptions(containerId, sizes) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = sizes.map(size => `
+        <button class="wp-size-btn" onclick="selectSize('${size}', '${containerId}')">
+          <i class="fas fa-check-circle"></i> ${size}
+        </button>
+      `).join('');
+    }
+
+    // 选择尺寸
+    function selectSize(size, containerId) {
+      // 移除其他选中状态
+      document.querySelectorAll('.wp-size-btn').forEach(btn => {
+        btn.classList.remove('selected');
+      });
+      
+      // 选中当前
+      event.target.classList.add('selected');
+      selectedSize = size;
+      
+      // 更新下载按钮
+      document.getElementById('downloadBtnText').textContent = `下载 ${size}`;
+    }
+
+    // 切换主图
+    function changeMainImage(src, thumb) {
+      document.getElementById('mainImage').src = src;
+      document.querySelectorAll('.wp-thumbnails img').forEach(img => {
+        img.classList.remove('active');
+      });
+      thumb.classList.add('active');
+    }
+
+    // 下载
+    function downloadSelected() {
+      if (!selectedSize) {
+        showToast('请先选择下载尺寸', 'error');
+        return;
+      }
+      
+      showToast(`开始下载 ${selected} 分辨率图片...`, 'success');
+      
+      // 模拟下载
+      const link = document.createElement('a');
+      link.href = currentWallpaper.preview;
+      link.download = `${currentWallpaper.title}-${selectedSize}.jpg`;
+      link.target = '_blank';
+      link.click();
+      
+      // 更新统计
+      currentWallpaper.downloads++;
+      document.getElementById('downloadCount').textContent = currentWallpaper.downloads.toLocaleString();
+    }
+
+    // 收藏
+    function toggleFavorite() {
+      const index = favorites.indexOf(currentWallpaper.id);
+      if (index > -1) {
+        favorites.splice(index, 1);
+        showToast('已取消收藏', 'success');
+      } else {
+        favorites.push(currentWallpaper.id);
+        showToast('已添加到收藏', 'success');
+      }
+      localStorage.setItem('wpFavorites', JSON.stringify(favorites));
+      updateFavoriteButton();
+    }
+
+    function updateFavoriteButton() {
+      const isFavorite = favorites.includes(currentWallpaper.id);
+      const icon = document.getElementById('favoriteIcon');
+      const text = document.getElementById('favoriteBtnText');
+      
+      if (isFavorite) {
+        icon.className = 'fas fa-heart';
+        icon.style.color = '#ef4444';
+        text.textContent = '取消收藏';
+      } else {
+        icon.className = 'far fa-heart';
+        icon.style.color = '';
+        text.textContent = '添加收藏';
+      }
+    }
+
+    // 分享
+    function shareTo(platform) {
+      const url = encodeURIComponent(window.location.href);
+      const title = encodeURIComponent(currentWallpaper.title + ' - 游导旅游');
+      const urls = {
+        wechat: 'javascript:void(0)',
+        weibo: `https://service.weibo.com/share/share.php?url=${url}&title=${title}`,
+        qq: `https://connect.qq.com/widget/shareqq/index.html?url=${url}&title=${title}`
+      };
+      
+      if (platform === 'wechat') {
+        showToast('请截图分享到微信', 'success');
+      } else {
+        window.open(urls[platform], '_blank');
+      }
+    }
+
+    function copyLink() {
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        showToast('链接已复制', 'success');
+      });
+    }
+
+    // 相关推荐
+    function renderRelated() {
+      const related = wallpapersData.wallpapers
+        .filter(w => w.category === currentWallpaper.category && w.id !== currentWallpaper.id)
+        .slice(0, 4);
+      
+      document.getElementById('relatedWallpapers').innerHTML = related.map(wp => createWallpaperCard(wp)).join('');
+    }
+
+    function createWallpaperCard(wp) {
+      const isFavorite = favorites.includes(wp.id);
+      
+      return `
+        <div class="wp-card" onclick="goToDetail('${wp.id}')">
+          <div class="wp-card-image">
+            <img src="${wp.preview}" alt="${wp.title}" loading="lazy">
+            <div class="wp-card-badge">${getCategoryName(wp.category)}</div>
+            <div class="wp-card-overlay">
+              <div class="wp-card-actions">
+                <button class="wp-btn-download" onclick="event.stopPropagation(); downloadWallpaper('${wp.id}')">
+                  <i class="fas fa-download"></i> 下载
+                </button>
+                <button class="wp-btn-favorite ${isFavorite ? 'active' : ''}" onclick="event.stopPropagation(); toggleFavoriteItem('${wp.id}')">
+                  <i class="fas fa-heart"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="wp-card-info">
+            <h3>${wp.title}</h3>
+            <div class="wp-card-meta">
+              <span><i class="fas fa-map-marker-alt"></i> ${wp.location}</span>
+              <span><i class="fas fa-download"></i> ${formatNumber(wp.downloads)}</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function goToDetail(id) {
+      window.location.href = `detail.html?id=${id}`;
+    }
+
+    function downloadWallpaper(id) {
+      const wp = wallpapersData.wallpapers.find(w => w.id === id);
+      if (wp) {
+        showToast(`开始下载: ${wp.title}`, 'success');
+        const link = document.createElement('a');
+        link.href = wp.preview;
+        link.download = `${wp.title}.jpg`;
+        link.target = '_blank';
+        link.click();
+      }
+    }
+
+    function toggleFavoriteItem(id) {
+      const index = favorites.indexOf(id);
+      if (index > -1) {
+        favorites.splice(index, 1);
+      } else {
+        favorites.push(id);
+      }
+      localStorage.setItem('wpFavorites', JSON.stringify(favorites));
+      renderRelated();
+    }
+
+    // 工具函数
+    function getCategoryName(id) {
+      const cat = wallpapersData.categories.find(c => c.id === id);
+      return cat ? cat.name : id;
+    }
+
+    function formatNumber(num) {
+      if (num >= 10000) {
+        return (num / 10000).toFixed(1) + '万';
+      }
+      return num.toLocaleString();
+    }
+
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `wp-toast ${type}`;
+      toast.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => toast.remove(), 300);
+      }, 2500);
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

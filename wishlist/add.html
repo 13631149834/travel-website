@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>添加新愿望 - 游导旅游</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0ea5e9',
+            secondary: '#06b6d4',
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+    body { font-family: 'Noto Sans SC', sans-serif; }
+    .gradient-bg { background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 50%, #10b981 100%); }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-4px); }
+    .fade-in { animation: fadeIn 0.5s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .category-option { transition: all 0.2s ease; }
+    .category-option:hover { transform: scale(1.05); }
+    .category-option.selected { ring: 4px; transform: scale(1.05); }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen">
+  <!-- Navigation -->
+  <nav class="gradient-bg text-white sticky top-0 z-50 shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="flex items-center gap-2 hover:opacity-90 transition">
+          <span class="text-3xl">🧭</span>
+          <span class="text-2xl font-bold">游导旅游</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="../index.html" class="hover:opacity-80 transition">首页</a>
+          <a href="index.html" class="font-semibold border-b-2 border-white pb-1">愿望清单</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-3xl mx-auto px-4 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8 fade-in">
+      <div class="inline-block px-4 py-1.5 bg-primary/10 rounded-full text-primary text-sm mb-4">✨ 开始规划你的梦想之旅</div>
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">🎯 添加新愿望</h1>
+      <p class="text-gray-500">写下你的旅行愿望，让它成为现实的第一步</p>
+    </div>
+
+    <!-- Form -->
+    <form id="wishForm" class="bg-white rounded-2xl shadow-xl p-6 md:p-8 fade-in">
+      <!-- Title -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-2">
+          <span class="text-red-500">*</span> 愿望标题
+        </label>
+        <input type="text" id="title" required
+               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+               placeholder="例如：日本京都赏樱">
+      </div>
+
+      <!-- Category -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-3">
+          <span class="text-red-500">*</span> 愿望分类
+        </label>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+          <button type="button" onclick="selectCategory('destination')" 
+                  class="category-option p-4 border-2 border-gray-200 rounded-xl text-center hover:border-blue-400 selected" 
+                  data-category="destination">
+            <div class="text-3xl mb-1">🌍</div>
+            <div class="text-sm font-medium text-gray-700">目的地</div>
+          </button>
+          <button type="button" onclick="selectCategory('experience')" 
+                  class="category-option p-4 border-2 border-gray-200 rounded-xl text-center hover:border-purple-400" 
+                  data-category="experience">
+            <div class="text-3xl mb-1">🎯</div>
+            <div class="text-sm font-medium text-gray-700">体验</div>
+          </button>
+          <button type="button" onclick="selectCategory('food')" 
+                  class="category-option p-4 border-2 border-gray-200 rounded-xl text-center hover:border-orange-400" 
+                  data-category="food">
+            <div class="text-3xl mb-1">🍜</div>
+            <div class="text-sm font-medium text-gray-700">美食</div>
+          </button>
+          <button type="button" onclick="selectCategory('accommodation')" 
+                  class="category-option p-4 border-2 border-gray-200 rounded-xl text-center hover:border-pink-400" 
+                  data-category="accommodation">
+            <div class="text-3xl mb-1">🏨</div>
+            <div class="text-sm font-medium text-gray-700">住宿</div>
+          </button>
+          <button type="button" onclick="selectCategory('adventure')" 
+                  class="category-option p-4 border-2 border-gray-200 rounded-xl text-center hover:border-red-400" 
+                  data-category="adventure">
+            <div class="text-3xl mb-1">⛷️</div>
+            <div class="text-sm font-medium text-gray-700">挑战</div>
+          </button>
+        </div>
+        <input type="hidden" id="category" value="destination" required>
+      </div>
+
+      <!-- Description -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-2">愿望描述</label>
+        <textarea id="description" rows="3"
+                  class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition resize-none"
+                  placeholder="详细描述你的愿望，让它更加具体..."></textarea>
+      </div>
+
+      <!-- Destination -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-2">
+          <span class="text-red-500">*</span> 目的地
+        </label>
+        <input type="text" id="destination" required
+               class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+               placeholder="例如：京都，日本">
+      </div>
+
+      <!-- Two Column: Date and Budget -->
+      <div class="grid md:grid-cols-2 gap-6 mb-6">
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">目标日期</label>
+          <input type="date" id="targetDate"
+                 class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition">
+        </div>
+        <div>
+          <label class="block text-gray-700 font-medium mb-2">预计预算</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">¥</span>
+            <input type="number" id="estimatedBudget" min="0"
+                   class="w-full pl-8 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
+                   placeholder="0">
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-2">参考图片</label>
+        <div id="imageUploadArea" 
+             class="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center cursor-pointer hover:border-primary transition"
+             onclick="document.getElementById('imageInput').click()">
+          <div id="imagePreview" class="hidden mb-4">
+            <img id="previewImg" src="" alt="预览" class="max-h-48 mx-auto rounded-lg">
+          </div>
+          <div id="uploadPlaceholder">
+            <div class="text-5xl mb-3">🖼️</div>
+            <p class="text-gray-500 mb-1">点击上传图片</p>
+            <p class="text-gray-400 text-sm">支持 JPG、PNG 格式</p>
+          </div>
+        </div>
+        <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageUpload(event)">
+        <input type="hidden" id="imageUrl" value="">
+      </div>
+
+      <!-- Notes -->
+      <div class="mb-6">
+        <label class="block text-gray-700 font-medium mb-2">备注信息</label>
+        <textarea id="notes" rows="2"
+                  class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition resize-none"
+                  placeholder="补充一些注意事项，如需要提前预约、特殊装备等..."></textarea>
+      </div>
+
+      <!-- Checklist -->
+      <div class="mb-8">
+        <label class="block text-gray-700 font-medium mb-3">准备清单</label>
+        <div id="checklistContainer" class="space-y-2 mb-3">
+          <!-- Checklist items will be added here -->
+        </div>
+        <button type="button" onclick="addChecklistItem()"
+                class="text-primary text-sm font-medium flex items-center gap-2 hover:text-primary/80 transition">
+          ➕ 添加清单项
+        </button>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-4 pt-4 border-t border-gray-100">
+        <a href="index.html" class="flex-1 py-3 bg-gray-100 text-gray-600 rounded-xl text-center font-medium hover:bg-gray-200 transition">
+          取消
+        </a>
+        <button type="submit" class="flex-1 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition shadow-lg">
+          💾 保存愿望
+        </button>
+      </div>
+    </form>
+
+    <!-- Tips -->
+    <div class="mt-8 bg-blue-50 rounded-2xl p-6 fade-in">
+      <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
+        <span>💡</span> 小贴士
+      </h3>
+      <ul class="text-gray-600 text-sm space-y-2">
+        <li>• 设定具体的目标日期可以帮助你更好地规划</li>
+        <li>• 详细的描述让愿望更加清晰，也更容易实现</li>
+        <li>• 添加准备清单可以帮助你追踪完成进度</li>
+        <li>• 上传参考图片可以让你更期待这次旅行</li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 text-white py-6 mt-12">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <p class="text-gray-400">© 2025 游导旅游 · 让旅行更简单</p>
+    </div>
+  </footer>
+
+  <script>
+    const STORAGE_KEY = 'travel_wishlist';
+    let selectedCategory = 'destination';
+    
+    // Category colors
+    const categoryColors = {
+      destination: { border: 'border-blue-400', ring: 'ring-blue-400', bg: 'bg-blue-50' },
+      experience: { border: 'border-purple-400', ring: 'ring-purple-400', bg: 'bg-purple-50' },
+      food: { border: 'border-orange-400', ring: 'ring-orange-400', bg: 'bg-orange-50' },
+      accommodation: { border: 'border-pink-400', ring: 'ring-pink-400', bg: 'bg-pink-50' },
+      adventure: { border: 'border-red-400', ring: 'ring-red-400', bg: 'bg-red-50' }
+    };
+
+    // Select category
+    function selectCategory(category) {
+      selectedCategory = category;
+      document.getElementById('category').value = category;
+      
+      // Update UI
+      document.querySelectorAll('.category-option').forEach(btn => {
+        btn.classList.remove('selected', 'border-blue-400', 'border-purple-400', 'border-orange-400', 'border-pink-400', 'border-red-400');
+        btn.classList.add('border-gray-200');
+      });
+      
+      const selectedBtn = document.querySelector(`[data-category="${category}"]`);
+      const color = categoryColors[category];
+      selectedBtn.classList.remove('border-gray-200');
+      selectedBtn.classList.add('selected', color.border, color.ring);
+    }
+
+    // Handle image upload
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById('previewImg').src = e.target.result;
+          document.getElementById('imagePreview').classList.remove('hidden');
+          document.getElementById('uploadPlaceholder').classList.add('hidden');
+          document.getElementById('imageUrl').value = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // Add checklist item
+    let checklistCount = 0;
+    function addChecklistItem() {
+      const container = document.getElementById('checklistContainer');
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'flex items-center gap-2';
+      itemDiv.innerHTML = `
+        <input type="checkbox" class="w-5 h-5 rounded border-gray-300 text-primary focus:ring-primary">
+        <input type="text" placeholder="清单项目..." 
+               class="flex-1 px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none text-sm">
+        <button type="button" onclick="this.parentElement.remove()" class="text-gray-400 hover:text-red-500 p-1">
+          ✕
+        </button>
+      `;
+      container.appendChild(itemDiv);
+      checklistCount++;
+    }
+
+    // Get checklist items
+    function getChecklistItems() {
+      const items = [];
+      document.querySelectorAll('#checklistContainer > div').forEach(div => {
+        const checkbox = div.querySelector('input[type="checkbox"]');
+        const input = div.querySelector('input[type="text"]');
+        if (input.value.trim()) {
+          items.push({
+            item: input.value.trim(),
+            completed: checkbox.checked
+          });
+        }
+      });
+      return items;
+    }
+
+    // Generate unique ID
+    function generateId() {
+      return 'w' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    // Form submit
+    document.getElementById('wishForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const wish = {
+        id: generateId(),
+        title: document.getElementById('title').value.trim(),
+        category: document.getElementById('category').value,
+        description: document.getElementById('description').value.trim(),
+        destination: document.getElementById('destination').value.trim(),
+        targetDate: document.getElementById('targetDate').value,
+        estimatedBudget: Number(document.getElementById('estimatedBudget').value) || 0,
+        image: document.getElementById('imageUrl').value,
+        notes: document.getElementById('notes').value.trim(),
+        checklist: getChecklistItems(),
+        progress: 0,
+        status: 'active',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Save to localStorage
+      const wishes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      wishes.unshift(wish);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(wishes));
+      
+      // Show success message
+      showToast('🎉 愿望已添加成功！');
+      
+      // Redirect to list after delay
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 1500);
+    });
+
+    // Toast notification
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-green-500 text-white px-8 py-4 rounded-2xl shadow-2xl z-50 fade-in';
+      toast.innerHTML = `<div class="text-lg font-medium">${message}</div>`;
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 2000);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      selectCategory('destination');
+      addChecklistItem();
+      addChecklistItem();
+    });
+  </script>
+</body>
+</html>
