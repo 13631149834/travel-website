@@ -27,7 +27,7 @@
             border-radius: 20px;
             padding: 40px;
             width: 100%;
-            max-width: 420px;
+            max-width: 480px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.2);
         }
         .logo {
@@ -43,6 +43,32 @@
             font-size: 14px;
             margin-top: 5px;
         }
+        
+        /* Tab切换 */
+        .tab-switch {
+            display: flex;
+            background: #F3F4F6;
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 25px;
+        }
+        .tab-switch button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #6B7280;
+            transition: all 0.3s;
+        }
+        .tab-switch button.active {
+            background: white;
+            color: #6366F1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
         .form-group {
             margin-bottom: 20px;
         }
@@ -52,7 +78,7 @@
             color: #374151;
             font-weight: 500;
         }
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #E5E7EB;
@@ -60,7 +86,7 @@
             font-size: 15px;
             transition: border-color 0.3s;
         }
-        .form-group input:focus {
+        .form-group input:focus, .form-group select:focus {
             outline: none;
             border-color: #6366F1;
         }
@@ -137,9 +163,35 @@
             background: white;
             cursor: pointer;
             font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .social-btn:hover {
             border-color: #6366F1;
+        }
+        
+        /* 隐藏表单区域 */
+        .form-section {
+            display: none;
+        }
+        .form-section.active {
+            display: block;
+        }
+        
+        /* 提示信息 */
+        .tip {
+            background: #FEF3C7;
+            border: 1px solid #F59E0B;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #92400E;
+        }
+        .tip i {
+            margin-right: 6px;
         }
     </style>
 </head>
@@ -147,46 +199,104 @@
     <div class="register-container">
         <div class="logo">
             <h1>🌍 游导旅游</h1>
-            <p>发现精彩世界</p>
+            <p>导游与游客的一站式旅行平台</p>
         </div>
 
-        <form action="#" method="POST">
-            <div class="form-group">
-                <label>手机号码</label>
-                <input type="tel" placeholder="请输入手机号码" required>
-            </div>
+        <!-- Tab切换 -->
+        <div class="tab-switch">
+            <button class="active" onclick="switchTab('tourist')">👤 游客注册</button>
+            <button onclick="switchTab('guide')">🎒 导游入驻</button>
+        </div>
 
-            <div class="form-group">
-                <label>验证码</label>
-                <div class="code-group">
-                    <input type="text" placeholder="请输入验证码" required>
-                    <button type="button" class="code-btn">获取验证码</button>
+        <!-- 游客注册表单 -->
+        <div id="tourist-form" class="form-section active">
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label>手机号码</label>
+                    <input type="tel" placeholder="请输入手机号码" required>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <label>设置密码</label>
-                <input type="password" placeholder="请设置密码（6-20位）" required>
-            </div>
+                <div class="form-group">
+                    <label>验证码</label>
+                    <div class="code-group">
+                        <input type="text" placeholder="请输入验证码" required>
+                        <button type="button" class="code-btn">获取验证码</button>
+                    </div>
+                </div>
 
-            <div class="form-group">
-                <label>确认密码</label>
-                <input type="password" placeholder="请再次输入密码" required>
-            </div>
+                <div class="form-group">
+                    <label>设置密码</label>
+                    <input type="password" placeholder="请设置密码（6-20位）" required>
+                </div>
 
-            <button type="submit" class="submit-btn">立即注册</button>
-        </form>
+                <div class="form-group">
+                    <label>确认密码</label>
+                    <input type="password" placeholder="请再次输入密码" required>
+                </div>
+
+                <button type="submit" class="submit-btn">立即注册</button>
+            </form>
+        </div>
+
+        <!-- 导游入驻表单 -->
+        <div id="guide-form" class="form-section">
+            <form action="#" method="POST">
+                <div class="form-group">
+                    <label>手机号码</label>
+                    <input type="tel" placeholder="请输入手机号码" required>
+                </div>
+
+                <div class="form-group">
+                    <label>验证码</label>
+                    <div class="code-group">
+                        <input type="text" placeholder="请输入验证码" required>
+                        <button type="button" class="code-btn">获取验证码</button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>设置密码</label>
+                    <input type="password" placeholder="请设置密码（6-20位）" required>
+                </div>
+
+                <div class="tip">
+                    <i>💡</i>入驻后您可以展示专业服务、接收预约、管理行程
+                </div>
+
+                <button type="submit" class="submit-btn">申请入驻</button>
+            </form>
+        </div>
 
         <div class="divider"><span>或使用以下方式注册</span></div>
 
         <div class="social-login">
-            <button class="social-btn">微信登录</button>
-            <button class="social-btn">QQ登录</button>
+            <button class="social-btn">📱 微信</button>
+            <button class="social-btn">💬 QQ</button>
         </div>
 
         <p class="login-link">
             已有账号？<a href="login.html">立即登录</a>
         </p>
     </div>
+
+    <script>
+        function switchTab(tab) {
+            // 切换Tab按钮样式
+            document.querySelectorAll('.tab-switch button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // 切换表单显示
+            document.getElementById('tourist-form').classList.remove('active');
+            document.getElementById('guide-form').classList.remove('active');
+            
+            if (tab === 'tourist') {
+                document.getElementById('tourist-form').classList.add('active');
+            } else {
+                document.getElementById('guide-form').classList.add('active');
+            }
+        }
+    </script>
 </body>
 </html>
