@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>导游证备考指南 - 持证导游带你一次上岸</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 备考页面专用样式 */
+    :root {
+      --primary: #f97316;
+      --primary-dark: #ea580c;
+      --primary-light: #fff7ed;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #fafafa;
+    }
+    
+    /* 导航栏 */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 0;
+      background: #fff;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 1.5rem; font-weight: 700; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+    .nav-toggle { display: none; flex-direction: column; gap: 4px; cursor: pointer; padding: 8px; }
+    .nav-toggle span { width: 24px; height: 2px; background: #333; }
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-links a { padding: 8px 16px; border-radius: 8px; transition: all 0.3s; font-size: 0.95rem; }
+    .nav-links a:hover { background: var(--primary); color: #fff; }
+    .nav-links .active { background: var(--primary); color: #fff; }
+    .nav-exam-link { background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important; color: #fff !important; font-weight: 600; }
+
+    /* Hero区域 */
+    .hero {
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+    }
+    
+    .hero h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    
+    .hero .tagline {
+      font-size: 1.25rem;
+      opacity: 0.95;
+      margin-bottom: 30px;
+      max-width: 650px;
+    }
+    
+    .stats {
+      display: flex;
+      gap: 50px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 2.2rem;
+      font-weight: 700;
+    }
+    
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 16px 40px;
+      background: white;
+      color: #f97316;
+      border: none;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+      margin-left: 15px;
+    }
+    
+    .btn-secondary:hover {
+      background: white;
+      color: #f97316;
+    }
+
+    /* 内容区块 */
+    .section {
+      padding: 80px 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    
+    .section-title {
+      font-size: 2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 50px;
+      color: #333;
+    }
+    
+    .section-title span {
+      color: #f97316;
+    }
+
+    /* 优势卡片 */
+    .advantages {
+      background: white;
+    }
+    
+    .advantage-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .advantage-card {
+      padding: 35px 30px;
+      background: #fff7ed;
+      border-radius: 20px;
+      text-align: center;
+      border: 2px solid #fed7aa;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .advantage-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px rgba(249, 115, 22, 0.15);
+    }
+    
+    .advantage-icon {
+      font-size: 3.5rem;
+      margin-bottom: 20px;
+    }
+    
+    .advantage-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #333;
+    }
+    
+    .advantage-desc {
+      font-size: 1rem;
+      color: #666;
+      line-height: 1.7;
+    }
+
+    /* 服务内容 */
+    .services {
+      background: #fff7ed;
+      border-radius: 30px;
+      margin: 0 20px;
+    }
+    
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 25px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    .service-item {
+      background: white;
+      padding: 30px 25px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      transition: transform 0.3s;
+    }
+    
+    .service-item:hover {
+      transform: translateY(-5px);
+    }
+    
+    .service-icon {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+    }
+    
+    .service-name {
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .service-desc {
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    /* 适用人群 */
+    .audience {
+      background: white;
+    }
+    
+    .audience-box {
+      background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
+      border-radius: 24px;
+      padding: 50px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    
+    .audience-item {
+      display: flex;
+      align-items: center;
+      padding: 18px 0;
+      border-bottom: 1px solid #fed7aa;
+    }
+    
+    .audience-item:last-child {
+      border-bottom: none;
+    }
+    
+    .audience-icon {
+      font-size: 1.5rem;
+      margin-right: 20px;
+      width: 50px;
+      height: 50px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .audience-text {
+      color: #333;
+      font-size: 1.05rem;
+    }
+
+    /* 学员评价 */
+    .testimonials {
+      background: white;
+    }
+    
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
+    }
+    
+    .testimonial-card {
+      background: #fff;
+      border: 2px solid #fed7aa;
+      border-radius: 20px;
+      padding: 30px;
+    }
+    
+    .testimonial-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .testimonial-avatar {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-right: 15px;
+    }
+    
+    .testimonial-info h4 {
+      font-size: 1.1rem;
+      color: #333;
+      margin-bottom: 5px;
+    }
+    
+    .testimonial-info span {
+      font-size: 0.85rem;
+      color: #f97316;
+    }
+    
+    .testimonial-content {
+      color: #555;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      font-style: italic;
+    }
+    
+    .testimonial-result {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px dashed #fed7aa;
+      color: #10b981;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* 信任背书 */
+    .trust {
+      background: #fff7ed;
+      border-radius: 30px;
+      margin: 0 20px;
+    }
+    
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 30px;
+      text-align: center;
+    }
+    
+    .trust-item {
+      padding: 30px;
+    }
+    
+    .trust-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #f97316;
+      margin-bottom: 10px;
+    }
+    
+    .trust-label {
+      font-size: 1rem;
+      color: #666;
+    }
+
+    /* 联系方式 */
+    .contact {
+      background: white;
+      text-align: center;
+    }
+    
+    .contact-box {
+      background: #1f2937;
+      color: white;
+      padding: 50px;
+      border-radius: 24px;
+      max-width: 550px;
+      margin: 0 auto 30px;
+    }
+    
+    .contact-box h3 {
+      font-size: 1.5rem;
+      margin-bottom: 25px;
+    }
+    
+    .wechat-id {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #f97316;
+      background: white;
+      padding: 15px 40px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 15px;
+    }
+    
+    .contact-note {
+      color: #9ca3af;
+      font-size: 0.95rem;
+      margin-top: 15px;
+    }
+    
+    .contact-desc {
+      color: #666;
+      font-size: 1rem;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* 底部 */
+    .footer {
+      background: #1f2937;
+      color: white;
+      padding: 50px 20px;
+      text-align: center;
+    }
+    
+    .footer-logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+    
+    .footer-text {
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+
+    /* CTA悬浮栏 */
+    .fixed-cta {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: white;
+      padding: 15px 30px;
+      border-radius: 50px;
+      box-shadow: 0 10px 30px rgba(249, 115, 22, 0.4);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .fixed-cta:hover {
+      transform: translateX(-50%) translateY(-3px);
+    }
+
+    /* 移动端适配 */
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; flex-direction: column; padding: 16px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+      .nav-links.open { display: flex; }
+      .nav-toggle { display: flex; }
+      
+      .hero h1 { font-size: 2rem; }
+      .hero .tagline { font-size: 1rem; }
+      .stats { gap: 25px; }
+      .stat-number { font-size: 1.8rem; }
+      .btn { padding: 14px 30px; font-size: 1rem; }
+      .btn-secondary { margin-left: 0; margin-top: 10px; }
+      
+      .section { padding: 50px 20px; }
+      .section-title { font-size: 1.6rem; }
+      .advantage-grid { grid-template-columns: 1fr; }
+      .service-grid { grid-template-columns: 1fr 1fr; }
+      .audience-box { padding: 30px; }
+      .testimonial-grid { grid-template-columns: 1fr; }
+      .fixed-cta { padding: 12px 20px; font-size: 0.9rem; }
+    }
+
+    /* 智能客服 */
+    .chatbot-btn { position: fixed; bottom: 80px; right: 20px; width: 55px; height: 55px; background: #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 1000; font-size: 1.5rem; }
+    .chatbot-btn:hover { transform: scale(1.1); }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <a href="index.html" class="logo">🌍 游导伴旅</a>
+      <div class="nav-toggle" onclick="this.parentElement.querySelector('.nav-links').classList.toggle('open')">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="visa.html">签证中心</a>
+        <a href="pitfall.html">避坑指南</a>
+        <a href="guide-tools.html">🎒 导游工具</a>
+        <a href="routes.html">精品线路</a>
+        <a href="tips.html">旅行经验</a>
+        <a href="emergency.html">应急资源</a>
+        <a href="faq.html">常见问题</a>
+        <a href="guide-exam.html" class="nav-exam-link active">📚 导游证备考</a>
+        <a href="contact.html">联系我们</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero区域 -->
+  <section class="hero">
+    <h1>导游证备考指南</h1>
+    <p class="tagline">持证导游亲授 · 实战导向辅导 · 带你一次上岸</p>
+    
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-number">持证导游</div>
+        <div class="stat-label">真实带团经验</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">98%</div>
+        <div class="stat-label">学员通过率</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">500+</div>
+        <div class="stat-label">服务学员</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number">1对1</div>
+        <div class="stat-label">专属辅导</div>
+      </div>
+    </div>
+    
+    <div>
+      <a href="#contact" class="btn">立即咨询</a>
+      <a href="free-materials.html" class="btn btn-secondary">免费领取资料</a>
+    </div>
+  </section>
+  
+  <!-- 核心优势 -->
+  <section class="section advantages">
+    <h2 class="section-title">为什么选择我？</h2>
+    <div class="advantage-grid">
+      <div class="advantage-card">
+        <div class="advantage-icon">🎯</div>
+        <div class="advantage-title">持证导游亲授</div>
+        <div class="advantage-desc">不是纸上谈兵，是真正带过团的实战经验分享。告诉你面试官想听什么，真正能用到的带团技巧。</div>
+      </div>
+      <div class="advantage-card">
+        <div class="advantage-icon">📚</div>
+        <div class="advantage-title">真题库+高频考点</div>
+        <div class="advantage-desc">历年真题精讲，锁定必考内容，整理了高频考点清单，不浪费一分钟在不会考的内容上。</div>
+      </div>
+      <div class="advantage-card">
+        <div class="advantage-icon">🎤</div>
+        <div class="advantage-title">面试实战模拟</div>
+        <div class="advantage-desc">真实面试场景还原，模拟面试官提问，告诉你每个问题背后的考察意图和最佳回答。</div>
+      </div>
+      <div class="advantage-card">
+        <div class="advantage-icon">🤝</div>
+        <div class="advantage-title">一对一全程陪伴</div>
+        <div class="advantage-desc">根据你的基础和时间制定学习计划，定期跟踪进度，遇到问题随时解答，直到你拿到证书。</div>
+      </div>
+      <div class="advantage-card">
+        <div class="advantage-icon">⏰</div>
+        <div class="advantage-title">时间灵活高效</div>
+        <div class="advantage-desc">专为上班族设计的学习方案，利用碎片时间学习，不影响正常工作生活。</div>
+      </div>
+      <div class="advantage-card">
+        <div class="advantage-icon">💯</div>
+        <div class="advantage-title">不过退费保障</div>
+        <div class="advantage-desc">签订学习协议，未通过考试可免费重修，让你无后顾之忧，全力以赴备考。</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 服务内容 -->
+  <section class="section services">
+    <h2 class="section-title">我能帮你什么？</h2>
+    <div class="service-grid">
+      <div class="service-item">
+        <div class="service-icon">📦</div>
+        <div class="service-name">备考资料包</div>
+        <div class="service-desc">历年真题+高频考点+思维导图</div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">📅</div>
+        <div class="service-name">学习计划定制</div>
+        <div class="service-desc">根据你的情况制定专属计划</div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">💬</div>
+        <div class="service-name">备考群</div>
+        <div class="service-desc">学员互相监督打卡</div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">🎤</div>
+        <div class="service-name">面试辅导</div>
+        <div class="service-desc">一对一模拟+点评</div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">🎯</div>
+        <div class="service-name">一对一督学</div>
+        <div class="service-desc">全程陪伴直到上岸</div>
+      </div>
+      <div class="service-item">
+        <div class="service-icon">📱</div>
+        <div class="service-name">随时答疑</div>
+        <div class="service-desc">学习问题24小时内解答</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 适用人群 -->
+  <section class="section audience">
+    <h2 class="section-title">适合谁来学习？</h2>
+    <div class="audience-box">
+      <div class="audience-item">
+        <div class="audience-icon">🎓</div>
+        <span class="audience-text">旅游专业学生，想一次性通过考试，赢在起跑线</span>
+      </div>
+      <div class="audience-item">
+        <div class="audience-icon">🔄</div>
+        <span class="audience-text">转行备考者，零基础不知道从哪学，有目标但没方向</span>
+      </div>
+      <div class="audience-item">
+        <div class="audience-icon">📚</div>
+        <span class="audience-text">二战考生，上次差了几分没过，想找到突破口</span>
+      </div>
+      <div class="audience-item">
+        <div class="audience-icon">⏰</div>
+        <span class="audience-text">上班族，备考时间有限，需要高效的学习方法</span>
+      </div>
+      <div class="audience-item">
+        <div class="audience-icon">🌟</div>
+        <span class="audience-text">追求高质量，想要系统学习，不只是应付考试</span>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 学员评价 -->
+  <section class="section testimonials">
+    <h2 class="section-title">学员真实反馈</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-header">
+          <div class="testimonial-avatar">李</div>
+          <div class="testimonial-info">
+            <h4>李同学</h4>
+            <span>2024年考生 · 北京</span>
+          </div>
+        </div>
+        <p class="testimonial-content">"之前自己看书完全抓不住重点，跟着老师学了一个月，感觉思路清晰多了。特别是面试模拟，老师指出我回答的很多问题，自己根本意识不到。"</p>
+        <div class="testimonial-result">✅ 笔试186分 · 面试通过</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-header">
+          <div class="testimonial-avatar">王</div>
+          <div class="testimonial-info">
+            <h4>王同学</h4>
+            <span>2024年考生 · 上海</span>
+          </div>
+        </div>
+        <p class="testimonial-content">"二战选手，第一次差了8分，二战终于过了！老师给的真题库太有用了，好几个考点都押中了。考完试特别感谢老师。"</p>
+        <div class="testimonial-result">✅ 二战上岸 · 成功逆袭</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-header">
+          <div class="testimonial-avatar">张</div>
+          <div class="testimonial-info">
+            <h4>张同学</h4>
+            <span>2024年考生 · 深圳</span>
+          </div>
+        </div>
+        <p class="testimonial-content">"我是上班族，平时根本没时间看书。老师帮我制定了每天1小时的学习计划，坚持下来真的有效。考证的同时还学到了很多实战技能。"</p>
+        <div class="testimonial-result">✅ 上班族一次过</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 信任背书 -->
+  <section class="section trust">
+    <h2 class="section-title">专业背书</h2>
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-number">8年+</div>
+        <div class="trust-label">导游从业经验</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-number">500+</div>
+        <div class="trust-label">服务学员数量</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-number">98%</div>
+        <div class="trust-label">学员通过率</div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-number">4.9</div>
+        <div class="trust-label">学员评分</div>
+      </div>
+    </div>
+  </section>
+  
+  <!-- 联系方式 -->
+  <section class="section contact" id="contact">
+    <h2 class="section-title">开始你的备考之旅</h2>
+    <div class="contact-box">
+      <h3>添加我的微信</h3>
+      <div class="wechat-id">ximao101</div>
+      <p class="contact-note">备注"备考"，我会优先回复</p>
+    </div>
+    <p class="contact-desc">
+      备考路上有疑问？随时来问~<br>
+      免费咨询，不收取任何费用<br>
+      期待和你一起，拿下导游证！
+    </p>
+  </section>
+  
+  <!-- 底部 -->
+  <footer class="footer">
+    <div class="footer-logo">导游证备考指南</div>
+    <p class="footer-text">
+      持证导游，专注导游证考试辅导。不卖课，只带你真正掌握知识、一次上岸。
+    </p>
+    <p style="margin-top: 20px; opacity: 0.6; font-size: 0.8rem;">
+      📧 2173381363@qq.com · 💬 微信：ximao101
+    </p>
+    <p style="margin-top: 10px; opacity: 0.5; font-size: 0.75rem;">
+      © 2024 导游证备考指南 · 持证导游带你上岸
+    </p>
+  </footer>
+
+  <!-- 悬浮CTA -->
+  <a href="#contact" class="fixed-cta">
+    💬 立即咨询 ximao101
+  </a>
+
+  <!-- 智能客服 -->
+  <div class="chatbot-btn" onclick="alert('备考问题可直接加微信 ximao101 咨询，更快更直接！')">💬</div>
+</body>
+</html>

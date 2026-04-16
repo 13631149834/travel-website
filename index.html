@@ -1,607 +1,301 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="游导旅游 - 导游与游客的一站式旅行平台。500+认证导游，精选旅游图片，专业旅行攻略，让每一次旅行都精彩。">
-    <meta name="keywords" content="导游预约,旅游平台,私人导游,旅行攻略,旅游图片,目的地推荐">
-    <title>游导旅游 - 导游与游客的一站式旅行平台</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
-        * { font-family: 'Noto Sans SC', sans-serif; }
-        
-        .hero-gradient {
-            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 50%, #7c3aed 100%);
-        }
-        
-        .float-animation {
-            animation: float 6s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-        }
-        
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        
-        .destination-card:hover {
-            transform: scale(1.03);
-        }
-        
-        .nav-link { position: relative; }
-        .nav-link::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            transition: width 0.3s ease;
-        }
-        .nav-link:hover::after { width: 100%; }
-        
-        .text-gradient {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        
-        .role-card {
-            transition: all 0.3s ease;
-        }
-        .role-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.2);
-        }
-        
-        .guide-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        
-        .feature-icon {
-            transition: all 0.3s ease;
-        }
-        .feature-card:hover .feature-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-        
-        .pulse-dot {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.7; transform: scale(1.2); }
-        }
-        
-        .quick-link-card {
-            transition: all 0.3s ease;
-        }
-        .quick-link-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>游导伴旅 - 导游与游客的全平台</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* 备考入口卡片样式 */
+    .exam-entry-card {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      border-radius: 16px;
+      padding: 24px;
+      color: white;
+      margin: 30px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .exam-entry-content h3 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+    .exam-entry-content p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+    .exam-entry-btn {
+      background: white;
+      color: #f97316;
+      padding: 12px 28px;
+      border-radius: 50px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .exam-entry-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+    .exam-entry-stats {
+      display: flex;
+      gap: 30px;
+      margin-top: 15px;
+      flex-wrap: wrap;
+    }
+    .exam-entry-stat {
+      text-align: center;
+    }
+    .exam-entry-stat .number {
+      font-size: 1.25rem;
+      font-weight: 700;
+    }
+    .exam-entry-stat .label {
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+
+    /* 导航栏备考入口 */
+    .nav-exam-link {
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%) !important;
+      color: #fff !important;
+      font-weight: 600;
+    }
+    .nav-exam-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(249, 115, 22, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .exam-entry-card {
+        flex-direction: column;
+        text-align: center;
+      }
+      .exam-entry-stats {
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="index.html" class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                        <i class="fas fa-compass text-white text-lg"></i>
-                    </div>
-                    <span class="text-xl font-bold text-gradient">游导旅游</span>
-                </a>
-                
-                <nav class="hidden lg:flex items-center space-x-5">
-                    <a href="destinations.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium text-sm">目的地</a>
-                    <a href="guides/index.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium text-sm">找导游</a>
-                    <a href="routes.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium text-sm">精品路线</a>
-                    <a href="visa.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium text-sm">签证中心</a>
-                    <a href="knowledge.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium text-sm">避坑指南</a>
-                    <a href="community.html" class="nav-link text-gray-600 hover:text-gray-900 font-medium text-sm">旅行社区</a>
-                    <div class="relative group">
-                        <a href="#" class="nav-link text-gray-600 hover:text-gray-900 font-medium text-sm flex items-center">
-                            更多 <i class="fas fa-chevron-down text-xs ml-1"></i>
-                        </a>
-                        <div class="absolute top-full left-0 mt-2 w-56 bg-white rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 py-2">
-                            <a href="activities.html" class="block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 text-sm"><i class="fas fa-bullhorn mr-2"></i>活动中心</a>
-                            <a href="budget-calculator.html" class="block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 text-sm"><i class="fas fa-calculator mr-2"></i>预算计算器</a>
-                            <a href="checklist.html" class="block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 text-sm"><i class="fas fa-list-check mr-2"></i>出行清单</a>
-                            <a href="weather.html" class="block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 text-sm"><i class="fas fa-cloud-sun mr-2"></i>天气预报</a>
-                            <a href="exchange.html" class="block px-4 py-2 text-gray-600 hover:bg-blue-50 hover:text-blue-600 text-sm"><i class="fas fa-coins mr-2"></i>汇率换算</a>
-                            <div class="border-t my-2"></div>
-                            <a href="guide-apply.html" class="block px-4 py-2 text-purple-600 hover:bg-purple-50 text-sm"><i class="fas fa-user-tie mr-2"></i>导游入驻</a>
-                            <a href="admin.html" class="block px-4 py-2 text-gray-600 hover:bg-gray-50 text-sm"><i class="fas fa-cog mr-2"></i>管理后台</a>
-                        </div>
-                    </div>
-                </nav>
-                
-                <div class="flex items-center space-x-3">
-                    <a href="login.html" class="px-4 py-2 text-gray-600 hover:text-gray-900 font-medium border border-gray-200 rounded-lg hover:bg-gray-50 transition-all text-sm">
-                        <i class="fas fa-sign-in-alt mr-1"></i>登录
-                    </a>
-                    <a href="register.html" class="px-5 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:shadow-lg transition-all font-medium text-sm">
-                        <i class="fas fa-user-plus mr-1"></i>注册
-                    </a>
-                </div>
-            </div>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <div class="container">
+      <a href="index.html" class="logo">🌍 游导伴旅</a>
+      <div class="nav-toggle" onclick="toggleNav()">
+        <span></span><span></span><span></span>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="active">首页</a>
+        <a href="guides.html">🎤 找导游</a>
+        <a href="visa.html">签证中心</a>
+        <a href="pitfall.html">避坑指南</a>
+        <a href="guide-tools.html">🎒 导游工具</a>
+        <a href="routes.html">精品线路</a>
+        <a href="tips.html">旅行经验</a>
+        <a href="stories.html">旅行故事</a>
+        <a href="wonders.html">世界奇趣</a>
+        <a href="emergency.html">应急资源</a>
+        <a href="faq.html">常见问题</a>
+        <!-- 新增：导游证备考入口 -->
+        <a href="guide-exam.html" class="nav-exam-link">📚 导游证备考</a>
+        <a href="contact.html">联系我们</a>
+        <a href="login.html" id="authLink" class="auth-nav-link">🔐 登录</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero区域 -->
+  <section class="hero">
+    <div class="container">
+      <h1>🧳 让旅行更简单</h1>
+      <p>一站式旅行知识平台，签证、路线、避坑、应急，统统搞定</p>
+    </div>
+  </section>
+
+  <!-- 导游证备考入口横幅 -->
+  <section class="container">
+    <div class="exam-entry-card">
+      <div class="exam-entry-content">
+        <h3>📚 导游证备考指南</h3>
+        <p>持证导游亲授 · 实战导向辅导 · 带你一次上岸</p>
+        <div class="exam-entry-stats">
+          <div class="exam-entry-stat">
+            <div class="number">98%</div>
+            <div class="label">学员通过率</div>
+          </div>
+          <div class="exam-entry-stat">
+            <div class="number">500+</div>
+            <div class="label">服务学员</div>
+          </div>
+          <div class="exam-entry-stat">
+            <div class="number">1对1</div>
+            <div class="label">专属辅导</div>
+          </div>
         </div>
-    </header>
-    
-    <!-- Hero Section -->
-    <section class="hero-gradient text-white relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10">
-            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <defs>
-                    <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-                        <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
-                    </pattern>
-                </defs>
-                <rect width="100" height="100" fill="url(#grid)"/>
-            </svg>
+      </div>
+      <a href="guide-exam.html" class="exam-entry-btn">
+        了解详情 →
+      </a>
+    </div>
+  </section>
+
+  <!-- 入口卡片 -->
+  <section class="container">
+    <div class="card-grid">
+      <a href="guides.html" class="card" style="background: linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(5,150,105,0.1) 100%); border: 2px solid rgba(16,185,129,0.3);">
+        <div class="card-icon">🎤</div>
+        <h3>找导游</h3>
+        <p>专业认证导游，为你定制专属旅程，搜索、筛选、在线预约</p>
+        <span class="card-badge" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%);">热门</span>
+      </a>
+      
+      <a href="guide-exam.html" class="card" style="background: linear-gradient(135deg, rgba(249,115,22,0.1) 0%, rgba(234,88,12,0.1) 100%); border: 2px solid rgba(249,115,22,0.3);">
+        <div class="card-icon">📚</div>
+        <h3>导游证备考</h3>
+        <p>持证导游亲授，一对一辅导，面试实战模拟，带你一次上岸</p>
+        <span class="card-badge" style="background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);">推荐</span>
+      </a>
+      
+      <a href="visa.html" class="card">
+        <div class="card-icon">📋</div>
+        <h3>签证中心</h3>
+        <p>全球热门国家签证攻略，一键查询所需材料与办理流程</p>
+        <span class="card-badge">必备</span>
+      </a>
+      
+      <a href="pitfall.html" class="card">
+        <div class="card-icon">⚠️</div>
+        <h3>避坑指南</h3>
+        <p>真实踩坑经历总结，让你少走弯路省钱又省心</p>
+        <span class="card-badge">必看</span>
+      </a>
+      
+      <a href="guide-tools.html" class="card" style="background: linear-gradient(135deg, rgba(102,126,234,0.1) 0%, rgba(118,75,162,0.1) 100%); border: 2px solid rgba(102,126,234,0.3);">
+        <div class="card-icon">🎒</div>
+        <h3>导游工具</h3>
+        <p>景点知识库、应急预案、路线规划、团期管理、收入记账，专为导游打造</p>
+        <span class="card-badge" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">新功能</span>
+      </a>
+      
+      <a href="routes.html" class="card">
+        <div class="card-icon">🗺️</div>
+        <h3>精品线路</h3>
+        <p>精选主题路线，从3天短途到30天深度游全覆盖</p>
+        <span class="card-badge">推荐</span>
+      </a>
+      
+      <a href="tips.html" class="card">
+        <div class="card-icon">💡</div>
+        <h3>旅行经验</h3>
+        <p>打包、摄影、省钱、应急，老司机经验分享</p>
+      </a>
+      
+      <a href="stories.html" class="card">
+        <div class="card-icon">📖</div>
+        <h3>旅行故事</h3>
+        <p>真实旅途见闻，感受不同文化的魅力</p>
+      </a>
+      
+      <a href="wonders.html" class="card">
+        <div class="card-icon">✨</div>
+        <h3>世界奇趣</h3>
+        <p>探访小众秘境，发现地球上最神奇的地方</p>
+      </a>
+      
+      <a href="emergency.html" class="card">
+        <div class="card-icon">🆘</div>
+        <h3>应急资源</h3>
+        <p>紧急求助电话、使馆信息、医疗指南，应急不慌</p>
+        <span class="card-badge">重要</span>
+      </a>
+      
+      <a href="faq.html" class="card">
+        <div class="card-icon">❓</div>
+        <h3>常见问题</h3>
+        <p>高频问题解答，快速找到你想要的答案</p>
+      </a>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>快速导航</h4>
+          <a href="visa.html">签证中心</a>
+          <a href="pitfall.html">避坑指南</a>
+          <a href="guide-exam.html">导游证备考</a>
+          <a href="emergency.html">应急资源</a>
         </div>
-        
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 relative">
-            <div class="text-center mb-12">
-                <div class="inline-flex items-center px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full text-sm mb-6">
-                    <span class="w-2 h-2 bg-green-400 rounded-full mr-2 pulse-dot"></span>
-                    游导旅游 - 导游与游客的一站式旅行平台
-                </div>
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-                    发现精彩世界<br>
-                    <span class="text-yellow-300">从遇见开始</span>
-                </h1>
-                <p class="text-lg md:text-xl text-white/80 mb-10 max-w-2xl mx-auto">
-                    500+认证导游 · 精选旅游图片 · 专业旅行攻略<br>
-                    让每一次旅行都成为难忘的体验
-                </p>
-            </div>
-            
-            <!-- 游客/导游入口 -->
-            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-                <!-- 游客入口 -->
-                <a href="register.html?type=tourist" class="role-card bg-white rounded-3xl p-10 text-center group">
-                    <div class="w-24 h-24 bg-gradient-to-br from-blue-400 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">
-                        <i class="fas fa-plane text-white text-4xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold text-gray-900 mb-4">我是游客</h3>
-                    <p class="text-gray-500 mb-6 text-lg">浏览目的地 · 找导游 · 查攻略 · 看图片</p>
-                    <div class="flex items-center justify-center text-blue-600 font-bold text-lg">
-                        开始探索 <i class="fas fa-arrow-right ml-3"></i>
-                    </div>
-                </a>
-                
-                <!-- 导游入口 -->
-                <a href="register.html?type=guide" class="role-card bg-white rounded-3xl p-10 text-center group">
-                    <div class="w-24 h-24 bg-gradient-to-br from-purple-400 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform shadow-lg">
-                        <i class="fas fa-user-tie text-white text-4xl"></i>
-                    </div>
-                    <h3 class="text-3xl font-bold text-gray-900 mb-4">我是导游</h3>
-                    <p class="text-gray-500 mb-6 text-lg">入驻平台 · 展示服务 · 接单赚钱</p>
-                    <div class="flex items-center justify-center text-purple-600 font-bold text-lg">
-                        立即入驻 <i class="fas fa-arrow-right ml-3"></i>
-                    </div>
-                </a>
-            </div>
+        <div>
+          <h4>热门目的地</h4>
+          <a href="#">日本</a>
+          <a href="#">泰国</a>
+          <a href="#">欧洲</a>
         </div>
-        
-        <div class="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-gray-50 to-transparent"></div>
-    </section>
-    
-    <!-- 游客端功能入口 -->
-    <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-gray-900 mb-3">👤 游客端功能</h2>
-                <p class="text-gray-500">一站式解决您的所有旅行需求</p>
-            </div>
-            
-            <!-- 核心服务 -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                <a href="guides/index.html" class="feature-card bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-                    <div class="feature-icon w-14 h-14 bg-blue-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
-                        <i class="fas fa-user-tie text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">找导游</h3>
-                    <p class="text-gray-600 text-sm">500+认证导游，专业服务保障</p>
-                </a>
-                
-                <a href="routes.html" class="feature-card bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-                    <div class="feature-icon w-14 h-14 bg-green-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
-                        <i class="fas fa-route text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">精品路线</h3>
-                    <p class="text-gray-600 text-sm">精选路线规划，省心又省钱</p>
-                </a>
-                
-                <a href="visa.html" class="feature-card bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-                    <div class="feature-icon w-14 h-14 bg-orange-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
-                        <i class="fas fa-passport text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">签证中心</h3>
-                    <p class="text-gray-600 text-sm">签证指南，一站式办理</p>
-                </a>
-                
-                <a href="knowledge.html" class="feature-card bg-gradient-to-br from-red-50 to-red-100 rounded-2xl p-6 hover:shadow-lg transition-all">
-                    <div class="feature-icon w-14 h-14 bg-red-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
-                        <i class="fas fa-shield-alt text-white text-2xl"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-900 mb-2">避坑指南</h3>
-                    <p class="text-gray-600 text-sm">老司机经验，少走弯路</p>
-                </a>
-            </div>
-            
-            <!-- 实用工具 -->
-            <div class="bg-gray-50 rounded-2xl p-6 mb-8">
-                <h3 class="text-xl font-bold text-gray-900 mb-4"><i class="fas fa-tools mr-2 text-blue-500"></i>实用工具</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    <a href="budget-calculator.html" class="quick-link-card bg-white rounded-xl p-4 text-center border border-gray-100">
-                        <i class="fas fa-calculator text-2xl text-blue-500 mb-2"></i>
-                        <p class="text-sm font-medium text-gray-700">预算计算器</p>
-                    </a>
-                    <a href="checklist.html" class="quick-link-card bg-white rounded-xl p-4 text-center border border-gray-100">
-                        <i class="fas fa-list-check text-2xl text-green-500 mb-2"></i>
-                        <p class="text-sm font-medium text-gray-700">出行清单</p>
-                    </a>
-                    <a href="weather.html" class="quick-link-card bg-white rounded-xl p-4 text-center border border-gray-100">
-                        <i class="fas fa-cloud-sun text-2xl text-orange-500 mb-2"></i>
-                        <p class="text-sm font-medium text-gray-700">天气预报</p>
-                    </a>
-                    <a href="exchange.html" class="quick-link-card bg-white rounded-xl p-4 text-center border border-gray-100">
-                        <i class="fas fa-coins text-2xl text-purple-500 mb-2"></i>
-                        <p class="text-sm font-medium text-gray-700">汇率换算</p>
-                    </a>
-                    <a href="world-clock.html" class="quick-link-card bg-white rounded-xl p-4 text-center border border-gray-100">
-                        <i class="fas fa-globe text-2xl text-cyan-500 mb-2"></i>
-                        <p class="text-sm font-medium text-gray-700">世界时钟</p>
-                    </a>
-                    <a href="translation.html" class="quick-link-card bg-white rounded-xl p-4 text-center border border-gray-100">
-                        <i class="fas fa-language text-2xl text-pink-500 mb-2"></i>
-                        <p class="text-sm font-medium text-gray-700">翻译工具</p>
-                    </a>
-                </div>
-            </div>
-            
-            <!-- 图片与社区 -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-                <a href="photos/index.html" class="feature-card bg-gradient-to-br from-pink-50 to-pink-100 rounded-2xl p-5 hover:shadow-lg transition-all">
-                    <div class="feature-icon w-12 h-12 bg-pink-500 rounded-xl flex items-center justify-center mb-3">
-                        <i class="fas fa-images text-white text-xl"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">图片库</h4>
-                    <p class="text-gray-600 text-xs">2800+高清图片免费商用</p>
-                </a>
-                
-                <a href="community.html" class="feature-card bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-2xl p-5 hover:shadow-lg transition-all">
-                    <div class="feature-icon w-12 h-12 bg-cyan-500 rounded-xl flex items-center justify-center mb-3">
-                        <i class="fas fa-comments text-white text-xl"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">旅行社区</h4>
-                    <p class="text-gray-600 text-xs">分享经验，结识旅伴</p>
-                </a>
-                
-                <a href="activities.html" class="feature-card bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-5 hover:shadow-lg transition-all">
-                    <div class="feature-icon w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center mb-3">
-                        <i class="fas fa-bullhorn text-white text-xl"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">活动中心</h4>
-                    <p class="text-gray-600 text-xs">精彩活动，优惠不断</p>
-                </a>
-                
-                <a href="faq.html" class="feature-card bg-gradient-to-br from-indigo-50 to-indigo-100 rounded-2xl p-5 hover:shadow-lg transition-all">
-                    <div class="feature-icon w-12 h-12 bg-indigo-500 rounded-xl flex items-center justify-center mb-3">
-                        <i class="fas fa-question-circle text-white text-xl"></i>
-                    </div>
-                    <h4 class="font-bold text-gray-900">常见问题</h4>
-                    <p class="text-gray-600 text-xs">快速解答您的疑惑</p>
-                </a>
-            </div>
+        <div>
+          <h4>帮助支持</h4>
+          <a href="faq.html">常见问题</a>
+          <a href="contact.html">联系我们</a>
         </div>
-    </section>
-    
-    <!-- 导游端功能入口 -->
-    <section class="py-12 bg-gradient-to-r from-purple-50 to-indigo-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8">
-                <h2 class="text-3xl font-bold text-gray-900 mb-3">🎒 导游端功能</h2>
-                <p class="text-gray-500">专业的导游工作平台</p>
-            </div>
-            
-            <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <a href="guide-apply.html" class="bg-white rounded-xl p-5 text-center hover:shadow-lg transition-all border-2 border-purple-200 hover:border-purple-400">
-                    <i class="fas fa-user-plus text-3xl text-purple-500 mb-3"></i>
-                    <h4 class="font-bold text-gray-900">入驻申请</h4>
-                    <p class="text-gray-500 text-xs">加入我们</p>
-                </a>
-                
-                <a href="guide-dashboard.html" class="bg-white rounded-xl p-5 text-center hover:shadow-lg transition-all">
-                    <i class="fas fa-tachometer-alt text-3xl text-blue-500 mb-3"></i>
-                    <h4 class="font-bold text-gray-900">工作台</h4>
-                    <p class="text-gray-500 text-xs">管理业务</p>
-                </a>
-                
-                <a href="guide-calendar.html" class="bg-white rounded-xl p-5 text-center hover:shadow-lg transition-all">
-                    <i class="fas fa-calendar-alt text-3xl text-green-500 mb-3"></i>
-                    <h4 class="font-bold text-gray-900">团期管理</h4>
-                    <p class="text-gray-500 text-xs">日程安排</p>
-                </a>
-                
-                <a href="guide-tools.html" class="bg-white rounded-xl p-5 text-center hover:shadow-lg transition-all">
-                    <i class="fas fa-tools text-3xl text-orange-500 mb-3"></i>
-                    <h4 class="font-bold text-gray-900">工具箱</h4>
-                    <p class="text-gray-500 text-xs">实用工具</p>
-                </a>
-                
-                <a href="guide-content.html" class="bg-white rounded-xl p-5 text-center hover:shadow-lg transition-all">
-                    <i class="fas fa-book text-3xl text-red-500 mb-3"></i>
-                    <h4 class="font-bold text-gray-900">知识库</h4>
-                    <p class="text-gray-500 text-xs">景点知识</p>
-                </a>
-            </div>
+        <div>
+          <h4>联系我们</h4>
+          <p style="color: #999; font-size: 0.9rem;">📧 2173381363@qq.com</p>
+          <p style="color: #999; font-size: 0.9rem;">💬 微信：ximao101</p>
         </div>
-    </section>
-    
-    <!-- 管理后台入口 -->
-    <section class="py-8 bg-gray-100">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="bg-white rounded-xl p-4 flex items-center justify-between">
-                <div class="flex items-center">
-                    <i class="fas fa-shield-alt text-2xl text-gray-500 mr-3"></i>
-                    <div>
-                        <h4 class="font-bold text-gray-900">管理后台</h4>
-                        <p class="text-gray-500 text-sm">用户管理 · 导游管理 · 评价管理 · 数据统计</p>
-                    </div>
-                </div>
-                <a href="admin.html" class="px-6 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-700 transition-all text-sm">
-                    进入后台 <i class="fas fa-arrow-right ml-1"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Stats Section -->
-    <section class="py-12 bg-white border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div>
-                    <div class="text-4xl font-bold text-gradient mb-2">500+</div>
-                    <div class="text-gray-500">认证导游</div>
-                </div>
-                <div>
-                    <div class="text-4xl font-bold text-gradient mb-2">50+</div>
-                    <div class="text-gray-500">国家地区</div>
-                </div>
-                <div>
-                    <div class="text-4xl font-bold text-gradient mb-2">2,800+</div>
-                    <div class="text-gray-500">精选图片</div>
-                </div>
-                <div>
-                    <div class="text-4xl font-bold text-gradient mb-2">10K+</div>
-                    <div class="text-gray-500">满意游客</div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Featured Guides Section -->
-    <section class="py-16 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between mb-10">
-                <div>
-                    <h2 class="text-3xl font-bold text-gray-900">精选导游</h2>
-                    <p class="text-gray-500 mt-2">专业认证，服务优质</p>
-                </div>
-                <a href="guides/index.html" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                    查看全部 <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="guide-card bg-white rounded-2xl overflow-hidden shadow-sm transition-all">
-                    <div class="h-48 bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
-                        <span class="text-7xl">👨‍💼</span>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-lg font-bold text-gray-900">田中太郎</h4>
-                            <span class="text-yellow-500 text-sm"><i class="fas fa-star"></i> 4.9</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-3"><i class="fas fa-map-marker-alt mr-1"></i> 日本 · 东京</p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">日语流利</span>
-                            <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">美食达人</span>
-                        </div>
-                        <a href="guide-detail.html?id=1" class="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg text-sm font-medium text-center block">立即预约</a>
-                    </div>
-                </div>
-                
-                <div class="guide-card bg-white rounded-2xl overflow-hidden shadow-sm transition-all">
-                    <div class="h-48 bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center">
-                        <span class="text-7xl">👩‍💼</span>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-lg font-bold text-gray-900">朴美英</h4>
-                            <span class="text-yellow-500 text-sm"><i class="fas fa-star"></i> 4.8</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-3"><i class="fas fa-map-marker-alt mr-1"></i> 韩国 · 首尔</p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">韩语母语</span>
-                            <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">购物向导</span>
-                        </div>
-                        <a href="guide-detail.html?id=2" class="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg text-sm font-medium text-center block">立即预约</a>
-                    </div>
-                </div>
-                
-                <div class="guide-card bg-white rounded-2xl overflow-hidden shadow-sm transition-all">
-                    <div class="h-48 bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center">
-                        <span class="text-7xl">👨‍💼</span>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-lg font-bold text-gray-900">颂巴·威拉</h4>
-                            <span class="text-yellow-500 text-sm"><i class="fas fa-star"></i> 4.9</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-3"><i class="fas fa-map-marker-alt mr-1"></i> 泰国 · 曼谷</p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">泰语母语</span>
-                            <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">寺庙专家</span>
-                        </div>
-                        <a href="guide-detail.html?id=3" class="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg text-sm font-medium text-center block">立即预约</a>
-                    </div>
-                </div>
-                
-                <div class="guide-card bg-white rounded-2xl overflow-hidden shadow-sm transition-all">
-                    <div class="h-48 bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
-                        <span class="text-7xl">👩‍💼</span>
-                    </div>
-                    <div class="p-5">
-                        <div class="flex items-center justify-between mb-2">
-                            <h4 class="text-lg font-bold text-gray-900">林慧敏</h4>
-                            <span class="text-yellow-500 text-sm"><i class="fas fa-star"></i> 5.0</span>
-                        </div>
-                        <p class="text-gray-500 text-sm mb-3"><i class="fas fa-map-marker-alt mr-1"></i> 新加坡</p>
-                        <div class="flex flex-wrap gap-2 mb-4">
-                            <span class="px-2 py-1 bg-blue-50 text-blue-600 text-xs rounded-full">中英双语</span>
-                            <span class="px-2 py-1 bg-purple-50 text-purple-600 text-xs rounded-full">美食专家</span>
-                        </div>
-                        <a href="guide-detail.html?id=4" class="w-full py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg text-sm font-medium text-center block">立即预约</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Destinations Section -->
-    <section class="py-16 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between mb-10">
-                <div>
-                    <h2 class="text-3xl font-bold text-gray-900">热门目的地</h2>
-                    <p class="text-gray-500 mt-2">探索不同国家的独特魅力</p>
-                </div>
-                <a href="destinations.html" class="text-blue-600 hover:text-blue-700 font-medium flex items-center">
-                    查看全部 <i class="fas fa-arrow-right ml-2"></i>
-                </a>
-            </div>
-            
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <a href="photos/destinations.html?country=japan" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group shadow-lg transition-all">
-                    <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400&h=500&fit=crop" alt="日本" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-5">
-                        <div class="text-4xl mb-2">🗾</div>
-                        <h3 class="text-white text-xl font-bold mb-1">日本</h3>
-                        <p class="text-white/80 text-sm">传统与现代的完美融合</p>
-                    </div>
-                </a>
-                
-                <a href="photos/destinations.html?country=korea" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group shadow-lg transition-all">
-                    <img src="https://images.unsplash.com/photo-1538485399081-7191377e8241?w=400&h=500&fit=crop" alt="韩国" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-5">
-                        <div class="text-4xl mb-2">🇰🇷</div>
-                        <h3 class="text-white text-xl font-bold mb-1">韩国</h3>
-                        <p class="text-white/80 text-sm">K-pop与韩剧的浪漫国度</p>
-                    </div>
-                </a>
-                
-                <a href="photos/destinations.html?country=thailand" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group shadow-lg transition-all">
-                    <img src="https://images.unsplash.com/photo-1528181304800-259b08848526?w=400&h=500&fit=crop" alt="泰国" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-5">
-                        <div class="text-4xl mb-2">🇹🇭</div>
-                        <h3 class="text-white text-xl font-bold mb-1">泰国</h3>
-                        <p class="text-white/80 text-sm">微笑佛国的热带风情</p>
-                    </div>
-                </a>
-                
-                <a href="photos/destinations.html?country=singapore" class="destination-card relative rounded-2xl overflow-hidden aspect-[3/4] group shadow-lg transition-all">
-                    <img src="https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=400&h=500&fit=crop" alt="新加坡" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 right-0 p-5">
-                        <div class="text-4xl mb-2">🇸🇬</div>
-                        <h3 class="text-white text-xl font-bold mb-1">新加坡</h3>
-                        <p class="text-white/80 text-sm">花园城市的现代魅力</p>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </section>
-    
-    <!-- CTA Section -->
-    <section class="py-16 hero-gradient text-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 class="text-3xl md:text-4xl font-bold mb-6">准备好开始您的旅程了吗？</h2>
-            <p class="text-xl text-white/80 mb-10 max-w-2xl mx-auto">立即注册，发现精彩世界</p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="register.html?type=tourist" class="px-8 py-4 bg-white text-blue-600 font-bold rounded-xl hover:bg-gray-100 hover:shadow-xl transition-all">
-                    <i class="fas fa-user-plus mr-2"></i> 游客注册
-                </a>
-                <a href="register.html?type=guide" class="px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-bold rounded-xl border-2 border-white/30 hover:bg-white/30 transition-all">
-                    <i class="fas fa-id-card mr-2"></i> 导游入驻
-                </a>
-            </div>
-        </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-white py-12">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
-                <div>
-                    <div class="flex items-center space-x-3 mb-4">
-                        <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
-                            <i class="fas fa-compass text-white"></i>
-                        </div>
-                        <span class="text-xl font-bold">游导旅游</span>
-                    </div>
-                    <p class="text-gray-400 text-sm">导游与游客的一站式旅行平台</p>
-                </div>
-                
-                <div>
-                    <h4 class="font-bold mb-4">快速链接</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="destinations.html" class="hover:text-white">热门目的地</a></li>
-                        <li><a href="guides/index.html" class="hover:text-white">找导游</a></li>
-                        <li><a href="photos/index.html" class="hover:text-white">图片库</a></li>
-                        <li><a href="knowledge.html" class="hover:text-white">旅行攻略</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="font-bold mb-4">服务支持</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><a href="faq.html" class="hover:text-white">常见问题</a></li>
-                        <li><a href="contact.html" class="hover:text-white">联系我们</a></li>
-                        <li><a href="about.html" class="hover:text-white">关于我们</a></li>
-                        <li><a href="wechat-contact.html" class="hover:text-white">微信客服</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h4 class="font-bold mb-4">联系方式</h4>
-                    <ul class="space-y-2 text-gray-400 text-sm">
-                        <li><i class="fas fa-phone mr-2"></i> 13631149834</li>
-                        <li><i class="fas fa-envelope mr-2"></i> service@youdao-travel.com</li>
-                        <li><i class="fab fa-weixin mr-2"></i> ximao101</li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-800 pt-8 text-center text-gray-400 text-sm">
-                <p>© 2026 游导旅游 版权所有 | <a href="legal/privacy.html" class="hover:text-white">隐私政策</a> | <a href="legal/terms.html" class="hover:text-white">服务条款</a></p>
-            </div>
-        </div>
-    </footer>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2024 TravelHub · 让旅行更简单</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 智能客服 -->
+  <div class="chatbot-btn" onclick="toggleChatbot()">💬</div>
+  <div id="chatbotPopup" class="chatbot-popup">
+    <div class="chatbot-header">
+      <span>🧳 旅行小助手</span>
+      <span class="chatbot-close" onclick="closeChatbot()">×</span>
+    </div>
+    <div id="chatbotBody" class="chatbot-body"></div>
+    <div class="chatbot-input">
+      <input type="text" id="chatInput" placeholder="输入你的问题..." onkeypress="if(event.key==='Enter')sendMessage()">
+      <button onclick="sendMessage()">发送</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleNav() {
+      document.querySelector('.nav-links').classList.toggle('open');
+    }
+    function toggleChatbot() {
+      document.getElementById('chatbotPopup').classList.toggle('open');
+    }
+    function closeChatbot() {
+      document.getElementById('chatbotPopup').classList.remove('open');
+    }
+    function sendMessage() {
+      const input = document.getElementById('chatInput');
+      const msg = input.value.trim();
+      if (!msg) return;
+      
+      const body = document.getElementById('chatbotBody');
+      body.innerHTML += `<div class="msg msg-user">${msg}</div>`;
+      input.value = '';
+      
+      setTimeout(() => {
+        body.innerHTML += `<div class="msg msg-bot">您好！有什么可以帮助您的吗？您可以咨询导游预约、签证办理、路线规划等问题。</div>`;
+        body.scrollTop = body.scrollHeight;
+      }, 500);
+    }
+  </script>
 </body>
 </html>

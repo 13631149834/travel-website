@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>免费领取导游证备考资料包 - 历年真题+高频考点</title>
+  <style>
+    :root {
+      --primary: #f97316;
+      --primary-dark: #ea580c;
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: #fafafa;
+    }
+    
+    /* 导航栏 */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 1.3rem; font-weight: 700; color: var(--primary); text-decoration: none; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-links a { padding: 8px 14px; border-radius: 8px; color: #333; text-decoration: none; font-size: 0.9rem; transition: all 0.3s; }
+    .nav-links a:hover { background: var(--primary); color: #fff; }
+    .nav-exam-link { background: linear-gradient(135deg, #f97316, #ea580c) !important; color: #fff !important; }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 60px 20px;
+      background: linear-gradient(135deg, #f97316, #ea580c);
+      color: white;
+    }
+    .hero-badge { background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 50px; font-size: 0.85rem; display: inline-block; margin-bottom: 20px; }
+    .hero h1 { font-size: 2.2rem; margin-bottom: 12px; }
+    .hero p { font-size: 1.1rem; opacity: 0.95; margin-bottom: 20px; }
+    .hero-highlight { background: white; color: #f97316; padding: 12px 28px; border-radius: 50px; font-size: 1.2rem; font-weight: 700; display: inline-block; }
+
+    /* 容器 */
+    .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
+
+    /* 资料预览 */
+    .preview-section { padding: 60px 0; }
+    .section-title { font-size: 1.8rem; text-align: center; margin-bottom: 40px; color: #333; }
+    .section-title span { color: var(--primary); }
+    
+    .preview-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+    .preview-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
+    .preview-header { background: linear-gradient(135deg, #f97316, #ea580c); color: white; padding: 20px; display: flex; align-items: center; gap: 12px; }
+    .preview-icon { font-size: 2rem; }
+    .preview-title { font-size: 1.1rem; font-weight: 600; }
+    .preview-body { padding: 20px; }
+    .preview-list { list-style: none; }
+    .preview-list li { padding: 10px 0; border-bottom: 1px dashed #eee; display: flex; align-items: center; gap: 10px; }
+    .preview-list li:last-child { border-bottom: none; }
+    .preview-list li::before { content: '✓'; color: #10b981; font-weight: bold; }
+
+    /* 领取表单 */
+    .form-section { background: linear-gradient(180deg, #fff7ed, #fafafa); padding: 60px 20px; }
+    .form-box { max-width: 420px; margin: 0 auto; background: #fff; border-radius: 20px; padding: 40px 30px; box-shadow: 0 10px 30px rgba(249,115,22,0.1); }
+    .form-box h2 { font-size: 1.4rem; text-align: center; margin-bottom: 25px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; }
+    .form-group input { width: 100%; padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1rem; }
+    .form-group input:focus { outline: none; border-color: var(--primary); }
+    .submit-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, #f97316, #ea580c); color: white; border: none; border-radius: 10px; font-size: 1.05rem; font-weight: 600; cursor: pointer; }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(249,115,22,0.3); }
+    .form-note { text-align: center; margin-top: 15px; color: #666; font-size: 0.85rem; }
+
+    /* 微信领取 */
+    .wechat-section { padding: 60px 20px; text-align: center; }
+    .wechat-box { background: #1f2937; color: white; border-radius: 20px; padding: 40px 30px; max-width: 400px; margin: 0 auto; }
+    .wechat-box h3 { margin-bottom: 20px; }
+    .wechat-id { font-size: 1.8rem; font-weight: 700; color: #f97316; background: white; padding: 12px 30px; border-radius: 12px; display: inline-block; margin-bottom: 15px; }
+    .wechat-box p { color: #9ca3af; font-size: 0.9rem; }
+    .wechat-steps { text-align: left; margin-top: 25px; padding-top: 25px; border-top: 1px solid #374151; }
+    .wechat-steps h4 { margin-bottom: 12px; font-size: 0.95rem; }
+    .wechat-step { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .step-num { width: 24px; height: 24px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+    .step-text { color: #d1d5db; font-size: 0.85rem; }
+
+    /* 底部 */
+    .footer { background: #1f2937; color: white; padding: 30px 20px; text-align: center; }
+    .footer-logo { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+    .footer p { opacity: 0.7; font-size: 0.85rem; }
+
+    /* 弹窗 */
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
+    .modal.show { display: flex; }
+    .modal-content { background: white; border-radius: 20px; padding: 40px 30px; max-width: 380px; text-align: center; }
+    .modal-icon { font-size: 3.5rem; margin-bottom: 15px; }
+    .modal h3 { font-size: 1.3rem; margin-bottom: 12px; }
+    .modal p { color: #666; margin-bottom: 20px; font-size: 0.9rem; }
+    .modal-wechat { background: var(--primary); color: white; padding: 12px 25px; border-radius: 50px; font-size: 1.1rem; font-weight: 700; display: inline-block; margin-bottom: 15px; }
+    .modal-close { background: #e5e7eb; color: #333; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; }
+
+    /* 移动端 */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .hero h1 { font-size: 1.7rem; }
+      .hero-highlight { font-size: 1rem; padding: 10px 20px; }
+      .section-title { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">🌍 游导伴旅</a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="guide-exam.html">📚 导游证备考</a>
+      <a href="free-materials.html" class="nav-exam-link">免费领资料</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">🎁 限时免费 · 无任何条件</div>
+    <h1>免费领取导游证备考资料包</h1>
+    <p>历年真题 · 高频考点 · 面试题库 · 学习计划</p>
+    <div class="hero-highlight">价值 ¥399 · 现在免费</div>
+  </section>
+
+  <!-- 资料预览 -->
+  <section class="preview-section container">
+    <h2 class="section-title">资料包里有什么？</h2>
+    <div class="preview-grid">
+      <div class="preview-card">
+        <div class="preview-header">
+          <div class="preview-icon">📖</div>
+          <div class="preview-title">历年真题精讲</div>
+        </div>
+        <div class="preview-body">
+          <ul class="preview-list">
+            <li>2020-2024年笔试真题全套</li>
+            <li>每题附详细解析与考点分析</li>
+            <li>高频考点标注，复习效率翻倍</li>
+            <li>面试真题及参考回答</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="preview-card">
+        <div class="preview-header">
+          <div class="preview-icon">🧠</div>
+          <div class="preview-title">高频考点汇总</div>
+        </div>
+        <div class="preview-body">
+          <ul class="preview-list">
+            <li>《政策与法律法规》重点</li>
+            <li>《导游业务》核心知识点</li>
+            <li>《全国导游基础知识》考点</li>
+            <li>《地方导游基础知识》速记</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="preview-card">
+        <div class="preview-header">
+          <div class="preview-icon">📝</div>
+          <div class="preview-title">面试备考大全</div>
+        </div>
+        <div class="preview-body">
+          <ul class="preview-list">
+            <li>面试官常问50题及回答模板</li>
+            <li>景点讲解技巧与范例</li>
+            <li>应变问题处理思路</li>
+            <li>着装礼仪与注意事项</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="preview-card">
+        <div class="preview-header">
+          <div class="preview-icon">📅</div>
+          <div class="preview-title">学习计划模板</div>
+        </div>
+        <div class="preview-body">
+          <ul class="preview-list">
+            <li>零基础30天冲刺计划</li>
+            <li>上班族高效学习方案</li>
+            <li>每日打卡清单</li>
+            <li>考前冲刺复习计划</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 领取表单 -->
+  <section class="form-section">
+    <div class="form-box">
+      <h2>立即免费领取</h2>
+      <form id="claimForm" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label>您的姓名</label>
+          <input type="text" placeholder="请输入姓名" required>
+        </div>
+        <div class="form-group">
+          <label>手机号码</label>
+          <input type="tel" placeholder="请输入手机号" required>
+        </div>
+        <button type="submit" class="submit-btn">🚀 立即免费领取</button>
+        <p class="form-note">提交后请加微信 <strong style="color:#f97316;">ximao101</strong> 领取</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- 微信领取 -->
+  <section class="wechat-section">
+    <div class="wechat-box">
+      <h3>📱 微信直接领取更快</h3>
+      <div class="wechat-id">ximao101</div>
+      <p>长按复制，搜索添加，备注"领资料"</p>
+      <div class="wechat-steps">
+        <h4>领取步骤</h4>
+        <div class="wechat-step">
+          <div class="step-num">1</div>
+          <div class="step-text">复制微信号：ximao101</div>
+        </div>
+        <div class="wechat-step">
+          <div class="step-num">2</div>
+          <div class="step-text">打开微信，搜索添加好友</div>
+        </div>
+        <div class="wechat-step">
+          <div class="step-num">3</div>
+          <div class="step-text">发送"领资料"，立即获取</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 底部 -->
+  <footer class="footer">
+    <div class="footer-logo">导游证备考指南</div>
+    <p>持证导游，专注导游证考试辅导 · 📧 2173381363@qq.com · 💬 微信：ximao101</p>
+  </footer>
+
+  <!-- 成功弹窗 -->
+  <div class="modal" id="successModal">
+    <div class="modal-content">
+      <div class="modal-icon">🎉</div>
+      <h3>提交成功！</h3>
+      <p>感谢您的填写，资料将在24小时内发送</p>
+      <div class="modal-wechat">ximao101</div>
+      <p style="margin-bottom:20px;color:#666;font-size:0.85rem;">请加微信领取资料，备注"领资料"</p>
+      <button class="modal-close" onclick="closeModal()">我知道了</button>
+    </div>
+  </div>
+
+  <script>
+    function handleSubmit(e) { e.preventDefault(); document.getElementById('successModal').classList.add('show'); }
+    function closeModal() { document.getElementById('successModal').classList.remove('show'); }
+    document.getElementById('successModal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+  </script>
+</body>
+</html>
