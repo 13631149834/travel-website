@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>导游证AI备考助手 - youdao-travel.com</title>
+  <meta name="description" content="导游证AI备考助手，智能出题、知识问答、模拟面试、学习计划，让备考更高效。">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+      min-height: 100vh;
+    }
+    a { text-decoration: none; color: inherit; }
+    
+    /* 导航栏 */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 24px;
+      background: #fff;
+      border-bottom: 1px solid #eee;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo { font-size: 1.2rem; font-weight: 600; color: #2563eb; }
+    .nav-links { display: flex; gap: 24px; }
+    .nav-links a { color: #666; font-size: 0.95rem; transition: color 0.2s; }
+    .nav-links a:hover { color: #2563eb; }
+    
+    /* 主容器 */
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+    
+    /* 介绍区域 */
+    .intro-section {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .intro-section h1 {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      color: #1f2937;
+    }
+    .intro-section .subtitle {
+      font-size: 1.1rem;
+      color: #666;
+      margin-bottom: 24px;
+    }
+    
+    /* 功能卡片 */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+    .feature-card {
+      background: #fff;
+      padding: 24px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      margin-bottom: 12px;
+    }
+    .feature-card h3 {
+      font-size: 1.1rem;
+      margin-bottom: 8px;
+      color: #1f2937;
+    }
+    .feature-card p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    /* AI聊天区域 */
+    .chat-section {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+      overflow: hidden;
+      min-height: 500px;
+    }
+    .chat-header {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #fff;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .chat-header-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+    }
+    .chat-header h2 {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    .chat-header p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+    
+    /* Coze Chat SDK容器 */
+    #chat-container {
+      min-height: 400px;
+      position: relative;
+    }
+    
+    /* SDK加载中状态 */
+    .loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 400px;
+      color: #666;
+    }
+    .loading-spinner {
+      width: 48px;
+      height: 48px;
+      border: 4px solid #e5e7eb;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* 使用说明 */
+    .tips {
+      background: #f8fafc;
+      padding: 24px;
+      border-top: 1px solid #eee;
+    }
+    .tips h3 {
+      font-size: 1rem;
+      margin-bottom: 12px;
+      color: #1f2937;
+    }
+    .tips ul {
+      list-style: none;
+      padding: 0;
+    }
+    .tips li {
+      padding: 8px 0;
+      color: #666;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .tips li::before {
+      content: "•";
+      color: #2563eb;
+      font-weight: bold;
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px;
+      color: #999;
+      font-size: 0.85rem;
+    }
+    
+    /* 移动端适配 */
+    @media (max-width: 768px) {
+      .nav-links { gap: 16px; font-size: 0.9rem; }
+      .intro-section h1 { font-size: 1.5rem; }
+      .container { padding: 24px 16px; }
+      .chat-header { padding: 16px; }
+      .chat-header h2 { font-size: 1.1rem; }
+    }
+    
+    @media (max-width: 480px) {
+      .navbar { padding: 12px 16px; }
+      .features { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .feature-card { padding: 16px; }
+      .feature-icon { font-size: 2rem; }
+      .feature-card h3 { font-size: 1rem; }
+      .feature-card p { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbar">
+    <a href="index.html" class="logo">🏠 youdao-travel.com</a>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="guide-exam.html">备考服务</a>
+      <a href="free-materials.html">免费资料</a>
+    </div>
+  </nav>
+  
+  <!-- 主容器 -->
+  <div class="container">
+    <!-- 介绍区域 -->
+    <div class="intro-section">
+      <h1>📚 导游证AI备考助手</h1>
+      <p class="subtitle">您的专属智能备考伙伴，让导游证考试更简单</p>
+    </div>
+    
+    <!-- 功能卡片 -->
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon">📝</div>
+        <h3>智能出题</h3>
+        <p>根据考试大纲智能生成练习题，涵盖笔试四科</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💡</div>
+        <h3>知识问答</h3>
+        <p>随时提问，即时解答备考疑惑，高效掌握知识点</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎤</div>
+        <h3>模拟面试</h3>
+        <p>模拟导游面试场景，练习导游词和现场问答</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <h3>学习计划</h3>
+        <p>量身定制备考计划，科学安排复习节奏</p>
+      </div>
+    </div>
+    
+    <!-- AI聊天区域 -->
+    <div class="chat-section">
+      <div class="chat-header">
+        <div class="chat-header-icon">🤖</div>
+        <div>
+          <h2>AI备考助手</h2>
+          <p>7×24小时在线，随时为您解答</p>
+        </div>
+      </div>
+      
+      <!-- 聊天容器 - Coze Chat SDK将在这里渲染 -->
+      <div id="chat-container">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <span>正在加载AI助手...</span>
+        </div>
+      </div>
+      
+      <!-- 使用提示 -->
+      <div class="tips">
+        <h3>💡 使用提示</h3>
+        <ul>
+          <li>可以直接输入任何与导游证考试相关的问题</li>
+          <li>可以要求AI出题练习，输入"出一道XX科的题"</li>
+          <li>可以练习面试，输入"模拟面试，讲解XX景点"</li>
+          <li>可以制定学习计划，输入"帮我制定一个备考计划"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 导游证备考资料 | <a href="index.html" style="color: #2563eb;">返回首页</a></p>
+  </footer>
+  
+  <!-- 
+    ========================================
+    Coze Chat SDK 嵌入代码
+    ========================================
+    使用说明：
+    1. 登录 coze.cn，进入Bot编排页面
+    2. 点击"发布"，选择"Chat SDK"渠道发布
+    3. 再次发布后，点击"安装"获取完整代码
+    4. 将下方的SDK代码替换为实际的安装代码
+    ========================================
+  -->
+  
+  <!-- Coze Chat SDK (请在扣子平台发布Chat SDK后替换为实际的安装代码) -->
+  <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/0.1.0-beta.5/libs/cn/index.js"></script>
+  <script>
+    // Bot ID: 7633483506475532328
+    new CozeWebSDK.WebChatClient({
+      config: {
+        bot_id: '7633483506475532328',
+      },
+      componentProps: {
+        title: '导游证AI备考助手',
+        icon: 'https://lf-coze-web-cdn.coze.cn/obj/eden-cn/lm-lgvj/ljhwZthlaukjlkulzlp/coze/chatsdk-logo.png',
+        lang: 'zh-CN',
+        layout: 'pc',
+        width: 800,
+      },
+      el: document.getElementById('chat-container'),
+    });
+  </script>
+</body>
+</html>
