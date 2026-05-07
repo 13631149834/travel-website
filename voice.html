@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>发声墙 - 游导旅游</title>
+  <meta name="description" content="导游和游客都能说话的地方，分享旅途中的温暖与感动。">
+  <style>
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      line-height: 1.7;
+      color: #333;
+      background: #f8f9fa;
+    }
+    a { text-decoration: none; color: inherit; }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 24px;
+      background: #fff;
+      border-bottom: 1px solid #e8ecf0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #1a5276;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .logo-icon {
+      width: 28px;
+      height: 28px;
+      background: #1a5276;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a {
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #555;
+      transition: all 0.2s;
+    }
+    .nav-links a:hover { background: #1a5276; color: #fff; }
+    .nav-links a.active { background: #1a5276; color: #fff; font-weight: 500; }
+    .nav-toggle { display: none; flex-direction: column; gap: 4px; cursor: pointer; padding: 6px; }
+    .nav-toggle span { width: 22px; height: 2px; background: #333; border-radius: 2px; }
+
+    .hero {
+      background: linear-gradient(135deg, #1a5276 0%, #1f618d 100%);
+      color: white;
+      padding: 70px 20px 50px;
+      text-align: center;
+    }
+    .hero h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      letter-spacing: -0.5px;
+    }
+    .hero p {
+      font-size: 1.05rem;
+      opacity: 0.9;
+      max-width: 520px;
+      margin: 0 auto 8px;
+    }
+    .hero-tip {
+      font-size: 0.88rem;
+      opacity: 0.75;
+      max-width: 400px;
+      margin: 0 auto;
+      font-style: italic;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .tab-btn {
+      padding: 10px 28px;
+      border-radius: 25px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: 2px solid rgba(255,255,255,0.5);
+      background: transparent;
+      color: white;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background: white;
+      color: #1a5276;
+      border-color: white;
+    }
+
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+    .posts-section {
+      padding: 40px 0 120px;
+    }
+    .posts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .post-card {
+      background: #fff;
+      border-radius: 14px;
+      padding: 22px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .post-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .identity-badge {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+    .identity-guide {
+      background: #fff3e0;
+      color: #e65100;
+    }
+    .identity-tourist {
+      background: #e3f2fd;
+      color: #1565c0;
+    }
+    .post-meta {
+      font-size: 0.8rem;
+      color: #999;
+    }
+    .post-author {
+      font-weight: 500;
+      color: #666;
+    }
+    .post-content {
+      flex: 1;
+      font-size: 0.95rem;
+      line-height: 1.75;
+      color: #444;
+      margin-bottom: 16px;
+    }
+    .post-footer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #999;
+      font-size: 0.85rem;
+    }
+    .like-icon {
+      color: #e74c3c;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #1a5276, #1f618d);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 28px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(26, 82, 118, 0.35);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s;
+      z-index: 50;
+    }
+    .fab:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 22px rgba(26, 82, 118, 0.45);
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #fff;
+      border-radius: 18px;
+      padding: 32px;
+      max-width: 500px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal h3 {
+      font-size: 1.3rem;
+      color: #1a5276;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: #1a5276;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 140px;
+    }
+    .char-count {
+      text-align: right;
+      font-size: 0.8rem;
+      color: #999;
+      margin-top: 4px;
+    }
+    .identity-select {
+      display: flex;
+      gap: 12px;
+    }
+    .identity-option {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .identity-option:hover { border-color: #1a5276; }
+    .identity-option.selected {
+      border-color: #1a5276;
+      background: #f0f7fb;
+    }
+    .identity-option .icon { font-size: 1.5rem; margin-bottom: 4px; }
+    .identity-option .text { font-size: 0.85rem; font-weight: 500; }
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .btn {
+      flex: 1;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+    .btn-cancel {
+      background: #f0f0f0;
+      color: #666;
+    }
+    .btn-cancel:hover { background: #e0e0e0; }
+    .btn-submit {
+      background: linear-gradient(135deg, #1a5276, #1f618d);
+      color: white;
+    }
+    .btn-submit:hover { opacity: 0.9; }
+    .btn-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .explore-section {
+      background: #fff;
+      padding: 50px 20px;
+      border-top: 1px solid #eee;
+    }
+    .explore-section h2 {
+      text-align: center;
+      font-size: 1.4rem;
+      color: #1a5276;
+      margin-bottom: 30px;
+    }
+    .explore-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .explore-card {
+      background: #f8f9fa;
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .explore-card:hover {
+      background: #eef5f9;
+      transform: translateY(-2px);
+    }
+    .explore-card h3 {
+      font-size: 1.1rem;
+      color: #1a5276;
+      margin-bottom: 8px;
+    }
+    .explore-card p {
+      font-size: 0.88rem;
+      color: #666;
+      margin-bottom: 14px;
+    }
+    .explore-link {
+      display: inline-block;
+      color: #1a5276;
+      font-size: 0.88rem;
+      font-weight: 500;
+    }
+    .explore-link:hover { text-decoration: underline; }
+
+    .footer {
+      background: #1a5276;
+      color: rgba(255,255,255,0.85);
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .footer img {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 16px;
+      border-radius: 8px;
+    }
+    .footer p { font-size: 0.9rem; margin-bottom: 6px; }
+    .footer .tip { font-size: 0.8rem; opacity: 0.7; }
+
+    .back-top {
+      position: fixed;
+      bottom: 30px;
+      left: 24px;
+      width: 42px;
+      height: 42px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 50;
+    }
+    .back-top.show { opacity: 1; }
+    .back-top:hover { background: #f0f0f0; }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #999;
+    }
+    .empty-state .icon { font-size: 3rem; margin-bottom: 16px; }
+    .empty-state p { font-size: 1rem; }
+
+    @media (max-width: 768px) {
+      .nav-toggle { display: flex; }
+      .nav-links {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        flex-direction: column;
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 14px; }
+      .posts-grid { grid-template-columns: 1fr; }
+      .tabs { flex-direction: column; align-items: center; }
+      .tab-btn { width: 200px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="white" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    </div>
+    游导旅游
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">首页</a>
+    <a href="travel-knowledge.html">旅行知识</a>
+    <a href="travel-tools.html">旅行工具</a>
+    <a href="exam-guide.html">导游证考试</a>
+    <a href="exam-simulator.html">模拟考试</a>
+    <a href="ai-assistant.html">AI助手</a>
+    <a href="resources.html">资料包</a>
+    <a href="voice.html" class="active">发声墙</a>
+  </div>
+  <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<header class="hero">
+  <h1>发声墙</h1>
+  <p>导游和游客，都能说话的地方</p>
+  <p class="hero-tip">分享你旅途中的温暖瞬间，可以是别人的善意，也可以是你自己的感动</p>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="guide" onclick="switchTab('guide')">
+      导游视角
+    </button>
+    <button class="tab-btn" data-tab="tourist" onclick="switchTab('tourist')">
+      游客视角
+    </button>
+  </div>
+</header>
+
+<section class="posts-section">
+  <div class="container">
+    <div class="posts-grid" id="postsGrid"></div>
+  </div>
+</section>
+
+<button class="fab" onclick="openModal()">
+  ✏️ 我要发声
+</button>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModalOnOverlay(event)">
+  <div class="modal">
+    <h3>✏️ 我要发声</h3>
+    <div class="form-group">
+      <label>选择身份</label>
+      <div class="identity-select">
+        <div class="identity-option selected" data-identity="guide" onclick="selectIdentity(this)">
+          <div class="icon">🎙️</div>
+          <div class="text">导游</div>
+        </div>
+        <div class="identity-option" data-identity="tourist" onclick="selectIdentity(this)">
+          <div class="icon">🎒</div>
+          <div class="text">游客</div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>昵称（选填，默认匿名）</label>
+      <input type="text" id="nickname" placeholder="给自己起个名字" maxlength="20">
+    </div>
+    <div class="form-group">
+      <label>想说的话</label>
+      <textarea id="postContent" placeholder="分享你旅途中的温暖瞬间..." maxlength="500" oninput="updateCharCount()"></textarea>
+      <div class="char-count"><span id="charCount">0</span>/500</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn btn-submit" id="submitBtn" onclick="submitPost()" disabled>发布</button>
+    </div>
+  </div>
+</div>
+
+<section class="explore-section">
+  <h2>继续探索</h2>
+  <div class="explore-grid">
+    <div class="explore-card">
+      <h3>📚 旅行知识</h3>
+      <p>签证攻略、目的地推荐、实用贴士</p>
+      <a href="travel-knowledge.html" class="explore-link">去看看 →</a>
+    </div>
+    <div class="explore-card">
+      <h3>🤖 AI助手</h3>
+      <p>智能规划行程，解答旅行疑问</p>
+      <a href="ai-assistant.html" class="explore-link">试试看 →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <img src="images/qrcode.jpg" alt="公众号二维码">
+  <p>有更多想说的话？</p>
+  <p>关注公众号，加入我们的交流群</p>
+  <p class="tip">© 2026 游导旅游</p>
+</footer>
+
+<div class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#666" stroke-width="2">
+    <path d="M18 15l-6-6-6 6"/>
+  </svg>
+</div>
+
+<script>
+var STORAGE_KEY = 'youdao_voice_posts';
+
+var seedPosts = [
+  // 导游视角 - 温暖瞬间
+  { identity: 'guide', nickname: '大理小霞', content: '今天带团去大理，一位阿姨拉着我的手说"小姑娘你比我女儿还细心"，差点在车上哭出来', likes: 892, time: Date.now() - 3600000 },
+  { identity: 'guide', nickname: '带团老周', content: '带团第三年，最开心的不是拿了多少提成，是每次送团时客人说"下次还找你"', likes: 1243, time: Date.now() - 7200000 },
+  { identity: 'guide', nickname: '长城导游小美', content: '有个小朋友在长城上画了幅画送给我，上面写着"导游姐姐最好看"，现在还贴在我工位上', likes: 756, time: Date.now() - 10800000 },
+  { identity: 'guide', nickname: '暴雨天领队', content: '暴雨天带团，全体游客没一个抱怨，还一起在车上唱歌，那是我带过最暖的一次团', likes: 567, time: Date.now() - 14400000 },
+  { identity: 'guide', nickname: '旅行的意义', content: '做导游最值得的瞬间：客人回来跟我说，那次旅行改变了ta的生活态度', likes: 1023, time: Date.now() - 18000000 },
+  { identity: 'guide', nickname: '新导游小陈', content: '第一次独立带团紧张到声音发抖，客人说"没事你慢慢来"，那一刻觉得这行值得', likes: 445, time: Date.now() - 21600000 },
+  { identity: 'guide', nickname: '海南导游阿芳', content: '带老年团去海南，叔叔阿姨们非要给我塞水果，挡都挡不住的温暖', likes: 678, time: Date.now() - 25200000 },
+  // 游客视角 - 温暖故事
+  { identity: 'tourist', nickname: '曼谷迷路人', content: '在泰国迷路了，一个当地导游主动帮我指路还送我到酒店，语言不通但善意是通的', likes: 834, time: Date.now() - 5400000 },
+  { identity: 'tourist', nickname: '带爸妈旅行', content: '带爸妈去云南，爸爸看到洱海的时候眼眶红了，说这辈子值了', likes: 1125, time: Date.now() - 9000000 },
+  { identity: 'tourist', nickname: '独行侠旅行中', content: '一个人的旅行，在青旅认识了现在的闺蜜，五年了还在一起旅行', likes: 1567, time: Date.now() - 12600000 },
+  { identity: 'tourist', nickname: '西藏行者', content: '在西藏，导游帮我们祈福，他把每个游客的名字都念了一遍，那一刻真的很感动', likes: 934, time: Date.now() - 16200000 },
+  { identity: 'tourist', nickname: '生日那天的旅行', content: '跟团去日本，导游小哥知道我生日，晚上偷偷买了蛋糕，在车上给我唱了生日歌', likes: 2341, time: Date.now() - 19800000 },
+  { identity: 'tourist', nickname: '新手妈妈', content: '第一次带3岁的娃出门旅行，全程忐忑，结果孩子比我想象的勇敢多了', likes: 567, time: Date.now() - 23400000 },
+  { identity: 'tourist', nickname: '路上的故事', content: '旅行最好的部分不是风景，是路上遇到的那些善意', likes: 1832, time: Date.now() - 27000000 },
+];
+
+function getAllPosts() {
+  var localPosts = [];
+  try {
+    var stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) localPosts = JSON.parse(stored);
+  } catch(e) {}
+  return localPosts;
+}
+
+function savePosts(posts) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+}
+
+function getMergedPosts() {
+  var localPosts = getAllPosts();
+  var localIds = {};
+  for (var i = 0; i < localPosts.length; i++) {
+    localIds[localPosts[i].localId] = true;
+  }
+  var merged = localPosts.slice();
+  for (var j = 0; j < seedPosts.length; j++) {
+    var seedId = 'seed_' + j;
+    if (!localIds[seedId]) {
+      merged.push({ identity: seedPosts[j].identity, nickname: seedPosts[j].nickname, content: seedPosts[j].content, likes: seedPosts[j].likes, time: seedPosts[j].time, localId: seedId });
+    }
+  }
+  merged.sort(function(a, b) { return b.time - a.time; });
+  return merged;
+}
+
+var currentTab = 'guide';
+
+function switchTab(tab) {
+  currentTab = tab;
+  var btns = document.querySelectorAll('.tab-btn');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('active', btns[i].dataset.tab === tab);
+  }
+  renderPosts();
+}
+
+function formatTime(ts) {
+  var diff = Date.now() - ts;
+  if (diff < 60000) return '刚刚';
+  if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+  if (diff < 86400000) return Math.floor(diff / 3600000) + '小时前';
+  if (diff < 604800000) return Math.floor(diff / 86400000) + '天前';
+  var d = new Date(ts);
+  return (d.getMonth() + 1) + '月' + d.getDate() + '日';
+}
+
+function escapeHtml(text) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(text));
+  return div.innerHTML;
+}
+
+function renderPosts() {
+  var grid = document.getElementById('postsGrid');
+  var allPosts = getMergedPosts();
+  var filtered = [];
+  for (var i = 0; i < allPosts.length; i++) {
+    if (allPosts[i].identity === currentTab) filtered.push(allPosts[i]);
+  }
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="icon">💛</div><p>还没有' + (currentTab === 'guide' ? '导游' : '游客') + '分享温暖</p><p>做第一个传递温暖的人吧！</p></div>';
+    return;
+  }
+
+  var html = '';
+  for (var k = 0; k < filtered.length; k++) {
+    var post = filtered[k];
+    var badge = post.identity === 'guide' ? 'identity-guide' : 'identity-tourist';
+    var label = post.identity === 'guide' ? '🎙️ 导游' : '🎒 游客';
+    html += '<div class="post-card"><div class="post-header"><span class="identity-badge ' + badge + '">' + label + '</span><span class="post-meta">' + formatTime(post.time) + '</span></div><div class="post-author" style="margin-bottom:8px;color:#888;font-size:0.85rem;">' + escapeHtml(post.nickname || '匿名用户') + '</div><div class="post-content">' + escapeHtml(post.content) + '</div><div class="post-footer"><span class="like-icon">❤</span><span>' + post.likes + '</span></div></div>';
+  }
+  grid.innerHTML = html;
+}
+
+var selectedIdentity = 'guide';
+
+function selectIdentity(el) {
+  var opts = document.querySelectorAll('.identity-option');
+  for (var i = 0; i < opts.length; i++) opts[i].classList.remove('selected');
+  el.classList.add('selected');
+  selectedIdentity = el.dataset.identity;
+}
+
+function updateCharCount() {
+  var content = document.getElementById('postContent').value;
+  document.getElementById('charCount').textContent = content.length;
+  document.getElementById('submitBtn').disabled = content.trim().length === 0;
+}
+
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('show');
+  document.getElementById('postContent').value = '';
+  document.getElementById('nickname').value = '';
+  document.getElementById('charCount').textContent = '0';
+  document.getElementById('submitBtn').disabled = true;
+  selectIdentity(document.querySelector('.identity-option[data-identity="guide"]'));
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('show');
+}
+
+function closeModalOnOverlay(e) {
+  if (e.target === e.currentTarget) closeModal();
+}
+
+function submitPost() {
+  var content = document.getElementById('postContent').value.trim();
+  if (!content) return;
+
+  var nickname = document.getElementById('nickname').value.trim() || '匿名用户';
+  var newPost = {
+    identity: selectedIdentity,
+    nickname: nickname,
+    content: content,
+    likes: 0,
+    time: Date.now(),
+    localId: 'local_' + Date.now()
+  };
+
+  var posts = getAllPosts();
+  posts.unshift(newPost);
+  savePosts(posts);
+
+  closeModal();
+  renderPosts();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.onscroll = function() {
+  document.getElementById('backTop').classList.toggle('show', window.scrollY > 400);
+};
+
+renderPosts();
+</script>
+
+</body>
+</html>
