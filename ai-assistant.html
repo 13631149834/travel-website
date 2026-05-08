@@ -7,18 +7,25 @@
   <title>AI备考助手 - 导游证智能问答</title>
   <meta name="description" content="导游证AI备考助手，7×24小时在线答疑，智能出题、知识问答、模拟面试，随时随地帮你备考。">
   <meta name="keywords" content="导游证AI助手,备考问答,智能出题,模拟面试,导游证备考">
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="AI备考助手 - 导游证智能问答">
+  <meta property="og:description" content="7×24小时在线答疑，智能出题、知识问答、模拟面试">
+  <meta property="og:url" content="https://youdao-travel.com/ai-assistant.html">
+  <meta property="og:image" content="https://youdao-travel.com/images/qrcode.jpg">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f8f9fa; color: #333; line-height: 1.7; }
     a { text-decoration: none; color: inherit; }
 
+    /* 导航栏 */
     .navbar {
       position: sticky; top: 0; z-index: 1000;
       background: #fff; display: flex; align-items: center; justify-content: space-between;
       padding: 12px 24px; box-shadow: 0 1px 8px rgba(0,0,0,0.06);
     }
     .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #2563eb; font-weight: 700; font-size: 1.1rem; }
-    .logo-icon { width: 28px; height: 28px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+    .logo-icon { width: 28px; height: 28px; background: linear-gradient(135deg, #2563eb, #FF6B35); border-radius: 50%; display: flex; align-items: center; justify-content: center; }
     .logo-icon svg { fill: none; stroke: white; stroke-width: 2; }
     .nav-links { display: flex; gap: 4px; }
     .nav-links a { padding: 7px 14px; border-radius: 8px; font-size: 0.9rem; color: #555; text-decoration: none; transition: all 0.2s; }
@@ -29,27 +36,42 @@
 
     .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
 
+    /* Hero */
     .ai-hero {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #7c3aed 100%);
       color: white; padding: 50px 24px; border-radius: 16px; text-align: center; margin: 30px 0 24px;
+      position: relative; overflow: hidden;
     }
+    .ai-hero::before {
+      content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+      animation: heroShine 6s ease-in-out infinite;
+    }
+    @keyframes heroShine {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(15%, 15%); }
+    }
+    .ai-hero-content { position: relative; z-index: 1; }
     .ai-hero h1 { font-size: 1.8rem; margin-bottom: 12px; }
     .ai-hero p { font-size: 1rem; opacity: 0.9; max-width: 500px; margin: 0 auto 20px; }
     .ai-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
-    .ai-tag { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
+    .ai-tag { background: rgba(255,255,255,0.2); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; backdrop-filter: blur(4px); }
 
+    /* 功能卡片 */
     .features {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 16px; margin-bottom: 30px;
     }
     .feature-card {
       background: #fff; padding: 20px; border-radius: 12px;
-      border: 1px solid #e8ecf0; text-align: center;
+      border: 1px solid #e8ecf0; text-align: center; transition: all 0.3s;
     }
+    .feature-card:hover { border-color: #2563eb; box-shadow: 0 8px 24px rgba(37,99,235,0.1); transform: translateY(-4px); }
     .feature-card .icon { font-size: 2rem; margin-bottom: 8px; }
     .feature-card h3 { font-size: 1rem; color: #2563eb; margin-bottom: 4px; }
     .feature-card p { font-size: 0.85rem; color: #888; }
 
+    /* 聊天区域 */
     .chat-section {
       background: #fff; border-radius: 16px; border: 1px solid #e8ecf0;
       padding: 24px; margin-bottom: 30px;
@@ -57,13 +79,25 @@
     .chat-section h2 { font-size: 1.2rem; color: #1f2937; margin-bottom: 16px; text-align: center; }
     #cozeChatContainer { min-height: 500px; border-radius: 12px; overflow: hidden; border: 1px solid #e8ecf0; }
 
-    .wechat-section { background: #f0f4f8; padding: 40px 20px; text-align: center; }
-    .wechat-section h3 { color: #2563eb; margin-bottom: 8px; font-size: 1.1rem; }
-    .wechat-section p { color: #666; font-size: 0.9rem; margin-bottom: 16px; }
-    .wechat-section img { width: 140px; height: 140px; border-radius: 8px; border: 2px solid #e0e0e0; }
+    /* 使用小贴士 */
+    .tips-section {
+      background: linear-gradient(135deg, #fff8f0, #fef3c7);
+      border-radius: 16px; padding: 24px; margin-bottom: 30px;
+      border: 1px solid #fde68a;
+    }
+    .tips-section h3 { font-size: 1rem; color: #92400e; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .tip-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .tip-item {
+      background: #fff; padding: 8px 14px; border-radius: 20px;
+      font-size: 0.85rem; color: #78350f; border: 1px solid #fed7aa;
+      transition: all 0.2s; cursor: pointer;
+    }
+    .tip-item:hover { background: #FF6B35; color: #fff; border-color: #FF6B35; }
+    .tip-item::before { content: '💬 '; }
 
-    .explore-section { padding: 40px 0; }
-    .explore-section h3 { font-size: 1.2rem; color: #2563eb; margin-bottom: 16px; }
+    /* 探索链接 */
+    .explore-section { padding: 30px 0; }
+    .explore-section h3 { font-size: 1.1rem; color: #2563eb; margin-bottom: 16px; }
     .explore-links { display: flex; gap: 12px; flex-wrap: wrap; }
     .explore-link {
       display: inline-block; padding: 10px 20px; background: #fff; border: 1px solid #e8ecf0;
@@ -71,6 +105,13 @@
     }
     .explore-link:hover { background: #2563eb; color: #fff; }
 
+    /* 公众号 */
+    .wechat-section { background: #f0f4f8; padding: 40px 20px; text-align: center; }
+    .wechat-section h3 { color: #2563eb; margin-bottom: 8px; font-size: 1.1rem; }
+    .wechat-section p { color: #666; font-size: 0.9rem; margin-bottom: 16px; }
+    .wechat-section img { width: 140px; height: 140px; border-radius: 8px; border: 2px solid #e0e0e0; }
+
+    /* 页脚 */
     .footer { background: #1e293b; color: rgba(255,255,255,0.8); padding: 30px 20px; text-align: center; }
     .footer p { margin-bottom: 6px; font-size: 0.9rem; }
     .footer a { color: rgba(255,255,255,0.9); text-decoration: none; }
@@ -83,6 +124,9 @@
       .ai-hero h1 { font-size: 1.4rem; }
       .features { grid-template-columns: repeat(2, 1fr); }
       #cozeChatContainer { min-height: 400px; }
+    }
+    @media (max-width: 480px) {
+      .features { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -113,13 +157,15 @@
 <div class="container">
 
   <div class="ai-hero">
-    <h1>导游证AI备考助手</h1>
-    <p>7×24小时在线，智能出题、知识问答、模拟面试，随时随地帮你备考</p>
-    <div class="ai-tags">
-      <span class="ai-tag">智能出题</span>
-      <span class="ai-tag">知识问答</span>
-      <span class="ai-tag">模拟面试</span>
-      <span class="ai-tag">学习计划</span>
+    <div class="ai-hero-content">
+      <h1>导游证AI备考助手</h1>
+      <p>7×24小时在线，智能出题、知识问答、模拟面试，随时随地帮你备考</p>
+      <div class="ai-tags">
+        <span class="ai-tag">智能出题</span>
+        <span class="ai-tag">知识问答</span>
+        <span class="ai-tag">模拟面试</span>
+        <span class="ai-tag">学习计划</span>
+      </div>
     </div>
   </div>
 
@@ -151,12 +197,26 @@
     <div id="cozeChatContainer"></div>
   </div>
 
+  <!-- 使用小贴士 -->
+  <div class="tips-section">
+    <h3>💡 试试这样问</h3>
+    <div class="tip-list">
+      <span class="tip-item" onclick="fillTip(this)">导游证怎么报名</span>
+      <span class="tip-item" onclick="fillTip(this)">科目一有哪些重点</span>
+      <span class="tip-item" onclick="fillTip(this)">面试景点有哪些</span>
+      <span class="tip-item" onclick="fillTip(this)">导游词怎么写</span>
+      <span class="tip-item" onclick="fillTip(this)">各省面试差异</span>
+      <span class="tip-item" onclick="fillTip(this)">备考计划怎么定</span>
+    </div>
+  </div>
+
   <div class="explore-section">
     <h3>继续探索</h3>
     <div class="explore-links">
       <a href="exam-guide.html" class="explore-link">备考攻略 →</a>
       <a href="exam-simulator.html" class="explore-link">模拟考试 →</a>
       <a href="resources.html" class="explore-link">资料套餐 →</a>
+      <a href="free-materials.html" class="explore-link">免费资料 →</a>
     </div>
   </div>
 
@@ -167,6 +227,7 @@
     <h3>扫码关注「逢考必过 & 证好有你」</h3>
     <p>AI备考助手免费使用 / 导游证考试干货 / 备考资料更新</p>
     <img src="images/qrcode.jpg" alt="公众号二维码">
+    <p style="margin-top: 12px; font-size: 0.85rem;">微信咨询：ximao101</p>
   </div>
 </div>
 
@@ -176,13 +237,25 @@
   <p style="margin-top: 10px; opacity: 0.6;">AI帮你考过，不只是给你资料</p>
 </footer>
 
-<!-- Coze Chat SDK -->
-<script src="https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/assets/coze-chat-v0.1.2.js"></script>
+<!-- Coze Chat SDK - 使用最新版本 -->
+<script src="https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/assets/coze-chat-v1.1.js"></script>
 <script>
   new CozeWebSDK.WebChatClient({
-    botId: '7633483506475532328',
-    userId: 'visitor_' + Math.random().toString(36).substring(7),
-    container: document.getElementById('cozeChatContainer'),
+    bot: {
+      id: '7633483506475532328',
+      name: '导游证AI备考助手'
+    },
+    user: {
+      id: 'visitor_' + Math.random().toString(36).substring(2, 11)
+    },
+    container: '#cozeChatContainer',
+    config: {
+      layout: 'embedded',
+      welcome: {
+        title: '导游证AI备考助手',
+        description: '你好！我是导游证备考AI助手，有什么可以帮你的吗？'
+      }
+    }
   });
 </script>
 

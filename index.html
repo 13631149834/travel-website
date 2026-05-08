@@ -7,6 +7,13 @@
   <title>游导旅游 - 导游证AI智能备考平台</title>
   <meta name="description" content="备考导游证，一次就上岸！AI智能备考助手+全套备考资料+1v1全程指导，基础包29.9元/升级包57元/全能包99元。">
   <meta name="keywords" content="导游证,导游证考试,备考,AI助手,历年真题,面试指导,导游词">
+  <!-- Open Graph 分享到微信/微博 -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="游导旅游 - 导游证AI智能备考平台">
+  <meta property="og:description" content="AI智能备考+全套备考资料+1v1全程指导，一次就上岸！">
+  <meta property="og:url" content="https://youdao-travel.com">
+  <meta property="og:image" content="https://youdao-travel.com/images/qrcode.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
     *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
@@ -18,7 +25,7 @@
     }
     a { text-decoration: none; color: inherit; }
 
-    /* 导航栏 */
+    /* ===== 导航栏 ===== */
     .navbar {
       display: flex;
       justify-content: space-between;
@@ -41,7 +48,7 @@
     .logo-icon {
       width: 28px;
       height: 28px;
-      background: #2563eb;
+      background: linear-gradient(135deg, #2563eb, #FF6B35);
       border-radius: 6px;
       display: flex;
       align-items: center;
@@ -62,37 +69,60 @@
 
     .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
-    /* Hero区域 */
+    /* ===== Hero区域 - 渐变+微动画 ===== */
     .hero {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #7c3aed 100%);
       color: white;
-      padding: 80px 20px 70px;
+      padding: 90px 20px 80px;
       text-align: center;
+      position: relative;
+      overflow: hidden;
     }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 50%);
+      animation: heroShine 8s ease-in-out infinite;
+    }
+    @keyframes heroShine {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(20%, 20%); }
+    }
+    .hero-content { position: relative; z-index: 1; }
     .hero h1 {
-      font-size: 2.4rem;
+      font-size: 2.5rem;
       font-weight: 700;
       margin-bottom: 16px;
       letter-spacing: -0.5px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
     .hero p {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       opacity: 0.95;
       max-width: 580px;
       margin: 0 auto 28px;
     }
     .hero-buttons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
     .btn-primary {
-      background: #fff;
-      color: #2563eb;
+      background: #FF6B35;
+      color: #fff;
       padding: 14px 32px;
       border-radius: 10px;
       font-size: 1rem;
       font-weight: 600;
-      transition: all 0.2s;
+      transition: all 0.3s;
       display: inline-block;
+      box-shadow: 0 4px 15px rgba(255,107,53,0.4);
     }
-    .btn-primary:hover { background: #f0f9ff; transform: translateY(-2px); }
+    .btn-primary:hover { 
+      background: #ea580c; 
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255,107,53,0.5);
+    }
     .btn-secondary {
       background: rgba(255,255,255,0.15);
       color: #fff;
@@ -101,16 +131,33 @@
       font-size: 1rem;
       font-weight: 500;
       border: 1px solid rgba(255,255,255,0.3);
-      transition: all 0.2s;
+      transition: all 0.3s;
       display: inline-block;
+      backdrop-filter: blur(4px);
     }
-    .btn-secondary:hover { background: rgba(255,255,255,0.25); }
-    .hero-stats { display: flex; gap: 40px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
-    .stat-item { text-align: center; }
-    .stat-number { font-size: 1.8rem; font-weight: 700; }
-    .stat-label { font-size: 0.85rem; opacity: 0.85; }
+    .btn-secondary:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); }
+    
+    /* Hero信任徽章 */
+    .hero-badges {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .badge-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255,255,255,0.15);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      backdrop-filter: blur(4px);
+    }
+    .badge-item span { font-size: 1rem; }
 
-    /* 服务卡片 */
+    /* ===== 服务卡片 ===== */
     .services-section { padding: 60px 0 30px; }
     .section-title { font-size: 1.5rem; font-weight: 600; color: #1f2937; margin-bottom: 8px; text-align: center; }
     .section-sub { color: #888; font-size: 0.95rem; margin-bottom: 32px; text-align: center; }
@@ -126,17 +173,18 @@
       border: 1px solid #e8ecf0;
       transition: all 0.3s;
       text-align: center;
+      cursor: pointer;
     }
     .service-card:hover {
       border-color: #2563eb;
-      box-shadow: 0 8px 30px rgba(37,99,235,0.12);
-      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(37,99,235,0.15);
+      transform: translateY(-6px);
     }
     .service-icon {
       width: 60px;
       height: 60px;
       border-radius: 14px;
-      background: #eff6ff;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -149,14 +197,14 @@
       display: inline-block;
       margin-top: 12px;
       padding: 4px 12px;
-      background: #fef3c7;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
       color: #b45309;
       border-radius: 20px;
       font-size: 0.8rem;
       font-weight: 500;
     }
 
-    /* 价格对比表 */
+    /* ===== 价格对比表 ===== */
     .pricing-section { padding: 50px 0; background: #fff; }
     .pricing-grid {
       display: grid;
@@ -174,10 +222,10 @@
       transition: all 0.3s;
       position: relative;
     }
-    .pricing-card:hover { border-color: #2563eb; }
+    .pricing-card:hover { border-color: #2563eb; box-shadow: 0 8px 30px rgba(37,99,235,0.1); }
     .pricing-card.featured {
-      border: 2px solid #2563eb;
-      box-shadow: 0 8px 30px rgba(37,99,235,0.15);
+      border: 2px solid #FF6B35;
+      box-shadow: 0 8px 30px rgba(255,107,53,0.2);
     }
     .pricing-card.featured::before {
       content: '最划算';
@@ -185,7 +233,7 @@
       top: -12px;
       left: 50%;
       transform: translateX(-50%);
-      background: #2563eb;
+      background: linear-gradient(135deg, #FF6B35, #ea580c);
       color: #fff;
       padding: 4px 16px;
       border-radius: 12px;
@@ -217,47 +265,163 @@
       display: block;
       margin-top: 16px;
       padding: 12px 24px;
-      background: #2563eb;
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
       color: #fff;
       border-radius: 8px;
       font-size: 0.95rem;
       font-weight: 500;
-      transition: background 0.2s;
+      transition: all 0.3s;
     }
-    .pricing-btn:hover { background: #1d4ed8; }
+    .pricing-btn:hover { 
+      background: linear-gradient(135deg, #1d4ed8, #1e40af);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    }
     .pricing-note { font-size: 0.75rem; color: #888; margin-top: 8px; }
 
-    /* CTA行动区域 */
-    .cta-section {
-      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
-      color: white;
-      padding: 60px 20px;
-      text-align: center;
+    /* ===== 信任保障 ===== */
+    .trust-section { padding: 40px 0; }
+    .trust-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
     }
-    .cta-section h2 { font-size: 1.6rem; margin-bottom: 12px; }
-    .cta-section p { font-size: 1rem; opacity: 0.9; margin-bottom: 24px; }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1px solid #e8ecf0;
+    }
+    .trust-icon {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, #eff6ff, #dbeafe);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .trust-text h4 { font-size: 0.9rem; color: #1f2937; margin-bottom: 2px; }
+    .trust-text p { font-size: 0.8rem; color: #888; }
+
+    /* ===== FAQ折叠面板 ===== */
+    .faq-section { padding: 40px 0; background: #fff; }
+    .faq-section h2 { font-size: 1.4rem; color: #1f2937; margin-bottom: 24px; text-align: center; }
+    .faq-list { max-width: 700px; margin: 0 auto; }
+    .faq-item {
+      border: 1px solid #e8ecf0;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    .faq-question {
+      width: 100%;
+      background: #f8fafc;
+      border: none;
+      padding: 16px 20px;
+      font-size: 0.95rem;
+      color: #1f2937;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .faq-question:hover { background: #f1f5f9; }
+    .faq-question::after {
+      content: '▼';
+      font-size: 0.7rem;
+      color: #888;
+      transition: transform 0.3s;
+    }
+    .faq-item.active .faq-question::after { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+    }
+    .faq-item.active .faq-answer { max-height: 300px; }
+    .faq-answer-content { padding: 16px 20px; font-size: 0.88rem; color: #555; line-height: 1.7; }
+
+    /* ===== CTA行动区域 ===== */
+    .cta-section {
+      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 50%, #7c3aed 100%);
+      color: white;
+      padding: 70px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .cta-content { position: relative; z-index: 1; }
+    .cta-section h2 { font-size: 1.8rem; margin-bottom: 12px; }
+    .cta-section p { font-size: 1.05rem; opacity: 0.9; margin-bottom: 28px; }
     .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
     .cta-btn {
-      padding: 14px 32px;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 500;
+      padding: 16px 36px;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 600;
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      transition: all 0.2s;
+      transition: all 0.3s;
     }
-    .cta-btn.primary { background: #fff; color: #2563eb; }
-    .cta-btn.secondary { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
-    .cta-btn:hover { transform: translateY(-2px); }
+    .cta-btn.primary { 
+      background: #FF6B35; 
+      color: #fff;
+      box-shadow: 0 4px 15px rgba(255,107,53,0.4);
+    }
+    .cta-btn.primary:hover { 
+      background: #ea580c;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(255,107,53,0.5);
+    }
+    .cta-btn.secondary { 
+      background: rgba(255,255,255,0.15); 
+      color: #fff; 
+      border: 1px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(4px);
+    }
+    .cta-btn.secondary:hover { 
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
 
-    /* 公众号区域 */
+    /* ===== 公众号区域 ===== */
     .wechat-section { background: #f0f4f8; padding: 50px 20px; text-align: center; }
     .wechat-section h3 { color: #2563eb; margin-bottom: 8px; font-size: 1.2rem; }
     .wechat-section p { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+    .wechat-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 24px;
+      background: #fff;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
     .wechat-qr { width: 140px; height: 140px; border-radius: 8px; border: 2px solid #e0e0e0; }
+    .wechat-info { text-align: left; }
+    .wechat-info h4 { color: #1f2937; margin-bottom: 8px; }
+    .wechat-info p { font-size: 0.88rem; color: #666; margin-bottom: 4px; }
+    .wechat-info .wechat-id { color: #FF6B35; font-weight: 600; }
 
-    /* 页脚 */
+    /* ===== 页脚 ===== */
     .footer {
       background: #1e293b;
       color: rgba(255,255,255,0.7);
@@ -274,13 +438,18 @@
       .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; flex-direction: column; padding: 12px; gap: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
       .nav-links.open { display: flex; }
       .nav-toggle { display: flex; }
-      .hero h1 { font-size: 1.7rem; }
-      .hero-stats { gap: 24px; }
+      .hero h1 { font-size: 1.8rem; }
+      .hero-badges { gap: 12px; }
       .services-grid { grid-template-columns: 1fr 1fr; }
       .pricing-grid { grid-template-columns: 1fr; max-width: 360px; }
+      .trust-grid { grid-template-columns: 1fr 1fr; }
+      .wechat-content { flex-direction: column; }
+      .wechat-info { text-align: center; }
     }
     @media (max-width: 480px) {
       .services-grid { grid-template-columns: 1fr; }
+      .trust-grid { grid-template-columns: 1fr; }
+      .badge-item { font-size: 0.78rem; padding: 5px 10px; }
     }
   </style>
 </head>
@@ -310,26 +479,17 @@
 
 <!-- Hero区域 -->
 <section class="hero">
-  <div class="container">
+  <div class="hero-content">
     <h1>备考导游证，一次就上岸</h1>
     <p>AI智能备考 + 全套备考资料 + 全程专业指导，让你备考路上不孤单</p>
     <div class="hero-buttons">
-      <a href="ai-assistant.html" class="btn-primary">免费试用AI助手</a>
-      <a href="resources.html" class="btn-secondary">查看资料套餐</a>
+      <a href="ai-assistant.html" class="btn-primary">🤖 免费试用AI助手</a>
+      <a href="resources.html" class="btn-secondary">📚 查看资料套餐</a>
     </div>
-    <div class="hero-stats">
-      <div class="stat-item">
-        <div class="stat-number">5000+</div>
-        <div class="stat-label">已服务考生</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">95%</div>
-        <div class="stat-label">好评率</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number">7×24h</div>
-        <div class="stat-label">AI随时答疑</div>
-      </div>
+    <div class="hero-badges">
+      <div class="badge-item"><span>🛡️</span> 闲鱼交易保障</div>
+      <div class="badge-item"><span>⏰</span> 24h内发货</div>
+      <div class="badge-item"><span>🔄</span> 资料持续更新</div>
     </div>
   </div>
 </section>
@@ -364,6 +524,42 @@
         <p>思维导图、重点归纳、备考计划模板，让你备考有条不紊</p>
         <span class="price-tag">29.9元起</span>
       </a>
+    </div>
+  </div>
+</section>
+
+<!-- 信任保障 -->
+<section class="trust-section">
+  <div class="container">
+    <div class="trust-grid">
+      <div class="trust-item">
+        <div class="trust-icon">🛡️</div>
+        <div class="trust-text">
+          <h4>闲鱼交易安全</h4>
+          <p>资金托管，有保障</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">⏰</div>
+        <div class="trust-text">
+          <h4>24小时发货</h4>
+          <p>拍下即发货</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">🔄</div>
+        <div class="trust-text">
+          <h4>资料持续更新</h4>
+          <p>无需重复购买</p>
+        </div>
+      </div>
+      <div class="trust-item">
+        <div class="trust-icon">💬</div>
+        <div class="trust-text">
+          <h4>微信答疑</h4>
+          <p>ximao101 随时咨询</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -421,13 +617,52 @@
   </div>
 </section>
 
+<!-- FAQ折叠面板 -->
+<section class="faq-section">
+  <div class="container">
+    <h2>常见问题</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">资料是什么样的形式？</button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">所有资料均为电子版（PDF/Word/思维导图等），购买后通过闲鱼或微信发送，方便打印复习。</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">购买后如何使用AI助手？</button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">购买套餐后，关注公众号「逢考必过 & 证好有你」，在底部菜单即可使用AI备考助手，或者直接访问本网站的AI助手页面。</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">资料会更新吗？</button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">会的！资料会持续更新，包括最新真题、最新的考试政策解读等。购买后无需重复付费。</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">考试没过怎么办？</button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">购买全能包的同学可享受"不过可续服务"，即下一年度可继续享受指导服务，让你备考无忧。</div>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">如何联系咨询？</button>
+        <div class="faq-answer">
+          <div class="faq-answer-content">微信搜索 ximao101 添加好友，备注"导游证备考"，即可咨询任何问题。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- CTA行动区域 -->
 <section class="cta-section">
-  <div class="container">
+  <div class="cta-content">
     <h2>还在犹豫？先试试免费的AI助手</h2>
     <p>扫码关注公众号，即可免费使用AI备考助手</p>
     <div class="cta-buttons">
-      <a href="weixin://addfriend/gh_xxxx" class="cta-btn primary">📱 加微信咨询</a>
+      <a href="weixin://addfriend/ximao101" class="cta-btn primary">📱 加微信咨询</a>
       <a href="ai-assistant.html" class="cta-btn secondary">🤖 试用AI助手</a>
     </div>
   </div>
@@ -436,10 +671,14 @@
 <!-- 公众号 -->
 <section class="wechat-section">
   <div class="container">
-    <h3>扫码关注「逢考必过 & 证好有你」</h3>
-    <p>AI助手免费用 / 备考干货推送 / 资料持续更新</p>
-    <img src="images/qrcode.jpg" alt="公众号二维码" class="wechat-qr">
-    <p style="margin-top: 16px; font-size: 0.85rem; color: #888;">微信咨询：ximao101</p>
+    <div class="wechat-content">
+      <img src="images/qrcode.jpg" alt="公众号二维码" class="wechat-qr">
+      <div class="wechat-info">
+        <h3>扫码关注「逢考必过 & 证好有你」</h3>
+        <p>AI助手免费用 / 备考干货推送 / 资料持续更新</p>
+        <p style="margin-top: 12px;">微信咨询：<span class="wechat-id">ximao101</span></p>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -453,6 +692,20 @@
     <p style="opacity: 0.6; margin-top: 10px;">© 2026 游导旅游 版权所有</p>
   </div>
 </footer>
+
+<script>
+  // FAQ折叠功能
+  function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isActive = item.classList.contains('active');
+    // 关闭所有
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+    // 打开当前
+    if (!isActive) {
+      item.classList.add('active');
+    }
+  }
+</script>
 
 </body>
 </html>
