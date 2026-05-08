@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>导游证AI备考助手 - youdao-travel.com</title>
+  <title>AI备考助手 - 导游证智能问答</title>
+  <meta name="description" content="导游证AI备考助手，7×24小时在线答疑，智能出题、知识问答、模拟面试，随时随地帮你备考。">
+  <meta name="keywords" content="导游证AI助手,备考问答,智能出题,模拟面试,导游证备考">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8f9fa; color: #333; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f8f9fa; color: #333; line-height: 1.7; }
+    a { text-decoration: none; color: inherit; }
+
     .navbar {
       position: sticky; top: 0; z-index: 1000;
       background: #fff; display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 20px; box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+      padding: 12px 24px; box-shadow: 0 1px 8px rgba(0,0,0,0.06);
     }
     .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; color: #2563eb; font-weight: 700; font-size: 1.1rem; }
     .logo-icon { width: 28px; height: 28px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
@@ -21,11 +26,12 @@
     .nav-links a.active { background: #2563eb; color: #fff; font-weight: 500; }
     .nav-toggle { display: none; flex-direction: column; gap: 4px; cursor: pointer; padding: 6px; }
     .nav-toggle span { width: 22px; height: 2px; background: #333; border-radius: 2px; }
-    .container { max-width: 900px; margin: 0 auto; padding: 30px 20px; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
 
     .ai-hero {
       background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: white; padding: 50px 24px; border-radius: 16px; text-align: center; margin-bottom: 30px;
+      color: white; padding: 50px 24px; border-radius: 16px; text-align: center; margin: 30px 0 24px;
     }
     .ai-hero h1 { font-size: 1.8rem; margin-bottom: 12px; }
     .ai-hero p { font-size: 1rem; opacity: 0.9; max-width: 500px; margin: 0 auto 20px; }
@@ -48,8 +54,8 @@
       background: #fff; border-radius: 16px; border: 1px solid #e8ecf0;
       padding: 24px; margin-bottom: 30px;
     }
-    .chat-section h2 { font-size: 1.2rem; color: #2563eb; margin-bottom: 16px; }
-    #cozeChatContainer { min-height: 500px; border-radius: 12px; overflow: hidden; }
+    .chat-section h2 { font-size: 1.2rem; color: #1f2937; margin-bottom: 16px; text-align: center; }
+    #cozeChatContainer { min-height: 500px; border-radius: 12px; overflow: hidden; border: 1px solid #e8ecf0; }
 
     .wechat-section { background: #f0f4f8; padding: 40px 20px; text-align: center; }
     .wechat-section h3 { color: #2563eb; margin-bottom: 8px; font-size: 1.1rem; }
@@ -65,17 +71,10 @@
     }
     .explore-link:hover { background: #2563eb; color: #fff; }
 
-    .footer { background: #2563eb; color: rgba(255,255,255,0.8); padding: 30px 20px; text-align: center; }
-    .footer p { margin-bottom: 6px; }
+    .footer { background: #1e293b; color: rgba(255,255,255,0.8); padding: 30px 20px; text-align: center; }
+    .footer p { margin-bottom: 6px; font-size: 0.9rem; }
     .footer a { color: rgba(255,255,255,0.9); text-decoration: none; }
     .footer a:hover { color: #fff; }
-
-    .back-top {
-      position: fixed; bottom: 24px; right: 24px; width: 44px; height: 44px;
-      background: #2563eb; color: #fff; border: none; border-radius: 50%;
-      font-size: 1.2rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      display: none; z-index: 999; align-items: center; justify-content: center;
-    }
 
     @media (max-width: 768px) {
       .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #fff; flex-direction: column; padding: 12px; gap: 4px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
@@ -83,6 +82,7 @@
       .nav-toggle { display: flex; }
       .ai-hero h1 { font-size: 1.4rem; }
       .features { grid-template-columns: repeat(2, 1fr); }
+      #cozeChatContainer { min-height: 400px; }
     }
   </style>
 </head>
@@ -91,13 +91,16 @@
 <nav class="navbar">
   <a href="index.html" class="logo">
     <div class="logo-icon">
-      <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <svg viewBox="0 0 24 24" width="18" height="18">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
     </div>
     游导旅游
   </a>
-    <div class="nav-links" id="navLinks">
+  <div class="nav-links" id="navLinks">
     <a href="index.html">首页</a>
-    <a href="ai-assistant.html">AI备考助手</a>
+    <a href="ai-assistant.html" class="active">AI备考助手</a>
     <a href="resources.html">资料套餐</a>
     <a href="free-materials.html">免费资料</a>
     <a href="exam-guide.html">备考攻略</a>
@@ -144,16 +147,16 @@
   </div>
 
   <div class="chat-section">
-    <h2>开始对话</h2>
+    <h2>👇 开始和AI对话吧</h2>
     <div id="cozeChatContainer"></div>
   </div>
 
   <div class="explore-section">
     <h3>继续探索</h3>
     <div class="explore-links">
-      <a href="exam-guide.html" class="explore-link">备考指南 →</a>
+      <a href="exam-guide.html" class="explore-link">备考攻略 →</a>
       <a href="exam-simulator.html" class="explore-link">模拟考试 →</a>
-      <a href="resources.html" class="explore-link">资料包下载 →</a>
+      <a href="resources.html" class="explore-link">资料套餐 →</a>
     </div>
   </div>
 
@@ -173,31 +176,14 @@
   <p style="margin-top: 10px; opacity: 0.6;">AI帮你考过，不只是给你资料</p>
 </footer>
 
-<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/latest/libs/cn/index.js"></script>
+<!-- Coze Chat SDK -->
+<script src="https://lf-coze-web-cdn.coze.cn/obj/coze-web-cn/assets/coze-chat-v0.1.2.js"></script>
 <script>
-new CozeWebSDK.WebChatClient({
-  config: {
-    bot_id: '7633483506475532328',
-  },
-  auth: { type: 'unauth' },
-  ui: {
-    base: { layout: 'pc', lang: 'zh-CN' },
-    chatBot: {
-      title: '导游证AI备考助手',
-      uploadable: true,
-      el: document.getElementById('cozeChatContainer'),
-    },
-    asstBtn: { isNeed: false },
-  },
-});
-
-// 回到顶部按钮
-window.addEventListener('scroll', function() {
-  var btn = document.getElementById('backTop');
-  if (btn) btn.style.display = window.scrollY > 300 ? 'flex' : 'none';
-});
+  new CozeWebSDK.WebChatClient({
+    botId: '7633483506475532328',
+    userId: 'visitor_' + Math.random().toString(36).substring(7),
+    container: document.getElementById('cozeChatContainer'),
+  });
 </script>
 
 </body>
