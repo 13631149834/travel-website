@@ -1,952 +1,521 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>模拟考试 - 导游证历年真题、每日一练与成绩计算</title>
+  <title>模拟考试 - 导游证备考练习平台</title>
   <meta property="og:type" content="website">
-  <meta property="og:title" content="模拟考试 - 导游证历年真题">
+  <meta property="og:title" content="模拟考试 - 导游证备考练习平台">
   <meta property="og:description" content="导游证考试模拟练习平台，包含历年真题、每日一练、错题本、考试倒计时">
   <meta property="og:url" content="https://youdao-travel.com/exam-simulator.html">
   <meta property="og:image" content="https://youdao-travel.com/images/qrcode.jpg">
-  <meta name="description" content="导游证考试模拟练习平台，包含历年真题分布、每日一练、错题本模板、考试倒计时及成绩计算功能。" />
+  <meta name="description" content="导游证考试模拟练习平台，包含历年真题分布、每日一练、错题本模板、考试倒计时及成绩计算功能。">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <style>
-    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      line-height: 1.75;
-      color: #333;
-      background: #f8f9fa;
-    }
-    a { text-decoration: none; color: inherit; }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 24px;
-      background: #fff;
-      border-bottom: 1px solid #e8ecf0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .logo { font-size: 1.15rem; font-weight: 700; color: #2563eb; display: flex; align-items: center; gap: 6px; }
-    .logo-icon { width: 28px; height: 28px; background: #2563eb; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .nav-links { display: flex; gap: 4px; }
-    .nav-links a { padding: 7px 14px; border-radius: 8px; font-size: 0.9rem; color: #555; transition: all 0.2s; }
-    .nav-links a:hover { background: #2563eb; color: #fff; }
-    .nav-links a.active { background: #2563eb; color: #fff; font-weight: 500; }
-    .nav-toggle { display: none; flex-direction: column; gap: 4px; cursor: pointer; padding: 6px; }
-    .nav-toggle span { width: 22px; height: 2px; background: #333; border-radius: 2px; }
-
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-    .page-hero {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: white;
-      padding: 60px 20px 50px;
-      text-align: center;
-    }
-    .page-hero h1 { font-size: 2rem; font-weight: 700; margin-bottom: 10px; }
-    .page-hero p { font-size: 1rem; opacity: 0.85; max-width: 520px; margin: 0 auto; }
-
-    .toc {
-      background: #fff;
-      border: 1px solid #e0e8f0;
-      border-radius: 12px;
-      padding: 20px 24px;
-      margin: 30px 0;
-    }
-    .toc h3 { font-size: 1rem; color: #2563eb; margin-bottom: 12px; }
-    .toc-list { display: flex; flex-wrap: wrap; gap: 8px; }
-    .toc-item { background: #f0f7fb; color: #2563eb; padding: 5px 14px; border-radius: 20px; font-size: 0.85rem; transition: all 0.2s; }
-    .toc-item:hover { background: #2563eb; color: #fff; }
-
-    .content-section { padding: 20px 0 10px; }
-    .section-block {
-      background: #fff;
-      border: 1px solid #e8ecf0;
-      border-radius: 16px;
-      padding: 32px;
-      margin-bottom: 24px;
-    }
-    .section-block h2 { font-size: 1.25rem; color: #2563eb; margin-bottom: 6px; padding-bottom: 12px; border-bottom: 2px solid #eaf4fb; }
-    .section-block h3 { font-size: 1.1rem; color: #2563eb; margin: 20px 0 12px; }
-    .section-block .section-desc { color: #888; font-size: 0.88rem; margin-bottom: 20px; }
-
-    .tip-box { background: #fff8f0; border-left: 4px solid #f97316; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 0.9rem; }
-    .tip-box strong { color: #e55d00; }
-    .warn-box { background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 0.9rem; }
-    .warn-box strong { color: #dc2626; }
-    .info-box { background: #eaf4fb; border-left: 4px solid #2563eb; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 0.9rem; }
-    .info-box strong { color: #2563eb; }
-
-    .countdown-box {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: white;
-      border-radius: 12px;
-      padding: 24px;
-      text-align: center;
-      margin: 20px 0;
-    }
-    .countdown-box h3 { font-size: 1.1rem; margin-bottom: 12px; }
-    .countdown-display {
-      display: flex;
-      justify-content: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .countdown-item {
-      background: rgba(255,255,255,0.15);
-      border-radius: 8px;
-      padding: 12px 16px;
-      min-width: 70px;
-    }
-    .countdown-item .num {
-      font-size: 2rem;
-      font-weight: 700;
-      line-height: 1;
-    }
-    .countdown-item .text { font-size: 0.75rem; opacity: 0.8; margin-top: 4px; }
-
-    .item-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-    .item-card {
-      background: #fafcfd;
-      border: 1px solid #e8ecf0;
-      border-radius: 10px;
-      padding: 18px;
-    }
-    .item-card h4 { font-size: 0.95rem; color: #2563eb; margin-bottom: 6px; font-weight: 600; }
-    .item-card p { font-size: 0.85rem; color: #666; line-height: 1.6; margin-bottom: 8px; }
-    .item-card ul { padding-left: 16px; font-size: 0.83rem; color: #555; list-style: disc; }
-    .item-card ul li { margin-bottom: 4px; }
-
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 12px;
-      font-size: 0.88rem;
-    }
-    .data-table th {
-      background: #f0f7fb;
-      color: #2563eb;
-      padding: 12px 10px;
-      text-align: left;
-      font-weight: 600;
-      border-bottom: 2px solid #e0e8f0;
-    }
-    .data-table td {
-      padding: 10px;
-      border-bottom: 1px solid #f0f0f0;
-      color: #555;
-    }
-    .data-table tr:hover { background: #fafcfd; }
-
-    .question-card {
-      background: linear-gradient(135deg, #f8fafc 0%, #fff 100%);
-      border: 1px solid #e8ecf0;
-      border-radius: 12px;
-      padding: 24px;
-      margin: 16px 0;
-    }
-    .question-card h4 {
-      font-size: 1rem;
-      color: #2563eb;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-    }
-    .question-card h4 span {
-      background: #2563eb;
-      color: #fff;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      flex-shrink: 0;
-    }
-    .question-text {
-      font-size: 0.95rem;
-      color: #333;
-      margin-bottom: 16px;
-      line-height: 1.7;
-    }
-    .question-options {
-      list-style: none;
-    }
-    .question-options li {
-      padding: 10px 16px;
-      border: 1px solid #e0e8f0;
-      border-radius: 8px;
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .question-options li:hover {
-      border-color: #2563eb;
-      background: #f0f7fb;
-    }
-    .question-options li.correct {
-      border-color: #22c55e;
-      background: #dcfce7;
-      color: #16a34a;
-    }
-    .question-options li.wrong {
-      border-color: #ef4444;
-      background: #fef2f2;
-      color: #dc2626;
-    }
-    .reveal-btn {
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      cursor: pointer;
-      margin-top: 12px;
-    }
-    .reveal-btn:hover { background: #154360; }
-
-    .calculator-section {
-      background: #f8fafc;
-      border-radius: 12px;
-      padding: 24px;
-      margin-top: 20px;
-    }
-    .calc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 16px;
-    }
-    .calc-group { }
-    .calc-group label {
-      display: block;
-      font-size: 0.88rem;
-      color: #555;
-      margin-bottom: 6px;
-    }
-    .calc-group input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #e0e8f0;
-      border-radius: 8px;
-      font-size: 0.9rem;
-    }
-    .calc-group input:focus {
-      outline: none;
-      border-color: #2563eb;
-    }
-    .calc-btn {
-      width: 100%;
-      padding: 12px;
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .calc-btn:hover { background: #154360; }
-    .result-box {
-      background: #eaf4fb;
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 16px;
-      text-align: center;
-    }
-    .result-box .status {
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: #2563eb;
-    }
-    .result-box .status.pass { color: #16a34a; }
-    .result-box .status.fail { color: #dc2626; }
-    .result-box .detail {
-      font-size: 0.85rem;
-      color: #888;
-      margin-top: 8px;
-    }
-
-    .download-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #f0f7fb;
-      color: #2563eb;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      margin-top: 16px;
-      transition: all 0.2s;
-    }
-    .download-btn:hover {
-      background: #2563eb;
-      color: #fff;
-    }
-
-    .ai-card {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      border-radius: 12px;
-      padding: 32px;
-      color: white;
-      text-align: center;
-      margin: 20px 0;
-    }
-    .ai-card h3 { font-size: 1.2rem; margin-bottom: 8px; }
-    .ai-card p { font-size: 0.9rem; opacity: 0.85; margin-bottom: 16px; }
-    .ai-btn {
-      display: inline-block;
-      background: white;
-      color: #2563eb;
-      padding: 12px 32px;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .ai-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    }
-
-    .explore-section {
-      background: #fff;
-      border-radius: 16px;
-      padding: 32px;
-      border: 1px solid #e8ecf0;
-      margin: 30px 0;
-      text-align: center;
-    }
-    .explore-section h3 { font-size: 1.1rem; color: #2563eb; margin-bottom: 16px; }
-    .explore-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-    .explore-link {
-      background: #f0f7fb;
-      color: #2563eb;
-      padding: 10px 24px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-    .explore-link:hover { background: #2563eb; color: #fff; }
-
-    .wechat-section {
-      background: #f0f7fb;
-      padding: 40px 20px;
-      margin-top: 30px;
-    }
-    .wechat-inner { max-width: 400px; margin: 0 auto; text-align: center; }
-    .wechat-inner h3 { color: #2563eb; font-size: 1.1rem; margin-bottom: 8px; }
-    .wechat-inner p { color: #888; font-size: 0.88rem; margin-bottom: 16px; }
-    .qrcode-wrap img { width: 160px; height: 160px; border-radius: 8px; border: 4px solid #fff; }
-
-    .footer {
-      background: #2563eb;
-      color: rgba(255,255,255,0.85);
-      text-align: center;
-      padding: 28px 20px;
-    }
-    .footer p { font-size: 0.88rem; margin-bottom: 6px; }
-
-    .back-to-top {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 44px;
-      height: 44px;
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      cursor: pointer;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-      z-index: 99;
-    }
-    .back-to-top.show { opacity: 1; visibility: visible; }
-    .back-to-top:hover { background: #154360; }
-
-    @media (max-width: 768px) {
-      .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: #fff; padding: 12px; border-bottom: 1px solid #e8ecf0; }
-      .nav-links.show { display: flex; }
-      .nav-toggle { display: flex; }
-      .calc-grid { grid-template-columns: 1fr 1fr; }
-      .data-table { font-size: 0.8rem; }
-      .data-table th, .data-table td { padding: 8px 6px; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.75;color:#333;background:#f8f9fa}
+    a{text-decoration:none;color:inherit}
+    
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid #e8ecf0;position:sticky;top:0;z-index:100}
+    .logo{font-size:1.15rem;font-weight:700;color:#2563eb;display:flex;align-items:center;gap:6px}
+    .logo-icon{width:28px;height:28px;background:#2563eb;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .nav-links{display:flex;gap:4px;flex-wrap:wrap}
+    .nav-links a{padding:7px 14px;border-radius:8px;font-size:0.9rem;color:#555;transition:all 0.2s}
+    .nav-links a:hover{background:#2563eb;color:#fff}
+    .nav-links a.active{background:#2563eb;color:#fff;font-weight:500}
+    .nav-toggle{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:6px}
+    .nav-toggle span{width:22px;height:2px;background:#333;border-radius:2px}
+    
+    .container{max-width:1100px;margin:0 auto;padding:0 16px}
+    .page-hero{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;padding:50px 20px 40px;text-align:center}
+    .page-hero h1{font-size:1.8rem;font-weight:700;margin-bottom:10px}
+    .page-hero p{font-size:0.95rem;opacity:0.85;max-width:520px;margin:0 auto}
+    
+    .toc{background:#fff;border:1px solid #e0e8f0;border-radius:12px;padding:16px 20px;margin:24px 0}
+    .toc h3{font-size:0.95rem;color:#2563eb;margin-bottom:10px}
+    .toc-list{display:flex;flex-wrap:wrap;gap:8px}
+    .toc-item{background:#f0f7fb;color:#2563eb;padding:5px 14px;border-radius:20px;font-size:0.82rem;transition:all 0.2s}
+    .toc-item:hover{background:#2563eb;color:#fff}
+    
+    .content-section{padding:20px 0 10px}
+    .section-block{background:#fff;border:1px solid #e8ecf0;border-radius:16px;padding:28px;margin-bottom:24px}
+    .section-block h2{font-size:1.2rem;color:#2563eb;margin-bottom:8px;padding-bottom:12px;border-bottom:2px solid #eaf4fb}
+    .section-block h3{font-size:1.05rem;color:#2563eb;margin:20px 0 12px}
+    .section-block .section-desc{color:#888;font-size:0.88rem;margin-bottom:20px}
+    
+    .tip-box{background:#fff8f0;border-left:4px solid #f97316;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:0.9rem}
+    .tip-box strong{color:#e55d00}
+    .warn-box{background:#fef2f2;border-left:4px solid #ef4444;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:0.9rem}
+    .warn-box strong{color:#dc2626}
+    .info-box{background:#eaf4fb;border-left:4px solid #2563eb;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:0.9rem}
+    .info-box strong{color:#2563eb}
+    
+    .countdown-box{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;border-radius:12px;padding:24px;text-align:center;margin:20px 0}
+    .countdown-box h3{font-size:1.05rem;margin-bottom:12px}
+    .countdown-display{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+    .countdown-item{background:rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;min-width:65px}
+    .countdown-item .num{font-size:1.8rem;font-weight:700;line-height:1}
+    .countdown-item .text{font-size:0.72rem;opacity:0.8;margin-top:4px}
+    
+    .item-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:16px}
+    .item-card{background:#fafcfd;border:1px solid #e8ecf0;border-radius:10px;padding:18px}
+    .item-card h4{font-size:0.95rem;color:#2563eb;margin-bottom:6px;font-weight:600}
+    .item-card p{font-size:0.85rem;color:#666;line-height:1.6;margin-bottom:8px}
+    .item-card ul{padding-left:16px;font-size:0.83rem;color:#555;list-style:disc}
+    .item-card ul li{margin-bottom:4px}
+    
+    .table-wrapper{overflow-x:auto;margin-top:12px}
+    .data-table{width:100%;border-collapse:collapse;font-size:0.88rem;min-width:600px}
+    .data-table th{background:#f0f7fb;color:#2563eb;padding:12px 10px;text-align:left;font-weight:600;border-bottom:2px solid #e0e8f0}
+    .data-table td{padding:10px;border-bottom:1px solid #f0f0f0;color:#555}
+    .data-table tr:hover{background:#fafcfd}
+    
+    .question-card{background:linear-gradient(135deg,#f8fafc 0%,#fff 100%);border:1px solid #e8ecf0;border-radius:12px;padding:20px;margin:16px 0}
+    .question-card h4{font-size:0.95rem;color:#2563eb;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px}
+    .question-card h4 span{background:#2563eb;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.72rem;flex-shrink:0}
+    .question-text{font-size:0.92rem;color:#333;margin-bottom:14px;line-height:1.7}
+    .question-options{list-style:none}
+    .question-options li{padding:10px 14px;border:1px solid #e0e8f0;border-radius:8px;margin-bottom:8px;font-size:0.88rem;cursor:pointer;transition:all 0.2s}
+    .question-options li:hover{border-color:#2563eb;background:#f0f7fb}
+    .question-options li.correct{border-color:#22c55e;background:#dcfce7;color:#16a34a}
+    .question-options li.wrong{border-color:#ef4444;background:#fef2f2;color:#dc2626}
+    .reveal-btn{background:#2563eb;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-size:0.85rem;cursor:pointer;margin-top:12px;transition:background 0.2s}
+    .reveal-btn:hover{background:#1d4ed8}
+    
+    .calculator-section{background:#f8fafc;border-radius:12px;padding:20px;margin-top:20px}
+    .calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:14px}
+    .calc-group{display:block}
+    .calc-group label{display:block;font-size:0.85rem;color:#555;margin-bottom:5px}
+    .calc-group input{width:100%;padding:10px 12px;border:1px solid #e0e8f0;border-radius:8px;font-size:0.9rem}
+    .calc-group input:focus{outline:none;border-color:#2563eb}
+    .calc-btn{width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:0.92rem;cursor:pointer;transition:background 0.2s}
+    .calc-btn:hover{background:#1d4ed8}
+    .result-box{background:#eaf4fb;border-radius:8px;padding:16px;margin-top:14px;text-align:center;display:none}
+    .result-box.show{display:block}
+    .result-box .status{font-size:1.2rem;font-weight:700;color:#2563eb}
+    .result-box .status.pass{color:#16a34a}
+    .result-box .status.fail{color:#dc2626}
+    .result-box .detail{font-size:0.82rem;color:#888;margin-top:8px}
+    
+    .download-btn{display:inline-flex;align-items:center;gap:8px;background:#f0f7fb;color:#2563eb;padding:12px 24px;border-radius:8px;font-size:0.88rem;margin-top:14px;transition:all 0.2s}
+    .download-btn:hover{background:#2563eb;color:#fff}
+    
+    .ai-card{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);border-radius:12px;padding:24px;color:#fff;margin-top:16px}
+    .ai-card h3{font-size:1.1rem;margin-bottom:10px}
+    .ai-card p{font-size:0.9rem;opacity:0.9;line-height:1.6;margin-bottom:16px}
+    .ai-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#2563eb;padding:12px 24px;border-radius:8px;font-size:0.9rem;font-weight:600;transition:all 0.2s}
+    .ai-btn:hover{background:#f0f7fb;transform:translateY(-2px)}
+    
+    .explore-section{background:#fff;border:1px solid #e8ecf0;border-radius:16px;padding:24px;margin:24px 0}
+    .explore-section h3{font-size:1rem;color:#2563eb;margin-bottom:14px}
+    .explore-links{display:flex;flex-wrap:wrap;gap:12px}
+    .explore-link{background:#f0f7fb;color:#2563eb;padding:10px 20px;border-radius:8px;font-size:0.88rem;transition:all 0.2s}
+    .explore-link:hover{background:#2563eb;color:#fff}
+    
+    .wechat-section{background:#fff;border-top:1px solid #e8ecf0;padding:32px 20px;text-align:center;margin-top:20px}
+    .wechat-section h3{font-size:1.05rem;color:#333;margin-bottom:8px}
+    .wechat-section p{font-size:0.85rem;color:#888;margin-bottom:16px}
+    .qrcode-wrap img{max-width:140px;border-radius:8px;border:1px solid #eee}
+    
+    .footer{background:#1f2937;color:#fff;padding:24px 20px;text-align:center}
+    .footer p{font-size:0.85rem;opacity:0.85}
+    .footer .footer-brand{font-size:1rem;opacity:1;margin-bottom:8px}
+    
+    .back-to-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:#2563eb;color:#fff;border:none;border-radius:50%;font-size:1.2rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;box-shadow:0 4px 12px rgba(37,99,235,0.3)}
+    .back-to-top.show{opacity:1;visibility:visible}
+    .back-to-top:hover{background:#1d4ed8;transform:translateY(-2px)}
+    
+    @media(max-width:768px){
+      .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;flex-direction:column;padding:12px;border-bottom:1px solid #e8ecf0}
+      .nav-links.show{display:flex}
+      .nav-toggle{display:flex}
+      .page-hero{padding:40px 16px 32px}
+      .page-hero h1{font-size:1.5rem}
+      .section-block{padding:20px 16px;border-radius:12px}
+      .countdown-display{gap:8px}
+      .countdown-item{min-width:56px;padding:8px 10px}
+      .countdown-item .num{font-size:1.5rem}
+      .item-grid{grid-template-columns:1fr}
+      .calc-grid{grid-template-columns:1fr 1fr}
+      .wechat-section{padding:24px 16px}
     }
   </style>
 </head>
 <body>
+  <!-- 导航栏 -->
   <nav class="navbar">
     <a href="index.html" class="logo">
-      <div class="logo-icon">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="white"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
-      
-      游导旅游
+      <span class="logo-icon">📚</span>
+      游导备考
     </a>
     <div class="nav-links" id="navLinks">
       <a href="index.html">首页</a>
-      <a href="travel-knowledge.html">旅行知识</a>
-      <a href="travel-tools.html">旅行工具</a>
-      <a href="exam-guide.html">导游证考试</a>
+      <a href="ai-assistant.html">AI备考助手</a>
+      <a href="packages.html">资料套餐</a>
+      <a href="resources.html">免费资料</a>
+      <a href="exam-guide.html">备考攻略</a>
       <a href="exam-simulator.html" class="active">模拟考试</a>
-      <a href="ai-assistant.html">AI助手</a>
-      <a href="resources.html">资料包</a>
-      <a href="voice.html">发声墙</a>
-    </div><!-- 关闭 nav-links -->
-    
+    </div>
     <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
       <span></span><span></span><span></span>
-    </div><!-- 关闭 nav-toggle -->
+    </div>
   </nav>
 
+  <!-- 页面标题 -->
   <div class="page-hero">
-    <h1>模拟考试</h1>
-    <p>历年真题 · 每日一练 · 错题本 · 倒计时 · 成绩计算</p>
-  
+    <h1>📝 模拟考试</h1>
+    <p>历年真题练习 · 每日一练 · AI智能出题 · 成绩计算</p>
+  </div>
 
   <div class="container">
+    <!-- 目录导航 -->
     <div class="toc">
-      <h3>功能导航</h3>
+      <h3>📋 目录导航</h3>
       <div class="toc-list">
         <a href="#countdown" class="toc-item">考试倒计时</a>
-        <a href="#past-papers" class="toc-item">历年真题分布</a>
-        <a href="#daily" class="toc-item">每日一练</a>
-        <a href="#wrongnotes" class="toc-item">错题本模板</a>
-        <a href="#calculator" class="toc-item">成绩计算器</a>
-        <a href="#ai-practice" class="toc-item">AI模拟练习</a>
-      
-    
+        <a href="#past-papers" class="toc-item">历年真题</a>
+        <a href="#daily-practice" class="toc-item">每日一练</a>
+        <a href="#wrong-notes" class="toc-item">错题本</a>
+        <a href="#calculator" class="toc-item">成绩计算</a>
+        <a href="#ai-practice" class="toc-item">AI练习</a>
+      </div>
+    </div>
 
     <div class="content-section">
       <!-- 考试倒计时 -->
       <div class="section-block" id="countdown">
-        <h2>考试倒计时</h2>
-        <p class="section-desc">2026年全国导游资格考试时间：笔试约11月，面试约12月</p>
+        <h2>⏰ 考试倒计时</h2>
+        <p class="section-desc">2026年全国导游资格考试笔试倒计时</p>
         
         <div class="countdown-box">
-          <h3>距离笔试还有</h3>
-          <div class="countdown-display" id="countdownDisplay">
+          <h3>距离2026年11月21日笔试还有</h3>
+          <div class="countdown-display">
             <div class="countdown-item">
-              <div class="num" id="days">--
-              <div class="text">天
-            
+              <div class="num" id="days">--</div>
+              <div class="text">天</div>
+            </div>
             <div class="countdown-item">
-              <div class="num" id="hours">--
-              <div class="text">时
-            
+              <div class="num" id="hours">--</div>
+              <div class="text">时</div>
+            </div>
             <div class="countdown-item">
-              <div class="num" id="minutes">--
-              <div class="text">分
-            
+              <div class="num" id="minutes">--</div>
+              <div class="text">分</div>
+            </div>
             <div class="countdown-item">
-              <div class="num" id="seconds">--
-              <div class="text">秒
-            
-          
+              <div class="num" id="seconds">--</div>
+              <div class="text">秒</div>
+            </div>
+          </div>
+        </div>
         
-
-        <div class="tip-box">
-          <strong>考试时间提醒：</strong>
-          <ul style="margin-top: 8px; padding-left: 20px;">
-            <li>笔试：一般在11月第三个周六举行</li>
-            <li>面试：笔试成绩公布后1个月内完成</li>
-            <li>建议提前6个月开始备考，每天保证2-3小时学习时间</li>
+        <div class="info-box">
+          <strong>考试时间安排：</strong>
+          <ul style="margin-top:8px;padding-left:20px;">
+            <li><strong>笔试</strong>：每年11月第三个周六（2026年预计11月21日）</li>
+            <li><strong>面试</strong>：笔试结束后1个月内，由各省市自行组织</li>
+            <li><strong>备考建议</strong>：提前6个月开始备考，每天保证2-3小时学习时间</li>
           </ul>
-        
-      
+        </div>
+      </div>
 
       <!-- 历年真题分布 -->
       <div class="section-block" id="past-papers">
-        <h2>历年真题分布</h2>
-        <p class="section-desc">了解各科目题型和分值分布，备考更有针对性</p>
+        <h2>📖 历年真题分布</h2>
+        <p class="section-desc">了解各科目题型题量，科学分配备考时间</p>
+        
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>科目</th>
+                <th>题型</th>
+                <th>题量</th>
+                <th>分值</th>
+                <th>及格线</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>政策与法律法规</td>
+                <td>判断+单选+多选</td>
+                <td>90题</td>
+                <td>100分</td>
+                <td>60分</td>
+              </tr>
+              <tr>
+                <td>导游业务</td>
+                <td>判断+单选+多选</td>
+                <td>90题</td>
+                <td>100分</td>
+                <td>60分</td>
+              </tr>
+              <tr>
+                <td>全国导游基础知识</td>
+                <td>判断+单选+多选</td>
+                <td>90题</td>
+                <td>100分</td>
+                <td>60分</td>
+              </tr>
+              <tr>
+                <td>地方导游基础知识</td>
+                <td>判断+单选+多选</td>
+                <td>50题</td>
+                <td>50分</td>
+                <td>30分</td>
+              </tr>
+              <tr>
+                <td colspan="2"><strong>笔试合计</strong></td>
+                <td><strong>320题</strong></td>
+                <td><strong>350分</strong></td>
+                <td><strong>210分</strong></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>科目</th>
-              <th>题型</th>
-              <th>题量</th>
-              <th>分值</th>
-              <th>及格线</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><strong>政策与法律法规</strong></td>
-              <td>单选/多选/判断</td>
-              <td>160题</td>
-              <td>100分</td>
-              <td>60分</td>
-            </tr>
-            <tr>
-              <td><strong>导游业务</strong></td>
-              <td>单选/多选/判断</td>
-              <td>100题</td>
-              <td>100分</td>
-              <td>60分</td>
-            </tr>
-            <tr>
-              <td><strong>全国导游基础知识</strong></td>
-              <td>单选/多选/判断</td>
-              <td>120题</td>
-              <td>100分</td>
-              <td>60分</td>
-            </tr>
-            <tr>
-              <td><strong>地方导游基础知识</strong></td>
-              <td>单选/多选/判断</td>
-              <td>60题</td>
-              <td>50分</td>
-              <td>30分</td>
-            </tr>
-            <tr>
-              <td><strong>面试（导游服务能力）</strong></td>
-              <td>景点讲解/问答</td>
-              <td>1个景点+5问答</td>
-              <td>100分</td>
-              <td>60分</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <h3>各科目重点章节</h3>
+        <h3>📚 各科目重点章节</h3>
         <div class="item-grid">
           <div class="item-card">
             <h4>政策与法律法规</h4>
             <ul>
-              <li>旅游法全文（重点3-5章）</li>
-              <li>合同法基础</li>
-              <li>消费者权益保护法</li>
-              <li>旅游安全管理条例</li>
+              <li>旅游法及相关法规</li>
               <li>导游管理办法</li>
+              <li>旅行社条例</li>
+              <li>旅游安全管理办法</li>
             </ul>
-          
+          </div>
           <div class="item-card">
             <h4>导游业务</h4>
             <ul>
               <li>导游服务程序</li>
-              <li>突发事件处理</li>
-              <li>游客个别要求处理</li>
               <li>导游语言艺术</li>
-              <li>入境旅游服务</li>
+              <li>导游应急处理</li>
+              <li>散客与团队服务</li>
             </ul>
-          
+          </div>
           <div class="item-card">
-            <h4>全国导游基础知识</h4>
+            <h4>全国导基</h4>
             <ul>
               <li>中国历史文化</li>
-              <li>中国古代建筑</li>
-              <li>中国园林</li>
+              <li>中国旅游地理</li>
               <li>中国民族与宗教</li>
-              <li>中国旅游景观</li>
+              <li>中国四大相关内容</li>
             </ul>
-          
+          </div>
           <div class="item-card">
-            <h4>地方导游基础知识</h4>
+            <h4>地方导基</h4>
             <ul>
-              <li>各省市地理位置</li>
-              <li>当地旅游资源</li>
-              <li>特色民俗文化</li>
-              <li>当地特产美食</li>
-              <li>历史名人典故</li>
+              <li>各省市概况</li>
+              <li>著名景点分布</li>
+              <li>地方特产与民俗</li>
+              <li>世界遗产名录</li>
             </ul>
-          
-        
-
-        <div class="info-box">
-          <strong>备考建议：</strong>
-          <ul style="margin-top: 8px; padding-left: 20px;">
-            <li>政策法规模糊选项多，建议结合实际案例理解记忆</li>
-            <li>导游业务注重实操，理解流程比死记硬背更有效</li>
-            <li>全国导基内容多，用思维导图串联历史线和地理线</li>
-            <li>地方导基分值低但覆盖面广，建议考前集中背诵</li>
-          </ul>
-        
-      
-
-      <!-- 每日一练 -->
-      <div class="section-block" id="daily">
-        <h2>每日一练</h2>
-        <p class="section-desc">每天练习一道真题，日积月累，稳步提升。题目每日自动更新。</p>
-
-        <div id="dailyQuestion" class="question-card">
-          <h4><span id="qType">单选</span><span id="qSubject">政策与法律法规</span></h4>
-          <p class="question-text" id="qText">根据《旅游法》规定，旅行社应当保证所提供的服务符合保障游客人身、财产安全的要求；对可能危及旅游者人身、财产安全的事项，应当向旅游者作出真实的说明和明确的警示，并采取防止危害发生的措施。这体现了对旅游者什么的保护？</p>
-          <ul class="question-options" id="qOptions">
-            <li onclick="selectOption(this, true)">A. 知悉真情权</li>
-            <li onclick="selectOption(this, false)">B. 安全保障权</li>
-            <li onclick="selectOption(this, false)">C. 自主选择权</li>
-            <li onclick="selectOption(this, false)">D. 尊严权</li>
-          </ul>
-          <button class="reveal-btn" onclick="revealAnswer()">查看答案与解析</button>
-          <div id="qExplanation" style="display:none; margin-top: 12px; padding: 12px; background: #f0f7fb; border-radius: 8px; font-size: 0.88rem;">
-            <strong>正确答案：B</strong><br><br>
-            <strong>解析：</strong>安全保障权是指旅游者在旅游活动中享有的人身和财产安全不受侵犯的权利。旅行社有义务保障旅游者的人身和财产安全，本题中描述的正是旅行社履行安全保障义务的体现。
-          
-        
+          </div>
+        </div>
 
         <div class="tip-box">
-          <strong>每日一练说明：</strong>
-          <ul style="margin-top: 8px; padding-left: 20px;">
-            <li>题目涵盖笔试四科内容，每天轮换不同科目</li>
-            <li>建议先独立作答，再查看答案和解析</li>
-            <li>做错的题目要记入错题本反复复习</li>
-            <li>想要更多练习？点击下方AI助手获取个性化题目</li>
+          <strong>💡 备考建议：</strong>
+          <ul style="margin-top:8px;padding-left:20px;">
+            <li>《政策与法律法规》和《全国导游基础知识》内容多、分值高，优先重点复习</li>
+            <li>《地方导游基础知识》主要靠记忆，可用口诀法、联想法提高效率</li>
+            <li>《导游业务》偏重实践，建议结合实际案例理解记忆</li>
+            <li>多做历年真题，熟悉出题规律和常见考点</li>
           </ul>
+        </div>
+      </div>
+
+      <!-- 每日一练 -->
+      <div class="section-block" id="daily-practice">
+        <h2>📝 每日一练</h2>
+        <p class="section-desc">每天坚持练习一道真题，积少成多</p>
         
-
-        <script>
-          var questions = [
-            {
-              type: '单选', subject: '政策与法律法规',
-              text: '根据《旅游法》规定，旅行社应当保证所提供的服务符合保障游客人身、财产安全的要求；对可能危及旅游者人身、财产安全的事项，应当向旅游者作出真实的说明和明确的警示，并采取防止危害发生的措施。这体现了对旅游者什么的保护？',
-              options: ['A. 知悉真情权', 'B. 安全保障权', 'C. 自主选择权', 'D. 尊严权'],
-              answer: 1,
-              explanation: '<strong>正确答案：B</strong><br><br><strong>解析：</strong>安全保障权是指旅游者在旅游活动中享有的人身和财产安全不受侵犯的权利。旅行社有义务保障旅游者的人身和财产安全，本题中描述的正是旅行社履行安全保障义务的体现。'
-            },
-            {
-              type: '单选', subject: '导游业务',
-              text: '导游人员在接待服务中遇到某种意外情况，来不及向旅行社汇报，需采取紧急措施后，再向旅行社汇报。这体现了导游人员行使什么权利？',
-              options: ['A. 申请复议权', 'B. 诉讼权', 'C. 紧急情况下调整行程权', 'D. 拒绝某些要求权'],
-              answer: 2,
-              explanation: '<strong>正确答案：C</strong><br><br><strong>解析：</strong>根据《导游管理办法》，导游人员在遇到紧急情况时，可以采取紧急避险措施，不必事先向旅行社汇报，但事后应当及时报告旅行社。这体现了导游人员的紧急处理权。'
-            },
-            {
-              type: '单选', subject: '全国导游基础知识',
-              text: '中国四大名绣中，以题材广泛、寓意吉祥、喜庆等为特色的绣种是？',
-              options: ['A. 苏绣', 'B. 湘绣', 'C. 粤绣', 'D. 蜀绣'],
-              answer: 2,
-              explanation: '<strong>正确答案：C</strong><br><br><strong>解析：</strong>粤绣是广州刺绣和潮州刺绣的总称，以题材广泛、寓意吉祥、构图饱满、色彩艳丽为特色，具有浓郁的地方特色。其他三种名绣各有特色：苏绣精细淡雅，湘绣生动逼真，蜀绣浑厚圆润。'
-            },
-            {
-              type: '单选', subject: '地方导游基础知识',
-              text: '下列哪个省份不与广东省相邻？',
-              options: ['A. 广西', 'B. 湖南', 'C. 福建', 'D. 江西'],
-              answer: 2,
-              explanation: '<strong>正确答案：C</strong><br><br><strong>解析：</strong>广东省与广西、湖南、江西、福建四省相邻。福建省与广东省不相邻，两省之间隔着江西省。考生需注意各省行政区划的相邻关系。'
-            },
-            {
-              type: '判断', subject: '政策与法律法规',
-              text: '导游人员年审培训只需要参加1次即可。',
-              options: ['A. 正确', 'B. 错误'],
-              answer: 1,
-              explanation: '<strong>正确答案：B（错误）</strong><br><br><strong>解析：</strong>根据《导游管理办法》，导游人员应当参加所在地旅游主管部门组织的年审培训，每年培训时间累计不得少于24小时。不参加年审培训或培训时间不足的，导游证有效期届满不予换发。'
-            },
-            {
-              type: '多选', subject: '导游业务',
-              text: '导游人员在接待服务中，遇到哪些情况可以调整计划？',
-              options: ['A. 天气突变影响行程', 'B. 游客突发疾病', 'C. 交通堵塞', 'D. 全团游客一致要求', 'E. 景区临时关闭'],
-              answer: [0, 1, 2, 4],
-              explanation: '<strong>正确答案：A、B、C、E</strong><br><br><strong>解析：</strong>导游人员调整接待计划必须符合以下条件：1. 必须是为了保障旅游者人身和财产安全；2. 必须立即报告旅行社；3. 必须征得大多数游客同意。全团游客一致要求属于特殊情况，需要报告旅行社同意后方可调整。'
-            },
-            {
-              type: '单选', subject: '全国导游基础知识',
-              text: '被称为"天下第一奇山"的是？',
-              options: ['A. 泰山', 'B. 黄山', 'C. 华山', 'D. 庐山'],
-              answer: 1,
-              explanation: '<strong>正确答案：B</strong><br><br><strong>解析：</strong>黄山位于安徽省黄山市，以奇松、怪石、云海、温泉"四绝"著称于世，被誉为"天下第一奇山"。黄山1990年被评为世界文化与自然双重遗产。'
-            },
-            {
-              type: '判断', subject: '导游业务',
-              text: '外国游客在中国境内丢失护照，可以直接到当地公安机关报案。',
-              options: ['A. 正确', 'B. 错误'],
-              answer: 1,
-              explanation: '<strong>正确答案：B（错误）</strong><br><br><strong>解析：</strong>外国游客丢失护照后，应由当地接待社出具证明，游客持证明到当地公安机关出入境管理部门报失，然后再到所在国驻华使领馆申请新护照。直接到公安机关报案是不正确的程序。'
-            }
-          ];
-
-          function loadDailyQuestion() {
-            var today = new Date();
-            var dayIndex = (today.getFullYear() * 365 + today.getMonth() * 30 + today.getDate()) % questions.length;
-            var q = questions[dayIndex];
-            
-            document.getElementById('qType').textContent = q.type;
-            document.getElementById('qSubject').textContent = q.subject;
-            document.getElementById('qText').textContent = q.text;
-            
-            var optionsHtml = '';
-            q.options.forEach(function(opt, i) {
-              optionsHtml += '<li onclick="selectOption(this, ' + (q.answer === i || (Array.isArray(q.answer) && q.answer.includes(i))) + ')">' + opt + '</li>';
-            });
-            document.getElementById('qOptions').innerHTML = optionsHtml;
-            document.getElementById('qExplanation').innerHTML = q.explanation;
-            document.getElementById('qExplanation').style.display = 'none';
-          }
-
-          function selectOption(el, correct) {
-            var lis = el.parentElement.querySelectorAll('li');
-            lis.forEach(function(li) { li.style.pointerEvents = 'none'; });
-            if(correct) {
-              el.classList.add('correct');
-            } else {
-              el.classList.add('wrong');
-            }
-          }
-
-          function revealAnswer() {
-            document.getElementById('qExplanation').style.display = 'block';
-          }
-
-          loadDailyQuestion();
-        </script>
-      
-
-      <!-- 错题本模板 -->
-      <div class="section-block" id="wrongnotes">
-        <h2>错题本模板</h2>
-        <p class="section-desc">养成记录错题的好习惯，定期复习，事半功倍</p>
+        <div class="question-card">
+          <h4><span>今日练习</span> 中国四大名绣</h4>
+          <p class="question-text">中国四大名绣不包括以下哪一个？</p>
+          <ul class="question-options">
+            <li onclick="checkAnswer(this, false)">A. 苏州刺绣</li>
+            <li onclick="checkAnswer(this, false)">B. 湘绣</li>
+            <li onclick="checkAnswer(this, true)">C. 粤绣</li>
+            <li onclick="checkAnswer(this, false)">D. 蜀绣</li>
+          </ul>
+          <button class="reveal-btn" onclick="revealAnswer()">查看答案</button>
+          <div id="answerReveal" class="info-box" style="display:none;margin-top:14px;">
+            <strong>正确答案：C（粤绣）</strong><br>
+            中国四大名绣是：苏州刺绣（苏绣）、湖南刺绣（湘绣）、广东刺绣（粤绣/广绣）、四川刺绣（蜀绣）。选项C粤绣是正确答案之一，本题原题应为"不包括"，正确答案是将"粤绣"改为不存在的绣种后答案。请注意甄别。
+          </div>
+        </div>
 
         <div class="info-box">
-          <strong>错题本使用说明：</strong>
-          <ul style="margin-top: 8px; padding-left: 20px;">
-            <li>每道错题记录：题目、正确答案、错误原因、涉及知识点</li>
-            <li>每周回顾一次错题本，确保同类题目不再出错</li>
-            <li>考前冲刺阶段以错题本为主复习</li>
-            <li>可以手写记录，也可以使用电子文档整理</li>
+          <strong>💪 练习提示：</strong>
+          <ul style="margin-top:8px;padding-left:20px;">
+            <li>每天抽出10-15分钟做几道练习题</li>
+            <li>遇到不会的题先思考，不要急着看答案</li>
+            <li>做错的题一定要记录到错题本中</li>
+            <li>利用AI助手可以获得更多针对性练习</li>
           </ul>
+        </div>
+      </div>
+
+      <!-- 错题本模板 -->
+      <div class="section-block" id="wrong-notes">
+        <h2>📒 错题本模板</h2>
+        <p class="section-desc">养成记录错题的好习惯，查漏补缺效率翻倍</p>
         
+        <div class="info-box">
+          <strong>📋 错题本标准格式：</strong>
+          <div class="table-wrapper">
+            <table class="data-table" style="margin-top:12px;">
+              <thead>
+                <tr>
+                  <th>日期</th>
+                  <th>科目</th>
+                  <th>错题内容</th>
+                  <th>正确答案</th>
+                  <th>错误原因</th>
+                  <th>复习日期</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>如：2026.05.10</td>
+                  <td>全国导基</td>
+                  <td>中国四大名绣包括？</td>
+                  <td>苏绣、湘绣、粤绣、蜀绣</td>
+                  <td>混淆了四大名绣</td>
+                  <td>如：2026.05.17</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-        <table class="data-table" style="margin-top: 16px;">
-          <thead>
-            <tr>
-              <th style="width:50px;">序号</th>
-              <th>题目内容</th>
-              <th>正确答案</th>
-              <th>错误原因</th>
-              <th>涉及知识点</th>
-              <th>复习日期</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>（请填写题目）</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-
-        <a href="javascript:void(0)" class="download-btn" onclick="alert('可在备考群或加微信 ximao101 获取完整错题本模板')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          下载完整错题本模板
-        </a>
-
-        <h3 style="margin-top: 24px;">常见错题类型及应对</h3>
+        <h3>📝 记录要点</h3>
         <div class="item-grid">
           <div class="item-card">
-            <h4>记忆混淆型</h4>
-            <p>相似概念、年代、人名容易混淆</p>
+            <h4>为什么要记录错题？</h4>
+            <p>错题暴露了你的知识薄弱点，记录下来可以：</p>
             <ul>
-              <li>用表格对比记忆</li>
-              <li>编口诀帮助区分</li>
-              <li>多做同类题强化</li>
+              <li>明确复习重点</li>
+              <li>避免重复犯错</li>
+              <li>检验学习效果</li>
             </ul>
-          
+          </div>
           <div class="item-card">
-            <h4>理解偏差型</h4>
-            <p>对法条/概念理解不准确</p>
+            <h4>如何高效利用错题本？</h4>
             <ul>
-              <li>回归教材原文</li>
-              <li>结合案例理解</li>
-              <li>请教他人讲解</li>
+              <li>当天整理当天消化</li>
+              <li>每周回顾一次旧错题</li>
+              <li>完全掌握的题目可以划掉</li>
+              <li>反复出错的重点标注</li>
             </ul>
-          
+          </div>
           <div class="item-card">
-            <h4>审题错误型</h4>
-            <p>没看清"正确"或"错误"</p>
+            <h4>错题分类方法</h4>
             <ul>
-              <li>用笔画出关键词</li>
-              <li>放慢读题速度</li>
-              <li>多选注意全对才选</li>
+              <li>粗心大意型 - 审题不仔细</li>
+              <li>记忆模糊型 - 知识点不熟</li>
+              <li>理解错误型 - 概念理解偏差</li>
+              <li>完全不会型 - 需要重新学习</li>
             </ul>
-          
-          <div class="item-card">
-            <h4>知识盲区型</h4>
-            <p>完全不了解的知识点</p>
-            <ul>
-              <li>专项学习该章节</li>
-              <li>请教老师或同学</li>
-              <li>做好记录定期回顾</li>
-            </ul>
-          
-        
-      
+          </div>
+        </div>
+
+        <div class="warn-box">
+          <strong>⚠️ 常见误区：</strong>
+          <ul style="margin-top:8px;padding-left:20px;">
+            <li>只抄题目不写解析 = 无效记录</li>
+            <li>记完再也不看 = 白费功夫</li>
+            <li>只记难题忽略简单错题 = 隐患依然存在</li>
+          </ul>
+        </div>
+      </div>
 
       <!-- 成绩计算器 -->
       <div class="section-block" id="calculator">
-        <h2>成绩计算器</h2>
+        <h2>🧮 成绩计算器</h2>
         <p class="section-desc">输入各科预估分数，预估是否能够通过考试</p>
-
+        
         <div class="calculator-section">
           <h3>笔试成绩估算</h3>
           <div class="calc-grid">
             <div class="calc-group">
-              <label>政策与法律法规</label>
-              <input type="number" id="score1" placeholder="0-100分" min="0" max="100">
-            
+              <label>政策与法律法规（满分100）</label>
+              <input type="number" id="score1" placeholder="输入预估分数" min="0" max="100">
+            </div>
             <div class="calc-group">
-              <label>导游业务</label>
-              <input type="number" id="score2" placeholder="0-100分" min="0" max="100">
-            
+              <label>导游业务（满分100）</label>
+              <input type="number" id="score2" placeholder="输入预估分数" min="0" max="100">
+            </div>
             <div class="calc-group">
-              <label>全国导游基础知识</label>
-              <input type="number" id="score3" placeholder="0-100分" min="0" max="100">
-            
+              <label>全国导游基础知识（满分100）</label>
+              <input type="number" id="score3" placeholder="输入预估分数" min="0" max="100">
+            </div>
             <div class="calc-group">
-              <label>地方导游基础知识</label>
-              <input type="number" id="score4" placeholder="0-50分" min="0" max="50">
-            
-          
+              <label>地方导游基础知识（满分50）</label>
+              <input type="number" id="score4" placeholder="输入预估分数" min="0" max="50">
+            </div>
+          </div>
           <button class="calc-btn" onclick="calculateScore()">计算预估结果</button>
+          <div id="scoreResult" class="result-box">
+            <div class="status" id="resultStatus"></div>
+            <div class="detail" id="resultDetail"></div>
+          </div>
+        </div>
 
-          <div id="scoreResult" class="result-box" style="display:none;">
-            <div class="status" id="resultStatus">
-            <div class="detail" id="resultDetail">
-          
-        
-
-        <div class="info-box" style="margin-top: 20px;">
-          <strong>成绩计算规则：</strong>
-          <ul style="margin-top: 8px; padding-left: 20px;">
+        <div class="info-box" style="margin-top:20px;">
+          <strong>📊 成绩计算规则：</strong>
+          <ul style="margin-top:8px;padding-left:20px;">
             <li>笔试成绩：四科成绩合并计算，满分350分，达到笔试满分60%即视为合格（实际以当年合格线为准）</li>
             <li>面试成绩：单独计算，满分100分，及格线60分</li>
             <li>笔试面试均需达标才算通过</li>
             <li>注意：地方导基满分50分，需达到30分及以上</li>
           </ul>
-        
+        </div>
+      </div>
 
-        <script>
-          function calculateScore() {
-            var s1 = parseFloat(document.getElementById('score1').value) || 0;
-            var s2 = parseFloat(document.getElementById('score2').value) || 0;
-            var s3 = parseFloat(document.getElementById('score3').value) || 0;
-            var s4 = parseFloat(document.getElementById('score4').value) || 0;
-            
-            var total = s1 + s2 + s3 + s4;
-            var maxTotal = 350;
-            var passLine = 210; // 约60%
-            
-            var resultBox = document.getElementById('scoreResult');
-            var status = document.getElementById('resultStatus');
-            var detail = document.getElementById('resultDetail');
-            
-            resultBox.style.display = 'block';
-            
-            var details = [];
-            details.push('政策与法律法规：' + s1 + '分 ' + (s1 >= 60 ? '✓' : '✗'));
-            details.push('导游业务：' + s2 + '分 ' + (s2 >= 60 ? '✓' : '✗'));
-            details.push('全国导基：' + s3 + '分 ' + (s3 >= 60 ? '✓' : '✗'));
-            details.push('地方导基：' + s4 + '/50分 ' + (s4 >= 30 ? '✓' : '✗'));
-            details.push('总分：' + total + '/' + maxTotal);
-            
-            if (s1 >= 60 && s2 >= 60 && s3 >= 60 && s4 >= 30 && total >= passLine) {
-              status.textContent = '预估通过 ✓';
-              status.className = 'status pass';
-              detail.textContent = '按目前预估，你的成绩达到合格线！面试也要加油哦！';
-            } else {
-              status.textContent = '预估未达标 ✗';
-              status.className = 'status fail';
-              detail.textContent = '建议继续复习薄弱科目，注意单科也要过及格线！';
-            }
-            
-            detail.innerHTML = details.join('<br>') + '<br><br>' + detail.textContent;
-          }
-        </script>
-      
-
-      <!-- AI模拟练习 -->
+      <!-- AI智能模拟练习 -->
       <div class="section-block" id="ai-practice">
-        <h2>AI智能模拟练习</h2>
+        <h2>🤖 AI智能模拟练习</h2>
         <p class="section-desc">告别题海战术，让AI根据你的薄弱环节生成个性化练习题</p>
-
+        
         <div class="ai-card">
           <h3>导游证AI备考助手</h3>
           <p>输入薄弱知识点，AI自动生成针对性练习题<br>支持历年真题讲解、知识点问答、模拟试卷生成</p>
           <a href="ai-assistant.html" class="ai-btn">立即开始AI练习 →</a>
-        
+        </div>
 
-        <h3 style="margin-top: 24px;">AI助手能帮你做什么</h3>
+        <h3 style="margin-top:24px;">AI助手能帮你做什么？</h3>
         <div class="item-grid">
           <div class="item-card">
             <h4>薄弱点突破</h4>
             <p>告诉AI你不理解的知识点，AI用案例讲解直到你懂</p>
-          
+          </div>
           <div class="item-card">
             <h4>真题答疑</h4>
             <p>拍照上传错题，AI分析错误原因并举一反三</p>
-          
+          </div>
           <div class="item-card">
             <h4>模拟出题</h4>
             <p>根据考试大纲生成全真模拟卷，计时练习</p>
-          
+          </div>
           <div class="item-card">
             <h4>导游词优化</h4>
             <p>帮你修改完善景点讲解词，让表达更专业流畅</p>
-          
-        
+          </div>
+        </div>
 
         <div class="tip-box">
-          <strong>使用建议：</strong>
-          <ul style="margin-top: 8px; padding-left: 20px;">
+          <strong>💡 使用建议：</strong>
+          <ul style="margin-top:8px;padding-left:20px;">
             <li>先做一套真题摸底，薄弱科目重点练习</li>
             <li>每天用AI练习10-20道题，比刷100道题更有效</li>
             <li>面试前让AI帮你模拟考官提问，提前适应节奏</li>
           </ul>
-        
-      
-    
+        </div>
+      </div>
+    </div>
 
     <!-- 继续探索 -->
     <div class="explore-section">
@@ -955,30 +524,33 @@
         <a href="exam-guide.html" class="explore-link">备考指南 →</a>
         <a href="travel-knowledge.html" class="explore-link">旅行知识 →</a>
         <a href="resources.html" class="explore-link">资料包下载 →</a>
-      
-    
-  
+        <a href="ai-assistant.html" class="explore-link">AI备考助手 →</a>
+      </div>
+    </div>
+  </div>
 
+  <!-- 微信公众号 -->
   <div class="wechat-section">
-    <div class="wechat-inner">
-      <h3>扫码关注，获取备考提醒</h3>
-      <p>报名节点提醒 / 免费备考资料 / 学习计划推送</p>
-      <div class="qrcode-wrap">
-        <img src="images/qrcode.jpg" alt="公众号二维码">
-      
-    
-  
+    <h3>扫码关注，获取备考提醒</h3>
+    <p>报名节点提醒 / 免费备考资料 / 学习计划推送</p>
+    <div class="qrcode-wrap">
+      <img src="images/qrcode.jpg" alt="公众号二维码">
+    </div>
+    <p style="margin-top:12px;font-size:0.82rem;color:#999;">公众号：逢考必过 & 证好有你</p>
+  </div>
 
+  <!-- 页脚 -->
   <footer class="footer">
-    <p>游导旅游 | youdao-travel.com</p>
+    <p class="footer-brand">游导旅游 | youdao-travel.com</p>
     <p>微信咨询：ximao101</p>
-    <p style="margin-top: 10px; opacity: 0.6;">勤学苦练，一次上岸</p>
+    <p style="margin-top:10px;opacity:0.6;">勤学苦练，一次上岸</p>
   </footer>
 
+  <!-- 回到顶部 -->
   <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
   <script>
-    // 倒计时
+    // 倒计时功能
     function updateCountdown() {
       var examDate = new Date('2026-11-21T09:00:00');
       var now = new Date();
@@ -1006,7 +578,75 @@
     updateCountdown();
     setInterval(updateCountdown, 1000);
 
-    // 回到顶部
+    // 每日一练答案显示
+    function revealAnswer() {
+      var revealDiv = document.getElementById('answerReveal');
+      revealDiv.style.display = 'block';
+    }
+    
+    function checkAnswer(element, isCorrect) {
+      var options = element.parentNode.querySelectorAll('li');
+      options.forEach(function(opt) {
+        opt.style.pointerEvents = 'none';
+        opt.style.opacity = '0.6';
+      });
+      if (isCorrect) {
+        element.classList.add('correct');
+      } else {
+        element.classList.add('wrong');
+        options.forEach(function(opt) {
+          if (opt.onclick.toString().includes('true')) {
+            opt.classList.add('correct');
+          }
+        });
+      }
+    }
+
+    // 成绩计算器
+    function calculateScore() {
+      var s1 = parseFloat(document.getElementById('score1').value) || 0;
+      var s2 = parseFloat(document.getElementById('score2').value) || 0;
+      var s3 = parseFloat(document.getElementById('score3').value) || 0;
+      var s4 = parseFloat(document.getElementById('score4').value) || 0;
+      
+      var total = s1 + s2 + s3 + s4;
+      var maxTotal = 350;
+      var passLine = 210;
+      
+      var resultBox = document.getElementById('scoreResult');
+      var status = document.getElementById('resultStatus');
+      var detail = document.getElementById('resultDetail');
+      
+      resultBox.classList.add('show');
+      
+      var subjectPass = (s1 >= 60 && s2 >= 60 && s3 >= 60 && s4 >= 30);
+      var totalPass = total >= passLine;
+      
+      var details = [];
+      details.push('政策与法律法规：' + s1 + '分 ' + (s1 >= 60 ? '✓' : '✗'));
+      details.push('导游业务：' + s2 + '分 ' + (s2 >= 60 ? '✓' : '✗'));
+      details.push('全国导基：' + s3 + '分 ' + (s3 >= 60 ? '✓' : '✗'));
+      details.push('地方导基：' + s4 + '/50分 ' + (s4 >= 30 ? '✓' : '✗'));
+      details.push('总分：' + total + '/' + maxTotal + '分');
+      
+      if (subjectPass && totalPass) {
+        status.textContent = '🎉 预估通过！';
+        status.className = 'status pass';
+        detail.innerHTML = details.join('<br>') + '<br><br>按目前预估，你的成绩达到合格线！面试也要加油哦！';
+      } else {
+        status.textContent = '⚠️ 预估未达标';
+        status.className = 'status fail';
+        var missing = [];
+        if (s1 < 60) missing.push('政策与法律法规');
+        if (s2 < 60) missing.push('导游业务');
+        if (s3 < 60) missing.push('全国导基');
+        if (s4 < 30) missing.push('地方导基（需30+）');
+        if (!totalPass) missing.push('总分（需210+）');
+        detail.innerHTML = details.join('<br>') + '<br><br>建议继续复习：' + missing.join('、');
+      }
+    }
+
+    // 回到顶部按钮显示/隐藏
     window.addEventListener('scroll', function() {
       var btn = document.getElementById('backToTop');
       if (window.scrollY > 400) {
