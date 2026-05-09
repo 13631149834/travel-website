@@ -1,1902 +1,214 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>旅行实用工具 - 游导旅游</title>
-     <meta name="description" content="旅行实用工具集合，包含签证查询、时差计算、汇率换算、行李清单生成器、旅行预算计算器及紧急联系电话。">
-  </title>
-<meta content="website" property="og:type"/>
-<meta content="旅行实用工具 - 签证查询、时差计算" property="og:title"/>
-<meta content="各国签证查询、时差计算、汇率换算、行李清单生成器、旅行预算计算器" property="og:description"/>
-<meta content="https://youdao-travel.com/travel-tools.html" property="og:url"/>
-<meta content="https://youdao-travel.com/images/qrcode.jpg" property="og:image"/>
-<meta content="旅行者实用工具集合，包含各国签证查询、时差计算、汇率换算、行李清单生成器、旅行预算计算器及紧急联系电话。" name="description"/>
-<style>
-   *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>旅行工具 - 游导旅游</title>
+  <meta name="description" content="旅行实用工具集合，包含签证查询、时差计算、汇率换算、行李清单生成器、旅行预算计算器">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="旅行实用工具 - 游导旅游">
+  <meta property="og:description" content="各国签证查询、时差计算、汇率换算、行李清单生成器、旅行预算计算器">
+  <meta property="og:url" content="https://youdao-travel.com/travel-tools.html">
+  <style>
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-      line-height: 1.75;
-      color: #333;
-      background: #f8f9fa;
-    }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; line-height: 1.7; color: #fff; background: linear-gradient(135deg, #1a1a4e 0%, #4a7cf7 100%); min-height: 100vh; }
     a { text-decoration: none; color: inherit; }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 24px;
-      background: #fff;
-      border-bottom: 1px solid #e8ecf0;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .logo { font-size: 1.15rem; font-weight: 700; color: #2563eb; display: flex; align-items: center; gap: 6px; }
-    .logo-icon { width: 28px; height: 28px; background: #2563eb; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .glass-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; transition: all 0.3s; }
+    .glass-card:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.25); }
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: rgba(26,26,78,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255,255,255,0.1); position: sticky; top: 0; z-index: 100; }
+    .logo { font-size: 1.1rem; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 8px; }
+    .logo-icon { width: 32px; height: 32px; background: linear-gradient(135deg, #FF6B35, #ff8c5a); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
     .nav-links { display: flex; gap: 4px; }
-    .nav-links a { padding: 7px 14px; border-radius: 8px; font-size: 0.9rem; color: #555; transition: all 0.2s; }
-    .nav-links a:hover { background: #2563eb; color: #fff; }
-    .nav-links a.active { background: #2563eb; color: #fff; font-weight: 500; }
-    .nav-toggle { display: none; flex-direction: column; gap: 4px; cursor: pointer; padding: 6px; }
-    .nav-toggle span { width: 22px; height: 2px; background: #333; border-radius: 2px; }
-
+    .nav-links a { padding: 8px 12px; border-radius: 10px; font-size: 0.85rem; color: rgba(255,255,255,0.8); transition: all 0.3s; }
+    .nav-links a:hover { background: rgba(255,107,53,0.3); color: #fff; }
+    .nav-links a.active { background: #FF6B35; color: #fff; font-weight: 600; }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; }
+    .nav-toggle span { width: 22px; height: 2px; background: #fff; border-radius: 2px; }
     .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-    .page-hero {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: white;
-      padding: 60px 20px 50px;
-      text-align: center;
-    }
-    .page-hero h1 { font-size: 2rem; font-weight: 700; margin-bottom: 10px; }
-    .page-hero p { font-size: 1rem; opacity: 0.85; max-width: 520px; margin: 0 auto; }
-
-    .toc {
-      background: #fff;
-      border: 1px solid #e0e8f0;
-      border-radius: 12px;
-      padding: 20px 24px;
-      margin: 30px 0;
-    }
-    .toc h3 { font-size: 1rem; color: #2563eb; margin-bottom: 12px; }
-    .toc-list { display: flex; flex-wrap: wrap; gap: 8px; }
-    .toc-item { background: #f0f7fb; color: #2563eb; padding: 5px 14px; border-radius: 20px; font-size: 0.85rem; transition: all 0.2s; }
-    .toc-item:hover { background: #2563eb; color: #fff; }
-
-    .content-section { padding: 20px 0 10px; }
-    .section-block {
-      background: #fff;
-      border: 1px solid #e8ecf0;
-      border-radius: 16px;
-      padding: 32px;
-      margin-bottom: 24px;
-    }
-    .section-block h2 { font-size: 1.25rem; color: #2563eb; margin-bottom: 6px; padding-bottom: 12px; border-bottom: 2px solid #eaf4fb; }
-    .section-block h3 { font-size: 1.1rem; color: #2563eb; margin: 20px 0 12px; }
-    .section-block .section-desc { color: #888; font-size: 0.88rem; margin-bottom: 20px; }
-
-    .tip-box { background: #fff8f0; border-left: 4px solid #f97316; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 0.9rem; }
-    .tip-box strong { color: #e55d00; }
-    .warn-box { background: #fef2f2; border-left: 4px solid #ef4444; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 0.9rem; }
-    .warn-box strong { color: #dc2626; }
-    .info-box { background: #eaf4fb; border-left: 4px solid #2563eb; border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 16px 0; font-size: 0.9rem; }
-    .info-box strong { color: #2563eb; }
-
-    .table-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      margin-top: 12px;
-    }
-    .data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.88rem;
-      min-width: 500px;
-    }
-    .data-table th {
-      background: #f0f7fb;
-      color: #2563eb;
-      padding: 12px 10px;
-      text-align: left;
-      font-weight: 600;
-      border-bottom: 2px solid #e0e8f0;
-    }
-    .data-table td {
-      padding: 10px;
-      border-bottom: 1px solid #f0f0f0;
-      color: #555;
-    }
-    .data-table tr:hover { background: #fafcfd; }
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 10px;
-      font-size: 0.75rem;
-      font-weight: 500;
-    }
-    .badge-free { background: #dcfce7; color: #16a34a; }
-    .badge-required { background: #ffedd5; color: #ea580c; }
-    .badge-arrival { background: #dbeafe; color: #2563eb; }
-
-    .item-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-    .item-card {
-      background: #fafcfd;
-      border: 1px solid #e8ecf0;
-      border-radius: 10px;
-      padding: 18px;
-    }
-    .item-card h4 { font-size: 0.95rem; color: #2563eb; margin-bottom: 6px; font-weight: 600; }
-    .item-card p { font-size: 0.85rem; color: #666; line-height: 1.6; margin-bottom: 8px; }
-    .item-card ul { padding-left: 16px; font-size: 0.83rem; color: #555; list-style: disc; }
-    .item-card ul li { margin-bottom: 4px; }
-
-    .tool-card {
-      background: linear-gradient(135deg, #f8fafc 0%, #fff 100%);
-      border: 1px solid #e8ecf0;
-      border-radius: 12px;
-      padding: 24px;
-      margin-top: 20px;
-    }
-    .tool-card h3 {
-      font-size: 1.1rem;
-      color: #2563eb;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .tool-card h3::before {
-      content: '';
-      width: 6px;
-      height: 20px;
-      background: #2563eb;
-      border-radius: 3px;
-    }
-
-    .calculator-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-    }
-    .calc-group { margin-bottom: 16px; }
-    .calc-group label {
-      display: block;
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 6px;
-      font-weight: 500;
-    }
-    .calc-group select, .calc-group input {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #e0e8f0;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      transition: border-color 0.2s;
-    }
-    .calc-group select:focus, .calc-group input:focus {
-      outline: none;
-      border-color: #2563eb;
-    }
-    .calc-btn {
-      width: 100%;
-      padding: 12px;
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      cursor: pointer;
-      transition: background 0.2s;
-      margin-top: 12px;
-    }
-    .calc-btn:hover { background: #154360; }
-    .calc-result {
-      background: #eaf4fb;
-      border-radius: 8px;
-      padding: 16px;
-      margin-top: 16px;
-      text-align: center;
-    }
-    .calc-result .amount {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #2563eb;
-    }
-    .calc-result .label { font-size: 0.85rem; color: #888; margin-top: 4px; }
-
-    .checklist {
-      list-style: none;
-    }
-    .checklist li {
-      padding: 10px 0;
-      border-bottom: 1px solid #f0f0f0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.9rem;
-    }
+    .hero { padding: 100px 20px 60px; text-align: center; position: relative; }
+    .hero::before { content: ''; position: absolute; top: -50%; right: -20%; width: 60%; height: 200%; background: radial-gradient(circle, rgba(16,185,129,0.1) 0%, transparent 70%); pointer-events: none; }
+    .hero h1 { font-size: clamp(2.5rem, 8vw, 4rem); font-weight: 900; margin-bottom: 16px; background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.85) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -1px; }
+    .hero p { font-size: 1.1rem; color: rgba(255,255,255,0.75); max-width: 500px; margin: 0 auto; }
+    .toc { margin: 40px 0; padding: 24px; }
+    .toc h3 { font-size: 1rem; color: #FF6B35; margin-bottom: 16px; font-weight: 600; }
+    .toc-list { display: flex; flex-wrap: wrap; gap: 10px; }
+    .toc-item { background: rgba(255,107,53,0.15); color: #fff; padding: 8px 18px; border-radius: 25px; font-size: 0.88rem; transition: all 0.3s; border: 1px solid rgba(255,107,53,0.3); }
+    .toc-item:hover { background: #FF6B35; transform: translateY(-2px); }
+    .section { padding: 20px 0; }
+    .section-title { font-size: clamp(1.5rem, 4vw, 2rem); font-weight: 800; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+    .section-title::before { content: ''; width: 6px; height: 28px; background: linear-gradient(180deg, #FF6B35, #ff8c5a); border-radius: 3px; }
+    .section-desc { color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 24px; padding-left: 18px; }
+    .tool-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 20px; padding: 28px; margin-top: 24px; }
+    .tool-card h3 { font-size: 1.2rem; color: #fff; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+    .tool-card h3 .icon { width: 40px; height: 40px; background: linear-gradient(135deg, #FF6B35, #ff8c5a); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+    .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin-top: 12px; }
+    .data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 500px; }
+    .data-table th { background: rgba(255,107,53,0.15); color: #FF6B35; padding: 14px 12px; text-align: left; font-weight: 600; border-bottom: 2px solid rgba(255,107,53,0.3); }
+    .data-table td { padding: 14px 12px; border-bottom: 1px solid rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
+    .data-table tr:hover { background: rgba(255,255,255,0.05); }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+    .badge-free { background: rgba(16,185,129,0.2); color: #10b981; }
+    .badge-required { background: rgba(255,107,53,0.2); color: #FF6B35; }
+    .badge-arrival { background: rgba(59,130,246,0.2); color: #3b82f6; }
+    .calc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .calc-group { margin-bottom: 18px; }
+    .calc-group label { display: block; font-size: 0.9rem; color: rgba(255,255,255,0.8); margin-bottom: 8px; font-weight: 500; }
+    .calc-group input, .calc-group select { width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; font-size: 1rem; color: #fff; transition: all 0.3s; }
+    .calc-group input:focus, .calc-group select:focus { outline: none; border-color: #FF6B35; background: rgba(255,255,255,0.12); }
+    .calc-group select option { background: #1a1a4e; color: #fff; }
+    .calc-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #FF6B35, #ea580c); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; box-shadow: 0 6px 20px rgba(255,107,53,0.35); }
+    .calc-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(255,107,53,0.45); }
+    .calc-result { background: linear-gradient(135deg, rgba(16,185,129,0.15), rgba(16,185,129,0.08)); border: 1px solid rgba(16,185,129,0.3); border-radius: 16px; padding: 24px; margin-top: 20px; text-align: center; }
+    .calc-result .amount { font-size: 2.2rem; font-weight: 800; color: #10b981; }
+    .calc-result .label { font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-top: 8px; }
+    .checklist { list-style: none; padding: 0; }
+    .checklist li { padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.08); display: flex; align-items: center; gap: 14px; font-size: 0.95rem; }
     .checklist li:last-child { border-bottom: none; }
-    .checklist input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
-      accent-color: #2563eb;
-      cursor: pointer;
-    }
-    .checklist .category {
-      font-weight: 600;
-      color: #2563eb;
-      margin: 16px 0 8px;
-      padding-top: 12px;
-      border-top: 2px solid #eaf4fb;
-    }
+    .checklist input[type="checkbox"] { width: 22px; height: 22px; accent-color: #FF6B35; cursor: pointer; flex-shrink: 0; }
+    .checklist .category { font-weight: 700; color: #FF6B35; margin: 20px 0 12px; padding-top: 16px; border-top: 2px solid rgba(255,107,53,0.2); font-size: 1rem; }
     .checklist .category:first-child { margin-top: 0; padding-top: 0; border-top: none; }
-
-    .emergency-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-    .emergency-card {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      border-radius: 10px;
-      padding: 18px;
-    }
-    .emergency-card h4 {
-      color: #dc2626;
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-    }
-    .emergency-card p { font-size: 0.85rem; color: #555; }
-    .emergency-card .number {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #dc2626;
-      margin-top: 6px;
-    }
-
-    .explore-section {
-      background: #fff;
-      border-radius: 16px;
-      padding: 32px;
-      border: 1px solid #e8ecf0;
-      margin: 30px 0;
-      text-align: center;
-    }
-    .explore-section h3 { font-size: 1.1rem; color: #2563eb; margin-bottom: 16px; }
-    .explore-links { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
-    .explore-link {
-      background: #f0f7fb;
-      color: #2563eb;
-      padding: 10px 24px;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      transition: all 0.2s;
-    }
-    .explore-link:hover { background: #2563eb; color: #fff; }
-
-    .wechat-section {
-      background: #f0f7fb;
-      padding: 40px 20px;
-      margin-top: 30px;
-    }
-    .wechat-inner { max-width: 400px; margin: 0 auto; text-align: center; }
-    .wechat-inner h3 { color: #2563eb; font-size: 1.1rem; margin-bottom: 8px; }
-    .wechat-inner p { color: #888; font-size: 0.88rem; margin-bottom: 16px; }
-    .qrcode-wrap img { width: 160px; height: 160px; border-radius: 8px; border: 4px solid #fff; }
-
-    .footer {
-      background: #2563eb;
-      color: rgba(255,255,255,0.85);
-      text-align: center;
-      padding: 28px 20px;
-    }
-    .footer p { font-size: 0.88rem; margin-bottom: 6px; }
-
-    .back-to-top {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      width: 44px;
-      height: 44px;
-      background: #2563eb;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      cursor: pointer;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s;
-      z-index: 99;
-    }
-    .back-to-top.show { opacity: 1; visibility: visible; }
-    .back-to-top:hover { background: #154360; }
-
-    @media (max-width: 768px) {
-      .nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: #fff; padding: 12px; border-bottom: 1px solid #e8ecf0; }
-      .nav-links.show { display: flex; }
-      .nav-toggle { display: flex; }
-      .calculator-grid { grid-template-columns: 1fr; }
-      .table-wrapper { margin-top: 12px; }
-      .data-table { font-size: 0.8rem; min-width: 500px; }
-      .data-table th, .data-table td { padding: 8px 6px; white-space: nowrap; }
-    }
+    .emergency-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 16px; }
+    .emergency-card { background: linear-gradient(135deg, rgba(239,68,68,0.12), rgba(239,68,68,0.06)); border: 1px solid rgba(239,68,68,0.25); border-radius: 16px; padding: 20px; }
+    .emergency-card h4 { color: #ef4444; font-size: 1rem; margin-bottom: 8px; }
+    .emergency-card p { color: rgba(255,255,255,0.7); font-size: 0.88rem; }
+    .emergency-card .number { font-size: 1.2rem; font-weight: 800; color: #ef4444; margin-top: 10px; }
+    .timezone-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
+    .timezone-item { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 18px; text-align: center; }
+    .timezone-item .city { font-size: 1.1rem; font-weight: 600; margin-bottom: 6px; }
+    .timezone-item .time { font-size: 1.8rem; font-weight: 800; color: #FF6B35; }
+    .timezone-item .diff { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 4px; }
+    .footer { background: rgba(26,26,78,0.9); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1); padding: 40px 20px; text-align: center; margin-top: 60px; }
+    .footer p { color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 8px; }
+    .footer a { color: #FF6B35; }
+    .footer strong { color: #fff; }
+    @media (max-width: 768px) { .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(26,26,78,0.98); flex-direction: column; padding: 12px; gap: 4px; border-radius: 0 0 16px 16px; } .nav-links.open { display: flex; } .nav-toggle { display: flex; } .calc-grid { grid-template-columns: 1fr; } .hero { padding: 80px 20px 40px; } }
   </style>
 </head>
 <body>
-<nav class="navbar">
-<a class="logo" href="index.html">
-<div class="logo-icon">
-<svg fill="white" height="16" viewbox="0 0 24 24" width="16">
-<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z">
-</path>
-</svg>
-</div>
-    游导旅游
-   </a>
-<div class="nav-links" id="navLinks">
-    <a href="index.html">首页</a>
-    <a href="ai-assistant.html">AI助手</a>
-    <a href="resources.html">资料套餐</a>
-    <a href="free-materials.html">免费资料</a>
-    <a href="exam-guide.html">备考攻略</a>
-    <a href="exam-simulator.html">模拟考试</a>
-    <a href="travel-knowledge.html">旅行知识</a>
-    <a href="travel-tools.html" class="active">旅行工具</a>
-    <a href="voice.html">发声墙</a>
+  <nav class="navbar">
+    <a class="logo" href="index.html"><div class="logo-icon"><svg fill="white" height="18" viewBox="0 0 24 24" width="18"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>游导旅游</a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html">首页</a><a href="ai-assistant.html">AI助手</a><a href="resources.html">资料套餐</a><a href="free-materials.html">免费资料</a><a href="exam-guide.html">备考攻略</a><a href="exam-simulator.html">模拟考试</a><a href="travel-knowledge.html">旅行知识</a><a href="travel-tools.html" class="active">旅行工具</a><a href="voice.html">发声墙</a>
+    </div>
+    <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')"><span></span><span></span><span></span></div>
+  </nav>
+  <div class="hero"><h1>旅行工具</h1><p>签证查询 · 时差计算 · 汇率换算 · 预算规划</p></div>
+  <div class="container">
+    <div class="toc"><h3>工具导航</h3><div class="toc-list"><a class="toc-item" href="#visa">签证查询</a><a class="toc-item" href="#timezone">时差计算</a><a class="toc-item" href="#exchange">汇率换算</a><a class="toc-item" href="#budget">预算计算</a><a class="toc-item" href="#checklist">行李清单</a><a class="toc-item" href="#emergency">紧急电话</a></div></div>
+    <div class="section" id="visa"><h2 class="section-title">签证查询</h2><p class="section-desc">各国签证政策一目了然，提前做好准备。</p>
+      <div class="tool-card glass-card"><h3><span class="icon">📋</span>热门目的地签证状态</h3>
+        <div class="table-wrapper">
+          <table class="data-table"><thead><tr><th>国家</th><th>签证类型</th><th>办理时间</th><th>费用参考</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>🇯🇵 日本</td><td>单次/多次</td><td>5-7工作日</td><td>200-800元</td><td><span class="badge badge-required">需办理</span></td></tr>
+            <tr><td>🇹🇭 泰国</td><td>落地签/贴纸签</td><td>落地即办/3-5日</td><td>230-280元</td><td><span class="badge badge-arrival">落地签</span></td></tr>
+            <tr><td>🇸🇬 新加坡</td><td>电子签</td><td>3-5工作日</td><td>约300元</td><td><span class="badge badge-required">需办理</span></td></tr>
+            <tr><td>🇰🇷 韩国</td><td>单次/五年多次</td><td>3-5工作日</td><td>280-800元</td><td><span class="badge badge-required">需办理</span></td></tr>
+            <tr><td>🇲🇴 澳门</td><td>免签</td><td>无需办理</td><td>0元</td><td><span class="badge badge-free">免签</span></td></tr>
+            <tr><td>🇭🇰 香港</td><td>免签</td><td>无需办理</td><td>0元</td><td><span class="badge badge-free">免签</span></td></tr>
+            <tr><td>🇪🇺 申根区</td><td>申根签证</td><td>10-15工作日</td><td>650-800元</td><td><span class="badge badge-required">需办理</span></td></tr>
+            <tr><td>🇺🇸 美国</td><td>B1/B2</td><td>面试预约</td><td>约1150元</td><td><span class="badge badge-required">需面签</span></td></tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+    <div class="section" id="timezone"><h2 class="section-title">时差计算</h2><p class="section-desc">热门目的地与北京时间对比（基准：北京时间 UTC+8）</p>
+      <div class="timezone-grid">
+        <div class="timezone-item glass-card"><div class="city">🇯🇵 东京</div><div class="time">+1h</div><div class="diff">UTC+9</div></div>
+        <div class="timezone-item glass-card"><div class="city">🇰🇷 首尔</div><div class="time">+1h</div><div class="diff">UTC+9</div></div>
+        <div class="timezone-item glass-card"><div class="city">🇸🇬 新加坡</div><div class="time">0h</div><div class="diff">UTC+8 无时差</div></div>
+        <div class="timezone-item glass-card"><div class="city">🇹🇭 曼谷</div><div class="time">-1h</div><div class="diff">UTC+7</div></div>
+        <div class="timezone-item glass-card"><div class="city">🇻🇳 河内</div><div class="time">-1h</div><div class="diff">UTC+7</div></div>
+        <div class="timezone-item glass-card"><div class="city">🇹🇷 伊斯坦布尔</div><div class="time">-5h</div><div class="diff">UTC+3</div></div>
+        <div class="timezone-item glass-card"><div class="city">🇫🇷 巴黎</div><div class="time">-6h</div><div class="diff">UTC+1 夏令时-5h</div></div>
+        <div class="timezone-item glass-card"><div class="city">🇬🇧 伦敦</div><div class="time">-8h</div><div class="diff">UTC+0 夏令时-7h</div></div>
+        <div class="timezone-item glass-card"><div class="city">🇺🇸 纽约</div><div class="time">-13h</div><div class="diff">UTC-5 夏令时-12h</div></div>
+        <div class="timezone-item glass-card"><div class="city">🇦🇺 悉尼</div><div class="time">+2h</div><div class="diff">UTC+11 夏令时</div></div>
+      </div>
+    </div>
+    <div class="section" id="exchange"><h2 class="section-title">汇率换算</h2><p class="section-desc">实时参考汇率（1人民币 ≈ 外币）</p>
+      <div class="tool-card glass-card"><h3><span class="icon">💱</span>常用货币汇率参考</h3>
+        <div class="table-wrapper">
+          <table class="data-table"><thead><tr><th>货币</th><th>代码</th><th>参考汇率</th><th>备注</th></tr></thead>
+          <tbody>
+            <tr><td>🇯🇵 日元</td><td>JPY</td><td>≈ 21.5</td><td>100日元 ≈ 4.6元</td></tr>
+            <tr><td>🇹🇭 泰铢</td><td>THB</td><td>≈ 4.8</td><td>100泰铢 ≈ 21元</td></tr>
+            <tr><td>🇸🇬 新加坡元</td><td>SGD</td><td>≈ 0.19</td><td>1新币 ≈ 5.3元</td></tr>
+            <tr><td>🇰🇷 韩元</td><td>KRW</td><td>≈ 188</td><td>1000韩元 ≈ 5.3元</td></tr>
+            <tr><td>🇪🇺 欧元</td><td>EUR</td><td>≈ 0.13</td><td>1欧元 ≈ 7.8元</td></tr>
+            <tr><td>🇬🇧 英镑</td><td>GBP</td><td>≈ 0.11</td><td>1英镑 ≈ 9.1元</td></tr>
+            <tr><td>🇺🇸 美元</td><td>USD</td><td>≈ 0.14</td><td>1美元 ≈ 7.2元</td></tr>
+            <tr><td>🇦🇺 澳元</td><td>AUD</td><td>≈ 0.21</td><td>1澳元 ≈ 4.7元</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 16px; text-align: center;">⚠️ 汇率实时波动，建议出发前在银行或机场兑换</p>
+      </div>
+    </div>
+    <div class="section" id="budget"><h2 class="section-title">旅行预算计算</h2><p class="section-desc">快速估算你的旅行总花费</p>
+      <div class="tool-card glass-card"><h3><span class="icon">🧮</span>预算计算器</h3>
+        <div class="calc-grid">
+          <div>
+            <div class="calc-group"><label>目的地</label><select id="destination"><option value="japan">🇯🇵 日本</option><option value="thailand">🇹🇭 泰国</option><option value="korea">🇰🇷 韩国</option><option value="singapore">🇸🇬 新加坡</option><option value="europe">🇪🇺 欧洲</option><option value="usa">🇺🇸 美国</option><option value="australia">🇦🇺 澳洲</option></select></div>
+            <div class="calc-group"><label>旅行天数</label><input type="number" id="days" value="5" min="1" max="30"></div>
+            <div class="calc-group"><label>每日餐饮预算 (元)</label><input type="number" id="food" value="150" min="50" max="1000"></div>
+            <div class="calc-group"><label>每日交通预算 (元)</label><input type="number" id="transport" value="80" min="20" max="500"></div>
+          </div>
+          <div>
+            <div class="calc-group"><label>住宿星级</label><select id="hotel"><option value="budget">经济型 (约200元/晚)</option><option value="mid" selected>舒适型 (约400元/晚)</option><option value="high">高档型 (约800元/晚)</option></select></div>
+            <div class="calc-group"><label>购物预算 (元)</label><input type="number" id="shopping" value="1000" min="0" max="50000"></div>
+            <div class="calc-group"><label>景点门票预算 (元)</label><input type="number" id="tickets" value="500" min="0" max="5000"></div>
+          </div>
+        </div>
+        <button class="calc-btn" onclick="calculateBudget()">计算预算</button>
+        <div class="calc-result" id="budgetResult" style="display: none;"><div class="amount" id="totalBudget">¥0</div><div class="label">预计总花费</div><p style="color: rgba(255,255,255,0.6); font-size: 0.85rem; margin-top: 12px;">人均预算 | 仅供参考，实际花费因人而异</p></div>
+      </div>
+    </div>
+    <div class="section" id="checklist"><h2 class="section-title">行李清单</h2><p class="section-desc">出发前勾选，确保万无一失</p>
+      <div class="tool-card glass-card"><h3><span class="icon">📦</span>行李清单</h3>
+        <ul class="checklist">
+          <li class="category">📄 证件类</li><li><input type="checkbox"> 护照（有效期6个月以上）</li><li><input type="checkbox"> 身份证</li><li><input type="checkbox"> 签证/签证确认函</li><li><input type="checkbox"> 机票/酒店预订单</li><li><input type="checkbox"> 旅行保险单</li><li><input type="checkbox"> 信用卡/借记卡</li><li><input type="checkbox"> 现金（少量外币）</li>
+          <li class="category">📱 电子设备</li><li><input type="checkbox"> 手机 + 充电器</li><li><input type="checkbox"> 充电宝 (注意容量限制)</li><li><input type="checkbox"> 转换插头</li><li><input type="checkbox"> 相机/自拍杆</li><li><input type="checkbox"> 耳机</li>
+          <li class="category">👔 衣物类</li><li><input type="checkbox"> 内衣/袜子</li><li><input type="checkbox"> 换洗衣物</li><li><input type="checkbox"> 睡衣</li><li><input type="checkbox"> 舒适的步行鞋</li><li><input type="checkbox"> 外套/防晒衫</li>
+          <li class="category">💊 药品类</li><li><input type="checkbox"> 常备药（感冒药、止泻药）</li><li><input type="checkbox"> 创可贴</li><li><input type="checkbox"> 个人处方药</li>
+          <li class="category">🧴 日用品</li><li><input type="checkbox"> 牙刷、牙膏</li><li><input type="checkbox"> 护肤品/防晒霜</li><li><input type="checkbox"> 洗漱用品</li><li><input type="checkbox"> 墨镜/遮阳帽</li>
+        </ul>
+      </div>
+    </div>
+    <div class="section" id="emergency"><h2 class="section-title">紧急联系电话</h2><p class="section-desc">关键时刻用得上，建议收藏</p>
+      <div class="emergency-grid">
+        <div class="emergency-card"><h4>🇨🇳 中国外交部</h4><p>全球领事保护与服务应急热线</p><div class="number">+86-10-12308</div></div>
+        <div class="emergency-card"><h4>🇨🇳 中国驻外使领馆</h4><p>根据目的地查询对应使领馆电话</p><div class="number">consular.gov.cn</div></div>
+        <div class="emergency-card"><h4>🆘 全球通用急救</h4><p>如在国外拨打需加国家代码</p><div class="number">报警 110 / 急救 120</div></div>
+        <div class="emergency-card"><h4>💳 银行紧急挂失</h4><p>信用卡/借记卡丢失或被盗</p><div class="number">联系发卡银行客服</div></div>
+      </div>
+    </div>
   </div>
-  <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
-<span>
-</span>
-<span>
-</span>
-<span>
-</span>
-<div class="page-hero">
-<h1>
-      旅行实用工具
-     </h1>
-<p>
-      签证查询 · 时差计算 · 汇率换算 · 行李清单 · 预算计算 · 紧急电话
-     </p>
-<div class="container">
-<div class="toc">
-<h3>
-        工具导航
-       </h3>
-<div class="toc-list">
-<a class="toc-item" href="#visa">
-         签证查询
-        </a>
-<a class="toc-item" href="#timezone">
-         时差计算
-        </a>
-<a class="toc-item" href="#exchange">
-         汇率参考
-        </a>
-<a class="toc-item" href="#checklist">
-         行李清单
-        </a>
-<a class="toc-item" href="#budget">
-         预算计算
-        </a>
-<a class="toc-item" href="#emergency">
-         紧急电话
-        </a>
-<div class="content-section">
-<!-- 签证查询表 -->
-<div class="section-block" id="visa">
-<h2>
-           各国签证查询表
-          </h2>
-<p class="section-desc">
-           热门目的地签证最新政策，含签证类型、办理时长、参考费用。建议出行前3个月开始准备。
-          </p>
-<div class="table-wrapper">
-<table class="data-table">
-<thead>
-<tr>
-<th>
-               国家/地区
-              </th>
-<th>
-               签证类型
-              </th>
-<th>
-               办理时长
-              </th>
-<th>
-               参考费用
-              </th>
-<th>
-               政策状态
-              </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<strong>
-                日本
-               </strong>
-</td>
-<td>
-               单次/三年多次/五年多次
-              </td>
-<td>
-               5-10工作日
-              </td>
-<td>
-               200-1000元
-              </td>
-<td>
-<span class="badge badge-required">
-                需办理
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                泰国
-               </strong>
-</td>
-<td>
-               落地签/贴纸签
-              </td>
-<td>
-               落地即办/3-5日
-              </td>
-<td>
-               2300泰铢/240元
-              </td>
-<td>
-<span class="badge badge-arrival">
-                可落地签
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                韩国
-               </strong>
-</td>
-<td>
-               单次/五年多次/C-3-9
-              </td>
-<td>
-               5-7工作日
-              </td>
-<td>
-               280-800元
-              </td>
-<td>
-<span class="badge badge-required">
-                需办理
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                新加坡
-               </strong>
-</td>
-<td>
-               旅游签证（担保签）
-              </td>
-<td>
-               3-5工作日
-              </td>
-<td>
-               300-500元
-              </td>
-<td>
-<span class="badge badge-required">
-                需办理
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                美国
-               </strong>
-</td>
-<td>
-               B1/B2旅游签证
-              </td>
-<td>
-               面试排期1-3月
-              </td>
-<td>
-               185美元+服务费
-              </td>
-<td>
-<span class="badge badge-required">
-                需面试
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                英国
-               </strong>
-</td>
-<td>
-               标准访客签证
-              </td>
-<td>
-               3周左右
-              </td>
-<td>
-               100英镑
-              </td>
-<td>
-<span class="badge badge-required">
-                需办理
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                申根国
-               </strong>
-</td>
-<td>
-               申根签证（短期）
-              </td>
-<td>
-               10-15工作日
-              </td>
-<td>
-               650-800元
-              </td>
-<td>
-<span class="badge badge-required">
-                需办理
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                澳大利亚
-               </strong>
-</td>
-<td>
-               访客签证（600）
-              </td>
-<td>
-               20-30工作日
-              </td>
-<td>
-               190澳元
-              </td>
-<td>
-<span class="badge badge-required">
-                需办理
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                马尔代夫
-               </strong>
-</td>
-<td>
-               免费落地签
-              </td>
-<td>
-               落地即办
-              </td>
-<td>
-               免费
-              </td>
-<td>
-<span class="badge badge-free">
-                免签
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                阿联酋
-               </strong>
-</td>
-<td>
-               免费落地签
-              </td>
-<td>
-               落地即办
-              </td>
-<td>
-               免费
-              </td>
-<td>
-<span class="badge badge-free">
-                免签
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                马来西亚
-               </strong>
-</td>
-<td>
-               电子签/ENTRI/落地签
-              </td>
-<td>
-               1-3工作日
-              </td>
-<td>
-               280元/免费
-              </td>
-<td>
-<span class="badge badge-arrival">
-                可落地签
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                越南
-               </strong>
-</td>
-<td>
-               落地签批文+签证
-              </td>
-<td>
-               1-2工作日
-              </td>
-<td>
-               25-50美元
-              </td>
-<td>
-<span class="badge badge-arrival">
-                落地批文
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                柬埔寨
-               </strong>
-</td>
-<td>
-               落地签/电子签
-              </td>
-<td>
-               落地即办
-              </td>
-<td>
-               30美元
-              </td>
-<td>
-<span class="badge badge-arrival">
-                可落地签
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                俄罗斯
-               </strong>
-</td>
-<td>
-               团队免签/个人旅游签
-              </td>
-<td>
-               7-10工作日
-              </td>
-<td>
-               350-700元
-              </td>
-<td>
-<span class="badge badge-arrival">
-                团队免签
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                印度尼西亚
-               </strong>
-</td>
-<td>
-               落地签/B211A电子签
-              </td>
-<td>
-               落地即办
-              </td>
-<td>
-               50万印尼盾
-              </td>
-<td>
-<span class="badge badge-arrival">
-                可落地签
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                菲律宾
-               </strong>
-</td>
-<td>
-               免签/落地签
-              </td>
-<td>
-               落地即办
-              </td>
-<td>
-               免费/免费
-              </td>
-<td>
-<span class="badge badge-free">
-                免签
-               </span>
-</td>
-</tr>
-<tr>
-<td>
-<strong>
-                哈萨克斯坦
-               </strong>
-</td>
-<td>
-               14天免签
-              </td>
-<td>
-               无需办理
-              </td>
-<td>
-               免费
-              </td>
-<td>
-<span class="badge badge-free">
-                免签
-               </span>
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="tip-box">
-<strong>
-            签证办理小贴士：
-           </strong>
-<ul style="margin-top: 8px; padding-left: 20px;">
-<li>
-             护照有效期需超过出行日期6个月以上
-            </li>
-<li>
-             在职证明需用公司抬头纸开具，注明准假信息
-            </li>
-<li>
-             银行流水建议近期有稳定入账，余额3-5万以上
-            </li>
-<li>
-             敏感地区户籍（福建、广东等）可能需要更多材料
-            </li>
-<li>
-             旺季（寒暑假、春节）建议提前2-3个月办理
-            </li>
-</ul>
-<!-- 时差计算 -->
-<div class="section-block" id="timezone">
-<h2>
-             主要目的地与北京时差
-            </h2>
-<p class="section-desc">
-             出国旅行必备的时差对照表，跨时区飞行不再懵
-            </p>
-<div class="table-wrapper">
-<table class="data-table">
-<thead>
-<tr>
-<th>
-                 国家/城市
-                </th>
-<th>
-                 时区
-                </th>
-<th>
-                 与北京时差
-                </th>
-<th>
-                 夏令时调整
-                </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-                 东京 / 日本
-                </td>
-<td>
-                 UTC+9
-                </td>
-<td>
-                 +1小时
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 首尔 / 韩国
-                </td>
-<td>
-                 UTC+9
-                </td>
-<td>
-                 +1小时
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 曼谷 / 泰国
-                </td>
-<td>
-                 UTC+7
-                </td>
-<td>
-                 -1小时
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 新加坡
-                </td>
-<td>
-                 UTC+8
-                </td>
-<td>
-                 0（相同）
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 雅加达 / 印尼
-                </td>
-<td>
-                 UTC+7
-                </td>
-<td>
-                 -1小时
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 吉隆坡 / 马来西亚
-                </td>
-<td>
-                 UTC+8
-                </td>
-<td>
-                 0（相同）
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 莫斯科 / 俄罗斯
-                </td>
-<td>
-                 UTC+3
-                </td>
-<td>
-                 -5小时
-                </td>
-<td>
-                 3月最后一个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 迪拜 / 阿联酋
-                </td>
-<td>
-                 UTC+4
-                </td>
-<td>
-                 -4小时
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 伦敦 / 英国
-                </td>
-<td>
-                 UTC+0
-                </td>
-<td>
-                 -8小时
-                </td>
-<td>
-                 3月最后一个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 巴黎 / 法国
-                </td>
-<td>
-                 UTC+1
-                </td>
-<td>
-                 -7小时
-                </td>
-<td>
-                 3月最后一个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 柏林 / 德国
-                </td>
-<td>
-                 UTC+1
-                </td>
-<td>
-                 -7小时
-                </td>
-<td>
-                 3月最后一个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 罗马 / 意大利
-                </td>
-<td>
-                 UTC+1
-                </td>
-<td>
-                 -7小时
-                </td>
-<td>
-                 3月最后一个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 纽约 / 美国
-                </td>
-<td>
-                 UTC-5
-                </td>
-<td>
-                 -13小时
-                </td>
-<td>
-                 3月第二个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 洛杉矶 / 美国
-                </td>
-<td>
-                 UTC-8
-                </td>
-<td>
-                 -16小时
-                </td>
-<td>
-                 3月第二个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 旧金山 / 美国
-                </td>
-<td>
-                 UTC-8
-                </td>
-<td>
-                 -16小时
-                </td>
-<td>
-                 3月第二个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 温哥华 / 加拿大
-                </td>
-<td>
-                 UTC-8
-                </td>
-<td>
-                 -16小时
-                </td>
-<td>
-                 3月第二个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 悉尼 / 澳大利亚
-                </td>
-<td>
-                 UTC+10
-                </td>
-<td>
-                 +2小时
-                </td>
-<td>
-                 10月第一个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 墨尔本 / 澳大利亚
-                </td>
-<td>
-                 UTC+10
-                </td>
-<td>
-                 +2小时
-                </td>
-<td>
-                 10月第一个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 奥克兰 / 新西兰
-                </td>
-<td>
-                 UTC+12
-                </td>
-<td>
-                 +4小时
-                </td>
-<td>
-                 9月第三个周日+1小时
-                </td>
-</tr>
-<tr>
-<td>
-                 香港
-                </td>
-<td>
-                 UTC+8
-                </td>
-<td>
-                 0（相同）
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 台北
-                </td>
-<td>
-                 UTC+8
-                </td>
-<td>
-                 0（相同）
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 开普敦 / 南非
-                </td>
-<td>
-                 UTC+2
-                </td>
-<td>
-                 -6小时
-                </td>
-<td>
-                 无夏令时
-                </td>
-</tr>
-<tr>
-<td>
-                 开罗 / 埃及
-                </td>
-<td>
-                 UTC+2
-                </td>
-<td>
-                 -6小时
-                </td>
-<td>
-                 4月最后一个周五+1小时
-                </td>
-</tr>
-</tbody>
-</table>
-<div class="info-box">
-<strong>
-               时差调整建议：
-              </strong>
-<ul style="margin-top: 8px; padding-left: 20px;">
-<li>
-                出发前3天开始调整作息：向东飞则早睡早起，向西飞则晚睡晚起
-               </li>
-<li>
-                长途飞行后多晒太阳，有助于调整生物钟
-               </li>
-<li>
-                落地当天避免咖啡因和酒精，保证充足睡眠
-               </li>
-<li>
-                跨5个时区以上建议留1-2天适应期
-               </li>
-</ul>
-<!-- 汇率参考 -->
-<div class="section-block" id="exchange">
-<h2>
-                主要货币兑人民币参考汇率
-               </h2>
-<p class="section-desc">
-                出行前了解当地消费水平，合理规划预算。以下汇率为参考值，实际以兑换时为准。
-               </p>
-<div class="item-grid">
-<div class="item-card">
-<h4>
-                  日元 JPY
-                 </h4>
-<p>
-                  100日元 ≈ 4.7-5.0人民币
-                 </p>
-<ul>
-<li>
-                   便利店饮料：130-180日元
-                  </li>
-<li>
-                   普通餐厅：500-1500日元/人
-                  </li>
-<li>
-                   地铁单程：150-300日元
-                  </li>
-</ul>
-<div class="item-card">
-<h4>
-                   泰铢 THB
-                  </h4>
-<p>
-                   1泰铢 ≈ 0.20-0.22人民币
-                  </p>
-<ul>
-<li>
-                    街头小吃：30-80泰铢
-                   </li>
-<li>
-                    按摩：250-500泰铢/小时
-                   </li>
-<li>
-                    普通酒店：500-2000泰铢/晚
-                   </li>
-</ul>
-<div class="item-card">
-<h4>
-                    韩元 KRW
-                   </h4>
-<p>
-                    100韩元 ≈ 0.50-0.55人民币
-                   </p>
-<ul>
-<li>
-                     便利店：1000-3000韩元
-                    </li>
-<li>
-                     烤肉店：15000-40000韩元/人
-                    </li>
-<li>
-                     地铁：1350韩元起
-                    </li>
-</ul>
-<div class="item-card">
-<h4>
-                     新加坡元 SGD
-                    </h4>
-<p>
-                     1新币 ≈ 5.3-5.5人民币
-                    </p>
-<ul>
-<li>
-                      肉骨茶：8-15新币
-                     </li>
-<li>
-                      食阁餐：5-15新币
-                     </li>
-<li>
-                      地铁：1-3新币
-                     </li>
-</ul>
-<div class="item-card">
-<h4>
-                      美元 USD
-                     </h4>
-<p>
-                      1美元 ≈ 7.2-7.3人民币
-                     </p>
-<ul>
-<li>
-                       快餐：10-20美元
-                      </li>
-<li>
-                       普通酒店：100-200美元/晚
-                      </li>
-<li>
-                       打车：2-3美元/公里
-                      </li>
-</ul>
-<div class="item-card">
-<h4>
-                       欧元 EUR
-                      </h4>
-<p>
-                       1欧元 ≈ 7.7-7.9人民币
-                      </p>
-<ul>
-<li>
-                        咖啡：2-5欧元
-                       </li>
-<li>
-                        餐厅午餐：10-25欧元
-                       </li>
-<li>
-                        青年旅舍：25-50欧元/晚
-                       </li>
-</ul>
-<div class="item-card">
-<h4>
-                        英镑 GBP
-                       </h4>
-<p>
-                        1英镑 ≈ 9.0-9.2人民币
-                       </p>
-<ul>
-<li>
-                         炸鱼薯条：8-15英镑
-                        </li>
-<li>
-                         酒吧 pint：4-7英镑
-                        </li>
-<li>
-                         博物馆：免费-20英镑
-                        </li>
-</ul>
-<div class="item-card">
-<h4>
-                         澳元 AUD
-                        </h4>
-<p>
-                         1澳元 ≈ 4.6-4.8人民币
-                        </p>
-<ul>
-<li>
-                          咖啡：4-6澳元
-                         </li>
-<li>
-                          餐厅：15-40澳元/人
-                         </li>
-<li>
-                          汽油：1.6-2.0澳元/升
-                         </li>
-</ul>
-<div class="warn-box">
-<strong>
-                          汇率提醒：
-                         </strong>
-                         汇率实时波动，以上为参考范围。建议在银行或正规兑换点换汇，机场汇率通常较差。出境前可备少量当地货币，大额消费优先使用信用卡（走银联通道更划算）。
-                         <!-- 行李清单生成器 -->
-<div class="section-block" id="checklist">
-<h2>
-                           行李清单生成器
-                          </h2>
-<p class="section-desc">
-                           根据目的地类型勾选适合的物品，告别丢三落四
-                          </p>
-<div class="calculator-grid">
-<div>
-<div class="calc-group">
-<label>
-                              目的地类型
-                             </label>
-<select id="tripType">
-<option value="island">
-                               海岛度假（马尔代夫/普吉岛/巴厘岛）
-                              </option>
-<option value="city">
-                               城市观光（东京/巴黎/纽约）
-                              </option>
-<option value="plateau">
-                               高原地区（西藏/云南/稻城）
-                              </option>
-<option value="cold">
-                               寒地冰雪（北海道/北欧/加拿大）
-                              </option>
-<option value="hiking">
-                               户外徒步（徒步/登山）
-                              </option>
-</select>
-<button class="calc-btn" onclick="generateChecklist()">
-                              生成清单
-                             </button>
-<div class="info-box">
-<strong>
-                               通用必带清单
-                              </strong>
-<ul style="margin-top: 8px; padding-left: 20px; font-size: 0.88rem;">
-<li>
-                                护照及复印件
-                               </li>
-<li>
-                                身份证及复印件
-                               </li>
-<li>
-                                机票/酒店确认单
-                               </li>
-<li>
-                                现金+银行卡
-                               </li>
-<li>
-                                手机+充电器+充电宝
-                               </li>
-<li>
-                                常用药品
-                               </li>
-</ul>
-<div class="tool-card" id="checklistResult">
-<h3 id="checklistTitle">
-                                海岛度假行李清单
-                               </h3>
-<ul class="checklist">
-<li class="category">
-                                 衣物
-                                </li>
-<li>
-<input id="c1" type="checkbox"/>
-<label for="c1">
-                                  泳衣/比基尼（建议2套以上）
-                                 </label>
-</li>
-<li>
-<input id="c2" type="checkbox"/>
-<label for="c2">
-                                  防晒衣/薄长袖（防晒必备）
-                                 </label>
-</li>
-<li>
-<input id="c3" type="checkbox"/>
-<label for="c3">
-                                  凉拖/拖鞋
-                                 </label>
-</li>
-<li>
-<input id="c4" type="checkbox"/>
-<label for="c4">
-                                  短裤/短裙
-                                 </label>
-</li>
-<li>
-<input id="c5" type="checkbox"/>
-<label for="c5">
-                                  墨镜+帽子
-                                 </label>
-</li>
-<li>
-<input id="c6" type="checkbox"/>
-<label for="c6">
-                                  轻薄睡衣
-                                 </label>
-</li>
-<li class="category">
-                                 护肤防晒
-                                </li>
-<li>
-<input id="c7" type="checkbox"/>
-<label for="c7">
-                                  防晒霜 SPF50+（足量）
-                                 </label>
-</li>
-<li>
-<input id="c8" type="checkbox"/>
-<label for="c8">
-                                  晒后修复
-                                 </label>
-</li>
-<li>
-<input id="c9" type="checkbox"/>
-<label for="c9">
-                                  防水手机袋
-                                 </label>
-</li>
-<li>
-<input id="c10" type="checkbox"/>
-<label for="c10">
-                                  芦荟胶
-                                 </label>
-</li>
-<li class="category">
-                                 亲水装备
-                                </li>
-<li>
-<input id="c11" type="checkbox"/>
-<label for="c11">
-                                  浮潜装备（面罩+呼吸管）
-                                 </label>
-</li>
-<li>
-<input id="c12" type="checkbox"/>
-<label for="c12">
-                                  防水包
-                                 </label>
-</li>
-<li>
-<input id="c13" type="checkbox"/>
-<label for="c13">
-                                  泳镜（如需）
-                                 </label>
-</li>
-<li class="category">
-                                 电子设备
-                                </li>
-<li>
-<input id="c14" type="checkbox"/>
-<label for="c14">
-                                  GoPro/防水相机
-                                 </label>
-</li>
-<li>
-<input id="c15" type="checkbox"/>
-<label for="c15">
-                                  转换插头（如需）
-                                 </label>
-</li>
-<li>
-<input id="c16" type="checkbox"/>
-<label for="c16">
-                                  水下拍照神器
-                                 </label>
-</li>
-</ul>
-<script>
-                                function generateChecklist() {
-            var type = document.getElementById('tripType').value;
-            var titles = {
-              island: '海岛度假行李清单',
-              city: '城市观光行李清单',
-              plateau: '高原地区行李清单',
-              cold: '寒地冰雪行李清单',
-              hiking: '户外徒步行李清单'
-            };
-            var essentials = {
-              island: ['防晒霜SPF50+（足量）','泳衣/比基尼','防晒衣/薄长袖','凉拖','墨镜+帽子','防水手机袋','芦荟胶','浮潜装备'],
-              city: ['舒适的步行鞋','薄外套（空调房）','充电宝','转换插头','常用药品','轻薄行李','斜挎小包','雨伞/折叠伞'],
-              plateau: ['厚外套/羽绒服','保暖内衣裤','防晒霜SPF50+','墨镜','帽子','红景天/高原安','润唇膏','保温杯'],
-              cold: ['羽绒服/冲锋衣','保暖内衣','围巾+手套+帽子','保暖袜子','雪地靴','暖宝宝','保温杯','润肤霜'],
-              hiking: ['登山鞋','速干衣裤','登山背包','登山杖','头灯','创可贴','藿香正气水','防蚊液']
-            };
-            document.getElementById('checklistTitle').textContent = titles[type];
-            var html = '<ul class="checklist">';
-            html += '<li class="category">衣物装备</li>';
-            essentials[type].forEach(function(item, i) {
-              html += '<li><input type="checkbox" id="gen' + i + '"><label for="gen' + i + '">' + item + '</label></li>';
-            });
-            html += '<li class="category">实用工具</li>';
-            html += '<li><input type="checkbox" id="tool1"><label for="tool1">打包收纳袋（分类装衣物）</label></li>';
-            html += '<li><input type="checkbox" id="tool2"><label for="tool2">折叠压缩袋（节省空间）</label></li>';
-            html += '<li><input type="checkbox" id="tool3"><label for="tool3">迷你挂锁（保护行李）</label></li>';
-            html += '<li><input type="checkbox" id="tool4"><label for="tool4">便携洗漱包</label></li>';
-            html += '</ul>';
-            document.getElementById('checklistResult').innerHTML = '<h3>' + titles[type] + '</h3>' + html;
-          }
-                               </script>
-<!-- 旅行预算计算器 -->
-<div class="section-block" id="budget">
-<h2>
-                                 旅行预算计算器
-                                </h2>
-<p class="section-desc">
-                                 输入目的地和天数，快速估算旅行总花费
-                                </p>
-<div class="calculator-grid">
-<div>
-<div class="calc-group">
-<label>
-                                    目的地
-                                   </label>
-<select id="destSelect">
-<option value="800">
-                                     国内游（北上广深）
-                                    </option>
-<option value="600">
-                                     国内游（二三线城市）
-                                    </option>
-<option value="1200">
-                                     东南亚（泰/越/柬）
-                                    </option>
-<option value="1500">
-                                     日韩
-                                    </option>
-<option value="2000">
-                                     新马泰
-                                    </option>
-<option value="2500">
-                                     欧洲
-                                    </option>
-<option value="3000">
-                                     美国/加拿大
-                                    </option>
-<option value="3500">
-                                     澳新
-                                    </option>
-</select>
-<div class="calc-group">
-<label>
-                                     旅行天数
-                                    </label>
-<input id="daysInput" max="30" min="1" type="number" value="5"/>
-<div class="calc-group">
-<label>
-                                      住宿标准
-                                     </label>
-<select id="hotelSelect">
-<option value="0.5">
-                                       经济型（青旅/快捷）
-                                      </option>
-<option selected="" value="1">
-                                       普通（3星酒店）
-                                      </option>
-<option value="2">
-                                       舒适（4星酒店）
-                                      </option>
-<option value="4">
-                                       豪华（5星酒店）
-                                      </option>
-</select>
-<div class="calc-group">
-<label>
-                                       出行人数
-                                      </label>
-<input id="peopleInput" max="10" min="1" type="number" value="1"/>
-<button class="calc-btn" onclick="calculateBudget()">
-                                       计算预算
-                                      </button>
-<div>
-<div class="calc-result" id="budgetResult">
-<div class="amount">
-                                         ¥4000
-                                         <div class="label">
-                                          人均预算参考
-                                          <div class="info-box" style="margin-top: 16px;">
-<strong>
-                                            费用构成参考
-                                           </strong>
-<ul style="margin-top: 8px; padding-left: 20px; font-size: 0.85rem;">
-<li>
-                                             机票：占比25-40%
-                                            </li>
-<li>
-                                             住宿：占比20-35%
-                                            </li>
-<li>
-                                             餐饮：占比15-25%
-                                            </li>
-<li>
-                                             门票/交通：占比10-20%
-                                            </li>
-<li>
-                                             购物/其他：占比5-15%
-                                            </li>
-</ul>
-<script>
-                                            function calculateBudget() {
-            var base = parseFloat(document.getElementById('destSelect').value);
-            var days = parseInt(document.getElementById('daysInput').value) || 1;
-            var hotel = parseFloat(document.getElementById('hotelSelect').value);
-            var people = parseInt(document.getElementById('peopleInput').value) || 1;
-            
-            var hotelCost = base * 1.2 * hotel * days;
-            var foodCost = base * 0.6 * days;
-            var transportCost = base * 0.8 * days * 0.5;
-            var ticketCost = base * 0.4 * days;
-            var total = (hotelCost + foodCost + transportCost + ticketCost) / people;
-            
-            document.querySelector('#budgetResult .amount').textContent = '¥' + Math.round(total).toLocaleString();
-          }
-                                           </script>
-<!-- 紧急电话 -->
-<div class="section-block" id="emergency">
-<h2>
-                                             各国紧急联系电话
-                                            </h2>
-<p class="section-desc">
-                                             出行必备收藏，关键时刻能救命
-                                            </p>
-<div class="emergency-grid">
-<div class="emergency-card">
-<h4>
-                                               通用求救
-                                              </h4>
-<p>
-                                               国际紧急求助号码
-                                              </p>
-<div class="number">
-                                               112（手机通用）
-                                               <div class="emergency-card">
-<h4>
-                                                 中国大使馆
-                                                </h4>
-<p>
-                                                 外交部全球领事保护热线
-                                                </p>
-<div class="number">
-                                                 +86-10-12308
-                                                 <p style="margin-top: 6px;">
-                                                  备用：+86-10-59913991
-                                                 </p>
-<div class="emergency-card">
-<h4>
-                                                   日本
-                                                  </h4>
-<p>
-                                                   报警：110 | 急救/火警：119
-                                                   <br/>
-                                                   中国驻日本大使馆：+81-3-3403-3064
-                                                  </p>
-<div class="emergency-card">
-<h4>
-                                                    泰国
-                                                   </h4>
-<p>
-                                                    报警：191 | 急救：1669
-                                                    <br/>
-                                                    旅游警察：1155 | 中国使馆：+66-2-2450088
-                                                   </p>
-<div class="emergency-card">
-<h4>
-                                                     韩国
-                                                    </h4>
-<p>
-                                                     报警/急救/火灾：112
-                                                     <br/>
-                                                     中国驻韩国大使馆：+82-2-7381038
-                                                    </p>
-<div class="emergency-card">
-<h4>
-                                                      新加坡
-                                                     </h4>
-<p>
-                                                      报警：999 | 急救：995
-                                                      <br/>
-                                                      中国驻新加坡大使馆：+65-64750165
-                                                     </p>
-<div class="emergency-card">
-<h4>
-                                                       美国
-                                                      </h4>
-<p>
-                                                       报警/急救/火灾：911
-                                                       <br/>
-                                                       中国驻美国大使馆：+1-202-4952266
-                                                      </p>
-<div class="emergency-card">
-<h4>
-                                                        英国
-                                                       </h4>
-<p>
-                                                        报警/急救/火灾：999
-                                                        <br/>
-                                                        中国驻英国大使馆：+44-20-74368294
-                                                       </p>
-<div class="emergency-card">
-<h4>
-                                                         法国
-                                                        </h4>
-<p>
-                                                         报警：17 | 急救：15 | 消防：18
-                                                         <br/>
-                                                         中国驻法国大使馆：+33-1-49521950
-                                                        </p>
-<div class="emergency-card">
-<h4>
-                                                          德国
-                                                         </h4>
-<p>
-                                                          报警：110 | 急救/消防：112
-                                                          <br/>
-                                                          中国驻德国大使馆：+49-30-27588529
-                                                         </p>
-<div class="emergency-card">
-<h4>
-                                                           澳大利亚
-                                                          </h4>
-<p>
-                                                           报警/急救/火灾：000
-                                                           <br/>
-                                                           中国驻澳大利亚大使馆：+61-2-62283948
-                                                          </p>
-<div class="emergency-card">
-<h4>
-                                                            马来西亚
-                                                           </h4>
-<p>
-                                                            报警：999 | 急救/消防：994
-                                                            <br/>
-                                                            中国驻马来西亚大使馆：+60-3-21636853
-                                                           </p>
-<div class="warn-box">
-<strong>
-                                                             安全提醒：
-                                                            </strong>
-<ul style="margin-top: 8px; padding-left: 20px;">
-<li>
-                                                              出发前将护照、签证、保险单扫描件存于云端
-                                                             </li>
-<li>
-                                                              记下当地中国使馆联系电话，存在手机快捷键
-                                                             </li>
-<li>
-                                                              购买境外旅行保险，高风险活动需确认含意外险
-                                                             </li>
-<li>
-                                                              保持手机国际漫游开通或购买当地电话卡
-                                                             </li>
-<li>
-                                                              深夜避免独自外出，财不外露
-                                                             </li>
-</ul>
-<!-- 继续探索 -->
-<div class="explore-section">
-<h3>
-                                                              继续探索
-                                                             </h3>
-<div class="explore-links">
-                                                               旅行知识攻略 →
-                                                              </a>
-<a class="explore-link" href="exam-guide.html">
-                                                               导游证备考指南 →
-                                                              </a>
-<a class="explore-link" href="resources.html">
-                                                               资料包下载 →
-                                                              </a>
-<div class="wechat-section">
-<div class="wechat-inner">
-<h3>
-                                                                 扫码关注，获取出行提醒
-                                                                </h3>
-<p>
-                                                                 签证政策更新 / 目的地攻略推送 / 出行实用贴士
-                                                                </p>
-<div class="qrcode-wrap">
-<img alt="公众号二维码" src="images/qrcode.jpg"/>
-</div>
-</div>
-<footer class="footer">
-  <p>游导旅游 | youdao-travel.com</p>
-  <p>微信咨询：ximao101</p>
-  <p style="margin-top: 8px;">公众号「逢考必过 &amp; 证好有你」</p>
-  <p style="margin-top: 10px; opacity: 0.6;">© 2026 游导旅游 版权所有</p>
-</footer>
-<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-                                                                ↑
-                                                               </button>
-<script>
-                                                                window.addEventListener('scroll', function() {
-      var btn = document.getElementById('backToTop');
-      if (window.scrollY > 400) {
-        btn.classList.add('show');
-      } else {
-        btn.classList.remove('show');
-      }
-    });
-                                                               </script>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</nav>
+  <footer class="footer"><p>游导旅游 - 专注导游证备考与旅行知识分享</p><p>微信联系：<strong>ximao101</strong></p><p style="margin-top: 16px; font-size: 0.8rem; opacity: 0.6;">© 2024 游导旅游 Youdao-Travel</p></footer>
+  <script>
+    const hotelPrice = { budget: 200, mid: 400, high: 800 };
+    const destinationMultiplier = { japan: 1.5, thailand: 0.8, korea: 1.2, singapore: 1.3, europe: 2.0, usa: 1.8, australia: 1.6 };
+    function calculateBudget() {
+      const days = parseInt(document.getElementById('days').value) || 5;
+      const food = parseInt(document.getElementById('food').value) || 150;
+      const transport = parseInt(document.getElementById('transport').value) || 80;
+      const hotelType = document.getElementById('hotel').value;
+      const shopping = parseInt(document.getElementById('shopping').value) || 0;
+      const tickets = parseInt(document.getElementById('tickets').value) || 0;
+      const dest = document.getElementById('destination').value;
+      const multiplier = destinationMultiplier[dest];
+      const hotelTotal = hotelPrice[hotelType] * (days - 1);
+      const foodTotal = food * days * multiplier;
+      const transportTotal = transport * days * multiplier;
+      const ticketsTotal = tickets * multiplier;
+      const total = Math.round(hotelTotal + foodTotal + transportTotal + ticketsTotal + shopping);
+      document.getElementById('totalBudget').textContent = '¥' + total.toLocaleString();
+      document.getElementById('budgetResult').style.display = 'block';
+    }
+    document.getElementById('navLinks').classList.remove('open');
+  </script>
 </body>
 </html>
