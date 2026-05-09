@@ -91,10 +91,59 @@
       .cards-grid { grid-template-columns: repeat(2, 1fr); }
       .coze-frame { height: 500px; }
       .compare-grid { grid-template-columns: 1fr; }
+      /* Coze 聊天界面样式 */
+      .coze-chat-container { height: 600px; display: flex; flex-direction: column; overflow: hidden; margin-bottom: 20px; }
+      .coze-chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+      .coze-welcome-message { text-align: center; padding: 30px 20px; background: rgba(255,255,255,0.05); border-radius: 16px; margin-bottom: 10px; }
+      .coze-welcome-icon { font-size: 3rem; margin-bottom: 12px; }
+      .coze-welcome-title { font-size: 1.4rem; font-weight: 700; color: #fff; margin-bottom: 12px; }
+      .coze-welcome-desc { color: rgba(255,255,255,0.8); margin-bottom: 16px; }
+      .coze-welcome-list { list-style: none; text-align: left; max-width: 320px; margin: 0 auto 16px; }
+      .coze-welcome-list li { color: rgba(255,255,255,0.75); padding: 6px 0; font-size: 0.9rem; }
+      .coze-welcome-tip { color: #FF6B35; font-size: 0.9rem; font-weight: 500; }
+      .coze-message { display: flex; gap: 10px; max-width: 85%; }
+      .coze-message.user { align-self: flex-end; flex-direction: row-reverse; }
+      .coze-message.ai { align-self: flex-start; }
+      .coze-message-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+      .coze-message.user .coze-message-avatar { background: linear-gradient(135deg, #FF6B35, #ea580c); }
+      .coze-message.ai .coze-message-avatar { background: rgba(74,124,247,0.8); }
+      .coze-message-content { padding: 12px 16px; border-radius: 16px; font-size: 0.95rem; line-height: 1.6; word-wrap: break-word; }
+      .coze-message.user .coze-message-content { background: linear-gradient(135deg, #FF6B35, #ea580c); color: #fff; border-bottom-right-radius: 4px; }
+      .coze-message.ai .coze-message-content { background: rgba(255,255,255,0.12); color: #fff; border-bottom-left-radius: 4px; }
+      .coze-message-content p { margin: 0 0 8px; }
+      .coze-message-content p:last-child { margin-bottom: 0; }
+      .coze-message-content code { background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; }
+      .coze-message-content pre { background: rgba(0,0,0,0.3); padding: 12px; border-radius: 8px; overflow-x: auto; margin: 8px 0; }
+      .coze-message-content pre code { background: none; padding: 0; }
+      .coze-message-content ul, .coze-message-content ol { margin: 8px 0; padding-left: 20px; }
+      .coze-message-content li { margin: 4px 0; }
+      .coze-message-time { font-size: 0.7rem; color: rgba(255,255,255,0.4); margin-top: 4px; text-align: right; }
+      .coze-message.user .coze-message-time { text-align: left; }
+      .coze-chat-input-area { padding: 16px 20px; background: rgba(255,255,255,0.05); border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 12px; align-items: flex-end; }
+      .coze-message-input { flex: 1; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 12px 18px; color: #fff; font-size: 0.95rem; resize: none; max-height: 120px; outline: none; transition: all 0.3s; }
+      .coze-message-input::placeholder { color: rgba(255,255,255,0.5); }
+      .coze-message-input:focus { border-color: #FF6B35; background: rgba(255,255,255,0.15); }
+      .coze-send-btn { width: 50px; height: 50px; background: linear-gradient(135deg, #FF6B35, #ea580c); border: none; border-radius: 50%; color: #fff; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s; flex-shrink: 0; }
+      .coze-send-btn:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(255,107,53,0.4); }
+      .coze-send-btn:disabled { background: rgba(255,255,255,0.2); cursor: not-allowed; transform: none; }
+      .coze-loading { display: flex; gap: 4px; align-items: center; padding: 8px 0; }
+      .coze-loading-dot { width: 8px; height: 8px; background: rgba(255,255,255,0.6); border-radius: 50%; animation: coze-loading 1s infinite alternate; }
+      .coze-loading-dot:nth-child(2) { animation-delay: 0.2s; }
+      .coze-loading-dot:nth-child(3) { animation-delay: 0.4s; }
+      @keyframes coze-loading { from { opacity: 0.4; transform: scale(0.8); } to { opacity: 1; transform: scale(1.2); } }
+      .coze-token-warning { background: rgba(255,107,53,0.15); border: 1px solid rgba(255,107,53,0.3); border-radius: 12px; padding: 16px; text-align: center; color: rgba(255,255,255,0.9); margin-top: 16px; }
     }
     @media (max-width: 480px) {
       .cards-grid { grid-template-columns: 1fr 1fr; }
       .coze-frame { height: 450px; }
+      .coze-chat-container { height: 500px; }
+    }
+    /* PC端聊天界面样式（非移动端） */
+    @media (min-width: 769px) {
+      .coze-chat-container {
+        border-radius: 20px;
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -120,9 +169,32 @@
     </div>
   </div>
 
-  <!-- Coze iframe -->
+  <!-- AI 聊天界面 -->
   <div class="section">
-    <iframe class="coze-frame" src="https://www.coze.cn/store/agent/7633483506475532328?bot_id=true" allow="microphone" title="导游证AI备考助手"></iframe>
+    <div id="coze-chat-container" class="coze-chat-container glass-card">
+      <div id="coze-chat-messages" class="coze-chat-messages">
+        <div class="coze-welcome-message">
+          <div class="coze-welcome-icon">🤖</div>
+          <div class="coze-welcome-title">导游证AI备考助手</div>
+          <div class="coze-welcome-desc">你好！我是你的专属导游证备考助手。我可以帮你：</div>
+          <ul class="coze-welcome-list">
+            <li>📚 解答政策法规、导游业务等知识点</li>
+            <li>📝 生成针对性练习题</li>
+            <li>🎤 模拟面试问答</li>
+            <li>📅 制定学习计划</li>
+          </ul>
+          <div class="coze-welcome-tip">输入你的问题开始对话吧~</div>
+        </div>
+      </div>
+      <div class="coze-chat-input-area">
+        <textarea id="coze-message-input" class="coze-message-input" placeholder="输入你的问题..." rows="1"></textarea>
+        <button id="coze-send-btn" class="coze-send-btn">发送</button>
+      </div>
+    </div>
+    <div id="coze-token-warning" class="coze-token-warning" style="display:none;">
+      ⚠️ 请配置 Coze API Token 才能使用聊天功能<br>
+      <small>获取方式：访问 <a href="https://www.coze.cn" target="_blank" style="color:#FF6B35;">coze.cn</a> → 个人设置 → 访问令牌 → 创建个人访问令牌（需勾选 chat 权限）</small>
+    </div>
   </div>
 
   <div class="section">
@@ -277,7 +349,277 @@
 </footer>
 
 <script>
-document.getElementById('navLinks').classList.remove('open');
+// ========== Coze API 聊天配置 ==========
+// ⚠️ 请在此处填入你的 Coze Token
+// 获取方式：访问 https://www.coze.cn → 右上角头像 → 个人设置 → 访问令牌 → 创建个人访问令牌（需勾选 chat 权限）
+const COZE_TOKEN = 'YOUR_COZE_TOKEN_HERE'; // 替换为你的 pat_xxx 格式 Token
+const COZE_BOT_ID = '7633483506475532328';
+
+// Coze API 配置
+const COZE_API_BASE = 'https://api.coze.cn';
+const COZE_API_VERSION = 'v3';
+
+// 会话管理
+let conversationId = null;
+let isStreaming = false;
+let userId = 'user_' + Math.random().toString(36).substr(2, 9);
+
+// DOM 元素
+const messagesContainer = document.getElementById('coze-chat-messages');
+const messageInput = document.getElementById('coze-message-input');
+const sendBtn = document.getElementById('coze-send-btn');
+const chatContainer = document.getElementById('coze-chat-container');
+const tokenWarning = document.getElementById('coze-token-warning');
+
+// 检查 Token 配置
+function checkToken() {
+  if (!COZE_TOKEN || COZE_TOKEN === 'YOUR_COZE_TOKEN_HERE') {
+    chatContainer.style.display = 'none';
+    tokenWarning.style.display = 'block';
+    return false;
+  }
+  return true;
+}
+
+// 格式化时间
+function formatTime(date) {
+  return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+}
+
+// 简易 Markdown 解析
+function parseMarkdown(text) {
+  if (!text) return '';
+  return text
+    .replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/^\- (.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
+    .replace(/^\d+\. (.+)$/gm, '<li>$1</li>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^<\/p>|<p>$/g, '')
+    .replace(/<p>(<h[123]>)/g, '$1')
+    .replace(/(<\/h[123]>)<\/p>/g, '$1')
+    .replace(/<p>(<ul>)/g, '$1')
+    .replace(/(<\/ul>)<\/p>/g, '$1');
+}
+
+// 创建消息元素
+function createMessageElement(role, content, showTime = true) {
+  const div = document.createElement('div');
+  div.className = `coze-message ${role}`;
+  const avatar = role === 'user' ? '👤' : '🤖';
+  const time = showTime ? `<div class="coze-message-time">${formatTime(new Date())}</div>` : '';
+  div.innerHTML = `
+    <div class="coze-message-avatar">${avatar}</div>
+    <div>
+      <div class="coze-message-content">${parseMarkdown(content)}</div>
+      ${time}
+    </div>
+  `;
+  return div;
+}
+
+// 创建加载指示器
+function createLoadingElement() {
+  const div = document.createElement('div');
+  div.className = 'coze-message ai';
+  div.id = 'coze-loading';
+  div.innerHTML = `
+    <div class="coze-message-avatar">🤖</div>
+    <div>
+      <div class="coze-message-content">
+        <div class="coze-loading">
+          <span class="coze-loading-dot"></span>
+          <span class="coze-loading-dot"></span>
+          <span class="coze-loading-dot"></span>
+        </div>
+      </div>
+    </div>
+  `;
+  return div;
+}
+
+// 添加消息到聊天区域
+function addMessage(role, content, showTime = true) {
+  // 移除欢迎消息
+  const welcome = messagesContainer.querySelector('.coze-welcome-message');
+  if (welcome) welcome.remove();
+  
+  const msg = createMessageElement(role, content, showTime);
+  messagesContainer.appendChild(msg);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  return msg;
+}
+
+// 更新消息内容
+function updateMessage(element, content) {
+  const contentDiv = element.querySelector('.coze-message-content');
+  if (contentDiv) {
+    contentDiv.innerHTML = parseMarkdown(content);
+  }
+}
+
+// 发送消息到 Coze API
+async function sendToCoze(message) {
+  const url = `${COZE_API_BASE}/${COZE_API_VERSION}/chat`;
+  
+  // 构建请求体
+  const requestBody = {
+    bot_id: COZE_BOT_ID,
+    user_id: userId,
+    stream: true,
+    auto_save_history: true
+  };
+  
+  // 如果有会话ID，添加到请求中
+  if (conversationId) {
+    requestBody.conversation_id = conversationId;
+  }
+  
+  // 添加用户消息
+  requestBody.additional_messages = [{
+    role: 'user',
+    content: message,
+    content_type: 'text'
+  }];
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${COZE_TOKEN}`,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(requestBody)
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.description || `请求失败: ${response.status}`);
+  }
+
+  return response;
+}
+
+// 处理流式响应
+async function handleStreamResponse(response) {
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let fullContent = '';
+  let done = false;
+
+  while (!done) {
+    const { value, done: readerDone } = await reader.read();
+    done = readerDone;
+    
+    if (value) {
+      buffer += decoder.decode(value, { stream: !done });
+      
+      // 处理 SSE 格式数据
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+      
+      for (const line of lines) {
+        if (line.startsWith('data: ')) {
+          try {
+            const data = JSON.parse(line.slice(6));
+            
+            // 提取对话ID（仅第一次）
+            if (!conversationId && data.conversation_id) {
+              conversationId = data.conversation_id;
+            }
+            
+            // 处理消息内容
+            if (data.type === 'conversation.message.delta' && data.data?.content) {
+              fullContent += data.data.content;
+            }
+            
+            // 检查是否完成
+            if (data.type === 'conversation.chat.completed' || data.done) {
+              return fullContent;
+            }
+          } catch (e) {
+            // 忽略解析错误
+          }
+        }
+      }
+    }
+  }
+  
+  return fullContent;
+}
+
+// 发送消息
+async function sendMessage() {
+  const message = messageInput.value.trim();
+  if (!message || isStreaming) return;
+  
+  if (!checkToken()) return;
+
+  // 清空输入框
+  messageInput.value = '';
+  messageInput.style.height = 'auto';
+  
+  // 添加用户消息
+  addMessage('user', message);
+  
+  // 显示加载
+  isStreaming = true;
+  sendBtn.disabled = true;
+  const loadingEl = createLoadingElement();
+  messagesContainer.appendChild(loadingEl);
+  messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  
+  try {
+    const response = await sendToCoze(message);
+    const aiContent = await handleStreamResponse(response);
+    
+    // 移除加载指示器
+    const loading = document.getElementById('coze-loading');
+    if (loading) loading.remove();
+    
+    if (aiContent) {
+      addMessage('ai', aiContent);
+    } else {
+      addMessage('ai', '抱歉，AI暂时没有回复，请稍后再试。');
+    }
+  } catch (error) {
+    console.error('发送消息失败:', error);
+    const loading = document.getElementById('coze-loading');
+    if (loading) loading.remove();
+    addMessage('ai', `发送失败: ${error.message}`);
+  } finally {
+    isStreaming = false;
+    sendBtn.disabled = false;
+  }
+}
+
+// 自动调整输入框高度
+function autoResizeInput() {
+  messageInput.style.height = 'auto';
+  messageInput.style.height = Math.min(messageInput.scrollHeight, 120) + 'px';
+}
+
+// 事件绑定
+sendBtn.addEventListener('click', sendMessage);
+messageInput.addEventListener('input', autoResizeInput);
+messageInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+  checkToken();
+});
 </script>
 </body>
 </html>
