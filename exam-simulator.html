@@ -4,174 +4,167 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>模拟考试 - 游导旅游</title>
-  <meta name="description" content="导游证模拟考试平台，包含历年真题练习、每日一练、错题本、考试倒计时和成绩计算功能。">
+<meta name="description" content="导游证模拟考试平台，包含历年真题练习、每日一练、错题本、考试倒计时和成绩计算功能。">
 <meta content="website" property="og:type"/>
 <meta content="模拟考试 - 导游证备考练习平台" property="og:title"/>
 <meta content="导游证考试模拟练习平台，包含历年真题、每日一练、错题本、考试倒计时" property="og:description"/>
 <meta content="https://youdao-travel.com/exam-simulator.html" property="og:url"/>
 <meta content="https://youdao-travel.com/images/qrcode.jpg" property="og:image"/>
-<meta content="导游证考试模拟练习平台，包含历年真题分布、每日一练、错题本模板、考试倒计时及成绩计算功能。" name="description"/>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html{scroll-behavior:smooth}
-    body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.75;color:#333;background:#f8f9fa}
-    a{text-decoration:none;color:inherit}
-    
-    .navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid #e8ecf0;position:sticky;top:0;z-index:100}
-    .logo{font-size:1.15rem;font-weight:700;color:#2563eb;display:flex;align-items:center;gap:6px}
-    .logo-icon{width:28px;height:28px;background:#2563eb;border-radius:6px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-    .nav-links{display:flex;gap:4px;flex-wrap:wrap}
-    .nav-links a{padding:7px 14px;border-radius:8px;font-size:0.9rem;color:#555;transition:all 0.2s}
-    .nav-links a:hover{background:#2563eb;color:#fff}
-    .nav-links a.active{background:#2563eb;color:#fff;font-weight:500}
-    .nav-toggle{display:none;flex-direction:column;gap:4px;cursor:pointer;padding:6px}
-    .nav-toggle span{width:22px;height:2px;background:#333;border-radius:2px}
-    
-    .container{max-width:1100px;margin:0 auto;padding:0 16px}
-    .page-hero{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;padding:50px 20px 40px;text-align:center}
-    .page-hero h1{font-size:1.8rem;font-weight:700;margin-bottom:10px}
-    .page-hero p{font-size:0.95rem;opacity:0.85;max-width:520px;margin:0 auto}
-    
-    .toc{background:#fff;border:1px solid #e0e8f0;border-radius:12px;padding:16px 20px;margin:24px 0}
-    .toc h3{font-size:0.95rem;color:#2563eb;margin-bottom:10px}
-    .toc-list{display:flex;flex-wrap:wrap;gap:8px}
-    .toc-item{background:#f0f7fb;color:#2563eb;padding:5px 14px;border-radius:20px;font-size:0.82rem;transition:all 0.2s}
-    .toc-item:hover{background:#2563eb;color:#fff}
-    
-    .content-section{padding:20px 0 10px}
-    .section-block{background:#fff;border:1px solid #e8ecf0;border-radius:16px;padding:28px;margin-bottom:24px}
-    .section-block h2{font-size:1.2rem;color:#2563eb;margin-bottom:8px;padding-bottom:12px;border-bottom:2px solid #eaf4fb}
-    .section-block h3{font-size:1.05rem;color:#2563eb;margin:20px 0 12px}
-    .section-block .section-desc{color:#888;font-size:0.88rem;margin-bottom:20px}
-    
-    .tip-box{background:#fff8f0;border-left:4px solid #f97316;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:0.9rem}
-    .tip-box strong{color:#e55d00}
-    .warn-box{background:#fef2f2;border-left:4px solid #ef4444;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:0.9rem}
-    .warn-box strong{color:#dc2626}
-    .info-box{background:#eaf4fb;border-left:4px solid #2563eb;border-radius:0 8px 8px 0;padding:14px 18px;margin:16px 0;font-size:0.9rem}
-    .info-box strong{color:#2563eb}
-    
-    .countdown-box{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);color:#fff;border-radius:12px;padding:24px;text-align:center;margin:20px 0}
-    .countdown-box h3{font-size:1.05rem;margin-bottom:12px}
-    .countdown-display{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
-    .countdown-item{background:rgba(255,255,255,0.15);border-radius:8px;padding:10px 14px;min-width:65px}
-    .countdown-item .num{font-size:1.8rem;font-weight:700;line-height:1}
-    .countdown-item .text{font-size:0.72rem;opacity:0.8;margin-top:4px}
-    
-    .item-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:16px}
-    .item-card{background:#fafcfd;border:1px solid #e8ecf0;border-radius:10px;padding:18px}
-    .item-card h4{font-size:0.95rem;color:#2563eb;margin-bottom:6px;font-weight:600}
-    .item-card p{font-size:0.85rem;color:#666;line-height:1.6;margin-bottom:8px}
-    .item-card ul{padding-left:16px;font-size:0.83rem;color:#555;list-style:disc}
-    .item-card ul li{margin-bottom:4px}
-    
-    .table-wrapper{overflow-x:auto;margin-top:12px}
-    .data-table{width:100%;border-collapse:collapse;font-size:0.88rem;min-width:600px}
-    .data-table th{background:#f0f7fb;color:#2563eb;padding:12px 10px;text-align:left;font-weight:600;border-bottom:2px solid #e0e8f0}
-    .data-table td{padding:10px;border-bottom:1px solid #f0f0f0;color:#555}
-    .data-table tr:hover{background:#fafcfd}
-    
-    .question-card{background:linear-gradient(135deg,#f8fafc 0%,#fff 100%);border:1px solid #e8ecf0;border-radius:12px;padding:20px;margin:16px 0}
-    .question-card h4{font-size:0.95rem;color:#2563eb;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px}
-    .question-card h4 span{background:#2563eb;color:#fff;padding:2px 8px;border-radius:4px;font-size:0.72rem;flex-shrink:0}
-    .question-text{font-size:0.92rem;color:#333;margin-bottom:14px;line-height:1.7}
-    .question-options{list-style:none}
-    .question-options li{padding:10px 14px;border:1px solid #e0e8f0;border-radius:8px;margin-bottom:8px;font-size:0.88rem;cursor:pointer;transition:all 0.2s}
-    .question-options li:hover{border-color:#2563eb;background:#f0f7fb}
-    .question-options li.correct{border-color:#22c55e;background:#dcfce7;color:#16a34a}
-    .question-options li.wrong{border-color:#ef4444;background:#fef2f2;color:#dc2626}
-    .reveal-btn{background:#2563eb;color:#fff;border:none;padding:10px 20px;border-radius:6px;font-size:0.85rem;cursor:pointer;margin-top:12px;transition:background 0.2s}
-    .reveal-btn:hover{background:#1d4ed8}
-    
-    .calculator-section{background:#f8fafc;border-radius:12px;padding:20px;margin-top:20px}
-    .calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:14px}
-    .calc-group{display:block}
-    .calc-group label{display:block;font-size:0.85rem;color:#555;margin-bottom:5px}
-    .calc-group input{width:100%;padding:10px 12px;border:1px solid #e0e8f0;border-radius:8px;font-size:0.9rem}
-    .calc-group input:focus{outline:none;border-color:#2563eb}
-    .calc-btn{width:100%;padding:12px;background:#2563eb;color:#fff;border:none;border-radius:8px;font-size:0.92rem;cursor:pointer;transition:background 0.2s}
-    .calc-btn:hover{background:#1d4ed8}
-    .result-box{background:#eaf4fb;border-radius:8px;padding:16px;margin-top:14px;text-align:center;display:none}
-    .result-box.show{display:block}
-    .result-box .status{font-size:1.2rem;font-weight:700;color:#2563eb}
-    .result-box .status.pass{color:#16a34a}
-    .result-box .status.fail{color:#dc2626}
-    .result-box .detail{font-size:0.82rem;color:#888;margin-top:8px}
-    
-    .download-btn{display:inline-flex;align-items:center;gap:8px;background:#f0f7fb;color:#2563eb;padding:12px 24px;border-radius:8px;font-size:0.88rem;margin-top:14px;transition:all 0.2s}
-    .download-btn:hover{background:#2563eb;color:#fff}
-    
-    .ai-card{background:linear-gradient(135deg,#2563eb 0%,#1d4ed8 100%);border-radius:12px;padding:24px;color:#fff;margin-top:16px}
-    .ai-card h3{font-size:1.1rem;margin-bottom:10px}
-    .ai-card p{font-size:0.9rem;opacity:0.9;line-height:1.6;margin-bottom:16px}
-    .ai-btn{display:inline-flex;align-items:center;gap:6px;background:#fff;color:#2563eb;padding:12px 24px;border-radius:8px;font-size:0.9rem;font-weight:600;transition:all 0.2s}
-    .ai-btn:hover{background:#f0f7fb;transform:translateY(-2px)}
-    
-    .explore-section{background:#fff;border:1px solid #e8ecf0;border-radius:16px;padding:24px;margin:24px 0}
-    .explore-section h3{font-size:1rem;color:#2563eb;margin-bottom:14px}
-    .explore-links{display:flex;flex-wrap:wrap;gap:12px}
-    .explore-link{background:#f0f7fb;color:#2563eb;padding:10px 20px;border-radius:8px;font-size:0.88rem;transition:all 0.2s}
-    .explore-link:hover{background:#2563eb;color:#fff}
-    
-    .wechat-section{background:#fff;border-top:1px solid #e8ecf0;padding:32px 20px;text-align:center;margin-top:20px}
-    .wechat-section h3{font-size:1.05rem;color:#333;margin-bottom:8px}
-    .wechat-section p{font-size:0.85rem;color:#888;margin-bottom:16px}
-    .qrcode-wrap img{max-width:140px;border-radius:8px;border:1px solid #eee}
-    
-    .footer{background:#1f2937;color:#fff;padding:24px 20px;text-align:center}
-    .footer p{font-size:0.85rem;opacity:0.85}
-    .footer .footer-brand{font-size:1rem;opacity:1;margin-bottom:8px}
-    
-    .back-to-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:#2563eb;color:#fff;border:none;border-radius:50%;font-size:1.2rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;box-shadow:0 4px 12px rgba(37,99,235,0.3)}
-    .back-to-top.show{opacity:1;visibility:visible}
-    .back-to-top:hover{background:#1d4ed8;transform:translateY(-2px)}
-    
-    @media(max-width:768px){
-      .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:#fff;flex-direction:column;padding:12px;border-bottom:1px solid #e8ecf0}
-      .nav-links.show{display:flex}
-      .nav-toggle{display:flex}
-      .page-hero{padding:40px 16px 32px}
-      .page-hero h1{font-size:1.5rem}
-      .section-block{padding:20px 16px;border-radius:12px}
-      .countdown-display{gap:8px}
-      .countdown-item{min-width:56px;padding:8px 10px}
-      .countdown-item .num{font-size:1.5rem}
-      .item-grid{grid-template-columns:1fr}
-      .calc-grid{grid-template-columns:1fr 1fr}
-      .wechat-section{padding:24px 16px}
-    }
-  </style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.75;color:#fff;background:linear-gradient(135deg,#1a1a4e 0%,#4a7cf7 100%);min-height:100vh}
+a{text-decoration:none;color:inherit}
+.glass-card{background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.15);border-radius:20px;transition:all 0.3s}
+.glass-card:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.25);transform:translateY(-3px);box-shadow:0 15px 35px rgba(0,0,0,0.25)}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(26,26,78,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.1);position:sticky;top:0;z-index:100}
+.logo{font-size:1.1rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:8px 12px;border-radius:10px;font-size:0.85rem;color:rgba(255,255,255,0.8);transition:all 0.3s}
+.nav-links a:hover{background:rgba(255,107,53,0.3);color:#fff}
+.nav-links a.active{background:#FF6B35;color:#fff;font-weight:600}
+.nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
+.nav-toggle span{width:22px;height:2px;background:#fff;border-radius:2px}
+.container{max-width:1100px;margin:0 auto;padding:0 16px}
+.hero{padding:100px 20px 60px;text-align:center;position:relative}
+.hero::before{content:'';position:absolute;top:-50%;left:-20%;width:60%;height:200%;background:radial-gradient(circle,rgba(16,185,129,0.08) 0%,transparent 70%);pointer-events:none}
+.hero h1{font-size:clamp(2.5rem,8vw,4rem);font-weight:900;margin-bottom:16px;background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,0.85) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px}
+.hero p{font-size:1.1rem;color:rgba(255,255,255,0.75);max-width:520px;margin:0 auto}
+.toc{margin:40px 0;padding:24px}
+.toc h3{font-size:1rem;color:#FF6B35;margin-bottom:16px;font-weight:600}
+.toc-list{display:flex;flex-wrap:wrap;gap:10px}
+.toc-item{background:rgba(255,107,53,0.15);color:#fff;padding:8px 18px;border-radius:25px;font-size:0.88rem;transition:all 0.3s;border:1px solid rgba(255,107,53,0.3)}
+.toc-item:hover{background:#FF6B35;transform:translateY(-2px)}
+.section{padding:20px 0}
+.section-block{padding:28px;margin-bottom:24px}
+.section-block h2{font-size:1.3rem;font-weight:700;color:#fff;margin-bottom:8px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;gap:10px}
+.section-block h2 .icon{font-size:1.2rem}
+.section-block h3{font-size:1.05rem;color:#FF6B35;margin:20px 0 12px;font-weight:600}
+.section-desc{color:rgba(255,255,255,0.65);font-size:0.9rem;margin-bottom:20px}
+/* Countdown */
+.countdown-box{background:linear-gradient(135deg,#1a1a4e,#0f2862);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px;text-align:center;margin:20px 0}
+.countdown-box h3{font-size:1.05rem;color:#FF6B35;margin-bottom:16px;font-weight:600}
+.countdown-display{display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+.countdown-item{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 18px;min-width:70px;flex-shrink:0}
+.countdown-item .num{font-size:2.2rem;font-weight:800;color:#f59e0b;line-height:1}
+.countdown-item .text{font-size:0.75rem;color:rgba(255,255,255,0.6);margin-top:6px}
+/* Table */
+.table-wrapper{overflow-x:auto;margin-top:12px;-webkit-overflow-scrolling:touch}
+.data-table{width:100%;border-collapse:collapse;font-size:0.9rem;min-width:500px}
+.data-table th{background:rgba(255,107,53,0.15);color:#FF6B35;padding:12px 10px;text-align:left;font-weight:600;border-bottom:2px solid rgba(255,107,53,0.3)}
+.data-table td{padding:12px 10px;border-bottom:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.85)}
+.data-table tr:hover{background:rgba(255,255,255,0.04)}
+.data-table td strong{color:#FF6B35}
+.item-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:16px}
+.item-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:14px;padding:18px}
+.item-card h4{font-size:0.95rem;color:#fff;margin-bottom:6px;font-weight:600}
+.item-card p{font-size:0.85rem;color:rgba(255,255,255,0.65);line-height:1.6;margin-bottom:8px}
+.item-card ul{padding-left:16px;font-size:0.83rem;color:rgba(255,255,255,0.75);list-style:disc}
+.item-card ul li{margin-bottom:4px}
+/* Question card */
+.question-card{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:24px;margin:20px 0}
+.question-card h4{font-size:0.95rem;color:#FF6B35;margin-bottom:14px;display:flex;align-items:center;gap:10px;font-weight:600}
+.question-card h4 span{background:#FF6B35;color:#fff;padding:2px 10px;border-radius:6px;font-size:0.75rem;flex-shrink:0}
+.question-text{font-size:0.92rem;color:rgba(255,255,255,0.9);margin-bottom:16px;line-height:1.7}
+.question-options{list-style:none}
+.question-options li{padding:12px 16px;border:1px solid rgba(255,255,255,0.12);border-radius:12px;margin-bottom:8px;font-size:0.9rem;color:rgba(255,255,255,0.85);cursor:pointer;transition:all 0.2s}
+.question-options li:hover{border-color:#FF6B35;background:rgba(255,107,53,0.1)}
+.question-options li.correct{border-color:#10b981;background:rgba(16,185,129,0.15);color:#10b981}
+.question-options li.wrong{border-color:#ef4444;background:rgba(239,68,68,0.15);color:#ef4444}
+.reveal-btn{background:linear-gradient(135deg,#FF6B35,#ea580c);color:#fff;border:none;padding:10px 24px;border-radius:50px;font-size:0.88rem;cursor:pointer;margin-top:14px;transition:all 0.2s;font-weight:600}
+.reveal-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,107,53,0.4)}
+.info-box{background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.06));border-left:4px solid #60a5fa;border-radius:0 16px 16px 0;padding:16px 20px;margin:16px 0}
+.info-box strong{color:#60a5fa;font-weight:700}
+.info-box p,.info-box ul li{color:rgba(255,255,255,0.85);font-size:0.9rem}
+.info-box ul{padding-left:20px;margin-top:8px}
+.info-box ul li{margin-bottom:4px}
+.tip-box{background:linear-gradient(135deg,rgba(255,107,53,0.15),rgba(255,140,90,0.1));border-left:4px solid #FF6B35;border-radius:0 16px 16px 0;padding:16px 20px;margin:16px 0}
+.tip-box strong{color:#FF6B35;font-weight:700}
+.tip-box p,.tip-box ul li{color:rgba(255,255,255,0.85);font-size:0.9rem}
+.tip-box ul{padding-left:20px;margin-top:8px}
+.tip-box ul li{margin-bottom:4px}
+.warn-box{background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.06));border-left:4px solid #ef4444;border-radius:0 16px 16px 0;padding:16px 20px;margin:16px 0}
+.warn-box strong{color:#ef4444;font-weight:700}
+.warn-box p,.warn-box ul li{color:rgba(255,255,255,0.85);font-size:0.9rem}
+.warn-box ul{padding-left:20px;margin-top:8px}
+.warn-box ul li{margin-bottom:4px}
+/* Calculator */
+.calculator-section{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:24px;margin-top:20px}
+.calc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:14px}
+.calc-group{display:block}
+.calc-group label{display:block;font-size:0.88rem;color:rgba(255,255,255,0.8);margin-bottom:6px;font-weight:500}
+.calc-group input{width:100%;padding:12px 14px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:12px;font-size:0.9rem;color:#fff;transition:all 0.3s}
+.calc-group input:focus{outline:none;border-color:#FF6B35;background:rgba(255,255,255,0.12)}
+.calc-group input::placeholder{color:rgba(255,255,255,0.4)}
+.calc-btn{width:100%;padding:14px;background:linear-gradient(135deg,#FF6B35,#ea580c);color:#fff;border:none;border-radius:50px;font-size:0.95rem;font-weight:600;cursor:pointer;transition:all 0.3s;box-shadow:0 6px 20px rgba(255,107,53,0.35)}
+.calc-btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(255,107,53,0.45)}
+.result-box{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.25);border-radius:16px;padding:20px;margin-top:16px;text-align:center;display:none}
+.result-box.show{display:block}
+.result-box .status{font-size:1.4rem;font-weight:800;color:#10b981}
+.result-box .status.fail{color:#ef4444}
+.result-box .detail{font-size:0.85rem;color:rgba(255,255,255,0.7);margin-top:10px}
+/* AI card */
+.ai-card{background:linear-gradient(135deg,#1a1a4e,#0f2862);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:28px;color:#fff;margin-top:20px}
+.ai-card h3{font-size:1.1rem;margin-bottom:10px}
+.ai-card p{font-size:0.9rem;opacity:0.85;line-height:1.6;margin-bottom:16px}
+.ai-btn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#FF6B35,#ea580c);color:#fff;padding:12px 24px;border-radius:50px;font-size:0.9rem;font-weight:600;transition:all 0.2s}
+.ai-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(255,107,53,0.4)}
+.explore-section{padding:28px;margin:30px 0;text-align:center}
+.explore-section h3{font-size:1.1rem;color:#FF6B35;margin-bottom:16px;font-weight:600}
+.explore-links{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.explore-link{background:rgba(255,107,53,0.15);border:1px solid rgba(255,107,53,0.25);padding:8px 16px;border-radius:20px;font-size:0.85rem;color:#FF6B35;transition:all 0.2s}
+.explore-link:hover{background:#FF6B35;color:#fff;border-color:#FF6B35}
+.footer{background:rgba(26,26,78,0.9);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.1);padding:40px 20px;text-align:center;margin-top:60px}
+.footer p{color:rgba(255,255,255,0.7);font-size:0.9rem;margin-bottom:8px}
+.footer a{color:#FF6B35}
+.back-to-top{position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:#FF6B35;color:#fff;border:none;border-radius:50%;font-size:1.2rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;box-shadow:0 4px 12px rgba(255,107,53,0.4)}
+.back-to-top.show{opacity:1;visibility:visible}
+.back-to-top:hover{background:#ea580c;transform:translateY(-2px)}
+@media(max-width:768px){
+.nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(26,26,78,0.98);flex-direction:column;padding:12px;border-radius:0 0 16px 16px}
+.nav-links.open{display:flex}
+.nav-toggle{display:flex}
+.hero{padding:80px 20px 40px}
+.hero h1{font-size:1.8rem}
+.section-block{padding:20px 16px;border-radius:16px}
+.countdown-display{gap:8px}
+.countdown-item{min-width:60px;padding:10px 12px}
+.countdown-item .num{font-size:1.8rem}
+.item-grid{grid-template-columns:1fr}
+.calc-grid{grid-template-columns:1fr 1fr}
+}
+</style>
 </head>
 <body>
-<!-- 导航栏 -->
 <nav class="navbar">
 <a class="logo" href="index.html">
 <span class="logo-icon">📚</span>
-      游导备考
-    </a>
+游导旅游
+</a>
 <div class="nav-links" id="navLinks">
-    <a href="index.html">首页</a>
-    <a href="ai-assistant.html">AI助手</a>
-    <a href="resources.html">资料套餐</a>
-    <a href="free-materials.html">免费资料</a>
-    <a href="exam-guide.html">备考攻略</a>
-    <a href="exam-simulator.html" class="active">模拟考试</a>
-    <a href="travel-knowledge.html">旅行知识</a>
-    <a href="travel-tools.html">旅行工具</a>
-    <a href="voice.html">发声墙</a>
-  </div>
-  <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">
+<a href="index.html">首页</a>
+<a href="ai-assistant.html">AI助手</a>
+<a href="resources.html">资料套餐</a>
+<a href="free-materials.html">免费资料</a>
+<a href="exam-guide.html">备考攻略</a>
+<a href="exam-simulator.html" class="active">模拟考试</a>
+<a href="travel-knowledge.html">旅行知识</a>
+<a href="travel-tools.html">旅行工具</a>
+<a href="voice.html">发声墙</a>
+</div>
+<div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">
 <span></span><span></span><span></span>
 </div>
 </nav>
-<!-- 页面标题 -->
-<div class="page-hero">
-<h1>📝 模拟考试</h1>
+
+<div class="hero">
+<h1>模拟考试</h1>
 <p>历年真题练习 · 每日一练 · AI智能出题 · 成绩计算</p>
 </div>
+
 <div class="container">
-<!-- 目录导航 -->
 <div class="toc">
 <h3>📋 目录导航</h3>
 <div class="toc-list">
@@ -183,95 +176,53 @@
 <a class="toc-item" href="#ai-practice">AI练习</a>
 </div>
 </div>
+
 <div class="content-section">
 <!-- 考试倒计时 -->
-<div class="section-block" id="countdown">
-<h2>⏰ 考试倒计时</h2>
+<div class="section" id="countdown">
+<div class="glass-card section-block">
+<h2><span class="icon">⏰</span>考试倒计时</h2>
 <p class="section-desc">2026年全国导游资格考试笔试倒计时</p>
 <div class="countdown-box">
 <h3>距离2026年11月21日笔试还有</h3>
 <div class="countdown-display">
-<div class="countdown-item">
-<div class="num" id="days">--</div>
-<div class="text">天</div>
-</div>
-<div class="countdown-item">
-<div class="num" id="hours">--</div>
-<div class="text">时</div>
-</div>
-<div class="countdown-item">
-<div class="num" id="minutes">--</div>
-<div class="text">分</div>
-</div>
-<div class="countdown-item">
-<div class="num" id="seconds">--</div>
-<div class="text">秒</div>
-</div>
+<div class="countdown-item"><div class="num" id="days">--</div><div class="text">天</div></div>
+<div class="countdown-item"><div class="num" id="hours">--</div><div class="text">时</div></div>
+<div class="countdown-item"><div class="num" id="minutes">--</div><div class="text">分</div></div>
+<div class="countdown-item"><div class="num" id="seconds">--</div><div class="text">秒</div></div>
 </div>
 </div>
 <div class="info-box">
 <strong>考试时间安排：</strong>
-<ul style="margin-top:8px;padding-left:20px;">
-<li><strong>笔试</strong>：每年11月第三个周六（2026年预计11月21日）</li>
-<li><strong>面试</strong>：笔试结束后1个月内，由各省市自行组织</li>
-<li><strong>备考建议</strong>：提前6个月开始备考，每天保证2-3小时学习时间</li>
+<ul>
+<li><strong>笔试：</strong>每年11月第三个周六（2026年预计11月21日）</li>
+<li><strong>面试：</strong>笔试结束后1个月内，由各省市自行组织</li>
+<li><strong>备考建议：</strong>提前6个月开始备考，每天保证2-3小时学习时间</li>
 </ul>
 </div>
 </div>
+</div>
+
 <!-- 历年真题分布 -->
-<div class="section-block" id="past-papers">
-<h2>📖 历年真题分布</h2>
+<div class="section" id="past-papers">
+<div class="glass-card section-block">
+<h2><span class="icon">📖</span>历年真题分布</h2>
 <p class="section-desc">了解各科目题型题量，科学分配备考时间</p>
 <div class="table-wrapper">
 <table class="data-table">
 <thead>
-<tr>
-<th>科目</th>
-<th>题型</th>
-<th>题量</th>
-<th>分值</th>
-<th>及格线</th>
-</tr>
+<tr><th>科目</th><th>题型</th><th>题量</th><th>分值</th><th>及格线</th></tr>
 </thead>
 <tbody>
-<tr>
-<td>政策与法律法规</td>
-<td>判断+单选+多选</td>
-<td>90题</td>
-<td>100分</td>
-<td>60分</td>
-</tr>
-<tr>
-<td>导游业务</td>
-<td>判断+单选+多选</td>
-<td>90题</td>
-<td>100分</td>
-<td>60分</td>
-</tr>
-<tr>
-<td>全国导游基础知识</td>
-<td>判断+单选+多选</td>
-<td>90题</td>
-<td>100分</td>
-<td>60分</td>
-</tr>
-<tr>
-<td>地方导游基础知识</td>
-<td>判断+单选+多选</td>
-<td>50题</td>
-<td>50分</td>
-<td>30分</td>
-</tr>
-<tr>
-<td colspan="2"><strong>笔试合计</strong></td>
-<td><strong>320题</strong></td>
-<td><strong>350分</strong></td>
-<td><strong>210分</strong></td>
-</tr>
+<tr><td>政策与法律法规</td><td>判断+单选+多选</td><td>90题</td><td><strong>100分</strong></td><td>60分</td></tr>
+<tr><td>导游业务</td><td>判断+单选+多选</td><td>90题</td><td><strong>100分</strong></td><td>60分</td></tr>
+<tr><td>全国导游基础知识</td><td>判断+单选+多选</td><td>90题</td><td><strong>100分</strong></td><td>60分</td></tr>
+<tr><td>地方导游基础知识</td><td>判断+单选+多选</td><td>50题</td><td><strong>50分</strong></td><td>30分</td></tr>
+<tr><td colspan="2"><strong>笔试合计</strong></td><td><strong>320题</strong></td><td><strong>350分</strong></td><td><strong>210分</strong></td></tr>
 </tbody>
 </table>
 </div>
-<h3>📚 各科目重点章节</h3>
+<h3>各科目重点章节</h3>
 <div class="item-grid">
 <div class="item-card">
 <h4>政策与法律法规</h4>
@@ -312,7 +263,7 @@
 </div>
 <div class="tip-box">
 <strong>💡 备考建议：</strong>
-<ul style="margin-top:8px;padding-left:20px;">
+<ul>
 <li>《政策与法律法规》和《全国导游基础知识》内容多、分值高，优先重点复习</li>
 <li>《地方导游基础知识》主要靠记忆，可用口诀法、联想法提高效率</li>
 <li>《导游业务》偏重实践，建议结合实际案例理解记忆</li>
@@ -320,9 +271,12 @@
 </ul>
 </div>
 </div>
+</div>
+
 <!-- 每日一练 -->
-<div class="section-block" id="daily-practice">
-<h2>📝 每日一练</h2>
+<div class="section" id="daily-practice">
+<div class="glass-card section-block">
+<h2><span class="icon">📝</span>每日一练</h2>
 <p class="section-desc">每天坚持练习一道真题，积少成多</p>
 <div class="question-card">
 <h4><span>今日练习</span> 中国四大名绣</h4>
@@ -342,11 +296,11 @@
 <strong>正确答案：C（粤绣）</strong><br/><br/>
 <strong>解析：</strong>中国四大名绣包括苏绣（苏州刺绣）、湘绣（湖南刺绣）、粤绣（广东刺绣/广绣）、蜀绣（四川刺绣）。粤绣是四大名绣之一，因此正确答案是C。<br/><br/>
 <strong>记忆口诀：</strong>苏湘粤蜀（谐音"书香粤秀"），都是国家级非物质文化遗产。
-          </div>
+</div>
 </div>
 <div class="info-box">
 <strong>💪 练习提示：</strong>
-<ul style="margin-top:8px;padding-left:20px;">
+<ul>
 <li>每天抽出10-15分钟做几道练习题</li>
 <li>遇到不会的题先思考，不要急着看答案</li>
 <li>做错的题一定要记录到错题本中</li>
@@ -354,23 +308,19 @@
 </ul>
 </div>
 </div>
-<!-- 错题本模板 -->
-<div class="section-block" id="wrong-notes">
-<h2>📒 错题本模板</h2>
+</div>
+
+<!-- 错题本 -->
+<div class="section" id="wrong-notes">
+<div class="glass-card section-block">
+<h2><span class="icon">📒</span>错题本模板</h2>
 <p class="section-desc">养成记录错题的好习惯，查漏补缺效率翻倍</p>
 <div class="info-box">
 <strong>📋 错题本标准格式：</strong>
 <div class="table-wrapper">
 <table class="data-table" style="margin-top:12px;">
 <thead>
-<tr>
-<th>日期</th>
-<th>科目</th>
-<th>错题内容</th>
-<th>正确答案</th>
-<th>错误原因</th>
-<th>复习日期</th>
-</tr>
+<tr><th>日期</th><th>科目</th><th>错题内容</th><th>正确答案</th><th>错误原因</th><th>复习日期</th></tr>
 </thead>
 <tbody>
 <tr>
@@ -385,7 +335,7 @@
 </table>
 </div>
 </div>
-<h3>📝 记录要点</h3>
+<h3>记录要点</h3>
 <div class="item-grid">
 <div class="item-card">
 <h4>为什么要记录错题？</h4>
@@ -417,16 +367,19 @@
 </div>
 <div class="warn-box">
 <strong>⚠️ 常见误区：</strong>
-<ul style="margin-top:8px;padding-left:20px;">
+<ul>
 <li>只抄题目不写解析 = 无效记录</li>
 <li>记完再也不看 = 白费功夫</li>
 <li>只记难题忽略简单错题 = 隐患依然存在</li>
 </ul>
 </div>
 </div>
+</div>
+
 <!-- 成绩计算器 -->
-<div class="section-block" id="calculator">
-<h2>🧮 成绩计算器</h2>
+<div class="section" id="calculator">
+<div class="glass-card section-block">
+<h2><span class="icon">🧮</span>成绩计算器</h2>
 <p class="section-desc">输入各科预估分数，预估是否能够通过考试</p>
 <div class="calculator-section">
 <h3>笔试成绩估算</h3>
@@ -456,7 +409,7 @@
 </div>
 <div class="info-box" style="margin-top:20px;">
 <strong>📊 成绩计算规则：</strong>
-<ul style="margin-top:8px;padding-left:20px;">
+<ul>
 <li>笔试成绩：四科成绩合并计算，满分350分，达到笔试满分60%即视为合格（实际以当年合格线为准）</li>
 <li>面试成绩：单独计算，满分100分，及格线60分</li>
 <li>笔试面试均需达标才算通过</li>
@@ -464,16 +417,19 @@
 </ul>
 </div>
 </div>
-<!-- AI智能模拟练习 -->
-<div class="section-block" id="ai-practice">
-<h2>🤖 AI智能模拟练习</h2>
+</div>
+
+<!-- AI练习 -->
+<div class="section" id="ai-practice">
+<div class="glass-card section-block">
+<h2><span class="icon">🤖</span>AI智能模拟练习</h2>
 <p class="section-desc">告别题海战术，让AI根据你的薄弱环节生成个性化练习题</p>
 <div class="ai-card">
 <h3>导游证AI备考助手</h3>
 <p>输入薄弱知识点，AI自动生成针对性练习题<br/>支持历年真题讲解、知识点问答、模拟试卷生成</p>
 <a class="ai-btn" href="ai-assistant.html">立即开始AI练习 →</a>
 </div>
-<h3 style="margin-top:24px;">AI助手能帮你做什么？</h3>
+<h3>AI助手能帮你做什么？</h3>
 <div class="item-grid">
 <div class="item-card">
 <h4>薄弱点突破</h4>
@@ -494,7 +450,7 @@
 </div>
 <div class="tip-box">
 <strong>💡 使用建议：</strong>
-<ul style="margin-top:8px;padding-left:20px;">
+<ul>
 <li>先做一套真题摸底，薄弱科目重点练习</li>
 <li>每天用AI练习10-20道题，比刷100道题更有效</li>
 <li>面试前让AI帮你模拟考官提问，提前适应节奏</li>
@@ -502,340 +458,104 @@
 </div>
 </div>
 </div>
-<!-- 继续探索 -->
 
-    <!-- 做题策略 -->
-    <div class="section-block">
-      <h2>📌 高效做题策略</h2>
-      <p class="section-desc">掌握正确的做题方法，让练习效果翻倍</p>
-      
-      <h3>三种做题模式</h3>
-      <div class="item-grid">
-        <div class="item-card">
-          <h4>模式一：章节练习</h4>
-          <p>按章节逐个击破，适合第一轮系统学习</p>
-          <ul>
-            <li>学完一章做一章题</li>
-            <li>不追求速度，追求正确率</li>
-            <li>遇到不会的立刻回看教材</li>
-          </ul>
-        </div>
-        <div class="item-card">
-          <h4>模式二：专项突破</h4>
-          <p>针对薄弱环节集中训练</p>
-          <ul>
-            <li>找出高频错题类型</li>
-            <li>集中做20-50道同类题</li>
-            <li>总结规律，举一反三</li>
-          </ul>
-        </div>
-        <div class="item-card">
-          <h4>模式三：全真模拟</h4>
-          <p>模拟真实考试环境</p>
-          <ul>
-            <li>严格控制时间</li>
-            <li>不翻书、不查资料</li>
-            <li>做完再统一分析</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="tip-box">
-        <strong>做题顺序建议：</strong>先章节练习打基础 → 再专项突破补短板 → 最后全真模拟找感觉。三个阶段循序渐进，效果最佳。
-      </div>
-      
-      <h3>错题处理流程</h3>
-      <div class="step-list">
-        <div class="step-item">
-          <div class="step-num">1</div>
-          <div class="step-content">
-            <h5>记录错题</h5>
-            <p>当天整理，题目+选项+正确答案+你的答案</p>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">2</div>
-          <div class="step-content">
-            <h5>分析原因</h5>
-            <p>粗心？记错？还是完全不会？分类标记</p>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">3</div>
-          <div class="step-content">
-            <h5>回到教材</h5>
-            <p>找到相关知识点，重新理解</p>
-          </div>
-        </div>
-        <div class="step-item">
-          <div class="step-num">4</div>
-          <div class="step-content">
-            <h5>间隔复习</h5>
-            <p>1天后、3天后、7天后各复习一次</p>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- 各科答题技巧 -->
-    <div class="section-block">
-      <h2>📚 各科答题技巧</h2>
-      <p class="section-desc">不同科目有不同的出题规律和答题技巧</p>
-      
-      <h3>政策与法律法规</h3>
-      <div class="item-card">
-        <h4>高频考点</h4>
-        <ul>
-          <li>《旅游法》核心条款（导游权利义务、禁止行为）</li>
-          <li>导游管理办法（导游证管理、执业规范）</li>
-          <li>旅行社条例（旅行社经营规范）</li>
-          <li>旅游安全管理办法</li>
-          <li>消费者权益保护法（游客维权）</li>
-        </ul>
-        <h4 style="margin-top: 12px;">答题技巧</h4>
-        <ul>
-          <li>法条题注意关键词："应当"、"不得"、"可以"的区别</li>
-          <li>时间、期限类题目容易混淆，可以用口诀记忆</li>
-          <li>多选题不确定时，优先选择最确定的选项</li>
-        </ul>
-      </div>
-      
-      <h3>导游业务</h3>
-      <div class="item-card">
-        <h4>高频考点</h4>
-        <ul>
-          <li>导游服务程序（接团、送团流程）</li>
-          <li>突发事件的应急处理</li>
-          <li>游客个别要求的处理</li>
-          <li>导游语言艺术</li>
-          <li>散客与团队服务差异</li>
-        </ul>
-        <h4 style="margin-top: 12px;">答题技巧</h4>
-        <ul>
-          <li>情景题要代入导游角色思考</li>
-          <li>安全第一，游客利益优先</li>
-          <li>注意"先安抚、再汇报、听指示"的原则</li>
-        </ul>
-      </div>
-      
-      <h3>全国导游基础知识</h3>
-      <div class="item-card">
-        <h4>高频考点</h4>
-        <ul>
-          <li>中国历史文化（朝代、人物、事件）</li>
-          <li>中国地理（省份简称、省会、著名地理标志）</li>
-          <li>中华民族与宗教（民族分布、四大宗教）</li>
-          <li>建筑、园林、烹饪等文化常识</li>
-          <li>世界遗产名录</li>
-        </ul>
-        <h4 style="margin-top: 12px;">答题技巧</h4>
-        <ul>
-          <li>"最"字辈考点出现频率极高</li>
-          <li>注意区分"AAAAA"和"四大"类题目</li>
-          <li>地图辅助记忆效果更好</li>
-        </ul>
-      </div>
-      
-      <h3>地方导游基础知识</h3>
-      <div class="item-card">
-        <h4>高频考点</h4>
-        <ul>
-          <li>本省地理位置、行政区划</li>
-          <li>本省著名景点（5A景区、世界遗产）</li>
-          <li>本省历史文化名人</li>
-          <li>本省特产、民俗</li>
-          <li>当地著名特产和工艺品</li>
-        </ul>
-        <h4 style="margin-top: 12px;">答题技巧</h4>
-        <ul>
-          <li>本省内容重点记忆，其他省熟悉即可</li>
-          <li>善用口诀和联想记忆</li>
-          <li>结合旅游宣传片加深印象</li>
-        </ul>
-      </div>
-      
-      <div class="info-box">
-        <strong>答题小贴士：</strong>遇到完全不会的题目，可以尝试排除法、逻辑推断法、常识判断法等技巧。但最重要的还是平时的知识积累。
-      </div>
-    </div>
-    
-    <!-- 考前冲刺建议 -->
-    <div class="section-block">
-      <h2>🔥 考前冲刺建议</h2>
-      <p class="section-desc">最后一个月这样复习效率最高</p>
-      
-      <div class="item-grid">
-        <div class="item-card">
-          <h4>第一周：查漏补缺</h4>
-          <ul>
-            <li>回顾错题本，重点复习高频错题</li>
-            <li>快速过一遍四科思维导图</li>
-            <li>薄弱科目重点突破</li>
-          </ul>
-        </div>
-        <div class="item-card">
-          <h4>第二周：真题演练</h4>
-          <ul>
-            <li>每天做一套历年真题</li>
-            <li>严格按照考试时间</li>
-            <li>记录每次得分，观察进步</li>
-          </ul>
-        </div>
-        <div class="item-card">
-          <h4>第三周：模拟冲刺</h4>
-          <ul>
-            <li>做3-5套模拟题</li>
-            <li>继续背诵面试导游词</li>
-            <li>准备面试问答</li>
-          </ul>
-        </div>
-        <div class="item-card">
-          <h4>第四周：调整状态</h4>
-          <ul>
-            <li>不再做新题，只看旧题</li>
-            <li>调整作息，早睡早起</li>
-            <li>准备好考试物品</li>
-          </ul>
-        </div>
-      </div>
-      
-      <div class="warn-box">
-        <strong>重要提醒：</strong>考前一周不要再熬夜刷题，保持良好状态比多刷几道题更重要。
-      </div>
-    </div>
-    <div class="explore-section">
+<!-- 探索更多 -->
+<div class="explore-section">
 <h3>继续探索</h3>
 <div class="explore-links">
-<a class="explore-link" href="exam-guide.html">备考指南 →</a>
-<a class="explore-link" href="resources.html">资料包下载 →</a>
-<a class="explore-link" href="ai-assistant.html">AI备考助手 →</a>
+<a class="explore-link" href="ai-assistant.html">🤖 AI备考助手</a>
+<a class="explore-link" href="guide-exam.html">🎯 备考方案</a>
+<a class="explore-link" href="resources.html">📚 资料套餐</a>
+<a class="explore-link" href="exam-guide.html">📖 备考攻略</a>
 </div>
 </div>
+
 </div>
-<!-- 微信公众号 -->
-<div class="wechat-section">
-<h3>扫码关注，获取备考提醒</h3>
-<p>报名节点提醒 / 免费备考资料 / 学习计划推送</p>
-<div class="qrcode-wrap">
-<img alt="公众号二维码" src="images/qrcode.jpg"/>
 </div>
-<p style="margin-top:12px;font-size:0.82rem;color:#999;">公众号：逢考必过 &amp; 证好有你</p>
-</div>
-<!-- 页脚 -->
+
+<button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
+
 <footer class="footer">
-  <p>游导旅游 | youdao-travel.com</p>
-  <p>微信咨询：ximao101</p>
-  <p style="margin-top: 8px;">公众号「逢考必过 &amp; 证好有你」</p>
-  <p style="margin-top: 10px; opacity: 0.6;">© 2026 游导旅游 版权所有</p>
+<p>游导旅游 - 专注导游证备考与旅行知识分享</p>
+<p>微信联系：<strong>ximao101</strong> | youdao-travel.com</p>
 </footer>
-<!-- 回到顶部 -->
-<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
 <script>
-    // 倒计时功能
-    function updateCountdown() {
-      var examDate = new Date('2026-11-21T09:00:00');
-      var now = new Date();
-      var diff = examDate - now;
-      
-      if (diff <= 0) {
-        document.getElementById('days').textContent = '0';
-        document.getElementById('hours').textContent = '0';
-        document.getElementById('minutes').textContent = '0';
-        document.getElementById('seconds').textContent = '0';
-        return;
-      }
-      
-      var days = Math.floor(diff / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((diff % (1000 * 60)) / 1000);
-      
-      document.getElementById('days').textContent = days;
-      document.getElementById('hours').textContent = hours;
-      document.getElementById('minutes').textContent = minutes;
-      document.getElementById('seconds').textContent = seconds;
-    }
-    
-    updateCountdown();
-    setInterval(updateCountdown, 1000);
+// Countdown
+function updateCountdown() {
+  const examDate = new Date('2026-11-22T00:00:00');
+  const now = new Date();
+  const diff = examDate - now;
+  if (diff <= 0) {
+    document.getElementById('days').textContent = '0';
+    document.getElementById('hours').textContent = '0';
+    document.getElementById('minutes').textContent = '0';
+    document.getElementById('seconds').textContent = '0';
+    return;
+  }
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+  document.getElementById('days').textContent = days;
+  document.getElementById('hours').textContent = hours;
+  document.getElementById('minutes').textContent = minutes;
+  document.getElementById('seconds').textContent = seconds;
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
 
-    // 每日一练答案显示
-    function revealAnswer() {
-      var revealDiv = document.getElementById('answerReveal');
-      revealDiv.style.display = 'block';
+// Question
+function checkAnswer(el, isCorrect) {
+  const options = el.parentElement.querySelectorAll('li');
+  options.forEach(opt => {
+    opt.style.pointerEvents = 'none';
+    if (opt.textContent.includes('粤绣')) {
+      opt.classList.add('correct');
     }
-    
-    function checkAnswer(element, isCorrect) {
-      var options = element.parentNode.querySelectorAll('li');
-      options.forEach(function(opt) {
-        opt.style.pointerEvents = 'none';
-        opt.style.opacity = '0.6';
-      });
-      if (isCorrect) {
-        element.classList.add('correct');
-      } else {
-        element.classList.add('wrong');
-        options.forEach(function(opt) {
-          if (opt.onclick.toString().includes('true')) {
-            opt.classList.add('correct');
-          }
-        });
-      }
-    }
+  });
+  if (!isCorrect) {
+    el.classList.add('wrong');
+  }
+}
+function revealAnswer() {
+  const box = document.getElementById('answerReveal');
+  box.style.display = 'block';
+}
 
-    // 成绩计算器
-    function calculateScore() {
-      var s1 = parseFloat(document.getElementById('score1').value) || 0;
-      var s2 = parseFloat(document.getElementById('score2').value) || 0;
-      var s3 = parseFloat(document.getElementById('score3').value) || 0;
-      var s4 = parseFloat(document.getElementById('score4').value) || 0;
-      
-      var total = s1 + s2 + s3 + s4;
-      var maxTotal = 350;
-      var passLine = 210;
-      
-      var resultBox = document.getElementById('scoreResult');
-      var status = document.getElementById('resultStatus');
-      var detail = document.getElementById('resultDetail');
-      
-      resultBox.classList.add('show');
-      
-      var subjectPass = (s1 >= 60 && s2 >= 60 && s3 >= 60 && s4 >= 30);
-      var totalPass = total >= passLine;
-      
-      var details = [];
-      details.push('政策与法律法规：' + s1 + '分 ' + (s1 >= 60 ? '✓' : '✗'));
-      details.push('导游业务：' + s2 + '分 ' + (s2 >= 60 ? '✓' : '✗'));
-      details.push('全国导基：' + s3 + '分 ' + (s3 >= 60 ? '✓' : '✗'));
-      details.push('地方导基：' + s4 + '/50分 ' + (s4 >= 30 ? '✓' : '✗'));
-      details.push('总分：' + total + '/' + maxTotal + '分');
-      
-      if (subjectPass && totalPass) {
-        status.textContent = '🎉 预估通过！';
-        status.className = 'status pass';
-        detail.innerHTML = details.join('<br>') + '<br><br>按目前预估，你的成绩达到合格线！面试也要加油哦！';
-      } else {
-        status.textContent = '⚠️ 预估未达标';
-        status.className = 'status fail';
-        var missing = [];
-        if (s1 < 60) missing.push('政策与法律法规');
-        if (s2 < 60) missing.push('导游业务');
-        if (s3 < 60) missing.push('全国导基');
-        if (s4 < 30) missing.push('地方导基（需30+）');
-        if (!totalPass) missing.push('总分（需210+）');
-        detail.innerHTML = details.join('<br>') + '<br><br>建议继续复习：' + missing.join('、');
-      }
-    }
+// Score calculator
+function calculateScore() {
+  const s1 = parseFloat(document.getElementById('score1').value) || 0;
+  const s2 = parseFloat(document.getElementById('score2').value) || 0;
+  const s3 = parseFloat(document.getElementById('score3').value) || 0;
+  const s4 = parseFloat(document.getElementById('score4').value) || 0;
+  const total = s1 + s2 + s3 + s4;
+  const resultBox = document.getElementById('scoreResult');
+  const statusEl = document.getElementById('resultStatus');
+  const detailEl = document.getElementById('resultDetail');
+  resultBox.classList.add('show');
+  if (total >= 210 && s4 >= 30) {
+    statusEl.textContent = '🎉 预估通过！';
+    statusEl.className = 'status';
+    detailEl.textContent = '总分 ' + total + '分（需≥210分） | 地方导基 ' + s4 + '分（需≥30分）';
+  } else if (total >= 180) {
+    statusEl.textContent = '⚠️ 有希望，再努力一点';
+    statusEl.className = 'status';
+    detailEl.textContent = '总分 ' + total + '分（需≥210分） | 还差 ' + Math.max(0, 210 - total) + '分';
+  } else {
+    statusEl.textContent = '❌ 差距较大，加强复习';
+    statusEl.className = 'status fail';
+    detailEl.textContent = '总分 ' + total + '分（需≥210分） | 还差 ' + Math.max(0, 210 - total) + '分';
+  }
+}
 
-    // 回到顶部按钮显示/隐藏
-    window.addEventListener('scroll', function() {
-      var btn = document.getElementById('backToTop');
-      if (window.scrollY > 400) {
-        btn.classList.add('show');
-      } else {
-        btn.classList.remove('show');
-      }
-    });
-  </script>
+// Back to top
+window.addEventListener('scroll', () => {
+  document.getElementById('backToTop').classList.toggle('show', window.scrollY > 400);
+});
+function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+document.getElementById('navLinks').classList.remove('open');
+</script>
 </body>
 </html>
