@@ -14,7 +14,7 @@
   <style>
     *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; line-height: 1.7; color: #fff; background: linear-gradient(135deg, #1a1a4e 0%, #4a7cf7 100%); min-height: 100vh; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; line-height: 1.7; color: #fff; background: linear-gradient(135deg, #1a1a4e 0%, #4a7cf7 100%); min-height: 100vh; padding-bottom: 70px; }
     a { text-decoration: none; color: inherit; }
     .glass-card { background: rgba(255,255,255,0.08); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.15); border-radius: 20px; transition: all 0.3s; }
     .glass-card:hover { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.25); transform: translateY(-3px); box-shadow: 0 15px 35px rgba(0,0,0,0.25); }
@@ -121,7 +121,8 @@
   <div class="toast" id="toast">发布成功！感谢你的分享 ✨</div>
   <footer class="footer"><p>游导旅游 - 专注导游证备考与旅行知识分享</p><p>微信联系：<strong>ximao101</strong></p></footer>
   <script>
-    const posts = [
+    // 默认展示帖子（只在没有localStorage数据时加载）
+    const defaultPosts = [
       {id:1,identity:'guide',identityText:'导游',content:'带团十年，最难忘的是一位80多岁的老奶奶，全程自己走完全程，最后对我说："小导游，谢谢你让我看到了这么美的世界。"那一刻觉得一切辛苦都值了。',author:'李导',time:'2小时前',likes:128},
       {id:2,identity:'tourist',identityText:'游客',content:'在东京地铁站迷路，一位日本老爷爷不会英语，但坚持带我走了十分钟到站台，还鞠躬送别。原来善意真的可以跨越语言。',author:'小鱼',time:'5小时前',likes:256},
       {id:3,identity:'examinee',identityText:'备考人',content:'备考导游证三个月，终于拿到了！感谢游导旅游的AI助手，面试模拟帮了我大忙。面试官问的题目，AI都帮我提前演练过了！',author:'小张',time:'昨天',likes:89},
@@ -131,6 +132,14 @@
       {id:7,identity:'guide',identityText:'导游',content:'带团去西藏，一位大姐哭着对我说："我一直想来西藏，但家人不让，这次终于自己来了，谢谢你陪我实现梦想。"那一刻我明白了导游的意义。',author:'西藏李导',time:'4天前',likes:567},
       {id:8,identity:'tourist',identityText:'游客',content:'在清迈夜市吃到一家路边摊，老板是位老奶奶，知道我是中国人后，硬是多送了我两份小吃。她说："中国游客对我们很好，我也想对你们好。"',author:'吃货小王',time:'5天前',likes:234}
     ];
+
+    // 从localStorage加载帖子，没有则用默认
+    let posts = JSON.parse(localStorage.getItem('youdao_posts') || 'null') || defaultPosts;
+
+    function savePosts() {
+      localStorage.setItem('youdao_posts', JSON.stringify(posts));
+    }
+
     let currentFilter = 'all';
     let selectedIdentity = '';
     function renderPosts(filter = 'all') {
@@ -139,7 +148,7 @@
       grid.innerHTML = filtered.map(post => `<div class="post-card glass-card" data-identity="${post.identity}"><div class="post-header"><span class="identity-badge identity-${post.identity}">${post.identityText}</span><span class="post-meta">${post.author ? post.author + ' · ' : ''}${post.time}</span></div><div class="post-content">${post.content}</div><div class="post-footer"><button class="like-btn" onclick="toggleLike(${post.id}, this)">❤️ <span class="like-count">${post.likes}</span></button></div></div>`).join('');
     }
     function filterPosts(identity) { currentFilter = identity; document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); event.target.closest('.tab-btn').classList.add('active'); renderPosts(identity); }
-    function toggleLike(id, btn) { btn.classList.toggle('liked'); const countSpan = btn.querySelector('.like-count'); let count = parseInt(countSpan.textContent); if (btn.classList.contains('liked')) { count++; } else { count--; } countSpan.textContent = count; }
+    function toggleLike(id, btn) { btn.classList.toggle('liked'); const countSpan = btn.querySelector('.like-count'); let count = parseInt(countSpan.textContent); if (btn.classList.contains('liked')) { count++; } else { count--; } countSpan.textContent = count; // 更新数据并保存 const post = posts.find(p => p.id === id); if (post) { post.likes = count; savePosts(); } }
     function openModal() { document.getElementById('modalOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
     function closeModal(e) { if (e && e.target !== e.currentTarget) return; document.getElementById('modalOverlay').classList.remove('show'); document.body.style.overflow = ''; document.querySelectorAll('.identity-option').forEach(opt => opt.classList.remove('selected')); document.getElementById('authorName').value = ''; document.getElementById('postContent').value = ''; document.getElementById('charCount').textContent = '0'; selectedIdentity = ''; }
     function selectIdentity(el, identity) { document.querySelectorAll('.identity-option').forEach(opt => opt.classList.remove('selected')); el.classList.add('selected'); selectedIdentity = identity; }
@@ -149,8 +158,9 @@
       const author = document.getElementById('authorName').value.trim() || '匿名';
       if (!content) { alert('请输入想说的话'); return; }
       if (!selectedIdentity) { alert('请选择你的身份'); return; }
-      const newPost = { id: posts.length + 1, identity: selectedIdentity, identityText: selectedIdentity === 'guide' ? '导游' : selectedIdentity === 'tourist' ? '游客' : '备考人', content: content, author: author, time: '刚刚', likes: 0 };
+      const newPost = { id: Date.now(), identity: selectedIdentity, identityText: selectedIdentity === 'guide' ? '导游' : selectedIdentity === 'tourist' ? '游客' : '备考人', content: content, author: author, time: new Date().toLocaleDateString('zh-CN'), likes: 0 };
       posts.unshift(newPost);
+      savePosts(); // 保存到localStorage
       renderPosts(currentFilter);
       closeModal();
       const toast = document.getElementById('toast');
@@ -160,5 +170,13 @@
     document.getElementById('navLinks').classList.remove('open');
     renderPosts();
   </script>
+
+<div class="bottom-tabs" style="position:fixed;bottom:0;left:0;right:0;background:rgba(26,26,78,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;">
+  <a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:rgba(255,255,255,0.5);"><span style="font-size:1.2rem;">🏠</span>首页</a>
+  <a href="exam-guide.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:rgba(255,255,255,0.5);"><span style="font-size:1.2rem;">📖</span>学知识</a>
+  <a href="exam-simulator.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:rgba(255,255,255,0.5);"><span style="font-size:1.2rem;">✏️</span>刷题</a>
+  <a href="ai-assistant.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:rgba(255,255,255,0.5);"><span style="font-size:1.2rem;">🤖</span>AI助手</a>
+  <a href="province-exam.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:rgba(255,255,255,0.5);"><span style="font-size:1.2rem;">🗺️</span>选省份</a>
+</div>
 </body>
 </html>
