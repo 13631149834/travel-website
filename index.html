@@ -94,11 +94,191 @@
     .footer { background: rgba(26,26,78,0.9); backdrop-filter: blur(20px); border-top: 1px solid rgba(255,255,255,0.1); padding: 40px 20px; text-align: center; margin-top: 60px; }
     .footer p { color: rgba(255,255,255,0.7); font-size: 0.9rem; margin-bottom: 8px; }
     .footer a { color: #FF6B35; }
+        /* 自定义倒计时组件 */
+    .countdown-section {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      padding: 40px 24px;
+      text-align: center;
+      margin: 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .countdown-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,107,53,0.1) 0%, transparent 70%);
+      animation: countdownPulse 4s ease-in-out infinite;
+    }
+    @keyframes countdownPulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 1; }
+    }
+    .countdown-section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 32px rgba(255,107,53,0.3);
+    }
+    .countdown-title {
+      color: rgba(255,255,255,0.8);
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .countdown-title span {
+      background: rgba(255,107,53,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,107,53,0.3);
+      font-size: 0.85rem;
+    }
+    .countdown-display {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+    }
+    .countdown-days {
+      font-size: 4.5rem;
+      font-weight: 800;
+      color: #FF6B35;
+      line-height: 1;
+      text-shadow: 0 4px 20px rgba(255,107,53,0.4);
+    }
+    .countdown-unit {
+      font-size: 1.2rem;
+      color: rgba(255,255,255,0.6);
+      margin-left: 4px;
+    }
+    .countdown-time {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+      position: relative;
+    }
+    .countdown-time-item {
+      text-align: center;
+    }
+    .countdown-time-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      background: rgba(255,255,255,0.1);
+      padding: 8px 16px;
+      border-radius: 10px;
+      min-width: 60px;
+    }
+    .countdown-time-label {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      margin-top: 4px;
+    }
+    .countdown-edit-hint {
+      color: rgba(255,255,255,0.4);
+      font-size: 0.8rem;
+      margin-top: 16px;
+      position: relative;
+    }
+
+    /* 日期选择器弹窗 */
+    .date-picker-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 10002;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .date-picker-modal.active { display: flex; }
+    .date-picker-content {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      animation: modalIn 0.3s ease;
+    }
+    .date-picker-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 20px;
+    }
+    .date-picker-input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      color: #333;
+      margin-bottom: 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .date-picker-input:focus { border-color: #FF6B35; }
+    .date-picker-btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: transform 0.2s;
+    }
+    .date-picker-btn:active { transform: scale(0.98); }
+    .date-picker-btn.primary { background: linear-gradient(135deg, #FF6B35, #ff8c5a); color: #fff; }
+    .date-picker-btn.secondary { background: #f1f5f9; color: #666; }
+    .date-picker-tip { font-size: 0.8rem; color: #999; margin-top: 12px; }
+
+    /* Toast */
+    .toast-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 10003;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .toast-modal.active { display: flex; }
+    .toast-content {
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px 32px;
+      text-align: center;
+      animation: modalIn 0.3s ease;
+    }
+    .toast-icon { font-size: 2.5rem; margin-bottom: 8px; }
+
     @media (max-width: 768px) {
       .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: rgba(26,26,78,0.98); flex-direction: column; padding: 12px; gap: 4px; border-radius: 0 0 16px 16px; }
       .nav-links.open { display: flex; }
       .nav-toggle { display: flex; }
       .hero { padding: 80px 20px 40px; }
+      .countdown-section { padding: 32px 16px; margin: 16px; border-radius: 16px; }
+      .countdown-days { font-size: 3.5rem; }
+      .countdown-time-value { font-size: 1.4rem; padding: 6px 12px; min-width: 50px; }
+      .countdown-time { gap: 10px; }
+    }
       .pricing-grid { grid-template-columns: 1fr; }
       .cards-grid { grid-template-columns: 1fr; }
       .pricing-card.featured { transform: scale(1); }
@@ -113,6 +293,52 @@
     </div>
     <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')"><span></span><span></span><span></span></div>
   </nav>
+
+  <!-- 自定义倒计时组件 -->
+  <div class="countdown-section" id="countdownSection" onclick="openDatePicker()">
+    <div class="countdown-title">
+      <span id="countdownLabel">距离2026年导游证考试还有</span>
+    </div>
+    <div class="countdown-display">
+      <span class="countdown-days" id="countdownDays">--</span>
+      <span class="countdown-unit">天</span>
+    </div>
+    <div class="countdown-time">
+      <div class="countdown-time-item">
+        <div class="countdown-time-value" id="countdownHours">--</div>
+        <div class="countdown-time-label">时</div>
+      </div>
+      <div class="countdown-time-item">
+        <div class="countdown-time-value" id="countdownMinutes">--</div>
+        <div class="countdown-time-label">分</div>
+      </div>
+      <div class="countdown-time-item">
+        <div class="countdown-time-value" id="countdownSeconds">--</div>
+        <div class="countdown-time-label">秒</div>
+      </div>
+    </div>
+    <div class="countdown-edit-hint">✏️ 点击设置你的考试日期</div>
+  </div>
+
+  <!-- 日期选择器弹窗 -->
+  <div class="date-picker-modal" id="datePickerModal">
+    <div class="date-picker-content">
+      <h3 class="date-picker-title">📅 设置倒计时日期</h3>
+      <input type="date" class="date-picker-input" id="datePickerInput">
+      <button class="date-picker-btn primary" onclick="saveCountdownDate()">保存日期</button>
+      <button class="date-picker-btn secondary" onclick="resetToDefault()">恢复默认</button>
+      <button class="date-picker-btn secondary" onclick="closeDatePicker()">取消</button>
+      <p class="date-picker-tip">默认日期：2026年11月15日（导游证笔试）</p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-modal" id="countdownToast">
+    <div class="toast-content">
+      <div class="toast-icon">✅</div>
+      <p id="toastMessage" style="color: #1f2937; font-weight: 600;">操作成功</p>
+    </div>
+  </div>
 
   <div class="hero">
     <h1>游导旅游</h1>
@@ -273,6 +499,97 @@
       document.querySelectorAll('.faq-item').forEach(i => { if (i !== item) i.classList.remove('active'); });
       item.classList.toggle('active');
     }
+
+    // 倒计时功能
+    const DEFAULT_DATE = '2026-11-15';
+    const STORAGE_KEY = 'exam_countdown_date';
+
+    function getCountdownDate() {
+      return localStorage.getItem(STORAGE_KEY) || DEFAULT_DATE;
+    }
+
+    function getCountdownLabel() {
+      const date = getCountdownDate();
+      if (date === DEFAULT_DATE) {
+        return '距离2026年导游证考试还有';
+      }
+      const dateObj = new Date(date);
+      const month = dateObj.getMonth() + 1;
+      const day = dateObj.getDate();
+      return `距离${month}月${day}日还有`;
+    }
+
+    function updateCountdown() {
+      const targetDate = new Date(getCountdownDate() + 'T09:00:00');
+      const now = new Date();
+      const diff = targetDate - now;
+
+      if (diff <= 0) {
+        document.getElementById('countdownDays').textContent = '0';
+        document.getElementById('countdownHours').textContent = '00';
+        document.getElementById('countdownMinutes').textContent = '00';
+        document.getElementById('countdownSeconds').textContent = '00';
+        document.getElementById('countdownLabel').textContent = '考试已开始，祝你成功！';
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+      document.getElementById('countdownDays').textContent = days;
+      document.getElementById('countdownHours').textContent = String(hours).padStart(2, '0');
+      document.getElementById('countdownMinutes').textContent = String(minutes).padStart(2, '0');
+      document.getElementById('countdownSeconds').textContent = String(seconds).padStart(2, '0');
+      document.getElementById('countdownLabel').textContent = getCountdownLabel();
+    }
+
+    function initCountdown() {
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    function openDatePicker() {
+      const modal = document.getElementById('datePickerModal');
+      const input = document.getElementById('datePickerInput');
+      input.value = getCountdownDate();
+      modal.classList.add('active');
+    }
+
+    function closeDatePicker() {
+      document.getElementById('datePickerModal').classList.remove('active');
+    }
+
+    function saveCountdownDate() {
+      const input = document.getElementById('datePickerInput');
+      if (input.value) {
+        localStorage.setItem(STORAGE_KEY, input.value);
+        closeDatePicker();
+        updateCountdown();
+        showCountdownToast('日期已保存！');
+      }
+    }
+
+    function resetToDefault() {
+      localStorage.removeItem(STORAGE_KEY);
+      closeDatePicker();
+      updateCountdown();
+      showCountdownToast('已恢复默认日期');
+    }
+
+    function showCountdownToast(msg) {
+      const toast = document.getElementById('countdownToast');
+      document.getElementById('toastMessage').textContent = msg;
+      toast.classList.add('active');
+      setTimeout(() => toast.classList.remove('active'), 1500);
+    }
+
+    document.getElementById('datePickerModal').addEventListener('click', function(e) {
+      if (e.target === this) closeDatePicker();
+    });
+
+    document.addEventListener('DOMContentLoaded', initCountdown);
   </script>
 </body>
 </html>
