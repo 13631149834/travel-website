@@ -18,23 +18,24 @@ body{background:linear-gradient(135deg,#1a1a4e 0%,#4a7cf7 100%);color:#fff;displ
 .nav-links a:hover{background:rgba(255,107,53,0.3);color:#fff}
 .nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
 .nav-toggle span{width:22px;height:2px;background:#fff;border-radius:2px}
-#chatContainer{flex:1;display:flex;flex-direction:column;position:relative}
-#chatBox{flex:1;width:100%;max-width:800px;margin:0 auto}
-.loading-box{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:16px;padding:40px}
-.spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.2);border-top:4px solid #FF6B35;border-radius:50%;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.fallback-box{text-align:center;padding:60px 20px;max-width:500px;margin:0 auto}
-.fallback-box h2{font-size:1.6rem;margin-bottom:12px}
-.fallback-box p{color:rgba(255,255,255,0.7);margin-bottom:8px;font-size:0.95rem;line-height:1.7}
-.fallback-box .btn{display:inline-block;padding:14px 36px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);color:#fff;border-radius:14px;font-size:1rem;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(255,107,53,0.3);margin-top:20px}
-.features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:20px 0;text-align:left}
-.feature{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;font-size:0.85rem}
-.feature strong{color:#FF6B35;display:block;margin-bottom:4px}
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 20px}
+.card{max-width:480px;width:100%;text-align:center}
+.avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#ff8c5a);margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-size:3rem;box-shadow:0 8px 32px rgba(255,107,53,0.4)}
+h1{font-size:1.8rem;font-weight:900;margin-bottom:8px}
+.subtitle{color:rgba(255,255,255,0.7);font-size:1rem;margin-bottom:28px;line-height:1.7}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px;text-align:left}
+.feature{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;font-size:0.85rem;color:rgba(255,255,255,0.85)}
+.feature strong{color:#FF6B35;display:block;margin-bottom:4px;font-size:0.9rem}
+.btn{display:inline-block;padding:16px 48px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);color:#fff;border-radius:16px;font-size:1.1rem;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(255,107,53,0.3);transition:transform 0.2s,box-shadow 0.2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,107,53,0.4)}
+.btn:active{transform:translateY(0)}
+.hint{color:rgba(255,255,255,0.5);font-size:0.82rem;margin-top:16px}
 @media(max-width:768px){
 .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(26,26,78,0.98);flex-direction:column;padding:12px;border-radius:0 0 16px 16px}
 .nav-links.open{display:flex}
 .nav-toggle{display:flex}
 .features{grid-template-columns:1fr}
+h1{font-size:1.5rem}
 }
 </style>
 </head>
@@ -50,73 +51,21 @@ body{background:linear-gradient(135deg,#1a1a4e 0%,#4a7cf7 100%);color:#fff;displ
 </div>
 </nav>
 
-<div id="chatContainer">
-  <div id="chatBox">
-    <div class="loading-box" id="loadingBox">
-      <div class="spinner"></div>
-      <p>AI助手加载中...</p>
-    </div>
+<div class="main">
+<div class="card">
+  <div class="avatar">🤖</div>
+  <h1>导游证AI备考助手</h1>
+  <p class="subtitle">7×24小时在线，智能出题、知识问答、模拟面试<br/>你的专属备考搭子「小游」</p>
+  <div class="features">
+    <div class="feature"><strong>📝 智能出题</strong>按省份按章节精准练习</div>
+    <div class="feature"><strong>💡 知识问答</strong>随时问随时答不卡壳</div>
+    <div class="feature"><strong>🎤 模拟面试</strong>景点讲解模拟练习</div>
+    <div class="feature"><strong>📋 备考规划</strong>个性化学习计划定制</div>
   </div>
+  <a class="btn" href="https://www.coze.cn/store/bot/7638687952973398050" target="_blank">开始对话 →</a>
+  <p class="hint">点击后在Coze平台打开，首次使用需登录</p>
 </div>
-
-<script>
-(function(){
-  var sdkLoaded = false;
-  var chatInited = false;
-
-  var script = document.createElement('script');
-  script.src = 'https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.1.0-beta.0/libs/cn/index.js';
-  script.onload = function() {
-    sdkLoaded = true;
-    tryInitChat();
-  };
-  script.onerror = function() {
-    showFallback('SDK加载失败');
-  };
-  document.head.appendChild(script);
-
-  function tryInitChat() {
-    if (chatInited) return;
-    chatInited = true;
-    try {
-      new CozeWebSDK.WebChatClient({
-        config: {
-          bot_id: '7638687952973398050'
-        },
-        componentProps: {
-          title: '导游证AI备考助手'
-        },
-        ui: {
-          base: {
-            lang: 'zh-CN'
-          },
-          chatBot: {
-            title: '导游证AI备考助手',
-            el: document.getElementById('chatBox')
-          },
-          asstBtn: {
-            isNeed: false
-          }
-        }
-      });
-      document.getElementById('loadingBox').style.display = 'none';
-    } catch(e) {
-      console.error('Chat init error:', e);
-      showFallback('初始化失败: ' + e.message);
-    }
-  }
-
-  function showFallback(reason) {
-    console.warn('Fallback reason:', reason);
-    var box = document.getElementById('chatBox');
-    box.innerHTML = '<div class="fallback-box"><h2>🤖 导游证AI备考助手</h2><p>7×24小时在线，陪你备考导游证</p><div class="features"><div class="feature"><strong>📝 智能出题</strong>按省份按章节出练习题</div><div class="feature"><strong>💡 知识问答</strong>随时问随时答</div><div class="feature"><strong>🎤 模拟面试</strong>景点讲解模拟练习</div><div class="feature"><strong>📋 备考规划</strong>个性化学习计划</div></div><a class="btn" href="https://www.coze.cn/store/bot/7638687952973398050" target="_blank">打开AI助手聊天 →</a></div>';
-  }
-
-  setTimeout(function(){
-    if (!chatInited) showFallback('加载超时');
-  }, 10000);
-})();
-</script>
+</div>
 
 <div style="background:rgba(26,26,78,0.9);padding:30px 20px;text-align:center;">
   <p style="color:rgba(255,255,255,0.7);font-size:0.9rem;">© 2026 游导旅游 youdao-travel.com | 导游证备考一站式平台</p>
