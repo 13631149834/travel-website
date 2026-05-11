@@ -9,7 +9,7 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}
-body{background:linear-gradient(135deg,#1a1a4e 0%,#4a7cf7 100%);color:#fff;display:flex;flex-direction:column;min-height:100vh}
+body{background:#1a1a4e;color:#fff;display:flex;flex-direction:column;min-height:100vh}
 .navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(26,26,78,0.85);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.1);position:sticky;top:0;z-index:100}
 .logo{font-size:1.1rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none}
 .logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);border-radius:8px;display:flex;align-items:center;justify-content:center}
@@ -18,24 +18,20 @@ body{background:linear-gradient(135deg,#1a1a4e 0%,#4a7cf7 100%);color:#fff;displ
 .nav-links a:hover{background:rgba(255,107,53,0.3);color:#fff}
 .nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
 .nav-toggle span{width:22px;height:2px;background:#fff;border-radius:2px}
-.main{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 20px}
-.card{max-width:480px;width:100%;text-align:center}
-.avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#ff8c5a);margin:0 auto 24px;display:flex;align-items:center;justify-content:center;font-size:3rem;box-shadow:0 8px 32px rgba(255,107,53,0.4)}
-h1{font-size:1.8rem;font-weight:900;margin-bottom:8px}
-.subtitle{color:rgba(255,255,255,0.7);font-size:1rem;margin-bottom:28px;line-height:1.7}
-.features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px;text-align:left}
+#cozeContainer{flex:1;width:100%;height:calc(100vh - 60px)}
+.fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center}
+.fallback h2{font-size:1.6rem;margin-bottom:12px}
+.fallback p{color:rgba(255,255,255,0.7);margin-bottom:24px;line-height:1.7}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px;text-align:left;max-width:400px;width:100%}
 .feature{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;font-size:0.85rem;color:rgba(255,255,255,0.85)}
-.feature strong{color:#FF6B35;display:block;margin-bottom:4px;font-size:0.9rem}
-.btn{display:inline-block;padding:16px 48px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);color:#fff;border-radius:16px;font-size:1.1rem;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(255,107,53,0.3);transition:transform 0.2s,box-shadow 0.2s}
-.btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,107,53,0.4)}
-.btn:active{transform:translateY(0)}
+.feature strong{color:#FF6B35;display:block;margin-bottom:4px}
+.btn{display:inline-block;padding:16px 48px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);color:#fff;border-radius:16px;font-size:1.1rem;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(255,107,53,0.3)}
 .hint{color:rgba(255,255,255,0.5);font-size:0.82rem;margin-top:16px}
 @media(max-width:768px){
 .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(26,26,78,0.98);flex-direction:column;padding:12px;border-radius:0 0 16px 16px}
 .nav-links.open{display:flex}
 .nav-toggle{display:flex}
 .features{grid-template-columns:1fr}
-h1{font-size:1.5rem}
 }
 </style>
 </head>
@@ -44,32 +40,48 @@ h1{font-size:1.5rem}
 <a class="logo" href="index.html">
 <div class="logo-icon"><svg fill="white" height="18" viewBox="0 0 24 24" width="18"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>游导旅游</a>
 <div class="nav-links" id="navLinks">
-<a href="index.html">首页</a><a href="ai-assistant.html" class="active">AI助手</a><a href="resources.html">资料套餐</a><a href="free-materials.html">免费资料</a><a href="exam-guide.html">备考攻略</a><a href="province-exam.html">各省备考</a><a href="exam-simulator.html">模拟考试</a><a href="travel-knowledge.html">旅行知识</a><a href="travel-tools.html">旅行工具</a><a href="voice.html">发声墙</a>
+<a href="index.html">首页</a><a href="chat.html" class="active">AI助手</a><a href="resources.html">资料套餐</a><a href="free-materials.html">免费资料</a><a href="exam-guide.html">备考攻略</a><a href="province-exam.html">各省备考</a><a href="exam-simulator.html">模拟考试</a><a href="travel-knowledge.html">旅行知识</a><a href="travel-tools.html">旅行工具</a><a href="voice.html">发声墙</a>
 </div>
 <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">
 <span></span><span></span><span></span>
 </div>
 </nav>
 
-<div class="main">
-<div class="card">
-  <div class="avatar">🤖</div>
-  <h1>导游证AI备考助手</h1>
-  <p class="subtitle">7×24小时在线，智能出题、知识问答、模拟面试<br/>你的专属备考搭子「小游」</p>
-  <div class="features">
-    <div class="feature"><strong>📝 智能出题</strong>按省份按章节精准练习</div>
-    <div class="feature"><strong>💡 知识问答</strong>随时问随时答不卡壳</div>
-    <div class="feature"><strong>🎤 模拟面试</strong>景点讲解模拟练习</div>
-    <div class="feature"><strong>📋 备考规划</strong>个性化学习计划定制</div>
+<div id="cozeContainer">
+  <div class="fallback" id="fallbackContent">
+    <h2>🤖 导游证AI备考助手</h2>
+    <p>7×24小时在线，你的专属备考搭子「小游」</p>
+    <div class="features">
+      <div class="feature"><strong>📝 智能出题</strong>按省份按章节精准练习</div>
+      <div class="feature"><strong>💡 知识问答</strong>随时问随时答不卡壳</div>
+      <div class="feature"><strong>🎤 模拟面试</strong>景点讲解模拟练习</div>
+      <div class="feature"><strong>📋 备考规划</strong>个性化学习计划定制</div>
+    </div>
+    <a class="btn" href="https://www.coze.cn/store/bot/7638687952973398050" target="_blank">开始对话 →</a>
+    <p class="hint">点击后在Coze平台打开聊天</p>
   </div>
-  <a class="btn" href="https://www.coze.cn/store/bot/7638687952973398050" target="_blank">开始对话 →</a>
-  <p class="hint">点击后在Coze平台打开，首次使用需登录</p>
-</div>
 </div>
 
-<div style="background:rgba(26,26,78,0.9);padding:30px 20px;text-align:center;">
-  <p style="color:rgba(255,255,255,0.7);font-size:0.9rem;">© 2026 游导旅游 youdao-travel.com | 导游证备考一站式平台</p>
-</div>
+<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.17/libs/cn/index.js"></script>
+<script>
+(function(){
+  setTimeout(function(){
+    try {
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7638687952973398050'
+        },
+        componentProps: {
+          title: '导游证AI备考助手'
+        }
+      });
+      document.getElementById('fallbackContent').style.display = 'none';
+    } catch(e) {
+      console.log('SDK mode failed, fallback to link page', e);
+    }
+  }, 500);
+})();
+</script>
 
 </body>
 </html>
