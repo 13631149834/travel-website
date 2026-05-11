@@ -281,12 +281,12 @@
   <p>微信联系：<strong>ximao101</strong> | youdao-travel.com</p>
 </footer>
 
-<!-- Coze Chat SDK：网页端直接对话，不跳转 -->
-<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/latest/libs/cn/index.js"></script>
+<!-- Coze Chat SDK 新版：支持手机端 -->
+<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.20/libs/cn/index.js"></script>
 <script>
-// 使用内嵌模式，直接在chat-container中渲染，不显示浮动按钮
+// 使用官方新版 WebChatClient API，自动适配PC/手机端
 var chatContainer = document.getElementById('coze-chat');
-new CozeWebSDK.ChatSDK({
+var cozeSDK = new CozeWebSDK.WebChatClient({
   config: {
     bot_id: '7633483506475532328',
   },
@@ -294,25 +294,20 @@ new CozeWebSDK.ChatSDK({
     title: '导游证AI备考助手',
     lang: 'zh-CN',
   },
-  el: chatContainer,
+  ui: {
+    base: {
+      lang: 'zh-CN',
+    },
+    asstBtn: {
+      isNeed: false,
+    },
+    chatBot: {
+      title: '导游证AI备考助手',
+      uploadable: false,
+      el: chatContainer,
+    },
+  },
 });
-
-// 隐藏Coze自带的浮动按钮（如果有）
-function hideCozeButton() {
-  var btn = document.getElementById('coze-web-chat-btn');
-  if (btn) { btn.style.display = 'none'; }
-  // 也尝试隐藏其他可能的浮动元素
-  var floats = document.querySelectorAll('[id*="coze"], [class*="coze-web-chat-btn"]');
-  floats.forEach(function(el) { 
-    if (el.tagName !== 'DIV' || el.id === 'coze-web-chat-btn') {
-      el.style.display = 'none';
-    }
-  });
-}
-// 多次尝试隐藏，因为SDK可能延迟渲染
-setTimeout(hideCozeButton, 1000);
-setTimeout(hideCozeButton, 3000);
-setTimeout(hideCozeButton, 5000);
 </script>
 <div class="bottom-tabs" style="position:fixed;bottom:0;left:0;right:0;background:rgba(26,26,78,0.95);backdrop-filter:blur(20px);border-top:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;">
   <a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:rgba(255,255,255,0.5);"><span style="font-size:1.2rem;">🏠</span>首页</a>
