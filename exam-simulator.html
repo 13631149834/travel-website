@@ -941,46 +941,6 @@ function getTypeName(type) {
 
 
 
-function renderExamQuestions() {
-  const container = document.getElementById('examQuestions');
-  let html = '';
-  
-  examQuestions.forEach((q, index) => {
-    html += `
-    <div class="question-card" id="examQ${index}">
-      <h4><span class="q-num">${index + 1}</span> ${getTypeName(q.type)}</h4>
-      <p class="question-text">${q.question}</p>
-      <ul class="question-options">
-        ${q.options.map((opt, i) => `
-          <li id="opt${index}_${i}" onclick="selectAnswer(${index}, ${i})">
-            <span class="opt-letter">${String.fromCharCode(65 + i)}</span>
-            ${opt}
-          </li>
-        `).join('')}
-      </ul>
-    </div>`;
-  });
-  container.innerHTML = html;
-}
-
-function selectAnswer(qIndex, optIndex) {
-  // 清除同一题的其他选项
-  const options = document.querySelectorAll(`#examQ${qIndex} .question-options li`);
-  options.forEach((opt, i) => {
-    opt.classList.remove('selected');
-    if (i === optIndex) {
-      opt.classList.add('selected');
-    }
-  });
-  
-  userAnswers[qIndex] = optIndex;
-  updateProgress();
-  // 更新答题卡
-  var navEl = document.getElementById('navQ' + qIndex);
-  if(navEl){ navEl.style.background = 'rgba(255,107,53,0.2)'; navEl.style.borderColor = '#FF6B35'; navEl.style.color = '#FF6B35'; }
-  var navA = document.getElementById('navAnswered');
-  if(navA) navA.textContent = '已答 ' + Object.keys(userAnswers).length + '/' + examQuestions.length;
-}
 
 function updateProgress() {
   const answered = Object.keys(userAnswers).length;
