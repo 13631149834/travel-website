@@ -852,10 +852,7 @@ function renderSingleQuestion(idx) {
     html += '<div class="analysis" style="margin-top:8px;">' + q.analysis + '</div>';
     html += '</div>';
   }
-  // 未回答时显示确认按钮
-  else if(userAnswers[idx] !== undefined) {
-    html += '<button onclick="confirmAnswer(' + idx + ')" style="margin-top:12px;padding:12px 28px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);color:#2C1A00;border:none;border-radius:12px;font-size:0.95rem;font-weight:600;cursor:pointer;">确认答案</button>';
-  }
+
   
   html += '</div>';
   wrap.innerHTML = html;
@@ -869,12 +866,11 @@ function renderSingleQuestion(idx) {
 }
 
 window.selectExamAnswer = function(qIdx, optIdx) {
-  var options = document.querySelectorAll('#singleQuestionWrap .question-options li');
-  options.forEach(function(opt, i) {
-    opt.classList.remove('selected');
-    if(i === optIdx) opt.classList.add('selected');
-  });
+  if(answeredQuestions[qIdx] !== undefined) return; // 已答过不再改
   userAnswers[qIdx] = optIdx;
+  answeredQuestions[qIdx] = optIdx; // 直接确认，立刻出解析
+  renderSingleQuestion(qIdx);
+  updateAnswerCard(qIdx);
 };
 
 window.confirmAnswer = function(qIdx) {
@@ -890,16 +886,8 @@ window.prevQuestion = function() {
 
 window.nextQuestion = function() {
   if(currentQIndex < examQuestions.length - 1) {
-    // 如果当前题选了但没确认，自动确认
-    if(userAnswers[currentQIndex] !== undefined && answeredQuestions[currentQIndex] === undefined) {
-      confirmAnswer(currentQIndex);
-    }
     renderSingleQuestion(currentQIndex + 1);
   } else {
-    // 最后一题，交卷
-    if(userAnswers[currentQIndex] !== undefined && answeredQuestions[currentQIndex] === undefined) {
-      confirmAnswer(currentQIndex);
-    }
     submitExam();
   }
 };
