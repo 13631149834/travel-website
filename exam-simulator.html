@@ -1020,10 +1020,6 @@ function submitExam() {
   const passScore = 60;
   const passed = score >= passScore;
   
-  // 更新localStorage
-  const left = parseInt(localStorage.getItem('examQuestionsLeft')) || 70;
-  localStorage.setItem('examQuestionsLeft', Math.max(0, left - total));
-  
   // 显示结果
   showExamResult(score, correct, wrong, total, passed, wrongList);
 }
@@ -1061,31 +1057,14 @@ function showExamResult(score, correct, wrong, total, passed, wrongList) {
   
   document.getElementById('wrongAnalysis').innerHTML = analysisHtml;
   
-  // 更新激活状态显示
-  const left = parseInt(localStorage.getItem('examQuestionsLeft')) || 0;
-  const code = localStorage.getItem('examCode') || '';
-  if (left > 0) {
-    updateActivationUI(true, code, left);
-  }
-  
+
   document.getElementById('backToTop').scrollIntoView({ behavior: 'smooth' });
 }
 
 function retakeExam() {
   document.getElementById('examResult').classList.add('hidden');
   document.getElementById('examSection').classList.remove('hidden');
-  
-  const left = parseInt(localStorage.getItem('examQuestionsLeft')) || 0;
-  if (left <= 0) {
-    isActivated = false;
-    localStorage.removeItem('examActivated');
-    localStorage.removeItem('examCode');
-    updateActivationUI(false);
-    switchMode('daily');
-    alert('激活码已用完，请使用新的激活码');
-  } else {
-    startExam();
-  }
+  startExam();
 }
 
 // ========== 其他功能 ==========
