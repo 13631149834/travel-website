@@ -18,14 +18,21 @@ body{background:#1a1a4e;color:#fff;display:flex;flex-direction:column;min-height
 .nav-links a:hover{background:rgba(255,107,53,0.3);color:#fff}
 .nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
 .nav-toggle span{width:22px;height:2px;background:#fff;border-radius:2px}
-#cozeContainer{flex:1;width:100%;height:calc(100vh - 60px)}
-.fallback{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center}
+#chatContainer{flex:1;width:100%;height:calc(100vh - 60px);position:relative}
+#cozeChat{width:100%;height:100%;display:none}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center}
+.loading-spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.15);border-top-color:#FF6B35;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading h2{font-size:1.4rem;margin-bottom:8px}
+.loading p{color:rgba(255,255,255,0.6);font-size:0.9rem}
+.fallback{display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center}
 .fallback h2{font-size:1.6rem;margin-bottom:12px}
 .fallback p{color:rgba(255,255,255,0.7);margin-bottom:24px;line-height:1.7}
 .features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:32px;text-align:left;max-width:400px;width:100%}
 .feature{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:14px;font-size:0.85rem;color:rgba(255,255,255,0.85)}
 .feature strong{color:#FF6B35;display:block;margin-bottom:4px}
-.btn{display:inline-block;padding:16px 48px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);color:#fff;border-radius:16px;font-size:1.1rem;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(255,107,53,0.3)}
+.btn{display:inline-block;padding:16px 48px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);color:#fff;border-radius:16px;font-size:1.1rem;font-weight:700;text-decoration:none;box-shadow:0 8px 24px rgba(255,107,53,0.3);transition:transform 0.2s}
+.btn:hover{transform:translateY(-2px)}
 .hint{color:rgba(255,255,255,0.5);font-size:0.82rem;margin-top:16px}
 @media(max-width:768px){
 .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(26,26,78,0.98);flex-direction:column;padding:12px;border-radius:0 0 16px 16px}
@@ -47,7 +54,13 @@ body{background:#1a1a4e;color:#fff;display:flex;flex-direction:column;min-height
 </div>
 </nav>
 
-<div id="cozeContainer">
+<div id="chatContainer">
+  <div id="cozeChat"></div>
+  <div class="loading" id="loadingContent">
+    <div class="loading-spinner"></div>
+    <h2>🤖 AI助手加载中...</h2>
+    <p>正在连接「小游」，请稍候</p>
+  </div>
   <div class="fallback" id="fallbackContent">
     <h2>🤖 导游证AI备考助手</h2>
     <p>7×24小时在线，你的专属备考搭子「小游」</p>
@@ -65,30 +78,57 @@ body{background:#1a1a4e;color:#fff;display:flex;flex-direction:column;min-height
 <script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.17/libs/cn/index.js"></script>
 <script>
 (function(){
-  setTimeout(function(){
-    try {
+  var sdkLoaded = false;
+  var timeoutId = setTimeout(function(){
+    if(!sdkLoaded){
+      document.getElementById('loadingContent').style.display = 'none';
+      document.getElementById('fallbackContent').style.display = 'flex';
+    }
+  }, 8000);
+
+  function initChat(){
+    try{
+      if(typeof CozeWebSDK === 'undefined') throw new Error('SDK not loaded');
+      var chatEl = document.getElementById('cozeChat');
       new CozeWebSDK.WebChatClient({
         config: {
           bot_id: '7638687952973398050'
         },
-        componentProps: {
-          title: '导游证AI备考助手'
-        },
         auth: {
           type: 'token',
           token: 'pat_7thMqKrsyXMEX4W6N51ILHY5X9TmWYG93eioUN2IvWEXprM24nYx6w2cKNIeEvZW',
-          onRefreshToken: function () {
-            return 'pat_7thMqKrsyXMEX4W6N51ILHY5X9TmWYG93eioUN2IvWEXprM24nYx6w2cKNIeEvZW'
+          onRefreshToken: function(){
+            return 'pat_7thMqKrsyXMEX4W6N51ILHY5X9TmWYG93eioUN2IvWEXprM24nYx6w2cKNIeEvZW';
+          }
+        },
+        ui: {
+          asstBtn: { isNeed: false },
+          chatBot: {
+            title: '导游证AI备考助手「小游」',
+            el: chatEl
           }
         }
       });
-      document.getElementById('fallbackContent').style.display = 'none';
-    } catch(e) {
-      console.log('SDK mode failed, fallback to link page', e);
+      sdkLoaded = true;
+      clearTimeout(timeoutId);
+      setTimeout(function(){
+        chatEl.style.display = 'block';
+        document.getElementById('loadingContent').style.display = 'none';
+      }, 1500);
+    } catch(e){
+      console.error('SDK init failed:', e);
+      clearTimeout(timeoutId);
+      document.getElementById('loadingContent').style.display = 'none';
+      document.getElementById('fallbackContent').style.display = 'flex';
     }
-  }, 500);
+  }
+
+  if(document.readyState === 'complete'){
+    setTimeout(initChat, 300);
+  } else {
+    window.addEventListener('load', function(){ setTimeout(initChat, 300); });
+  }
 })();
 </script>
-
 </body>
 </html>
