@@ -656,6 +656,107 @@ function switchMode(mode) {
 }
 
 // ========== 每日一练 ==========
+let dailyQuestions = [];
+let dailyUserAnswers = {};
+let dailyAnswered = {};
+let dailyQIndex = 0;
+
+function renderDailySingle(idx) {
+  if(idx < 0 || idx >= dailyQuestions.length) return;
+  dailyQIndex = idx;
+  var q = dailyQuestions[idx];
+  var wrap = document.getElementById('dailySingleWrap');
+  
+  var qType = q.type === 'multi' ? '多选题' : q.type === 'judge' ? '判断题' : '单选题';
+  var html = '<div style="margin-bottom:12px;"><span style="font-size:0.8rem;color:#4E342E;font-weight:600;">第' + (idx+1) + '题 · ' + qType + '</span></div>';
+  html += '<div style="font-size:0.95rem;line-height:1.7;margin-bottom:16px;font-weight:500;">' + q.q + '</div>';
+  html += '<ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;">';
+  
+  var opts = q.type === 'judge' ? ['正确','错误'] : q.options;
+  opts.forEach(function(opt, oi) {
+    var selected = false;
+    if(q.type === 'multi') {
+      selected = dailyUserAnswers[idx] && dailyUserAnswers[idx].includes(oi);
+    } else {
+      selected = dailyUserAnswers[idx] === oi;
+    }
+    var borderColor = selected ? '#8B0000' : 'rgba(0,0,0,0.1)';
+    var bgColor = selected ? 'rgba(139,0,0,0.06)' : 'rgba(255,255,255,0.5)';
+    
+    if(dailyAnswered[idx] !== undefined) {
+      if(q.type === 'multi') {
+        if(Array.isArray(q.answer) && q.answer.includes(oi)) bgColor = 'rgba(6,95,70,0.1)';
+        else if(selected) bgColor = 'rgba(185,28,28,0.1)';
+      } else {
+        if(oi === q.answer) bgColor = 'rgba(6,95,70,0.1)';
+        else if(selected && oi !== q.answer) bgColor = 'rgba(185,28,28,0.1)';
+      }
+    }
+    
+    html += '<li onclick="dailySelectOption(' + idx + ',' + oi + ')" style="padding:12px 16px;border:1px solid ' + borderColor + ';border-radius:10px;cursor:pointer;background:' + bgColor + ';transition:all 0.2s;font-weight:500;">' + String.fromCharCode(65+oi) + '. ' + opt + '</li>';
+  });
+  html += '</ul>';
+  
+  if(q.type === 'multi' && dailyAnswered[idx] === undefined) {
+    html += '<button onclick="dailyConfirmMulti(' + idx + ')" style="margin-top:10px;padding:8px 20px;background:linear-gradient(135deg,#8B0000,#BF360C);color:#fff;border:none;border-radius:20px;font-size:0.85rem;cursor:pointer;">确认提交</button>';
+  }
+  
+  if(dailyAnswered[idx] !== undefined) {
+    var isCorrect = false;
+    if(q.type === 'multi') {
+      isCorrect = JSON.stringify(dailyUserAnswers[idx].sort()) === JSON.stringify(q.answer.sort());
+    } else {
+      isCorrect = dailyUserAnswers[idx] === q.answer;
+    }
+    html += '<div style="margin-top:10px;padding:10px;border-radius:8px;background:' + (isCorrect ? 'rgba(6,95,70,0.08)' : 'rgba(185,28,28,0.08)') + ';font-size:0.85rem;color:' + (isCorrect ? '#065F46' : '#B91C1C') + ';">' + (isCorrect ? '✓ 正确' : '✗ 错误') + (q.explain ? ' — ' + q.explain : '') + '</div>';
+  }
+  
+  wrap.innerHTML = html;
+  document.getElementById('dailyProgress').textContent = (idx+1) + ' / ' + dailyQuestions.length;
+  document.getElementById('dailyNextBtn').textContent = idx === dailyQuestions.length - 1 ? '完成 ✓' : '下一题 →';
+  document.getElementById('dailyPrevBtn').style.visibility = idx === 0 ? 'hidden' : 'visible';
+}
+
+function dailySelectOption(qIdx, optIdx) {
+  if(dailyAnswered[qIdx] !== undefined) return;
+  var q = dailyQuestions[qIdx];
+  if(q.type === 'multi') {
+    if(!dailyUserAnswers[qIdx]) dailyUserAnswers[qIdx] = [];
+    var pos = dailyUserAnswers[qIdx].indexOf(optIdx);
+    if(pos >= 0) dailyUserAnswers[qIdx].splice(pos, 1);
+    else dailyUserAnswers[qIdx].push(optIdx);
+  } else {
+    dailyUserAnswers[qIdx] = optIdx;
+    dailyAnswered[qIdx] = true;
+  }
+  renderDailySingle(qIdx);
+}
+
+function dailyConfirmMulti(qIdx) {
+  if(!dailyUserAnswers[qIdx] || dailyUserAnswers[qIdx].length === 0) return;
+  dailyAnswered[qIdx] = true;
+  renderDailySingle(qIdx);
+}
+
+function dailyPrev() { if(dailyQIndex > 0) renderDailySingle(dailyQIndex - 1); }
+function dailyNext() {
+  if(dailyQIndex < dailyQuestions.length - 1) renderDailySingle(dailyQIndex + 1);
+  else {
+    var correct = 0;
+    dailyQuestions.forEach(function(q,i) {
+      if(dailyAnswered[i] !== undefined) {
+        if(q.type === 'multi') {
+          if(JSON.stringify(dailyUserAnswers[i].sort()) === JSON.stringify(q.answer.sort())) correct++;
+        } else {
+          if(dailyUserAnswers[i] === q.answer) correct++;
+        }
+      }
+    });
+    var wrap = document.getElementById('dailySingleWrap');
+    wrap.innerHTML = '<div style="text-align:center;padding:20px;"><div style="font-size:2.5rem;font-weight:800;color:#8B0000;">' + correct + '/' + dailyQuestions.length + '</div><div style="font-size:1rem;color:#4E342E;margin-top:8px;">练习完成！</div><button onclick="renderDailyQuestions()" style="margin-top:16px;padding:12px 30px;background:linear-gradient(135deg,#8B0000,#BF360C);color:#fff;border:none;border-radius:25px;font-size:0.95rem;cursor:pointer;">再练一组</button></div>';
+  }
+}
+
 function renderDailyQuestions() {
   const container = document.getElementById('dailyQuestions');
   const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
