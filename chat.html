@@ -18,9 +18,9 @@ body{background:#1a1a4e;color:#fff;display:flex;flex-direction:column;min-height
 .nav-links a:hover{background:rgba(255,107,53,0.3);color:#fff}
 .nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
 .nav-toggle span{width:22px;height:2px;background:#fff;border-radius:2px}
-#chatContainer{flex:1;width:100%;height:calc(100vh - 60px);position:relative}
-#cozeChat{width:100%;height:100%;display:none}
-.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center}
+#chatContainer{flex:1;width:100%;height:calc(100vh - 60px);position:relative;overflow:hidden}
+#chatIframe{width:100%;height:100%;border:none;display:none;background:#fff;border-radius:0}
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:30px;text-align:center;position:absolute;top:0;left:0;right:0;bottom:0;z-index:10}
 .loading-spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.15);border-top-color:#FF6B35;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:20px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading h2{font-size:1.4rem;margin-bottom:8px}
@@ -55,12 +55,17 @@ body{background:#1a1a4e;color:#fff;display:flex;flex-direction:column;min-height
 </nav>
 
 <div id="chatContainer">
-  <div id="cozeChat"></div>
+  <!-- iframe方案：直接嵌入Coze聊天页面，轻量快速 -->
+  <iframe id="chatIframe" src="about:blank" allow="microphone;camera" loading="eager"></iframe>
+
+  <!-- 加载动画 -->
   <div class="loading" id="loadingContent">
     <div class="loading-spinner"></div>
     <h2>🤖 AI助手加载中...</h2>
     <p>正在连接「小游」，请稍候</p>
   </div>
+
+  <!-- 最终降级方案 -->
   <div class="fallback" id="fallbackContent">
     <h2>🤖 导游证AI备考助手</h2>
     <p>7×24小时在线，你的专属备考搭子「小游」</p>
@@ -75,59 +80,78 @@ body{background:#1a1a4e;color:#fff;display:flex;flex-direction:column;min-height
   </div>
 </div>
 
-<script src="https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.17/libs/cn/index.js"></script>
 <script>
 (function(){
-  var sdkLoaded = false;
-  var timeoutId = setTimeout(function(){
-    if(!sdkLoaded){
-      document.getElementById('loadingContent').style.display = 'none';
-      document.getElementById('fallbackContent').style.display = 'flex';
-    }
-  }, 8000);
+  // 方案1：iframe嵌入Coze聊天页（轻量，几KB vs SDK 14MB）
+  var iframe = document.getElementById('chatIframe');
+  var loaded = false;
 
-  function initChat(){
-    try{
-      if(typeof CozeWebSDK === 'undefined') throw new Error('SDK not loaded');
-      var chatEl = document.getElementById('cozeChat');
-      new CozeWebSDK.WebChatClient({
-        config: {
-          bot_id: '7638687952973398050'
-        },
-        auth: {
-          type: 'token',
-          token: 'pat_7thMqKrsyXMEX4W6N51ILHY5X9TmWYG93eioUN2IvWEXprM24nYx6w2cKNIeEvZW',
-          onRefreshToken: function(){
-            return 'pat_7thMqKrsyXMEX4W6N51ILHY5X9TmWYG93eioUN2IvWEXprM24nYx6w2cKNIeEvZW';
+  iframe.onload = function(){
+    loaded = true;
+    document.getElementById('loadingContent').style.display = 'none';
+    iframe.style.display = 'block';
+  };
+
+  iframe.onerror = function(){
+    // iframe失败，降级到SDK
+    trySDK();
+  };
+
+  // 设置iframe src
+  iframe.src = 'https://www.coze.cn/store/bot/7638687952973398050';
+
+  // 6秒后如果iframe还没加载出来，尝试SDK
+  setTimeout(function(){
+    if(!loaded){
+      trySDK();
+    }
+  }, 6000);
+
+  // 方案2：SDK嵌入（备选）
+  function trySDK(){
+    if(loaded) return;
+    var script = document.createElement('script');
+    script.src = 'https://lf-cdn.coze.cn/obj/unpkg/flow-platform/chat-app-sdk/1.2.0-beta.17/libs/cn/index.js';
+    script.onload = function(){
+      try{
+        var chatEl = document.createElement('div');
+        chatEl.id = 'sdkChat';
+        chatEl.style.cssText = 'width:100%;height:100%;position:absolute;top:0;left:0;';
+        document.getElementById('chatContainer').appendChild(chatEl);
+
+        new CozeWebSDK.WebChatClient({
+          config: { bot_id: '7638687952973398050' },
+          auth: {
+            type: 'token',
+            token: 'pat_7thMqKrsyXMEX4W6N51ILHY5X9TmWYG93eioUN2IvWEXprM24nYx6w2cKNIeEvZW',
+            onRefreshToken: function(){ return 'pat_7thMqKrsyXMEX4W6N51ILHY5X9TmWYG93eioUN2IvWEXprM24nYx6w2cKNIeEvZW'; }
+          },
+          ui: {
+            asstBtn: { isNeed: false },
+            chatBot: { title: '导游证AI备考助手「小游」', el: chatEl }
           }
-        },
-        ui: {
-          asstBtn: { isNeed: false },
-          chatBot: {
-            title: '导游证AI备考助手「小游」',
-            el: chatEl
-          }
-        }
-      });
-      sdkLoaded = true;
-      clearTimeout(timeoutId);
-      setTimeout(function(){
-        chatEl.style.display = 'block';
+        });
         document.getElementById('loadingContent').style.display = 'none';
-      }, 1500);
-    } catch(e){
-      console.error('SDK init failed:', e);
-      clearTimeout(timeoutId);
-      document.getElementById('loadingContent').style.display = 'none';
-      document.getElementById('fallbackContent').style.display = 'flex';
-    }
+        loaded = true;
+      } catch(e){
+        console.error('SDK failed:', e);
+        showFallback();
+      }
+    };
+    script.onerror = function(){ showFallback(); };
+    document.body.appendChild(script);
   }
 
-  if(document.readyState === 'complete'){
-    setTimeout(initChat, 300);
-  } else {
-    window.addEventListener('load', function(){ setTimeout(initChat, 300); });
+  // 方案3：最终降级——跳转按钮
+  function showFallback(){
+    document.getElementById('loadingContent').style.display = 'none';
+    document.getElementById('fallbackContent').style.display = 'flex';
   }
+
+  // 15秒绝对超时
+  setTimeout(function(){
+    if(!loaded) showFallback();
+  }, 15000);
 })();
 </script>
 </body>
