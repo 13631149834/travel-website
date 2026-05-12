@@ -760,78 +760,22 @@ function dailyNext() {
 function renderDailyQuestions() {
   const container = document.getElementById('dailyQuestions');
   const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
-  const questions = shuffled.slice(0, 20);
+  dailyQuestions = shuffled.slice(0, 20);
+  dailyUserAnswers = {};
+  dailyAnswered = {};
+  dailyQIndex = 0;
   
-  let html = '';
-  questions.forEach((q, index) => {
-    html += `
-    <div class="question-card">
-      <h4><span class="q-num">${index + 1}</span> ${getTypeName(q.type)}</h4>
-      <p class="question-text">${q.question}</p>
-      <ul class="question-options">
-        ${q.options.map((opt, i) => `
-          <li onclick="checkDailyAnswer(this, ${index}, ${i}, ${q.answer})">
-            <span class="opt-letter">${String.fromCharCode(65 + i)}</span>
-            ${opt}
-          </li>
-        `).join('')}
-      </ul>
-      <button class="reveal-btn" onclick="revealDailyAnswer(${index}, ${q.answer}, '${escapeHtml(q.analysis)}')">查看答案</button>
-      <div class="answer-box" id="dailyAnswer${index}">
-        <div class="correct-text">正确答案：${q.options[q.answer]}</div>
-        <div class="analysis">${q.analysis}</div>
-      </div>
-    </div>`;
-  });
-  // 添加答题卡导航
-  let navHtml = '<div style="position:sticky;top:60px;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);padding:12px 16px;margin:-16px -16px 16px;border-bottom:1px solid rgba(230,81,0,0.1);z-index:10;"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;"><span style="font-size:0.85rem;color:#2C1A00;">答题卡</span><span id="navAnswered" style="font-size:0.78rem;color:#8B0000;">已答 0/" + count + "</span></div><div style="display:flex;flex-wrap:wrap;gap:4px;">';
-  examQuestions.forEach((q, i) => {
-    navHtml += '<span id="navQ' + i + '" onclick="scrollToQ(' + i + ')" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:0.72rem;border-radius:6px;background:rgba(255,255,255,0.82);border:1px solid rgba(255,255,255,0.88);color:#2C1A00;cursor:pointer;">' + (i+1) + '</span>';
-  });
-  navHtml += '</div></div>';
-  container.innerHTML = navHtml + html;
-}
-
-window.scrollToQ = function(idx) {
-  const el = document.getElementById('examQ' + idx);
-  if(el) el.scrollIntoView({behavior:'smooth',block:'center'});
-};
-
-function getTypeName(type) {
-  const names = {
-    'policy': '📋 政策法规',
-    'service': '🛎️ 导游业务',
-    'guidebook': '📚 全国导基',
-    'local': '🏙️ 地方导基'
-  };
-  return names[type] || '📝';
-}
-
-function checkDailyAnswer(el, qIndex, optIndex, correctIndex) {
-  const card = el.closest('.question-card');
-  const options = card.querySelectorAll('.question-options li');
+  container.innerHTML = '<div id="dailySingleWrap" style="min-height:350px"></div>' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:8px;">' +
+    '<button onclick="dailyPrev()" id="dailyPrevBtn" style="padding:10px 20px;background:rgba(139,0,0,0.06);border:1px solid rgba(139,0,0,0.12);border-radius:12px;font-size:0.88rem;cursor:pointer;">← 上一题</button>' +
+    '<span id="dailyProgress" style="font-size:0.85rem;color:#4E342E;">1 / 20</span>' +
+    '<button onclick="dailyNext()" id="dailyNextBtn" style="padding:10px 20px;background:rgba(139,0,0,0.06);border:1px solid rgba(139,0,0,0.12);border-radius:12px;font-size:0.88rem;cursor:pointer;">下一题 →</button>' +
+    '</div>';
   
-  options.forEach(opt => {
-    opt.style.pointerEvents = 'none';
-    const idx = Array.from(options).indexOf(opt);
-    if (idx === correctIndex) {
-      opt.classList.add('correct');
-    } else if (opt === el && optIndex !== correctIndex) {
-      opt.classList.add('wrong');
-    }
-  });
+  renderDailySingle(0);
 }
 
-function revealDailyAnswer(index, answer, analysis) {
-  const box = document.getElementById(`dailyAnswer${index}`);
-  box.classList.toggle('show');
-}
 
-function escapeHtml(text) {
-  return text.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '<br>');
-}
-
-// ========== 正式模拟考试 ==========
 function startExam() {
   // 正式模考：4科各按比例出题，共90分钟
   const totalExamQ = 90;
@@ -995,48 +939,7 @@ function getTypeName(type) {
   return names[type] || '📝';
 }
 
-function checkDailyAnswer(el, qIndex, optIndex, correctIndex) {
-  const card = el.closest('.question-card');
-  const options = card.querySelectorAll('.question-options li');
-  
-  options.forEach(opt => {
-    opt.style.pointerEvents = 'none';
-    const idx = Array.from(options).indexOf(opt);
-    if (idx === correctIndex) {
-      opt.classList.add('correct');
-    } else if (opt === el && optIndex !== correctIndex) {
-      opt.classList.add('wrong');
-    }
-  });
-}
 
-function revealDailyAnswer(index, answer, analysis) {
-  const box = document.getElementById(`dailyAnswer${index}`);
-  box.classList.toggle('show');
-}
-
-function escapeHtml(text) {
-  return text.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '<br>');
-}
-
-// ========== 正式模拟考试 ==========
-function startExam() {
-  // 正式模考：4科各按比例出题，共90分钟
-  const totalExamQ = 90;
-  const count = Math.min(totalExamQ, questionBank.length);
-  
-  // 随机抽取题目
-  const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
-  examQuestions = shuffled.slice(0, count);
-  userAnswers = {};
-  
-  document.getElementById('totalQuestions').textContent = count;
-  document.getElementById('answeredCount').textContent = '0';
-  document.getElementById('progressFill').style.width = '0%';
-  
-  renderExamQuestions();
-  startTimer();
-}
 
 function renderExamQuestions() {
   const container = document.getElementById('examQuestions');
