@@ -10,8 +10,8 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}
-body{background:#5a3818;color:#fff;display:flex;flex-direction:column;min-height:100vh}
-.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(90,55,20,0.94);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.12);position:sticky;top:0;z-index:100}
+body{background:#6b5a10;color:#fff;display:flex;flex-direction:column;min-height:100vh}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:rgba(80,65,10,0.95);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,0.12);position:sticky;top:0;z-index:100}
 .logo{font-size:1.1rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px;text-decoration:none}
 .logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#FF6B35,#ff8c5a);border-radius:8px;display:flex;align-items:center;justify-content:center}
 .nav-links{display:flex;gap:4px}
@@ -103,15 +103,14 @@ body{background:#5a3818;color:#fff;display:flex;flex-direction:column;min-height
 .clear-btn:hover{border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7)}
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(max-width:768px){
-.nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(90,55,20,0.98);flex-direction:column;padding:12px;border-radius:0 0 16px 16px}
+.nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:rgba(80,65,10,0.98);flex-direction:column;padding:12px;border-radius:0 0 16px 16px}
 .nav-links.open{display:flex}
 .nav-toggle{display:flex}
 .msg{max-width:92%}
 .messages{padding:12px 14px;gap:12px}
 .chat-header{padding:12px 14px}
 .input-area{padding:0 14px 16px}
-.msg-actions{display:flex!important;opacity:0.4}
-.msg:hover .msg-actions{opacity:1}
+.msg-actions{display:flex!important;opacity:0.6}
 }
 </style>
 </head>
@@ -208,13 +207,17 @@ function escapeHtml(t){
 }
 
 /* ===== 引用功能 ===== */
-function quoteMessage(msgId){
-  var hist = chatHistory.find(h => h.id === msgId);
-  if(!hist) return;
-  quoteTarget = hist;
+function quoteMessage(el){
+  // 从按钮往上找到msg元素，获取文本
+  var msgEl = el.closest('.msg');
+  if(!msgEl) return;
+  var bubble = msgEl.querySelector('.msg-bubble');
+  if(!bubble) return;
+  var text = bubble.textContent.replace(/📎 引用/g,'').replace(/📚.*/,'').replace(/⏱.*/,'').trim();
+  quoteTarget = {text: text.substring(0,100), role: msgEl.classList.contains('bot') ? 'bot' : 'user'};
   var hint = document.getElementById('quoteHint');
   var hintText = document.getElementById('quoteHintText');
-  hintText.textContent = '📎 引用: ' + (hist.text || '').substring(0, 40) + '...';
+  hintText.textContent = '📎 引用: ' + text.substring(0, 40) + '...';
   hint.classList.add('show');
   inputEl.focus();
 }
@@ -278,7 +281,7 @@ function addMsg(role, html, save, msgText){
   var mid = 'msg_' + (++msgIdCounter);
   div.id = mid;
   var avatar = role === 'bot' ? '<img src="images/ai-avatar.jpg">' : '👤';
-  div.innerHTML = '<div class="msg-avatar">' + avatar + '</div><div class="msg-bubble">' + html + '<div class="msg-actions"><button class="quote-btn" onclick="quoteMessage(\'' + mid + '\')">📎 引用</button></div></div>';
+  div.innerHTML = '<div class="msg-avatar">' + avatar + '</div><div class="msg-bubble">' + html + '<div class="msg-actions"><button class="quote-btn" onclick="quoteMessage(this)">📎 引用</button></div></div>';
   msgContainer.appendChild(div);
   msgContainer.scrollTop = msgContainer.scrollHeight;
   if(save !== false){
@@ -441,12 +444,7 @@ async function doSendMessage(text, quote){
                 fullText = data.content;
                 bubble.innerHTML = renderMd(fullText);
                 // 保留引用按钮
-                if(!bubble.querySelector('.msg-actions')){
-                  var actions = document.createElement('div');
-                  actions.className = 'msg-actions';
-                  actions.innerHTML = '<button class="quote-btn" onclick="quoteMessage(\'' + botInfo.div.id + '\')">📎 引用</button>';
-                  bubble.appendChild(actions);
-                }
+                // msg-actions added after full response
                 msgContainer.scrollTop = msgContainer.scrollHeight;
               }
             }
@@ -491,8 +489,7 @@ async function doSendMessage(text, quote){
       // 引用按钮
       var actions = document.createElement('div');
       actions.className = 'msg-actions';
-      actions.innerHTML = '<button class="quote-btn">📎 引用</button>';
-      actions.querySelector('.quote-btn').onclick = function(){ quoteMessage(botInfo.div.id); };
+      actions.innerHTML = '<button class="quote-btn" onclick="quoteMessage(this)">📎 引用</button>';
       bubble.appendChild(actions);
 
       // 更新聊天记录
