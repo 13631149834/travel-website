@@ -268,19 +268,22 @@ async function sendMessage(){
           var data = JSON.parse(jsonStr);
           if(data.conversation_id) conversationId = data.conversation_id;
 
-          // 只处理answer类型的增量消息，忽略completed和verbose
+          // 只处理answer类型，忽略verbose/progress等辅助消息
           if(data.type === 'answer' && data.role === 'assistant'){
-            if(data.id) answerId = data.id;
-            if(data.content !== undefined && data.content !== null){
-              fullText = data.content; // completed消息包含完整文本，直接替换
-              if(!rendered){
-                clearInterval(timerInterval);
+            // delta消息：增量累加
+            if(data.content !== undefined && data.content !== null && data.content !== ''){
+              if(!answerId && data.id) answerId = data.id;
+              // 只处理同一个answer的消息
+              if(!answerId || data.id === answerId){
+                if(!rendered){
+                  clearInterval(timerInterval);
+                  rendered = true;
+                }
+                // completed消息包含完整文本，直接替换
+                fullText = data.content;
                 bubble.innerHTML = renderMd(fullText);
-                rendered = true;
-              } else {
-                bubble.innerHTML = renderMd(fullText);
+                msgContainer.scrollTop = msgContainer.scrollHeight;
               }
-              msgContainer.scrollTop = msgContainer.scrollHeight;
             }
           }
         } catch(e){}
