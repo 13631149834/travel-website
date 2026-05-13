@@ -574,10 +574,19 @@ let remainingTime = 90 * 60; // 正式考试90分钟
 
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', function() {
-  checkActivation();
-  renderDailyQuestions();
-  updateCountdown();
-  setupActivationInput();
+  try {
+    checkActivation();
+    if(typeof questionBank !== 'undefined' && questionBank.length > 0) {
+      renderDailyQuestions();
+    } else {
+      document.getElementById('dailyQuestions').innerHTML = '<div style="padding:20px;text-align:center;color:#C62828">题库加载失败，请刷新页面重试</div>';
+    }
+    updateCountdown();
+    setupActivationInput();
+  } catch(e) {
+    document.getElementById('dailyQuestions').innerHTML = '<div style="padding:20px;text-align:center;color:#C62828">页面加载出错: ' + e.message + '</div>';
+    console.error('Exam init error:', e);
+  }
 });
 
 function setupActivationInput() {
