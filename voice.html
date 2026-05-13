@@ -155,9 +155,9 @@ a { color: #8B4513 !important; }
     <p class="hero-tip">可以是别人的善意，也可以是你自己的感动</p>
     <div class="tabs">
       <button class="tab-btn active" onclick="filterPosts('all')"><span class="emoji">✨</span> 全部</button>
-      <button class="tab-btn" onclick="filterPosts('guide')"><span class="emoji">🏛️</span> 导游说</button>
-      <button class="tab-btn" onclick="filterPosts('tourist')"><span class="emoji">🎒</span> 游客说</button>
-      <button class="tab-btn" onclick="filterPosts('examinee')"><span class="emoji">📚</span> 备考人</button>
+      <button class="tab-btn" onclick="filterPosts('guide', this)"><span class="emoji">🏛️</span> 导游说</button>
+      <button class="tab-btn" onclick="filterPosts('tourist', this)"><span class="emoji">🎒</span> 游客说</button>
+      <button class="tab-btn" onclick="filterPosts('examinee', this)"><span class="emoji">📚</span> 备考人</button>
     </div>
   </div>
   <div class="container"><div class="posts-section"><div class="posts-grid" id="postsGrid"></div></div></div>
@@ -198,13 +198,20 @@ a { color: #8B4513 !important; }
 
     let currentFilter = 'all';
     let selectedIdentity = '';
-    function renderPosts(filter = 'all') {
-      const grid = document.getElementById('postsGrid');
-      const filtered = filter === 'all' ? posts : posts.filter(p => p.identity === filter);
-      grid.innerHTML = filtered.map(post => `<div class="post-card glass-card" data-identity="${post.identity}"><div class="post-header"><span class="identity-badge identity-${post.identity}">${post.identityText}</span><span class="post-meta">${post.author ? post.author + ' · ' : ''}${post.time}</span></div><div class="post-content">${post.content}</div><div class="post-footer"><button class="like-btn" onclick="toggleLike(${post.id}, this)">❤️ <span class="like-count">${post.likes}</span></button></div></div>`).join('');
+    function renderPosts(filter) {
+      filter = filter || 'all';
+      var grid = document.getElementById('postsGrid');
+      var filtered = filter === 'all' ? posts : posts.filter(function(p){ return p.identity === filter; });
+      grid.innerHTML = filtered.map(function(post) {
+        return '<div class="post-card glass-card" data-identity="' + post.identity + '">' +
+          '<div class="post-header"><span class="identity-badge identity-' + post.identity + '">' + post.identityText + '</span>' +
+          '<span class="post-meta">' + (post.author ? post.author + ' · ' : '') + post.time + '</span></div>' +
+          '<div class="post-content">' + post.content + '</div>' +
+          '<div class="post-footer"><button class="like-btn" onclick="toggleLike(' + post.id + ', this)">❤️ <span class="like-count">' + post.likes + '</span></button></div></div>';
+      }).join('');
     }
-    function filterPosts(identity) { currentFilter = identity; document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active')); event.target.closest('.tab-btn').classList.add('active'); renderPosts(identity); }
-    function toggleLike(id, btn) { btn.classList.toggle('liked'); const countSpan = btn.querySelector('.like-count'); let count = parseInt(countSpan.textContent); if (btn.classList.contains('liked')) { count++; } else { count--; } countSpan.textContent = count; // 更新数据并保存 const post = posts.find(p => p.id === id); if (post) { post.likes = count; savePosts(); } }
+    function filterPosts(identity, btn) { currentFilter = identity; document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')}); btn.classList.add('active'); renderPosts(identity); }
+    function toggleLike(id, btn) { btn.classList.toggle('liked'); var countSpan = btn.querySelector('.like-count'); var count = parseInt(countSpan.textContent); if (btn.classList.contains('liked')) { count++; } else { count--; } countSpan.textContent = count; var post = posts.find(function(p){ return p.id === id; }); if (post) { post.likes = count; savePosts(); } }
     function openModal() { document.getElementById('modalOverlay').classList.add('show'); document.body.style.overflow = 'hidden'; }
     function closeModal(e) { if (e && e.target !== e.currentTarget) return; document.getElementById('modalOverlay').classList.remove('show'); document.body.style.overflow = ''; document.querySelectorAll('.identity-option').forEach(opt => opt.classList.remove('selected')); document.getElementById('authorName').value = ''; document.getElementById('postContent').value = ''; document.getElementById('charCount').textContent = '0'; selectedIdentity = ''; }
     function selectIdentity(el, identity) { document.querySelectorAll('.identity-option').forEach(opt => opt.classList.remove('selected')); el.classList.add('selected'); selectedIdentity = identity; }
