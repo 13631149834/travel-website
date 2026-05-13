@@ -671,7 +671,7 @@ function renderDailySingle(idx) {
   
   var qType = q.type === 'multi' ? '多选题' : q.type === 'judge' ? '判断题' : '单选题';
   var html = '<div style="margin-bottom:12px;"><span style="font-size:0.8rem;color:#4E342E;font-weight:600;">第' + (idx+1) + '题 · ' + qType + '</span></div>';
-  html += '<div style="font-size:0.95rem;line-height:1.7;margin-bottom:16px;font-weight:500;">' + q.q + '</div>';
+  html += '<div style="font-size:0.95rem;line-height:1.7;margin-bottom:16px;font-weight:500;">' + q.question + '</div>';
   html += '<ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;">';
   
   var opts = q.type === 'judge' ? ['正确','错误'] : q.options;
@@ -695,7 +695,7 @@ function renderDailySingle(idx) {
       }
     }
     
-    html += '<li onclick="dailySelectOption(' + idx + ',' + oi + ')" style="padding:12px 16px;border:1px solid ' + borderColor + ';border-radius:10px;cursor:pointer;background:' + bgColor + ';transition:all 0.2s;font-weight:500;">' + String.fromCharCode(65+oi) + '. ' + opt + '</li>';
+    html += '<li onclick="dailySelectOption(' + idx + ',' + oi + ')" style="padding:12px 16px;border:1px solid ' + borderColor + ';border-radius:10px;cursor:pointer;background:' + bgColor + ';transition:all 0.2s;font-weight:500;">' + opt + '</li>';
   });
   html += '</ul>';
   
@@ -710,7 +710,7 @@ function renderDailySingle(idx) {
     } else {
       isCorrect = dailyUserAnswers[idx] === q.answer;
     }
-    html += '<div style="margin-top:10px;padding:10px;border-radius:8px;background:' + (isCorrect ? 'rgba(6,95,70,0.08)' : 'rgba(185,28,28,0.08)') + ';font-size:0.85rem;color:' + (isCorrect ? '#065F46' : '#B91C1C') + ';">' + (isCorrect ? '✓ 正确' : '✗ 错误') + (q.explain ? ' — ' + q.explain : '') + '</div>';
+    html += '<div style="margin-top:10px;padding:10px;border-radius:8px;background:' + (isCorrect ? 'rgba(6,95,70,0.08)' : 'rgba(185,28,28,0.08)') + ';font-size:0.85rem;color:' + (isCorrect ? '#065F46' : '#B91C1C') + ';">' + (isCorrect ? '✓ 正确' : '✗ 错误') + (q.analysis ? ' — ' + q.analysis : '') + '</div>';
   }
   
   wrap.innerHTML = html;
@@ -843,7 +843,7 @@ function renderSingleQuestion(idx) {
       cls = 'selected';
     }
     var clickHandler = isAnswered ? '' : 'onclick="selectExamAnswer(' + idx + ',' + i + ')"';
-    html += '<li class="' + cls + '" ' + clickHandler + '><span class="opt-letter">' + String.fromCharCode(65+i) + '</span> ' + opt + '</li>';
+    html += '<li class="' + cls + '" ' + clickHandler + '>' + opt + '</li>';
   });
   html += '</ul>';
   

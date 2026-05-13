@@ -40,7 +40,7 @@ body{background:#FDF8F4;color:#3D2B1F;font-weight:400;display:flex;flex-directio
 .msg.bot .msg-bubble{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.88);border-top-left-radius:4px}
 .msg.user .msg-bubble{background:linear-gradient(135deg,#D4654A,#E8956E);border-top-right-radius:4px}
 /* 引用消息样式 */
-.msg-quote{background:rgba(212,101,74,0.08);border-left:3px solid #D4654A;padding:6px 10px;margin-bottom:8px;border-radius:0 6px 6px 0;font-size:0.78rem;color:#3D2B1F;max-height:50px;overflow:hidden;line-height:1.4;opacity:0.85}
+.msg-quote{background:rgba(212,101,74,0.06);border-left:3px solid #D4654A;padding:8px 12px;margin-bottom:10px;border-radius:0 8px 8px 0;font-size:0.76rem;color:#5D4037;max-height:60px;overflow:hidden;line-height:1.5;opacity:0.75}
 .msg-quote .quote-author{color:#8B4513;font-weight:600;font-size:0.78rem;margin-bottom:2px}
 /* 引用按钮 - hover时显示 */
 .msg-actions{position:absolute;top:8px;right:8px;display:none;gap:4px}
@@ -220,7 +220,14 @@ a { color: #8B4513 !important; }
       <span id="quoteHintText">引用消息</span>
       <button class="cancel-quote" onclick="cancelQuote()">✕</button>
     </div>
-    <div class="input-wrap">
+    <div class="send-preview" id="sendPreview">
+        <img id="previewImg" src="" alt="预览">
+        <span id="previewName">图片</span>
+        <span class="remove-img" onclick="cancelImage()">✕</span>
+      </div>
+      <div class="input-wrap">
+      <button class="img-btn" onclick="document.getElementById('imgInput').click()">🖼️</button>
+      <input type="file" id="imgInput" accept="image/*" style="display:none" onchange="handleImageUpload(this)">
       <textarea id="userInput" placeholder="输入你的问题..." rows="1" onkeydown="handleKey(event)"></textarea>
       <button class="send-btn" id="sendBtn" onclick="sendMessage()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>
@@ -605,7 +612,7 @@ function showImagePreview(src) {
 // Override sendMessage to support images
 var _origSendMessage = sendMessage;
 sendMessage = function() {
-  var input = document.getElementById('msgInput');
+  var input = document.getElementById('userInput');
   var text = input.value.trim();
   if (!text && !pendingImage) return;
   
@@ -629,6 +636,6 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
-</script></script>
+</script>
 </body>
 </html>
