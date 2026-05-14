@@ -669,10 +669,10 @@ sendMessage = function() {
   _origSendMessage();
 };
 
-// 图片发送到Coze API
+// 图片发送到Coze API（先上传文件获取file_id，再用object_string格式发送）
 async function doSendImageMessage(imageDataUrl, text, quote) {
   sendBtn.disabled = true;
-  document.getElementById('statusText').textContent = '小游正在看图片...';
+  document.getElementById('statusText').textContent = '上传图片中...';
   
   var botInfo = addBotStreaming();
   var bubble = botInfo.div.querySelector('.msg-bubble');
@@ -682,19 +682,54 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
     prompt = '[引用消息: "' + (quote.text||'').substring(0,100) + '"]\n' + prompt;
   }
   
-  var body = {
-    bot_id: BOT_ID,
-    user_id: 'web_user',
-    stream: true,
-    auto_save_history: true,
-    additional_messages: [
-      { role: 'user', content: prompt, content_type: 'text' },
-      { role: 'user', content: imageDataUrl, content_type: 'image' }
-    ]
-  };
-  if(conversationId) body.conversation_id = conversationId;
-  
   try {
+    // Step 1: 将base64 data URL转为Blob并上传到Coze文件API
+    var arr = imageDataUrl.split(',');
+    var mime = arr[0].match(/:(.*?);/)[1];
+    var bstr = atob(arr[1]);
+    var n = bstr.length;
+    var u8arr = new Uint8Array(n);
+    for(var i = 0; i < n; i++) u8arr[i] = bstr.charCodeAt(i);
+    var blob = new Blob([u8arr], {type: mime});
+    var ext = mime.split('/')[1] || 'png';
+    var fileName = 'image_' + Date.now() + '.' + ext;
+    
+    var formData = new FormData();
+    formData.append('file', blob, fileName);
+    
+    var uploadResp = await fetch('https://api.coze.cn/v1/files/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + PAT_TOKEN
+      },
+      body: formData
+    });
+    
+    var uploadData = await uploadResp.json();
+    if(uploadData.code !== 0 || !uploadData.data || !uploadData.data.id) {
+      throw new Error('文件上传失败: ' + (uploadData.msg || '未知错误'));
+    }
+    
+    var fileId = uploadData.data.id;
+    document.getElementById('statusText').textContent = '小游正在看图片...';
+    
+    // Step 2: 使用object_string格式发送消息（text + image file_id）
+    var body = {
+      bot_id: BOT_ID,
+      user_id: 'web_user',
+      stream: true,
+      auto_save_history: true,
+      additional_messages: [{
+        role: 'user',
+        content: JSON.stringify([
+          {type: 'text', text: prompt},
+          {type: 'image', file_id: fileId}
+        ]),
+        content_type: 'object_string'
+      }]
+    };
+    if(conversationId) body.conversation_id = conversationId;
+    
     var resp = await fetch('https://api.coze.cn/v3/chat', {
       method: 'POST',
       headers: {
@@ -783,7 +818,7 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
     }
   } catch(e) {
     clearInterval(timerInterval);
-    bubble.innerHTML = '<span style="color:#666666;">网络错误，请检查后重试</span>';
+    bubble.innerHTML = '<span style="color:#666666;">图片发送失败：' + escHtml(e.message || '网络错误') + '</span>';
   }
   
   sendBtn.disabled = false;
