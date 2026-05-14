@@ -86,8 +86,8 @@ a{text-decoration:none;color:inherit}
 .question-options li{padding:12px 16px;border:1px solid rgba(255,255,255,0.28);border-radius:12px;margin-bottom:8px;font-size:0.92rem;color:#666666;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px}
 .question-options li:hover{border-color:#666666;background:rgba(212,101,74,0.1)}
 .question-options li.selected{border-color:#666666;background:rgba(212,101,74,0.2)}
-.question-options li.correct{border-color:#065F46;background:rgba(16,185,129,0.15);color:#065F46}
-.question-options li.wrong{border-color:#B91C1C;background:rgba(239,68,68,0.15);color:#B91C1C}
+.question-options li.correct{border-color:#065F46;border-width:2px;background:rgba(16,185,129,0.15);color:#065F46;font-weight:600}
+.question-options li.wrong{border-color:#B91C1C;border-width:2px;background:rgba(239,68,68,0.15);color:#B91C1C;font-weight:600}
 .question-options li .opt-letter{width:24px;height:24px;border:1px solid #4C8BF5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;flex-shrink:0;background:#F0F5FF}
 .question-options li.selected .opt-letter{background:#FFFFFF;border-color:#666666}
 .question-options li.correct .opt-letter{background:#10b981;border-color:#065F46}
@@ -704,8 +704,8 @@ function renderDailySingle(idx) {
     } else {
       selected = dailyUserAnswers[idx] === oi;
     }
-    var borderColor = selected ? '#FFFFFF' : 'rgba(0,0,0,0.1)';
-    var bgColor = selected ? '#F0F5FF' : '#FFFFFF';
+    var borderColor = selected ? '#4C8BF5' : 'rgba(0,0,0,0.1)';
+    var bgColor = selected ? '#E8F0FE' : '#FFFFFF';
     
     if(dailyAnswered[idx] !== undefined) {
       if(q.type === 'multi') {
@@ -717,7 +717,17 @@ function renderDailySingle(idx) {
       }
     }
     
-    html += '<li onclick="dailySelectOption(' + idx + ',' + oi + ')" style="padding:12px 16px;border:1px solid ' + borderColor + ';border-radius:10px;cursor:pointer;background:' + bgColor + ';transition:all 0.2s;font-weight:500;">' + opt + '</li>';
+    var optPrefix = '';
+    if(dailyAnswered[idx] !== undefined) {
+      if(q.type === 'multi') {
+        if(Array.isArray(q.answer) && q.answer.includes(oi)) optPrefix = '✅ ';
+        else if(selected) optPrefix = '❌ ';
+      } else {
+        if(oi === q.answer) optPrefix = '✅ ';
+        else if(selected && oi !== q.answer) optPrefix = '❌ ';
+      }
+    }
+    html += '<li onclick="dailySelectOption(' + idx + ',' + oi + ')" style="padding:12px 16px;border:1px solid ' + borderColor + ';border-radius:10px;cursor:pointer;background:' + bgColor + ';transition:all 0.2s;font-weight:500;">' + optPrefix + opt + '</li>';
   });
   html += '</ul>';
   
