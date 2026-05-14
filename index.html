@@ -361,6 +361,79 @@ a { color: #4C8BF5 !important; }
 .mode-tab.active { color: #FFFFFF !important; background: #4C8BF5 !important; }
 .tab-icon { color: #999999 !important; }
 .tab-text { color: #999999 !important; }
+
+/* 学习进度卡片 */
+.progress-card {
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.progress-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  flex: 1;
+}
+.stat-item {
+  text-align: center;
+  padding: 16px;
+  background: #F8F9FA;
+  border-radius: 16px;
+  border: 1px solid #F0F0F0;
+}
+.stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #4C8BF5;
+  display: block;
+  margin-bottom: 4px;
+}
+.stat-label {
+  font-size: 0.85rem;
+  color: #666666;
+  display: block;
+}
+.progress-circle {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+}
+.progress-percent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #4C8BF5;
+}
+.progress-bar-container {
+  height: 8px;
+  background: #F0F0F0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #4C8BF5 0%, #6BA3F7 100%);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+.progress-tip {
+  font-size: 0.85rem;
+  color: #666666;
+  margin: 0;
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -472,7 +545,48 @@ a { color: #4C8BF5 !important; }
 
 
 
-    <div class="faq-section">
+    
+    <!-- 学习进度卡片 -->
+    <div class="section">
+      <h2 class="section-title">我的学习进度</h2>
+      <p class="section-desc">追踪你的备考进展，持续提升</p>
+      <div class="progress-card glass-card">
+        <div class="progress-header">
+          <div class="progress-stats">
+            <div class="stat-item">
+              <span class="stat-value" id="questionsDone">0</span>
+              <span class="stat-label">已做题目</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="guidesRead">0</span>
+              <span class="stat-label">已读导游词</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="examsTaken">0</span>
+              <span class="stat-label">模拟考试</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="lastStudy">从未学习</span>
+              <span class="stat-label">最近学习</span>
+            </div>
+          </div>
+          <div class="progress-circle">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="54" fill="none" stroke="#F0F0F0" stroke-width="8"/>
+              <circle id="progressCircle" cx="60" cy="60" r="54" fill="none" stroke="#4C8BF5" stroke-width="8"
+                stroke-dasharray="339.292" stroke-dashoffset="339.292" stroke-linecap="round"
+                transform="rotate(-90 60 60)"/>
+            </svg>
+            <div class="progress-percent" id="progressPercent">0%</div>
+          </div>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+        <p class="progress-tip">💡 坚持每天刷题、读导游词，目标达成率会持续提升！</p>
+      </div>
+    </div>
+<div class="faq-section">
       <h2 class="section-title" style="justify-content: center; margin-bottom: 24px;">常见问题</h2>
       <div class="faq-list">
         <div class="faq-item">
@@ -622,7 +736,63 @@ a { color: #4C8BF5 !important; }
       if (e.target === this) closeDatePicker();
     });
 
-    document.addEventListener('DOMContentLoaded', initCountdown);
+    
+    // 学习进度管理
+    const PROGRESS_KEY = 'youdao_study_progress';
+    
+    function getProgress() {
+      const data = localStorage.getItem(PROGRESS_KEY);
+      if (data) {
+        return JSON.parse(data);
+      }
+      return {questionsDone: 0, guidesRead: 0, examsTaken: 0, lastStudy: null};
+    }
+    
+    function updateProgressDisplay() {
+      const progress = getProgress();
+      document.getElementById('questionsDone').textContent = progress.questionsDone;
+      document.getElementById('guidesRead').textContent = progress.guidesRead;
+      document.getElementById('examsTaken').textContent = progress.examsTaken;
+      
+      if (progress.lastStudy) {
+        const lastDate = new Date(progress.lastStudy);
+        const now = new Date();
+        const diffDays = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+        if (diffDays === 0) {
+          document.getElementById('lastStudy').textContent = '今天';
+        } else if (diffDays === 1) {
+          document.getElementById('lastStudy').textContent = '昨天';
+        } else if (diffDays < 7) {
+          document.getElementById('lastStudy').textContent = diffDays + '天前';
+        } else {
+          document.getElementById('lastStudy').textContent = lastDate.toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'});
+        }
+      }
+      
+      // 计算完成度 (目标: 1000题 + 50篇导游词 + 10次考试 = 1060)
+      const targetQuestions = 1000;
+      const targetGuides = 50;
+      const targetExams = 10;
+      const totalTarget = targetQuestions + targetGuides + targetExams;
+      const currentProgress = Math.min(progress.questionsDone, targetQuestions) + 
+                               Math.min(progress.guidesRead, targetGuides) + 
+                               Math.min(progress.examsTaken, targetExams);
+      const percent = Math.round((currentProgress / totalTarget) * 100);
+      
+      document.getElementById('progressPercent').textContent = percent + '%';
+      document.getElementById('progressBar').style.width = percent + '%';
+      
+      // 圆形进度条
+      const circle = document.getElementById('progressCircle');
+      const circumference = 339.292; // 2 * PI * 54
+      circle.style.strokeDashoffset = circumference - (percent / 100) * circumference;
+    }
+    
+    function initProgress() {
+      updateProgressDisplay();
+    }
+    
+document.addEventListener('DOMContentLoaded', initCountdown);
   </script>
 
 <div class="bottom-tabs" style="position:fixed;bottom:0;left:0;right:0;background:#FFFFFF;border-top:1px solid #F0F0F0;display:flex;justify-content:space-around;padding:8px 0 max(8px,env(safe-area-inset-bottom));z-index:100;">
