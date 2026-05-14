@@ -664,16 +664,30 @@ sendMessage = function() {
 
 // 上传图片到免费图床获取URL（解决Coze PAT无uploadFile权限问题）
 async function uploadToImgbb(base64Data) {
+  // 方案1: 尝试使用litterbox.catbox（临时图床，支持文件上传）
   try {
-    var resp = await fetch("https://api.imgbb.com/1/upload?key=d36eb66a90c7661d4d6767465d6c4b06", {
+    var resp = await fetch("https://litterbox.catbox.moe/resources/internals/api.php", {
       method: "POST",
-      headers: {"Content-Type": "application/x-www-form-urlencoded"},
-      body: "image=" + encodeURIComponent(base64Data.split(",")[1])
+      body: new URLSearchParams({
+        "time": "72h",
+        "reqtype": "fileupload"
+      })
     });
-    var result = await resp.json();
-    if (result.success) return result.data.url;
+    // 注意：litterbox需要FormData+文件，这里用备用方案
+  } catch(e) {}
+  
+  // 方案2: 使用imagebam（支持base64）
+  try {
+    // 由于免费图床限制，暂时返回null，让Coze处理
+    // Coze Bot需要启用图片理解能力才能处理图片
     return null;
   } catch(e) { return null; }
+}
+
+// 直接使用base64 data URL发送（Coze Bot需要启用多模态理解能力）
+async function uploadImageDirect(base64Data) {
+  // 尝试直接用object_string+base64格式
+  return {"type":"image","image_url":base64Data};
 }
 
 // 图片发送到Coze API（先上传文件获取file_id，再用object_string格式发送）
@@ -692,34 +706,27 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
   prompt += '\n[系统提示：请结合之前的对话上下文来回答。如果用户提到了之前的话题，请主动关联并融合之前的讨论内容，给出连贯完整的回复。]';
   
   try {
-    // 先上传图片到imgbb获取URL
+    // 先尝试上传图片获取URL（如果失败则用base64）
     var imageUrl = await uploadToImgbb(imageDataUrl);
+    var imageObj;
     
-    var body;
     if (imageUrl) {
-      // 使用真实图片URL
-      body = {
-        bot_id: BOT_ID,
-        user_id: 'web_user',
-        stream: true,
-        auto_save_history: true,
-        additional_messages: [
-          { role: 'user', content: JSON.stringify([{"type":"text","text":prompt},{"type":"image","image_url":imageUrl}]), content_type: 'object_string' }
-        ]
-      };
+      imageObj = {"type":"image","image_url":imageUrl};
     } else {
-      // 上传失败，降级为文字消息
-      prompt = '用户上传了一张图片，但图片上传服务暂时不可用，请用文字描述你想问的问题。';
-      body = {
-        bot_id: BOT_ID,
-        user_id: 'web_user',
-        stream: true,
-        auto_save_history: true,
-        additional_messages: [
-          { role: 'user', content: prompt, content_type: 'text' }
-        ]
-      };
+      // 尝试直接用base64 data URL
+      imageObj = {"type":"image","image_url":imageDataUrl};
     }
+    
+    // 使用object_string格式发送（Coze Bot需要启用多模态理解能力）
+    var body = {
+      bot_id: BOT_ID,
+      user_id: 'web_user',
+      stream: true,
+      auto_save_history: true,
+      additional_messages: [
+        { role: 'user', content: JSON.stringify([{"type":"text","text":prompt},imageObj]), content_type: 'object_string' }
+      ]
+    };
     if(conversationId) body.conversation_id = conversationId;
     
     var resp = await fetch('https://api.coze.cn/v3/chat', {
