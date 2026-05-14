@@ -195,15 +195,50 @@ a { color: #4C8BF5 !important; }
   .toc{background:#F9FAFB;border-radius:18px;padding:20px;margin-bottom:24px}
   .toc-list{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
 
+
+.nav-more{position:relative}
+.nav-more-btn{cursor:pointer;padding:6px 14px;font-size:0.9rem;color:#666}
+.nav-more:hover .nav-dropdown{display:block}
+.nav-dropdown{display:none;position:absolute;top:100%;right:0;background:#FFFFFF;border:1px solid #F0F0F0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:160px;z-index:200;padding:8px 0}
+.nav-dropdown a{display:block;padding:10px 20px;color:#666;font-size:0.9rem;white-space:nowrap}
+.nav-dropdown a:hover{background:#F0F5FF;color:#4C8BF5}
+.nav-links a.active{background:#4C8BF5;color:#FFFFFF!important;border-radius:20px;padding:6px 14px}
+.nav-more-btn.active{background:#4C8BF5;color:#FFFFFF!important;border-radius:20px;padding:6px 14px}
+.bottom-tabs .tab-active span{color:#4C8BF5!important}
+@media(max-width:768px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:#FFFFFF;border-bottom:1px solid #F0F0F0;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+  .nav-links.show{display:flex}
+  .nav-links a,.nav-more-btn{padding:12px 0}
+  .nav-toggle{display:block;background:none;border:none;font-size:1.5rem;cursor:pointer}
+  .nav-dropdown{position:static;box-shadow:none;border:none;padding-left:16px;display:none}
+  .nav-more:hover .nav-dropdown,.nav-more.open .nav-dropdown{display:block}
+}
 </style>
 </head>
 <body>
-  <nav class="navbar">
-    <a class="logo" href="index.html"><div class="logo-icon"><svg fill="white" height="18" viewBox="0 0 24 24" width="18"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>游导旅游</a>
-    <div class="nav-links" id="navLinks">
-      <a href="index.html">首页</a><a href="chat.html">AI助手</a><a href="exam-guide.html">备考攻略</a><a href="province-exam.html">各省备考</a><a href="exam-simulator.html">模拟考试</a><a href="travel-knowledge.html" class="active">旅行知识</a><a href="voice.html">发声墙</a><a href="resources.html">资料套餐</a>
+      <nav class="navbar">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🏠</div>
+      <span>游导旅游</span>
+    </a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="exam-guide.html">学习中心</a>
+      <a href="exam-simulator.html">刷题</a>
+      <a href="chat.html">AI助手</a>
+      <div class="nav-more">
+              <span class="nav-more-btn active">更多 ▾</span>
+        <div class="nav-dropdown">
+          <a href="province-exam.html">各省备考</a>
+          <a href="free-materials.html">免费资料</a>
+          <a href="travel-knowledge.html">旅行知识</a>
+          <a href="resources.html">资料套餐</a>
+          <a href="voice.html">发声墙</a>
+          <a href="travel-tools.html">备考工具箱</a>
+        </div>
+      </div>
     </div>
-    <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')"><span></span><span></span><span></span></div>
   </nav>
   <div class="hero"><h1>备考工具箱</h1><p>考试倒计时 · 学习计划 · 知识点速查 · 模拟考试</p></div>
   <div class="container">
@@ -512,12 +547,12 @@ a { color: #4C8BF5 !important; }
     
 </script>
 
-<div class="bottom-tabs" max(8px,env(safe-area-inset-bottom));z-index:100;">
-  <a href="index.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:#4C8BF5;text-decoration:none;"><span style="font-size:1.2rem;">🏠</span>首页</a>
-  <a href="exam-guide.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:#4C8BF5;text-decoration:none;"><span style="font-size:1.2rem;">📖</span>学知识</a>
-  <a href="exam-simulator.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:#4C8BF5;text-decoration:none;"><span style="font-size:1.2rem;">✏️</span>刷题</a>
-  <a href="chat.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:#4C8BF5;text-decoration:none;"><span style="font-size:1.2rem;">🤖</span>AI助手</a>
-  <a href="province-exam.html" style="display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.7rem;color:#4C8BF5;text-decoration:none;"><span style="font-size:1.2rem;">🗺️</span>选省份</a>
+<div class="bottom-tabs">
+  <a href="index.html" class="tab-active"><span>🏠</span><span>首页</span></a>
+  <a href="exam-guide.html"><span>📚</span><span>学习</span></a>
+  <a href="exam-simulator.html"><span>✏️</span><span>刷题</span></a>
+  <a href="chat.html"><span>🤖</span><span>AI</span></a>
+  <a href="resources.html"><span>👤</span><span>我的</span></a>
 </div>
 </body>
 </html>

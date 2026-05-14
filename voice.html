@@ -133,20 +133,52 @@ a{text-decoration:none;color:inherit}
   .fab{right:32px;bottom:32px}
   .hero{padding:40px 24px 24px}
 
+
+.nav-more{position:relative}
+.nav-more-btn{cursor:pointer;padding:6px 14px;font-size:0.9rem;color:#666}
+.nav-more:hover .nav-dropdown{display:block}
+.nav-dropdown{display:none;position:absolute;top:100%;right:0;background:#FFFFFF;border:1px solid #F0F0F0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:160px;z-index:200;padding:8px 0}
+.nav-dropdown a{display:block;padding:10px 20px;color:#666;font-size:0.9rem;white-space:nowrap}
+.nav-dropdown a:hover{background:#F0F5FF;color:#4C8BF5}
+.nav-links a.active{background:#4C8BF5;color:#FFFFFF!important;border-radius:20px;padding:6px 14px}
+.nav-more-btn.active{background:#4C8BF5;color:#FFFFFF!important;border-radius:20px;padding:6px 14px}
+.bottom-tabs .tab-active span{color:#4C8BF5!important}
+@media(max-width:768px){
+  .nav-links{display:none;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:#FFFFFF;border-bottom:1px solid #F0F0F0;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+  .nav-links.show{display:flex}
+  .nav-links a,.nav-more-btn{padding:12px 0}
+  .nav-toggle{display:block;background:none;border:none;font-size:1.5rem;cursor:pointer}
+  .nav-dropdown{position:static;box-shadow:none;border:none;padding-left:16px;display:none}
+  .nav-more:hover .nav-dropdown,.nav-more.open .nav-dropdown{display:block}
+}
 </style>
 </head>
 <body>
 
-<nav class="navbar">
-  <a class="logo" href="index.html">
-    <div class="logo-icon"><svg fill="white" height="18" viewBox="0 0 24 24" width="18"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>
-    游导旅游
-  </a>
-  <div class="nav-links" id="navLinks">
-    <a href="index.html">首页</a><a href="chat.html">AI助手</a><a href="exam-guide.html">备考攻略</a><a href="province-exam.html">各省备考</a><a href="exam-simulator.html">模拟考试</a><a href="travel-knowledge.html">旅行知识</a><a href="voice.html" class="active">发声墙</a><a href="resources.html">资料套餐</a>
-  </div>
-  <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')"><span></span><span></span><span></span></div>
-</nav>
+    <nav class="navbar">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🏠</div>
+      <span>游导旅游</span>
+    </a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="exam-guide.html">学习中心</a>
+      <a href="exam-simulator.html">刷题</a>
+      <a href="chat.html">AI助手</a>
+      <div class="nav-more">
+              <span class="nav-more-btn active">更多 ▾</span>
+        <div class="nav-dropdown">
+          <a href="province-exam.html">各省备考</a>
+          <a href="free-materials.html">免费资料</a>
+          <a href="travel-knowledge.html">旅行知识</a>
+          <a href="resources.html">资料套餐</a>
+          <a href="voice.html">发声墙</a>
+          <a href="travel-tools.html">备考工具箱</a>
+        </div>
+      </div>
+    </div>
+  </nav>
 
 <div class="hero">
   <h1>发声墙</h1>
@@ -187,95 +219,11 @@ a{text-decoration:none;color:inherit}
 <div class="toast" id="toast">发布成功！感谢你的分享 ✨</div>
 
 <div class="bottom-tabs">
-  <a class="bottom-tab" href="index.html"><span class="tab-icon">🏠</span>首页</a>
-  <a class="bottom-tab" href="exam-guide.html"><span class="tab-icon">📖</span>学知识</a>
-  <a class="bottom-tab" href="exam-simulator.html"><span class="tab-icon">✏️</span>刷题</a>
-  <a class="bottom-tab" href="chat.html"><span class="tab-icon">🤖</span>AI助手</a>
-  <a class="bottom-tab" href="province-exam.html"><span class="tab-icon">🗺️</span>选省份</a>
+  <a href="index.html" class="tab-active"><span>🏠</span><span>首页</span></a>
+  <a href="exam-guide.html"><span>📚</span><span>学习</span></a>
+  <a href="exam-simulator.html"><span>✏️</span><span>刷题</span></a>
+  <a href="chat.html"><span>🤖</span><span>AI</span></a>
+  <a href="resources.html"><span>👤</span><span>我的</span></a>
 </div>
-
-<script>
-var defaultPosts=[
-{id:1,identity:'examinee',identityText:'备考人',content:'买了B包资料，配合AI助手每天刷题2小时，笔试终于过了！政策法规那个口诀真的太好记了，考试好几题都是口诀里的内容。',author:'小陈',time:'3天前',likes:12},
-{id:2,identity:'examinee',identityText:'备考人',content:'非旅游专业零基础备考，导基知识量太大了，还好有AI助手能随时问，比翻书快多了。面试部分还在练，加油！',author:'阿杰',time:'5天前',likes:8},
-{id:3,identity:'examinee',identityText:'备考人',content:'第二次考了，上次差3分没过。这次换了复习方法，跟着备考攻略的节奏走，比上次有信心多了。',author:'再来一次',time:'1周前',likes:15},
-{id:4,identity:'examinee',identityText:'备考人',content:'各省导基真的太细了，每个省的景点、美食、民俗都要记。我的方法是每天攻一个省，用AI助手测一测，效果不错。',author:'考证ing',time:'1周前',likes:6},
-{id:5,identity:'examinee',identityText:'备考人',content:'最怕面试了，站在那里脑子一片空白。后来用AI模拟面试练了十几遍，终于能流利讲完导游词了。',author:'社恐选手',time:'2周前',likes:21},
-{id:6,identity:'guide',identityText:'导游',content:'带团三年了，当年备考时最痛苦的就是背导游词。建议学弟学妹们一定要用自己的话讲，不要死记硬背，考官一听就知道你是不是在背书。',author:'老导游阿文',time:'2天前',likes:18},
-{id:7,identity:'guide',identityText:'导游',content:'分享一下面试通关经验：开场微笑问好，讲解时要有手势和眼神交流，遇到忘词别慌，自然过渡到下一段就好。考官看的是你的台风，不是背书能力。',author:'带团小能手',time:'4天前',likes:25},
-{id:8,identity:'guide',identityText:'导游',content:'做了5年导游，说说这个行业的真实感受。收入跟淡旺季关系很大，旺季月入2万+不稀奇，淡季可能就几千。但自由度是真的高，认识天南海北的朋友。',author:'行走江湖',time:'1周前',likes:14},
-{id:9,identity:'tourist',identityText:'游客',content:'去九寨沟遇到一个超好的导游，讲解特别生动，把藏族文化讲得引人入胜。好导游真的能让旅行体验翻倍！',author:'旅行小达人',time:'1天前',likes:9},
-{id:10,identity:'tourist',identityText:'游客',content:'跟团游被坑过一次，导游强制购物体验极差。后来学了点导游证知识，知道这是违规的，现在投诉有底气了哈哈。',author:'精明旅客',time:'3天前',likes:11},
-{id:11,identity:'examinee',identityText:'备考人',content:'我是日语专业的，想考外语导游证。感觉比中文导游多了语言关，但薪资也更高。有没有同样备考外语导游的姐妹？',author:'日语小樱',time:'6天前',likes:7},
-{id:12,identity:'examinee',identityText:'备考人',content:'地方导基真的让人头大，一个省几十个景点+美食+民俗+历史...我的记忆方法是画思维导图，先把框架搭起来，再往里填细节。',author:'思维导图党',time:'1周前',likes:16},
-{id:13,identity:'guide',identityText:'导游',content:'给备考的同学提个醒：笔试只是第一步，面试才是拉开差距的关键！一定要提前准备导游词，找朋友模拟考官，练到脱稿为止。',author:'前辈指路',time:'5天前',likes:22},
-{id:14,identity:'tourist',identityText:'游客',content:'在丽江遇到一个特别专业的导游，纳西族文化讲得特别透彻。后来才知道她考导游证时就特别用功，还拿了面试高分。专业真的能感受到！',author:'文化爱好者',time:'1周前',likes:5},
-{id:15,identity:'examinee',identityText:'备考人',content:'政策法规太难背了...各种旅游法、消费者权益保护法、合同法，条款多到怀疑人生。不过用AI助手梳理重点之后清晰多了，至少知道哪些是高频考点。',author:'法条苦手',time:'4天前',likes:13},
-{id:16,identity:'examinee',identityText:'备考人',content:'我是四川的，省考导基要背九寨沟、峨眉山、都江堰这些导游词，感觉背完一遍忘一半。后来每天对着镜子讲一遍，慢慢就记住了。',author:'川妹子备考中',time:'2天前',likes:19}
-];
-
-var posts=JSON.parse(localStorage.getItem('youdao_posts')||'null')||defaultPosts;
-function savePosts(){localStorage.setItem('youdao_posts',JSON.stringify(posts))}
-var currentFilter='all',selectedIdentity='';
-
-function renderPosts(filter){
-  filter=filter||currentFilter;
-  var grid=document.getElementById('postsGrid');
-  var filtered=filter==='all'?posts:posts.filter(function(p){return p.identity===filter});
-  if(filtered.length===0){grid.innerHTML='<div class="empty-state">暂无内容，快来第一个发声吧 ✨</div>';return}
-  grid.innerHTML=filtered.map(function(post){
-    return '<div class="post-card" data-identity="'+post.identity+'">'+
-      '<div class="post-header"><span class="identity-badge identity-'+post.identity+'">'+post.identityText+'</span>'+
-      '<span class="post-meta">'+(post.author?post.author+' · ':'')+post.time+'</span></div>'+
-      '<div class="post-content">'+post.content+'</div>'+
-      '<div class="post-footer"><button class="like-btn" onclick="toggleLike('+post.id+',this)">❤️ <span class="like-count">'+post.likes+'</span></button></div></div>'
-  }).join('')
-}
-
-function filterPosts(identity,btn){
-  currentFilter=identity;
-  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
-  btn.classList.add('active');
-  renderPosts(identity)
-}
-
-function toggleLike(id,btn){
-  btn.classList.toggle('liked');
-  var s=btn.querySelector('.like-count'),c=parseInt(s.textContent);
-  c=btn.classList.contains('liked')?c+1:c-1;s.textContent=c;
-  var p=posts.find(function(x){return x.id===id});
-  if(p){p.likes=c;savePosts()}
-}
-
-function openModal(){document.getElementById('modalOverlay').classList.add('show');document.body.style.overflow='hidden'}
-function closeModal(e){
-  if(e&&e.target!==e.currentTarget)return;
-  document.getElementById('modalOverlay').classList.remove('show');document.body.style.overflow='';
-  document.querySelectorAll('.identity-option').forEach(function(o){o.classList.remove('selected')});
-  document.getElementById('authorName').value='';document.getElementById('postContent').value='';
-  document.getElementById('charCount').textContent='0';selectedIdentity=''
-}
-
-function selectIdentity(el,id){
-  document.querySelectorAll('.identity-option').forEach(function(o){o.classList.remove('selected')});
-  el.classList.add('selected');selectedIdentity=id
-}
-
-function updateCharCount(){document.getElementById('charCount').textContent=document.getElementById('postContent').value.length}
-
-function submitPost(){
-  var content=document.getElementById('postContent').value.trim();
-  var author=document.getElementById('authorName').value.trim()||'匿名';
-  if(!content){alert('请输入想说的话');return}
-  if(!selectedIdentity){alert('请选择你的身份');return}
-  var it=selectedIdentity==='guide'?'导游':selectedIdentity==='tourist'?'游客':'备考人';
-  posts.unshift({id:Date.now(),identity:selectedIdentity,identityText:it,content:content,author:author,time:'刚刚',likes:0});
-  savePosts();renderPosts(currentFilter);closeModal();
-  var t=document.getElementById('toast');t.classList.add('show');
-  setTimeout(function(){t.classList.remove('show')},3000)
-}
-
-renderPosts();
-</script>
 </body>
 </html>
