@@ -31,7 +31,7 @@ body{background:#FFFFFF;color: #666666;font-weight:400;display:flex;flex-directi
 .chat-header-info h2{font-size:1rem;font-weight:700}
 .chat-header-info p{font-size:0.75rem;color: #666666}
 .messages{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:16px;-webkit-overflow-scrolling:touch}
-.msg{display:flex;gap:10px;max-width:88%;animation:fadeIn 0.3s ease}
+.msg{display:flex;gap:10px;max-width:88%;animation:msgIn 0.15s ease}
 .msg.user{align-self:flex-end;flex-direction:row-reverse}
 .msg-avatar{width:32px;height:32px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:0.8rem;overflow:hidden}
 .msg.bot .msg-avatar{background:#4C8BF5}
@@ -119,7 +119,7 @@ body{background:#FFFFFF;color: #666666;font-weight:400;display:flex;flex-directi
 .history-notice{font-size:0.75rem;color:#616161;text-align:center;padding:8px;display:flex;align-items:center;justify-content:center;gap:8px}
 .clear-btn{background:none;border:1px solid #F0F0F0;color: #999999;padding:4px 12px;border-radius:12px;font-size:0.72rem;cursor:pointer}
 .clear-btn:hover{border-color:#616161;color: #666666}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes msgIn{from{opacity:0}to{opacity:1}}
 @media(max-width:768px){
 .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:#FFFFFF;flex-direction:column;padding:12px;border-radius:0 0 16px 16px}
 .nav-links.open{display:flex}
@@ -833,5 +833,11 @@ function escHtml(s) {
 }
 
 </script>
+
+<!-- 回顶/回底悬浮按钮 -->
+<div id="scrollBtns" style="position:fixed;right:12px;bottom:130px;display:flex;flex-direction:column;gap:8px;z-index:99;">
+  <button onclick="msgContainer.scrollTo({top:0,behavior:'smooth'})" style="width:36px;height:36px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center;">↑</button>
+  <button onclick="msgContainer.scrollTo({top:msgContainer.scrollHeight,behavior:'smooth'})" style="width:36px;height:36px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center;">↓</button>
+</div>
 </body>
 </html>
