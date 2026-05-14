@@ -15,7 +15,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}
 body{background:#FFFFFF;color: #666666;font-weight:400;display:flex;flex-direction:column;min-height:100vh}
-.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#FFFFFF;border-bottom:1px solid #F0F0F0;position:sticky;top:0;z-index:100}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#FFFFFF;border-bottom:1px solid #F0F0F0;position:sticky;top:0;z-index:100;position:relative}
 .logo{font-size:1.1rem;font-weight:800;color:#1A1A1A;display:flex;align-items:center;gap:8px;text-decoration:none}
 .logo-icon{width:32px;height:32px;background:#4C8BF5;border-radius:8px;display:flex;align-items:center;justify-content:center}
 .nav-links{display:flex;gap:4px}
@@ -215,6 +215,7 @@ a { color: #4C8BF5 !important; }
 <nav class="navbar">
 <a class="logo" href="index.html">
 <div class="logo-icon"><svg fill="white" height="18" viewBox="0 0 24 24" width="18"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div>游导旅游</a>
+<span style="position:absolute;left:50%;transform:translateX(-50%);font-size:1rem;font-weight:700;color:#1A1A1A;">AI助手</span>
 <div class="nav-links" id="navLinks">
       <a href="index.html">首页</a><a href="chat.html" class="active">AI助手</a><a href="exam-guide.html">备考攻略</a><a href="province-exam.html">各省备考</a><a href="exam-simulator.html">模拟考试</a><a href="travel-knowledge.html">旅行知识</a><a href="voice.html">发声墙</a><a href="resources.html">资料套餐</a>
     </div>
@@ -677,50 +678,16 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
   prompt += '\n[系统提示：请结合之前的对话上下文来回答。如果用户提到了之前的话题，请主动关联并融合之前的讨论内容，给出连贯完整的回复。]';
   
   try {
-    // Step 1: 将base64 data URL转为Blob并上传到Coze文件API
-    var arr = imageDataUrl.split(',');
-    var mime = arr[0].match(/:(.*?);/)[1];
-    var bstr = atob(arr[1]);
-    var n = bstr.length;
-    var u8arr = new Uint8Array(n);
-    for(var i = 0; i < n; i++) u8arr[i] = bstr.charCodeAt(i);
-    var blob = new Blob([u8arr], {type: mime});
-    var ext = mime.split('/')[1] || 'png';
-    var fileName = 'image_' + Date.now() + '.' + ext;
-    
-    var formData = new FormData();
-    formData.append('file', blob, fileName);
-    
-    var uploadResp = await fetch('https://api.coze.cn/v1/files/upload', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Bearer ' + PAT_TOKEN
-      },
-      body: formData
-    });
-    
-    var uploadData = await uploadResp.json();
-    if(uploadData.code !== 0 || !uploadData.data || !uploadData.data.id) {
-      throw new Error('文件上传失败: ' + (uploadData.msg || '未知错误'));
-    }
-    
-    var fileId = uploadData.data.id;
-    document.getElementById('statusText').textContent = '小游正在看图片...';
-    
-    // Step 2: 使用object_string格式发送消息（text + image file_id）
+    // 直接用content_type:'image'发送base64 data URL
     var body = {
       bot_id: BOT_ID,
       user_id: 'web_user',
       stream: true,
       auto_save_history: true,
-      additional_messages: [{
-        role: 'user',
-        content: JSON.stringify([
-          {type: 'text', text: prompt},
-          {type: 'image', file_id: fileId}
-        ]),
-        content_type: 'object_string'
-      }]
+      additional_messages: [
+        { role: 'user', content: prompt, content_type: 'text' },
+        { role: 'user', content: imageDataUrl, content_type: 'image' }
+      ]
     };
     if(conversationId) body.conversation_id = conversationId;
     
