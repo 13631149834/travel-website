@@ -662,6 +662,20 @@ sendMessage = function() {
   _origSendMessage();
 };
 
+// 上传图片到免费图床获取URL（解决Coze PAT无uploadFile权限问题）
+async function uploadToImgbb(base64Data) {
+  try {
+    var resp = await fetch("https://api.imgbb.com/1/upload?key=d36eb66a90c7661d4d6767465d6c4b06", {
+      method: "POST",
+      headers: {"Content-Type": "application/x-www-form-urlencoded"},
+      body: "image=" + encodeURIComponent(base64Data.split(",")[1])
+    });
+    var result = await resp.json();
+    if (result.success) return result.data.url;
+    return null;
+  } catch(e) { return null; }
+}
+
 // 图片发送到Coze API（先上传文件获取file_id，再用object_string格式发送）
 async function doSendImageMessage(imageDataUrl, text, quote) {
   sendBtn.disabled = true;
@@ -678,17 +692,34 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
   prompt += '\n[系统提示：请结合之前的对话上下文来回答。如果用户提到了之前的话题，请主动关联并融合之前的讨论内容，给出连贯完整的回复。]';
   
   try {
-    // 使用object_string格式发送图片+文字（Coze推荐方式）
-    var imageContentObj = {"type":"image","image_url":imageDataUrl};
-    var body = {
-      bot_id: BOT_ID,
-      user_id: 'web_user',
-      stream: true,
-      auto_save_history: true,
-      additional_messages: [
-        { role: 'user', content: JSON.stringify([{"type":"text","text":prompt},imageContentObj]), content_type: 'object_string' }
-      ]
-    };
+    // 先上传图片到imgbb获取URL
+    var imageUrl = await uploadToImgbb(imageDataUrl);
+    
+    var body;
+    if (imageUrl) {
+      // 使用真实图片URL
+      body = {
+        bot_id: BOT_ID,
+        user_id: 'web_user',
+        stream: true,
+        auto_save_history: true,
+        additional_messages: [
+          { role: 'user', content: JSON.stringify([{"type":"text","text":prompt},{"type":"image","image_url":imageUrl}]), content_type: 'object_string' }
+        ]
+      };
+    } else {
+      // 上传失败，降级为文字消息
+      prompt = '用户上传了一张图片，但图片上传服务暂时不可用，请用文字描述你想问的问题。';
+      body = {
+        bot_id: BOT_ID,
+        user_id: 'web_user',
+        stream: true,
+        auto_save_history: true,
+        additional_messages: [
+          { role: 'user', content: prompt, content_type: 'text' }
+        ]
+      };
+    }
     if(conversationId) body.conversation_id = conversationId;
     
     var resp = await fetch('https://api.coze.cn/v3/chat', {
