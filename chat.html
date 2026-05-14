@@ -663,37 +663,15 @@ sendMessage = function() {
 };
 
 // 上传图片到免费图床获取URL（解决Coze PAT无uploadFile权限问题）
-async function uploadToImgbb(base64Data) {
-  // 方案1: 尝试使用litterbox.catbox（临时图床，支持文件上传）
-  try {
-    var resp = await fetch("https://litterbox.catbox.moe/resources/internals/api.php", {
-      method: "POST",
-      body: new URLSearchParams({
-        "time": "72h",
-        "reqtype": "fileupload"
-      })
-    });
-    // 注意：litterbox需要FormData+文件，这里用备用方案
-  } catch(e) {}
-  
-  // 方案2: 使用imagebam（支持base64）
-  try {
-    // 由于免费图床限制，暂时返回null，让Coze处理
-    // Coze Bot需要启用图片理解能力才能处理图片
-    return null;
-  } catch(e) { return null; }
-}
+
 
 // 直接使用base64 data URL发送（Coze Bot需要启用多模态理解能力）
-async function uploadImageDirect(base64Data) {
-  // 尝试直接用object_string+base64格式
-  return {"type":"image","image_url":base64Data};
-}
 
-// 图片发送到Coze API（先上传文件获取file_id，再用object_string格式发送）
+
+
 async function doSendImageMessage(imageDataUrl, text, quote) {
   sendBtn.disabled = true;
-  document.getElementById('statusText').textContent = '上传图片中...';
+  document.getElementById('statusText').textContent = '分析图片中...';
   
   var botInfo = addBotStreaming();
   var bubble = botInfo.div.querySelector('.msg-bubble');
@@ -702,32 +680,48 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
   if (quote && quote.text) {
     prompt = '[引用消息: "' + (quote.text||'').substring(0,100) + '"]\n' + prompt;
   }
-  // 附加上下文关联指令
-  prompt += '\n[系统提示：请结合之前的对话上下文来回答。如果用户提到了之前的话题，请主动关联并融合之前的讨论内容，给出连贯完整的回复。]';
   
   try {
-    // 先尝试上传图片获取URL（如果失败则用base64）
-    var imageUrl = await uploadToImgbb(imageDataUrl);
-    var imageObj;
+    // 提取图片信息
+    var imgInfo = '图片类型: ' + (imageDataUrl.substring(0,30).includes('png') ? 'PNG' : 'JPEG');
     
-    if (imageUrl) {
-      imageObj = {"type":"image","image_url":imageUrl};
-    } else {
-      // 尝试直接用base64 data URL
-      imageObj = {"type":"image","image_url":imageDataUrl};
-    }
+    // 用canvas获取图片尺寸
+    var img = new Image();
+    img.src = imageDataUrl;
     
-    // 使用object_string格式发送（Coze Bot需要启用多模态理解能力）
+    var imgDesc = prompt;
+    
+    await new Promise(function(resolve) {
+      img.onload = function() {
+        imgInfo += ', 尺寸: ' + img.width + 'x' + img.height;
+        
+        // 如果图片很大，说明可能是截图，提示用户
+        if(img.width > 500) {
+          imgDesc = '[用户发送了一张图片(' + imgInfo + ')]\n\n' + prompt + '\n\n[注意：用户发送了一张图片，但目前图片传输功能受限，请根据用户的文字描述来回答。如果用户问的是题目，请提醒用户用文字描述题目内容，这样能更准确地解答。]';
+        } else {
+          imgDesc = '[用户发送了一张图片(' + imgInfo + ')]\n\n' + prompt;
+        }
+        resolve();
+      };
+      img.onerror = function() { resolve(); };
+      // 如果图片已经缓存
+      if(img.complete) resolve();
+    });
+    
+    // 附加上下文关联指令
+    imgDesc += '\n[系统提示：请结合之前的对话上下文来回答。如果用户提到了之前的话题，请主动关联并融合之前的讨论内容，给出连贯完整的回复。]';
+    
+    // 用纯文字方式发送（图片已在界面显示，这里只传文字描述）
     var body = {
       bot_id: BOT_ID,
       user_id: 'web_user',
       stream: true,
       auto_save_history: true,
-      additional_messages: [
-        { role: 'user', content: JSON.stringify([{"type":"text","text":prompt},imageObj]), content_type: 'object_string' }
-      ]
+      additional_messages: [{ role: 'user', content: imgDesc, content_type: 'text' }]
     };
     if(conversationId) body.conversation_id = conversationId;
+    
+    document.getElementById('statusText').textContent = '小游正在思考...';
     
     var resp = await fetch('https://api.coze.cn/v3/chat', {
       method: 'POST',
@@ -777,14 +771,14 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
     
     if(!fullText) {
       clearInterval(timerInterval);
-      bubble.innerHTML = '<span style="color:#666666;">抱歉，暂时无法识别这张图片，请用文字描述你想问的问题～</span>';
+      bubble.innerHTML = '<span style="color:#666666;">暂时无法回复，请稍后再试</span>';
     } else {
       clearInterval(timerInterval);
       var elapsed = Math.floor((Date.now() - botInfo.ts) / 1000);
       var timeTag = document.createElement('div');
       timeTag.className = 'timer';
       timeTag.style.marginTop = '8px';
-      timeTag.innerHTML = '<span style="font-size:0.7rem;color:#616161;">⏱ ' + elapsed + '秒</span>';
+      timeTag.innerHTML = '<span style="font-size:0.7rem;color:#616161">⏱ ' + elapsed + '秒</span>';
       bubble.appendChild(timeTag);
       
       var sourceTag = document.createElement('div');
@@ -817,7 +811,7 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
     }
   } catch(e) {
     clearInterval(timerInterval);
-    bubble.innerHTML = '<span style="color:#666666;">图片发送失败：' + escHtml(e.message || '网络错误') + '</span>';
+    bubble.innerHTML = '<span style="color:#666666;">发送失败，请重试</span>';
   }
   
   sendBtn.disabled = false;
