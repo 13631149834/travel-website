@@ -678,15 +678,15 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
   prompt += '\n[系统提示：请结合之前的对话上下文来回答。如果用户提到了之前的话题，请主动关联并融合之前的讨论内容，给出连贯完整的回复。]';
   
   try {
-    // 直接用content_type:'image'发送base64 data URL
+    // 使用object_string格式发送图片+文字（Coze推荐方式）
+    var imageContentObj = {"type":"image","image_url":imageDataUrl};
     var body = {
       bot_id: BOT_ID,
       user_id: 'web_user',
       stream: true,
       auto_save_history: true,
       additional_messages: [
-        { role: 'user', content: prompt, content_type: 'text' },
-        { role: 'user', content: imageDataUrl, content_type: 'image' }
+        { role: 'user', content: JSON.stringify([{"type":"text","text":prompt},imageContentObj]), content_type: 'object_string' }
       ]
     };
     if(conversationId) body.conversation_id = conversationId;
@@ -791,12 +791,129 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
 
+// ===== 消息复制和引用功能 =====
+var currentCtxMenu = null;
+var longPressTimer = null;
+
+// 复制消息内容
+function copyMsg(btn) {
+  var bubble = btn.closest('.msg-bubble');
+  var text = bubble.textContent.replace(/复制|引用/g, '').trim();
+  navigator.clipboard.writeText(text).then(function() {
+    showToast('已复制');
+  }).catch(function() {
+    showToast('复制失败');
+  });
+  hideCtxMenu();
+}
+
+// 引用消息
+function quoteMsg(btn) {
+  var bubble = btn.closest('.msg-bubble');
+  var msgs = bubble.closest('.msg');
+  var msgId = msgs.id;
+  var text = bubble.textContent.replace(/复制|引用/g, '').trim();
+  
+  // 找到对应的聊天记录
+  var chatItem = chatHistory.find(function(c){ return c.id === msgId; });
+  if (chatItem) {
+    quoteTarget = {id: msgId, text: chatItem.text, role: chatItem.role};
+    showQuoteHint(chatItem.text);
+    document.getElementById('userInput').focus();
+  }
+  hideCtxMenu();
+}
+
+// 显示引用提示
+function showQuoteHint(text) {
+  var hint = document.getElementById('quoteHint');
+  if (!hint) {
+    hint = document.createElement('div');
+    hint.id = 'quoteHint';
+    hint.className = 'quote-hint';
+    hint.innerHTML = '<span>引用: ...</span><button class="cancel-quote" onclick="cancelQuote()">×</button>';
+    document.querySelector('.input-area').before(hint);
+  }
+  hint.querySelector('span').textContent = '引用: ' + text.substring(0,50) + (text.length > 50 ? '...' : '');
+  hint.classList.add('show');
+}
+
+// 隐藏右键菜单
+function hideCtxMenu() {
+  document.querySelectorAll('.msg-context-menu').forEach(function(m){ m.classList.remove('show'); });
+  currentCtxMenu = null;
+}
+
+// 显示Toast提示
+function showToast(msg) {
+  var toast = document.getElementById('ctxToast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'ctxToast';
+    toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.7);color:#fff;padding:10px 20px;border-radius:8px;font-size:0.9rem;z-index:10001;';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.display = 'block';
+  setTimeout(function(){ toast.style.display = 'none'; }, 1500);
+}
+
+// 显示右键菜单
+function showCtxMenu(bubble) {
+  hideCtxMenu();
+  var menu = bubble.querySelector('.msg-context-menu');
+  if (menu) {
+    menu.classList.add('show');
+    currentCtxMenu = menu;
+  }
+}
+
+// 初始化消息气泡的交互事件
+function initMsgInteractions() {
+  // PC端右键菜单
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.msg-bubble')) hideCtxMenu();
+  });
+  
+  // 消息气泡点击显示菜单（手机友好）
+  document.querySelectorAll('.msg-bubble').forEach(function(bubble) {
+    // 长按显示菜单（500ms）
+    bubble.addEventListener('touchstart', function(e) {
+      longPressTimer = setTimeout(function() {
+        showCtxMenu(bubble);
+      }, 500);
+    });
+    bubble.addEventListener('touchend', function() {
+      clearTimeout(longPressTimer);
+    });
+    bubble.addEventListener('touchmove', function() {
+      clearTimeout(longPressTimer);
+    });
+    
+    // PC端右键菜单
+    bubble.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      showCtxMenu(bubble);
+    });
+    
+    // 单击也显示菜单（手机友好）
+    bubble.addEventListener('click', function(e) {
+      if (!e.target.closest('button') && !e.target.closest('a') && !e.target.closest('img')) {
+        showCtxMenu(bubble);
+      }
+    });
+  });
+}
+
+// DOM加载后初始化
+document.addEventListener('DOMContentLoaded', initMsgInteractions);
+
 </script>
 
 <!-- 回顶/回底悬浮按钮 -->
-<div id="scrollBtns" style="position:fixed;right:12px;bottom:130px;display:flex;flex-direction:column;gap:8px;z-index:99;">
-  <button onclick="msgContainer.scrollTo({top:0,behavior:'smooth'})" style="width:36px;height:36px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center;">↑</button>
-  <button onclick="msgContainer.scrollTo({top:msgContainer.scrollHeight,behavior:'smooth'})" style="width:36px;height:36px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center;">↓</button>
+<div id="scrollBtns" style="position:fixed;right:12px;bottom:85px;display:flex;flex-direction:column;gap:8px;z-index:999;">
+  <button onclick="msgContainer.scrollTo({top:0,behavior:'smooth'})" id="scrollTopBtn" style="width:44px;height:44px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1.3rem;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;opacity:0.85;transition:opacity 0.2s,transform 0.2s;">↑</button>
+  <button onclick="msgContainer.scrollTo({top:msgContainer.scrollHeight,behavior:'smooth'})" id="scrollBottomBtn" style="width:44px;height:44px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1.3rem;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;opacity:0.85;transition:opacity 0.2s,transform 0.2s;">↓</button>
 </div>
 </body>
 </html>
