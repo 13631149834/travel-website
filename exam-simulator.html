@@ -776,24 +776,16 @@ function dailySelectOption(qIdx, optIdx) {
   }
   renderDailySingle(qIdx);
   
-  // 自动1.5秒后跳转到下一题
+  // 直接在选项上显示对错反馈，1秒后平滑切换到下一题
   var isCorrect = dailyUserAnswers[qIdx] === q.answer;
-  var feedbackColor = isCorrect ? '#10b981' : '#ef4444'; var textColor = '#FFFFFF';
-  var feedbackIcon = isCorrect ? '✓' : '✗';
   
-  // 在答题区域显示明显反馈
-  var wrap = document.getElementById('dailySingleWrap');
-  var feedbackHtml = '<div id="answerFeedback" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:' + feedbackColor + ';color:#FFFFFF;padding:16px 32px;z-index:1000;box-shadow:0 4px 20px rgba(0,0,0,0.25);animation:fadeIn 0.2s ease-out;opacity:0;display:flex;align-items:center;gap:8px;z-index:1000;box-shadow:0 8px 30px rgba(0,0,0,0.3);animation:fadeIn 0.3s;">' + feedbackIcon + ' ' + (isCorrect ? '回答正确' : '回答错误') + '</div>';
-  wrap.innerHTML += feedbackHtml;
-  
-  // 1.5秒后自动下一题
+  // 不弹出固定框，选项样式已经通过CSS显示了正确/错误
+  // 1秒后自动平滑切换到下一题
   if(qIdx < dailyQuestions.length - 1) {
     setTimeout(function() {
-      var fb = document.getElementById('answerFeedback');
-      if(fb) fb.remove();
       renderDailySingle(qIdx + 1);
       dailyQIndex = qIdx + 1;
-    }, 1500);
+    }, 1000);
   }
 }
 

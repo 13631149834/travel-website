@@ -337,7 +337,7 @@ function processQueue(){
   doSendMessage(item.text, item.quote).finally(function(){
     isProcessingQueue = false;
     if(messageQueue.length > 0){
-      setTimeout(processQueue, 500);
+      setTimeout(processQueue, 200);
     }
   });
 }
@@ -407,9 +407,9 @@ function addBotStreaming(){
   var start = Date.now();
   timerInterval = setInterval(function(){
     var elapsed = Math.floor((Date.now() - start) / 1000);
-    if(elapsed < 5) timerEl.textContent = '预计 5-15 秒';
-    else if(elapsed < 15) timerEl.textContent = '已等待 ' + elapsed + ' 秒';
-    else timerEl.textContent = '已等待 ' + elapsed + ' 秒，回复较长请耐心';
+    if(elapsed < 3) timerEl.textContent = '思考中...';
+    else if(elapsed < 10) timerEl.textContent = '已等待 ' + elapsed + ' 秒';
+    else timerEl.textContent = '已等待 ' + elapsed + ' 秒';
   }, 1000);
 
   return { div: div, ts: ts };
@@ -658,11 +658,13 @@ sendMessage = function() {
     }
     
     addMsg('user', imgHtml, true, text || '[图片]');
+    // 先保存图片数据再cancelImage（cancelImage会清空pendingImage）
+    var savedImageData = pendingImage;
     cancelImage();
     input.value = '';
     
-    // 发送图片到Coze API（使用image content_type）
-    doSendImageMessage(pendingImage, text, q);
+    // 发送图片到Coze API（使用保存的图片数据）
+    doSendImageMessage(savedImageData, text, q);
     return;
   }
   
