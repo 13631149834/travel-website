@@ -198,6 +198,15 @@ a { color: #4C8BF5 !important; }
 .mode-tab.active { color: #FFFFFF !important; background: #4C8BF5 !important; }
 .tab-icon { color: #999999 !important; }
 .tab-text { color: #999999 !important; }
+
+.msg-image { max-width: 200px; max-height: 200px; border-radius: 12px; cursor: pointer; margin: 4px 0; }
+.image-preview { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 10000; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.image-preview img { max-width: 90%; max-height: 90%; border-radius: 12px; }
+.img-btn { width: 36px; height: 36px; border-radius: 10px; border: none; background: #F8F9FA; cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.send-preview { display: none; align-items: center; gap: 8px; padding: 8px 12px; background: #F0F5FF; border: 1px solid #E0EAFF; border-radius: 10px; margin: 0 6px 4px; font-size: 0.82rem; color: #4C8BF5; }
+.send-preview.show { display: flex; }
+.send-preview img { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; }
+.send-preview .remove-img { margin-left: auto; cursor: pointer; color: #999; font-size: 1rem; }
 </style>
 </head>
 <body>
@@ -629,7 +638,7 @@ function showImagePreview(src) {
   overlay.onclick = function() { overlay.remove(); };
   document.body.appendChild(overlay);
 }
-// Override sendMessage to support images
+// 重写sendMessage以支持图片发送（修复引用+图片bug）
 var _origSendMessage = sendMessage;
 sendMessage = function() {
   var input = document.getElementById('userInput');
@@ -637,21 +646,151 @@ sendMessage = function() {
   if (!text && !pendingImage) return;
   
   if (pendingImage) {
-    // Send as image message
-    var imgHtml = '<img class="msg-image" src="' + pendingImage + '" onclick="showImagePreview(this.src)">';
-    if (text) imgHtml += '<p style="margin-top:4px;font-size:0.9rem">' + escHtml(text) + '</p>';
-    addMessage('user', imgHtml, true);
+    // 图片消息：显示在聊天界面 + 发送到Coze API
+    var imgHtml = '<img class="msg-image" src="' + pendingImage + '" onclick="showImagePreview(this.src)" style="max-width:200px;max-height:200px;border-radius:12px;cursor:pointer;">';
+    if (text) imgHtml += '<p style="margin-top:4px;font-size:0.9rem;color:#1A1A1A;">' + escHtml(text) + '</p>';
+    
+    // 处理引用
+    var q = quoteTarget;
+    cancelQuote();
+    if (q && q.text) {
+      imgHtml = '<div class="msg-quote"><div class="quote-author">' + (q.role==='bot'?'小游':'你') + '</div>' + escHtml((q.text||'').substring(0,60)) + '...</div>' + imgHtml;
+    }
+    
+    addMsg('user', imgHtml, true, text || '[图片]');
     cancelImage();
     input.value = '';
-    // Bot reply
-    setTimeout(function() {
-      addMessage('bot', '收到图片了！我看看... 📸<br>目前我暂时无法识别图片内容，但你可以用文字描述你想问的问题，我来帮你～');
-    }, 800);
+    
+    // 发送图片到Coze API（使用image content_type）
+    doSendImageMessage(pendingImage, text, q);
     return;
   }
   
   _origSendMessage();
 };
+
+// 图片发送到Coze API
+async function doSendImageMessage(imageDataUrl, text, quote) {
+  sendBtn.disabled = true;
+  document.getElementById('statusText').textContent = '小游正在看图片...';
+  
+  var botInfo = addBotStreaming();
+  var bubble = botInfo.div.querySelector('.msg-bubble');
+  
+  var prompt = text || '请帮我看看这张图片';
+  if (quote && quote.text) {
+    prompt = '[引用消息: "' + (quote.text||'').substring(0,100) + '"]\n' + prompt;
+  }
+  
+  var body = {
+    bot_id: BOT_ID,
+    user_id: 'web_user',
+    stream: true,
+    auto_save_history: true,
+    additional_messages: [
+      { role: 'user', content: prompt, content_type: 'text' },
+      { role: 'user', content: imageDataUrl, content_type: 'image' }
+    ]
+  };
+  if(conversationId) body.conversation_id = conversationId;
+  
+  try {
+    var resp = await fetch('https://api.coze.cn/v3/chat', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + PAT_TOKEN,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    
+    var fullText = '';
+    var answerId = null;
+    var rendered = false;
+    var reader = resp.body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+    
+    while(true) {
+      var result = await reader.read();
+      if(result.done) break;
+      buffer += decoder.decode(result.value, {stream: true});
+      var lines = buffer.split('\n');
+      buffer = lines.pop();
+      
+      for(var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if(!line.startsWith('data:')) continue;
+        var jsonStr = line.substring(5).trim();
+        if(!jsonStr || jsonStr === '[DONE]') continue;
+        try {
+          var data = JSON.parse(jsonStr);
+          if(data.conversation_id) conversationId = data.conversation_id;
+          if(data.type === 'answer' && data.role === 'assistant') {
+            if(data.content !== undefined && data.content !== null && data.content !== '') {
+              if(!answerId && data.id) answerId = data.id;
+              if(!answerId || data.id === answerId) {
+                if(!rendered){ clearInterval(timerInterval); rendered = true; }
+                fullText = data.content;
+                bubble.innerHTML = renderMd(fullText);
+                msgContainer.scrollTop = msgContainer.scrollHeight;
+              }
+            }
+          }
+        } catch(e){}
+      }
+    }
+    
+    if(!fullText) {
+      clearInterval(timerInterval);
+      bubble.innerHTML = '<span style="color:#666666;">抱歉，暂时无法识别这张图片，请用文字描述你想问的问题～</span>';
+    } else {
+      clearInterval(timerInterval);
+      var elapsed = Math.floor((Date.now() - botInfo.ts) / 1000);
+      var timeTag = document.createElement('div');
+      timeTag.className = 'timer';
+      timeTag.style.marginTop = '8px';
+      timeTag.innerHTML = '<span style="font-size:0.7rem;color:#616161;">⏱ ' + elapsed + '秒</span>';
+      bubble.appendChild(timeTag);
+      
+      var sourceTag = document.createElement('div');
+      sourceTag.className = 'msg-source';
+      sourceTag.textContent = '以上内容基于导游证考试知识库整理';
+      bubble.appendChild(sourceTag);
+      
+      var followUps = generateFollowUps(fullText);
+      if(followUps.length > 0) {
+        var followDiv = document.createElement('div');
+        followDiv.className = 'follow-ups';
+        followUps.forEach(function(q) {
+          var btn = document.createElement('button');
+          btn.className = 'follow-btn';
+          btn.textContent = q;
+          btn.onclick = function(){ sendQuick(q); };
+          followDiv.appendChild(btn);
+        });
+        bubble.appendChild(followDiv);
+      }
+      
+      var actions = document.createElement('div');
+      actions.className = 'msg-actions';
+      actions.innerHTML = '<button class="quote-btn" onclick="quoteMessage(this)">📎 引用</button>';
+      bubble.appendChild(actions);
+      
+      chatHistory.push({id: botInfo.div.id, role: 'bot', html: bubble.innerHTML, text: fullText});
+      if(chatHistory.length > 100) chatHistory = chatHistory.slice(-80);
+      try{ localStorage.setItem('youdao_chat_history', JSON.stringify(chatHistory)); localStorage.setItem('youdao_chat_conv', conversationId || ''); }catch(e){}
+    }
+  } catch(e) {
+    clearInterval(timerInterval);
+    bubble.innerHTML = '<span style="color:#666666;">网络错误，请检查后重试</span>';
+  }
+  
+  sendBtn.disabled = false;
+  document.getElementById('statusText').textContent = '在线 · 随时提问';
+  inputEl.focus();
+}
+
 function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 }
