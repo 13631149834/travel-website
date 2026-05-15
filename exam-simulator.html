@@ -357,6 +357,33 @@ a { color: #4C8BF5 !important; }
   .quiz-options{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
   .quiz-option{padding:16px;font-size:1rem}
 
+
+/* ========== 答案解析样式 ========== */
+.answer-explanation {
+  margin-top: 12px;
+  padding: 14px;
+  background: #F0F5FF;
+  border-radius: 12px;
+  border-left: 3px solid #4C8BF5;
+}
+.explanation-header {
+  font-size: 0.85rem;
+  color: #4C8BF5;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.explanation-text {
+  font-size: 0.85rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 6px;
+}
+.explanation-key {
+  font-size: 0.8rem;
+  color: #38A169;
+  font-weight: 600;
+  margin-top: 6px;
+}
 </style>
 </head>
 <body>
@@ -579,26 +606,11 @@ a { color: #4C8BF5 !important; }
 
 <!-- 底部Tab栏 -->
 <div class="bottom-tabs">
-<a class="bottom-tab" href="index.html">
-<span class="tab-icon">🏠</span>
-<span class="tab-text">首页</span>
-</a>
-<a class="bottom-tab" href="resources.html">
-<span class="tab-icon">📚</span>
-<span class="tab-text">资料</span>
-</a>
-<a class="bottom-tab active" href="exam-simulator.html">
-<span class="tab-icon">📝</span>
-<span class="tab-text">模考</span>
-</a>
-<a class="bottom-tab" href="chat.html">
-<span class="tab-icon">🤖</span>
-<span class="tab-text">AI助手</span>
-</a>
-<a class="bottom-tab" href="free-materials.html">
-<span class="tab-icon">🎁</span>
-<span class="tab-text">免费</span>
-</a>
+  <a href="index.html"><span>🏠</span><span>首页</span></a>
+  <a href="exam-guide.html"><span>📚</span><span>学习</span></a>
+  <a href="exam-simulator.html" class="tab-active"><span>✏️</span><span>刷题</span></a>
+  <a href="chat.html"><span>🤖</span><span>AI</span></a>
+  <a href="resources.html"><span>👤</span><span>我的</span></a>
 </div>
 
 
@@ -870,7 +882,16 @@ function renderDailySingle(idx) {
     } else {
       isCorrect = dailyUserAnswers[idx] === q.answer;
     }
-    html += '<div style="margin-top:10px;padding:10px;border-radius:8px;background:' + (isCorrect ? 'rgba(6,95,70,0.08)' : 'rgba(185,28,28,0.08)') + ';font-size:0.85rem;color:' + (isCorrect ? '#065F46' : '#B91C1C') + ';">' + (isCorrect ? '✓ 正确' : '✗ 错误') + (q.analysis ? ' — ' + q.analysis : '') + '</div>';
+    var resultIcon = isCorrect ? '✓ 正确' : '✗ 错误';
+    var resultBg = isCorrect ? 'rgba(6,95,70,0.08)' : 'rgba(185,28,28,0.08)';
+    var resultColor = isCorrect ? '#065F46' : '#B91C1C';
+    var resultBorder = isCorrect ? 'rgba(6,95,70,0.3)' : 'rgba(185,28,28,0.3)';
+    html += '<div style="margin-top:10px;padding:10px 14px;border-radius:8px;border-left:3px solid ' + resultBorder + ';background:' + resultBg + ';">';
+    html += '<div style="font-size:0.9rem;font-weight:700;color:' + resultColor + ';margin-bottom:6px;">' + resultIcon + '</div>';
+    if(q.analysis) {
+      html += '<div style="font-size:0.82rem;color:#666;line-height:1.6;">' + q.analysis + '</div>';
+    }
+    html += '</div>';
   }
   
   wrap.innerHTML = html;
