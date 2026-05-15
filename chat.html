@@ -319,6 +319,26 @@ a { color: #4C8BF5 !important; }
 .voice-btn.recording{background:#EF4444;color:#fff;animation:vpulse 1s infinite;}
 @keyframes vpulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,.3)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
 .voice-btn svg{width:20px;height:20px;}
+/* Hide mobile-fix bottom bar on chat page - we have our own input area */
+#bb{display:none!important;}
+/* Clean up input area for chat */
+.input-area{position:fixed;bottom:0;left:0;right:0;background:#fff;z-index:100;border-top:1px solid #F0F0F0;padding-bottom:env(safe-area-inset-bottom);}
+.chat-shortcuts{background:#FAFAFA;border-top:none;padding:6px 12px;}
+.shortcut-tag{touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.shortcut-tag:active{background:#E0EAFF;transform:scale(0.96);}
+/* Override mobile-fix.js body padding on chat page */
+body{padding-bottom:0!important;}
+/* Make messages area scroll above fixed input area */
+.messages{padding-bottom:200px!important;}
+/* Input area fixed at bottom */
+.input-area{position:fixed!important;bottom:0!important;left:0!important;right:0!important;background:#fff!important;z-index:100!important;border-top:1px solid #F0F0F0!important;padding:8px 14px calc(8px + env(safe-area-inset-bottom))!important;}
+/* Shortcut tags - clean compact style */
+.chat-shortcuts{background:transparent!important;border-top:none!important;padding:4px 0!important;margin-bottom:4px;}
+.shortcut-tag{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;font-size:0.78rem!important;padding:5px 12px!important;}
+/* Quote hint inside input area */
+.quote-hint{font-size:0.78rem!important;padding:4px 8px!important;}
+/* Send preview inside input area */
+.send-preview{font-size:0.78rem!important;padding:4px 8px!important;}
 </style>
 
   <meta property="og:title" content="AI对话 - 导游证备考助手小游">
@@ -431,6 +451,15 @@ var PAT_TOKEN = 'pat_7thMqKrsyXMEX4W6N51ILHY5X9TmWYG93eioUN2IvWEXprM24nYx6w2cKNI
 var conversationId = null;
 var isStreaming = false;
 var msgContainer = document.getElementById('messages');
+// Auto-scroll to bottom on load
+setTimeout(function(){ if(msgContainer) msgContainer.scrollTop = msgContainer.scrollHeight; }, 300);
+  // Also scroll on any new message (MutationObserver)
+  if(msgContainer) {
+    var mo = new MutationObserver(function(){ 
+      setTimeout(function(){ msgContainer.scrollTop = msgContainer.scrollHeight; }, 50);
+    });
+    mo.observe(msgContainer, {childList: true, subtree: true});
+  }
 var inputEl = document.getElementById('userInput');
 var sendBtn = document.getElementById('sendBtn');
 var welcomeEl = document.getElementById('welcome');
@@ -586,7 +615,7 @@ function restoreHistory(){
         });
         var notice = document.createElement('div');
         notice.className = 'history-notice';
-        notice.innerHTML = '已恢复上次对话<button class="clear-btn" onclick="clearHistory()">清除记录</button>';
+        notice.innerHTML = '<span>已恢复上次对话</span><button class="clear-btn" onclick="clearHistory()" style="margin-left:8px;padding:2px 10px;background:none;border:1px solid #ddd;border-radius:12px;font-size:0.75rem;color:#999;cursor:pointer;">清除</button>';
         msgContainer.appendChild(notice);
         msgContainer.scrollTop = msgContainer.scrollHeight;
       }
@@ -1099,12 +1128,12 @@ document.addEventListener('DOMContentLoaded', initMsgInteractions);
 </script>
 
 <!-- 回顶/回底悬浮按钮 -->
-<div id="scrollBtns" style="display:none" style="display:none !important" style="position:fixed;right:12px;bottom:85px;display:flex;flex-direction:column;gap:8px;z-index:999;">
+<div id="scrollBtns" style="display:none;position:fixed;right:12px;bottom:85px;display:flex;flex-direction:column;gap:8px;z-index:999;">
   <button onclick="msgContainer.scrollTo({top:0,behavior:'smooth'})" id="scrollTopBtn" style="width:44px;height:44px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1.3rem;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;opacity:0.85;transition:opacity 0.2s,transform 0.2s;">↑</button>
   <button onclick="msgContainer.scrollTo({top:msgContainer.scrollHeight,behavior:'smooth'})" id="scrollBottomBtn" style="width:44px;height:44px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1.3rem;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;opacity:0.85;transition:opacity 0.2s,transform 0.2s;">↓</button>
 </div>
 
-<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+<!-- back-to-top removed on chat page -->
 <script>
 (function(){
     var btn = document.querySelector('.back-to-top');
@@ -1116,6 +1145,12 @@ document.addEventListener('DOMContentLoaded', initMsgInteractions);
 })();
 </script>
 <script src="gamification.js">
+
+
+</script>
+<div style="text-align:center;padding:16px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-top:20px;"><a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a></div>
+
+<script>
 // ========== Voice Input (Web Speech API) ==========
 var voiceRecognition = null;
 var isRecording = false;
@@ -1191,8 +1226,6 @@ function stopVoice() {
   var btn = document.getElementById('voiceBtn');
   if (btn) btn.classList.remove('recording');
 }
-
 </script>
-<div style="text-align:center;padding:16px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-top:20px;"><a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a></div>
 </body>
 </html>
