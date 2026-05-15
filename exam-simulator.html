@@ -492,7 +492,26 @@ a { color: #4C8BF5 !important; }
 <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
 </div>
 
-<div id="examQuestions"></div>
+<div id="examQuestions">
+  <!-- 题目卡片 -->
+  <div id="singleQuestionWrap"></div>
+  
+  <!-- 题目导航 -->
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;margin-top:8px;">
+    <button id="prevBtn" onclick="prevQuestion()" style="padding:10px 20px;background:#F8F9FA;border:1px solid #F0F0F0;border-radius:10px;color:#666;font-size:0.9rem;cursor:pointer;touch-action:manipulation;">← 上一题</button>
+    <span id="qProgress" style="font-size:0.85rem;color:#666;">1 / 20</span>
+    <button id="nextBtn" onclick="nextQuestion()" style="padding:10px 20px;background:#4C8BF5;border:none;border-radius:10px;color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;touch-action:manipulation;">下一题 →</button>
+  </div>
+  
+  <!-- 答题卡 -->
+  <div style="margin-top:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:0.85rem;color:#666;">答题卡</span>
+      <button onclick="toggleAnswerCard()" style="background:none;border:none;color:#4C8BF5;font-size:0.8rem;cursor:pointer;">收起/展开</button>
+    </div>
+    <div id="answerCard" style="display:flex;flex-wrap:wrap;gap:6px;padding:12px;background:#F8F9FA;border-radius:12px;"></div>
+  </div>
+</div>
 </div>
 
 <!-- 考试结果区域 -->
@@ -559,13 +578,76 @@ a { color: #4C8BF5 !important; }
 <!-- 底部Tab栏 -->
 ';
   
-  container.innerHTML = singleHtml;
+  <script>
+  // Initialize exam state
+  userAnswers = {};
+  answeredQuestions = {};
   currentQIndex = 0;
+  
+  // Start with first question
   renderSingleQuestion(0);
   renderAnswerCard();
+  
+  // Start timer
+  startTimer();
 }
 
 var currentQIndex = 0;
+
+// ========== 正式考试题库 ==========
+var examQuestions = [
+  // 政策法规
+  {type:'policy',question:'根据《旅游法》，旅行社应当向导游支付不低于当地最低工资标准的报酬，这一规定体现了什么原则？',options:['A. 公平原则','B. 保障原则','C. 平等原则','D. 诚信原则'],answer:1,analysis:'《旅游法》第38条规定，旅行社应当与其聘用的导游依法订立劳动合同，支付劳动报酬，不得要求导游垫付费用，体现了保障原则。'},
+  {type:'policy',question:'导游在进行导游活动时，其行为规范由哪部法律来规范？',options:['A. 合同法','B. 旅游法','C. 消费者权益保护法','D. 民法通则'],answer:1,analysis:'导游行为主要由《旅游法》规范，同时受《导游管理办法》等行政法规约束。'},
+  {type:'policy',question:'旅行社组织团队旅游，应当与旅游者订立什么？',options:['A. 口头协议','B. 旅游合同','C. 谅解备忘录','D. 行程确认单'],answer:1,analysis:'《旅游法》第57条规定，旅行社组织和安排旅游活动，应当与旅游者订立书面旅游合同。'},
+  {type:'policy',question:'导游证的有效期为几年？',options:['A. 1年','B. 2年','C. 3年','D. 5年'],answer:2,analysis:'《导游管理办法》规定，导游证的有效期为3年。'},
+  {type:'policy',question:'以下哪项不属于导游的权利？',options:['A. 获取劳动报酬','B. 人身权','C. 自由变更行程','D. 参加培训'],answer:2,analysis:'导游无权自由变更行程，行程变更需经旅行社同意并告知旅游者。'},
+  // 导游业务
+  {type:'service',question:'导游服务的核心是？',options:['A. 购物安排','B. 讲解服务','C. 食宿安排','D. 交通安排'],answer:1,analysis:'导游服务的核心是讲解服务，通过讲解使旅游者获得知识和审美享受。'},
+  {type:'service',question:'地陪导游的服务对象是？',options:['A. 出境旅游者','B. 入境旅游者','C. 本地旅游者','D. 所有旅游者'],answer:1,analysis:'地陪导游主要服务入境旅游者，负责在当地进行导游讲解和安排相关服务。'},
+  {type:'service',question:'导游在团队出发前的准备工作不包括？',options:['A. 熟悉接待计划','B. 准备导游词','C. 与旅游者签订合同','D. 检查所需物品'],answer:2,analysis:'签订合同是旅行社的工作，不是导游出发前的准备内容。'},
+  {type:'service',question:'以下哪项是导游在旅游途中应做的？',options:['A. 随意更改行程','B. 关注旅游者安全','C. 强制购物','D. 索要小费'],answer:1,analysis:'导游在旅游途中应关注旅游者安全，不得随意更改行程、强制购物或索要小费。'},
+  {type:'service',question:'全陪导游的职责是？',options:['A. 负责景点讲解','B. 负责全程陪同','C. 负责餐饮安排','D. 负责购物安排'],answer:1,analysis:'全陪导游负责全程陪同旅游团，协调联络，处理突发事件，保障旅游者权益。'},
+  // 全国导基
+  {type:'guidebook',question:'中国最长的河流是？',options:['A. 黄河','B. 珠江','C. 长江','D. 淮河'],answer:2,analysis:'长江全长6300公里，是中国最长的河流，也是世界第三大河流。'},
+  {type:'guidebook',question:'北京的故宫旧称是？',options:['A. 颐和园','B. 紫禁城','C. 圆明园','D. 天坛'],answer:1,analysis:'北京故宫旧称紫禁城，是中国明清两代的皇家宫殿，世界最大古建筑群。'},
+  {type:'guidebook',question:'以下哪个不属于中国五岳？',options:['A. 泰山','B. 华山','C. 黄山','D. 嵩山'],answer:2,analysis:'中国五岳为东岳泰山、西岳华山、南岳衡山、北岳恒山、中岳嵩山，黄山不属于五岳。'},
+  {type:'guidebook',question:'中国四大佛教名山中，属于安徽的是？',options:['A. 五台山','B. 峨眉山','C. 九华山','D. 普陀山'],answer:2,analysis:'九华山位于安徽省池州市，是中国佛教四大名山之一，地藏菩萨道场。'},
+  // 地方导基
+  {type:'local',question:'「桂林山水甲天下」形容的是哪个景区？',options:['A. 漓江','B. 西湖','C. 太湖','D. 滇池'],answer:0,analysis:'「桂林山水甲天下」形容的是广西桂林漓江风景区，以喀斯特地貌闻名。'},
+  {type:'local',question:'以下哪个省份有「彩云之南」的美称？',options:['A. 贵州','B. 四川','C. 云南','D. 广西'],answer:2,analysis:'云南省因位于云岭以南，素有「彩云之南」的美称。'},
+  {type:'local',question:'以下哪个城市有「天府之国」的美称？',options:['A. 重庆','B. 成都','C. 昆明','D. 西安'],answer:1,analysis:'成都位于四川盆地西部，因物产丰富被称为「天府之国」。'},
+  {type:'local',question:'以下哪个是云南著名的旅游景点？',options:['A. 故宫','B. 丽江古城','C. 西湖','D. 泰山'],answer:1,analysis:'丽江古城位于云南省丽江市，是世界文化遗产，以独特的纳西族文化闻名。'},
+  {type:'local',question:'以下哪个是四川著名的旅游景点？',options:['A. 故宫','B. 九寨沟','C. 西湖','D. 黄山'],answer:1,analysis:'九寨沟位于四川省阿坝藏族羌族自治州，以翠海、叠瀑、彩林、雪峰、藏情、蓝冰「六绝」著称。'}
+];
+
+// ========== 正式考试启动函数 ==========
+function startExam() {
+  // Reset state
+  userAnswers = {};
+  answeredQuestions = {};
+  currentQIndex = 0;
+  
+  // Random select 20 questions from the pool for the exam
+  var shuffled = examQuestions.slice().sort(function() { return Math.random() - 0.5; });
+  examQuestions = shuffled.slice(0, 20);
+  
+  // Update total count display
+  var totalEl = document.getElementById('totalQuestions');
+  if (totalEl) totalEl.textContent = examQuestions.length;
+  
+  // Reset timer
+  remainingTime = 90 * 60; // 90 minutes
+  updateTimerDisplay();
+  
+  // Start with first question
+  renderSingleQuestion(0);
+  renderAnswerCard();
+  
+  // Start timer
+  startTimer();
+}
+
 var answeredQuestions = {};
 
 function renderSingleQuestion(idx) {
@@ -1053,7 +1135,7 @@ window.addEventListener('scroll', () => {
 function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 document.getElementById('navLinks').classList.remove('open');
 </script>
-</script>
+
 
 <script>
 // ========== Mode Switching ==========
