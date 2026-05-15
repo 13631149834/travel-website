@@ -829,9 +829,16 @@ function renderDailySingle(idx) {
   var q = dailyQuestions[idx];
   var wrap = document.getElementById('dailySingleWrap');
   
+  // 防御性检查：如果题目数据有问题，显示友好提示
+  if(!q || typeof q.question === 'undefined') {
+    wrap.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#666;"><p>题目数据加载中，请刷新重试...</p></div>';
+    return;
+  }
+  
   var qType = q.type === 'multi' ? '多选题' : q.type === 'judge' ? '判断题' : '单选题';
+  var questionText = q.question || q.title || '题目内容加载中...';
   var html = '<div style="margin-bottom:12px;"><span style="font-size:0.8rem;color:#666666;font-weight:600;">第' + (idx+1) + '题 · ' + qType + '</span></div>';
-  html += '<div style="font-size:0.95rem;line-height:1.7;margin-bottom:16px;font-weight:500;">' + q.question + '</div>';
+  html += '<div style="font-size:0.95rem;line-height:1.7;margin-bottom:16px;font-weight:500;">' + questionText + '</div>';
   html += '<ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;">';
   
   var opts = q.type === 'judge' ? ['正确','错误'] : q.options;
@@ -1043,6 +1050,12 @@ function renderSingleQuestion(idx) {
   if(idx < 0 || idx >= examQuestions.length) return;
   currentQIndex = idx;
   var q = examQuestions[idx];
+  
+  // 防御性检查：如果题目数据有问题
+  if(!q || typeof q.question === 'undefined') {
+    document.getElementById('singleQuestionWrap').innerHTML = '<div style="text-align:center;padding:40px 20px;color:#666;"><p>题目数据加载中，请刷新重试...</p></div>';
+    return;
+  }
   var wrap = document.getElementById('singleQuestionWrap');
   var isAnswered = answeredQuestions[idx] !== undefined;
   var userAns = answeredQuestions[idx];

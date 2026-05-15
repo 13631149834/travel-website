@@ -314,6 +314,22 @@ a{text-decoration:none;color:inherit}
 
   const categoryIcons = {'备考人':'📚','导游说':'🏛️','游客说':'🎒','全部':'✨'};
   
+  
+window.closeModal = function(e) {
+    if(e && e.target !== document.getElementById('modalOverlay')) return;
+    document.getElementById('modalOverlay').classList.remove('show');
+  };
+
+window.selectIdentity = function(el, identity) {
+    document.querySelectorAll('.identity-option').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+    el.dataset.identity = identity;
+  };
+
+window.updateCharCount = function() {
+    var len = document.getElementById('postContent').value.length;
+    document.getElementById('charCount').textContent = len;
+  };
   function renderPosts(filter) {
     const grid = document.getElementById('postsGrid');
     if(!grid) return;
@@ -348,11 +364,73 @@ a{text-decoration:none;color:inherit}
 
   window.likePost = function(id) {
     const post = samplePosts.find(p => p.id === id);
-    if(post) { post.likes++; renderPosts(document.querySelector('.cat-tab.active')?.textContent.replace(/[✨🏛️🎒📚]/g,'').trim() || '全部'); }
+    if(post) { post.likes++; renderPosts(document.querySelector('.tab-btn.active')?.textContent.replace(/[✨🏛️🎒📚]/g,'').trim() || '全部'); }
   };
 
+window.submitPost = function() {
+    var content_text = document.getElementById('postContent').value.trim();
+    if(!content_text) {
+      alert('请输入想说的话');
+      return;
+    }
+    var identity = '游客';
+    document.querySelectorAll('.identity-option').forEach(opt => {
+      if(opt.classList.contains('selected') && opt.dataset.identity) {
+        identity = {'guide':'导游','tourist':'游客','examinee':'备考人'}[opt.dataset.identity] || '游客';
+      }
+    });
+    var author = document.getElementById('authorName').value.trim() || '匿名用户';
+    var avatar = {'guide':'👨‍💼','tourist':'🎒','examinee':'👩‍🎓'}[document.querySelector('.identity-option.selected')?.dataset.identity] || '👤';
+    
+    // 创建新帖子
+    var newPost = {
+      id: Date.now(),
+      category: identity,
+      author: author,
+      avatar: avatar,
+      time: '刚刚',
+      content: content_text,
+      likes: 0,
+      comments: 0,
+      isUserPost: true
+    };
+    
+    // 保存到 localStorage
+    try {
+      var userPosts = JSON.parse(localStorage.getItem('userPosts') || '[]');
+      userPosts.unshift(newPost);
+      localStorage.setItem('userPosts', JSON.stringify(userPosts.slice(0, 50))); // 最多保存50条
+    } catch(e) {
+      console.log('保存帖子失败:', e);
+    }
+    
+    // 添加到显示列表
+    samplePosts.unshift(newPost);
+    
+    // 关闭弹窗并刷新
+    document.getElementById('modalOverlay').classList.remove('show');
+    showToast('发布成功！感谢你的分享 ✨');
+    
+    // 刷新列表
+    var activeFilter = document.querySelector('.tab-btn.active')?.textContent.replace(/[✨🏛️🎒📚]/g,'').trim() || '全部';
+    renderPosts(activeFilter === '全部' ? '全部' : activeFilter);
+  };
+
+function showToast(msg) {
+    var toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2500);
+  }
+
   window.openModal = function() {
-    alert('发帖功能即将上线，敬请期待！');
+    document.getElementById('modalOverlay').classList.add('show');
+    // 重置表单
+    document.getElementById('authorName').value = '';
+    document.getElementById('postContent').value = '';
+    document.getElementById('charCount').textContent = '0';
+    // 重置身份选择
+    document.querySelectorAll('.identity-option').forEach(opt => opt.classList.remove('selected'));
   };
 
   // Initial render
