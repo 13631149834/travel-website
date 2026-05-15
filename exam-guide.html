@@ -481,6 +481,98 @@ a { color: #4C8BF5 !important; }
 .toc-group { margin-bottom: 16px; }
 .toc-group-title { font-size: 0.85rem; color: #666; font-weight: 600; margin-bottom: 8px; padding-left: 4px; }
 .toc-group .toc-list { display: flex; flex-wrap: wrap; gap: 8px; }
+
+
+/* ========== Tab切换样式 ========== */
+.tab-nav-wrap {
+    position: sticky;
+    top: 56px;
+    z-index: 90;
+    background: #FFFFFF;
+    padding: 12px 16px;
+    margin: 0 -20px;
+    border-bottom: 1px solid #F0F0F0;
+}
+.tab-nav {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding-bottom: 4px;
+}
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+    flex-shrink: 0;
+    background: #F0F5FF;
+    color: #666666;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    white-space: nowrap;
+}
+.tab-btn:hover {
+    background: #E0EAFF;
+    color: #4C8BF5;
+}
+.tab-btn.active {
+    background: #4C8BF5;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+.tab-panel {
+    display: none;
+    animation: tabFadeIn 0.25s ease;
+}
+.tab-panel.active {
+    display: block;
+}
+@keyframes tabFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* 回到顶部按钮 */
+.back-to-top {
+    position: fixed;
+    bottom: 130px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #4C8BF5;
+    color: #FFFFFF;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(76,139,245,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 90;
+    transition: all 0.3s;
+    opacity: 0;
+}
+.back-to-top:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76,139,245,0.35);
+}
+.back-to-top.visible {
+    display: flex;
+    opacity: 1;
+}
+@media (min-width: 769px) {
+    .back-to-top {
+        bottom: 40px;
+        right: calc(50% - 620px);
+    }
+}
+
 </style>
 </head>
 <body>
@@ -516,30 +608,17 @@ a { color: #4C8BF5 !important; }
 </div>
 
 <div class="container">
-<div class="toc">
-<div class="toc-group">
-  <div class="toc-group-title">📚 考试必知</div>
-  <div class="toc-list">
-    <a class="toc-item" href="#overview">考试概览</a>
-    <a class="toc-item" href="#law-points">🔥政策法规</a>
-    <a class="toc-item" href="#service-points">⚡导游业务</a>
-    <a class="toc-item" href="#knowledge-points">📚全国导基</a>
+<div class="tab-nav-wrap">
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab(this, 'tab-overview')">考试概览</button>
+    <button class="tab-btn" onclick="switchTab(this, 'tab-law')">政策法规</button>
+    <button class="tab-btn" onclick="switchTab(this, 'tab-service')">导游业务</button>
+    <button class="tab-btn" onclick="switchTab(this, 'tab-subjects')">笔试科目</button>
+    <button class="tab-btn" onclick="switchTab(this, 'tab-knowledge')">全国导基</button>
+    <button class="tab-btn" onclick="switchTab(this, 'tab-points')">高频考点</button>
+    <button class="tab-btn" onclick="switchTab(this, 'tab-interview')">面试模板</button>
+    <button class="tab-btn" onclick="switchTab(this, 'tab-plan')">备考时间表</button>
   </div>
-</div>
-<div class="toc-group">
-  <div class="toc-group-title">🎤 面试备考</div>
-  <div class="toc-list">
-    <a class="toc-item" href="#interview-templates">🎤面试模板</a>
-    <a class="toc-item" href="#study-plans">📅备考时间表</a>
-  </div>
-</div>
-<div class="toc-group">
-  <div class="toc-group-title">🎯 高频速记</div>
-  <div class="toc-list">
-    <a class="toc-item" href="#exam-points">🎯高频考点</a>
-  </div>
-</div>
-</div>
 </div>
 
 <!-- ========== 考试数据概览 ========== -->
@@ -585,6 +664,7 @@ a { color: #4C8BF5 !important; }
 <div class="section" id="overview">
 <div class="container">
 <div class="glass-card section-block">
+<div class="tab-panel active" id="tab-overview">
 <h2>考试概览</h2>
 <p class="section-desc">全国导游资格考试每年举行一次，笔试+面试，合格后颁发导游资格证书</p>
 <div class="info-box">
@@ -619,7 +699,9 @@ a { color: #4C8BF5 !important; }
 <div class="section" id="law-points">
 <div class="container">
 <div class="glass-card section-full border-law">
-<h2>🔥 政策法规必考点（考试占比50%）</h2>
+<div class="tab-panel" id="tab-law">
+
+</div><h2>🔥 政策法规必考点（考试占比50%）</h2>
 <p class="section-desc">《政策与法律法规》与《导游业务》合并为一张试卷，分值各占50%</p>
 
 <h3 class="h4-title">📜 旅游法核心条文（必背5条）</h3>
@@ -749,7 +831,9 @@ a { color: #4C8BF5 !important; }
 <div class="section" id="service-points">
 <div class="container">
 <div class="glass-card section-full border-service">
-<h2>⚡ 导游业务实操要点（考试占比50%）</h2>
+<div class="tab-panel" id="tab-service">
+
+</div><h2>⚡ 导游业务实操要点（考试占比50%）</h2>
 <p class="section-desc">导游服务程序、应急处理、特殊游客服务等核心考点</p>
 
 <h3 class="h4-title">📋 接团规范流程（必须掌握）</h3>
@@ -1076,7 +1160,9 @@ a { color: #4C8BF5 !important; }
 <div class="section" id="subjects">
 <div class="container">
 <div class="glass-card section-block">
-<h2>笔试科目</h2>
+<div class="tab-panel" id="tab-subjects">
+
+</div><h2>笔试科目</h2>
 <p class="section-desc">笔试包含四科，总分350分，达到210分视为合格</p>
 <div class="subject-grid">
 <div class="subject-card">
@@ -1204,7 +1290,9 @@ a { color: #4C8BF5 !important; }
 <div class="section" id="knowledge-points">
 <div class="container">
 <div class="glass-card section-full border-knowledge">
-<h2>📚 全国导游基础知识高频考点（必背15+条）</h2>
+<div class="tab-panel" id="tab-knowledge">
+
+</div><h2>📚 全国导游基础知识高频考点（必背15+条）</h2>
 <p class="section-desc">中国历史文化、地理、民族宗教等核心考点，配记忆口诀</p>
 
 <h3 class="h4-title">🏔️ 四大佛教名山</h3>
@@ -1611,7 +1699,9 @@ a { color: #4C8BF5 !important; }
 <div class="section" id="exam-points">
 <div class="container">
 <div class="glass-card section-block">
-<h2>🎯 导游证高频考点速记</h2>
+<div class="tab-panel" id="tab-points">
+
+</div><h2>🎯 导游证高频考点速记</h2>
 <p class="section-desc">考试必背知识点，利用碎片时间反复记忆</p>
 <h3>中国历史文化四大类（必背）</h3>
 <div class="item-grid">
@@ -1687,7 +1777,9 @@ a { color: #4C8BF5 !important; }
 <div class="section" id="interview-templates">
 <div class="container">
 <div class="glass-card section-full border-interview">
-<h2>🎤 面试导游词模板（5个框架）</h2>
+<div class="tab-panel" id="tab-interview">
+
+</div><h2>🎤 面试导游词模板（5个框架）</h2>
 <p class="section-desc">面试导游词讲解标准模板，可根据景点灵活调整</p>
 
 <h3 class="h4-title">📝 欢迎词模板</h3>
@@ -1874,7 +1966,9 @@ a { color: #4C8BF5 !important; }
 <div class="section" id="study-plans">
 <div class="container">
 <div class="glass-card section-full border-plan">
-<h2>📅 备考时间表（3套方案）</h2>
+<div class="tab-panel" id="tab-plan">
+
+</div><h2>📅 备考时间表（3套方案）</h2>
 <p class="section-desc">根据你的备考周期，选择合适的复习方案</p>
 
 <h3 class="h4-title">🎯 三个月备考方案（强化型）</h3>
@@ -2063,7 +2157,8 @@ a { color: #4C8BF5 !important; }
 </div>
 </div>
 
-<!-- 探索更多 -->
+
+</div><!-- 探索更多 -->
 <div class="container">
 <div class="explore-section">
 <h3>继续探索</h3>
@@ -2096,5 +2191,30 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
   <a href="chat.html"><span>🤖</span><span>AI</span></a>
   <a href="resources.html"><span>👤</span><span>我的</span></a>
 </div>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button><script>
+function switchTab(btn, panelId) {
+    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+    btn.classList.add('active');
+    document.getElementById(panelId).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+}
+document.addEventListener('DOMContentLoaded',function(){
+    var firstBtn=document.querySelector('.tab-btn');
+    var firstPanel=document.querySelector('.tab-panel');
+    if(firstBtn&&firstPanel&&!firstPanel.classList.contains('active')){
+        firstBtn.classList.add('active');
+        firstPanel.classList.add('active');
+    }
+});
+(function(){
+    var btn=document.querySelector('.back-to-top');
+    if(!btn)return;
+    window.addEventListener('scroll',function(){
+        if(window.scrollY>400)btn.classList.add('visible');
+        else btn.classList.remove('visible');
+    });
+})();
+</script>
 </body>
 </html>

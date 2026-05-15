@@ -228,6 +228,43 @@ a { color: #4C8BF5 !important; }
 .page-header{padding:28px 20px 16px;text-align:center}
 .page-header h1{font-size:1.5rem;color:#1A1A1A;font-weight:800;margin-bottom:6px}
 .page-desc{font-size:0.85rem;color:#999;line-height:1.5}
+
+/* 回到顶部按钮 */
+.back-to-top {
+    position: fixed;
+    bottom: 130px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #4C8BF5;
+    color: #FFFFFF;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(76,139,245,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 90;
+    transition: all 0.3s;
+    opacity: 0;
+}
+.back-to-top:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76,139,245,0.35);
+}
+.back-to-top.visible {
+    display: flex;
+    opacity: 1;
+}
+@media (min-width: 769px) {
+    .back-to-top {
+        bottom: 40px;
+        right: calc(50% - 620px);
+    }
+}
+
 </style>
 </head>
 <body>
@@ -352,5 +389,16 @@ a { color: #4C8BF5 !important; }
   <a href="chat.html"><span>🤖</span><span>AI</span></a>
   <a href="resources.html" class="tab-active"><span>👤</span><span>我的</span></a>
 </div>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+<script>
+(function(){
+    var btn = document.querySelector('.back-to-top');
+    if(!btn) return;
+    window.addEventListener('scroll', function(){
+        if(window.scrollY > 400) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+    });
+})();
+</script>
 </body>
 </html>
