@@ -690,7 +690,53 @@ a { color: #4C8BF5 !important; }
 <div class="item-card">
 <h4>户籍要求</h4>
 <p>一般要求本地户籍，部分省市放宽至居住证</p>
+
+<div style="margin-top:20px;padding:20px;background:#F0FDF4;border:1px solid #BBF7D0;border-radius:14px">
+  <h4 style="color:#166534;margin-bottom:14px">✅ 报名条件自查工具</h4>
+  <p style="color:#666;font-size:0.88rem;margin-bottom:14px">勾选你符合的条件，自动判断是否满足报考资格</p>
+  <div id="checklist-items" style="display:flex;flex-direction:column;gap:10px">
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;background:#fff;border-radius:10px;border:1px solid #E5E7EB">
+      <input type="checkbox" class="check-item" data-required="true" onchange="checkEligibility()" style="width:18px;height:18px;accent-color:#4C8BF5">
+      <span style="color:#1A1A1A;font-size:0.92rem"><strong>学历达标：</strong>具有高级中学/中等专业学校或以上学历</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;background:#fff;border-radius:10px;border:1px solid #E5E7EB">
+      <input type="checkbox" class="check-item" data-required="true" onchange="checkEligibility()" style="width:18px;height:18px;accent-color:#4C8BF5">
+      <span style="color:#1A1A1A;font-size:0.92rem"><strong>身体健康：</strong>身体健康，能适应导游工作需要</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;background:#fff;border-radius:10px;border:1px solid #E5E7EB">
+      <input type="checkbox" class="check-item" data-required="true" onchange="checkEligibility()" style="width:18px;height:18px;accent-color:#4C8BF5">
+      <span style="color:#1A1A1A;font-size:0.92rem"><strong>基本品行：</strong>无故意犯罪记录</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;background:#fff;border-radius:10px;border:1px solid #E5E7EB">
+      <input type="checkbox" class="check-item" data-required="false" onchange="checkEligibility()" style="width:18px;height:18px;accent-color:#4C8BF5">
+      <span style="color:#1A1A1A;font-size:0.92rem"><strong>国籍：</strong>具有中华人民共和国国籍</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:10px;cursor:pointer;padding:10px;background:#fff;border-radius:10px;border:1px solid #E5E7EB">
+      <input type="checkbox" class="check-item" data-required="false" onchange="checkEligibility()" style="width:18px;height:18px;accent-color:#4C8BF5">
+      <span style="color:#1A1A1A;font-size:0.92rem"><strong>语言能力：</strong>具备基本普通话表达能力</span>
+    </label>
+  </div>
+  <div id="check-result" style="margin-top:14px;padding:14px;background:#fff;border-radius:10px;text-align:center;font-weight:600;display:none"></div>
 </div>
+<script>
+function checkEligibility(){
+  var items=document.querySelectorAll('.check-item');
+  var required=document.querySelectorAll('.check-item[data-required="true"]');
+  var reqChecked=0;var totalChecked=0;
+  required.forEach(function(i){if(i.checked)reqChecked++;});
+  items.forEach(function(i){if(i.checked)totalChecked++;});
+  var result=document.getElementById('check-result');
+  result.style.display='block';
+  if(reqChecked===required.length){
+    result.style.background='#F0FDF4';result.style.color='#166534';result.style.border='1px solid #BBF7D0';
+    result.innerHTML='🎉 恭喜！你满足导游证报考基本条件！'+(totalChecked===items.length?' 各项全部达标，可以放心报名！':'');
+  }else{
+    result.style.background='#FEF2F2';result.style.color='#991B1B';result.style.border='1px solid #FECACA';
+    result.innerHTML='⚠️ 还有'+(required.length-reqChecked)+'项必备条件未满足，请确认后重试';
+  }
+}
+</script>
+
 </div>
 </div>
 </div>
@@ -1150,6 +1196,64 @@ a { color: #4C8BF5 !important; }
 </ul>
 </div>
 </div>
+
+<div class="item-card">
+<h4>Q7: 游客拒绝购物怎么处理？</h4>
+<p><strong>参考答案：</strong>①尊重游客意愿不强迫；②耐心说明购物是行程安排的一部分；③不得以不购物为由降低服务质量；④如遇强迫购物可向旅游局投诉</p>
+</div>
+<div class="item-card">
+<h4>Q8: 游客要求增加自费项目怎么办？</h4>
+<p><strong>参考答案：</strong>①确认是否在行程允许范围内；②征求全体游客意见；③确保不影响正常行程安排；④价格透明明码标价；⑤绝不强制消费</p>
+</div>
+<div class="item-card">
+<h4>Q9: 遇到恶劣天气怎么处理？</h4>
+<p><strong>参考答案：</strong>①关注天气预报提前预警；②调整行程安排确保安全；③向游客说明情况并致歉；④联系旅行社寻求替代方案；⑤做好游客安抚和后勤保障</p>
+</div>
+<div class="item-card">
+<h4>Q10: 游客之间发生冲突怎么办？</h4>
+<p><strong>参考答案：</strong>①及时制止防止事态升级；②分别了解情况耐心调解；③换位思考引导互相理解；④必要时调整座位或分组；⑤严重时报告旅行社或报警</p>
+</div>
+<div class="item-card">
+<h4>Q11: 游客提出无理要求怎么办？</h4>
+<p><strong>参考答案：</strong>①耐心倾听表示理解；②礼貌解释无法满足的原因；③提供替代方案；④坚持原则不随意妥协；⑤态度和蔼立场坚定</p>
+</div>
+<div class="item-card">
+<h4>Q12: 旅途中游客突发心脏病怎么办？</h4>
+<p><strong>参考答案：</strong>①立即拨打120急救电话；②让患者平躺保持安静；③询问是否有随身药物协助服用；④组织其他游客让出空间；⑤向旅行社报告并联系家属</p>
+</div>
+<div class="item-card">
+<h4>Q13: 旅游车在高速路上抛锚怎么办？</h4>
+<p><strong>参考答案：</strong>①确保乘客安全组织疏散到护栏外；②放置警示标志拨打救援电话；③联系旅行社安排替代车辆；④安抚游客情绪提供饮用水；⑤调整后续行程减少损失</p>
+</div>
+<div class="item-card">
+<h4>Q14: 游客对住宿不满意要求换房怎么办？</h4>
+<p><strong>参考答案：</strong>①了解不满意的具体原因；②与酒店协商看能否调换房间；③如无法调换耐心解释并致歉；④记录游客意见反馈旅行社；⑤尽量满足合理需求</p>
+</div>
+<div class="item-card">
+<h4>Q15: 接到游客遗失物品报告怎么办？</h4>
+<p><strong>参考答案：</strong>①详细了解遗失物品和时间地点；②协助在可能地点寻找；③向酒店/景区/交通部门报失；④协助报警备案；⑤留下联系方式持续跟进</p>
+</div>
+<div class="item-card">
+<h4>Q16: 游客护照/证件丢失怎么办？</h4>
+<p><strong>参考答案：</strong>①安抚游客情绪不要慌张；②立即到当地派出所报案获取证明；③联系游客所属使领馆办理旅行证；④协助联系航空公司改签；⑤向旅行社报告协助处理后续</p>
+</div>
+<div class="item-card">
+<h4>Q17: 游客在景区被蚊虫/蛇咬伤怎么办？</h4>
+<p><strong>参考答案：</strong>①保持冷静不要慌乱奔跑；②如为蛇咬记住蛇的特征；③用布条在伤口近心端绑扎；④立即送往最近医院；⑤报告旅行社并跟进后续</p>
+</div>
+<div class="item-card">
+<h4>Q18: 团队中有游客传染性疾病怎么办？</h4>
+<p><strong>参考答案：</strong>①建议患者立即就医；②向旅行社报告请求指示；③做好其他游客的心理安抚；④配合卫生部门做好防控；⑤严格保密患者隐私</p>
+</div>
+<div class="item-card">
+<h4>Q19: 遇到地震等自然灾害怎么办？</h4>
+<p><strong>参考答案：</strong>①保持冷静立即组织避难；②按照当地应急指示行动；③确保游客人身安全为第一优先；④清点人数防止走散；⑤与旅行社保持联系等待救援</p>
+</div>
+<div class="item-card">
+<h4>Q20: 游客对导游服务正式投诉怎么办？</h4>
+<p><strong>参考答案：</strong>①认真倾听不争辩不推卸；②记录投诉内容和具体诉求；③调查核实情况；④能解决的立即解决；⑤无法立即解决的告知处理时限；⑥向旅行社报告并跟踪结果；⑦总结经验避免再次发生</p>
+</div>
+
 <div class="warn-box">
 <strong>⚠️ 面试注意事项：</strong>回答问题要条理清晰，使用"首先...其次...最后..."等连接词。展现专业素养，态度诚恳，不卑不亢。
 </div>
@@ -1886,7 +1990,12 @@ a { color: #4C8BF5 !important; }
 <div class="mnemonic-card">
 <div class="mnemonic-title">💡 面试加分技巧</div>
 <div class="mnemonic-content">声音洪亮+眼神交流+手势自然</div>
-<div class="mnemonic-desc">微笑开场+情感投入+自信收尾</div>
+<div class="mnemonic-desc">微笑开场+情感投入+自信收尾
+<div style="margin-top:24px;padding:22px;background:linear-gradient(135deg,#EFF6FF,#F0FDF4);border:1px solid #93C5FD;border-radius:14px;text-align:center">
+  <h4 style="color:#1E40AF;margin-bottom:10px">🤖 AI模拟面试官</h4>
+  <p style="color:#666;font-size:0.9rem;margin-bottom:16px">让AI扮演面试考官，随机提问应变题，训练临场反应能力</p>
+  <a href="chat.html" style="display:inline-block;background:#4C8BF5;color:#fff;padding:14px 32px;border-radius:12px;font-weight:600;text-decoration:none;font-size:0.95rem">开始模拟面试</a>
+  <p style="color:#999;font-size:0.82rem;margin-top:10px">点击后向AI助手发送"开始模拟面试"即可</p>
 </div>
 
 </div>
@@ -1925,12 +2034,138 @@ a { color: #4C8BF5 !important; }
 <p><strong>参考答案：</strong>①认真倾听，不争辩；②表示理解和道歉；③调查核实情况；④提出解决方案；⑤跟踪后续服务；⑥总结改进</p>
 </div>
 </div>
+
+<div class="item-card">
+<h4>Q7: 游客拒绝购物怎么处理？</h4>
+<p><strong>参考答案：</strong>①尊重游客意愿不强迫；②耐心说明购物是行程安排的一部分；③不得以不购物为由降低服务质量；④如遇强迫购物可向旅游局投诉</p>
+</div>
+<div class="item-card">
+<h4>Q8: 游客要求增加自费项目怎么办？</h4>
+<p><strong>参考答案：</strong>①确认是否在行程允许范围内；②征求全体游客意见；③确保不影响正常行程安排；④价格透明明码标价；⑤绝不强制消费</p>
+</div>
+<div class="item-card">
+<h4>Q9: 遇到恶劣天气怎么处理？</h4>
+<p><strong>参考答案：</strong>①关注天气预报提前预警；②调整行程安排确保安全；③向游客说明情况并致歉；④联系旅行社寻求替代方案；⑤做好游客安抚和后勤保障</p>
+</div>
+<div class="item-card">
+<h4>Q10: 游客之间发生冲突怎么办？</h4>
+<p><strong>参考答案：</strong>①及时制止防止事态升级；②分别了解情况耐心调解；③换位思考引导互相理解；④必要时调整座位或分组；⑤严重时报告旅行社或报警</p>
+</div>
+<div class="item-card">
+<h4>Q11: 游客提出无理要求怎么办？</h4>
+<p><strong>参考答案：</strong>①耐心倾听表示理解；②礼貌解释无法满足的原因；③提供替代方案；④坚持原则不随意妥协；⑤态度和蔼立场坚定</p>
+</div>
+<div class="item-card">
+<h4>Q12: 旅途中游客突发心脏病怎么办？</h4>
+<p><strong>参考答案：</strong>①立即拨打120急救电话；②让患者平躺保持安静；③询问是否有随身药物协助服用；④组织其他游客让出空间；⑤向旅行社报告并联系家属</p>
+</div>
+<div class="item-card">
+<h4>Q13: 旅游车在高速路上抛锚怎么办？</h4>
+<p><strong>参考答案：</strong>①确保乘客安全组织疏散到护栏外；②放置警示标志拨打救援电话；③联系旅行社安排替代车辆；④安抚游客情绪提供饮用水；⑤调整后续行程减少损失</p>
+</div>
+<div class="item-card">
+<h4>Q14: 游客对住宿不满意要求换房怎么办？</h4>
+<p><strong>参考答案：</strong>①了解不满意的具体原因；②与酒店协商看能否调换房间；③如无法调换耐心解释并致歉；④记录游客意见反馈旅行社；⑤尽量满足合理需求</p>
+</div>
+<div class="item-card">
+<h4>Q15: 接到游客遗失物品报告怎么办？</h4>
+<p><strong>参考答案：</strong>①详细了解遗失物品和时间地点；②协助在可能地点寻找；③向酒店/景区/交通部门报失；④协助报警备案；⑤留下联系方式持续跟进</p>
+</div>
+<div class="item-card">
+<h4>Q16: 游客护照/证件丢失怎么办？</h4>
+<p><strong>参考答案：</strong>①安抚游客情绪不要慌张；②立即到当地派出所报案获取证明；③联系游客所属使领馆办理旅行证；④协助联系航空公司改签；⑤向旅行社报告协助处理后续</p>
+</div>
+<div class="item-card">
+<h4>Q17: 游客在景区被蚊虫/蛇咬伤怎么办？</h4>
+<p><strong>参考答案：</strong>①保持冷静不要慌乱奔跑；②如为蛇咬记住蛇的特征；③用布条在伤口近心端绑扎；④立即送往最近医院；⑤报告旅行社并跟进后续</p>
+</div>
+<div class="item-card">
+<h4>Q18: 团队中有游客传染性疾病怎么办？</h4>
+<p><strong>参考答案：</strong>①建议患者立即就医；②向旅行社报告请求指示；③做好其他游客的心理安抚；④配合卫生部门做好防控；⑤严格保密患者隐私</p>
+</div>
+<div class="item-card">
+<h4>Q19: 遇到地震等自然灾害怎么办？</h4>
+<p><strong>参考答案：</strong>①保持冷静立即组织避难；②按照当地应急指示行动；③确保游客人身安全为第一优先；④清点人数防止走散；⑤与旅行社保持联系等待救援</p>
+</div>
+<div class="item-card">
+<h4>Q20: 游客对导游服务正式投诉怎么办？</h4>
+<p><strong>参考答案：</strong>①认真倾听不争辩不推卸；②记录投诉内容和具体诉求；③调查核实情况；④能解决的立即解决；⑤无法立即解决的告知处理时限；⑥向旅行社报告并跟踪结果；⑦总结经验避免再次发生</p>
+</div>
+
 <div class="warn-box">
 <strong>⚠️ 面试注意事项：</strong>回答问题要条理清晰，使用"首先...其次...最后..."等连接词。展现专业素养，态度诚恳，不卑不亢。
 </div>
 </div>
 </div>
 </div>
+
+
+<!-- 导游词背诵技巧 -->
+<div class="section" id="memorize-tips">
+<div class="container">
+<div class="glass-card section-block">
+<h2>🧠 导游词背诵技巧</h2>
+<p class="section-desc">面试导游词背不下来？掌握方法事半功倍</p>
+<h3>五步背诵法（推荐）</h3>
+<div class="step-list">
+<div class="step-item">
+<div class="step-num">1</div>
+<div class="step-content"><h5>通读理解（第1遍）</h5><p>逐字通读导游词，理解每段讲什么，不急着背。把不理解的词语查清楚。</p></div>
+</div>
+<div class="step-item">
+<div class="step-num">2</div>
+<div class="step-content"><h5>框架记忆（第2遍）</h5><p>提炼导游词框架：欢迎词→景点概述→历史背景→核心亮点→趣味故事→总结升华→欢送词。记住骨架，填内容。</p></div>
+</div>
+<div class="step-item">
+<div class="step-num">3</div>
+<div class="step-content"><h5>分段攻克（第3-5遍）</h5><p>按框架分段背诵，每段单独练熟再串联。重点攻克自己卡壳的地方。</p></div>
+</div>
+<div class="step-item">
+<div class="step-num">4</div>
+<div class="step-content"><h5>录音自检（第6遍起）</h5><p>用手机录下自己的讲解，回放听哪里卡壳、哪里啰嗦。反复修正直到流畅。</p></div>
+</div>
+<div class="step-item">
+<div class="step-num">5</div>
+<div class="step-content"><h5>模拟实战（最后3天）</h5><p>对着镜子/家人/朋友完整讲解，控制时间在8-12分钟。练到脱稿自然，像在聊天而不是背书。</p></div>
+</div>
+</div>
+<div class="item-grid">
+<div class="item-card">
+<h4>💡 背诵加速技巧</h4>
+<ul>
+<li>联想画面法：把每段内容想象成一幅画</li>
+<li>关键词串联：每段提取3-5个关键词串线</li>
+<li>场景代入：假装自己在景点现场讲</li>
+<li>碎片时间：走路/等车时默背</li>
+</ul>
+</div>
+<div class="item-card">
+<h4>⚠️ 常见背诵误区</h4>
+<ul>
+<li>死记硬背一字不差→面试官更看重理解</li>
+<li>只背不练→上台会紧张忘词</li>
+<li>背太快→考官听不清反而扣分</li>
+<li>忽略开场和收尾→首尾印象很重要</li>
+</ul>
+</div>
+<div class="item-card">
+<h4>🎯 脱稿技巧</h4>
+<ul>
+<li>卡壳时用"换句话说"衔接</li>
+<li>忘词了跳过讲下一段，不要停</li>
+<li>用自己的话复述，不要逐字背</li>
+<li>准备2-3个备选趣味故事随时插入</li>
+</ul>
+</div>
+</div>
+<div class="mnemonic-card">
+<div class="mnemonic-title">📝 面试导游词黄金时间分配</div>
+<div class="mnemonic-content">欢迎词30秒 + 景点概述1分钟 + 历史背景2分钟 + 核心亮点3分钟 + 趣味故事2分钟 + 总结升华1分钟 + 欢送词30秒 = 约10分钟</div>
+</div>
+</div>
+</div>
+</div>
+
 
 <!-- 备考方法 -->
 <div class="section" id="method">
@@ -2018,6 +2253,23 @@ a { color: #4C8BF5 !important; }
           <strong>行程延误：</strong>致歉 → 调整方案 → 补偿措施<br>
           <strong>突发事件：</strong>安全确认 → 情绪安抚 → 方案告知 → 后续保障
         </div>
+      
+    <div style="margin-top:20px;padding:18px;background:#FFFBEB;border:1px solid #FDE68A;border-radius:14px">
+      <h4 style="color:#92400E;margin-bottom:12px">📋 面试评分细则（每项拆解）</h4>
+      <div style="color:#666;font-size:0.88rem;line-height:2">
+        <strong style="color:#1A1A1A">🎯 景点讲解（45分）：</strong>内容准确完整15分 | 条理清晰有逻辑10分 | 生动有趣有感染力10分 | 时间把控合理5分 | 突出景点特色5分<br>
+        <strong style="color:#1A1A1A">🗣️ 语言表达（20分）：</strong>普通话标准5分 | 表达流畅无语病5分 | 用词准确得体5分 | 语速适中节奏好5分<br>
+        <strong style="color:#1A1A1A">⚡ 应变能力（10分）：</strong>反应迅速3分 | 处理方法得当4分 | 考虑全面周到3分<br>
+        <strong style="color:#1A1A1A">📌 服务规范（10分）：</strong>服务程序正确4分 | 规范意识强3分 | 注意事项到位3分<br>
+        <strong style="color:#1A1A1A">📚 综合知识（10分）：</strong>知识面广4分 | 回答准确4分 | 与导游工作相关2分<br>
+        <strong style="color:#1A1A1A">🙏 礼貌礼仪（5分）：</strong>仪容仪表2分 | 礼节礼貌2分 | 态度亲切1分
+      </div>
+      <div style="margin-top:12px;padding:12px;background:#fff;border-radius:10px">
+        <strong style="color:#92400E">💡 评分通关线：</strong>
+        <span style="color:#666;font-size:0.88rem">笔试和面试均需达到60分（满分100）才算合格。面试中景点讲解占近一半分数，是重中之重！</span>
+      </div>
+    </div>
+
       </div>
     </div>
 </div>
@@ -2139,6 +2391,65 @@ a { color: #4C8BF5 !important; }
 <div class="warn-box">
 <strong>⚠️ 提醒：</strong>一个月冲刺方案适合有一定基础的考生！零基础考生建议至少准备2个月以上。无论哪种方案，<strong>坚持</strong>才是成功的关键！
 </div>
+
+<div style="margin-top:24px;padding:22px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:14px">
+  <h4 style="color:#1E40AF;margin-bottom:14px">🎯 90天备考计划生成器</h4>
+  <p style="color:#666;font-size:0.88rem;margin-bottom:16px">根据你的基础情况，生成个性化备考方案</p>
+  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+    <label style="display:flex;align-items:center;gap:8px;padding:10px;background:#fff;border-radius:10px;border:1px solid #E5E7EB;cursor:pointer">
+      <input type="radio" name="plan-level" value="zero" style="accent-color:#4C8BF5">
+      <span style="color:#1A1A1A;font-size:0.92rem"><strong>零基础：</strong>完全没接触过导游知识，需要从头学起</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;padding:10px;background:#fff;border-radius:10px;border:1px solid #E5E7EB;cursor:pointer">
+      <input type="radio" name="plan-level" value="some" style="accent-color:#4C8BF5">
+      <span style="color:#1A1A1A;font-size:0.92rem"><strong>有一定基础：</strong>看过部分教材，需要系统强化</span>
+    </label>
+    <label style="display:flex;align-items:center;gap:8px;padding:10px;background:#fff;border-radius:10px;border:1px solid #E5E7EB;cursor:pointer">
+      <input type="radio" name="plan-level" value="review" style="accent-color:#4C8BF5">
+      <span style="color:#1A1A1A;font-size:0.92rem"><strong>冲刺复习：</strong>已经学过一遍，需要查漏补缺</span>
+    </label>
+  </div>
+  <button onclick="generatePlan()" style="background:#4C8BF5;color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;width:100%">生成我的备考计划</button>
+  <div id="plan-result" style="margin-top:16px;display:none"></div>
+</div>
+<script>
+function generatePlan(){
+  var level=document.querySelector('input[name="plan-level"]:checked');
+  if(!level){alert('请先选择你的基础情况');return;}
+  var v=level.value;
+  var plans={
+    zero:{title:'零基础90天备考计划',phases:[
+      {name:'基础期（Day 1-30）',tasks:['通读4科教材，每天3-4小时','政策法规：重点法条逐条理解，做笔记','导游业务：地陪/全陪/领队流程图记忆','全国导基：按章节做思维导图','地方导基：本省景点+文化重点整理','每天背1个口诀，周末做章节测试']},
+      {name:'强化期（Day 31-60）',tasks:['做历年真题，每天1套','整理错题本，标记反复出错的知识点','政策法规：刷题+背诵法条数字','导游业务：应变能力情景题专项训练','全国导基：口诀+联想记忆高频考点','开始准备面试导游词，选3-5个景点']},
+      {name:'冲刺期（Day 61-90）',tasks:['每天2套模拟题，严格限时','错题本第2轮复习','面试导游词脱稿练习，每篇3遍以上','模拟面试：找人当考官提问','考前7天：回顾笔记+口诀+错题','考前1天：早点休息，自信上场']}
+    ]},
+    some:{title:'有基础90天备考计划',phases:[
+      {name:'巩固期（Day 1-20）',tasks:['快速回顾4科教材，标记薄弱章节','薄弱章节重点攻克','开始刷历年真题','每天2-3小时学习时间']},
+      {name:'强化期（Day 21-55）',tasks:['大量刷题，每天1-2套真题','错题归纳分析，找规律','面试导游词开始准备','应变能力问答专项训练','每天3-4小时学习时间']},
+      {name:'冲刺期（Day 56-90）',tasks:['模拟考试每周2-3次','面试脱稿练习+模拟面试','错题本反复过','考前调整状态，自信备考']}
+    ]},
+    review:{title:'冲刺复习90天计划',phases:[
+      {name:'查漏期（Day 1-15）',tasks:['做1-2套真题找薄弱点','重点章节精读回顾','口诀+速记卡过一遍']},
+      {name:'刷题期（Day 16-45）',tasks:['每天2-3套模拟题','错题分类整理','面试导游词熟练脱稿','应变能力问答强化']},
+      {name:'冲刺期（Day 46-90）',tasks:['全真模拟考试环境','错题三刷','面试模拟实战','考前信心建设']}
+    ]}
+  };
+  var p=plans[v];
+  var html='<div style="background:#fff;border-radius:12px;padding:18px;border:1px solid #BFDBFE">';
+  html+='<h5 style="color:#1E40AF;margin-bottom:14px">'+p.title+'</h5>';
+  p.phases.forEach(function(ph){
+    html+='<div style="margin-bottom:14px;padding:14px;background:#F8FAFC;border-radius:10px">';
+    html+='<strong style="color:#4C8BF5;font-size:0.95rem">'+ph.name+'</strong>';
+    html+='<ul style="margin-top:8px;padding-left:18px;color:#666;font-size:0.88rem;line-height:1.9">';
+    ph.tasks.forEach(function(t){html+='<li>'+t+'</li>';});
+    html+='</ul></div>';
+  });
+  html+='</div>';
+  document.getElementById('plan-result').innerHTML=html;
+  document.getElementById('plan-result').style.display='block';
+}
+</script>
+
 
 </div>
 </div>
