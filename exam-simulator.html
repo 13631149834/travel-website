@@ -1046,7 +1046,7 @@ function renderSingleQuestion(idx) {
   updateProgress();
 }
 
-window.selectExamAnswer = function(qIdx, optIdx) {
+window.selectExamAnswer = function(qIdx, optIdx) {if(typeof GameSystem!=='undefined')GameSystem.addQuestion();
   if(answeredQuestions[qIdx] !== undefined) return; // 已答过不再改
   userAnswers[qIdx] = optIdx;
   answeredQuestions[qIdx] = optIdx; // 直接确认，立刻出解析
@@ -1159,7 +1159,7 @@ function toggleTimer() {
 }
 
 // ========== 交卷 ==========
-function submitExam() {
+function submitExam() {if(typeof GameSystem!=='undefined')GameSystem.addExam();
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   
   // 自动确认所有未确认的答案
@@ -1480,5 +1480,6 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 document.getElementById('navLinks').classList.remove('open');
 </script>
 
+<script src="gamification.js"></script>
 </body>
 </html>
