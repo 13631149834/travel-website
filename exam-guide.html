@@ -537,6 +537,7 @@ a { color: #4C8BF5 !important; }
 }
 .tab-panel.active {
     display: block;
+    opacity: 1;
 }
 .tab-hidden {
     display: none !important;
@@ -2854,15 +2855,12 @@ function switchTab(btn, panelId) {
     });
     window.scrollTo({top:0,behavior:'smooth'});
 }
-document.addEventListener('DOMContentLoaded',function(){
+function initTabSystem(){
     try{
     // Re-organize DOM: move all .section[data-tab] to be direct children of .content-section
-    // This fixes the HTML nesting issue where sections are nested inside each other
     var cs=document.querySelector('.content-section');
     if(cs){
-        // Move ALL .section[data-tab] to .content-section (search entire document, not just cs)
         document.querySelectorAll('.section[data-tab]').forEach(function(sec){cs.appendChild(sec);});
-        // Also move standalone data-tab divs to content-section
         document.querySelectorAll('[data-tab]:not(.tab-panel):not(.section)').forEach(function(d){cs.appendChild(d);});
     }
     // Initialize tab state
@@ -2886,7 +2884,10 @@ document.addEventListener('DOMContentLoaded',function(){
         else{d.classList.add('tab-hidden');}
     });
     }catch(e){console.error('Tab init error:',e);}
-});
+}
+// Run immediately if DOM ready, otherwise wait for DOMContentLoaded
+if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',initTabSystem);}
+else{initTabSystem();}
 (function(){
     var btn=document.querySelector('.back-to-top');
     if(!btn)return;
