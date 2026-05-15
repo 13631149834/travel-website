@@ -10892,6 +10892,7 @@ function initPage() {
     if (data.extra && data.extra.length) tabs += '<div class="detail-tab" onclick="switchTab(this,&quot;extra&quot;)">核心考点</div>';
     if (data.questions && data.questions.length) tabs += '<div class="detail-tab" onclick="switchTab(this,&quot;quiz&quot;)">练习题(' + data.questions.length + ')</div>';
     if (data.guideSpeech && data.guideSpeech.length) tabs += '<div class="detail-tab" onclick="switchTab(this,&quot;guide&quot;)">导游词(' + data.guideSpeech.length + ')</div>';
+    if (data.exam && data.exam.length) tabs += '<div class="detail-tab" onclick="switchTab(this,&quot;exam&quot;)">考试专项(' + data.exam.length + ')</div>';
     tabs += '</div>';
     let official = '<div class="detail-content active" id="tab-official"><div class="info-box"><h4>官方报考信息</h4><ul>';
     if (data.official) {
@@ -10918,6 +10919,13 @@ function initPage() {
       });
     }
     guide += '</div>';
+    let exam = '<div class="detail-content" id="tab-exam">';
+    if (data.exam) {
+      data.exam.forEach((e, i) => {
+        exam += '<div class="content-card" style="margin-bottom:20px"><h4><span style="margin-right:8px">🎯</span>' + (e.title||'考试专项'+(i+1)) + '</h4><div style="white-space:pre-wrap;line-height:1.9;font-size:0.92rem;color:#1A1A1A;font-weight:500;padding:12px 0">' + (e.content||'暂无内容') + '</div></div>';
+      });
+    }
+    exam += '</div>';
     let quiz = '<div class="detail-content" id="tab-quiz">';
     if (data.questions) {
       data.questions.forEach((q, i) => {
@@ -10941,7 +10949,7 @@ function initPage() {
       });
     }
     quiz += '</div>';
-    detail.innerHTML += tabs + official + extra + guide + quiz;
+    detail.innerHTML += tabs + official + extra + guide + exam + quiz;
   }
   window.backToList = function() {
     document.getElementById('provinceDetail').classList.remove('active');
