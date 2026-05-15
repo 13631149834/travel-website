@@ -78,3 +78,19 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     document.body.appendChild(h);
   },1200);
 })();
+
+
+// Privacy consent banner
+(function(){
+  if(localStorage.getItem('yd_privacy_ok'))return;
+  setTimeout(function(){
+    var b=document.createElement('div');b.id='pCon';
+    b.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #E5E7EB;padding:14px 16px;padding-bottom:calc(14px + env(safe-area-inset-bottom));z-index:99999;box-shadow:0 -2px 12px rgba(0,0,0,0.1);';
+    b.innerHTML='<div style="max-width:480px;margin:0 auto;"><div style="font-size:0.82rem;color:#666;line-height:1.6;margin-bottom:10px;">🔒 我们使用浏览器本地存储保存你的学习进度（不收集个人信息），AI对话会发送到第三方处理。<a href="privacy.html" style="color:#4C8BF5;font-weight:500;">查看隐私政策</a></div><div style="display:flex;gap:8px;justify-content:flex-end;"><button onclick="document.getElementById(\'pCon\').remove();localStorage.setItem(\'yd_privacy_ok\',\'1\')" style="background:#4C8BF5;color:#fff;border:none;padding:8px 20px;border-radius:18px;font-size:0.82rem;font-weight:600;cursor:pointer;">我知道了</button></div></div>';
+    document.body.appendChild(b);
+    // Adjust bottom bar if exists
+    var bb=document.getElementById('bb');if(bb)bb.style.bottom='80px';
+    // Remove adjustment after consent
+    var origRemove=b.remove.bind(b);
+  },2500);
+})();
