@@ -590,7 +590,7 @@ a { color: #4C8BF5 !important; }
 .step-item { padding: 12px 0; }
 </style>
 
-<script src="mobile-fix.js?v=20260516b"></script>
+<script src="mobile-fix.js?v=20260516c"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -2856,7 +2856,16 @@ function switchTab(btn, panelId) {
         p.style.display = 'none';
     });
     var panel = document.getElementById(panelId);
-    if(panel){ panel.classList.add('active'); panel.style.display = 'block'; }
+    if(panel){ 
+        panel.classList.add('active'); 
+        panel.style.display = 'block';
+        panel.style.visibility = 'visible';
+        panel.style.height = 'auto';
+        panel.style.overflow = 'visible';
+    }
+    // Debug: update version marker
+    var verEl = document.getElementById('ver');
+    if(verEl) verEl.textContent = 'v2.1 → ' + panelId;
     // Toggle sections: show only the one matching this tab
     document.querySelectorAll('[data-tab]').forEach(function(s){
         if(s.getAttribute('data-tab') === panelId){
