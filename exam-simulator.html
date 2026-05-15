@@ -12,6 +12,7 @@
 <meta content="https://youdao-travel.com/images/qrcode.jpg" property="og:image"/>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <style>
+*{-webkit-tap-highlight-color:transparent;}button,.tab-btn,.mode-tab{touch-action:manipulation;-webkit-touch-callout:none;}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.75;color:#666666;font-weight:400;background:#FFFFFF;min-height:100vh;padding-bottom:85px}
@@ -347,7 +348,7 @@ a { color: #4C8BF5 !important; }
   .card{border-radius:18px;padding:24px;margin:0}
   .section{padding:32px 0}
   .section-title{font-size:1.5rem;margin-bottom:8px}
-  .fab{bottom:24px;right:24px}
+  .fab{bottom:24px;left:16px}
   .modal-overlay .modal{max-width:600px}
 }
   .quiz-container{max-width:800px;margin:0 auto;padding:24px}
@@ -689,13 +690,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Mobile touch fix for mode tabs
     document.querySelectorAll('.mode-tab').forEach(function(tab){
-        tab.addEventListener('touchend', function(e){
+        tab.addEventListener('touchstart', function(e){
             e.preventDefault();
             var match = tab.getAttribute('onclick');
             if(match) {
                 tab.click();
             }
-        }, {passive: false});
+        }, {passive: false
+    // Explicit click binding for mode tabs
+    document.querySelectorAll('.mode-tab').forEach(function(tab){
+        var origOnclick = tab.getAttribute('onclick');
+        if(origOnclick) {
+            tab.removeAttribute('onclick');
+            tab.addEventListener('click', function(e){
+                e.preventDefault();
+                var m = origOnclick.match(/switchMode\('([^']+)'\)/);
+                if(m && typeof switchMode === 'function') {
+                    switchMode(m[1]);
+                }
+            });
+            tab.addEventListener('touchstart', function(e){
+                e.preventDefault();
+                var m = origOnclick.match(/switchMode\('([^']+)'\)/);
+                if(m && typeof switchMode === 'function') {
+                    switchMode(m[1]);
+                }
+            }, {passive: false});
+        }
+    });});
     });
 });
 
