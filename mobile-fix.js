@@ -74,6 +74,18 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     .mode-tab{min-height:60px!important;touch-action:manipulation!important;}
     .detail-tab{min-height:36px;min-width:60px;padding:6px 12px!important;border-radius:16px!important;font-size:0.82rem!important;}
     .detail-tab.active{background:#4C8BF5!important;color:#fff!important;}
+    .page-header{padding:18px 16px 10px!important;}
+    .page-header h1{font-size:1.3rem!important;margin-bottom:4px!important;}
+    .page-desc{font-size:0.82rem!important;}
+    .section-title{font-size:1.05rem!important;margin-bottom:12px!important;}
+    .core-card{padding:16px!important;}
+    .core-card h3{font-size:0.95rem!important;}
+    .core-card p{font-size:0.82rem!important;margin-bottom:8px!important;}
+    .card{padding:14px!important;margin-bottom:10px!important;}
+    .faq-list{margin-top:12px!important;}
+    .faq-question,.faq-q{font-size:0.88rem!important;padding:10px 12px!important;}
+    .faq-answer,.faq-a{font-size:0.82rem!important;padding:8px 12px!important;}
+
     .gqopt:active{transform:scale(0.97);border-color:#4C8BF5!important;background:#F0F5FF!important;}
     .gst[onclick]{cursor:pointer;transition:background .15s;}
     .gst[onclick]:active{background:#F0F5FF;border-radius:8px;}
