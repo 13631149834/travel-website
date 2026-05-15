@@ -2859,6 +2859,16 @@ function switchTab(btn, panelId) {
             el=el.parentElement;
         }
     }
+    // Step 4b: Re-hide ancestor sections whose data-tab doesn't match (override Step 4)
+    if(panel){
+        var el2=panel;
+        while(el2&&el2!==document.body){
+            if(el2.classList&&el2.classList.contains('section')&&el2.hasAttribute('data-tab')){
+                if(el2.getAttribute('data-tab')!==panelId){el2.classList.add('tab-hidden');}
+            }
+            el2=el2.parentElement;
+        }
+    }
     // Step 5: Handle standalone data-tab divs (not tab-panel, not section)
     document.querySelectorAll('[data-tab]:not(.tab-panel):not(.section)').forEach(function(d){
         if(d.getAttribute('data-tab')===panelId){d.classList.remove('tab-hidden');}
@@ -2886,7 +2896,11 @@ document.addEventListener('DOMContentLoaded',function(){
     // Unhide ancestor sections of active panel
     if(activePanelId){
         var ap=document.getElementById(activePanelId);
-        if(ap){var el=ap;while(el&&el!==document.body){if(el.classList&&el.classList.contains('section')){el.classList.remove('tab-hidden');}el=el.parentElement;}}
+        if(ap){
+            var el=ap;while(el&&el!==document.body){if(el.classList&&el.classList.contains('section')){el.classList.remove('tab-hidden');}el=el.parentElement;}
+            // Re-hide ancestor sections whose data-tab doesn't match
+            var el2=ap;while(el2&&el2!==document.body){if(el2.classList&&el2.classList.contains('section')&&el2.hasAttribute('data-tab')){if(el2.getAttribute('data-tab')!==activePanelId){el2.classList.add('tab-hidden');}}el2=el2.parentElement;}
+        }
     }
     // Handle standalone data-tab divs
     document.querySelectorAll('[data-tab]:not(.tab-panel):not(.section)').forEach(function(d){
