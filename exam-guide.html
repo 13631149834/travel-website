@@ -2838,18 +2838,26 @@ function switchTab(btn, panelId) {
         panel.classList.add('active');
     }
     
-    // Step 3: Handle sections with data-tab (hide non-matching, but keep #overview visible always)
+    // Step 3: Hide all sections with data-tab that don't match the active tab
     document.querySelectorAll('.section[data-tab]').forEach(function(sec){
         var tab = sec.getAttribute('data-tab');
-        // Never hide #overview section - it contains all other sections nested inside
-        if(sec.id === 'overview'){
-            sec.classList.remove('tab-hidden');
-        } else if(tab === panelId){
+        if(tab === panelId){
             sec.classList.remove('tab-hidden');
         } else {
             sec.classList.add('tab-hidden');
         }
     });
+    // Step 3b: Unhide any section that contains the active tab-panel (handles nesting)
+    var activePanel = document.querySelector('.tab-panel.active');
+    if(activePanel){
+        var el = activePanel;
+        while(el && el !== document.body){
+            if(el.classList.contains('section')){
+                el.classList.remove('tab-hidden');
+            }
+            el = el.parentElement;
+        }
+    }
     // Handle standalone data-tab divs (not tab-panel, not section)
     document.querySelectorAll('[data-tab]:not(.tab-panel):not(.section)').forEach(function(el){
         var tab = el.getAttribute('data-tab');
@@ -2881,17 +2889,26 @@ document.addEventListener('DOMContentLoaded',function(){
             ap.classList.add('active');
         }
         
-        // Handle sections with data-tab (hide non-matching, but keep #overview visible)
+        // Hide all sections with data-tab that don't match the active tab
         document.querySelectorAll('.section[data-tab]').forEach(function(sec){
             var tab = sec.getAttribute('data-tab');
-            if(sec.id === 'overview'){
-                sec.classList.remove('tab-hidden');
-            } else if(tab === activePanelId){
+            if(tab === activePanelId){
                 sec.classList.remove('tab-hidden');
             } else {
                 sec.classList.add('tab-hidden');
             }
         });
+        // Unhide any section that contains the active tab-panel (handles nesting)
+        var ap = document.querySelector('.tab-panel.active');
+        if(ap){
+            var el = ap;
+            while(el && el !== document.body){
+                if(el.classList.contains('section')){
+                    el.classList.remove('tab-hidden');
+                }
+                el = el.parentElement;
+            }
+        }
         // Handle standalone data-tab divs
         document.querySelectorAll('[data-tab]:not(.tab-panel):not(.section)').forEach(function(el){
             if(el.getAttribute('data-tab') === activePanelId){
