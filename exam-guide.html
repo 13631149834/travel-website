@@ -2817,7 +2817,35 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
     </div>
 </div>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button><script>
-function switchTab(btn, panelId) {if(typeof GameSystem!=='undefined' && (panelId==='tab-interview'||panelId==='tab-guide'))GameSystem.addGuide();
+function switchTab(btn, panelId) {
+    // Game system hooks for each tab
+    if(typeof GameSystem!=='undefined'){
+        if(panelId==='tab-interview'){
+            GameSystem.addGuide();
+            GameSystem.state.sp.s51={d:true}; GameSystem.state.sp.s52={d:true};
+            // 面试紧张急救包
+            GameSystem.state.sp.s33={d:true};
+            GameSystem.chkAch(); GameSystem.chkSt();
+        }
+        if(panelId==='tab-law'){
+            GameSystem.state.sp.s21={d:true};
+            GameSystem.chkAch(); GameSystem.chkSt();
+        }
+        if(panelId==='tab-service'){
+            GameSystem.state.sp.s31={d:true};
+            GameSystem.chkAch(); GameSystem.chkSt();
+        }
+        if(panelId==='tab-overview'){
+            GameSystem.state.sp.s14={d:true}; // 报名自查
+            GameSystem.state.sp.s62={d:true}; // 收入计算
+            GameSystem.state.sp.s63={d:true}; // 证书对比
+            GameSystem.chkAch(); GameSystem.chkSt();
+        }
+        if(panelId==='tab-plan'){
+            GameSystem.state.sp.s15={d:true}; // 90天计划
+            GameSystem.chkAch(); GameSystem.chkSt();
+        }
+    }
     // Toggle tab buttons
     document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
     btn.classList.add('active');

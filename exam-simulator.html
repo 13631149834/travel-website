@@ -867,6 +867,10 @@ function renderDailySingle(idx) {
 function dailySelectOption(qIdx, optIdx) {
   if(dailyAnswered[qIdx] !== undefined) return;
   var q = dailyQuestions[qIdx];
+  // Game system hook - count answered questions
+  if(typeof GameSystem!=='undefined' && !dailyAnswered[qIdx]){
+      // Will be called on first answer for this question
+  }
   if(q.type === 'multi') {
     if(!dailyUserAnswers[qIdx]) dailyUserAnswers[qIdx] = [];
     var pos = dailyUserAnswers[qIdx].indexOf(optIdx);
@@ -875,6 +879,8 @@ function dailySelectOption(qIdx, optIdx) {
   } else {
     dailyUserAnswers[qIdx] = optIdx;
     dailyAnswered[qIdx] = true;
+    // Game system hook - record question answered
+    if(typeof GameSystem!=='undefined')GameSystem.addQuestion();
   }
   renderDailySingle(qIdx);
   
@@ -907,6 +913,8 @@ function dailyConfirmMulti(qIdx) {
   if(!dailyUserAnswers[qIdx] || dailyUserAnswers[qIdx].length === 0) return;
   dailyAnswered[qIdx] = true;
   var q = dailyQuestions[qIdx];
+  // Game system hook
+  if(typeof GameSystem!=='undefined')GameSystem.addQuestion();
   var isCorrect = JSON.stringify(dailyUserAnswers[qIdx].sort()) === JSON.stringify(q.answer.sort());
   
   // 答错时记录到错题本
