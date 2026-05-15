@@ -2860,10 +2860,12 @@ function switchTab(btn, panelId) {
         }
     }
     // Step 4b: Re-hide ancestor sections whose data-tab doesn't match (override Step 4)
+    // But skip #overview since it contains all sections nested inside
     if(panel){
         var el2=panel;
         while(el2&&el2!==document.body){
-            if(el2.classList&&el2.classList.contains('section')&&el2.hasAttribute('data-tab')){
+            if(el2.id==='overview'){el2.classList.remove('tab-hidden');} // never hide #overview
+            else if(el2.classList&&el2.classList.contains('section')&&el2.hasAttribute('data-tab')){
                 if(el2.getAttribute('data-tab')!==panelId){el2.classList.add('tab-hidden');}
             }
             el2=el2.parentElement;
@@ -2898,8 +2900,8 @@ document.addEventListener('DOMContentLoaded',function(){
         var ap=document.getElementById(activePanelId);
         if(ap){
             var el=ap;while(el&&el!==document.body){if(el.classList&&el.classList.contains('section')){el.classList.remove('tab-hidden');}el=el.parentElement;}
-            // Re-hide ancestor sections whose data-tab doesn't match
-            var el2=ap;while(el2&&el2!==document.body){if(el2.classList&&el2.classList.contains('section')&&el2.hasAttribute('data-tab')){if(el2.getAttribute('data-tab')!==activePanelId){el2.classList.add('tab-hidden');}}el2=el2.parentElement;}
+            // Re-hide ancestor sections whose data-tab doesn't match (skip #overview)
+            var el2=ap;while(el2&&el2!==document.body){if(el2.id==='overview'){el2.classList.remove('tab-hidden');}else if(el2.classList&&el2.classList.contains('section')&&el2.hasAttribute('data-tab')){if(el2.getAttribute('data-tab')!==activePanelId){el2.classList.add('tab-hidden');}}el2=el2.parentElement;}
         }
     }
     // Handle standalone data-tab divs
