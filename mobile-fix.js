@@ -9,6 +9,16 @@ function initTouch(){
   });
   document.addEventListener('touchstart',function(e){var d=e.target.closest('.detail-tab,[onclick*="switchTab"],[onclick*="switchMode"],[onclick*="filterPosts"]');if(d&&!d._tb){d._tb=1;var o=d.getAttribute('onclick');if(o){try{eval(o)}catch(x){}}}},{passive:false});
 }
+
+  // Quiz option touch support
+  document.addEventListener('touchstart',function(e){
+    var qo=e.target.closest('.gqopt');
+    if(qo&&!qo._tb){
+      qo._tb=1;
+      var o=qo.getAttribute('onclick');
+      if(o){try{eval(o)}catch(x){}}
+    }
+  },{passive:false});
 var S={
 home:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m11-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0s0-6 0-7a1 1 0 011-1h4a1 1 0 011 1v7m-6 0h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 study:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9 7h6M9 11h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
@@ -64,6 +74,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
     .mode-tab{min-height:60px!important;touch-action:manipulation!important;}
     .detail-tab{min-height:36px;min-width:60px;padding:6px 12px!important;border-radius:16px!important;font-size:0.82rem!important;}
     .detail-tab.active{background:#4C8BF5!important;color:#fff!important;}
+    .gqopt:active{transform:scale(0.97);border-color:#4C8BF5!important;background:#F0F5FF!important;}
+    .gst[onclick]{cursor:pointer;transition:background .15s;}
+    .gst[onclick]:active{background:#F0F5FF;border-radius:8px;}
+    .gst[onclick]:hover{background:#F9FAFB;border-radius:8px;}
+
   `;
   document.head.appendChild(s);
 })();
