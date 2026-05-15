@@ -2865,8 +2865,6 @@ function switchTab(btn, panelId) {
     window.scrollTo({top:0,behavior:'smooth'});
 }
 document.addEventListener('DOMContentLoaded',function(){
-    // Game system: mark "认识考试" step as done
-    if(typeof GameSystem!=='undefined'){GameSystem.state.sp.s13={d:true};GameSystem.chkAch();GameSystem.chkSt();}
     // Initialize: show only the active tab's sections
     var activeBtn = document.querySelector('.tab-btn.active');
     var activePanelId = activeBtn ? activeBtn.getAttribute('onclick').match(/'([^']+)'/) : null;
@@ -2889,5 +2887,19 @@ document.addEventListener('DOMContentLoaded',function(){
 })();
 </script>
 <script src="gamification.js"></script>
+<script>
+// Mark "认识考试" step as done after GameSystem is loaded
+(function(){
+  function markS13(){
+    if(typeof GameSystem!=='undefined' && GameSystem.state){
+      GameSystem.state.sp.s13={d:true};
+      GameSystem.chkAch();GameSystem.chkSt();
+    } else {
+      setTimeout(markS13, 200);
+    }
+  }
+  markS13();
+})();
+</script>
 </body>
 </html>

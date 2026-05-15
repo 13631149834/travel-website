@@ -672,8 +672,7 @@ let remainingTime = 90 * 60; // 正式考试90分钟
 
 // ========== 初始化 ==========
 document.addEventListener('DOMContentLoaded', function() {
-    // Game system: mark exam visit
-    if(typeof GameSystem!=='undefined' && GameSystem.state){GameSystem.state.sp.s13={d:true};GameSystem.chkAch();GameSystem.chkSt();}
+
   try {
     checkActivation();
     if(typeof questionBank !== 'undefined' && questionBank.length > 0) {
@@ -1502,5 +1501,18 @@ document.getElementById('navLinks').classList.remove('open');
 </script>
 
 <script src="gamification.js"></script>
+<script>
+(function(){
+  function markVisit(){
+    if(typeof GameSystem!=='undefined' && GameSystem.state){
+      GameSystem.state.sp.s13={d:true};
+      GameSystem.chkAch();GameSystem.chkSt();
+    } else {
+      setTimeout(markVisit, 200);
+    }
+  }
+  markVisit();
+})();
+</script>
 </body>
 </html>

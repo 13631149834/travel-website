@@ -11720,7 +11720,6 @@ function sortProvinces(type){
     tryRender();
   } else {
     // Game system: mark exam visit
-    if(typeof GameSystem!=='undefined' && GameSystem.state){GameSystem.state.sp.s13={d:true};GameSystem.chkAch();GameSystem.chkSt();}
     document.addEventListener('DOMContentLoaded', tryRender);
   }
 })();
@@ -11847,5 +11846,18 @@ function sortProvinces(type){
 })();
 </script>
 <script src="gamification.js"></script>
+<script>
+(function(){
+  function markVisit(){
+    if(typeof GameSystem!=='undefined' && GameSystem.state){
+      GameSystem.state.sp.s13={d:true};
+      GameSystem.chkAch();GameSystem.chkSt();
+    } else {
+      setTimeout(markVisit, 200);
+    }
+  }
+  markVisit();
+})();
+</script>
 </body>
 </html>
