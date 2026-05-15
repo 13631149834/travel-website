@@ -672,7 +672,7 @@ a { color: #4C8BF5 !important; }
 
 <div class="content-section">
 <!-- 考试概览 -->
-<div class="section" id="overview">
+<div class="section" id="overview" data-tab="tab-overview">
 <div class="container">
 <div class="glass-card section-block">
 <div class="tab-panel active" id="tab-overview">
@@ -846,7 +846,7 @@ function calcIncome(){
 
 
 <!-- ========== 政策法规必考点 ========== -->
-<div class="section" id="law-points">
+<div class="section" id="law-points" data-tab="tab-law">
 <div class="container">
 <div class="glass-card section-full border-law">
 <div class="tab-panel" id="tab-law">
@@ -978,7 +978,7 @@ function calcIncome(){
 </div>
 
 <!-- ========== 导游业务实操要点 ========== -->
-<div class="section" id="service-points">
+<div class="section" id="service-points" data-tab="tab-service">
 <div class="container">
 <div class="glass-card section-full border-service">
 <div class="tab-panel" id="tab-service">
@@ -1215,7 +1215,7 @@ function calcIncome(){
 </div>
 
 <!-- 面试专题 -->
-<div class="section" id="interview-detail">
+<div class="section" id="interview-detail" data-tab="tab-interview">
 <div class="container">
 <div class="glass-card section-block">
 <h2>面试备考专题</h2>
@@ -1365,7 +1365,7 @@ function calcIncome(){
 </div>
 
 <!-- 笔试科目 -->
-<div class="section" id="subjects">
+<div class="section" id="subjects" data-tab="tab-subjects">
 <div class="container">
 <div class="glass-card section-block">
 <div class="tab-panel" id="tab-subjects">
@@ -1398,7 +1398,7 @@ function calcIncome(){
 </div>
 
 <!-- 各科复习重点详解 -->
-<div class="section" id="subject-detail">
+<div class="section" id="subject-detail" data-tab="tab-knowledge">
 <div class="container">
 <div class="glass-card section-block">
 <h2>各科复习重点详解</h2>
@@ -1495,7 +1495,7 @@ function calcIncome(){
 </div>
 
 <!-- ========== 全国导基高频考点 ========== -->
-<div class="section" id="knowledge-points">
+<div class="section" id="knowledge-points" data-tab="tab-knowledge">
 <div class="container">
 <div class="glass-card section-full border-knowledge">
 <div class="tab-panel" id="tab-knowledge">
@@ -1904,7 +1904,7 @@ function calcIncome(){
 </div>
 
 <!-- 导游证高频考点速记 -->
-<div class="section" id="exam-points">
+<div class="section" id="exam-points" data-tab="tab-points">
 <div class="container">
 <div class="glass-card section-block">
 <div class="tab-panel" id="tab-points">
@@ -2003,7 +2003,7 @@ function calcIncome(){
 </div>
 
 <!-- ========== 面试导游词模板 ========== -->
-<div class="section" id="interview-templates">
+<div class="section" id="interview-templates" data-tab="tab-interview">
 <div class="container">
 <div class="glass-card section-full border-interview">
 <div class="tab-panel" id="tab-interview">
@@ -2123,7 +2123,7 @@ function diagnoseSpeech(){
 </div>
 
 <!-- 面试高频问答 -->
-<div class="section" id="interview-qa">
+<div class="section" id="interview-qa" data-tab="tab-interview">
 <div class="container">
 <div class="glass-card section-block">
 <h2>📝 面试现场问答高频题目</h2>
@@ -2309,7 +2309,7 @@ function randomQA(){
 
 
 <!-- 导游词背诵技巧 -->
-<div class="section" id="memorize-tips">
+<div class="section" id="memorize-tips" data-tab="tab-interview">
 <div class="container">
 <div class="glass-card section-block">
 <h2>🧠 导游词背诵技巧</h2>
@@ -2376,7 +2376,7 @@ function randomQA(){
 
 
 <!-- 备考方法 -->
-<div class="section" id="method">
+<div class="section" id="method" data-tab="tab-interview">
 <div class="container">
 <div class="glass-card section-block">
 <h2>备考方法</h2>
@@ -2483,7 +2483,7 @@ function randomQA(){
 </div>
 
 <!-- ========== 备考时间表 ========== -->
-<div class="section" id="study-plans">
+<div class="section" id="study-plans" data-tab="tab-plan">
 <div class="container">
 <div class="glass-card section-full border-plan">
 <div class="tab-panel" id="tab-plan">
@@ -2664,7 +2664,7 @@ function generatePlan(){
 </div>
 
 <!-- 时间规划 -->
-<div class="section" id="timeline-plan">
+<div class="section" id="timeline-plan" data-tab="tab-plan">
 <div class="container">
 <div class="glass-card section-block">
 <h2>备考时间规划</h2>
@@ -2739,6 +2739,8 @@ function generatePlan(){
 
 </div><!-- 探索更多 -->
 <div class="container">
+</div>
+
 <div class="explore-section">
 <h3>继续探索</h3>
 <div class="explore-links">
@@ -2750,6 +2752,9 @@ function generatePlan(){
 </div>
 </div>
 
+</div>
+</div>
+</div>
 </div>
 
 <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
@@ -2811,19 +2816,36 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 </div>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button><script>
 function switchTab(btn, panelId) {
+    // Toggle tab buttons
     document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
-    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
     btn.classList.add('active');
-    document.getElementById(panelId).classList.add('active');
+    // Toggle tab panels
+    document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+    var panel = document.getElementById(panelId);
+    if(panel) panel.classList.add('active');
+    // Toggle sections: show only the one matching this tab
+    document.querySelectorAll('[data-tab]').forEach(function(s){
+        if(s.getAttribute('data-tab') === panelId){
+            s.style.display = '';
+        } else {
+            s.style.display = 'none';
+        }
+    });
+    // Scroll to top smoothly
     window.scrollTo({top:0,behavior:'smooth'});
 }
 document.addEventListener('DOMContentLoaded',function(){
-    var firstBtn=document.querySelector('.tab-btn');
-    var firstPanel=document.querySelector('.tab-panel');
-    if(firstBtn&&firstPanel&&!firstPanel.classList.contains('active')){
-        firstBtn.classList.add('active');
-        firstPanel.classList.add('active');
-    }
+    // Initialize: show only the active tab's sections
+    var activeBtn = document.querySelector('.tab-btn.active');
+    var activePanelId = activeBtn ? activeBtn.getAttribute('onclick').match(/'([^']+)'/) : null;
+    if(activePanelId) activePanelId = activePanelId[1];
+    document.querySelectorAll('[data-tab]').forEach(function(s){
+        if(s.getAttribute('data-tab') === activePanelId){
+            s.style.display = '';
+        } else {
+            s.style.display = 'none';
+        }
+    });
 });
 (function(){
     var btn=document.querySelector('.back-to-top');

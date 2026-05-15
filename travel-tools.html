@@ -1,5 +1,6 @@
-<head>  <meta property="og:image" content="https://youdao-travel.com/images/qrcode.jpg">
-
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -263,6 +264,7 @@ a { color: #4C8BF5 !important; }
 }
 
 </style>
+  <meta property="og:image" content="https://youdao-travel.com/images/qrcode.jpg">
 <style>
 /* Global readability improvements */
 .section-block p, .item-card p, .template-box p, .plan-card p { line-height: 1.7; }
@@ -272,5 +274,363 @@ a { color: #4C8BF5 !important; }
 .step-list { gap: 14px; }
 .step-item { padding: 12px 0; }
 </style>
-
 </head>
+<body>
+      <nav class="navbar">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🏠</div>
+      <span>游导旅游</span>
+    </a>
+    <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button>
+    <div class="nav-links">
+      <a href="index.html">首页</a>
+      <a href="exam-guide.html">学习中心</a>
+      <a href="exam-simulator.html">刷题</a>
+      <a href="chat.html">AI助手</a>
+      <div class="nav-more">
+              <span class="nav-more-btn active">更多 ▾</span>
+        <div class="nav-dropdown">
+          <a href="province-exam.html">各省备考</a>
+          <a href="free-materials.html">免费资料</a>
+          <a href="travel-knowledge.html">旅行知识</a>
+          <a href="resources.html">资料套餐</a>
+          <a href="voice.html">发声墙</a>
+          <a href="travel-tools.html">备考工具箱</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1>备考工具箱</h1>
+    <p class="page-desc">倒计时、计划生成器、速查表等</p>
+  </div>
+
+  <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>更多</span> <span class="sep">›</span> <span>备考工具箱</span></div>
+  <div class="hero"><h1>备考工具箱</h1><p>考试倒计时 · 学习计划 · 知识点速查 · 模拟考试</p></div>
+  <div class="container">
+    <div class="toc"><h3>工具导航</h3><div class="toc-list"><a class="toc-item" href="#countdown">考试倒计时</a><a class="toc-item" href="#studyplan">学习计划</a><a class="toc-item" href="#quickref">知识点速查</a><a class="toc-item" href="#memory">记忆技巧</a><a class="toc-item" href="#exam">模拟考试</a></div></div>
+    
+    <!-- 考试倒计时 -->
+    <div class="section" id="countdown">
+      <h2 class="section-title">考试倒计时</h2>
+      <p class="section-desc">距离2026年导游资格证考试还有</p>
+      <div class="tool-card glass-card">
+        <div style="text-align: center; padding: 20px 0;">
+          <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <div style="background: #F0F5FF; border-radius: 16px; padding: 20px 28px; min-width: 90px;">
+              <div id="examDays" style="font-size: 3rem; font-weight: 800; color: #4C8BF5;">--</div>
+              <div style="font-size: 0.85rem; color: #666666;">天</div>
+            </div>
+            <div style="background: #F0F5FF; border-radius: 16px; padding: 20px 28px; min-width: 90px;">
+              <div id="examHours" style="font-size: 3rem; font-weight: 800; color: #4C8BF5;">--</div>
+              <div style="font-size: 0.85rem; color: #666666;">时</div>
+            </div>
+            <div style="background: #F0F5FF; border-radius: 16px; padding: 20px 28px; min-width: 90px;">
+              <div id="examMins" style="font-size: 3rem; font-weight: 800; color: #4C8BF5;">--</div>
+              <div style="font-size: 0.85rem; color: #666666;">分</div>
+            </div>
+          </div>
+          <p style="margin-top: 20px; color: #666666; font-size: 0.9rem;">📅 考试日期：2026年11月22日（周六）</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学习计划生成器 -->
+    <div class="section" id="studyplan">
+      <h2 class="section-title">每日学习计划生成器</h2>
+      <p class="section-desc">根据剩余时间和目标，生成个性化学习计划</p>
+      <div class="tool-card glass-card">
+        <div class="calc-grid">
+          <div class="calc-group">
+            <label>剩余天数</label>
+            <input type="number" id="remainDays" placeholder="如：180" min="1" max="365">
+          </div>
+          <div class="calc-group">
+            <label>每天学习时间</label>
+            <select id="dailyHours">
+              <option value="1">1小时</option>
+              <option value="2" selected>2小时</option>
+              <option value="3">3小时</option>
+              <option value="4">4小时</option>
+              <option value="5">5小时以上</option>
+            </select>
+          </div>
+        </div>
+        <button class="calc-btn" onclick="generateStudyPlan()">生成学习计划</button>
+        <div class="calc-result" id="planResult" style="display: none;">
+          <div class="amount" id="planTitle">学习计划</div>
+          <div class="label" id="planDetail"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 知识点速查表 -->
+    <div class="section" id="quickref">
+      <h2 class="section-title">知识点速查表</h2>
+      <p class="section-desc">导游证考试核心知识点快速回顾</p>
+      <div class="tool-card glass-card">
+        <h3><span class="icon">📖</span>四科重点速查</h3>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>科目</th>
+                <th>核心考点</th>
+                <th>建议时长</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>政策与法律法规</td>
+                <td>旅游法、合同法、消费者权益保护法、突发事件应对</td>
+                <td>占总分30%</td>
+              </tr>
+              <tr>
+                <td>导游业务</td>
+                <td>导游服务程序、应变能力、突发事件处理</td>
+                <td>占总分25%</td>
+              </tr>
+              <tr>
+                <td>全国导游基础知识</td>
+                <td>历史、地理、文化、艺术、宗教、民俗</td>
+                <td>占总分25%</td>
+              </tr>
+              <tr>
+                <td>地方导游基础知识</td>
+                <td>34省市概况、世界遗产、著名景点</td>
+                <td>占总分20%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top: 20px;">
+          <h4 style="color: #666666; margin-bottom: 12px;">📌 高频考点速记</h4>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+            <span class="key-tag">世界遗产(15处)</span>
+            <span class="key-tag">中国四大名楼</span>
+            <span class="key-tag">四大佛教名山</span>
+            <span class="key-tag">道教名山</span>
+            <span class="key-tag">五岳</span>
+            <span class="key-tag">长江三峡</span>
+            <span class="key-tag">丝绸之路</span>
+            <span class="key-tag">京杭大运河</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 记忆技巧 -->
+    <div class="section" id="memory">
+      <h2 class="section-title">记忆技巧库</h2>
+      <p class="section-desc">高效记忆方法，备考更轻松</p>
+      <div class="tool-card glass-card">
+        <h3><span class="icon">🧠</span>备考记忆方法</h3>
+        <ul class="checklist">
+          <li class="category">📝 数字记忆法</li>
+          <li><input type="checkbox"> <strong>中国世界遗产数量(15处)</strong>：故宫、长城、莫高窟、秦始皇陵、周口店、北京人...</li>
+          <li><input type="checkbox"> <strong>五岳</strong>：东西南北中(泰华北华衡嵩)</li>
+          <li><input type="checkbox"> <strong>四大佛教名山</strong>：普陀峨眉五台九华</li>
+          <li class="category">🎯 联想法</li>
+          <li><input type="checkbox"> <strong>各省简称</strong>：结合车牌首字母记忆</li>
+          <li><input type="checkbox"> <strong>少数民族节日</strong>：联系民族分布地区</li>
+          <li class="category">📋 口诀法</li>
+          <li><input type="checkbox"> <strong>旅游法要点</strong>：权利义务要记清，投诉处理有时限</li>
+          <li><input type="checkbox"> <strong>导游服务程序</strong>：接站-游览-送站，六大环节记心间</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 模拟考试入口 -->
+    <div class="section" id="exam">
+      <h2 class="section-title">模拟考试</h2>
+      <p class="section-desc">检验学习成果，查漏补缺</p>
+      <div class="tool-card glass-card" style="text-align: center; padding: 40px 24px;">
+        <div style="font-size: 4rem; margin-bottom: 16px;">✏️</div>
+        <h3 style="color: #1A1A1A; margin-bottom: 12px;">开启刷题模式</h3>
+        <p style="color: #666666; margin-bottom: 24px;">练习各省考题，熟悉考试题型，掌握答题节奏</p>
+        <a href="exam-simulator.html" class="calc-btn" style="display: inline-block; width: auto; padding: 16px 48px;">开始模拟考试 →</a>
+      </div>
+    </div>
+
+    <!-- 备考小贴士 -->
+    <div class="section" id="tips">
+      <h2 class="section-title">备考小贴士</h2>
+      <p class="section-desc">过来人的经验之谈</p>
+      <div class="tool-card glass-card">
+        <h3><span class="icon">💡</span>高效备考建议</h3>
+        <ul class="checklist">
+          <li><input type="checkbox"> <strong>制定计划</strong>：每天固定2小时，持之以恒</li>
+          <li><input type="checkbox"> <strong>交替学习</strong>：法规+业务交替，效率更高</li>
+          <li><input type="checkbox"> <strong>定期复习</strong>：学新内容前先回顾旧的</li>
+          <li><input type="checkbox"> <strong>做真题</strong>：历年真题是最好的练习题</li>
+          <li><input type="checkbox"> <strong>导游词</strong>：每个景点准备一篇，面试必备</li>
+          <li><input type="checkbox"> <strong>模拟考试</strong>：考前至少做3-5套模拟卷</li>
+        </ul>
+      </div>
+    </div>
+<div class="section" id="packing-tips">
+      <h2 class="section-title">🧳 打包技巧</h2>
+      <p class="section-desc">高效打包，轻装出行</p>
+      <div class="cards-grid">
+        <div class="card glass-card">
+          <h4><span class="icon">👔</span>衣物打包</h4>
+          <ul>
+            <li>卷起来放比叠起来省空间</li>
+            <li>按天搭配好，避免多带</li>
+            <li>鞋子用浴帽套住放底部</li>
+            <li>内衣放收纳袋保持整洁</li>
+          </ul>
+        </div>
+        <div class="card glass-card">
+          <h4><span class="icon">📱</span>电子设备</h4>
+          <ul>
+            <li>充电宝必带（飞机限100Wh）</li>
+            <li>万能转换插头（各国不同）</li>
+            <li>数据线多带一根备用</li>
+            <li>手机下载离线地图</li>
+          </ul>
+        </div>
+        <div class="card glass-card">
+          <h4><span class="icon">💊</span>常备药品</h4>
+          <ul>
+            <li>感冒药+肠胃药+创可贴</li>
+            <li>防蚊液（东南亚必备）</li>
+            <li>高反药（高原地区准备）</li>
+            <li>个人处方药+英文说明书</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="travel-tips">
+      <h2 class="section-title">💡 旅行小贴士</h2>
+      <p class="section-desc">老导游的经验之谈</p>
+      <div class="cards-grid">
+        <div class="card glass-card">
+          <h4><span class="icon">🏨</span>住宿技巧</h4>
+          <ul>
+            <li>预定时确认是否含早餐</li>
+            <li>入住先看安全出口位置</li>
+            <li>贵重物品放保险箱</li>
+            <li>退房前检查抽屉和充电口</li>
+          </ul>
+        </div>
+        <div class="card glass-card">
+          <h4><span class="icon">🚕</span>交通攻略</h4>
+          <ul>
+            <li>机场到市区提前查好交通方式</li>
+            <li>国外打车用当地常用App</li>
+            <li>租车需国际驾照（部分国家）</li>
+            <li>公共交通最省钱</li>
+          </ul>
+        </div>
+        <div class="card glass-card">
+          <h4><span class="icon">📱</span>通讯网络</h4>
+          <ul>
+            <li>提前买当地SIM卡或国际漫游包</li>
+            <li>下载离线翻译App</li>
+            <li>重要号码存在手机+手写备份</li>
+            <li>开通国际漫游以防紧急联系</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const hotelPrice = { budget: 200, mid: 400, high: 800 };
+    const destinationMultiplier = { japan: 1.5, thailand: 0.8, korea: 1.2, singapore: 1.3, europe: 2.0, usa: 1.8, australia: 1.6 };
+    function calculateBudget() {
+      const days = parseInt(document.getElementById('days').value) || 5;
+      const food = parseInt(document.getElementById('food').value) || 150;
+      const transport = parseInt(document.getElementById('transport').value) || 80;
+      const hotelType = document.getElementById('hotel').value;
+      const shopping = parseInt(document.getElementById('shopping').value) || 0;
+      const tickets = parseInt(document.getElementById('tickets').value) || 0;
+      const dest = document.getElementById('destination').value;
+      const multiplier = destinationMultiplier[dest];
+      const hotelTotal = hotelPrice[hotelType] * (days - 1);
+      const foodTotal = food * days * multiplier;
+      const transportTotal = transport * days * multiplier;
+      const ticketsTotal = tickets * multiplier;
+      const total = Math.round(hotelTotal + foodTotal + transportTotal + ticketsTotal + shopping);
+      document.getElementById('totalBudget').textContent = '¥' + total.toLocaleString();
+      document.getElementById('budgetResult').style.display = 'block';
+    }
+    var navLinks = document.getElementById('navLinks'); if(navLinks) navLinks.classList.remove('open');
+  
+    // 考试倒计时
+    function updateExamCountdown() {
+      const examDate = new Date('2026-11-22T09:00:00');
+      const now = new Date();
+      const diff = examDate - now;
+      
+      if (diff <= 0) {
+        document.getElementById('examDays').textContent = '0';
+        document.getElementById('examHours').textContent = '0';
+        document.getElementById('examMins').textContent = '0';
+        return;
+      }
+      
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      
+      document.getElementById('examDays').textContent = days;
+      document.getElementById('examHours').textContent = hours;
+      document.getElementById('examMins').textContent = mins;
+    }
+    
+    // 学习计划生成器
+    function generateStudyPlan() {
+      const days = parseInt(document.getElementById('remainDays').value) || 180;
+      const hours = parseInt(document.getElementById('dailyHours').value) || 2;
+      const totalHours = days * hours;
+      
+      const policyHours = Math.round(totalHours * 0.3);
+      const businessHours = Math.round(totalHours * 0.25);
+      const nationHours = Math.round(totalHours * 0.25);
+      const localHours = Math.round(totalHours * 0.2);
+      
+      const planDetail = `
+        <strong>总学习时长：</strong>${totalHours}小时<br>
+        <strong>政策与法律法规：</strong>${policyHours}小时<br>
+        <strong>导游业务：</strong>${businessHours}小时<br>
+        <strong>全国导游基础知识：</strong>${nationHours}小时<br>
+        <strong>地方导游基础知识：</strong>${localHours}小时<br>
+        <strong style="color:#4C8BF5;margin-top:8px;display:block;">💡 建议：每天交替学习不同科目，保持新鲜感</strong>
+      `;
+      
+      document.getElementById('planDetail').innerHTML = planDetail;
+      document.getElementById('planResult').style.display = 'block';
+    }
+    
+    // 页面加载时初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      updateExamCountdown();
+      setInterval(updateExamCountdown, 60000); // 每分钟更新
+    });
+    
+</script>
+
+<div class="bottom-tabs">
+  <a class="tab-item" href="index.html"><span>🏠</span><span>首页</span></a>
+  <a class="tab-item tab-active" href="exam-guide.html"><span>📚</span><span>学习</span></a>
+  <a href="exam-simulator.html"><span>✏️</span><span>刷题</span></a>
+  <a href="chat.html"><span>🤖</span><span>AI</span></a>
+  <a href="resources.html"><span>👤</span><span>我的</span></a>
+</div>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+<script>
+(function(){
+    var btn = document.querySelector('.back-to-top');
+    if(!btn) return;
+    window.addEventListener('scroll', function(){
+        if(window.scrollY > 400) btn.classList.add('visible');
+        else btn.classList.remove('visible');
+    });
+})();
+</script>
+</body>
+</html>
