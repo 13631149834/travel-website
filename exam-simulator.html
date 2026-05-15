@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>模拟考试 - 游导旅游</title>
@@ -12,9 +15,10 @@
 <meta content="https://youdao-travel.com/images/qrcode.jpg" property="og:image"/>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <style>
+*{-webkit-tap-highlight-color:transparent;}button,.tab-btn,.mode-tab{touch-action:manipulation;-webkit-touch-callout:none;}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.75;color:#666666;font-weight:400;background:#FFFFFF;min-height:100vh;padding-bottom:85px}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.75;color:#666666;font-weight:400;background:#FFFFFF;min-height:100vh;padding-bottom:70px!important}
 a{text-decoration:none;color:inherit}
 .glass-card{background:#FFFFFF;border:1px solid #F0F0F0;border-radius:20px;transition:all 0.3s;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
 .glass-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
@@ -53,8 +57,9 @@ a{text-decoration:none;color:inherit}
 .activation-status.inactive{color:#B91C1C}
 .activation-codes{display:block;margin-top:10px;font-size:0.78rem;color:#666666}
 /* Mode Tabs */
-.mode-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.mode-tab{flex:1;min-width:140px;padding:14px 16px;background:#F8F9FA;border:1px solid #F0F0F0;border-radius:14px;text-align:center;cursor:pointer;transition:all 0.3s}
+.mode-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;touch-action:pan-x manipulation;padding-bottom:4px}
+.mode-tabs::-webkit-scrollbar{display:none;}
+.mode-tab{flex:1;min-width:140px;padding:14px 16px;background:#F8F9FA;touch-action:manipulation;border:1px solid #F0F0F0;border-radius:14px;text-align:center;cursor:pointer;transition:all 0.3s}
 .mode-tab:hover{background:#F0F0F0}
 .mode-tab.active{background:#FFFFFF;border-color:#666666}
 .mode-tab .tab-icon{font-size:1.5rem;display:block;margin-bottom:6px}
@@ -154,7 +159,7 @@ a{text-decoration:none;color:inherit}
 .footer { color: #999999;background:#FFFFFF;border-top:1px solid #F0F0F0;padding:30px 20px;text-align:center;margin-top:30px}
 .footer p{color:#666666;font-size:0.85rem;margin-bottom:6px}
 .footer a { color: #4C8BF5;color:#666666}
-.back-to-top{position:fixed;bottom:70px;right:16px;width:40px;height:40px;background:#FFFFFF;color:#666666;border:none;border-radius:50%;font-size:1.1rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;box-shadow:0 4px 12px rgba(76,139,245,0.4);z-index:90}
+.back-to-top{position:fixed;bottom:70px;left:16px;width:40px;height:40px;background:#FFFFFF;color:#666666;border:none;border-radius:50%;font-size:1.1rem;cursor:pointer;opacity:0;visibility:hidden;transition:all 0.3s;box-shadow:0 4px 12px rgba(76,139,245,0.4);z-index:90}
 .back-to-top.show{opacity:1;visibility:visible}
 .back-to-top:hover{background:#FFFFFF;transform:translateY(-2px)}
 /* Hidden */
@@ -173,8 +178,11 @@ a{text-decoration:none;color:inherit}
 .countdown-display{gap:8px}
 .countdown-item{min-width:55px;padding:8px 10px}
 .countdown-item .num{font-size:1.5rem}
-.mode-tabs{flex-direction:column}
-.mode-tab{min-width:100%}
+.mode-tabs{flex-direction:row;flex-wrap:nowrap;gap:6px}
+.mode-tab{min-width:auto;flex-shrink:0;padding:10px 12px}
+.mode-tab .tab-icon{font-size:1.2rem;margin-bottom:2px}
+.mode-tab .tab-title{font-size:0.82rem}
+.mode-tab .tab-desc{font-size:0.68rem}
 .timer-box{flex-direction:column;text-align:center}
 .timer-display{justify-content:center}
 .activation-input-wrap{flex-direction:column}
@@ -347,7 +355,7 @@ a { color: #4C8BF5 !important; }
   .card{border-radius:18px;padding:24px;margin:0}
   .section{padding:32px 0}
   .section-title{font-size:1.5rem;margin-bottom:8px}
-  .fab{bottom:24px;right:24px}
+  .fab{bottom:24px;left:16px}
   .modal-overlay .modal{max-width:600px}
 }
   .quiz-container{max-width:800px;margin:0 auto;padding:24px}
@@ -383,6 +391,17 @@ a { color: #4C8BF5 !important; }
   margin-top: 6px;
 }
 </style>
+<style>
+/* Global readability improvements */
+.section-block p, .item-card p, .template-box p, .plan-card p { line-height: 1.7; }
+.section-block ul, .item-card ul { line-height: 1.8; }
+.section-block li, .item-card li { margin-bottom: 4px; }
+.item-card h4 { margin-bottom: 10px; }
+.step-list { gap: 14px; }
+.step-item { padding: 12px 0; }
+</style>
+
+<script src="mobile-fix.js?v=20260516b"></script>
 </head>
 <body>
 <nav class="navbar">
@@ -391,7 +410,7 @@ a { color: #4C8BF5 !important; }
 游导旅游
 </a>
 <div class="nav-links" id="navLinks">
-      <a href="index.html">首页</a><a href="chat.html">AI助手</a><a href="exam-guide.html">备考攻略</a><a href="province-exam.html">各省备考</a><a href="exam-simulator.html" class="active">模拟考试</a><a href="travel-knowledge.html">旅行知识</a><a href="voice.html">发声墙</a><a href="resources.html">资料套餐</a>
+      <a href="index.html">首页</a><a href="chat.html">AI助手</a><a href="exam-guide.html">备考攻略</a><a href="province-exam.html">各省备考</a><a href="exam-simulator.html" class="active">模拟考试</a><a href="travel-knowledge.html">旅行知识</a><a href="voice.html">发声墙</a><a href="free-materials.html">免费资料</a><a href="travel-tools.html">备考工具箱</a><a href="resources.html">资料套餐</a>
     </div>
 <div class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('open')">
 <span></span><span></span><span></span>
@@ -449,9 +468,9 @@ a { color: #4C8BF5 !important; }
 <div class="info-box" style="margin-top:16px;">
 <strong>练习提示：</strong>
 <ul>
-<li>每天抽出10-15分钟做几道练习题</li>
-<li>遇到不会的题先思考，不要急着看答案</li>
-<li>利用AI助手可以获得更多针对性练习</li>
+<li>每天10分钟就够了，积少成多</li>
+<li>不会的先想30秒，想不出再看解析</li>
+<li>卡住了问AI，比翻书快10倍</li>
 </ul>
 </div>
 </div>
@@ -476,7 +495,26 @@ a { color: #4C8BF5 !important; }
 <div class="progress-bar"><div class="fill" id="progressFill"></div></div>
 </div>
 
-<div id="examQuestions"></div>
+<div id="examQuestions">
+  <!-- 题目卡片 -->
+  <div id="singleQuestionWrap"></div>
+  
+  <!-- 题目导航 -->
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;margin-top:8px;">
+    <button id="prevBtn" onclick="prevQuestion()" style="padding:10px 20px;background:#F8F9FA;border:1px solid #F0F0F0;border-radius:10px;color:#666;font-size:0.9rem;cursor:pointer;touch-action:manipulation;">← 上一题</button>
+    <span id="qProgress" style="font-size:0.85rem;color:#666;">1 / 20</span>
+    <button id="nextBtn" onclick="nextQuestion()" style="padding:10px 20px;background:#4C8BF5;border:none;border-radius:10px;color:#fff;font-size:0.9rem;font-weight:600;cursor:pointer;touch-action:manipulation;">下一题 →</button>
+  </div>
+  
+  <!-- 答题卡 -->
+  <div style="margin-top:16px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <span style="font-size:0.85rem;color:#666;">答题卡</span>
+      <button onclick="toggleAnswerCard()" style="background:none;border:none;color:#4C8BF5;font-size:0.8rem;cursor:pointer;">收起/展开</button>
+    </div>
+    <div id="answerCard" style="display:flex;flex-wrap:wrap;gap:6px;padding:12px;background:#F8F9FA;border-radius:12px;"></div>
+  </div>
+</div>
 </div>
 
 <!-- 考试结果区域 -->
@@ -515,68 +553,6 @@ a { color: #4C8BF5 !important; }
 </div>
 </div>
 
-<!-- 考试倒计时 -->
-<div class="section-block">
-<h2><span class="icon">⏰</span>考试倒计时</h2>
-<p class="section-desc">2026年全国导游资格考试笔试倒计时</p>
-<div class="countdown-box">
-<h3>距离2026年11月21日笔试还有</h3>
-<div class="countdown-display">
-<div class="countdown-item"><div class="num" id="days">--</div><div class="text">天</div></div>
-<div class="countdown-item"><div class="num" id="hours">--</div><div class="text">时</div></div>
-<div class="countdown-item"><div class="num" id="minutes">--</div><div class="text">分</div></div>
-<div class="countdown-item"><div class="num" id="seconds">--</div><div class="text">秒</div></div>
-</div>
-</div>
-<div class="info-box">
-<strong>考试时间安排：</strong>
-<ul>
-<li><strong>笔试：</strong>每年11月第三个周六（2026年预计11月21日）</li>
-<li><strong>面试：</strong>笔试结束后1个月内，由各省市自行组织</li>
-</ul>
-</div>
-</div>
-
-<!-- 成绩计算器 -->
-<div class="section-block">
-<h2><span class="icon">🧮</span>成绩计算器</h2>
-<p class="section-desc">输入各科预估分数，预估是否能够通过考试</p>
-<div class="calculator-section">
-<h3>笔试成绩估算</h3>
-<div class="calc-grid">
-<div class="calc-group">
-<label>政策与法律法规（满分100）</label>
-<input id="score1" max="100" min="0" placeholder="输入预估分数" type="number"/>
-</div>
-<div class="calc-group">
-<label>导游业务（满分100）</label>
-<input id="score2" max="100" min="0" placeholder="输入预估分数" type="number"/>
-</div>
-<div class="calc-group">
-<label>全国导游基础知识（满分100）</label>
-<input id="score3" max="100" min="0" placeholder="输入预估分数" type="number"/>
-</div>
-<div class="calc-group">
-<label>地方导游基础知识（满分50）</label>
-<input id="score4" max="50" min="0" placeholder="输入预估分数" type="number"/>
-</div>
-</div>
-<button class="calc-btn" onclick="calculateScore()">计算预估结果</button>
-<div class="result-box" id="scoreResult">
-<div class="status" id="resultStatus"></div>
-<div class="detail" id="resultDetail"></div>
-</div>
-</div>
-<div class="info-box" style="margin-top:16px;">
-<strong>成绩计算规则：</strong>
-<ul>
-<li>笔试成绩：四科成绩合并计算，满分350分，达到笔试满分60%即视为合格</li>
-<li>面试成绩：单独计算，满分100分，及格线60分</li>
-<li>笔试面试均需达标才算通过</li>
-</ul>
-</div>
-</div>
-
 <!-- AI练习 -->
 <div class="section-block">
 <h2><span class="icon">🤖</span>AI智能练习</h2>
@@ -603,447 +579,78 @@ a { color: #4C8BF5 !important; }
 <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
 
 <!-- 底部Tab栏 -->
-<div class="bottom-tabs">
-  <a class="tab-item" href="index.html"><span>🏠</span><span>首页</span></a>
-  <a class="tab-item" href="exam-guide.html"><span>📚</span><span>学习</span></a>
-  <a class="tab-item" href="exam-simulator.html" class="tab-active"><span>✏️</span><span>刷题</span></a>
-  <a class="tab-item" href="chat.html"><span>🤖</span><span>AI</span></a>
-  <a class="tab-item" href="resources.html"><span>👤</span><span>我的</span></a>
-</div>
-
-
-<script>
-// ========== 题库 ==========
-const questionBank = [
-  // 政策法规类
-  {id:1,type:'policy',question:'《中华人民共和国旅游法》明确规定，导游从事领队业务应当具有（ ）年以上旅行社业务经营、管理或者导游等从业经历。',options:['A. 1年','B. 2年','C. 3年','D. 5年'],answer:2,analysis:'根据《旅游法》第39条规定，导游从事领队业务应当具有三年以上旅行社业务经营、管理或者导游等从业经历。记忆口诀：领队三年起，经验是硬道理'},
-  {id:2,type:'policy',question:'根据《旅游法》规定，旅行社应当全额支付导游人员垫付的接待费用，这体现了对导游什么权利的保护？',options:['A. 获取劳动报酬权','B. 职业尊严权','C. 享受社会保险权','D. 复核权'],answer:0,analysis:'根据《旅游法》第38条规定，导游有权拒绝支付垫付的接待费用，体现了对导游获取劳动报酬权的保护。导游权利汇总：人格尊严权、人身安全权、获取劳动报酬权、合理拒绝权'},
-  {id:3,type:'policy',question:'旅游者因拒绝导游强迫购物而被甩团，在此情况下旅游者的什么权利受到了侵害？',options:['A. 安全保障权','B. 自主选择权','C. 知情权','D. 公平交易权'],answer:1,analysis:'根据《消费者权益保护法》第9条，消费者享有自主选择商品或者服务的权利。强迫购物侵犯了旅游者的自主选择权。'},
-  {id:4,type:'policy',question:'根据《旅游法》第35条规定，旅行社以不合理的低价组织旅游活动，诱骗旅游者，并通过安排购物获取回扣，将受到什么处罚？',options:['A. 警告','B. 责令停业整顿','C. 吊销旅行社业务经营许可证','D. 三万元以上三十万元以下罚款'],answer:3,analysis:'《旅游法》第35条规定，由旅游主管部门责令改正，没收违法所得，责令停业整顿，并处三万元以上三十万元以下罚款。'},
-  {id:5,type:'policy',question:'导游进行导游活动时，欺骗、胁迫旅游者消费，将被处以多少罚款？',options:['A. 1000元以上5000元以下','B. 2000元以上10000元以下','C. 5000元以上50000元以下','D. 10000元以上100000元以下'],answer:2,analysis:'根据《导游人员管理条例》，欺骗、胁迫旅游者消费的，由旅游行政部门责令改正，处1000元以上30000元以下的罚款。'},
-  {id:6,type:'policy',question:'根据《旅游法》，突发事件发生后，导游应当采取什么措施？',options:['A. 立即报告旅行社','B. 保护旅游者财产安全','C. 救助或者协助救助受困旅游者','D. 以上全部'],answer:3,analysis:'根据《旅游法》第78条，突发事件发生后，旅行社及其从业人员应当采取必要措施救助或者协助救助受困旅游者，并立即向旅游主管部门报告。'},
-  {id:7,type:'policy',question:'旅游者在旅游过程中发生人身伤害，旅行社是否应当承担赔偿责任？',options:['A. 应当承担全部责任','B. 应当承担与其过错相应的责任','C. 不承担任何责任','D. 承担连带责任'],answer:1,analysis:'根据《旅游法》，旅行社应当对旅游者的安全保障义务，但因旅游者自身原因造成的损害，旅行社不承担责任或承担与其过错相应的责任。'},
-  {id:8,type:'policy',question:'根据《旅游法》，景区接待旅游者的最大承载量由谁核定？',options:['A. 景区自己','B. 旅游主管部门','C. 景区主管部门','D. 县级人民政府'],answer:0,analysis:'根据《旅游法》第45条，景区接待旅游者的最大承载量由景区自己核定，并在景区入口处公布。'},
-  // 导游业务类
-  {id:9,type:'service',question:'导游在接到送站计划后，应提前（ ）小时与旅游者再次确认送站时间和地点。',options:['A. 12小时','B. 24小时','C. 36小时','D. 48小时'],answer:1,analysis:'导游在接到送站计划后，应提前24小时与旅游者再次确认送站时间和地点，确保顺利送站。送站当天，导游应提前2小时到达约定地点等候旅游者。'},
-  {id:10,type:'service',question:'发生交通事故后，导游首先应该做什么？',options:['A. 保护现场','B. 向旅行社报告','C. 立即拨打120组织抢救','D. 安抚其他游客'],answer:2,analysis:'交通事故发生后，导游应首先救人，立即拨打120急救电话并组织现场人员迅速抢救受伤的游客。"救人第一"是处理突发事件的首要原则。'},
-  {id:11,type:'service',question:'地陪导游在接团前应提前多长时间到达接站地点？',options:['A. 10分钟','B. 20分钟','C. 30分钟','D. 60分钟'],answer:2,analysis:'地陪导游应提前30分钟到达接站地点，做好接团前的各项准备工作，确保准时迎接旅游团。'},
-  {id:12,type:'service',question:'导游讲解时应遵循的原则是？',options:['A. 客观真实','B. 因人施讲','C. 生动形象','D. 以上全部'],answer:3,analysis:'导游讲解应遵循客观真实、因人施讲、生动形象的原则，提供专业、个性化的讲解服务。'},
-  {id:13,type:'service',question:'旅游者在自由活动期间走失，导游首先应该？',options:['A. 报警','B. 联系旅行社','C. 协助寻找','D. 继续带其他游客游览'],answer:2,analysis:'旅游者在自由活动期间走失，导游应立即协助寻找，同时安抚其他游客，必要时报警并报告旅行社。'},
-  {id:14,type:'service',question:'下列哪种情况导游可以调整接待计划？',options:['A. 危及旅游者人身安全','B. 与旅游者协商一致','C. 领队要求','D. 全陪建议'],answer:0,analysis:'根据《旅游法》，只有当遇到可能危及旅游者人身安全的紧急情况时，导游才可以调整或变更接待计划。'},
-  {id:15,type:'service',question:'散客旅游的特点是？',options:['A. 人数少','B. 批次多','C. 预订周期短','D. 以上全部'],answer:3,analysis:'散客旅游（FIT）特点包括：人数少、批次多、预订周期短、服务要求高、零星付款等。'},
-  {id:16,type:'service',question:'导游语言"一看二调三唱"中的"调"指的是？',options:['A. 调整音量','B. 调整讲解内容','C. 调整语速','D. 调整讲解顺序'],answer:0,analysis:'导游语言技巧"一看二调三唱"：一看（观察游客反应）、二调（调整音量）、三唱（声情并茂地讲解）。'},
-  // 全国导游基础知识
-  {id:17,type:'guidebook',question:'下列哪个不属于中国四大佛教名山？',options:['A. 五台山','B. 峨眉山','C. 武当山','D. 九华山'],answer:2,analysis:'中国四大佛教名山是：五台山（文殊菩萨道场）、峨眉山（普贤菩萨道场）、普陀山（观音菩萨道场）、九华山（地藏菩萨道场）。武当山是道教名山。'},
-  {id:18,type:'guidebook',question:'"先天下之忧而忧，后天下之乐而乐"出自哪篇文章？',options:['A. 《醉翁亭记》','B. 《岳阳楼记》','C. 《滕王阁序》','D. 《黄鹤楼记》'],answer:1,analysis:'"先天下之忧而忧，后天下之乐而乐"出自范仲淹的《岳阳楼记》。四大名楼：黄鹤楼（武汉）、岳阳楼（岳阳）、滕王阁（南昌）、鹳雀楼（永济）。'},
-  {id:19,type:'guidebook',question:'中国面积最大的盆地是哪个？',options:['A. 塔里木盆地','B. 准噶尔盆地','C. 柴达木盆地','D. 四川盆地'],answer:0,analysis:'塔里木盆地位于新疆南部，是中国面积最大的内陆盆地，面积约53万平方公里。四大盆地口诀：塔里木最大、准噶尔最北、柴达木最高、四川最富。'},
-  {id:20,type:'guidebook',question:'中国四大名绣不包括？',options:['A. 苏绣','B. 湘绣','C. 粤绣','D. 鲁绣'],answer:3,analysis:'中国四大名绣是：苏绣、湘绣、粤绣、蜀绣。鲁绣是山东地区的刺绣工艺，但不属于四大名绣。'},
-  {id:21,type:'guidebook',question:'下列哪个不是中国的世界自然遗产？',options:['A. 黄龙','B. 九寨沟','C. 武夷山','D. 曲阜三孔'],answer:3,analysis:'黄龙、九寨沟、武夷山都是世界自然遗产。曲阜三孔（孔府、孔庙、孔林）是世界文化遗产。'},
-  {id:22,type:'guidebook',question:'中国最长的人工运河是？',options:['A. 京杭大运河','B. 隋唐大运河','C. 灵渠','D. 都江堰'],answer:0,analysis:'京杭大运河全长约1794公里，是中国最长的人工运河，也是世界上里程最长的人工运河。'},
-  {id:23,type:'guidebook',question:'中国最高的山脉是？',options:['A. 昆仑山','B. 喜马拉雅山','C. 天山','D. 珠穆朗玛峰'],answer:1,analysis:'喜马拉雅山脉是世界上最高的山脉，平均海拔7000米以上。珠穆朗玛峰是喜马拉雅山脉的主峰，海拔8848.86米，是世界最高峰。'},
-  {id:24,type:'guidebook',question:'中国四大名玉不包括？',options:['A. 和田玉','B. 独山玉','C. 岫岩玉','D. 翡翠'],answer:3,analysis:'中国四大名玉是：和田玉（新疆）、独山玉（河南）、岫岩玉（辽宁）、蓝田玉（陕西）。翡翠虽然名贵，但不属于中国传统四大名玉。'},
-  // 地方导游基础知识
-  {id:25,type:'local',question:'以下哪个省份的世界遗产数量位居全国前列？',options:['A. 北京','B. 江苏','C. 河南','D. 陕西'],answer:1,analysis:'江苏省是世界遗产大省，拥有苏州古典园林、明孝陵、大运河（江苏段）等多处世界遗产，总数居全国前列。'},
-  {id:26,type:'local',question:'四川九寨沟位于哪个自治州？',options:['A. 甘孜藏族自治州','B. 阿坝藏族羌族自治州','C. 凉山彝族自治州','D. 攀枝花市'],answer:1,analysis:'九寨沟位于四川省阿坝藏族羌族自治州九寨沟县，是世界自然遗产、世界生物圈保护区和国家5A级旅游景区。'},
-  {id:27,type:'local',question:'西藏布达拉宫位于哪个城市？',options:['A. 日喀则','B. 林芝','C. 拉萨','D. 昌都'],answer:2,analysis:'布达拉宫位于西藏自治区拉萨市，是世界文化遗产，海拔3700米，是藏传佛教圣地。'},
-  {id:28,type:'local',question:'云南丽江古城位于哪个市？',options:['A. 昆明','B. 大理','C. 丽江纳西族自治县','D. 迪庆'],answer:2,analysis:'丽江古城位于云南省丽江市古城区，是中国历史文化名城、世界文化遗产。'},
-  {id:29,type:'local',question:'桂林山水的典型代表"桂林山水甲天下"中的"甲"是什么意思？',options:['A. 第一','B. 优秀','C. 美观','D. 著名'],answer:0,analysis:'"甲"在这里是第一、最好的意思。桂林山水以其独特的喀斯特地貌闻名于世，有"桂林山水甲天下"之美誉。'},
-  {id:30,type:'local',question:'内蒙古呼伦贝尔大草原位于哪个市？',options:['A. 呼和浩特','B. 包头','C. 呼伦贝尔市','D. 鄂尔多斯'],answer:2,analysis:'呼伦贝尔大草原位于内蒙古自治区呼伦贝尔市，是世界四大草原之一，被誉为"世界上最美的草原"。'},
-  {id:31,type:'local',question:'苏州园林的代表拙政园始建于哪个朝代？',options:['A. 唐代','B. 宋代','C. 明代','D. 清代'],answer:2,analysis:'拙政园始建于明代正德年间（1509年），是苏州园林中面积最大的古典山水园林，代表了中国江南园林的风格。'},
-  {id:32,type:'local',question:'青海湖位于哪个省？',options:['A. 西藏','B. 甘肃','C. 青海','D. 四川'],answer:2,analysis:'青海湖位于青海省海南藏族自治州，是中国最大的内陆湖、咸水湖，也是世界上海拔最高的湖泊之一。'},
-  // 混合类新增题目
-  {id:33,type:'policy',question:'《旅游法》规定的旅游者权利不包括？',options:['A. 人身安全权','B. 自主选择权','C. 退货权','D. 知情权'],answer:2,analysis:'《旅游法》保障旅游者的人身安全权、自主选择权、知情权等，但"后悔权"（退货权）主要在七天无理由退货规则中规定。'},
-  {id:34,type:'service',question:'导游迎接入境旅游团时，发现有游客未到，正确的处理方法是？',options:['A. 立即出发','B. 等待所有人到齐','C. 报告旅行社并继续等待','D. 联系预订酒店'],answer:2,analysis:'导游迎接入境旅游团时，如有游客未到，应报告旅行社并在原地等待联系，同时安抚已到游客。'},
-  {id:35,type:'guidebook',question:'中国最大的淡水湖是？',options:['A. 洞庭湖','B. 鄱阳湖','C. 太湖','D. 西湖'],answer:1,analysis:'鄱阳湖位于江西省，是中国最大的淡水湖，也是世界重要的湿地之一。'},
-  {id:36,type:'local',question:'贵州黄果树瀑布位于哪个市？',options:['A. 贵阳','B. 遵义','C. 安顺','D. 黔东南'],answer:2,analysis:'黄果树瀑布位于贵州省安顺市镇宁布依族苗族自治县，是中国最大的瀑布之一。'},
-  {id:37,type:'policy',question:'根据《导游人员管理条例》，导游人员涂改、转让导游证的，将被处以多少罚款？',options:['A. 500元以下','B. 1000元以上30000元以下','C. 5000元以上50000元以下','D. 吊销导游证'],answer:1,analysis:'根据《导游人员管理条例》，涂改、转让导游证的，由旅游行政部门责令改正，处1000元以上30000元以下的罚款。'},
-  {id:38,type:'service',question:'导游带团过程中，旅游者提出更换导游的请求，正确的做法是？',options:['A. 立即更换','B. 拒绝更换','C. 报告旅行社由其决定','D. 让旅游者自己找旅行社'],answer:2,analysis:'导游无权擅自更换，如旅游者提出更换请求，应报告旅行社，由旅行社根据情况决定是否更换。'},
-  {id:39,type:'guidebook',question:'中国最长的河流是？',options:['A. 黄河','B. 长江','C. 珠江','D. 淮河'],answer:1,analysis:'长江全长约6397公里，是中国最长的河流，也是世界第三长河。'},
-  {id:40,type:'local',question:'新疆喀纳斯湖位于哪个地区？',options:['A. 伊犁哈萨克自治州','B. 阿勒泰地区','C. 喀什地区','D. 吐鲁番盆地'],answer:1,analysis:'喀纳斯湖位于新疆阿勒泰地区布尔津县境内，是中国最深的高山淡水湖，有"人间仙境"之称。'},
-  {id:41,type:'policy',question:'旅行社责任保险的投保人是？',options:['A. 旅游者','B. 导游','C. 旅行社','D. 旅游主管部门'],answer:2,analysis:'根据《旅游法》，旅行社应当投保旅行社责任保险，投保人是旅行社，保障旅行社对旅游者造成损害的赔偿责任。'},
-  {id:42,type:'service',question:'入境旅游团抵达后，导游应首先做的工作是？',options:['A. 介绍自己','B. 核实人数','C. 安排行李','D. 清点财务'],answer:1,analysis:'入境旅游团抵达后，导游应首先核实人数、清点人数，确认无误后再开展后续接待工作。'},
-  {id:43,type:'guidebook',question:'中国四大书院不包括？',options:['A. 岳麓书院','B. 白鹿洞书院','C. 嵩山书院','D. 应天书院'],answer:2,analysis:'中国四大书院是：岳麓书院（长沙）、白鹿洞书院（庐山）、嵩山书院（嵩山）、应天书院（商丘）。'},
-  {id:44,type:'local',question:'福建武夷山位于哪个市？',options:['A. 厦门','B. 福州','C. 泉州','D. 南平'],answer:3,analysis:'武夷山位于福建省南平市武夷山市，是世界自然与文化双重遗产，以"丹霞地貌"著称。'},
-  {id:45,type:'policy',question:'导游人员向旅游者索要小费的，将被处以多少罚款？',options:['A. 500元以下','B. 1000元以上10000元以下','C. 500元以上5000元以下','D. 吊销导游证'],answer:1,analysis:'根据《导游人员管理条例》，导游人员向旅游者索要小费的，由旅游行政部门责令改正，处1000元以上10000元以下的罚款。'},
-  {id:46,type:'service',question:'旅游者在景点走失，导游正确的处理顺序是？',options:['A. 报警→寻找→报告','B. 寻找→报告→报警','C. 报告→报警→寻找','D. 寻找→报警→报告'],answer:0,analysis:'旅游者走失的处理顺序：立即寻找→找不到时报告旅行社和相关部门→必要时报警。'},
-  {id:47,type:'guidebook',question:'中国最大的沙漠是？',options:['A. 塔克拉玛干沙漠','B. 古尔班通古特沙漠','C. 巴丹吉林沙漠','D. 腾格里沙漠'],answer:0,analysis:'塔克拉玛干沙漠位于新疆塔里木盆地，面积约33万平方公里，是中国最大、世界第二大流动沙漠。'},
-  {id:48,type:'local',question:'陕西秦始皇兵马俑位于哪个市？',options:['A. 延安','B. 西安','C. 咸阳','D. 宝鸡'],answer:2,analysis:'秦始皇兵马俑位于陕西省咸阳市渭城区，是世界第八大奇迹，是秦始皇陵的陪葬坑。'},
-  {id:49,type:'policy',question:'《旅游法》规定，景区门票价格调整应提前多久公布？',options:['A. 1个月','B. 3个月','C. 6个月','D. 1年'],answer:2,analysis:'根据《旅游法》第43条，景区门票价格调整应提前6个月向社会公布。'},
-  {id:50,type:'service',question:'导游在带团过程中使用手机时，正确的做法是？',options:['A. 随意使用','B. 尽量减少使用','C. 禁止使用','D. 只接电话不打电话'],answer:1,analysis:'导游在带团过程中应尽量减少使用手机，特别是私人电话，以体现对旅游者的尊重和服务质量。'},
-  {id:51,type:'guidebook',question:'中国最高的宫殿是？',options:['A. 故宫','B. 布达拉宫','C. 天坛','D. 颐和园'],answer:1,analysis:'布达拉宫位于西藏拉萨，海拔3700米，是中国也是世界上海拔最高的宫殿建筑群。'},
-  {id:52,type:'local',question:'湖南张家界位于哪个市？',options:['A. 长沙','B. 衡阳','C. 湘西土家族苗族自治州','D. 张家界市'],answer:3,analysis:'张家界市位于湖南省西北部，拥有中国第一个国家森林公园——张家界国家森林公园，以独特的石英砂岩峰林地貌闻名。'},
-  {id:53,type:'policy',question:'导游人员进行导游活动时，其人格尊严受到侵犯，可以向谁投诉？',options:['A. 只能向旅行社','B. 只能向旅游主管部门','C. 可以向旅游主管部门或公安机关','D. 只能报警'],answer:2,analysis:'根据《旅游法》，导游人格尊严受侵犯时，可以向旅游主管部门投诉，也可以向公安机关报案，依法维护自身权益。'},
-  {id:54,type:'service',question:'旅游者要求延长行程，导游应该？',options:['A. 直接答应','B. 拒绝','C. 报告旅行社决定','D. 自行决定'],answer:2,analysis:'旅游者要求延长行程属于合同变更，导游无权擅自决定，应报告旅行社，由旅行社与旅游者协商处理。'},
-  {id:55,type:'guidebook',question:'中国最大的群岛是？',options:['A. 西沙群岛','B. 南沙群岛','C. 舟山群岛','D. 庙岛群岛'],answer:2,analysis:'舟山群岛位于浙江省舟山市，是中国最大的群岛，由1390个岛屿组成，被誉为"中国海鲜之都"。'},
-  {id:56,type:'local',question:'甘肃莫高窟位于哪个市？',options:['A. 兰州','B. 嘉峪关','C. 敦煌','D. 天水'],answer:2,analysis:'莫高窟位于甘肃省敦煌市境内，是中国现存规模最大、内容最丰富的佛教艺术宝库，是世界文化遗产。'},
-  {id:57,type:'policy',question:'根据《旅游法》，旅游发展规划应当与哪些规划相衔接？',options:['A. 仅土地利用总体规划','B. 仅城乡规划','C. 土地利用总体规划、城乡规划以及其他自然资源、文物等文物保护','D. 以上都不是'],answer:2,analysis:'根据《旅游法》第17条，旅游发展规划应当与土地利用总体规划、城乡规划以及其他自然资源、文物等文物保护规划相衔接。'},
-  {id:58,type:'service',question:'导游讲解时，目光应该？',options:['A. 只看前面','B. 环视全场','C. 只看个别人','D. 低头看地'],answer:1,analysis:'导游讲解时应采用环视全场的方式，目光自然地扫视全体游客，与游客保持目光接触，体现对全体游客的关注。'},
-  {id:59,type:'guidebook',question:'中国最深的湖泊是？',options:['A. 青海湖','B. 长白山天池','C. 纳木错','D. 喀纳斯湖'],answer:2,analysis:'长白山天池最深处约373米，是中国最深的湖泊。纳木错是中国最高的咸水湖，但不是最深的。'},
-  {id:60,type:'local',question:'浙江西湖位于哪个市？',options:['A. 南京','B. 苏州','C. 杭州','D. 扬州'],answer:2,analysis:'西湖位于浙江省杭州市，是中国首批国家重点风景名胜区和世界文化遗产，以"西湖十景"闻名。'},
-  // 额外补充题目凑够70题
-  {id:61,type:'policy',question:'旅行社设立分社的，应当向原审批部门备案，并缴纳质量保证金。分社的注册资本不少于多少万元？',options:['A. 30万元','B. 50万元','C. 75万元','D. 100万元'],answer:2,analysis:'根据《旅行社条例》，旅行社每设立一个分社，应当向原审批部门缴纳质量保证金不少于35万元，分社的注册资本不少于75万元。'},
-  {id:62,type:'service',question:'导游带团乘坐飞机时，办理登机手续的顺序是？',options:['A. 确认机票→换登机牌→托运行李→过安检','B. 托运行李→确认机票→换登机牌→过安检','C. 过安检→托运行李→换登机牌','D. 换登机牌→托运行李→确认机票'],answer:0,analysis:'正确的登机手续办理顺序是：确认机票→换登机牌并托运行李→通过安检→登机口候机。'},
-  {id:63,type:'guidebook',question:'中国第一部纪传体通史是？',options:['A. 《汉书》','B. 《史记》','C. 《资治通鉴》','D. 《左传》'],answer:1,analysis:'《史记》由司马迁编写，是中国第一部纪传体通史，记载了上起黄帝下至汉武帝三千多年的历史。'},
-  {id:64,type:'local',question:'广东丹霞山位于哪个市？',options:['A. 广州','B. 深圳','C. 韶关','D. 珠海'],answer:2,analysis:'丹霞山位于广东省韶关市仁化县，是中国丹霞地貌的命名地，也是世界自然遗产。'},
-  {id:65,type:'policy',question:'旅游者在旅途中突发疾病，导游应当采取的措施不包括？',options:['A. 立即拨打急救电话','B. 送往医院','C. 垫付全部医疗费用','D. 报告旅行社'],answer:2,analysis:'导游应协助救治、报告旅行社，但不应擅自垫付全部医疗费用，应由旅游者本人或旅行社按规定处理。'},
-  {id:66,type:'service',question:'导游带团入住酒店时，分配房间的正确做法是？',options:['A. 按自己意愿分配','B. 按旅游者要求和旅行社安排分配','C. 让旅游者自己分','D. 按性别分配'],answer:1,analysis:'导游应按照旅游者的要求和旅行社的安排合理分配房间，并处理好特殊需求。'},
-  {id:67,type:'guidebook',question:'中国最大的广场是？',options:['A. 天安门广场','B. 人民广场','C. 长安街','D. 延安广场'],answer:0,analysis:'天安门广场位于北京市中心，面积约44万平方米，是世界上最大的城市广场。'},
-  {id:68,type:'local',question:'重庆武隆天生三桥位于哪个区？',options:['A. 万州区','B. 渝中区','C. 武隆区','D. 涪陵区'],answer:2,analysis:'武隆天生三桥位于重庆市武隆区，是国家5A级旅游景区，也是世界自然遗产。'},
-  {id:69,type:'policy',question:'根据《旅游法》，住宿经营者应向旅游者提供的服务不包括？',options:['A. 免费早餐','B. 安全防范','C. 住宿服务','D. 停车服务'],answer:0,analysis:'住宿经营者应提供住宿服务、安全防范等基本服务，是否提供免费早餐由住宿经营者自行决定，《旅游法》未强制要求。'},
-  {id:70,type:'service',question:'导游讲解"因人施讲"的原则是？',options:['A. 对所有游客讲同样的内容','B. 根据游客的兴趣、背景调整讲解','C. 只讲解重点内容','D. 让游客自己看书'],answer:1,analysis:'"因人施讲"是指根据游客的身份、兴趣、文化背景等差异，调整讲解的内容、方式和深度，提供个性化的服务。'},
-  {id:71,type:'guidebook',question:'中国最高的古塔是？',options:['A. 大雁塔','B. 应县木塔','C. 雷峰塔','D. 灵通塔'],answer:1,analysis:'应县木塔位于山西省朔州市应县，是中国现存最高、最古老的木结构塔式建筑，高约67.31米。'},
-  {id:72,type:'local',question:'海南天涯海角位于哪个市？',options:['A. 三亚','B. 海口','C. 琼海','D. 儋州'],answer:0,analysis:'天涯海角游览区位于海南省三亚市，是海南著名的旅游景区，以"天涯""海角"两块巨石著称。'},
-  {id:73,type:'policy',question:'旅游者购买商品后发现质量问题，可以向谁要求退货？',options:['A. 只能向导游','B. 只能向旅行社','C. 可以向经营者或旅行社','D. 不能退货'],answer:2,analysis:'根据《旅游法》和《消费者权益保护法》，旅游者可以向商品经营者要求退货，也可以向旅行社要求协助。'},
-  {id:74,type:'service',question:'导游送别旅游团时，应提前多长时间到达机场？',options:['A. 30分钟','B. 1小时','C. 2小时','D. 3小时'],answer:2,analysis:'导游送团时，应提前2小时到达机场（国际航班提前3小时），办理登机手续和送别工作。'},
-  {id:75,type:'guidebook',question:'中国最长的关隘是？',options:['A. 山海关','B. 嘉峪关','C. 居庸关','D. 友谊关'],answer:0,analysis:'山海关位于河北省秦皇岛市，是万里长城的起点，有"天下第一关"之称，也是中国最长的关隘。'},
-  {id:76,type:'local',question:'安徽黄山位于哪个市？',options:['A. 合肥','B. 安庆','C. 黄山','D. 芜湖'],answer:2,analysis:'黄山位于安徽省黄山市黄山区，以奇松、怪石、云海、温泉"四绝"闻名，是中国著名的风景游览胜地。'},
-  {id:77,type:'policy',question:'旅行社责任保险的保险期间是？',options:['A. 1个月','B. 6个月','C. 1年','D. 2年'],answer:2,analysis:'旅行社责任保险的保险期间通常为1年，旅行社应每年续保。'},
-  {id:78,type:'service',question:'导游讲解时，语速应该？',options:['A. 越快越好','B. 越慢越好','C. 适中，便于游客理解','D. 不用考虑语速'],answer:2,analysis:'导游讲解语速应适中，一般控制在每分钟200字左右，便于游客理解和记录。'},
-  {id:79,type:'guidebook',question:'中国现存最大的皇家园林是？',options:['A. 颐和园','B. 承德避暑山庄','C. 圆明园','D. 北海公园'],answer:1,analysis:'承德避暑山庄位于河北省承德市，是中国现存最大的皇家园林，占地约564万平方米。'},
-  {id:80,type:'local',question:'河南少林寺位于哪个市？',options:['A. 洛阳','B. 开封','C. 郑州','D. 登封'],answer:3,analysis:'少林寺位于河南省郑州市登封市，是中国佛教禅宗祖庭和中国功夫的发源地之一。'},
-  {id:81,type:'policy',question:'导游人员进行导游活动时，未佩戴导游证的，将被处以多少罚款？',options:['A. 100元以下','B. 100元以上500元以下','C. 500元以上5000元以下','D. 警告'],answer:1,analysis:'根据《导游人员管理条例》，导游人员进行导游活动时未佩戴导游证的，由旅游行政部门责令改正，处100元以上500元以下的罚款。'},
-  {id:82,type:'service',question:'旅游团用餐时，导游应该？',options:['A. 自己先吃','B. 提前到达餐厅确认预订','C. 让游客自己找餐厅','D. 不需要关注餐饮'],answer:1,analysis:'导游应提前到达餐厅确认预订、安排座位、核对菜品，确保旅游团用餐顺利进行。'},
-  {id:83,type:'guidebook',question:'中国最大的石窟群是？',options:['A. 莫高窟','B. 云冈石窟','C. 龙门石窟','D. 大足石刻'],answer:0,analysis:'莫高窟位于甘肃省敦煌市，是中国、也是世界上规模最大、内容最丰富的佛教石窟艺术宝库。'},
-  {id:84,type:'local',question:'辽宁故宫位于哪个市？',options:['A. 长春','B. 沈阳','C. 大连','D. 鞍山'],answer:1,analysis:'沈阳故宫位于辽宁省沈阳市，是中国现存两座完整的宫殿建筑群之一（另一座为北京故宫）。'},
-  {id:85,type:'policy',question:'根据《旅游法》，旅游经营者应保护旅游者个人信息，非法泄露旅游者个人信息的，将被处以多少罚款？',options:['A. 1000元以下','B. 5000元以上50000元以下','C. 10000元以上100000元以下','D. 没有罚款规定'],answer:1,analysis:'根据《旅游法》，旅游经营者非法泄露旅游者个人信息的，由旅游主管部门责令改正，没收违法所得，并处5000元以上50000元以下罚款。'},
-  {id:86,type:'service',question:'导游在讲解过程中，发现游客注意力不集中，正确的做法是？',options:['A. 继续讲','B. 调整讲解方式吸引注意力','C. 停止讲解','D. 批评游客'],answer:1,analysis:'导游应根据游客反应适时调整讲解方式，如提问、举例、使用幽默等，保持游客的注意力。'},
-  {id:87,type:'guidebook',question:'中国最高的石像是？',options:['A. 乐山大佛','B. 无锡灵山大佛','C. 强巴佛','D. 龙门石窟卢舍那佛'],answer:2,analysis:'强巴佛（未来佛）位于西藏日喀则的扎什伦布寺，佛像高26.2米，是中国最高的石雕坐佛像。'},
-  {id:88,type:'local',question:'山西平遥古城位于哪个市？',options:['A. 太原','B. 大同','C. 平遥','D. 运城'],answer:2,analysis:'平遥古城位于山西省晋中市平遥县，是中国现存最完整的明清古城之一，被列入世界文化遗产。'},
-  {id:89,type:'policy',question:'导游擅自变更旅游行程，情节严重的，将被处以多少罚款并吊销导游证？',options:['A. 1000元以上10000元以下','B. 2000元以上20000元以下','C. 5000元以上50000元以下','D. 10000元以上100000元以下'],answer:3,analysis:'根据《旅游法》，导游擅自变更旅游行程的，由旅游行政部门责令改正，处10000元以上100000元以下罚款，并吊销导游证。'},
-  {id:90,type:'service',question:'导游接团时发现计划有误，正确的处理方法是？',options:['A. 按自己理解执行','B. 报告旅行社确认','C. 不管计划','D. 让游客决定'],answer:1,analysis:'导游接团时如发现计划有误，应及时报告旅行社确认，在得到明确指示后再执行。'}
-];
-
-// ========== 状态管理 ==========
-const VALID_CODES = ['FREE2024', 'TRYFREE', 'XIMAO101', 'DAOYOU2024', 'BEIKAO666', 'GUIDE2024', 'KAOZHENG88', 'TRAVEL66', 'MANKAO99', 'XUEXI2024', 'AIHELPER', 'BEIKAO2026'];
-let currentMode = 'daily';
-let isActivated = false;
-let examQuestions = [];
-let userAnswers = {};
-let timerInterval = null;
-let remainingTime = 90 * 60; // 正式考试90分钟
-
-// ========== 初始化 ==========
-document.addEventListener('DOMContentLoaded', function() {
-  try {
-    checkActivation();
-    if(typeof questionBank !== 'undefined' && questionBank.length > 0) {
-      renderDailyQuestions();
-    } else {
-      document.getElementById('dailyQuestions').innerHTML = '<div style="padding:20px;text-align:center;color:#C62828">题库加载失败，请刷新页面重试</div>';
-    }
-    updateCountdown();
-    setupActivationInput();
-  } catch(e) {
-    document.getElementById('dailyQuestions').innerHTML = '<div style="padding:20px;text-align:center;color:#C62828">页面加载出错: ' + e.message + '</div>';
-    console.error('Exam init error:', e);
-  }
-});
-
-function setupActivationInput() {
-  // 模考已免费开放，无需激活码
-}
-
-// ========== 激活码系统 ==========
-function checkActivation() {
-  // 模考已免费开放，无需激活码
-  isActivated = true;
-}
-
-function updateActivationUI(active, code = '', questionsLeft = 0) {
-  const statusEl = document.getElementById('activationStatus');
-  const descEl = document.getElementById('activationDesc');
-  const examTab = document.getElementById('tabExam');
+';
   
-  if (active) {
-    statusEl.innerHTML = `<span class="active">✅ 已激活 - 激活码: ${code} - 剩余${questionsLeft}题</span>`;
-    statusEl.className = 'activation-status active';
-    // activation removed
-    examTab.classList.remove('locked');
-  } else {
-    statusEl.innerHTML = `<span class="inactive">❌ 未激活 - 请输入激活码解锁正式模拟考试</span>`;
-    statusEl.className = 'activation-status inactive';
-    // activation removed
-    // examTab.classList.remove('locked'); // 已取消激活码限制
-  }
-}
-
-function activateCode() {
-  // 模考已免费开放，无需激活码
-  return;
-  
-  if (!code) {
-    alert('请输入激活码');
-    return;
-  }
-  
-  if (VALID_CODES.includes(code)) {
-    const questionCount = Math.floor(Math.random() * 21) + 50; // 50-70题
-    localStorage.setItem('examActivated', 'true');
-    localStorage.setItem('examCode', code);
-    localStorage.setItem('examQuestionsLeft', questionCount);
-    
-    isActivated = true;
-    updateActivationUI(true, code, questionCount);
-    input.value = '';
-    alert(`🎉 激活成功！已解锁${questionCount}道题目`);
-  } else {
-    alert('❌ 激活码无效，请检查后重试');
-  }
-}
-
-// ========== 模式切换 ==========
-function switchMode(mode) {
-  // 模考已开放，无需激活码
-  
-  currentMode = mode;
-  document.getElementById('tabDaily').classList.toggle('active', mode === 'daily');
-  document.getElementById('tabExam').classList.toggle('active', mode === 'exam');
-  document.getElementById('tabWrong').classList.toggle('active', mode === 'wrong');
-  document.getElementById('tabStats').classList.toggle('active', mode === 'stats');
-  document.getElementById('dailySection').classList.toggle('hidden', mode !== 'daily');
-  document.getElementById('examSection').classList.toggle('hidden', mode !== 'exam');
-  document.getElementById('examResult').classList.toggle('hidden', true);
-  document.getElementById('wrongBookSection').classList.toggle('hidden', mode !== 'wrong');
-  document.getElementById('statsSection').classList.toggle('hidden', mode !== 'stats');
-  
-  if (mode === 'exam' && examQuestions.length === 0) {
-    startExam();
-  }
-  if (mode === 'wrong') {
-    renderWrongBook();
-  }
-  if (mode === 'stats') {
-    renderStats();
-  }
-}
-
-// ========== 每日一练 ==========
-let dailyQuestions = [];
-let dailyUserAnswers = {};
-let dailyAnswered = {};
-let dailyQIndex = 0;
-
-function renderDailySingle(idx) {
-  if(idx < 0 || idx >= dailyQuestions.length) return;
-  dailyQIndex = idx;
-  var q = dailyQuestions[idx];
-  var wrap = document.getElementById('dailySingleWrap');
-  
-  // 防御性检查：如果题目数据有问题，显示友好提示
-  if(!q || typeof q.question === 'undefined') {
-    wrap.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#666;"><p>题目数据加载中，请刷新重试...</p></div>';
-    return;
-  }
-  
-  var qType = q.type === 'multi' ? '多选题' : q.type === 'judge' ? '判断题' : '单选题';
-  var questionText = q.question || q.title || '题目内容加载中...';
-  var html = '<div style="margin-bottom:12px;"><span style="font-size:0.8rem;color:#666666;font-weight:600;">第' + (idx+1) + '题 · ' + qType + '</span></div>';
-  html += '<div style="font-size:0.95rem;line-height:1.7;margin-bottom:16px;font-weight:500;">' + questionText + '</div>';
-  html += '<ul style="list-style:none;padding:0;display:flex;flex-direction:column;gap:8px;">';
-  
-  var opts = q.type === 'judge' ? ['正确','错误'] : q.options;
-  opts.forEach(function(opt, oi) {
-    var selected = false;
-    if(q.type === 'multi') {
-      selected = dailyUserAnswers[idx] && dailyUserAnswers[idx].includes(oi);
-    } else {
-      selected = dailyUserAnswers[idx] === oi;
-    }
-    var borderColor = selected ? '#4C8BF5' : 'rgba(0,0,0,0.1)';
-    var bgColor = selected ? '#E8F0FE' : '#FFFFFF';
-    
-    if(dailyAnswered[idx] !== undefined) {
-      if(q.type === 'multi') {
-        if(Array.isArray(q.answer) && q.answer.includes(oi)) bgColor = 'rgba(6,95,70,0.1)';
-        else if(selected) bgColor = 'rgba(185,28,28,0.1)';
-      } else {
-        if(oi === q.answer) bgColor = 'rgba(6,95,70,0.1)';
-        else if(selected && oi !== q.answer) bgColor = 'rgba(185,28,28,0.1)';
-      }
-    }
-    
-    var optPrefix = '';
-    if(dailyAnswered[idx] !== undefined) {
-      if(q.type === 'multi') {
-        if(Array.isArray(q.answer) && q.answer.includes(oi)) optPrefix = '✅ ';
-        else if(selected) optPrefix = '❌ ';
-      } else {
-        if(oi === q.answer) optPrefix = '✅ ';
-        else if(selected && oi !== q.answer) optPrefix = '❌ ';
-      }
-    }
-    html += '<li onclick="dailySelectOption(' + idx + ',' + oi + ')" style="padding:12px 16px;border:1px solid ' + borderColor + ';border-radius:10px;cursor:pointer;background:' + bgColor + ';transition:all 0.2s;font-weight:500;">' + optPrefix + opt + '</li>';
-  });
-  html += '</ul>';
-  
-  if(q.type === 'multi' && dailyAnswered[idx] === undefined) {
-    html += '<button onclick="dailyConfirmMulti(' + idx + ')" style="margin-top:10px;padding:8px 20px;background:#4C8BF5;color:#FFFFFF;border:none;border-radius:20px;font-size:0.85rem;cursor:pointer;">确认提交</button>';
-  }
-  
-  if(dailyAnswered[idx] !== undefined) {
-    var isCorrect = false;
-    if(q.type === 'multi') {
-      isCorrect = JSON.stringify(dailyUserAnswers[idx].sort()) === JSON.stringify(q.answer.sort());
-    } else {
-      isCorrect = dailyUserAnswers[idx] === q.answer;
-    }
-    var resultIcon = isCorrect ? '✓ 正确' : '✗ 错误';
-    var resultBg = isCorrect ? 'rgba(6,95,70,0.08)' : 'rgba(185,28,28,0.08)';
-    var resultColor = isCorrect ? '#065F46' : '#B91C1C';
-    var resultBorder = isCorrect ? 'rgba(6,95,70,0.3)' : 'rgba(185,28,28,0.3)';
-    html += '<div style="margin-top:10px;padding:10px 14px;border-radius:8px;border-left:3px solid ' + resultBorder + ';background:' + resultBg + ';">';
-    html += '<div style="font-size:0.9rem;font-weight:700;color:' + resultColor + ';margin-bottom:6px;">' + resultIcon + '</div>';
-    if(q.analysis) {
-      html += '<div style="font-size:0.82rem;color:#666;line-height:1.6;">' + q.analysis + '</div>';
-    }
-    html += '</div>';
-  }
-  
-  wrap.innerHTML = html;
-  document.getElementById('dailyProgress').innerHTML = '<span style="background:#FFFFFF;color:#1A1A1A;padding:4px 12px;border-radius:20px;font-size:0.85rem;">' + (idx+1) + ' / ' + dailyQuestions.length + '</span>';
-  document.getElementById('dailyNextBtn').textContent = idx === dailyQuestions.length - 1 ? '完成 ✓' : '下一题 →';
-  document.getElementById('dailyPrevBtn').style.visibility = idx === 0 ? 'hidden' : 'visible';
-}
-
-function dailySelectOption(qIdx, optIdx) {
-  if(dailyAnswered[qIdx] !== undefined) return;
-  var q = dailyQuestions[qIdx];
-  if(q.type === 'multi') {
-    if(!dailyUserAnswers[qIdx]) dailyUserAnswers[qIdx] = [];
-    var pos = dailyUserAnswers[qIdx].indexOf(optIdx);
-    if(pos >= 0) dailyUserAnswers[qIdx].splice(pos, 1);
-    else dailyUserAnswers[qIdx].push(optIdx);
-  } else {
-    dailyUserAnswers[qIdx] = optIdx;
-    dailyAnswered[qIdx] = true;
-  }
-  renderDailySingle(qIdx);
-  
-  // 直接在选项上显示对错反馈，1秒后平滑切换到下一题
-  var isCorrect = dailyUserAnswers[qIdx] === q.answer;
-  
-  // 答错时记录到错题本
-  if(!isCorrect) {
-    saveWrongQuestion({
-      question: q.question,
-      options: q.options,
-      correctAnswer: q.answer,
-      userAnswer: dailyUserAnswers[qIdx],
-      type: q.type,
-      subject: q.subject || '未分类'
-    });
-  }
-  
-  // 不弹出固定框，选项样式已经通过CSS显示了正确/错误
-  // 1秒后自动平滑切换到下一题
-  if(qIdx < dailyQuestions.length - 1) {
-    setTimeout(function() {
-      renderDailySingle(qIdx + 1);
-      dailyQIndex = qIdx + 1;
-    }, 3000);
-  }
-}
-
-function dailyConfirmMulti(qIdx) {
-  if(!dailyUserAnswers[qIdx] || dailyUserAnswers[qIdx].length === 0) return;
-  dailyAnswered[qIdx] = true;
-  var q = dailyQuestions[qIdx];
-  var isCorrect = JSON.stringify(dailyUserAnswers[qIdx].sort()) === JSON.stringify(q.answer.sort());
-  
-  // 答错时记录到错题本
-  if(!isCorrect) {
-    saveWrongQuestion({
-      question: q.question,
-      options: q.options,
-      correctAnswer: q.answer,
-      userAnswer: dailyUserAnswers[qIdx],
-      type: q.type,
-      subject: q.subject || '未分类'
-    });
-  }
-  
-  renderDailySingle(qIdx);
-}
-
-function dailyPrev() { if(dailyQIndex > 0) renderDailySingle(dailyQIndex - 1); }
-function dailyNext() {
-  if(dailyQIndex < dailyQuestions.length - 1) renderDailySingle(dailyQIndex + 1);
-  else {
-    var correct = 0;
-    dailyQuestions.forEach(function(q,i) {
-      if(dailyAnswered[i] !== undefined) {
-        if(q.type === 'multi') {
-          if(JSON.stringify(dailyUserAnswers[i].sort()) === JSON.stringify(q.answer.sort())) correct++;
-        } else {
-          if(dailyUserAnswers[i] === q.answer) correct++;
-        }
-      }
-    });
-    var wrap = document.getElementById('dailySingleWrap');
-    wrap.innerHTML = '<div style="text-align:center;padding:20px;"><div style="font-size:2.5rem;font-weight:800;color:#666666;">' + correct + '/' + dailyQuestions.length + '</div><div style="font-size:1rem;color:#666666;margin-top:8px;">练习完成！</div><button onclick="renderDailyQuestions()" style="margin-top:16px;padding:12px 30px;background:#4C8BF5;color:#FFFFFF;border:none;border-radius:25px;font-size:0.95rem;cursor:pointer;">再练一组</button></div>';
-  }
-}
-
-function renderDailyQuestions() {
-  const container = document.getElementById('dailyQuestions');
-  const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
-  dailyQuestions = shuffled.slice(0, 20);
-  dailyUserAnswers = {};
-  dailyAnswered = {};
-  dailyQIndex = 0;
-  
-  container.innerHTML = '<div id="dailySingleWrap" style="min-height:350px"></div>' +
-    '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:16px;gap:8px;">' +
-    '<button onclick="dailyPrev()" id="dailyPrevBtn" style="padding:10px 20px;background:#F0F5FF;border:1px solid #4C8BF5;border-radius:12px;font-size:0.88rem;cursor:pointer;color:#4C8BF5;">← 上一题</button>' +
-    '<span id="dailyProgress" style="font-size:0.85rem;color:#666666;">1 / 20</span>' +
-    '<button onclick="dailyNext()" id="dailyNextBtn" style="padding:10px 20px;background:#F0F5FF;border:1px solid #4C8BF5;border-radius:12px;font-size:0.88rem;cursor:pointer;color:#4C8BF5;">下一题 →</button>' +
-    '</div>';
-  
-  renderDailySingle(0);
-}
-
-
-function startExam() {
-  // 正式模考：4科各按比例出题，共90分钟
-  const totalExamQ = 90;
-  const count = Math.min(totalExamQ, questionBank.length);
-  
-  // 随机抽取题目
-  const shuffled = [...questionBank].sort(() => Math.random() - 0.5);
-  examQuestions = shuffled.slice(0, count);
+  <script>
+  // Initialize exam state
   userAnswers = {};
+  answeredQuestions = {};
+  currentQIndex = 0;
   
-  document.getElementById('totalQuestions').textContent = count;
-  document.getElementById('answeredCount').textContent = '0';
-  document.getElementById('progressFill').style.width = '0%';
+  // Start with first question
+  renderSingleQuestion(0);
+  renderAnswerCard();
   
-  renderExamQuestions();
+  // Start timer
   startTimer();
 }
 
-function renderExamQuestions() {
-  const container = document.getElementById('examQuestions');
-  container.innerHTML = '';
-  
-  // 单题模式容器
-  let singleHtml = '<div id="singleQuestionWrap" style="min-height:400px">';
-  singleHtml += '</div>';
-  // 底部导航
-  singleHtml += '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;flex-wrap:wrap;gap:10px;">';
-  singleHtml += '<button onclick="prevQuestion()" id="prevBtn" style="padding:12px 24px;background:#F0F0F0;border:1px solid #E0E0E0;border-radius:12px;color:#666666;font-size:0.9rem;cursor:pointer;">← 上一题</button>';
-  singleHtml += '<span id="qProgress" style="color:#666666;font-size:0.9rem;">1 / ' + examQuestions.length + '</span>';
-  singleHtml += '<button onclick="nextQuestion()" id="nextBtn" style="padding:12px 24px;background:#F0F0F0;border:1px solid #E0E0E0;border-radius:12px;color:#666666;font-size:0.9rem;cursor:pointer;">下一题 →</button>';
-  singleHtml += '</div>';
-  // 答题卡折叠
-  singleHtml += '<div style="margin-top:16px;"><button onclick="toggleAnswerCard()" style="width:100%;padding:10px;background:#F8F9FA;border:1px solid #F0F0F0;border-radius:10px;color:#666666;font-size:0.85rem;cursor:pointer;">📋 展开答题卡</button><div id="answerCard" style="display:none;margin-top:8px;padding:12px;background:#FAFAFA;border-radius:10px;display:none;flex-wrap:wrap;gap:4px;"></div></div>';
-  
-  container.innerHTML = singleHtml;
+var currentQIndex = 0;
+
+// ========== 正式考试题库 ==========
+var examQuestions = [
+  // 政策法规
+  {type:'policy',question:'根据《旅游法》，旅行社应当向导游支付不低于当地最低工资标准的报酬，这一规定体现了什么原则？',options:['A. 公平原则','B. 保障原则','C. 平等原则','D. 诚信原则'],answer:1,analysis:'《旅游法》第38条规定，旅行社应当与其聘用的导游依法订立劳动合同，支付劳动报酬，不得要求导游垫付费用，体现了保障原则。'},
+  {type:'policy',question:'导游在进行导游活动时，其行为规范由哪部法律来规范？',options:['A. 合同法','B. 旅游法','C. 消费者权益保护法','D. 民法通则'],answer:1,analysis:'导游行为主要由《旅游法》规范，同时受《导游管理办法》等行政法规约束。'},
+  {type:'policy',question:'旅行社组织团队旅游，应当与旅游者订立什么？',options:['A. 口头协议','B. 旅游合同','C. 谅解备忘录','D. 行程确认单'],answer:1,analysis:'《旅游法》第57条规定，旅行社组织和安排旅游活动，应当与旅游者订立书面旅游合同。'},
+  {type:'policy',question:'导游证的有效期为几年？',options:['A. 1年','B. 2年','C. 3年','D. 5年'],answer:2,analysis:'《导游管理办法》规定，导游证的有效期为3年。'},
+  {type:'policy',question:'以下哪项不属于导游的权利？',options:['A. 获取劳动报酬','B. 人身权','C. 自由变更行程','D. 参加培训'],answer:2,analysis:'导游无权自由变更行程，行程变更需经旅行社同意并告知旅游者。'},
+  // 导游业务
+  {type:'service',question:'导游服务的核心是？',options:['A. 购物安排','B. 讲解服务','C. 食宿安排','D. 交通安排'],answer:1,analysis:'导游服务的核心是讲解服务，通过讲解使旅游者获得知识和审美享受。'},
+  {type:'service',question:'地陪导游的服务对象是？',options:['A. 出境旅游者','B. 入境旅游者','C. 本地旅游者','D. 所有旅游者'],answer:1,analysis:'地陪导游主要服务入境旅游者，负责在当地进行导游讲解和安排相关服务。'},
+  {type:'service',question:'导游在团队出发前的准备工作不包括？',options:['A. 熟悉接待计划','B. 准备导游词','C. 与旅游者签订合同','D. 检查所需物品'],answer:2,analysis:'签订合同是旅行社的工作，不是导游出发前的准备内容。'},
+  {type:'service',question:'以下哪项是导游在旅游途中应做的？',options:['A. 随意更改行程','B. 关注旅游者安全','C. 强制购物','D. 索要小费'],answer:1,analysis:'导游在旅游途中应关注旅游者安全，不得随意更改行程、强制购物或索要小费。'},
+  {type:'service',question:'全陪导游的职责是？',options:['A. 负责景点讲解','B. 负责全程陪同','C. 负责餐饮安排','D. 负责购物安排'],answer:1,analysis:'全陪导游负责全程陪同旅游团，协调联络，处理突发事件，保障旅游者权益。'},
+  // 全国导基
+  {type:'guidebook',question:'中国最长的河流是？',options:['A. 黄河','B. 珠江','C. 长江','D. 淮河'],answer:2,analysis:'长江全长6300公里，是中国最长的河流，也是世界第三大河流。'},
+  {type:'guidebook',question:'北京的故宫旧称是？',options:['A. 颐和园','B. 紫禁城','C. 圆明园','D. 天坛'],answer:1,analysis:'北京故宫旧称紫禁城，是中国明清两代的皇家宫殿，世界最大古建筑群。'},
+  {type:'guidebook',question:'以下哪个不属于中国五岳？',options:['A. 泰山','B. 华山','C. 黄山','D. 嵩山'],answer:2,analysis:'中国五岳为东岳泰山、西岳华山、南岳衡山、北岳恒山、中岳嵩山，黄山不属于五岳。'},
+  {type:'guidebook',question:'中国四大佛教名山中，属于安徽的是？',options:['A. 五台山','B. 峨眉山','C. 九华山','D. 普陀山'],answer:2,analysis:'九华山位于安徽省池州市，是中国佛教四大名山之一，地藏菩萨道场。'},
+  // 地方导基
+  {type:'local',question:'「桂林山水甲天下」形容的是哪个景区？',options:['A. 漓江','B. 西湖','C. 太湖','D. 滇池'],answer:0,analysis:'「桂林山水甲天下」形容的是广西桂林漓江风景区，以喀斯特地貌闻名。'},
+  {type:'local',question:'以下哪个省份有「彩云之南」的美称？',options:['A. 贵州','B. 四川','C. 云南','D. 广西'],answer:2,analysis:'云南省因位于云岭以南，素有「彩云之南」的美称。'},
+  {type:'local',question:'以下哪个城市有「天府之国」的美称？',options:['A. 重庆','B. 成都','C. 昆明','D. 西安'],answer:1,analysis:'成都位于四川盆地西部，因物产丰富被称为「天府之国」。'},
+  {type:'local',question:'以下哪个是云南著名的旅游景点？',options:['A. 故宫','B. 丽江古城','C. 西湖','D. 泰山'],answer:1,analysis:'丽江古城位于云南省丽江市，是世界文化遗产，以独特的纳西族文化闻名。'},
+  {type:'local',question:'以下哪个是四川著名的旅游景点？',options:['A. 故宫','B. 九寨沟','C. 西湖','D. 黄山'],answer:1,analysis:'九寨沟位于四川省阿坝藏族羌族自治州，以翠海、叠瀑、彩林、雪峰、藏情、蓝冰「六绝」著称。'}
+];
+
+// ========== 正式考试启动函数 ==========
+function startExam() {
+  // Reset state
+  userAnswers = {};
+  answeredQuestions = {};
   currentQIndex = 0;
+  
+  // Random select 20 questions from the pool for the exam
+  var shuffled = examQuestions.slice().sort(function() { return Math.random() - 0.5; });
+  examQuestions = shuffled.slice(0, 20);
+  
+  // Update total count display
+  var totalEl = document.getElementById('totalQuestions');
+  if (totalEl) totalEl.textContent = examQuestions.length;
+  
+  // Reset timer
+  remainingTime = 90 * 60; // 90 minutes
+  updateTimerDisplay();
+  
+  // Start with first question
   renderSingleQuestion(0);
   renderAnswerCard();
+  
+  // Start timer
+  startTimer();
 }
 
-var currentQIndex = 0;
 var answeredQuestions = {};
 
 function renderSingleQuestion(idx) {
@@ -1091,14 +698,14 @@ function renderSingleQuestion(idx) {
   wrap.innerHTML = html;
   
   // 更新导航
-  document.getElementById('qProgress').textContent = (idx+1) + ' / ' + examQuestions.length;
+  (document.getElementById('qProgress')||{}).textContent= (idx+1) + ' / ' + examQuestions.length;
   document.getElementById('prevBtn').style.opacity = idx === 0 ? '0.3' : '1';
-  document.getElementById('nextBtn').textContent = idx === examQuestions.length - 1 ? '交卷 📝' : '下一题 →';
+  (document.getElementById('nextBtn')||{}).textContent= idx === examQuestions.length - 1 ? '交卷 📝' : '下一题 →';
   
   updateProgress();
 }
 
-window.selectExamAnswer = function(qIdx, optIdx) {
+window.selectExamAnswer = function(qIdx, optIdx) {if(typeof GameSystem!=='undefined')GameSystem.addQuestion();
   if(answeredQuestions[qIdx] !== undefined) return; // 已答过不再改
   userAnswers[qIdx] = optIdx;
   answeredQuestions[qIdx] = optIdx; // 直接确认，立刻出解析
@@ -1166,7 +773,7 @@ function getTypeName(type) {
 function updateProgress() {
   const answered = Object.keys(userAnswers).length;
   const total = examQuestions.length;
-  document.getElementById('answeredCount').textContent = answered;
+  (document.getElementById('answeredCount')||{}).textContent= answered;
   document.getElementById('progressFill').style.width = `${(answered / total) * 100}%`;
 }
 
@@ -1190,7 +797,7 @@ function startTimer() {
 function updateTimerDisplay() {
   const mins = Math.floor(remainingTime / 60);
   const secs = remainingTime % 60;
-  document.getElementById('examTimer').textContent = 
+  (document.getElementById('examTimer')||{}).textContent= 
     `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
@@ -1211,7 +818,7 @@ function toggleTimer() {
 }
 
 // ========== 交卷 ==========
-function submitExam() {
+function submitExam() {if(typeof GameSystem!=='undefined')GameSystem.addExam();
   if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
   
   // 自动确认所有未确认的答案
@@ -1252,12 +859,12 @@ function showExamResult(score, correct, wrong, total, passed, wrongList) {
   const resultCard = document.getElementById('resultCard');
   resultCard.classList.toggle('fail', !passed);
   
-  document.getElementById('resultScore').textContent = score + '分';
-  document.getElementById('resultCorrect').textContent = correct;
-  document.getElementById('resultWrong').textContent = wrong;
-  document.getElementById('resultTotal').textContent = total;
-  document.getElementById('resultMsg').textContent = passed ? '🎉 恭喜！预估通过考试！' : '💪 再接再厉，下次一定行！';
-  if(typeof unanswered !== 'undefined' && unanswered > 0) document.getElementById('resultMsg').textContent += '（' + unanswered + '题未作答）';
+  (document.getElementById('resultScore')||{}).textContent= score + '分';
+  (document.getElementById('resultCorrect')||{}).textContent= correct;
+  (document.getElementById('resultWrong')||{}).textContent= wrong;
+  (document.getElementById('resultTotal')||{}).textContent= total;
+  (document.getElementById('resultMsg')||{}).textContent= passed ? '🎉 恭喜！预估通过考试！' : '💪 再接再厉，下次一定行！';
+  if(typeof unanswered !== 'undefined' && unanswered > 0) (document.getElementById('resultMsg')||{}).textContent += '（' + unanswered + '题未作答）';
   
   // 显示错题解析
   const analysisHtml = wrongList.length > 0 ? `
@@ -1483,20 +1090,20 @@ function updateCountdown() {
   const now = new Date();
   const diff = examDate - now;
   if (diff <= 0) {
-    document.getElementById('days').textContent = '0';
-    document.getElementById('hours').textContent = '0';
-    document.getElementById('minutes').textContent = '0';
-    document.getElementById('seconds').textContent = '0';
+    (document.getElementById('days')||{}).textContent= '0';
+    (document.getElementById('hours')||{}).textContent= '0';
+    (document.getElementById('minutes')||{}).textContent= '0';
+    (document.getElementById('seconds')||{}).textContent= '0';
     return;
   }
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-  document.getElementById('days').textContent = days;
-  document.getElementById('hours').textContent = hours;
-  document.getElementById('minutes').textContent = minutes;
-  document.getElementById('seconds').textContent = seconds;
+  (document.getElementById('days')||{}).textContent= days;
+  (document.getElementById('hours')||{}).textContent= hours;
+  (document.getElementById('minutes')||{}).textContent= minutes;
+  (document.getElementById('seconds')||{}).textContent= seconds;
 }
 setInterval(updateCountdown, 1000);
 
@@ -1532,5 +1139,218 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 document.getElementById('navLinks').classList.remove('open');
 </script>
 
+
+<script>
+// ========== Mode Switching ==========
+function switchMode(mode) {
+  // Hide all sections
+  document.getElementById('dailySection').style.display = 'none';
+  document.getElementById('examSection').style.display = 'none';
+  document.getElementById('examResult').style.display = 'none';
+  document.getElementById('wrongSection') && (document.getElementById('wrongSection').style.display = 'none');
+  document.getElementById('statsSection') && (document.getElementById('statsSection').style.display = 'none');
+
+  // Remove active from all mode-tabs
+  document.querySelectorAll('.mode-tab').forEach(function(t) { t.classList.remove('active'); });
+
+  // Show selected section
+  if (mode === 'daily') {
+    document.getElementById('dailySection').style.display = 'block';
+    document.getElementById('tabDaily').classList.add('active');
+    renderDailyQuestions();
+  } else if (mode === 'exam') {
+    document.getElementById('examSection').style.display = 'block';
+    document.getElementById('tabExam').classList.add('active');
+    startExam();
+  } else if (mode === 'wrong') {
+    if (!document.getElementById('wrongSection')) {
+      var ws = document.createElement('div');
+      ws.id = 'wrongSection';
+      document.querySelector('.container').appendChild(ws);
+    }
+    document.getElementById('wrongSection').style.display = 'block';
+    document.getElementById('tabWrong').classList.add('active');
+    renderWrongBook();
+  } else if (mode === 'stats') {
+    if (!document.getElementById('statsSection')) {
+      var ss = document.createElement('div');
+      ss.id = 'statsSection';
+      document.querySelector('.container').appendChild(ss);
+    }
+    document.getElementById('statsSection').style.display = 'block';
+    document.getElementById('tabStats').classList.add('active');
+    renderStats();
+  }
+}
+
+// ========== Daily Question Bank ==========
+var dailyBank = [
+  {q:"根据《旅游法》，旅行社应当向导游支付不低于当地最低工资标准的报酬，这一规定体现了什么原则？",o:["A.公平原则","B.保障原则","C.平等原则","D.诚信原则"],a:1,exp:"《旅游法》第38条规定，旅行社应当与其聘用的导游依法订立劳动合同，支付劳动报酬，不得要求导游垫付费用，体现了保障原则。"},
+  {q:"导游在进行导游活动时，其行为规范由哪部法律来规范？",o:["A.合同法","B.旅游法","C.消费者权益保护法","D.民法通则"],a:1,exp:"导游行为主要由《旅游法》规范，同时受《导游管理办法》等行政法规约束。"},
+  {q:"旅行社组织团队旅游，应当与旅游者订立什么？",o:["A.口头协议","B.旅游合同","C.谅解备忘录","D.行程确认单"],a:1,exp:"《旅游法》第57条规定，旅行社组织和安排旅游活动，应当与旅游者订立书面旅游合同。"},
+  {q:"导游证的有效期为几年？",o:["A.1年","B.2年","C.3年","D.5年"],a:2,exp:"《导游管理办法》规定，导游证的有效期为3年。"},
+  {q:"以下哪项不属于导游的权利？",o:["A.获取劳动报酬","B.人身权","C.自由变更行程","D.参加培训"],a:2,exp:"导游无权自由变更行程，行程变更需经旅行社同意并告知旅游者。"},
+  {q:"导游人员在导游活动中损害旅游者合法权益的，应当承担什么责任？",o:["A.只由旅行社承担","B.导游和旅行社连带责任","C.只由导游承担","D.不承担任何责任"],a:1,exp:"导游在导游活动中损害旅游者合法权益，旅行社和导游依法承担连带责任。"},
+  {q:"根据规定，取得导游证需要通过什么考试？",o:["A.全国导游资格考试","B.省级导游考试","C.旅行社内部考核","D.旅游局面试"],a:0,exp:"《旅游法》规定，参加全国导游资格考试合格方可取得导游证。"},
+  {q:"旅行社变更旅游行程安排需经过谁同意？",o:["A.只需导游同意","B.只需旅行社同意","C.需征得旅游者同意","D.不需任何人同意"],a:2,exp:"《旅游法》第69条规定，旅行社经征得旅游者同意，可以变更行程安排。"},
+  {q:"旅游者在旅游活动中受到损害，有权要求赔偿的时效为多久？",o:["A.6个月","B.1年","C.2年","D.3年"],a:1,exp:"旅游纠纷的诉讼时效一般为2年（民法典），但旅游者向旅游质监部门投诉的时效为90天。此处按旅游投诉时效为60日。但考试常考2年民事时效。"},
+  {q:"导游应当遵守的职业道德不包括以下哪项？",o:["A.爱岗敬业","B.诚实守信","C.以权谋私","D.遵纪守法"],a:2,exp:"以权谋私违反职业道德，导游应做到爱岗敬业、诚实守信、遵纪守法。"},
+  {q:"以下哪个是导游服务的基本特点？",o:["A.独立性","B.关联性","C.季节性","D.分散性"],a:0,exp:"导游服务的基本特点包括独立性、脑体高度结合、复杂性和跨文化性。"},
+  {q:"导游服务的核心是？",o:["A.购物安排","B.讲解服务","C.食宿安排","D.交通安排"],a:1,exp:"导游服务的核心是讲解服务，通过讲解使旅游者获得知识和审美享受。"},
+  {q:"地陪导游的服务对象是？",o:["A.出境旅游者","B.入境旅游者","C.本地旅游者","D.所有旅游者"],a:1,exp:"地陪导游主要服务入境旅游者，负责在当地进行导游讲解和安排相关服务。"},
+  {q:"导游在团队出发前的准备工作不包括？",o:["A.熟悉接待计划","B.准备导游词","C.与旅游者签订合同","D.检查所需物品"],a:2,exp:"签订合同是旅行社的工作，不是导游出发前的准备内容。"},
+  {q:"以下哪项是导游在旅游途中应做的？",o:["A.随意更改行程","B.关注旅游者安全","C.强制购物","D.索要小费"],a:1,exp:"导游在旅游途中应关注旅游者安全，不得随意更改行程、强制购物或索要小费。"},
+  {q:"全陪导游的职责是？",o:["A.负责景点讲解","B.负责全程陪同","C.负责餐饮安排","D.负责购物安排"],a:1,exp:"全陪导游负责全程陪同旅游团，协调联络，处理突发事件，保障旅游者权益。"},
+  {q:"导游语言的基本要求不包括？",o:["A.准确","B.生动","C.夸张","D.规范"],a:2,exp:"导游语言要求准确、生动、规范，夸张不是基本要求。"},
+  {q:"导游在接待外国旅游者时，应当遵守的基本原则是？",o:["A.内外有别","B.不卑不亢","C.唯利是图","D.有求必应"],a:1,exp:"导游接待外国旅游者应做到不卑不亢、热情友好，维护国家利益和民族尊严。"},
+  {q:"《旅游法》正式施行的时间是？",o:["A.2013年4月25日","B.2013年10月1日","C.2014年1月1日","D.2014年10月1日"],a:1,exp:"《中华人民共和国旅游法》于2013年4月25日通过，2013年10月1日起施行。"},
+  {q:"以下哪项属于导游的义务？",o:["A.收取小费","B.维护旅游者合法权益","C.擅自改变行程","D.私自承揽业务"],a:1,exp:"维护旅游者合法权益是导游的法定义务，其他三项均属于导游不得做的行为。"},
+  {q:"导游证的注册管理机关是？",o:["A.人力资源部门","B.旅游行政管理部门","C.工商行政部门","D.公安部门"],a:1,exp:"导游证由旅游行政管理部门（现为文化和旅游主管部门）注册管理。"},
+  {q:"导游在讲解中应遵循的原则是？",o:["A.以购物为主","B.以讲解为主","C.以娱乐为主","D.以餐饮为主"],a:1,exp:"导游讲解应遵循以讲解为主的原则，提供高质量的导游服务。"},
+  {q:"旅游安全事故发生后，导游首先应做什么？",o:["A.继续行程","B.报告旅行社","C.保护现场并组织抢救","D.追究责任"],a:2,exp:"导游在旅游安全事故发生后，应立即保护现场、组织抢救，并报告旅行社和相关部门。"},
+  {q:"导游带团中突发地震，应首先？",o:["A.打电话报警","B.组织旅游者有序撤离","C.原地不动等待救援","D.先自己逃生"],a:1,exp:"导游在突发地震时应组织旅游者有序撤离到安全地带，确保旅游者安全。"},
+  {q:"以下哪种行为违反了《导游管理办法》？",o:["A.佩戴导游证","B.私自转借导游证","C.参加培训","D.按规定执业"],a:1,exp:"私自转借导游证违反《导游管理办法》，导游证不得转借、涂改。"},
+  {q:"中国四大佛教名山中，属于安徽的是？",o:["A.五台山","B.峨眉山","C.九华山","D.普陀山"],a:2,exp:"九华山位于安徽省池州市，是中国佛教四大名山之一，地藏菩萨道场。"},
+  {q:"「桂林山水甲天下」形容的是哪个景区？",o:["A.漓江","B.西湖","C.太湖","D.滇池"],a:0,exp:"「桂林山水甲天下」形容的是广西桂林漓江风景区，以喀斯特地貌闻名。"},
+  {q:"北京的故宫旧称是？",o:["A.颐和园","B.紫禁城","C.圆明园","D.天坛"],a:1,exp:"北京故宫旧称紫禁城，是中国明清两代的皇家宫殿，世界最大古建筑群。"},
+  {q:"以下哪个不属于中国五岳？",o:["A.泰山","B.华山","C.黄山","D.嵩山"],a:2,exp:"中国五岳为东岳泰山、西岳华山、南岳衡山、北岳恒山、中岳嵩山，黄山不属于五岳。"},
+  {q:"导游讲解的常用方法不包括？",o:["A.简单概述法","B.分段讲解法","C.画龙点睛法","D.默读法"],a:3,exp:"默读法不属于导游讲解方法，常用方法有简单概述法、分段讲解法、画龙点睛法、触景生情法等。"},
+  {q:"旅游者在旅游途中患病，导游应如何处理？",o:["A.自行给药","B.劝其就医并报告旅行社","C.不予理会","D.让旅游者自行处理"],a:1,exp:"旅游者患病时，导游应劝其就医，及时报告旅行社，并协助联系医院。"},
+  {q:"中国最长的河流是？",o:["A.黄河","B.珠江","C.长江","D.淮河"],a:2,exp:"长江全长6300公里，是中国最长的河流，也是世界第三大河流。"},
+  {q:"导游在行程结束后，需要做的工作不包括？",o:["A.填写结算单","B.归还物品","C.与旅游者签订下次旅行合同","D.总结汇报"],a:2,exp:"与旅游者签订下次旅行合同不是导游行程结束后的工作内容。"},
+  {q:"以下哪项是旅游合同应包含的内容？",o:["A.旅游行程安排","B.导游私人电话","C.旅行社利润","D.其他游客信息"],a:0,exp:"旅游合同应包含旅游行程安排、交通住宿标准、旅游费用、违约责任等。"},
+  {q:"导游服务中，「图文声像」属于哪种导游方式？",o:["A.实地导游","B.物化导游","C.语音导游","D.虚拟导游"],a:1,exp:"图文声像导游属于物化导游，是以实物方式向旅游者提供导游服务。"},
+  {q:"以下哪个省份有「彩云之南」的美称？",o:["A.贵州","B.四川","C.云南","D.广西"],a:2,exp:"云南省因位于云岭以南，素有「彩云之南」的美称。"},
+  {q:"导游接待计划确认后，应提前多久与司机联系？",o:["A.当天早上","B.提前一天","C.提前两天","D.不需要联系"],a:1,exp:"导游应在出团前一天与司机联系确认接团时间和地点。"},
+  {q:"旅游投诉处理机构处理投诉的时限是？",o:["A.15个工作日","B.30个工作日","C.45个工作日","D.60个工作日"],a:2,exp:"旅游投诉处理机构应当在受理投诉之日起45个工作日内做出处理决定。"},
+  {q:"导游领队引导文明旅游的规范要求，以下哪项正确？",o:["A.只在出发前提醒","B.全程提醒引导","C.不需要提醒","D.只在景点提醒"],a:1,exp:"导游领队应全程提醒引导旅游者文明旅游，不得以任何方式纵容不文明行为。"},
+  {q:"以下哪种情况可以解除旅游合同？",o:["A.旅游者不想去了","B.旅行社未按约定提供服务","C.天气稍差","D.旅游者心情不好"],a:1,exp:"旅行社未按约定提供服务属于违约，旅游者有权解除合同并要求赔偿。"}
+];
+
+var dailyQuestions = [];
+var dailyQIndex = 0;
+var dailyAnswered = {};
+var dailyCorrect = 0;
+
+function renderDailyQuestions() {
+  var container = document.getElementById('dailyQuestions');
+  if (!container) return;
+
+  // If already rendered, don't re-render
+  if (container.querySelector('.question-card')) return;
+
+  // Random pick 20 questions
+  var shuffled = dailyBank.slice().sort(function() { return Math.random() - 0.5; });
+  dailyQuestions = shuffled.slice(0, 20);
+  dailyQIndex = 0;
+  dailyAnswered = {};
+  dailyCorrect = 0;
+
+  var html = '<div style="margin-bottom:12px;text-align:center;font-size:0.85rem;color:#666;">本次共 ' + dailyQuestions.length + ' 题，加油！</div>';
+  dailyQuestions.forEach(function(q, i) {
+    html += '<div class="question-card" style="background:#fff;border:1px solid #F0F0F0;border-radius:14px;padding:16px;margin-bottom:14px;" id="dq-' + i + '">';
+    html += '<div style="font-size:0.78rem;color:#4C8BF5;font-weight:600;margin-bottom:8px;">第 ' + (i+1) + ' 题 / ' + dailyQuestions.length + '</div>';
+    html += '<div class="question-text" style="font-size:0.9rem;color:#333;line-height:1.7;margin-bottom:14px;">' + q.q + '</div>';
+    html += '<ul class="question-options" style="list-style:none;padding:0;margin:0;">';
+    q.o.forEach(function(opt, j) {
+      html += '<li onclick="answerDaily(' + i + ',' + j + ')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:8px;background:#F8F9FA;border:1.5px solid #F0F0F0;border-radius:12px;cursor:pointer;transition:all .15s;touch-action:manipulation;" class="daily-opt" id="dopt-' + i + '-' + j + '">';
+      html += '<span style="width:24px;height:24px;border:1.5px solid #4C8BF5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;flex-shrink:0;background:#F0F5FF;color:#4C8BF5;font-weight:600;">' + String.fromCharCode(65+j) + '</span>';
+      html += '<span style="font-size:0.85rem;color:#666;flex:1;">' + opt + '</span>';
+      html += '</li>';
+    });
+    html += '</ul>';
+    html += '<div id="dexp-' + i + '" style="display:none;margin-top:10px;padding:10px 14px;background:#F0F5FF;border-radius:10px;font-size:0.82rem;color:#666;line-height:1.7;"></div>';
+    html += '</div>';
+  });
+
+  html += '<div style="text-align:center;padding:20px 0;" id="dailyResult"></div>';
+  container.innerHTML = html;
+}
+
+function answerDaily(qIdx, optIdx) {
+  if (dailyAnswered[qIdx] !== undefined) return;
+  dailyAnswered[qIdx] = optIdx;
+
+  var q = dailyQuestions[qIdx];
+  var isCorrect = optIdx === q.a;
+
+  if (isCorrect) {
+    dailyCorrect++;
+    var el = document.getElementById('dopt-' + qIdx + '-' + optIdx);
+    if (el) { el.style.background = '#ECFDF5'; el.style.borderColor = '#10B981'; }
+    // Game system reward
+    if (typeof GameSystem !== 'undefined' && GameSystem.addXP) {
+      GameSystem.addXP(5);
+      GameSystem.addCoins(2);
+    }
+  } else {
+    var wrongEl = document.getElementById('dopt-' + qIdx + '-' + optIdx);
+    if (wrongEl) { wrongEl.style.background = '#FEF2F2'; wrongEl.style.borderColor = '#EF4444'; }
+    var correctEl = document.getElementById('dopt-' + qIdx + '-' + q.a);
+    if (correctEl) { correctEl.style.background = '#ECFDF5'; correctEl.style.borderColor = '#10B981'; }
+    // Save wrong question
+    saveWrongQuestion(q);
+  }
+
+  // Show explanation
+  var expEl = document.getElementById('dexp-' + qIdx);
+  if (expEl) {
+    expEl.innerHTML = (isCorrect ? '✅ 正确！' : '❌ 错误！') + '<br>' + q.exp;
+    expEl.style.display = 'block';
+  }
+
+  // Disable all options for this question
+  q.o.forEach(function(_, j) {
+    var opt = document.getElementById('dopt-' + qIdx + '-' + j);
+    if (opt) { opt.style.pointerEvents = 'none'; opt.style.opacity = '0.7'; }
+  });
+
+  // Check if all answered
+  if (Object.keys(dailyAnswered).length === dailyQuestions.length) {
+    var resultEl = document.getElementById('dailyResult');
+    if (resultEl) {
+      var pct = Math.round(dailyCorrect / dailyQuestions.length * 100);
+      resultEl.innerHTML = '<div style="background:linear-gradient(135deg,#F0F5FF,#E0EAFF);border-radius:16px;padding:24px;margin-top:10px;">' +
+        '<div style="font-size:2rem;font-weight:900;color:#4C8BF5;">' + dailyCorrect + '/' + dailyQuestions.length + '</div>' +
+        '<div style="font-size:0.9rem;color:#666;margin-top:4px;">正确率 ' + pct + '%</div>' +
+        '<div style="font-size:0.85rem;color:#666;margin-top:8px;">' + (pct >= 80 ? '🎉 太棒了！继续保持！' : pct >= 60 ? '💪 不错哦，再接再厉！' : '📚 还需努力，多刷几遍！') + '</div>' +
+        '<button onclick="resetDaily()" style="margin-top:14px;padding:10px 28px;background:#4C8BF5;color:#fff;border:none;border-radius:20px;font-size:0.9rem;font-weight:600;cursor:pointer;touch-action:manipulation;">再练一组 →</button>' +
+        '</div>';
+    }
+    // Track in game system
+    if (typeof GameSystem !== 'undefined' && GameSystem.addExam) {
+      GameSystem.state.totalQuestions = (GameSystem.state.totalQuestions || 0) + dailyQuestions.length;
+      GameSystem.chkSt && GameSystem.chkSt();
+    }
+  }
+}
+
+function resetDaily() {
+  dailyQuestions = [];
+  dailyQIndex = 0;
+  dailyAnswered = {};
+  dailyCorrect = 0;
+  var container = document.getElementById('dailyQuestions');
+  if (container) container.innerHTML = '';
+  renderDailyQuestions();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+</script>
+
+<script src="gamification.js?v=20260516b"></script>
+<script>
+(function(){
+  function markVisit(){
+    if(typeof GameSystem!=='undefined' && GameSystem.state){
+      GameSystem.state.sp.s13={d:true};
+      GameSystem.chkAch();GameSystem.chkSt();
+    } else {
+      setTimeout(markVisit, 200);
+    }
+  }
+  markVisit();
+})();
+</script>
+<div style="text-align:center;padding:16px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-top:20px;"><a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a></div>
 </body>
 </html>

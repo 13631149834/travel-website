@@ -12,6 +12,7 @@
 <meta property="og:url" content="https://youdao-travel.com/voice.html">
 <meta property="og:image" content="https://youdao-travel.com/images/qrcode.jpg">
 <style>
+*{-webkit-tap-highlight-color:transparent;}button,.tab-btn{touch-action:manipulation;-webkit-touch-callout:none;}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7;color:#666666;background:#FFFFFF;min-height:100vh;padding-bottom:80px}
@@ -125,7 +126,7 @@ a{text-decoration:none;color:inherit}
   .card{border-radius:18px;padding:24px;margin:0}
   .section{padding:32px 0}
   .section-title{font-size:1.5rem;margin-bottom:8px}
-  .fab{bottom:24px;right:24px}
+  .fab{bottom:24px;left:16px}
   .modal-overlay .modal{max-width:600px}
 }
   .voice-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
@@ -168,7 +169,7 @@ a{text-decoration:none;color:inherit}
 .back-to-top {
     position: fixed;
     bottom: 130px;
-    right: 20px;
+    left:16px;
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -201,6 +202,17 @@ a{text-decoration:none;color:inherit}
 }
 
 </style>
+<style>
+/* Global readability improvements */
+.section-block p, .item-card p, .template-box p, .plan-card p { line-height: 1.7; }
+.section-block ul, .item-card ul { line-height: 1.8; }
+.section-block li, .item-card li { margin-bottom: 4px; }
+.item-card h4 { margin-bottom: 10px; }
+.step-list { gap: 14px; }
+.step-item { padding: 12px 0; }
+</style>
+
+<script src="mobile-fix.js?v=20260516b"></script>
 </head>
 <body>
 
@@ -236,17 +248,7 @@ a{text-decoration:none;color:inherit}
 
 
   <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>发声墙</span></div>
-<div class="hero">
-  <h2>发声墙</h2>
-  <p>旅行中的温暖与感动，值得被看见</p>
-  <p class="hero-tip">可以是别人的善意，也可以是你自己的感动</p>
-  <div class="tabs">
-    <button class="tab-btn active" onclick="filterPosts('all', this)"><span class="emoji">✨</span> 全部</button>
-    <button class="tab-btn" onclick="filterPosts('guide', this)"><span class="emoji">🏛️</span> 导游说</button>
-    <button class="tab-btn" onclick="filterPosts('tourist', this)"><span class="emoji">🎒</span> 游客说</button>
-    <button class="tab-btn" onclick="filterPosts('examinee', this)"><span class="emoji">📚</span> 备考人</button>
-  </div>
-</div>
+
 
 <div class="container">
   <div class="posts-section">
@@ -274,13 +276,7 @@ a{text-decoration:none;color:inherit}
 
 <div class="toast" id="toast">发布成功！感谢你的分享 ✨</div>
 
-<div class="bottom-tabs">
-  <a class="tab-item" href="index.html"><span>🏠</span><span>首页</span></a>
-  <a class="tab-item tab-active" href="exam-guide.html"><span>📚</span><span>学习</span></a>
-  <a class="tab-item" href="exam-simulator.html"><span>✏️</span><span>刷题</span></a>
-  <a class="tab-item" href="chat.html"><span>🤖</span><span>AI</span></a>
-  <a class="tab-item" href="resources.html"><span>👤</span><span>我的</span></a>
-</div>
+
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
 <script>
 (function(){
@@ -328,7 +324,7 @@ window.selectIdentity = function(el, identity) {
 
 window.updateCharCount = function() {
     var len = document.getElementById('postContent').value.length;
-    document.getElementById('charCount').textContent = len;
+    (document.getElementById('charCount')||{}).textContent= len;
   };
   function renderPosts(filter) {
     const grid = document.getElementById('postsGrid');
@@ -428,7 +424,7 @@ function showToast(msg) {
     // 重置表单
     document.getElementById('authorName').value = '';
     document.getElementById('postContent').value = '';
-    document.getElementById('charCount').textContent = '0';
+    (document.getElementById('charCount')||{}).textContent= '0';
     // 重置身份选择
     document.querySelectorAll('.identity-option').forEach(opt => opt.classList.remove('selected'));
   };
@@ -437,5 +433,8 @@ function showToast(msg) {
   renderPosts('全部');
 
 </script>
+
+<script src="gamification.js?v=20260516b"></script>
+<div style="text-align:center;padding:16px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-top:20px;"><a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a></div>
 </body>
 </html>

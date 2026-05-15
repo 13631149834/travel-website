@@ -185,7 +185,7 @@ a { color: #4C8BF5 !important; }
   .card{border-radius:18px;padding:24px;margin:0}
   .section{padding:32px 0}
   .section-title{font-size:1.5rem;margin-bottom:8px}
-  .fab{bottom:24px;right:24px}
+  .fab{bottom:24px;left:16px}
   .modal-overlay .modal{max-width:600px}
 }
   .tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
@@ -231,7 +231,7 @@ a { color: #4C8BF5 !important; }
 .back-to-top {
     position: fixed;
     bottom: 130px;
-    right: 20px;
+    left:16px;
     width: 44px;
     height: 44px;
     border-radius: 50%;
@@ -264,6 +264,17 @@ a { color: #4C8BF5 !important; }
 }
 
 </style>
+  <meta property="og:image" content="https://youdao-travel.com/images/qrcode.jpg">
+<style>
+/* Global readability improvements */
+.section-block p, .item-card p, .template-box p, .plan-card p { line-height: 1.7; }
+.section-block ul, .item-card ul { line-height: 1.8; }
+.section-block li, .item-card li { margin-bottom: 4px; }
+.item-card h4 { margin-bottom: 10px; }
+.step-list { gap: 14px; }
+.step-item { padding: 12px 0; }
+</style>
+<script src="mobile-fix.js?v=20260516b"></script>
 </head>
 <body>
       <nav class="navbar">
@@ -293,11 +304,11 @@ a { color: #4C8BF5 !important; }
 
   <div class="page-header">
     <h1>备考工具箱</h1>
-    <p class="page-desc">倒计时、计划生成器、速查表等</p>
+    <p class="page-desc">考试倒计时 · 学习计划 · 知识点速查 · 模拟考试</p>
   </div>
 
   <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>更多</span> <span class="sep">›</span> <span>备考工具箱</span></div>
-  <div class="hero"><h2>备考工具箱</h2><p>考试倒计时 · 学习计划 · 知识点速查 · 模拟考试</p></div>
+  
   <div class="container">
     <div class="toc"><h3>工具导航</h3><div class="toc-list"><a class="toc-item" href="#countdown">考试倒计时</a><a class="toc-item" href="#studyplan">学习计划</a><a class="toc-item" href="#quickref">知识点速查</a><a class="toc-item" href="#memory">记忆技巧</a><a class="toc-item" href="#exam">模拟考试</a></div></div>
     
@@ -545,7 +556,7 @@ a { color: #4C8BF5 !important; }
       const transportTotal = transport * days * multiplier;
       const ticketsTotal = tickets * multiplier;
       const total = Math.round(hotelTotal + foodTotal + transportTotal + ticketsTotal + shopping);
-      document.getElementById('totalBudget').textContent = '¥' + total.toLocaleString();
+      (document.getElementById('totalBudget')||{}).textContent= '¥' + total.toLocaleString();
       document.getElementById('budgetResult').style.display = 'block';
     }
     var navLinks = document.getElementById('navLinks'); if(navLinks) navLinks.classList.remove('open');
@@ -557,9 +568,9 @@ a { color: #4C8BF5 !important; }
       const diff = examDate - now;
       
       if (diff <= 0) {
-        document.getElementById('examDays').textContent = '0';
-        document.getElementById('examHours').textContent = '0';
-        document.getElementById('examMins').textContent = '0';
+        (document.getElementById('examDays')||{}).textContent= '0';
+        (document.getElementById('examHours')||{}).textContent= '0';
+        (document.getElementById('examMins')||{}).textContent= '0';
         return;
       }
       
@@ -567,9 +578,9 @@ a { color: #4C8BF5 !important; }
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       
-      document.getElementById('examDays').textContent = days;
-      document.getElementById('examHours').textContent = hours;
-      document.getElementById('examMins').textContent = mins;
+      (document.getElementById('examDays')||{}).textContent= days;
+      (document.getElementById('examHours')||{}).textContent= hours;
+      (document.getElementById('examMins')||{}).textContent= mins;
     }
     
     // 学习计划生成器
@@ -604,13 +615,7 @@ a { color: #4C8BF5 !important; }
     
 </script>
 
-<div class="bottom-tabs">
-  <a class="tab-item" href="index.html"><span>🏠</span><span>首页</span></a>
-  <a class="tab-item tab-active" href="exam-guide.html"><span>📚</span><span>学习</span></a>
-  <a class="tab-item" href="exam-simulator.html"><span>✏️</span><span>刷题</span></a>
-  <a class="tab-item" href="chat.html"><span>🤖</span><span>AI</span></a>
-  <a class="tab-item" href="resources.html"><span>👤</span><span>我的</span></a>
-</div>
+
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
 <script>
 (function(){
@@ -622,5 +627,7 @@ a { color: #4C8BF5 !important; }
     });
 })();
 </script>
+<script src="gamification.js?v=20260516b"></script>
+<div style="text-align:center;padding:16px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-top:20px;"><a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a></div>
 </body>
 </html>
