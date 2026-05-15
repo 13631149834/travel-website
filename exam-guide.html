@@ -2844,8 +2844,19 @@ function switchTab(btn, panelId) {
         panel.classList.add('active');
     }
     
-    // Step 3: Handle standalone content blocks with data-tab (NOT tab-panel, NOT section)
-    // Sections are containers that may hold multiple tab contents, so never hide them
+    // Step 3: Handle sections with data-tab (hide non-matching, but keep #overview visible always)
+    document.querySelectorAll('.section[data-tab]').forEach(function(sec){
+        var tab = sec.getAttribute('data-tab');
+        // Never hide #overview section - it contains all other sections nested inside
+        if(sec.id === 'overview'){
+            sec.classList.remove('tab-hidden');
+        } else if(tab === panelId){
+            sec.classList.remove('tab-hidden');
+        } else {
+            sec.classList.add('tab-hidden');
+        }
+    });
+    // Handle standalone data-tab divs (not tab-panel, not section)
     document.querySelectorAll('[data-tab]:not(.tab-panel):not(.section)').forEach(function(el){
         var tab = el.getAttribute('data-tab');
         if(tab === panelId){
@@ -2876,7 +2887,18 @@ document.addEventListener('DOMContentLoaded',function(){
             ap.classList.add('active');
         }
         
-        // Handle data-tab elements (not tab-panels)
+        // Handle sections with data-tab (hide non-matching, but keep #overview visible)
+        document.querySelectorAll('.section[data-tab]').forEach(function(sec){
+            var tab = sec.getAttribute('data-tab');
+            if(sec.id === 'overview'){
+                sec.classList.remove('tab-hidden');
+            } else if(tab === activePanelId){
+                sec.classList.remove('tab-hidden');
+            } else {
+                sec.classList.add('tab-hidden');
+            }
+        });
+        // Handle standalone data-tab divs
         document.querySelectorAll('[data-tab]:not(.tab-panel):not(.section)').forEach(function(el){
             if(el.getAttribute('data-tab') === activePanelId){
                 el.classList.remove('tab-hidden');
