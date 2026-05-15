@@ -34,7 +34,7 @@ a{text-decoration:none;color:inherit}
 .hero p{font-size:1rem;color:#4C8BF5}
 .back-btn{display:inline-flex;align-items:center;gap:6px;background:#F0F5FF;color:#4C8BF5;padding:10px 20px;border-radius:25px;font-size:0.85rem;margin-bottom:20px;transition:all 0.2s;border:1px solid #E0EAFF;font-weight:500}
 .back-btn:hover{background:#F0F5FF}
-.region-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:20px 0}
+.region-tabs{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:12px 0 16px}#searchWrap:focus-within{border-color:#4C8BF5;}#provinceSearch::placeholder{color:#bbb;}
 .region-tab{background:#F8F9FA;border:1px solid #F0F0F0;padding:8px 16px;border-radius:20px;font-size:0.82rem;color:#999999;cursor:pointer;transition:all 0.2s;font-weight:500}
 .region-tab:hover,.region-tab.active{background:#4C8BF5;color:#fff;border-color:#4C8BF5}
 .section{padding:24px 0}
@@ -287,6 +287,14 @@ a { color: #4C8BF5 !important; }
   <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>学习中心</span> <span class="sep">›</span> <span>各省备考</span></div>
 <div class="container">
 
+
+<div style="padding:12px 16px 0;max-width:600px;margin:0 auto;">
+  <div style="display:flex;align-items:center;gap:8px;background:#FFFFFF;border:1.5px solid #F0F0F0;border-radius:14px;padding:8px 14px;transition:border-color 0.2s;" id="searchWrap">
+    <span style="color:#999;font-size:1rem;">🔍</span>
+    <input type="text" id="provinceSearch" placeholder="搜索省份..." style="flex:1;border:none;outline:none;font-size:0.9rem;background:transparent;color:#333;" oninput="filterProvinces(this.value)">
+    <button onclick="document.getElementById('provinceSearch').value='';filterProvinces('');" style="background:none;border:none;color:#999;cursor:pointer;font-size:1rem;padding:0;display:none;" id="searchClear">✕</button>
+  </div>
+</div>
 
 <div class="region-tabs">
   <div class="region-tab active">全部</div>
@@ -11477,7 +11485,34 @@ function initPage() {
   };
   let allProvinces = [];
   Object.values(regionNames).forEach(arr => allProvinces = allProvinces.concat(arr));
-  function renderGrid(filter) {
+  
+function filterProvinces(query) {
+  var q = query.trim().toLowerCase();
+  var clearBtn = document.getElementById('searchClear');
+  if (clearBtn) clearBtn.style.display = q ? 'block' : 'none';
+  
+  if (!q) {
+    renderGrid(document.querySelector('.region-tab.active') ? document.querySelector('.region-tab.active').textContent : '全部');
+    return;
+  }
+  
+  var container = document.getElementById('provinceGrid');
+  container.innerHTML = '';
+  Object.keys(provinceData).forEach(function(name) {
+    if (name.toLowerCase().indexOf(q) >= 0 || (provinceData[name].region && provinceData[name].region.toLowerCase().indexOf(q) >= 0)) {
+      var data = provinceData[name];
+      var card = document.createElement('div');
+      card.className = 'province-card';
+      var hasExtra = data && data.extra && data.extra.length > 0;
+      var hasQ = data && data.questions && data.questions.length > 0;
+      card.innerHTML = '<h3>' + name + '</h3><span>' + (hasExtra ? '详细考点' : '基础信息') + (hasQ ? ' · ' + data.questions.length + '题' : '') + '</span>';
+      card.onclick = function(){ showDetail(name); };
+      container.appendChild(card);
+    }
+  });
+}
+
+function renderGrid(filter) {
     container.innerHTML = '';
     const list = filter === '全部' ? allProvinces : (regionNames[filter] || allProvinces);
     list.forEach(name => {
