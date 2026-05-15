@@ -2883,14 +2883,12 @@ document.addEventListener('DOMContentLoaded',function(){
         var m = activeBtn.getAttribute('onclick');
         if(m) { m = m.match(/'([^']+)'/); if(m) activePanelId = m[1]; }
     }
-    // Hide all tab-panels first, then show active
+    // Force hide all panels, show only active
     document.querySelectorAll('.tab-panel').forEach(function(p){
         p.style.display = 'none';
         p.classList.remove('active');
     });
-    document.querySelectorAll('[data-tab]').forEach(function(s){
-        s.style.display = 'none';
-    });
+    document.querySelectorAll('[data-tab]').forEach(function(s){ s.style.display = 'none'; });
     if(activePanelId){
         var ap = document.getElementById(activePanelId);
         if(ap){ ap.style.display = 'block'; ap.classList.add('active'); }
@@ -2898,17 +2896,23 @@ document.addEventListener('DOMContentLoaded',function(){
             if(s.getAttribute('data-tab') === activePanelId) s.style.display = '';
         });
     }
-    // Re-bind tab buttons with touch support
+    // Add touchend backup for mobile browsers where click doesn't fire
     document.querySelectorAll('.tab-btn').forEach(function(btn){
         var oc = btn.getAttribute('onclick');
         if(!oc) return;
         var m = oc.match(/'([^']+)'/);
         if(!m) return;
         var pid = m[1];
-        // Remove inline onclick, use addEventListener for better mobile support
-        btn.removeAttribute('onclick');
-        btn.addEventListener('click', function(e){
+        var touched = false;
+        btn.addEventListener('touchend', function(e){
+            touched = true;
+            // Prevent ghost click
             e.preventDefault();
+            switchTab(this, pid);
+        });
+        btn.addEventListener('click', function(e){
+            // If touchend already handled it, skip click
+            if(touched){ touched = false; return; }
             switchTab(this, pid);
         });
     });
