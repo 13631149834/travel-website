@@ -2820,7 +2820,7 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 </div>
 </div>
 
-<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button><script>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
 function switchTab(btn, panelId) {
     // Game system hooks
     if(typeof GameSystem!=='undefined'){
@@ -5811,117 +5811,6 @@ function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
 </div>
 </div>
 <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button><script>
-function switchTab(btn, panelId) {
-    // Game system hooks
-    if(typeof GameSystem!=='undefined'){
-        if(panelId==='tab-interview'){
-            GameSystem.addGuide();
-            GameSystem.state.sp.s51={d:true}; GameSystem.state.sp.s52={d:true};
-            GameSystem.state.sp.s33={d:true};
-            GameSystem.chkAch(); GameSystem.chkSt();
-        }
-        if(panelId==='tab-law'){
-            GameSystem.state.sp.s21={d:true};
-            GameSystem.chkAch(); GameSystem.chkSt();
-        }
-        if(panelId==='tab-service'){
-            GameSystem.state.sp.s31={d:true};
-            GameSystem.chkAch(); GameSystem.chkSt();
-        }
-        if(panelId==='tab-overview'){
-            GameSystem.state.sp.s14={d:true}; GameSystem.state.sp.s62={d:true}; GameSystem.state.sp.s63={d:true};
-            GameSystem.chkAch(); GameSystem.chkSt();
-        }
-        if(panelId==='tab-plan'){
-            GameSystem.state.sp.s15={d:true};
-            GameSystem.chkAch(); GameSystem.chkSt();
-        }
-    }
-    // Toggle tab buttons
-    document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
-    btn.classList.add('active');
-    
-    // === NEW: Hide ALL content between tab-nav and back-to-top, then show only matching ===
-    // Strategy: every container/section between tab-nav-wrap and back-to-top gets hidden,
-    // then only those belonging to the active tab are shown.
-    
-    var contentArea = document.querySelector('.content-area');
-    if(!contentArea){
-        // Fallback: hide/show using data-tab + tab-panel + infer orphans
-        document.querySelectorAll('.tab-panel').forEach(function(p){
-            p.style.display = 'none';
-            p.classList.remove('active');
-        });
-        var panel = document.getElementById(panelId);
-        if(panel){ panel.classList.add('active'); panel.style.display = 'block'; }
-        document.querySelectorAll('[data-tab]').forEach(function(s){
-            s.style.display = s.getAttribute('data-tab') === panelId ? '' : 'none';
-        });
-    } else {
-        // Use content-area approach
-        contentArea.querySelectorAll('[data-tab-group]').forEach(function(g){
-            g.style.display = g.getAttribute('data-tab-group') === panelId ? '' : 'none';
-        });
-    }
-    
-    window.scrollTo({top:0,behavior:'smooth'});
-}
-document.addEventListener('DOMContentLoaded',function(){
-    // Initialize: show only the active tab's sections
-    var activeBtn = document.querySelector('.tab-btn.active');
-    var activePanelId = null;
-    if(activeBtn){
-        var m = activeBtn.getAttribute('onclick');
-        if(m) { m = m.match(/'([^']+)'/); if(m) activePanelId = m[1]; }
-    }
-    // Force hide all panels, show only active
-    document.querySelectorAll('.tab-panel').forEach(function(p){
-        p.style.display = 'none';
-        p.classList.remove('active');
-    });
-    document.querySelectorAll('[data-tab]').forEach(function(s){ s.style.display = 'none'; });
-    if(activePanelId){
-        var ap = document.getElementById(activePanelId);
-        if(ap){ ap.style.display = 'block'; ap.classList.add('active'); }
-        document.querySelectorAll('[data-tab]').forEach(function(s){
-            if(s.getAttribute('data-tab') === activePanelId) s.style.display = '';
-        });
-    }
-    // Ensure tabs work on all mobile browsers
-    document.querySelectorAll('.tab-btn').forEach(function(btn){
-        var oc = btn.getAttribute('onclick');
-        if(!oc) return;
-        var m = oc.match(/'([^']+)'/);
-        if(!m) return;
-        var pid = m[1];
-        // Use touchstart with passive:false for instant response on mobile
-        // But only short taps (not scrolls)
-        var startX = 0, startY = 0, moved = false;
-        btn.addEventListener('touchstart', function(e){
-            var t = e.touches[0];
-            startX = t.clientX; startY = t.clientY; moved = false;
-        }, {passive: true});
-        btn.addEventListener('touchmove', function(e){
-            var t = e.touches[0];
-            if(Math.abs(t.clientX - startX) > 10 || Math.abs(t.clientY - startY) > 10) moved = true;
-        }, {passive: true});
-        btn.addEventListener('touchend', function(e){
-            if(!moved){
-                e.preventDefault(); // prevent ghost click
-                switchTab(this, pid);
-            }
-        });
-    });
-});
-(function(){
-    var btn=document.querySelector('.back-to-top');
-    if(!btn)return;
-    window.addEventListener('scroll',function(){
-        if(window.scrollY>400)btn.classList.add('visible');
-        else btn.classList.remove('visible');
-    });
-})();
-</script>
 <script src="gamification.js?v=20260516b"></script>
 <script>
 // Mark "认识考试" step as done after GameSystem is loaded
