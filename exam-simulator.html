@@ -54,7 +54,7 @@ a{text-decoration:none;color:inherit}
 .activation-codes{display:block;margin-top:10px;font-size:0.78rem;color:#666666}
 /* Mode Tabs */
 .mode-tabs{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
-.mode-tab{flex:1;min-width:140px;padding:14px 16px;background:#F8F9FA;border:1px solid #F0F0F0;border-radius:14px;text-align:center;cursor:pointer;transition:all 0.3s}
+.mode-tab{flex:1;min-width:140px;padding:14px 16px;background:#F8F9FA;touch-action:manipulation;border:1px solid #F0F0F0;border-radius:14px;text-align:center;cursor:pointer;transition:all 0.3s}
 .mode-tab:hover{background:#F0F0F0}
 .mode-tab.active{background:#FFFFFF;border-color:#666666}
 .mode-tab .tab-icon{font-size:1.5rem;display:block;margin-bottom:6px}
@@ -685,6 +685,17 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('dailyQuestions').innerHTML = '<div style="padding:20px;text-align:center;color:#C62828">页面加载出错: ' + e.message + '</div>';
     console.error('Exam init error:', e);
   }
+
+    // Mobile touch fix for mode tabs
+    document.querySelectorAll('.mode-tab').forEach(function(tab){
+        tab.addEventListener('touchend', function(e){
+            e.preventDefault();
+            var match = tab.getAttribute('onclick');
+            if(match) {
+                tab.click();
+            }
+        }, {passive: false});
+    });
 });
 
 function setupActivationInput() {

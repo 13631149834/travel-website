@@ -11829,7 +11829,18 @@ function sortProvinces(type){
     window.addEventListener('scroll', function(){
         if(window.scrollY > 400) btn.classList.add('visible');
         else btn.classList.remove('visible');
+    
+    // Mobile touch fix
+    document.querySelectorAll('.tab-btn,.mode-tab,[onclick*="switchTab"]').forEach(function(el){
+        el.addEventListener('touchend', function(e){
+            e.preventDefault();
+            var match = el.getAttribute('onclick');
+            if(match && match.indexOf('switchTab')>-1) {
+                el.click();
+            }
+        }, {passive: false});
     });
+});
 })();
 </script>
 <script src="gamification.js"></script>
