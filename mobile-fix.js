@@ -1,24 +1,15 @@
 (function(){
 function initTouch(){
+  // Nav toggle - use click instead of touchstart+preventDefault
   var nb=document.querySelector('.nav-toggle'),nl=document.querySelector('.nav-links')||document.getElementById('navLinks');
-  if(nb&&nl){nb.addEventListener('touchstart',function(e){e.preventDefault();nl.classList.toggle('show');nl.classList.toggle('open');},{passive:false});}
-  document.querySelectorAll('.tab-btn,.detail-tab,.mode-tab').forEach(function(b){b.addEventListener('touchstart',function(e){e.preventDefault();var o=b.getAttribute('onclick');if(o){try{eval(o)}catch(x){b.click()}}},{passive:false});});
-  document.querySelectorAll('button[onclick],div[onclick],a[onclick]').forEach(function(el){
-    if(el.classList.contains('tab-btn')||el.classList.contains('mode-tab')||el.classList.contains('detail-tab')||el.classList.contains('nav-toggle'))return;
-    el.addEventListener('touchstart',function(e){e.preventDefault();var o=el.getAttribute('onclick');if(o){try{eval(o)}catch(x){}}},{passive:false});
-  });
-  document.addEventListener('touchstart',function(e){var d=e.target.closest('.detail-tab,[onclick*="switchTab"],[onclick*="switchMode"],[onclick*="filterPosts"]');if(d&&!d._tb){d._tb=1;var o=d.getAttribute('onclick');if(o){try{eval(o)}catch(x){}}}},{passive:false});
+  if(nb&&nl){nb.addEventListener('click',function(e){e.preventDefault();nl.classList.toggle('show');nl.classList.toggle('open');});}
+  // All interactive elements use click + touch-action:manipulation CSS
+  // NO touchstart+preventDefault - it blocks scrolling!
+  // touch-action:manipulation removes 300ms delay without breaking scroll
 }
 
-  // Quiz option touch support
-  document.addEventListener('touchstart',function(e){
-    var qo=e.target.closest('.gqopt');
-    if(qo&&!qo._tb){
-      qo._tb=1;
-      var o=qo.getAttribute('onclick');
-      if(o){try{eval(o)}catch(x){}}
-    }
-  },{passive:false});
+  // Quiz option - use click naturally, touch-action:manipulation handles delay
+  // Removed touchstart+preventDefault to preserve scrolling
 var S={
 home:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m11-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0s0-6 0-7a1 1 0 011-1h4a1 1 0 011 1v7m-6 0h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 study:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M9 7h6M9 11h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
@@ -54,6 +45,11 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 (function(){
   var s=document.createElement('style');
   s.textContent=`
+    /* Global touch-action to remove 300ms delay WITHOUT breaking scroll */
+    button,a,.tab-btn,.detail-tab,.mode-tab,.gqopt,.gst[onclick],.nav-toggle,[onclick]{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent;}
+    /* Tab nav horizontal scroll fix */
+    .tab-nav,.tab-bar,.tabs{overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;scrollbar-width:none!important;touch-action:pan-x manipulation!important;}
+    .tab-nav::-webkit-scrollbar,.tab-bar::-webkit-scrollbar,.tabs::-webkit-scrollbar{display:none!important;}
     .tab-btn{min-height:38px;min-width:48px;padding:7px 12px!important;border-radius:20px!important;font-size:0.85rem!important;font-weight:500!important;transition:all .15s!important;white-space:nowrap!important;}
     .tab-btn.active{background:#4C8BF5!important;color:#fff!important;box-shadow:0 2px 8px rgba(76,139,245,.25)!important;}
     .tab-bar,.tabs{gap:5px!important;flex-wrap:nowrap!important;overflow-x:auto!important;-webkit-overflow-scrolling:touch!important;padding:4px 0!important;scrollbar-width:none;}
