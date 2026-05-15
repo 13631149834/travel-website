@@ -20,7 +20,7 @@ me:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" 
 function initBar(){
   if(window.innerWidth>768||document.getElementById('bb'))return;
   var pg=location.pathname.split('/').pop()||'index.html';
-  var ts=[{s:S.home,n:'首页',p:'index.html'},{s:S.study,n:'学习',p:'exam-guide.html'},{s:S.quiz,n:'刷题',p:'exam-simulator.html'},{s:S.map,n:'省份',p:'province-exam.html'},{s:S.me,n:'我的',p:'resources.html'}];
+  var S2='\x3csvg width="22" height="22" viewBox="0 0 24 24" fill="none"\x3e\x3cpath d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/\x3e\x3c/svg\x3e';var ts=[{s:S.home,n:'首页',p:'index.html'},{s:S.study,n:'学习',p:'exam-guide.html'},{s:S2,n:'AI',p:'chat.html'},{s:S.quiz,n:'刷题',p:'exam-simulator.html'},{s:S.me,n:'我的',p:'resources.html'}];
   var b=document.createElement('div');b.id='bb';
   b.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #E5E7EB;display:flex;z-index:9990;padding:5px 0;padding-bottom:calc(5px + env(safe-area-inset-bottom));box-shadow:0 -1px 8px rgba(0,0,0,0.05);';
   ts.forEach(function(t){
