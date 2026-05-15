@@ -2896,24 +2896,29 @@ document.addEventListener('DOMContentLoaded',function(){
             if(s.getAttribute('data-tab') === activePanelId) s.style.display = '';
         });
     }
-    // Add touchend backup for mobile browsers where click doesn't fire
+    // Ensure tabs work on all mobile browsers
     document.querySelectorAll('.tab-btn').forEach(function(btn){
         var oc = btn.getAttribute('onclick');
         if(!oc) return;
         var m = oc.match(/'([^']+)'/);
         if(!m) return;
         var pid = m[1];
-        var touched = false;
+        // Use touchstart with passive:false for instant response on mobile
+        // But only short taps (not scrolls)
+        var startX = 0, startY = 0, moved = false;
+        btn.addEventListener('touchstart', function(e){
+            var t = e.touches[0];
+            startX = t.clientX; startY = t.clientY; moved = false;
+        }, {passive: true});
+        btn.addEventListener('touchmove', function(e){
+            var t = e.touches[0];
+            if(Math.abs(t.clientX - startX) > 10 || Math.abs(t.clientY - startY) > 10) moved = true;
+        }, {passive: true});
         btn.addEventListener('touchend', function(e){
-            touched = true;
-            // Prevent ghost click
-            e.preventDefault();
-            switchTab(this, pid);
-        });
-        btn.addEventListener('click', function(e){
-            // If touchend already handled it, skip click
-            if(touched){ touched = false; return; }
-            switchTab(this, pid);
+            if(!moved){
+                e.preventDefault(); // prevent ghost click
+                switchTab(this, pid);
+            }
         });
     });
 });
