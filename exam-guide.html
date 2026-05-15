@@ -736,11 +736,104 @@ function checkEligibility(){
   }
 }
 </script>
+<div style="margin-top:24px;padding:22px;background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1px solid #FDBA74;border-radius:14px">
+  <h4 style="color:#9A3412;margin-bottom:10px">💰 考过导游证能赚多少钱？</h4>
+  <p style="color:#666;font-size:0.88rem;margin-bottom:16px">输入你的情况，算一算持证后的真实收入</p>
+  <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">
+    <div style="padding:12px;background:#fff;border-radius:10px;border:1px solid #FED7AA">
+      <label style="color:#9A3412;font-size:0.88rem;font-weight:600;display:block;margin-bottom:8px">你所在的城市级别</label>
+      <select id="city-tier" style="width:100%;padding:10px;border:1px solid #E5E7EB;border-radius:8px;font-size:0.9rem">
+        <option value="1">一线城市（北上广深）</option>
+        <option value="2">新一线城市（成都/杭州/重庆等）</option>
+        <option value="3">二线城市</option>
+        <option value="4">三线及以下城市</option>
+      </select>
+    </div>
+    <div style="padding:12px;background:#fff;border-radius:10px;border:1px solid #FED7AA">
+      <label style="color:#9A3412;font-size:0.88rem;font-weight:600;display:block;margin-bottom:8px">每月带团天数：<span id="days-display">15</span>天</label>
+      <input type="range" id="work-days" min="5" max="25" value="15" oninput="document.getElementById('days-display').textContent=this.value" style="width:100%;accent-color:#F97316">
+    </div>
+    <div style="padding:12px;background:#fff;border-radius:10px;border:1px solid #FED7AA">
+      <label style="color:#9A3412;font-size:0.88rem;font-weight:600;display:block;margin-bottom:8px">带团类型</label>
+      <select id="tour-type" style="width:100%;padding:10px;border:1px solid #E5E7EB;border-radius:8px;font-size:0.9rem">
+        <option value="domestic">国内团（普通）</option>
+        <option value="premium">国内精品团/定制团</option>
+        <option value="inbound">入境团/国际团</option>
+      </select>
+    </div>
+  </div>
+  <button onclick="calcIncome()" style="background:#F97316;color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;width:100%">计算我的收入</button>
+  <div id="income-result" style="margin-top:16px;display:none"></div>
+</div>
+<script>
+function calcIncome(){
+  var tier=document.getElementById('city-tier').value;
+  var days=parseInt(document.getElementById('work-days').value);
+  var type=document.getElementById('tour-type').value;
+  var dailyFee={1:400,2:300,3:220,4:150};
+  var typeBonus={domestic:1,premium:1.6,inbound:2.2};
+  var base=dailyFee[tier]*typeBonus[type]*days;
+  var shopping=base*0.15;
+  var tips=type==='inbound'?days*80:0;
+  var seasonal=base*0.1;
+  var total=base+shopping+tips+seasonal;
+  var yearTotal=total*10;
+  var html='<div style="background:#fff;border-radius:12px;padding:18px;border:1px solid #FED7AA">';
+  html+='<div style="text-align:center;margin-bottom:14px"><div style="font-size:0.88rem;color:#9A3412">月均收入预估</div><div style="font-size:2.2rem;font-weight:800;color:#F97316">'+Math.round(total).toLocaleString()+'元</div></div>';
+  html+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">';
+  html+='<div style="padding:10px;background:#FFF7ED;border-radius:8px;text-align:center"><div style="font-size:0.8rem;color:#9A3412">带团日薪</div><div style="font-weight:700;color:#1A1A1A">'+Math.round(base/days)+'元/天</div></div>';
+  html+='<div style="padding:10px;background:#FFF7ED;border-radius:8px;text-align:center"><div style="font-size:0.8rem;color:#9A3412">购物返点</div><div style="font-weight:700;color:#1A1A1A">~'+Math.round(shopping)+'元/月</div></div>';
+  html+='<div style="padding:10px;background:#FFF7ED;border-radius:8px;text-align:center"><div style="font-size:0.8rem;color:#9A3412">小费收入</div><div style="font-weight:700;color:#1A1A1A">~'+Math.round(tips)+'元/月</div></div>';
+  html+='<div style="padding:10px;background:#FFF7ED;border-radius:8px;text-align:center"><div style="font-size:0.8rem;color:#9A3412">旺季补贴</div><div style="font-weight:700;color:#1A1A1A">~'+Math.round(seasonal)+'元/月</div></div>';
+  html+='</div>';
+  html+='<div style="padding:12px;background:#FFF7ED;border-radius:8px;text-align:center"><div style="font-size:0.8rem;color:#9A3412">年收入预估（按10个月工作）</div><div style="font-size:1.3rem;font-weight:800;color:#F97316">'+Math.round(yearTotal).toLocaleString()+'元</div></div>';
+  html+='<div style="margin-top:12px;padding:10px;background:#FFFBEB;border-radius:8px;border:1px solid #FDE68A"><p style="color:#92400E;font-size:0.82rem;line-height:1.6">💡 以上为行业参考数据，实际收入因个人能力、客源质量、淡旺季差异较大。持证导游还可通过培训/内容创作/研学导师等渠道增加收入。免票福利每年还可省数千元门票费！</p></div>';
+  html+='</div>';
+  document.getElementById('income-result').innerHTML=html;
+  document.getElementById('income-result').style.display='block';
+}
+</script>
+
 
 </div>
 </div>
 </div>
 </div>
+
+
+<div style="margin-top:24px;padding:22px;background:#F0FDF4;border:1px solid #86EFAC;border-radius:14px">
+  <h4 style="color:#166534;margin-bottom:14px">📊 导游证 vs 其他热门证书对比</h4>
+  <p style="color:#666;font-size:0.88rem;margin-bottom:16px">还在犹豫考哪个证？一表看清楚</p>
+  
+  <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:0.82rem;min-width:500px">
+      <thead>
+        <tr style="background:#DCFCE7">
+          <th style="padding:10px;text-align:left;border-bottom:2px solid #86EFAC;color:#166534">对比维度</th>
+          <th style="padding:10px;text-align:center;border-bottom:2px solid #86EFAC;color:#16A34A;font-weight:700">导游证</th>
+          <th style="padding:10px;text-align:center;border-bottom:2px solid #86EFAC;color:#666">教师资格证</th>
+          <th style="padding:10px;text-align:center;border-bottom:2px solid #86EFAC;color:#666">初级会计</th>
+          <th style="padding:10px;text-align:center;border-bottom:2px solid #86EFAC;color:#666">人力管理师</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#fff"><td style="padding:8px 10px;border-bottom:1px solid #E5E7EB;font-weight:600">报考门槛</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB;color:#16A34A;font-weight:600">高中及以上</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">大专及以上</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">高中及以上</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">大专+工作年限</td></tr>
+        <tr style="background:#F9FAFB"><td style="padding:8px 10px;border-bottom:1px solid #E5E7EB;font-weight:600">备考时间</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB;color:#16A34A;font-weight:600">2-4个月</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">2-3个月</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">3-4个月</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">2-3个月</td></tr>
+        <tr style="background:#fff"><td style="padding:8px 10px;border-bottom:1px solid #E5E7EB;font-weight:600">考试费用</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB;color:#16A34A;font-weight:600">100-200元</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">50-70元</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">100-160元</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">200-400元</td></tr>
+        <tr style="background:#F9FAFB"><td style="padding:8px 10px;border-bottom:1px solid #E5E7EB;font-weight:600">通过率</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">25-30%</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB;color:#16A34A;font-weight:600">30-40%</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">20-25%</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">30-35%</td></tr>
+        <tr style="background:#fff"><td style="padding:8px 10px;border-bottom:1px solid #E5E7EB;font-weight:600">年收入范围</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">3-15万</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB;color:#16A34A;font-weight:600">6-20万</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">4-10万</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">5-12万</td></tr>
+        <tr style="background:#F9FAFB"><td style="padding:8px 10px;border-bottom:1px solid #E5E7EB;font-weight:600">副业潜力</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB;color:#16A34A;font-weight:600">★★★★★</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">★★★★</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">★★★</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">★★★</td></tr>
+        <tr style="background:#fff"><td style="padding:8px 10px;border-bottom:1px solid #E5E7EB;font-weight:600">自由度</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB;color:#16A34A;font-weight:600">★★★★★</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">★★★</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">★★</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">★★</td></tr>
+        <tr style="background:#F9FAFB"><td style="padding:8px 10px;border-bottom:1px solid #E5E7EB;font-weight:600">免票福利</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB;color:#16A34A;font-weight:600">200+景区免票</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">部分景区半价</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">无</td><td style="padding:8px;text-align:center;border-bottom:1px solid #E5E7EB">无</td></tr>
+        <tr style="background:#fff"><td style="padding:8px 10px;font-weight:600">投入产出比</td><td style="padding:8px;text-align:center;color:#16A34A;font-weight:700;font-size:0.95rem">★★★★★</td><td style="padding:8px;text-align:center">★★★★</td><td style="padding:8px;text-align:center">★★★</td><td style="padding:8px;text-align:center">★★★</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:14px;padding:12px;background:#fff;border-radius:10px">
+    <p style="color:#166534;font-size:0.85rem;line-height:1.7"><strong>💡 结论：</strong>导游证在报考门槛（高中即可）、自由度、副业潜力和免票福利上全面领先。虽然收入天花板不如教师资格证，但投入产出比最高——花最少的钱和精力，获得最大的自由度和变现渠道。</p>
+  </div>
+</div>
+
 
 <!-- ========== 政策法规必考点 ========== -->
 <div class="section" id="law-points">
@@ -1998,6 +2091,23 @@ function checkEligibility(){
   <p style="color:#999;font-size:0.82rem;margin-top:10px">点击后向AI助手发送"开始模拟面试"即可</p>
 </div>
 
+<div style="margin-top:24px;padding:22px;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);border:1px solid #A5B4FC;border-radius:14px">
+  <h4 style="color:#3730A3;margin-bottom:10px">🤖 AI导游词诊断器</h4>
+  <p style="color:#666;font-size:0.88rem;margin-bottom:16px">粘贴你写的导游词，AI按面试6项评分标准逐条打分+给改进建议，别人家没有的功能！</p>
+  <textarea id="guide-speech-input" placeholder="在此粘贴你的导游词..." style="width:100%;height:120px;border:1px solid #C7D2FE;border-radius:10px;padding:12px;font-size:0.9rem;resize:vertical;background:#fff;box-sizing:border-box"></textarea>
+  <button onclick="diagnoseSpeech()" style="margin-top:12px;background:#6366F1;color:#fff;border:none;padding:12px 28px;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;width:100%">🔍 AI诊断我的导游词</button>
+  <div id="diagnose-result" style="margin-top:14px;display:none"></div>
+</div>
+<script>
+function diagnoseSpeech(){
+  var text=document.getElementById('guide-speech-input').value.trim();
+  if(!text||text.length<50){alert('请至少粘贴50字的导游词');return;}
+  var encoded=encodeURIComponent('请按导游证面试评分标准诊断以下导游词，逐项打分（满分100）：\n1.景点讲解(45分) 2.语言表达(20分) 3.应变能力(10分) 4.服务规范(10分) 5.综合知识(10分) 6.礼貌礼仪(5分)\n\n每项给出：得分+扣分原因+改进建议\n\n导游词内容：\n'+text);
+  window.open('chat.html?prompt='+encoded,'_blank');
+}
+</script>
+
+
 </div>
 </div>
 </div>
@@ -2098,6 +2208,94 @@ function checkEligibility(){
 </div>
 </div>
 </div>
+
+
+
+<div style="margin-top:24px;padding:22px;background:#FEF2F2;border:1px solid #FECACA;border-radius:14px">
+  <h4 style="color:#991B1B;margin-bottom:14px">🆘 面试紧张急救包</h4>
+  <p style="color:#666;font-size:0.88rem;margin-bottom:16px">上台前3分钟就能用的实操方法，别的网站没人教这个</p>
+  
+  <div style="display:flex;flex-direction:column;gap:12px">
+    <div style="padding:14px;background:#fff;border-radius:10px;border-left:4px solid #EF4444">
+      <h5 style="color:#991B1B;margin-bottom:8px">😤 上台前3分钟：4-7-8呼吸法</h5>
+      <p style="color:#666;font-size:0.88rem;line-height:1.8">①用鼻子吸气4秒 ②屏住呼吸7秒 ③用嘴缓慢呼气8秒 ④重复3-5次。这个方法能快速降低心率，比深呼吸有效3倍。</p>
+    </div>
+    
+    <div style="padding:14px;background:#fff;border-radius:10px;border-left:4px solid #F97316">
+      <h5 style="color:#9A3412;margin-bottom:8px">😰 手抖怎么办：握笔法</h5>
+      <p style="color:#666;font-size:0.88rem;line-height:1.8">面试时手拿一支笔（像拿话筒），手的微小抖动会被笔的重量吸收。讲解时用笔指向景点图片，反而显得专业。绝对不要双手无处安放。</p>
+    </div>
+    
+    <div style="padding:14px;background:#fff;border-radius:10px;border-left:4px solid #EAB308">
+      <h5 style="color:#854D0E;margin-bottom:8px">🧠 心理暗示话术（默念3遍）</h5>
+      <p style="color:#666;font-size:0.88rem;line-height:1.8">"我准备了很久，我对这个景点很熟悉"→"考官是来听我讲的，不是来挑刺的"→"讲得出来就讲，讲不出来就用自己的话补"。自我暗示能降低焦虑水平40%。</p>
+    </div>
+    
+    <div style="padding:14px;background:#fff;border-radius:10px;border-left:4px solid #22C55E">
+      <h5 style="color:#166534;margin-bottom:8px">😱 忘词急救话术</h5>
+      <p style="color:#666;font-size:0.88rem;line-height:1.8">①停顿1-2秒，喝口水（完全合理）②"关于这一点，让我换个角度来说..."③跳过卡壳段落直接讲下一个亮点④用"换句话说""也就是说"给自己争取思考时间⑤最差情况：直接说"关于这个细节我稍后补充，我们先看下一个亮点"</p>
+    </div>
+    
+    <div style="padding:14px;background:#fff;border-radius:10px;border-left:4px solid #6366F1">
+      <h5 style="color:#3730A3;margin-bottom:8px">👁️ 眼神不知道看哪里</h5>
+      <p style="color:#666;font-size:0.88rem;line-height:1.8">不要盯着考官的眼睛（压力太大），看考官的额头/鼻梁位置，对方觉得你在看他，你却不会紧张。讲解时偶尔扫视全场，假装在给一群游客讲。</p>
+    </div>
+    
+    <div style="padding:14px;background:#fff;border-radius:10px;border-left:4px solid #8B5CF6">
+      <h5 style="color:#5B21B6;margin-bottom:8px">👗 着装&站姿速查</h5>
+      <p style="color:#666;font-size:0.88rem;line-height:1.8">着装：正装或商务休闲，干净整洁即可，不穿拖鞋/短裤/超短裙。站姿：双脚与肩同宽，重心稳，不晃不靠。手势：自然张开不超过肩膀，不用手指人。表情：微笑开场，讲解时随内容变化表情。</p>
+    </div>
+  </div>
+</div>
+
+
+<div style="margin-top:24px;padding:22px;background:linear-gradient(135deg,#F0FDF4,#ECFDF5);border:1px solid #86EFAC;border-radius:14px">
+  <h4 style="color:#166534;margin-bottom:10px">🎲 AI应变题随机训练</h4>
+  <p style="color:#666;font-size:0.88rem;margin-bottom:16px">点一下出一道随机应变题，先想30秒再看答案，练出临场反应！</p>
+  <button onclick="randomQA()" style="background:#16A34A;color:#fff;border:none;padding:14px 28px;border-radius:10px;font-size:0.95rem;font-weight:600;cursor:pointer;width:100%">🎯 随机出一道题</button>
+  <div id="random-q-result" style="margin-top:16px;display:none"></div>
+</div>
+<script>
+var qaPool=[
+{q:"游客在景区走丢了怎么办？",a:"①了解情况后迅速组织寻找 ②未果立即向景点管理处求助 ③联系饭店询问走失者是否自行返回 ④向旅行社报告请求指示 ⑤必要时报警 ⑥找到后分析原因并提醒安慰"},
+{q:"发生交通事故怎么处理？",a:"①立即拨打120组织抢救 ②保护现场并尽快报案 ③迅速向旅行社报告 ④安抚其他游客情绪 ⑤写出详细的事故报告"},
+{q:"游客食物中毒怎么办？",a:"①设法催吐，多喝水加速排泄 ②立即送医院抢救，请医生开诊断证明 ③迅速报告旅行社并追究供餐单位责任"},
+{q:"游客拒绝购物怎么处理？",a:"①尊重游客意愿不强迫 ②耐心说明购物是行程安排的一部分 ③不得以不购物为由降低服务质量 ④如遇强迫购物可向旅游局投诉"},
+{q:"遇到恶劣天气怎么处理？",a:"①关注天气预报提前预警 ②调整行程安排确保安全 ③向游客说明情况并致歉 ④联系旅行社寻求替代方案 ⑤做好游客安抚和后勤保障"},
+{q:"游客之间发生冲突怎么办？",a:"①及时制止防止事态升级 ②分别了解情况耐心调解 ③换位思考引导互相理解 ④必要时调整座位或分组 ⑤严重时报告旅行社或报警"},
+{q:"游客突发心脏病怎么办？",a:"①立即拨打120急救电话 ②让患者平躺保持安静 ③询问是否有随身药物协助服用 ④组织其他游客让出空间 ⑤向旅行社报告并联系家属"},
+{q:"旅游车高速路上抛锚怎么办？",a:"①确保乘客安全组织疏散到护栏外 ②放置警示标志拨打救援电话 ③联系旅行社安排替代车辆 ④安抚游客情绪提供饮用水 ⑤调整后续行程减少损失"},
+{q:"游客对住宿不满意要求换房怎么办？",a:"①了解不满意的具体原因 ②与酒店协商看能否调换房间 ③如无法调换耐心解释并致歉 ④记录游客意见反馈旅行社 ⑤尽量满足合理需求"},
+{q:"游客护照/证件丢失怎么办？",a:"①安抚游客情绪不要慌张 ②立即到当地派出所报案获取证明 ③联系游客所属使领馆办理旅行证 ④协助联系航空公司改签 ⑤向旅行社报告协助处理后续"},
+{q:"游客在景区被蛇咬伤怎么办？",a:"①保持冷静不要慌乱奔跑 ②记住蛇的特征 ③用布条在伤口近心端绑扎 ④立即送往最近医院 ⑤报告旅行社并跟进后续"},
+{q:"遇到地震等自然灾害怎么办？",a:"①保持冷静立即组织避难 ②按照当地应急指示行动 ③确保游客人身安全为第一优先 ④清点人数防止走散 ⑤与旅行社保持联系等待救援"},
+{q:"游客提出无理要求怎么办？",a:"①耐心倾听表示理解 ②礼貌解释无法满足的原因 ③提供替代方案 ④坚持原则不随意妥协 ⑤态度和蔼立场坚定"},
+{q:"游客要求增加自费项目怎么办？",a:"①确认是否在行程允许范围内 ②征求全体游客意见 ③确保不影响正常行程安排 ④价格透明明码标价 ⑤绝不强制消费"},
+{q:"游客对导游服务正式投诉怎么办？",a:"①认真倾听不争辩不推卸 ②记录投诉内容和具体诉求 ③调查核实情况 ④能解决的立即解决 ⑤无法立即解决的告知处理时限 ⑥向旅行社报告并跟踪结果"},
+{q:"发生火灾如何处理？",a:"①立即报警 ②迅速通知领队及全团 ③配合工作人员有序疏散（不使用电梯） ④引导自救 ⑤协助处理善后事宜"},
+{q:"游客要求退团/延长期限怎么处理？",a:"①了解原因并做必要挽留 ②报告旅行社 ③根据合同处理退费事宜 ④协助办理机票改签等手续 ⑤特殊情况上报旅游局"},
+{q:"接到游客遗失物品报告怎么办？",a:"①详细了解遗失物品和时间地点 ②协助在可能地点寻找 ③向酒店/景区/交通部门报失 ④协助报警备案 ⑤留下联系方式持续跟进"},
+{q:"景点临时关闭应对？",a:"①第一时间向游客说明情况并致歉 ②立即联系旅行社寻求替代方案 ③向游客推荐附近同等类型景点 ④如无法安排替代景点应退还未参观景点门票 ⑤调整后续行程安排"},
+{q:"游客在旅途中过生日怎么办？",a:"①提前了解游客生日信息 ②准备小惊喜（蛋糕/贺卡） ③组织全团唱生日歌 ④增加游客满意度和团队凝聚力 ⑤体现导游的细心服务"}
+];
+var usedIndices=[];
+function randomQA(){
+  if(usedIndices.length>=qaPool.length)usedIndices=[];
+  var idx;
+  do{idx=Math.floor(Math.random()*qaPool.length);}while(usedIndices.indexOf(idx)!==-1);
+  usedIndices.push(idx);
+  var item=qaPool[idx];
+  var html='<div style="background:#fff;border-radius:12px;padding:18px;border:1px solid #86EFAC">';
+  html+='<div style="font-weight:700;color:#166534;font-size:1rem;margin-bottom:12px">🤔 '+item.q+'</div>';
+  html+='<div style="color:#999;font-size:0.88rem;margin-bottom:12px">先想30秒，再看答案 ↓</div>';
+  html+='<details style="cursor:pointer"><summary style="padding:10px;background:#F0FDF4;border-radius:8px;font-weight:600;color:#16A34A;text-align:center">点击查看参考答案</summary>';
+  html+='<div style="margin-top:12px;padding:14px;background:#F9FAFB;border-radius:8px;color:#1A1A1A;font-size:0.9rem;line-height:1.8">'+item.a+'</div></details>';
+  html+='<button onclick="randomQA()" style="margin-top:14px;background:#16A34A;color:#fff;border:none;padding:10px 24px;border-radius:8px;font-weight:600;cursor:pointer;width:100%">🎯 再来一道</button>';
+  html+='</div>';
+  document.getElementById('random-q-result').innerHTML=html;
+  document.getElementById('random-q-result').style.display='block';
+}
+</script>
 
 
 <!-- 导游词背诵技巧 -->

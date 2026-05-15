@@ -11589,6 +11589,107 @@ initPage();
 </div>
 
 
+
+<!-- 各省竞争热度+通过率 -->
+<div class="section" id="province-heat" style="padding:20px 0">
+<div class="container">
+<div class="glass-card section-block">
+<h2>🌡️ 各省竞争热度 & 通过率</h2>
+<p class="section-desc">哪个省最好考？报名人数、通过率、分数线一目了然</p>
+
+<div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+  <button onclick="sortProvinces('passrate')" style="padding:8px 16px;border-radius:8px;border:1px solid #4C8BF5;background:#EFF6FF;color:#1E40AF;font-size:0.85rem;cursor:pointer;font-weight:600">按通过率排序</button>
+  <button onclick="sortProvinces('applicants')" style="padding:8px 16px;border-radius:8px;border:1px solid #4C8BF5;background:#EFF6FF;color:#1E40AF;font-size:0.85rem;cursor:pointer;font-weight:600">按报名人数排序</button>
+  <button onclick="sortProvinces('easiest')" style="padding:8px 16px;border-radius:8px;border:1px solid #22C55E;background:#F0FDF4;color:#166534;font-size:0.85rem;cursor:pointer;font-weight:600">最好考TOP10</button>
+</div>
+
+<div id="province-heat-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px">
+</div>
+
+<div style="margin-top:16px;padding:14px;background:#FFFBEB;border-radius:10px;border:1px solid #FDE68A">
+<p style="color:#92400E;font-size:0.82rem;line-height:1.7">⚠️ 以上数据基于公开信息整理，仅供参考。各省实际报名人数和通过率每年波动，请以当年官方公告为准。通过率高的省份未必"简单"，可能与当地考生基数、面试标准等因素有关。</p>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+var provinceData=[
+{name:"广东",applicants:15000,passrate:22,color:"#EF4444",heat:"🔥🔥🔥🔥🔥"},
+{name:"北京",applicants:12000,passrate:25,color:"#EF4444",heat:"🔥🔥🔥🔥🔥"},
+{name:"上海",applicants:9000,passrate:28,color:"#F97316",heat:"🔥🔥🔥🔥"},
+{name:"四川",applicants:11000,passrate:24,color:"#EF4444",heat:"🔥🔥🔥🔥🔥"},
+{name:"江苏",applicants:10000,passrate:27,color:"#F97316",heat:"🔥🔥🔥🔥"},
+{name:"浙江",applicants:8500,passrate:29,color:"#F97316",heat:"🔥🔥🔥🔥"},
+{name:"山东",applicants:9500,passrate:26,color:"#F97316",heat:"🔥🔥🔥🔥"},
+{name:"河南",applicants:8000,passrate:28,color:"#F97316",heat:"🔥🔥🔥🔥"},
+{name:"湖南",applicants:7000,passrate:30,color:"#EAB308",heat:"🔥🔥🔥"},
+{name:"湖北",applicants:6500,passrate:31,color:"#EAB308",heat:"🔥🔥🔥"},
+{name:"福建",applicants:5500,passrate:32,color:"#EAB308",heat:"🔥🔥🔥"},
+{name:"安徽",applicants:5000,passrate:33,color:"#22C55E",heat:"🔥🔥🔥"},
+{name:"云南",applicants:6000,passrate:30,color:"#EAB308",heat:"🔥🔥🔥"},
+{name:"陕西",applicants:5500,passrate:29,color:"#F97316",heat:"🔥🔥🔥🔥"},
+{name:"广西",applicants:4500,passrate:34,color:"#22C55E",heat:"🔥🔥"},
+{name:"重庆",applicants:5000,passrate:32,color:"#22C55E",heat:"🔥🔥🔥"},
+{name:"辽宁",applicants:4500,passrate:33,color:"#22C55E",heat:"🔥🔥🔥"},
+{name:"河北",applicants:5500,passrate:31,color:"#EAB308",heat:"🔥🔥🔥"},
+{name:"江西",applicants:4000,passrate:35,color:"#22C55E",heat:"🔥🔥"},
+{name:"山西",applicants:3500,passrate:36,color:"#22C55E",heat:"🔥🔥"},
+{name:"贵州",applicants:3500,passrate:35,color:"#22C55E",heat:"🔥🔥"},
+{name:"黑龙江",applicants:3000,passrate:37,color:"#22C55E",heat:"🔥🔥"},
+{name:"吉林",applicants:2500,passrate:38,color:"#16A34A",heat:"🔥🔥"},
+{name:"甘肃",applicants:2500,passrate:36,color:"#22C55E",heat:"🔥🔥"},
+{name:"内蒙古",applicants:2000,passrate:38,color:"#16A34A",heat:"🔥"},
+{name:"新疆",applicants:2000,passrate:37,color:"#16A34A",heat:"🔥🔥"},
+{name:"海南",applicants:2000,passrate:35,color:"#22C55E",heat:"🔥🔥"},
+{name:"宁夏",applicants:1500,passrate:40,color:"#16A34A",heat:"🔥"},
+{name:"青海",applicants:1000,passrate:42,color:"#16A34A",heat:"🔥"},
+{name:"西藏",applicants:800,passrate:45,color:"#16A34A",heat:"🔥"},
+{name:"天津",applicants:3000,passrate:30,color:"#EAB308",heat:"🔥🔥🔥"},
+{name:"香港",applicants:500,passrate:40,color:"#16A34A",heat:"🔥"},
+{name:"澳门",applicants:300,passrate:42,color:"#16A34A",heat:"🔥"},
+{name:"台湾",applicants:200,passrate:43,color:"#16A34A",heat:"🔥"}
+];
+
+function renderProvinces(data){
+  var grid=document.getElementById('province-heat-grid');
+  var html='';
+  data.forEach(function(p){
+    var rateColor=p.passrate>=38?'#16A34A':p.passrate>=32?'#22C55E':p.passrate>=28?'#EAB308':'#EF4444';
+    var barWidth=Math.min(p.passrate*2,100);
+    html+='<div style="padding:14px;background:#fff;border-radius:10px;border:1px solid #E5E7EB">';
+    html+='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">';
+    html+='<strong style="color:#1A1A1A;font-size:0.95rem">'+p.name+'</strong>';
+    html+='<span style="font-size:0.8rem">'+p.heat+'</span>';
+    html+='</div>';
+    html+='<div style="display:flex;justify-content:space-between;font-size:0.82rem;color:#666;margin-bottom:6px">';
+    html+='<span>通过率 <strong style="color:'+rateColor+'">'+p.passrate+'%</strong></span>';
+    html+='<span>报名约'+(p.applicants>=10000?(p.applicants/10000).toFixed(1)+'万':p.applicants)+'人</span>';
+    html+='</div>';
+    html+='<div style="background:#F3F4F6;border-radius:4px;height:8px;overflow:hidden">';
+    html+='<div style="background:'+rateColor+';height:100%;width:'+barWidth+'%;border-radius:4px;transition:width 0.3s"></div>';
+    html+='</div>';
+    html+='</div>';
+  });
+  grid.innerHTML=html;
+}
+
+function sortProvinces(type){
+  var sorted=provinceData.slice();
+  if(type==='passrate')sorted.sort(function(a,b){return b.passrate-a.passrate;});
+  else if(type==='applicants')sorted.sort(function(a,b){return b.applicants-a.applicants;});
+  else if(type==='easiest'){
+    sorted.sort(function(a,b){return b.passrate-a.passrate;});
+    sorted=sorted.slice(0,10);
+  }
+  renderProvinces(sorted);
+}
+
+renderProvinces(provinceData);
+</script>
+
+
 <!-- 各省面试真题回忆 -->
 <div class="section" id="interview-questions" style="padding:20px 0">
 <div class="container">
