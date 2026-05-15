@@ -11696,7 +11696,22 @@ function sortProvinces(type){
   renderProvinces(sorted);
 }
 
-document.addEventListener("DOMContentLoaded",function(){renderProvinces(provinceData);});
+// Render province heat data
+(function(){
+  function tryRender(){
+    var grid=document.getElementById('province-heat-grid');
+    if(grid && typeof provinceData!=='undefined'){
+      renderProvinces(provinceData);
+    } else {
+      setTimeout(tryRender, 500);
+    }
+  }
+  if(document.readyState==='complete'||document.readyState==='interactive'){
+    tryRender();
+  } else {
+    document.addEventListener('DOMContentLoaded', tryRender);
+  }
+})();
 </script>
 
 
