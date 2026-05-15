@@ -624,7 +624,7 @@ function sendMessage(){
 /* ===== 实际发送到API ===== */
 async function doSendMessage(text, quote){
   sendBtn.disabled = true;
-  document.getElementById('statusText').textContent = '小游正在思考...';
+  (document.getElementById('statusText')||{}).textContent= '小游正在思考...';
 
   var botInfo = addBotStreaming();
   var bubble = botInfo.div.querySelector('.msg-bubble');
@@ -744,7 +744,7 @@ async function doSendMessage(text, quote){
   }
 
   sendBtn.disabled = false;
-  document.getElementById('statusText').textContent = '在线 · 随时提问';
+  (document.getElementById('statusText')||{}).textContent= '在线 · 随时提问';
   inputEl.focus();
 }
 
@@ -760,7 +760,7 @@ function handleImageUpload(input) {
   reader.onload = function(e) {
     pendingImage = e.target.result;
     document.getElementById('previewImg').src = pendingImage;
-    document.getElementById('previewName').textContent = file.name || '图片';
+    (document.getElementById('previewName')||{}).textContent= file.name || '图片';
     document.getElementById('sendPreview').classList.add('show');
   };
   reader.readAsDataURL(file);
@@ -819,7 +819,7 @@ sendMessage = function() {
 
 async function doSendImageMessage(imageDataUrl, text, quote) {
   sendBtn.disabled = true;
-  document.getElementById('statusText').textContent = '分析图片中...';
+  (document.getElementById('statusText')||{}).textContent= '分析图片中...';
   
   var botInfo = addBotStreaming();
   var bubble = botInfo.div.querySelector('.msg-bubble');
@@ -869,7 +869,7 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
     };
     if(conversationId) body.conversation_id = conversationId;
     
-    document.getElementById('statusText').textContent = '小游正在思考...';
+    (document.getElementById('statusText')||{}).textContent= '小游正在思考...';
     
     var resp = await fetch('https://api.coze.cn/v3/chat', {
       method: 'POST',
@@ -963,7 +963,7 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
   }
   
   sendBtn.disabled = false;
-  document.getElementById('statusText').textContent = '在线 · 随时提问';
+  (document.getElementById('statusText')||{}).textContent= '在线 · 随时提问';
   inputEl.focus();
 }
 

@@ -808,11 +808,11 @@ a { color: #4C8BF5 !important; }
       const diff = targetDate - now;
 
       if (diff <= 0) {
-        document.getElementById('countdownDays').textContent = '0';
-        document.getElementById('countdownHours').textContent = '00';
-        document.getElementById('countdownMinutes').textContent = '00';
-        document.getElementById('countdownSeconds').textContent = '00';
-        document.getElementById('countdownLabel').textContent = '考试已开始，祝你成功！';
+        (document.getElementById('countdownDays')||{}).textContent= '0';
+        (document.getElementById('countdownHours')||{}).textContent= '00';
+        (document.getElementById('countdownMinutes')||{}).textContent= '00';
+        (document.getElementById('countdownSeconds')||{}).textContent= '00';
+        (document.getElementById('countdownLabel')||{}).textContent= '考试已开始，祝你成功！';
         return;
       }
 
@@ -821,11 +821,11 @@ a { color: #4C8BF5 !important; }
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
       const seconds = Math.floor((diff % (1000 * 60)) / 1000);
 
-      document.getElementById('countdownDays').textContent = days;
-      document.getElementById('countdownHours').textContent = String(hours).padStart(2, '0');
-      document.getElementById('countdownMinutes').textContent = String(minutes).padStart(2, '0');
-      document.getElementById('countdownSeconds').textContent = String(seconds).padStart(2, '0');
-      document.getElementById('countdownLabel').textContent = getCountdownLabel();
+      (document.getElementById('countdownDays')||{}).textContent= days;
+      (document.getElementById('countdownHours')||{}).textContent= String(hours).padStart(2, '0');
+      (document.getElementById('countdownMinutes')||{}).textContent= String(minutes).padStart(2, '0');
+      (document.getElementById('countdownSeconds')||{}).textContent= String(seconds).padStart(2, '0');
+      (document.getElementById('countdownLabel')||{}).textContent= getCountdownLabel();
     }
 
     function initCountdown() {
@@ -863,7 +863,7 @@ a { color: #4C8BF5 !important; }
 
     function showCountdownToast(msg) {
       const toast = document.getElementById('countdownToast');
-      document.getElementById('toastMessage').textContent = msg;
+      (document.getElementById('toastMessage')||{}).textContent= msg;
       toast.classList.add('active');
       setTimeout(() => toast.classList.remove('active'), 1500);
     }
@@ -886,22 +886,22 @@ a { color: #4C8BF5 !important; }
     
     function updateProgressDisplay() {
       const progress = getProgress();
-      document.getElementById('questionsDone').textContent = progress.questionsDone;
-      document.getElementById('guidesRead').textContent = progress.guidesRead;
-      document.getElementById('examsTaken').textContent = progress.examsTaken;
+      (document.getElementById('questionsDone')||{}).textContent= progress.questionsDone;
+      (document.getElementById('guidesRead')||{}).textContent= progress.guidesRead;
+      (document.getElementById('examsTaken')||{}).textContent= progress.examsTaken;
       
       if (progress.lastStudy) {
         const lastDate = new Date(progress.lastStudy);
         const now = new Date();
         const diffDays = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
         if (diffDays === 0) {
-          document.getElementById('lastStudy').textContent = '今天';
+          (document.getElementById('lastStudy')||{}).textContent= '今天';
         } else if (diffDays === 1) {
-          document.getElementById('lastStudy').textContent = '昨天';
+          (document.getElementById('lastStudy')||{}).textContent= '昨天';
         } else if (diffDays < 7) {
-          document.getElementById('lastStudy').textContent = diffDays + '天前';
+          (document.getElementById('lastStudy')||{}).textContent= diffDays + '天前';
         } else {
-          document.getElementById('lastStudy').textContent = lastDate.toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'});
+          (document.getElementById('lastStudy')||{}).textContent= lastDate.toLocaleDateString('zh-CN', {month: 'short', day: 'numeric'});
         }
       }
       
@@ -915,7 +915,7 @@ a { color: #4C8BF5 !important; }
                                Math.min(progress.examsTaken, targetExams);
       const percent = Math.round((currentProgress / totalTarget) * 100);
       
-      document.getElementById('progressPercent').textContent = percent + '%';
+      (document.getElementById('progressPercent')||{}).textContent= percent + '%';
       document.getElementById('progressBar').style.width = percent + '%';
       
       // 圆形进度条

@@ -849,7 +849,7 @@ function renderDailySingle(idx) {
   
   wrap.innerHTML = html;
   document.getElementById('dailyProgress').innerHTML = '<span style="background:#FFFFFF;color:#1A1A1A;padding:4px 12px;border-radius:20px;font-size:0.85rem;">' + (idx+1) + ' / ' + dailyQuestions.length + '</span>';
-  document.getElementById('dailyNextBtn').textContent = idx === dailyQuestions.length - 1 ? '完成 ✓' : '下一题 →';
+  (document.getElementById('dailyNextBtn')||{}).textContent= idx === dailyQuestions.length - 1 ? '完成 ✓' : '下一题 →';
   document.getElementById('dailyPrevBtn').style.visibility = idx === 0 ? 'hidden' : 'visible';
 }
 
@@ -961,8 +961,8 @@ function startExam() {
   examQuestions = shuffled.slice(0, count);
   userAnswers = {};
   
-  document.getElementById('totalQuestions').textContent = count;
-  document.getElementById('answeredCount').textContent = '0';
+  (document.getElementById('totalQuestions')||{}).textContent= count;
+  (document.getElementById('answeredCount')||{}).textContent= '0';
   document.getElementById('progressFill').style.width = '0%';
   
   renderExamQuestions();
@@ -1039,9 +1039,9 @@ function renderSingleQuestion(idx) {
   wrap.innerHTML = html;
   
   // 更新导航
-  document.getElementById('qProgress').textContent = (idx+1) + ' / ' + examQuestions.length;
+  (document.getElementById('qProgress')||{}).textContent= (idx+1) + ' / ' + examQuestions.length;
   document.getElementById('prevBtn').style.opacity = idx === 0 ? '0.3' : '1';
-  document.getElementById('nextBtn').textContent = idx === examQuestions.length - 1 ? '交卷 📝' : '下一题 →';
+  (document.getElementById('nextBtn')||{}).textContent= idx === examQuestions.length - 1 ? '交卷 📝' : '下一题 →';
   
   updateProgress();
 }
@@ -1114,7 +1114,7 @@ function getTypeName(type) {
 function updateProgress() {
   const answered = Object.keys(userAnswers).length;
   const total = examQuestions.length;
-  document.getElementById('answeredCount').textContent = answered;
+  (document.getElementById('answeredCount')||{}).textContent= answered;
   document.getElementById('progressFill').style.width = `${(answered / total) * 100}%`;
 }
 
@@ -1138,7 +1138,7 @@ function startTimer() {
 function updateTimerDisplay() {
   const mins = Math.floor(remainingTime / 60);
   const secs = remainingTime % 60;
-  document.getElementById('examTimer').textContent = 
+  (document.getElementById('examTimer')||{}).textContent= 
     `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 }
 
@@ -1200,12 +1200,12 @@ function showExamResult(score, correct, wrong, total, passed, wrongList) {
   const resultCard = document.getElementById('resultCard');
   resultCard.classList.toggle('fail', !passed);
   
-  document.getElementById('resultScore').textContent = score + '分';
-  document.getElementById('resultCorrect').textContent = correct;
-  document.getElementById('resultWrong').textContent = wrong;
-  document.getElementById('resultTotal').textContent = total;
-  document.getElementById('resultMsg').textContent = passed ? '🎉 恭喜！预估通过考试！' : '💪 再接再厉，下次一定行！';
-  if(typeof unanswered !== 'undefined' && unanswered > 0) document.getElementById('resultMsg').textContent += '（' + unanswered + '题未作答）';
+  (document.getElementById('resultScore')||{}).textContent= score + '分';
+  (document.getElementById('resultCorrect')||{}).textContent= correct;
+  (document.getElementById('resultWrong')||{}).textContent= wrong;
+  (document.getElementById('resultTotal')||{}).textContent= total;
+  (document.getElementById('resultMsg')||{}).textContent= passed ? '🎉 恭喜！预估通过考试！' : '💪 再接再厉，下次一定行！';
+  if(typeof unanswered !== 'undefined' && unanswered > 0) (document.getElementById('resultMsg')||{}).textContent += '（' + unanswered + '题未作答）';
   
   // 显示错题解析
   const analysisHtml = wrongList.length > 0 ? `
@@ -1431,20 +1431,20 @@ function updateCountdown() {
   const now = new Date();
   const diff = examDate - now;
   if (diff <= 0) {
-    document.getElementById('days').textContent = '0';
-    document.getElementById('hours').textContent = '0';
-    document.getElementById('minutes').textContent = '0';
-    document.getElementById('seconds').textContent = '0';
+    (document.getElementById('days')||{}).textContent= '0';
+    (document.getElementById('hours')||{}).textContent= '0';
+    (document.getElementById('minutes')||{}).textContent= '0';
+    (document.getElementById('seconds')||{}).textContent= '0';
     return;
   }
   const days = Math.floor(diff / (1000 * 60 * 60 * 24));
   const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
   const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-  document.getElementById('days').textContent = days;
-  document.getElementById('hours').textContent = hours;
-  document.getElementById('minutes').textContent = minutes;
-  document.getElementById('seconds').textContent = seconds;
+  (document.getElementById('days')||{}).textContent= days;
+  (document.getElementById('hours')||{}).textContent= hours;
+  (document.getElementById('minutes')||{}).textContent= minutes;
+  (document.getElementById('seconds')||{}).textContent= seconds;
 }
 setInterval(updateCountdown, 1000);
 
