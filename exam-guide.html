@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>备考攻略 - 游导旅游</title>
@@ -590,7 +593,7 @@ a { color: #4C8BF5 !important; }
 .step-item { padding: 12px 0; }
 </style>
 
-<script src="mobile-fix.js"></script>
+<script src="mobile-fix.js?v=20260516h"></script>
 </head>
 <body>
     <nav class="navbar">
@@ -2852,15 +2855,16 @@ function switchTab(btn, panelId) {
     window.scrollTo({top:0,behavior:'smooth'});
 }
 document.addEventListener('DOMContentLoaded',function(){
+    try{
     // Re-organize DOM: move all .section[data-tab] to be direct children of .content-section
     // This fixes the HTML nesting issue where sections are nested inside each other
     var cs=document.querySelector('.content-section');
     if(cs){
-        var sections=cs.querySelectorAll('.section[data-tab]');
-        sections.forEach(function(sec){cs.appendChild(sec);});
+        // Move ALL .section[data-tab] to .content-section (search entire document, not just cs)
+        document.querySelectorAll('.section[data-tab]').forEach(function(sec){cs.appendChild(sec);});
+        // Also move standalone data-tab divs to content-section
+        document.querySelectorAll('[data-tab]:not(.tab-panel):not(.section)').forEach(function(d){cs.appendChild(d);});
     }
-    // Also move standalone data-tab divs (not inside tab-panels) to content-section
-    cs.querySelectorAll('[data-tab]:not(.tab-panel):not(.section)').forEach(function(d){cs.appendChild(d);});
     // Initialize tab state
     var activeBtn=document.querySelector('.tab-btn.active');
     var activePanelId=null;
@@ -2881,6 +2885,7 @@ document.addEventListener('DOMContentLoaded',function(){
         if(d.getAttribute('data-tab')===activePanelId){d.classList.remove('tab-hidden');}
         else{d.classList.add('tab-hidden');}
     });
+    }catch(e){console.error('Tab init error:',e);}
 });
 (function(){
     var btn=document.querySelector('.back-to-top');
@@ -2891,9 +2896,7 @@ document.addEventListener('DOMContentLoaded',function(){
     });
 })();
 </script>
-})();
-</script>
-<script src="gamification.js?v=20260516f"></script>
+<script src="gamification.js?v=20260516h"></script>
 <script>
 // Mark "认识考试" step as done after GameSystem is loaded
 (function(){
