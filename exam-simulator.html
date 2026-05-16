@@ -1347,31 +1347,52 @@ function renderDailyQuestions() {
   // If already rendered, don't re-render
   if (container.querySelector('.question-card')) return;
 
-  // Random pick 20 questions
+  // Random shuffle questions
   var shuffled = dailyBank.slice().sort(function() { return Math.random() - 0.5; });
   dailyQuestions = shuffled.slice(0, dailyBank.length);
   dailyQIndex = 0;
   dailyAnswered = {};
   dailyCorrect = 0;
 
-  var html = '<div style="margin-bottom:12px;text-align:center;font-size:0.85rem;color:#666;">本次共 ' + dailyQuestions.length + ' 题，加油！</div>';
-  dailyQuestions.forEach(function(q, i) {
-    html += '<div class="question-card" style="background:#fff;border:1px solid #F0F0F0;border-radius:14px;padding:16px;margin-bottom:14px;" id="dq-' + i + '">';
-    html += '<div style="font-size:0.78rem;color:#4C8BF5;font-weight:600;margin-bottom:8px;">第 ' + (i+1) + ' 题 / ' + dailyQuestions.length + '</div>';
-    html += '<div class="question-text" style="font-size:0.9rem;color:#333;line-height:1.7;margin-bottom:14px;">' + q.q + '</div>';
-    html += '<ul class="question-options" style="list-style:none;padding:0;margin:0;">';
-    q.o.forEach(function(opt, j) {
-      html += '<li onclick="answerDaily(' + i + ',' + j + ')" style="display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:8px;background:#F8F9FA;border:1.5px solid #F0F0F0;border-radius:12px;cursor:pointer;transition:all .15s;touch-action:manipulation;" class="daily-opt" id="dopt-' + i + '-' + j + '">';
-      html += '<span style="width:24px;height:24px;border:1.5px solid #4C8BF5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;flex-shrink:0;background:#F0F5FF;color:#4C8BF5;font-weight:600;">' + String.fromCharCode(65+j) + '</span>';
-      html += '<span style="font-size:0.85rem;color:#666;flex:1;">' + opt + '</span>';
-      html += '</li>';
-    });
-    html += '</ul>';
-    html += '<div id="dexp-' + i + '" style="display:none;margin-top:10px;padding:10px 14px;background:#F0F5FF;border-radius:10px;font-size:0.82rem;color:#666;line-height:1.7;"></div>';
-    html += '</div>';
-  });
+  // Show one question at a time (card/stack style)
+  showDailyQuestion(0);
+}
 
-  html += '<div style="text-align:center;padding:20px 0;" id="dailyResult"></div>';
+function showDailyQuestion(idx) {
+  var container = document.getElementById('dailyQuestions');
+  if (!container || idx >= dailyQuestions.length) return;
+  dailyQIndex = idx;
+  var q = dailyQuestions[idx];
+  var total = dailyQuestions.length;
+
+  var html = '<div style="text-align:center;margin-bottom:16px;">';
+  html += '<div style="font-size:0.78rem;color:#999;margin-bottom:4px;">本次共 ' + total + ' 题</div>';
+  html += '<div style="display:flex;justify-content:center;gap:6px;align-items:center;">';
+  // Progress dots
+  var maxDots = Math.min(total, 20);
+  for(var d=0;d<maxDots;d++){
+    var dotColor = d < idx ? '#10B981' : d === idx ? '#4C8BF5' : '#E5E7EB';
+    html += '<span style="width:8px;height:8px;border-radius:50%;background:'+dotColor+';display:inline-block;"></span>';
+  }
+  if(total > 20) html += '<span style="font-size:0.7rem;color:#999;">...</span>';
+  html += '</div></div>';
+
+  html += '<div class="question-card" style="background:#fff;border:1px solid #F0F0F0;border-radius:20px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">';
+  html += '<div style="font-size:0.85rem;color:#4C8BF5;font-weight:700;margin-bottom:12px;">第 ' + (idx+1) + ' 题 / ' + total + '</div>';
+  html += '<div class="question-text" style="font-size:1rem;color:#333;line-height:1.8;margin-bottom:16px;font-weight:500;">' + q.q + '</div>';
+  html += '<ul class="question-options" style="list-style:none;padding:0;margin:0;">';
+  q.o.forEach(function(opt, j) {
+    html += '<li onclick="answerDaily(' + idx + ',' + j + ')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;margin-bottom:10px;background:#F8F9FA;border:1.5px solid #F0F0F0;border-radius:14px;cursor:pointer;transition:all .2s;touch-action:manipulation;" class="daily-opt" id="dopt-' + idx + '-' + j + '">';
+    html += '<span style="width:28px;height:28px;border:2px solid #4C8BF5;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;flex-shrink:0;background:#F0F5FF;color:#4C8BF5;font-weight:700;">' + String.fromCharCode(65+j) + '</span>';
+    html += '<span style="font-size:0.9rem;color:#444;flex:1;line-height:1.5;">' + opt + '</span>';
+    html += '</li>';
+  });
+  html += '</ul>';
+  html += '<div id="dexp-' + idx + '" style="display:none;margin-top:12px;padding:12px 16px;background:#F0F5FF;border-radius:12px;font-size:0.85rem;color:#666;line-height:1.7;"></div>';
+  html += '<div id="dnext-' + idx + '" style="display:none;margin-top:14px;text-align:center;"></div>';
+  html += '</div>';
+
+  html += '<div style="text-align:center;padding:10px 0;" id="dailyResult"></div>';
   container.innerHTML = html;
 }
 
@@ -1413,17 +1434,24 @@ function answerDaily(qIdx, optIdx) {
     if (opt) { opt.style.pointerEvents = 'none'; opt.style.opacity = '0.7'; }
   });
 
-  // Check if all answered
-  if (Object.keys(dailyAnswered).length === dailyQuestions.length) {
-    var resultEl = document.getElementById('dailyResult');
-    if (resultEl) {
-      var pct = Math.round(dailyCorrect / dailyQuestions.length * 100);
-      resultEl.innerHTML = '<div style="background:linear-gradient(135deg,#F0F5FF,#E0EAFF);border-radius:16px;padding:24px;margin-top:10px;">' +
-        '<div style="font-size:2rem;font-weight:900;color:#4C8BF5;">' + dailyCorrect + '/' + dailyQuestions.length + '</div>' +
-        '<div style="font-size:0.9rem;color:#666;margin-top:4px;">正确率 ' + pct + '%</div>' +
-        '<div style="font-size:0.85rem;color:#666;margin-top:8px;">' + (pct >= 80 ? '🎉 太棒了！继续保持！' : pct >= 60 ? '💪 不错哦，再接再厉！' : '📚 还需努力，多刷几遍！') + '</div>' +
-        '<button onclick="resetDaily()" style="margin-top:14px;padding:10px 28px;background:#4C8BF5;color:#fff;border:none;border-radius:20px;font-size:0.9rem;font-weight:600;cursor:pointer;touch-action:manipulation;">再练一组 →</button>' +
-        '</div>';
+  // Show next button or result
+  var nextEl = document.getElementById('dnext-' + qIdx);
+  if (nextEl) {
+    if (qIdx < dailyQuestions.length - 1) {
+      nextEl.innerHTML = '<button onclick="showDailyQuestion(' + (qIdx+1) + ')" style="background:#4C8BF5;color:#fff;border:none;padding:14px 40px;border-radius:25px;font-size:0.95rem;font-weight:600;cursor:pointer;touch-action:manipulation;">下一题 →</button>';
+      nextEl.style.display = 'block';
+    } else {
+      // Last question - show result
+      var resultEl = document.getElementById('dailyResult');
+      if (resultEl) {
+        var pct = Math.round(dailyCorrect / dailyQuestions.length * 100);
+        var emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '💪';
+        resultEl.innerHTML = '<div style="background:#fff;border:1px solid #F0F0F0;border-radius:20px;padding:24px;text-align:center;margin-top:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);"><div style="font-size:2.5rem;margin-bottom:10px;">' + emoji + '</div><div style="font-size:1.2rem;font-weight:700;color:#1A1A1A;margin-bottom:6px;">练习完成！</div><div style="font-size:1rem;color:#666;">答对 ' + dailyCorrect + ' / ' + dailyQuestions.length + ' 题（' + pct + '%）</div><button onclick="resetDailyPractice()" style="margin-top:16px;background:#4C8BF5;color:#fff;border:none;padding:12px 32px;border-radius:25px;font-size:0.9rem;font-weight:600;cursor:pointer;">再练一次</button></div>';
+      }
+    }
+  }
+
+  // (Result now shown via dnext button above)
     }
     // Track in game system
     if (typeof GameSystem !== 'undefined' && GameSystem.addExam) {
@@ -1431,6 +1459,15 @@ function answerDaily(qIdx, optIdx) {
       GameSystem.chkSt && GameSystem.chkSt();
     }
   }
+}
+
+function resetDailyPractice() {
+  dailyQIndex = 0;
+  dailyAnswered = {};
+  dailyCorrect = 0;
+  var container = document.getElementById('dailyQuestions');
+  if(container) container.innerHTML = '';
+  renderDailyQuestions();
 }
 
 function resetDaily() {
