@@ -7,7 +7,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>AI对话 - 导游证备考助手小游 | 游导旅游</title>
-<meta name="description" content="和AI备考助手小游实时对话，随时提问导游证考试问题，免费使用，24小时在线答疑"/>
+<meta name="description" content="和AI备考助手小游实时对话，随时提问导游证考试问题，24小时在线答疑"/>
 <link href="favicon.svg" rel="icon" type="image/svg+xml"/>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <style>
@@ -1170,7 +1170,30 @@ document.addEventListener('DOMContentLoaded', initMsgInteractions);
     });
 })();
 </script>
-<script src="gamification.js?v=20260516b"></script>
+<script src="gamification.js?v=20260516c"></script>
+<script>
+// Hide game system FAB on chat page
+(function(){
+  function hideGameUI(){
+    var gp=document.getElementById('gp');if(gp)gp.style.display='none';
+    var gl=document.getElementById('gl');if(gl)gl.style.display='none';
+    var gh=document.getElementById('ghint');if(gh)gh.style.display='none';
+  }
+  // Try immediately and also after a delay (game JS loads async)
+  hideGameUI();
+  setTimeout(hideGameUI,500);
+  setTimeout(hideGameUI,1500);
+  setTimeout(hideGameUI,3000);
+  // Also observe DOM for added nodes
+  if(typeof MutationObserver!=='undefined'){
+    var obs=new MutationObserver(function(){
+      var gp=document.getElementById('gp');
+      if(gp){hideGameUI();obs.disconnect();}
+    });
+    obs.observe(document.body,{childList:true,subtree:true});
+  }
+})();
+</script>
 <div style="text-align:center;padding:16px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-top:20px;"><a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a></div>
 
 <script>
