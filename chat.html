@@ -330,9 +330,10 @@ body{padding-bottom:0!important;}
 /* Send preview inside input area */
 .send-preview{font-size:0.78rem!important;padding:4px 8px!important;}
 /* Hide game system on chat page - too crowded */
-#gp{display:none!important}
+#game-widget{display:none!important}
 #ghint{display:none!important}
-#gl{display:none!important}
+#gfb{display:none!important}
+#gpnl{display:none!important}
 
 /* Welcome区域渐变卡片 */
 .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;text-align:center;gap:16px}
@@ -1170,27 +1171,57 @@ document.addEventListener('DOMContentLoaded', initMsgInteractions);
     });
 })();
 </script>
+<script>
+// Monkey-patch: prevent GameSystem from rendering the FAB widget on chat page
+var _origGSI = null;
+Object.defineProperty(window, 'GameSystem', {
+  configurable: true,
+  get: function(){ return _origGSI; },
+  set: function(val){
+    _origGSI = val;
+    // Override render to no-op on chat page
+    if(val && typeof val.render === 'function'){
+      var origRender = val.render;
+      val.render = function(){
+        // Don't create the game widget on chat page
+        return;
+      };
+    }
+    // Override autoHint too
+    if(val && typeof val.autoHint === 'function'){
+      val.autoHint = function(){ return; };
+    }
+  }
+});
+</script>
 <script src="gamification.js?v=20260516c"></script>
 <script>
-// Hide game system FAB on chat page
+// Hide game system FAB on chat page - destroy it completely
 (function(){
-  function hideGameUI(){
-    var gp=document.getElementById('gp');if(gp)gp.style.display='none';
-    var gl=document.getElementById('gl');if(gl)gl.style.display='none';
-    var gh=document.getElementById('ghint');if(gh)gh.style.display='none';
+  function killGameWidget(){
+    var w=document.getElementById('game-widget');if(w)w.remove();
+    var h=document.getElementById('ghint');if(h)h.remove();
   }
-  // Try immediately and also after a delay (game JS loads async)
-  hideGameUI();
-  setTimeout(hideGameUI,500);
-  setTimeout(hideGameUI,1500);
-  setTimeout(hideGameUI,3000);
-  // Also observe DOM for added nodes
+  killGameWidget();
+  setTimeout(killGameWidget,100);
+  setTimeout(killGameWidget,500);
+  setTimeout(killGameWidget,1500);
+  setTimeout(killGameWidget,3000);
+  // MutationObserver to catch when game JS creates it
   if(typeof MutationObserver!=='undefined'){
-    var obs=new MutationObserver(function(){
-      var gp=document.getElementById('gp');
-      if(gp){hideGameUI();obs.disconnect();}
+    var obs=new MutationObserver(function(muts){
+      muts.forEach(function(m){
+        m.addedNodes.forEach(function(n){
+          if(n.id==='game-widget'||n.id==='ghint'){n.remove();}
+          if(n.querySelectorAll){
+            n.querySelectorAll('#game-widget,#ghint').forEach(function(el){el.remove();});
+          }
+        });
+      });
     });
     obs.observe(document.body,{childList:true,subtree:true});
+    // Stop observing after 5 seconds to save resources
+    setTimeout(function(){obs.disconnect();},5000);
   }
 })();
 </script>
