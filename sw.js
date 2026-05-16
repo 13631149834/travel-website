@@ -1,5 +1,5 @@
 // Service Worker for 游导旅游
-const CACHE_NAME = 'youdao-travel-v1';
+const CACHE_NAME = 'youdao-travel-v2';
 const ASSETS = [
   '/',
   '/index.html',
@@ -40,22 +40,19 @@ self.addEventListener('fetch', (event) => {
   if (!event.request.url.startsWith(self.location.origin)) return;
   
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      // Return cached version or fetch from network
-      return cached || fetch(event.request).then((response) => {
-        // Cache successful responses
-        if (response.ok) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, clone);
-          });
-        }
-        return response;
-      }).catch(() => {
-        // Return offline page for navigation requests
-        if (event.request.mode === 'navigate') {
-          return caches.match('/index.html');
-        }
+    fetch(event.request).then((response) => {
+      // Network first: cache successful responses for offline use
+      if (response.ok) {
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, clone);
+        });
+      }
+      return response;
+    }).catch(() => {
+      // Fallback to cache when offline
+      return caches.match(event.request).then((cached) => {
+        return cached || (event.request.mode === 'navigate' ? caches.match('/index.html') : undefined);
       });
     })
   );
