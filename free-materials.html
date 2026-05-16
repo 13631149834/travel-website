@@ -827,11 +827,13 @@ if(typeof GameSystem==='undefined'){
 
 <script>
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js')
-      .then((reg) => console.log('SW registered'))
-      .catch((err) => console.log('SW registration failed:', err));
+  // Unregister ALL service workers to fix loading issues
+  navigator.serviceWorker.getRegistrations().then(function(registrations) {
+    for(let registration of registrations) {
+      registration.unregister();
+    }
   });
+  // SW registration disabled temporarily
 }
 </script>
 

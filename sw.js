@@ -1,5 +1,5 @@
 // Service Worker for 游导旅游
-const CACHE_NAME = 'youdao-travel-v2';
+const CACHE_NAME = 'youdao-travel-v3';
 const ASSETS = [
   '/',
   '/index.html',
@@ -31,29 +31,53 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch event
+// Fetch with timeout - cache first for speed, network fallback with short timeout
 self.addEventListener('fetch', (event) => {
-  // Skip non-GET requests
   if (event.request.method !== 'GET') return;
-  
-  // Skip cross-origin requests
   if (!event.request.url.startsWith(self.location.origin)) return;
-  
+
   event.respondWith(
-    fetch(event.request).then((response) => {
-      // Network first: cache successful responses for offline use
-      if (response.ok) {
-        const clone = response.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, clone);
-        });
+    caches.match(event.request).then((cached) => {
+      // If cached, return immediately + update cache in background
+      if (cached) {
+        // Background update (stale-while-revalidate)
+        fetchWithTimeout(event.request, 5000).then((response) => {
+          if (response && response.ok) {
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, response);
+            });
+          }
+        }).catch(() => {});
+        return cached;
       }
-      return response;
-    }).catch(() => {
-      // Fallback to cache when offline
-      return caches.match(event.request).then((cached) => {
-        return cached || (event.request.mode === 'navigate' ? caches.match('/index.html') : undefined);
-      });
+      
+      // No cache: try network with 3s timeout
+      return fetchWithTimeout(event.request, 3000)
+        .then((response) => {
+          if (response && response.ok) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, clone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Network failed, no cache either - return offline page
+          if (event.request.mode === 'navigate') {
+            return caches.match('/index.html');
+          }
+          return new Response('', { status: 408, statusText: 'Request timeout' });
+        });
     })
   );
 });
+
+function fetchWithTimeout(request, timeout) {
+  return Promise.race([
+    fetch(request),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Timeout')), timeout)
+    )
+  ]);
+}
