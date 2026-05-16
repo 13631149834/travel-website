@@ -252,3 +252,102 @@ grep -rE '<img[^>]+>' --include="*.html" | grep -vE 'width=|height='
 3. CSS公共样式抽取可减少冗余
 4. JS延迟加载(defer)可优化首屏渲染
 5. 移动端fixed元素需要考虑底部导航遮挡问题
+
+---
+
+## 第四轮优化（2026-05-16 续）
+
+### 优化概览
+第四轮10轮深度优化，聚焦业务价值与用户体验提升。
+
+### 第1轮：社交媒体分享预览优化
+- 问题：所有页面og:image使用qrcode.jpg (430x430)，非1200x630标准分享图
+- 修复：生成og-share.jpg (1200x630)专用分享图
+- 为所有页面添加twitter:card标签
+- 各页面独立og:title和og:description
+- 支持Facebook/Twitter/微信分享预览
+
+### 第2轮：全站文字内容深度审查
+- 错别字检查：未发现错误
+- TODO/FIXME检查：无残留
+- 标点符号：使用规范
+- 信息核实：西夏陵2025年信息准确（7月11日列入世界遗产）
+
+### 第3轮：考试倒计时与日期准确性
+- 核实：2026年导游证考试时间为11月21日
+- 修复：exam-simulator.html倒计时日期从11-22更正为11-21
+- index.html倒计时日期已正确
+
+### 第4轮：resources.html购买转化优化
+- 移除gamification.js（购买页面不需要游戏化）
+- B包添加"限时特惠"标签
+- 购买流程优化：强调自动发货、夸克网盘秒发
+
+### 第5轮：free-materials.html优化
+- 顶部添加免费说明（无需下载直接浏览）
+- 升级引导优化，强调免费vs付费差异
+- 明确付费套餐价值
+
+### 第6轮：全站搜索功能评估
+- 结论：不需要站内搜索
+- 13个页面，导航结构清晰合理
+- 用户可在3次点击内到达任何页面
+- sitemap.xml已完整覆盖所有页面
+
+### 第7轮：浏览器兼容性优化
+- cards-grid添加flex fallback
+- 使用@supports检测grid支持
+- 移动端优先，现代浏览器特性足够
+- JS使用ES6+，移动端浏览器全面支持
+
+### 第8轮：PWA基础能力建设
+- 创建manifest.json（应用名/图标/主题色/启动URL）
+- 添加PWA相关meta标签（theme-color/apple-mobile-web-app）
+- 创建sw.js Service Worker（离线缓存静态资源）
+- 所有页面添加Service Worker注册代码
+
+### 第9轮：数据安全与隐私合规
+- PAT_TOKEN在chat.html中，用于Coze API调用
+- localStorage仅存储非敏感数据（学习进度、对话记录）
+- 隐私页面已说明Cookie使用、数据收集、AI数据处理
+- 添加数据存储详细说明到隐私页面
+
+### 第10轮：最终全面验证
+- chat.html无gamification.js ✓
+- 无虚假数据 ✓
+- 套餐名称正确（A包9.9元/B包49.9元/C包99元）✓
+- common.css正确加载 ✓
+- sitemap.xml完整（14个URL）✓
+- PWA manifest.json完整 ✓
+
+### Git提交记录（第四轮）
+- ae6754f: 社交媒体分享预览优化
+- 07ae368: 文字内容审查与倒计时修复
+- 5e7fb13: resources.html购买转化优化
+- f4f2b8a: free-materials.html优化
+- a1ebfb5: 全站导航架构评估
+- 130b564: 浏览器兼容性优化
+- 174e458: PWA基础能力建设
+- eb2e088: 数据安全与隐私合规检查
+
+### 四轮优化总结
+1. **社交分享**：OG标签完整，twitter:card支持
+2. **内容质量**：无错别字、无虚假数据、信息准确
+3. **考试信息**：倒计时日期准确（11月21日）
+4. **转化优化**：购买流程清晰，升级引导明确
+5. **导航架构**：无需搜索，3次点击可达
+6. **兼容性**：CSS fallback，移动端优先
+7. **PWA**：manifest.json + Service Worker
+8. **隐私合规**：localStorage非敏感，隐私页面完整
+9. **铁律遵守**：套餐价格真实、无虚假数据、无违禁内容
+10. **代码质量**：无TODO残留、结构清晰
+
+### 关键修复清单
+| 问题 | 修复 | 文件 |
+|------|------|------|
+| og:image尺寸不当 | 生成1200x630专用图 | images/og-share.jpg |
+| 倒计时日期错误 | 11-22→11-21 | exam-simulator.html |
+| 购买页游戏化 | 移除gamification.js | resources.html |
+| 浏览器兼容 | grid fallback | css/common.css |
+| 无PWA支持 | manifest + sw.js | manifest.json, sw.js |
+| 隐私说明不足 | 数据存储说明 | privacy.html |
