@@ -492,7 +492,7 @@ a { color: #4C8BF5 !important; }
 <p class="section-desc">每天坚持练习真题，积少成多，备考更轻松（无需激活码）</p>
 
 <div class="tip-box">
-<strong>💡 提示：</strong>每日一练每次随机抽取20道题目，涵盖政策法规、导游业务、全国导基、地方导基四大科目。
+<strong>💡 提示：</strong>每日一练包含全部题目，随机打乱顺序，涵盖政策法规、导游业务、全国导基、地方导基四大科目。
 </div>
 
 <div id="dailyQuestions"><div class="loading-state"><div class="loading-spinner"></div><p style="text-align:center;color:#999;font-size:0.9rem;padding:40px 20px;">正在加载每日一练题目...</p></div></div>
@@ -741,9 +741,9 @@ function startExam() {
   answeredQuestions = {};
   currentQIndex = 0;
   
-  // Random select 20 questions from the pool for the exam
+  // Random select questions from the pool for the exam
   var shuffled = examQuestions.slice().sort(function() { return Math.random() - 0.5; });
-  examQuestions = shuffled.slice(0, 20);
+  examQuestions = shuffled.slice(0, Math.min(90, shuffled.length));
   
   // Update total count display
   var totalEl = document.getElementById('totalQuestions');
@@ -1349,7 +1349,7 @@ function renderDailyQuestions() {
 
   // Random pick 20 questions
   var shuffled = dailyBank.slice().sort(function() { return Math.random() - 0.5; });
-  dailyQuestions = shuffled.slice(0, 20);
+  dailyQuestions = shuffled.slice(0, questionBank.length);
   dailyQIndex = 0;
   dailyAnswered = {};
   dailyCorrect = 0;
