@@ -329,11 +329,7 @@ body{padding-bottom:0!important;}
 .quote-hint{font-size:0.78rem!important;padding:4px 8px!important;}
 /* Send preview inside input area */
 .send-preview{font-size:0.78rem!important;padding:4px 8px!important;}
-/* Hide game system on chat page - too crowded */
-#game-widget{display:none!important}
-#ghint{display:none!important}
-#gfb{display:none!important}
-#gpnl{display:none!important}
+
 
 /* Welcome区域渐变卡片 */
 .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;text-align:center;gap:16px}
@@ -1171,60 +1167,40 @@ document.addEventListener('DOMContentLoaded', initMsgInteractions);
     });
 })();
 </script>
+<!-- Game system stub for chat page - no FAB, no UI, just data tracking -->
 <script>
-// Monkey-patch: prevent GameSystem from rendering the FAB widget on chat page
-var _origGSI = null;
-Object.defineProperty(window, 'GameSystem', {
-  configurable: true,
-  get: function(){ return _origGSI; },
-  set: function(val){
-    _origGSI = val;
-    // Override render to no-op on chat page
-    if(val && typeof val.render === 'function'){
-      var origRender = val.render;
-      val.render = function(){
-        // Don't create the game widget on chat page
-        return;
-      };
-    }
-    // Override autoHint too
-    if(val && typeof val.autoHint === 'function'){
-      val.autoHint = function(){ return; };
-    }
-  }
-});
+var GameSystem = {
+  state: null,
+  init: function(){ 
+    try{var s=localStorage.getItem('ydg3');this.state=s?JSON.parse(s):null;}catch(e){}
+    if(!this.state)this.state={xp:0,level:1,coins:0,streak:0,lastCheckIn:null,totalCheckIns:0,totalQuestions:0,totalGuides:0,totalExams:0,totalAIChats:0,provincesVisited:[],achievements:[],dailyTasks:{},dailyTaskDate:null,examAttempts:0,aiBonus:0,guideUnlocks:0,coupons:[],doubleDayEnd:0,sp:{},createdAt:Date.now()};
+  },
+  addAIChat: function(){
+    this.init();
+    this.state.totalAIChats++;
+    if(!this.state.dailyTasks)this.state.dailyTasks={};
+    this.state.dailyTasks.ai=(this.state.dailyTasks.ai||0)+1;
+    this.state.xp+=5;
+    var dbl=this.state.doubleDayEnd&&Date.now()<this.state.doubleDayEnd;
+    this.state.coins+=dbl?4:2;
+    try{localStorage.setItem('ydg3',JSON.stringify(this.state));}catch(e){}
+  },
+  addXP: function(){},
+  addCoins: function(){},
+  checkIn: function(){},
+  addQuestion: function(){},
+  addGuide: function(){},
+  addExam: function(){},
+  addProvinceVisit: function(){},
+  markVisit: function(){},
+  render: function(){},
+  toggle: function(){},
+  switchTab: function(){},
+  autoHint: function(){}
+};
+GameSystem.init();
 </script>
-<script src="gamification.js?v=20260516c"></script>
-<script>
-// Hide game system FAB on chat page - destroy it completely
-(function(){
-  function killGameWidget(){
-    var w=document.getElementById('game-widget');if(w)w.remove();
-    var h=document.getElementById('ghint');if(h)h.remove();
-  }
-  killGameWidget();
-  setTimeout(killGameWidget,100);
-  setTimeout(killGameWidget,500);
-  setTimeout(killGameWidget,1500);
-  setTimeout(killGameWidget,3000);
-  // MutationObserver to catch when game JS creates it
-  if(typeof MutationObserver!=='undefined'){
-    var obs=new MutationObserver(function(muts){
-      muts.forEach(function(m){
-        m.addedNodes.forEach(function(n){
-          if(n.id==='game-widget'||n.id==='ghint'){n.remove();}
-          if(n.querySelectorAll){
-            n.querySelectorAll('#game-widget,#ghint').forEach(function(el){el.remove();});
-          }
-        });
-      });
-    });
-    obs.observe(document.body,{childList:true,subtree:true});
-    // Stop observing after 5 seconds to save resources
-    setTimeout(function(){obs.disconnect();},5000);
-  }
-})();
-</script>
+
 <div style="text-align:center;padding:16px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-top:20px;"><a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a></div>
 
 <script>
