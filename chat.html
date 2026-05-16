@@ -323,12 +323,16 @@ body{padding-bottom:0!important;}
 /* Input area fixed at bottom */
 .input-area{position:fixed!important;bottom:0!important;left:0!important;right:0!important;background:#fff!important;z-index:100!important;border-top:1px solid #F0F0F0!important;padding:8px 14px calc(8px + env(safe-area-inset-bottom))!important;}
 /* Shortcut tags - clean compact style */
-.chat-shortcuts{background:transparent!important;border-top:none!important;padding:4px 0!important;margin-bottom:4px;}
-.shortcut-tag{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;font-size:0.78rem!important;padding:5px 12px!important;}
+.chat-shortcuts{background:transparent!important;border-top:none!important;padding:4px 0!important;margin-bottom:2px;gap:6px!important;}
+.shortcut-tag{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;font-size:0.76rem!important;padding:5px 10px!important;border-radius:16px!important;background:#F0F5FF!important;border:1px solid #D6E4FF!important;color:#4C8BF5!important;font-weight:500!important;}
 /* Quote hint inside input area */
 .quote-hint{font-size:0.78rem!important;padding:4px 8px!important;}
 /* Send preview inside input area */
 .send-preview{font-size:0.78rem!important;padding:4px 8px!important;}
+/* Hide game system on chat page - too crowded */
+#gp{display:none!important}
+#ghint{display:none!important}
+#gl{display:none!important}
 
 /* Welcome区域渐变卡片 */
 .welcome{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px 20px;text-align:center;gap:16px}
@@ -451,9 +455,11 @@ body{padding-bottom:0!important;}
         <span class="remove-img" onclick="cancelImage()">✕</span>
       </div>
     <div class="chat-shortcuts">
+      <span class="shortcut-tag" onclick="sendQuick('制定备考计划')">📅 备考计划</span>
       <span class="shortcut-tag" onclick="sendQuick('导游证报名条件是什么？')">📋 报名条件</span>
       <span class="shortcut-tag" onclick="sendQuick('帮我模拟面试')">🎤 面试模拟</span>
-      <span class="shortcut-tag" onclick="sendQuick('制定备考计划')">📅 备考计划</span>
+      <span class="shortcut-tag" onclick="sendQuick('能给我一篇导游词范文吗？')">📖 导游词</span>
+      <span class="shortcut-tag" onclick="sendQuick('面试评分标准是什么？')">🎯 评分标准</span>
     </div>
       <div class="input-wrap">
       <textarea id="userInput" placeholder="输入你的问题..." rows="1" onkeydown="handleKey(event)"></textarea>
@@ -1148,9 +1154,9 @@ document.addEventListener('DOMContentLoaded', initMsgInteractions);
 </script>
 
 <!-- 回顶/回底悬浮按钮 -->
-<div id="scrollBtns" style="display:none;position:fixed;right:12px;bottom:85px;display:flex;flex-direction:column;gap:8px;z-index:999;">
-  <button onclick="msgContainer.scrollTo({top:0,behavior:'smooth'})" id="scrollTopBtn" style="width:44px;height:44px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1.3rem;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;opacity:0.85;transition:opacity 0.2s,transform 0.2s;">↑</button>
-  <button onclick="msgContainer.scrollTo({top:msgContainer.scrollHeight,behavior:'smooth'})" id="scrollBottomBtn" style="width:44px;height:44px;border-radius:50%;background:#FFFFFF;border:1px solid #E0E0E0;color:#4C8BF5;font-size:1.3rem;font-weight:bold;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:center;opacity:0.85;transition:opacity 0.2s,transform 0.2s;">↓</button>
+<div id="scrollBtns" style="position:fixed;right:12px;bottom:120px;display:flex;flex-direction:column;gap:6px;z-index:90;">
+  <button onclick="msgContainer.scrollTo({top:0,behavior:'smooth'})" id="scrollTopBtn" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.92);border:1px solid #E8E8E8;color:#999;font-size:1.1rem;font-weight:bold;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;opacity:0.7;transition:opacity 0.2s,transform 0.2s;">↑</button>
+  <button onclick="msgContainer.scrollTo({top:msgContainer.scrollHeight,behavior:'smooth'})" id="scrollBottomBtn" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.92);border:1px solid #E8E8E8;color:#999;font-size:1.1rem;font-weight:bold;cursor:pointer;box-shadow:0 1px 6px rgba(0,0,0,0.08);display:flex;align-items:center;justify-content:center;opacity:0.7;transition:opacity 0.2s,transform 0.2s;">↓</button>
 </div>
 
 <!-- back-to-top removed on chat page -->
