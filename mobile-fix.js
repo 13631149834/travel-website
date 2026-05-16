@@ -19,6 +19,7 @@ me:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" 
 };
 function initBar(){
   if(window.innerWidth>768||document.getElementById('bb'))return;
+  if(document.querySelector('.bottom-tabs'))return; // 页面已有底部导航，不重复创建
   var pg=location.pathname.split('/').pop()||'index.html';
   var S2='\x3csvg width="22" height="22" viewBox="0 0 24 24" fill="none"\x3e\x3cpath d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/\x3e\x3c/svg\x3e';var ts=[{s:S.home,n:'首页',p:'index.html'},{s:S.study,n:'学习',p:'exam-guide.html'},{s:S2,n:'AI',p:'chat.html'},{s:S.quiz,n:'刷题',p:'exam-simulator.html'},{s:S.me,n:'我的',p:'resources.html'}];
   var b=document.createElement('div');b.id='bb';
