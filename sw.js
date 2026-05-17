@@ -1,4 +1,4 @@
-// Service Worker for 游导旅游
+// Service Worker for 游导学习笔记
 const CACHE_NAME = 'youdao-travel-v3';
 const ASSETS = [
   '/',

@@ -98,7 +98,7 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
   setTimeout(function(){
     var h=document.createElement('div');h.id='gOv';
     h.style.cssText='position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
-    h.innerHTML='<div style="background:#fff;border-radius:20px;padding:28px 24px;max-width:300px;text-align:center;animation:gP .4s ease"><div style="font-size:44px;margin-bottom:10px">🎮</div><div style="font-size:17px;font-weight:700;color:#1A1A1A;margin-bottom:6px">欢迎来到游导旅游</div><div style="font-size:13px;color:#666;margin-bottom:16px;line-height:1.7">像玩游戏一样备考导游证<br>闯关·刷题·升级·拿证</div><button onclick="document.getElementById(\'gOv\').remove();localStorage.setItem(\'yd_g2\',\'1\')" style="background:linear-gradient(135deg,#4C8BF5,#7C3AED);color:#fff;border:none;padding:12px 36px;border-radius:24px;font-size:14px;font-weight:600;cursor:pointer">开始冒险 →</button></div>';
+    h.innerHTML='<div style="background:#fff;border-radius:20px;padding:28px 24px;max-width:300px;text-align:center;animation:gP .4s ease"><div style="font-size:44px;margin-bottom:10px">📚</div><div style="font-size:17px;font-weight:700;color:#1A1A1A;margin-bottom:6px">欢迎来到游导学习笔记</div><div style="font-size:13px;color:#666;margin-bottom:16px;line-height:1.7">像玩游戏一样备考导游证<br>逐关练习·刷题·进步·拿证</div><button onclick="document.getElementById(\'gOv\').remove();localStorage.setItem(\'yd_g2\',\'1\')" style="background:linear-gradient(135deg,#4C8BF5,#7C3AED);color:#fff;border:none;padding:12px 36px;border-radius:24px;font-size:14px;font-weight:600;cursor:pointer">开始学习 →</button></div>';
     document.body.appendChild(h);
   },1200);
 })();
