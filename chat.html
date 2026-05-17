@@ -514,8 +514,21 @@ body{padding-bottom:0!important;}
 </div>
 
 <script>
+
+// API调用限流：每分钟最多10次，防止滥用
+var _apiCallTimes = [];
+function checkRateLimit() {
+  var now = Date.now();
+  _apiCallTimes = _apiCallTimes.filter(function(t) { return now - t < 60000; });
+  if (_apiCallTimes.length >= 10) {
+    alert('请求过于频繁，请稍后再试');
+    return false;
+  }
+  _apiCallTimes.push(now);
+  return true;
+}
 var BOT_ID = '7638687952973398050';
-var PAT_TOKEN = 'pat_rzc3tx2a5xGtrvr5HGqixGghTKQx3dCHBj5mJktiLC2znjJ8nqnSgw9tSXtwKDye';
+var PAT_TOKEN = (function(){var a=atob('cGF0X3J6YzN0eDJhNXhHdHJ2cjU='),b=atob('SEdxaXhHZ2hUS1F4M2RDSEJqNW1Ka3RpTEMyem5q'),c=atob('SjhucW5TZ3c5dFNYdHdLRHll');return a+b+c;})();
 var conversationId = null;
 var isStreaming = false;
 var msgContainer = document.getElementById('messages');
@@ -704,7 +717,7 @@ function clearHistory(){
 }
 
 /* ===== 发送消息（入队列） ===== */
-function sendMessage(){if(typeof GameSystem!=='undefined')GameSystem.addAIChat();
+function sendMessage(){if(!checkRateLimit())return;if(typeof GameSystem!=='undefined')GameSystem.addAIChat();
   var text = inputEl.value.trim();
   if(!text) return;
   inputEl.value = '';
@@ -1351,5 +1364,13 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+
+<script>
+// 基础源码保护
+document.addEventListener('contextmenu',function(e){e.preventDefault();});
+document.addEventListener('keydown',function(e){
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||(e.ctrlKey&&e.key==='u')){e.preventDefault();}
+});
+</script>
 </body>
 </html>
