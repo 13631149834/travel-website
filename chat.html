@@ -477,10 +477,10 @@ body{padding-bottom:0!important;}
       <div class="welcome-card">
         <div class="welcome-avatar"><img src="images/ai-avatar.jpg" alt="AI助手小游" width="54" height="54"></div>
         <h2>你好，我是小游 👋</h2>
-        <p>你的导游证AI备考搭子，随时问我任何备考问题</p>
+        <p>导游证备考助手，问问题、刷题、查政策都行</p>
         <div class="quick-actions">
           <button class="quick-btn" onclick="sendQuick('导游证报名条件是什么？')">📋 报名条件</button>
-          <button class="quick-btn" onclick="sendQuick('帮我模拟面试')">🎤 面试模拟</button>
+          <button class="quick-btn" onclick="sendQuick('广东面试考什么？怎么准备？')">🎤 面试模拟</button>
           <button class="quick-btn" onclick="sendQuick('帮我制定一个30天备考计划')">📅 备考计划</button>
         </div>
       </div>
@@ -500,7 +500,7 @@ body{padding-bottom:0!important;}
     <div class="chat-shortcuts">
       <span class="shortcut-tag" onclick="sendQuick('制定备考计划')">📅 备考计划</span>
       <span class="shortcut-tag" onclick="sendQuick('导游证报名条件是什么？')">📋 报名条件</span>
-      <span class="shortcut-tag" onclick="sendQuick('帮我模拟面试')">🎤 面试模拟</span>
+      <span class="shortcut-tag" onclick="sendQuick('广东面试考什么？怎么准备？')">🎤 面试模拟</span>
       <span class="shortcut-tag" onclick="sendQuick('能给我一篇导游词范文吗？')">📖 导游词</span>
     </div>
       <div class="input-wrap">
@@ -698,7 +698,7 @@ function clearHistory(){
   msgContainer.innerHTML = '';
   var w = document.createElement('div');
   w.className = 'welcome'; w.id = 'welcome';
-  w.innerHTML = '<div class="welcome-avatar"><img src="images/ai-avatar.jpg" alt="AI助手小游" width="54" height="54"></div><h2>你好，我是小游 👋</h2><p>你的导游证AI备考搭子<br>随时问我任何备考问题</p><div class="quick-actions"><button class="quick-btn" onclick="sendQuick(\'北京导游考试考哪些科目？\')">北京导游考试科目</button><button class="quick-btn" onclick="sendQuick(\'导游业务笔试重点有哪些？\')">导游业务重点</button><button class="quick-btn" onclick="sendQuick(\'帮我制定一个30天备考计划\')">30天备考计划</button><button class="quick-btn" onclick="sendQuick(\'全国导游基础知识怎么复习？\')">导基复习方法</button></div>';
+  w.innerHTML = '<div class="welcome-avatar"><img src="images/ai-avatar.jpg" alt="AI助手小游" width="54" height="54"></div><h2>你好，我是小游 👋</h2><p>导游证备考助手<br>问问题、刷题、查政策都行</p><div class="quick-actions"><button class="quick-btn" onclick="sendQuick(\'北京导游考试考哪些科目？\')">北京导游考试科目</button><button class="quick-btn" onclick="sendQuick(\'导游业务笔试重点有哪些？\')">导游业务重点</button><button class="quick-btn" onclick="sendQuick(\'帮我制定一个30天备考计划\')">30天备考计划</button><button class="quick-btn" onclick="sendQuick(\'全国导游基础知识怎么复习？\')">导基复习方法</button></div>';
   msgContainer.appendChild(w);
   welcomeEl = w;
 }
@@ -740,7 +740,14 @@ async function doSendMessage(text, quote){
     prompt = '[引用消息: "' + (quote.text||'').substring(0,100) + '"]\n' + text;
   }
   // 附加上下文关联指令
-  prompt += '\n[系统提示：请结合之前的对话上下文来回答。如果用户提到了之前的话题，请主动关联并融合之前的讨论内容，给出连贯完整的回复。]';
+  prompt += '\n[系统修正指令（必须遵守）：]';
+  prompt += '\n1. 你是导游证备考助手"小游"，不要叫用户任何昵称，直接用"你"称呼';
+  prompt += '\n2. 面试模拟时：广东省面试采用机考（人机对话）模式，考生对着电脑录制讲解视频，无需面对真人考官。其他省份请根据实际情况说明';
+  prompt += '\n3. 不要编造数据（通过率、报名人数等），不确定的就说"建议查阅当地文旅厅官方公告"';
+  prompt += '\n4. 不要使用"闯关""升级""金币"等游戏化话术，这是专业备考工具';
+  prompt += '\n5. 2025年考试已结束，下次考试预计2026年7月报名、11月笔试';
+  prompt += '\n6. 资料包价格：A包9.9元/B包49.9元/C包99元，引导加微信ximao101';
+  prompt += '\n7. 请结合之前的对话上下文来回答，给出连贯完整的回复';
 
   var body = {
     bot_id: BOT_ID,
