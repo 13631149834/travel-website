@@ -811,7 +811,19 @@ async function doSendMessage(text, quote){
               if(!answerId && data.id) answerId = data.id;
               if(!answerId || data.id === answerId){
                 if(!rendered){ clearInterval(timerInterval); rendered = true; }
-                fullText = data.content;
+                // Coze API: content may be incremental or full
+                // If content looks like incremental (starts from beginning each time), use full replace
+                // If content is growing, append
+                if(data.content.length > fullText.length && data.content.startsWith(fullText)) {
+                  // Full content mode: API returns complete text each time
+                  fullText = data.content;
+                } else if(data.content.length <= fullText.length) {
+                  // Full content mode with same or shorter: replace
+                  fullText = data.content;
+                } else {
+                  // Incremental mode: append new content
+                  fullText += data.content;
+                }
                 bubble.innerHTML = renderMd(fullText);
                 // 保留引用按钮
                 msgContainer.scrollTop = msgContainer.scrollHeight;
@@ -1035,7 +1047,14 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
               if(!answerId && data.id) answerId = data.id;
               if(!answerId || data.id === answerId) {
                 if(!rendered){ clearInterval(timerInterval); rendered = true; }
-                fullText = data.content;
+                // Coze API: content may be incremental or full
+                if(data.content.length > fullText.length && data.content.startsWith(fullText)) {
+                  fullText = data.content;
+                } else if(data.content.length <= fullText.length) {
+                  fullText = data.content;
+                } else {
+                  fullText += data.content;
+                }
                 bubble.innerHTML = renderMd(fullText);
                 msgContainer.scrollTop = msgContainer.scrollHeight;
               }
