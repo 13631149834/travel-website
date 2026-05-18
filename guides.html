@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>找导游 - 游导伴旅 | 专业导游预约平台</title>
+    <meta name="description" content="在游导伴旅平台找到合适的专业导游，支持按地区、语言、特长筛选，查看真实评价，开启愉快旅程。">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .hero-dual {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            padding: 60px 0;
+            text-align: center;
+        }
+        .hero-dual h1 {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+        .hero-dual p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        .search-section {
+            max-width: 800px;
+            margin: -30px auto 40px;
+            background: #fff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        .search-box {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 14px 18px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+        }
+        .search-btn {
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        .filter-label {
+            font-weight: 600;
+            color: #374151;
+            min-width: 60px;
+        }
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            flex: 1;
+        }
+        .tag {
+            padding: 6px 12px;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tag:hover, .tag.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-color: transparent;
+        }
+        .guides-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto 60px;
+            padding: 0 20px;
+        }
+        .guide-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .guide-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .guide-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        }
+        .guide-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .guide-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+            color: #1f2937;
+        }
+        .guide-info .title {
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+        .guide-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+            font-size: 0.8rem;
+        }
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #6b7280;
+        }
+        .guide-body {
+            padding: 20px;
+        }
+        .guide-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .guide-tag {
+            padding: 4px 10px;
+            background: #fef3c7;
+            color: #92400e;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+        .guide-bio {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        .guide-footer {
+            padding: 16px 20px;
+            background: #f9fafb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .contact-btn {
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+        .no-results .icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+        }
+        @media (max-width: 768px) {
+            .search-box {
+                flex-direction: column;
+            }
+            .filter-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">🌍 游导伴旅</a>
+            <div class="nav-toggle" onclick="toggleNav()"><span></span><span></span><span></span></div>
+            <div class="nav-links">
+                <a href="index.html">🏠 首页</a>
+                <a href="guides.html" class="active">🎤 找导游</a>
+                <a href="exam-guide.html">📝 备考</a>
+                <a href="resources.html">📚 资源</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero区域 -->
+    <section class="hero-dual">
+        <div class="container">
+            <h1>🎤 找专业导游</h1>
+            <p>全球5000+认证导游，为您提供个性化旅行服务</p>
+        </div>
+    </section>
+
+    <!-- 搜索筛选区 -->
+    <div class="search-section">
+        <div class="search-box">
+            <input type="text" class="search-input" id="searchInput" placeholder="输入导游姓名、服务城市、特长...">
+            <button class="search-btn" onclick="searchGuides()">搜索导游</button>
+        </div>
+        <div class="filter-bar">
+            <span class="filter-label">服务地区:</span>
+            <div class="filter-tags">
+                <span class="tag active" data-type="all">全部</span>
+                <span class="tag" data-type="beijing">北京</span>
+                <span class="tag" data-type="shanghai">上海</span>
+                <span class="tag" data-type="guangzhou">广州</span>
+                <span class="tag" data-type="shenzhen">深圳</span>
+                <span class="tag" data-type="chengdu">成都</span>
+                <span class="tag" data-type="tokyo">东京</span>
+                <span class="tag" data-type="bangkok">曼谷</span>
+                <span class="tag" data-type="paris">巴黎</span>
+            </div>
+        </div>
+        <div class="filter-bar">
+            <span class="filter-label">擅长领域:</span>
+            <div class="filter-tags">
+                <span class="tag active" data-type="all">全部</span>
+                <span class="tag" data-type="history">历史文化</span>
+                <span class="tag" data-type="food">美食探店</span>
+                <span class="tag" data-type="photography">摄影打卡</span>
+                <span class="tag" data-type="family">亲子研学</span>
+                <span class="tag" data-type="adventure">户外探险</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导游列表 -->
+    <div class="guides-grid" id="guidesGrid"></div>
+    <div class="no-results" id="noResults" style="display: none;">
+        <div class="icon">🔍</div>
+        <p>没有找到符合条件的导游</p>
+        <p style="font-size: 0.9rem; margin-top: 8px;">换个关键词试试，或联系顾问为您推荐</p>
+    </div>
+
+    <!-- 顾问弹窗 -->
+    <div class="consultant-modal" id="consultantModal">
+        <div class="consultant-content">
+            <button class="consultant-close" onclick="closeConsultantModal()">×</button>
+            <h3>💬 联系旅行顾问</h3>
+            <p>添加微信，为您精准匹配合适的导游</p>
+            <div class="consultant-qr">
+                <img src="images/aman-wechat.jpg" alt="微信二维码">
+                <div class="consultant-qr-label">扫码添加微信</div>
+            </div>
+            <div class="consultant-benefits">
+                <span class="benefit-item">✅ 免费咨询</span>
+                <span class="benefit-item">✅ 精准匹配</span>
+                <span class="benefit-item">✅ 行程建议</span>
+            </div>
+            <div class="consultant-tip">💡 加微信后，告诉我您的旅行需求，为您推荐最合适的导游</div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script>
+        // 模拟导游数据
+        const guideData = [
+            { id: 1, name: '张导', avatar: '👨‍💼', title: '高级导游 | 10年经验', years: 10, rating: 4.9, reviews: 328, languages: ['普通话', '英语'], specialties: ['历史文化', '摄影打卡'], cities: ['北京', '西安'], bio: '专注历史文化深度游，带您穿越千年古都，感受历史的温度', verified: true },
+            { id: 2, name: '李姐', avatar: '👩‍💼', title: '金牌导游 | 8年经验', years: 8, rating: 4.8, reviews: 256, languages: ['普通话', '粤语'], specialties: ['美食探店', '亲子研学'], cities: ['广州', '深圳'], bio: '美食达人，带您吃遍岭南特色美食，体验地道广州生活', verified: true },
+            { id: 3, name: '王导', avatar: '🧑‍💼', title: '资深导游 | 12年经验', years: 12, rating: 4.9, reviews: 412, languages: ['普通话', '英语', '日语'], specialties: ['历史文化', '商务接待'], cities: ['上海', '东京'], bio: '精通中日文化，为您提供高端商务接待和文化深度游服务', verified: true },
+            { id: 4, name: '陈导', avatar: '👩‍💼', title: '个性导游 | 6年经验', years: 6, rating: 4.7, reviews: 189, languages: ['普通话', '英语'], specialties: ['户外探险', '自然景观'], cities: ['成都', '拉萨'], bio: '热爱户外探险，带您探索川藏秘境，感受大自然的壮丽', verified: true },
+            { id: 5, name: '刘导', avatar: '👨‍💼', title: '海外导游 | 15年经验', years: 15, rating: 4.9, reviews: 567, languages: ['普通话', '英语', '泰语'], specialties: ['海岛度假', '休闲放松'], cities: ['曼谷', '普吉岛'], bio: '泰国生活15年，熟悉当地一切，为您打造完美海岛度假体验', verified: true },
+            { id: 6, name: '赵导', avatar: '🧑‍💼', title: '文艺导游 | 7年经验', years: 7, rating: 4.8, reviews: 234, languages: ['普通话', '英语'], specialties: ['艺术鉴赏', '城市漫步'], cities: ['巴黎', '佛罗伦萨'], bio: '艺术专业出身，带您走进欧洲艺术殿堂，领略艺术之美', verified: true }
+        ];
+
+        // 渲染导游列表
+        function renderGuides(guides) {
+            const grid = document.getElementById('guidesGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (guides.length === 0) {
+                grid.style.display = 'none';
+                noResults.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            noResults.style.display = 'none';
+            
+            grid.innerHTML = guides.map(guide => `
+                <div class="guide-card">
+                    <div class="guide-header">
+                        <div class="guide-avatar">${guide.avatar}</div>
+                        <div class="guide-info">
+                            <h3>${guide.name}</h3>
+                            <div class="title">${guide.title}</div>
+                            <div class="guide-stats">
+                                <div class="stat-item">
+                                    <span>⭐</span>
+                                    <span>${guide.rating}</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span>👥</span>
+                                    <span>${guide.reviews}条评价</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="guide-body">
+                        <div class="guide-tags">
+                            ${guide.specialties.map(tag => `<span class="guide-tag">${tag}</span>`).join('')}
+                        </div>
+                        <div class="guide-bio">${guide.bio}</div>
+                    </div>
+                    <div class="guide-footer">
+                        <div style="font-size: 0.85rem; color: #6b7280;">
+                            <span>🗣️ ${guide.languages.join('、')}</span> • <span>🌍 ${guide.cities.join('、')}</span>
+                        </div>
+                        <button class="contact-btn" onclick="openConsultantModal()">💬 联系顾问</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 搜索导游
+        function searchGuides() {
+            const keyword = document.getElementById('searchInput').value.toLowerCase();
+            const regionTag = document.querySelector('.filter-tags:nth-child(2) .tag.active').dataset.type;
+            const specialtyTag = document.querySelector('.filter-tags:nth-child(4) .tag.active').dataset.type;
+            
+            let filtered = guideData;
+            
+            // 关键词过滤
+            if (keyword) {
+                filtered = filtered.filter(guide => 
+                    guide.name.toLowerCase().includes(keyword) ||
+                    guide.cities.some(city => city.toLowerCase().includes(keyword)) ||
+                    guide.specialties.some(tag => tag.toLowerCase().includes(keyword))
+                );
+            }
+            
+            // 地区过滤
+            if (regionTag !== 'all') {
+                filtered = filtered.filter(guide => guide.cities.includes(regionTag.charAt(0).toUpperCase() + regionTag.slice(1)));
+            }
+            
+            // 特长过滤
+            if (specialtyTag !== 'all') {
+                const specialty = specialtyTag.charAt(0).toUpperCase() + specialtyTag.slice(1);
+                filtered = filtered.filter(guide => guide.specialties.includes(specialty));
+            }
+            
+            renderGuides(filtered);
+        }
+
+        // 切换标签
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                const parentTags = tag.closest('.filter-tags');
+                parentTags.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                tag.classList.add('active');
+                searchGuides();
+            });
+        });
+
+        // 回车搜索
+        document.getElementById('searchInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') searchGuides();
+        });
+
+        // 初始化
+        renderGuides(guideData);
+    </script>
+</body>
+</html>
