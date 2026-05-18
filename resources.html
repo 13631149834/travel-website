@@ -60,8 +60,21 @@
     .pricing-card .plan-btn{display:block;width:100%;padding:12px;border-radius:25px;font-size:0.95rem;font-weight:700;text-align:center;text-decoration:none;transition:all 0.2s;border:none;cursor:pointer}
     .pricing-card .plan-btn-primary{background:#4C8BF5;color:#FFFFFF}
     .pricing-card .plan-btn-primary:hover{background:#3B7AE0}
+    .pricing-card .plan-btn-secondary{background:#FFF;color:#4C8BF5;border:1px solid #4C8BF5}
+    .pricing-card .plan-btn-secondary:hover{background:#F0F5FF}
     .pricing-card .plan-note{font-size:0.75rem;color:#999;text-align:center;margin-top:8px;line-height:1.5}
     .pricing-card .plan-note a{color:#4C8BF5;text-decoration:none}
+
+    /* 可展开内容清单 */
+    .content-detail-btn{width:100%;padding:10px;background:#F8F9FA;border:1px dashed #E0E0E0;border-radius:12px;color:#666;font-size:0.82rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px}
+    .content-detail-btn:hover{background:#F0F5FF;border-color:#4C8BF5;color:#4C8BF5}
+    .content-detail-list{display:none;background:#FAFAFA;border-radius:12px;padding:14px;margin-top:12px;font-size:0.82rem}
+    .content-detail-list.show{display:block}
+    .content-detail-list h4{color:#1A1A1A;font-weight:600;margin:10px 0 6px;font-size:0.88rem}
+    .content-detail-list h4:first-child{margin-top:0}
+    .content-detail-list ul{list-style:none;padding:0;margin:0}
+    .content-detail-list li{padding:4px 0;color:#666;display:flex;align-items:flex-start;gap:6px}
+    .content-detail-list li::before{content:'•';color:#4C8BF5;flex-shrink:0}
 
     /* 信任保障区域 */
     .trust-section{margin:36px 0;padding:24px;background:#F0F5FF;border-radius:18px;text-align:center}
@@ -145,6 +158,10 @@
 .bottom-tabs .tab-item span:first-child{font-size:1.25rem}
 .bottom-tabs .tab-active{color:#4C8BF5}
 .bottom-tabs a{color:#999;text-decoration:none}
+
+/* Toast提示 */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:25px;font-size:0.85rem;z-index:1000;opacity:0;transition:opacity 0.3s}
+.toast.show{opacity:1}
 </style>
 
 <style>
@@ -267,7 +284,66 @@
         <li>四科思维导图</li>
         <li>AI助手无限问</li>
       </ul>
-      <button class="plan-btn plan-btn-primary" onclick="buyPack('B','39.9')">立即获取</button>
+      <button class="plan-btn plan-btn-primary" onclick="buyPack('A','1.9')">立即获取</button>
+      <div class="plan-note">闲鱼/微信下单 · 升级B包更多内容</div>
+    </div>
+
+    <!-- B包 -->
+    <div class="pricing-card popular">
+      <div class="popular-badge">🔥 推荐选择</div><div style="background:#F59E0B;color:#FFF;font-size:0.7rem;padding:2px 8px;border-radius:4px;margin-top:4px;">限时特惠</div>
+      <div class="plan-name">B包</div>
+      <div class="plan-title">高效备考</div>
+      <div class="plan-price">¥39.9 <span>元</span></div>
+      <hr class="plan-divider">
+      <ul class="plan-features">
+        <li>A包全部内容</li>
+        <li>103份DOCX完整资料</li>
+        <li>面试190问+答案</li>
+        <li>广东面试12景点导游词 <a href="province-exam.html" style="color:#4C8BF5;font-size:0.82rem;text-decoration:underline;">查看样本→</a></li>
+        <li>记忆口诀200+条</li>
+        <li>四科思维导图</li>
+        <li>AI助手无限问</li>
+      </ul>
+      <!-- 内容详情展开按钮 -->
+      <button class="content-detail-btn" onclick="toggleDetail('b-detail')">
+        📋 点击查看B包详细内容清单
+      </button>
+      <div class="content-detail-list" id="b-detail">
+        <h4>📚 政策法规（核心法条）</h4>
+        <ul>
+          <li>核心法条笔记 ×15</li>
+          <li>易混淆对比表 ×8</li>
+          <li>真题精选 ×50</li>
+        </ul>
+        <h4>🗂️ 导游业务（服务流程）</h4>
+        <ul>
+          <li>服务流程图 ×6</li>
+          <li>应急处理模板 ×10</li>
+          <li>案例题 ×30</li>
+        </ul>
+        <h4>🌍 全国导基（高频考点）</h4>
+        <ul>
+          <li>四大系列口诀 ×20</li>
+          <li>高频考点笔记 ×12</li>
+          <li>思维导图 ×4</li>
+        </ul>
+        <h4>🏛️ 地方导基（广东省）</h4>
+        <ul>
+          <li>广东省考点精编 ×5</li>
+        </ul>
+        <h4>🎤 面试资料</h4>
+        <ul>
+          <li>190问+标准答案</li>
+          <li>广东12景点导游词</li>
+          <li>面试评分标准</li>
+          <li>仪态礼仪指南</li>
+        </ul>
+      </div>
+      <!-- 购买按钮组 -->
+      <div style="margin-top:12px;">
+        <button class="plan-btn plan-btn-primary" onclick="openXianyu('B')">🛒 闲鱼下单</button>
+        <button class="plan-btn plan-btn-secondary" onclick="copyWechat()">💬 加微信ximao101</button>
+      </div>
       <div class="plan-note">升级C包享受1v1答疑</div>
     </div>
 
@@ -286,8 +362,49 @@
         <li>考前冲刺押题</li>
         <li>持续更新到考试</li>
       </ul>
-      <button class="plan-btn plan-btn-primary" onclick="buyPack('C','99')">咨询购买</button>
-      <div class="plan-note">闲鱼担保下单 · 或加微信ximao101 · 1v1答疑+备考陪伴到考试</div>
+      <!-- 内容详情展开按钮 -->
+      <button class="content-detail-btn" onclick="toggleDetail('c-detail')">
+        📋 点击查看C包完整服务清单
+      </button>
+      <div class="content-detail-list" id="c-detail">
+        <h4>📦 B包全部内容（103份资料）</h4>
+        <ul>
+          <li>政策法规核心笔记+对比表+真题</li>
+          <li>导游业务流程图+应急模板</li>
+          <li>全国导基口诀+思维导图</li>
+          <li>地方导基广东省考点精编</li>
+          <li>面试190问+12景点导游词</li>
+        </ul>
+        <h4>💬 1v1专属服务</h4>
+        <ul>
+          <li>微信直接对话（非群聊）</li>
+          <li>工作日24小时内回复</li>
+          <li>备考问题随时问</li>
+        </ul>
+        <h4>🎤 面试强化训练</h4>
+        <ul>
+          <li>3次微信语音模拟面试</li>
+          <li>模拟广东机考人机对话</li>
+          <li>专业点评+改进建议</li>
+        </ul>
+        <h4>✍️ 个性化辅导</h4>
+        <ul>
+          <li>导游词一对一修改批改</li>
+          <li>专属学习计划定制</li>
+          <li>考前重点押题</li>
+        </ul>
+        <h4>🔄 持续更新</h4>
+        <ul>
+          <li>资料持续更新到考试前</li>
+          <li>新增内容免费推送</li>
+        </ul>
+      </div>
+      <!-- 购买按钮组 -->
+      <div style="margin-top:12px;">
+        <button class="plan-btn plan-btn-primary" onclick="openXianyu('C')">🛒 闲鱼下单</button>
+        <button class="plan-btn plan-btn-secondary" onclick="copyWechat()">💬 加微信ximao101</button>
+      </div>
+      <div class="plan-note">1v1答疑+备考陪伴到考试</div>
     </div>
   </div>
 
@@ -363,6 +480,52 @@ function buyPack(pack, price) {
   } else {
     alert('【推荐】闲鱼搜索"导游证备考资料"下单（平台担保）\n\n或添加微信：ximao101（备注"导游证"）\n\n' + pack + '包价格：¥' + price + '\n\n💡 7天不满意可全额退款');
   }
+}
+
+// 内容详情展开/收起
+function toggleDetail(id) {
+  const el = document.getElementById(id);
+  el.classList.toggle('show');
+  const btn = el.previousElementSibling;
+  if (el.classList.contains('show')) {
+    btn.innerHTML = '📋 点击收起内容清单 ▲';
+  } else {
+    btn.innerHTML = '📋 点击查看详细内容清单 ▼';
+  }
+}
+
+// 闲鱼下单
+function openXianyu(pack) {
+  const price = pack === 'A' ? '1.9' : pack === 'B' ? '39.9' : '99';
+  alert('【闲鱼下单】（推荐）\n\n1. 打开闲鱼APP\n2. 搜索：导游证备考资料\n3. 找到对应套餐下单\n\n' + pack + '包价格：¥' + price + '\n\n闲鱼平台担保，确认收货才付款，最安心！\n\n或直接加微信：ximao101 购买');
+}
+
+// 复制微信号
+function copyWechat() {
+  navigator.clipboard.writeText('ximao101').then(function() {
+    showToast('微信号 ximao101 已复制，去微信添加吧！');
+  }).catch(function() {
+    // 降级方案
+    const textarea = document.createElement('textarea');
+    textarea.value = 'ximao101';
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    showToast('微信号 ximao101 已复制，去微信添加吧！');
+  });
+}
+
+// Toast提示
+function showToast(msg) {
+  const existing = document.querySelector('.toast');
+  if (existing) existing.remove();
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function() { toast.classList.add('show'); }, 10);
+  setTimeout(function() { toast.classList.remove('show'); setTimeout(function() { toast.remove(); }, 300); }, 2500);
 }
 </script>
 
