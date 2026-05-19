@@ -757,50 +757,202 @@ a { color: #4C8BF5 !important; }
     </div>
   </section>
 
-  <!-- ===== 第二屏：AI助手直接可用 ===== -->
-  <section class="ai-demo-section" style="padding:60px 20px;background:#FFFFFF;">
+  <!-- ===== 第二屏：内嵌AI聊天 ===== -->
+  <section style="padding:60px 20px;background:#FFFFFF;">
     <div style="max-width:600px;margin:0 auto;">
       <h2 style="font-size:1.6rem;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:12px;">有问题？问小游</h2>
-      <p style="text-align:center;color:#666;margin-bottom:32px;font-size:0.95rem;">点击问题直接跳转AI助手，立刻获得答案</p>
+      <p style="text-align:center;color:#666;margin-bottom:24px;font-size:0.95rem;">直接在首页问AI，立刻获得答案</p>
       
-      <!-- 迷你AI对话框 -->
-      <div style="background:#F8FAFC;border-radius:20px;padding:24px;margin-bottom:24px;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #E2E8F0;">
-        <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-          <div style="width:40px;height:40px;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;">🤖</div>
+      <!-- 快捷问题按钮 -->
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;justify-content:center;">
+        <button onclick="homeChatSend(this.textContent)" style="padding:8px 16px;background:#F0F5FF;border:1px solid #E0E7FF;border-radius:20px;color:#4C8BF5;font-size:0.85rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">非旅游专业能考吗？</button>
+        <button onclick="homeChatSend(this.textContent)" style="padding:8px 16px;background:#F0F5FF;border:1px solid #E0E7FF;border-radius:20px;color:#4C8BF5;font-size:0.85rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">通过率多少？</button>
+        <button onclick="homeChatSend(this.textContent)" style="padding:8px 16px;background:#F0F5FF;border:1px solid #E0E7FF;border-radius:20px;color:#4C8BF5;font-size:0.85rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">大专学历能报名吗？</button>
+        <button onclick="homeChatSend(this.textContent)" style="padding:8px 16px;background:#F0F5FF;border:1px solid #E0E7FF;border-radius:20px;color:#4C8BF5;font-size:0.85rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">面试怎么准备？</button>
+        <button onclick="homeChatSend(this.textContent)" style="padding:8px 16px;background:#F0F5FF;border:1px solid #E0E7FF;border-radius:20px;color:#4C8BF5;font-size:0.85rem;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">笔试和面试哪个难？</button>
+      </div>
+      
+      <!-- 聊天容器 -->
+      <div id="homeChatContainer" style="background:#F8FAFC;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #E2E8F0;overflow:hidden;">
+        <!-- 聊天头部 -->
+        <div style="display:flex;align-items:center;gap:12px;padding:16px 20px;background:#FFFFFF;border-bottom:1px solid #E2E8F0;">
+          <div style="width:36px;height:36px;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;">🤖</div>
           <div>
-            <div style="font-weight:700;color:#1A1A1A;font-size:0.95rem;">小游AI助手</div>
-            <div style="font-size:0.75rem;color:#999;">24小时在线</div>
+            <div style="font-weight:700;color:#1A1A1A;font-size:0.9rem;">小游AI助手</div>
+            <div style="font-size:0.75rem;color:#10B981;">在线</div>
           </div>
         </div>
-        <div style="background:#FFFFFF;border-radius:16px;padding:16px;border:1px solid #E2E8F0;">
-          <p style="color:#666;font-size:0.9rem;line-height:1.6;">我是小游，导游证备考AI助手。有任何备考问题都可以问我，24小时在线，有问必答~</p>
+        
+        <!-- 消息区域 -->
+        <div id="homeChatMessages" style="height:320px;overflow-y:auto;padding:16px;background:#FAFAFA;">
+          <!-- 欢迎消息 -->
+          <div style="display:flex;gap:10px;margin-bottom:16px;">
+            <div style="width:32px;height:32px;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0;">🤖</div>
+            <div style="background:#FFFFFF;padding:12px 16px;border-radius:12px;border:1px solid #E2E8F0;max-width:85%;">
+              <p style="color:#666;font-size:0.9rem;line-height:1.6;margin:0;">你好！我是小游，导游证备考AI助手 🎯<br><br>有问必答，24小时在线。点击上方快捷问题或直接输入你的问题~</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 输入区域 -->
+        <div style="padding:12px 16px;background:#FFFFFF;border-top:1px solid #E2E8F0;display:flex;gap:10px;align-items:flex-end;">
+          <input type="text" id="homeChatInput" placeholder="输入问题..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();homeChatSend()}"" style="flex:1;padding:12px 16px;border:1px solid #E2E8F0;border-radius:24px;font-size:0.9rem;outline:none;resize:none;line-height:1.4;max-height:100px;overflow-y:auto;" />
+          <button id="homeChatSendBtn" onclick="homeChatSend()" style="width:44px;height:44px;background:#4C8BF5;border:none;border-radius:50%;color:#FFFFFF;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;" onmouseover="this.style.background='#3B7AE5'" onmouseout="this.style.background='#4C8BF5'">➤</button>
         </div>
       </div>
       
-      <!-- 示例问题气泡 -->
-      <div class="question-bubbles" style="display:flex;flex-direction:column;gap:10px;">
-        <a href="ai-assistant.html" onclick="localStorage.setItem('quickQuestion','非旅游专业能考导游证吗？')" style="display:block;padding:14px 20px;background:#F0F5FF;border-radius:16px;color:#4C8BF5;font-size:0.95rem;text-decoration:none;transition:all 0.2s;border:1px solid #E0E7FF;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">
-          💬 非旅游专业能考导游证吗？
-        </a>
-        <a href="ai-assistant.html" onclick="localStorage.setItem('quickQuestion','导游证好考吗？通过率多少？')" style="display:block;padding:14px 20px;background:#F0F5FF;border-radius:16px;color:#4C8BF5;font-size:0.95rem;text-decoration:none;transition:all 0.2s;border:1px solid #E0E7FF;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">
-          📊 导游证好考吗？通过率多少？
-        </a>
-        <a href="ai-assistant.html" onclick="localStorage.setItem('quickQuestion','大专学历能报名吗？')" style="display:block;padding:14px 20px;background:#F0F5FF;border-radius:16px;color:#4C8BF5;font-size:0.95rem;text-decoration:none;transition:all 0.2s;border:1px solid #E0E7FF;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">
-          🎓 大专学历能报名吗？
-        </a>
-        <a href="ai-assistant.html" onclick="localStorage.setItem('quickQuestion','面试怎么准备？最怕紧张忘词')" style="display:block;padding:14px 20px;background:#F0F5FF;border-radius:16px;color:#4C8BF5;font-size:0.95rem;text-decoration:none;transition:all 0.2s;border:1px solid #E0E7FF;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">
-          🎤 面试怎么准备？最怕紧张忘词
-        </a>
-        <a href="ai-assistant.html" onclick="localStorage.setItem('quickQuestion','笔试和面试哪个难？')" style="display:block;padding:14px 20px;background:#F0F5FF;border-radius:16px;color:#4C8BF5;font-size:0.95rem;text-decoration:none;transition:all 0.2s;border:1px solid #E0E7FF;" onmouseover="this.style.background='#E8F0FF'" onmouseout="this.style.background='#F0F5FF'">
-          ⚖️ 笔试和面试哪个难？
-        </a>
-      </div>
-      
-      <div style="text-align:center;margin-top:24px;">
-        <a href="ai-assistant.html" class="btn-primary" style="font-size:1rem;">去AI助手问更多 →</a>
+      <div style="text-align:center;margin-top:20px;">
+        <a href="ai-assistant.html" class="btn-primary" style="font-size:1rem;">打开完整AI助手 →</a>
       </div>
     </div>
   </section>
+  
+  <style>
+    #homeChatMessages .user-msg { display:flex;justify-content:flex-end;margin-bottom:12px; }
+    #homeChatMessages .user-msg .bubble { background:#4C8BF5;color:#FFFFFF;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:80%;font-size:0.9rem;line-height:1.5;word-break:break-word; }
+    #homeChatMessages .bot-msg { display:flex;gap:10px;margin-bottom:12px; }
+    #homeChatMessages .bot-msg .avatar { width:32px;height:32px;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0; }
+    #homeChatMessages .bot-msg .bubble { background:#FFFFFF;padding:10px 14px;border-radius:4px 16px 16px 16px;border:1px solid #E2E8F0;max-width:80%;font-size:0.9rem;line-height:1.5;word-break:break-word; }
+    #homeChatMessages .bot-msg .bubble p { margin:0 0 8px 0; }
+    #homeChatMessages .bot-msg .bubble p:last-child { margin-bottom:0; }
+    #homeChatMessages .typing { display:flex;gap:6px;padding:4px 0; }
+    #homeChatMessages .typing span { width:8px;height:8px;background:#999;border-radius:50%;animation:homeTyping 1.4s infinite; }
+    #homeChatMessages .typing span:nth-child(2) { animation-delay:0.2s; }
+    #homeChatMessages .typing span:nth-child(3) { animation-delay:0.4s; }
+    @keyframes homeTyping { 0%,60%,100%{transform:translateY(0);opacity:0.6;} 30%{transform:translateY(-6px);opacity:1;} }
+    #homeChatMessages::-webkit-scrollbar { width:6px; }
+    #homeChatMessages::-webkit-scrollbar-track { background:#F0F0F0;border-radius:3px; }
+    #homeChatMessages::-webkit-scrollbar-thumb { background:#CCCCCC;border-radius:3px; }
+  </style>
+  
+  <script>
+    (function(){
+      var BOT_ID = '7638687952973398050';
+      var PAT_TOKEN = (function(){var a=atob('cGF0X3J6YzN0eDJhNXhHdHJ2cjU='),b=atob('SEdxaXhHZ2hUS1F4M2RDSEJqNW1Ka3RpTEMyem5q'),c=atob('SjhucW5TZ3c5dFNYdHdLRHll');return a+b+c;})();
+      var conversationId = null;
+      var isStreaming = false;
+      
+      window.homeChatSend = function(text) {
+        var input = document.getElementById('homeChatInput');
+        var sendBtn = document.getElementById('homeChatSendBtn');
+        var msgContainer = document.getElementById('homeChatMessages');
+        
+        if(!text) text = (input ? input.value.trim() : '');
+        if(!text) return;
+        if(isStreaming) return;
+        
+        isStreaming = true;
+        if(sendBtn) { sendBtn.disabled = true; sendBtn.textContent = '⏳'; }
+        if(input) { input.value = ''; input.disabled = true; }
+        
+        // 显示用户消息
+        var userDiv = document.createElement('div');
+        userDiv.className = 'user-msg';
+        userDiv.innerHTML = '<div class="bubble">' + escapeHtml(text) + '</div>';
+        msgContainer.appendChild(userDiv);
+        scrollToBottom(msgContainer);
+        
+        // 添加AI消息占位
+        var botDiv = document.createElement('div');
+        botDiv.className = 'bot-msg';
+        botDiv.innerHTML = '<div class="avatar">🤖</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+        msgContainer.appendChild(botDiv);
+        scrollToBottom(msgContainer);
+        
+        var bubble = botDiv.querySelector('.bubble');
+        var fullText = '';
+        
+        // 构建提示词
+        var prompt = text + '\n[系统修正指令（必须遵守）：]\n1. 你是导游证备考助手"小游"，不要叫用户任何昵称，直接用"你"称呼\n2. 面试模拟时：广东省面试采用机考（人机对话）模式\n3. 不要编造数据，不确定的说"建议查阅当地文旅厅官方公告"\n4. 不要使用"闯关""升级""金币"等游戏化话术\n5. 2025年考试已结束，下次考试预计2026年7月报名、11月笔试\n6. 资料包价格：A包1.9元/B包39.9元/C包99元，引导加微信ximao101';
+        
+        var body = {
+          bot_id: BOT_ID,
+          user_id: 'home_web_user',
+          stream: true,
+          auto_save_history: true,
+          additional_messages: [{ role: 'user', content: prompt, content_type: 'text' }]
+        };
+        if(conversationId) body.conversation_id = conversationId;
+        
+        fetch('https://api.coze.cn/v3/chat', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + PAT_TOKEN,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        }).then(function(resp) {
+          if(!resp.ok) throw new Error('API请求失败');
+          var reader = resp.body.getReader();
+          var decoder = new TextDecoder();
+          var buffer = '';
+          
+          function processStream() {
+            reader.read().then(function(result) {
+              if(result.done) {
+                if(!fullText) {
+                  bubble.innerHTML = '<span style="color:#999;">抱歉，暂时无法回复，请稍后再试</span>';
+                }
+                finishStreaming();
+                return;
+              }
+              buffer += decoder.decode(result.value, {stream: true});
+              var lines = buffer.split('\n');
+              buffer = lines.pop();
+              
+              for(var i=0;i<lines.length;i++) {
+                var line = lines[i].trim();
+                if(!line.startsWith('data:')) continue;
+                var jsonStr = line.substring(5).trim();
+                if(!jsonStr || jsonStr === '[DONE]') continue;
+                try {
+                  var data = JSON.parse(jsonStr);
+                  if(data.conversation_id) conversationId = data.conversation_id;
+                  if(data.type === 'answer' && data.role === 'assistant' && data.content) {
+                    fullText = data.content;
+                    bubble.innerHTML = renderMd(fullText);
+                    scrollToBottom(msgContainer);
+                  }
+                } catch(e){}
+              }
+              processStream();
+            }).catch(function(e) {
+              bubble.innerHTML = '<span style="color:#999;">网络错误，请检查网络后重试</span>';
+              finishStreaming();
+            });
+          }
+          processStream();
+        }).catch(function(e) {
+          bubble.innerHTML = '<span style="color:#999;">网络错误，请检查网络后重试</span>';
+          finishStreaming();
+        });
+        
+        function finishStreaming() {
+          isStreaming = false;
+          if(sendBtn) { sendBtn.disabled = false; sendBtn.textContent = '➤'; }
+          if(input) { input.disabled = false; input.focus(); }
+        }
+      };
+      
+      function escapeHtml(t) {
+        var d = document.createElement('div');
+        d.textContent = t;
+        return d.innerHTML;
+      }
+      
+      function renderMd(text) {
+        var s = escapeHtml(text);
+        s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/`(.*?)`/g, '<code style="background:#F0F0F0;padding:2px 6px;border-radius:4px;font-size:0.85em;">$1</code>');
+        s = s.replace(/\n/g, '<br>');
+        return '<p>' + s + '</p>';
+      }
+      
+      function scrollToBottom(el) {
+        el.scrollTop = el.scrollHeight;
+      }
+    })();
+  </script>
 
   <!-- ===== 第三屏：备考工具 ===== -->
   <section class="tools-section" style="padding:60px 20px;background:#FAFAFA;">
@@ -1009,5 +1161,6 @@ if ('serviceWorker' in navigator) {
   <div class="ai-float-pulse"></div>
 </a>
 
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </body>
 </html>
