@@ -962,6 +962,59 @@ a { color: #4C8BF5 !important; }
 
 
 <script>
+// 考试倒计时
+(function(){
+  var EXAM_DATE_KEY = 'youdao_exam_date';
+  var DEFAULT_EXAM_DATE = '2026-11-22';
+  
+  function getExamDate() {
+    var saved = localStorage.getItem(EXAM_DATE_KEY);
+    return saved || DEFAULT_EXAM_DATE;
+  }
+  
+  function updateCountdown() {
+    var dateStr = getExamDate();
+    var examDate = new Date(dateStr + 'T09:00:00');
+    var now = new Date();
+    var diff = examDate - now;
+    var days = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+    var el = document.getElementById('homeCountdownDays');
+    if (el) el.textContent = days;
+    // Update hint text
+    var hints = document.querySelectorAll('.glass-card');
+    hints.forEach(function(card) {
+      var hint = card.querySelector('div[style*="0.75rem"]');
+      if (hint && hint.textContent.indexOf('点击设置') >= 0) {
+        hint.textContent = dateStr + ' (点击修改)';
+      }
+    });
+  }
+  
+  window.openDatePicker = function() {
+    var current = getExamDate();
+    var input = document.createElement('input');
+    input.type = 'date';
+    input.value = current;
+    input.min = new Date().toISOString().split('T')[0];
+    input.style.position = 'fixed';
+    input.style.top = '-100px';
+    document.body.appendChild(input);
+    input.addEventListener('change', function() {
+      if (this.value) {
+        localStorage.setItem(EXAM_DATE_KEY, this.value);
+        updateCountdown();
+      }
+    });
+    input.addEventListener('blur', function() {
+      document.body.removeChild(this);
+    });
+    input.click();
+  };
+  
+  updateCountdown();
+})();
+</script>
+<script>
 if ('serviceWorker' in navigator) {
   // Unregister ALL service workers to fix loading issues
   navigator.serviceWorker.getRegistrations().then(function(registrations) {
