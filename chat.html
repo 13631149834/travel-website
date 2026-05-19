@@ -135,11 +135,25 @@ body{background:#FFFFFF;color:#333;font-weight:400;display:flex;flex-direction:c
 .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:#FFFFFF;flex-direction:column;padding:12px;border-radius:0 0 16px 16px}
 .nav-links.open{display:flex}
 .nav-toggle{display:flex}
-.msg{max-width:92%}
-.messages{padding:12px 14px;gap:12px}
-.chat-header{padding:12px 14px}
-.input-area{padding:0 14px 16px}
-
+.msg{max-width:95%}
+.messages{padding:8px 10px;gap:10px;-webkit-overflow-scrolling:touch;overflow-y:auto}
+.chat-header{padding:10px 12px}
+.input-area{padding:0 10px 12px}
+/* 手机端气泡优化：文字更大、行距更宽、可滚动 */
+.msg-bubble{padding:12px 14px;font-size:0.92rem;line-height:1.9;word-break:break-word;overflow-wrap:break-word;max-height:none}
+.msg.bot .msg-bubble{border-radius:16px 16px 16px 4px}
+.msg.user .msg-bubble{border-radius:16px 16px 4px 16px}
+/* AI回复长内容可滚动 */
+.msg.bot .msg-bubble{max-height:60vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* 减少头像大小节省空间 */
+.msg-avatar{width:28px;height:28px;font-size:0.7rem}
+.chat-avatar{width:36px;height:36px}
+/* 快捷标签缩小 */
+.shortcut-tag{padding:5px 10px;font-size:0.75rem}
+.follow-btn{padding:6px 10px;font-size:0.78rem}
+/* 欢迎区域缩小 */
+.welcome{padding:12px}
+.welcome-avatar{width:48px;height:48px}
 }
 
 /* === 全局字体强制深色 === */
@@ -811,7 +825,19 @@ async function doSendMessage(text, quote){
               if(!answerId && data.id) answerId = data.id;
               if(!answerId || data.id === answerId){
                 if(!rendered){ clearInterval(timerInterval); rendered = true; }
-                fullText = data.content;
+                // Coze API: content may be incremental or full
+                // If content looks like incremental (starts from beginning each time), use full replace
+                // If content is growing, append
+                if(data.content.length > fullText.length && data.content.startsWith(fullText)) {
+                  // Full content mode: API returns complete text each time
+                  fullText = data.content;
+                } else if(data.content.length <= fullText.length) {
+                  // Full content mode with same or shorter: replace
+                  fullText = data.content;
+                } else {
+                  // Incremental mode: append new content
+                  fullText += data.content;
+                }
                 bubble.innerHTML = renderMd(fullText);
                 // 保留引用按钮
                 msgContainer.scrollTop = msgContainer.scrollHeight;
@@ -1035,7 +1061,14 @@ async function doSendImageMessage(imageDataUrl, text, quote) {
               if(!answerId && data.id) answerId = data.id;
               if(!answerId || data.id === answerId) {
                 if(!rendered){ clearInterval(timerInterval); rendered = true; }
-                fullText = data.content;
+                // Coze API: content may be incremental or full
+                if(data.content.length > fullText.length && data.content.startsWith(fullText)) {
+                  fullText = data.content;
+                } else if(data.content.length <= fullText.length) {
+                  fullText = data.content;
+                } else {
+                  fullText += data.content;
+                }
                 bubble.innerHTML = renderMd(fullText);
                 msgContainer.scrollTop = msgContainer.scrollHeight;
               }
@@ -1351,7 +1384,7 @@ function stopVoice() {
   <a class="tab-item" href="exam-guide.html"><span>📚</span><span>学习</span></a>
   <a class="tab-item" href="exam-simulator.html"><span>✏️</span><span>刷题</span></a>
   <a class="tab-item" href="chat.html"><span>💬</span><span>AI</span></a>
-  <a class="tab-item" href="resources.html"><span>👤</span><span>资料</span></a>
+  <a class="tab-item" href="resources.html"><span>👤</span><span>套餐</span></a>
 </nav>
 
 
@@ -1375,5 +1408,12 @@ document.addEventListener('keydown',function(e){
   if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&(e.key==='I'||e.key==='J'||e.key==='C'))||(e.ctrlKey&&e.key==='u')){e.preventDefault();}
 });
 </script>
+
+<footer style="text-align:center;padding:20px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-bottom:60px;">
+  <a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a> · <a href="index.html" style="color:#4C8BF5;">返回首页</a>
+  <p style="margin-top:6px;">© 2026 游导学习笔记</p>
+  <p style="margin-top:8px;color:#999;font-size:0.8rem;">公众号：逢考必过 & 证好有你</p>
+</footer>
+
 </body>
 </html>
