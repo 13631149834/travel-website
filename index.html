@@ -726,6 +726,23 @@ a { color: #4C8BF5 !important; }
     <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
     <meta name="apple-mobile-web-app-title" content="游导学习笔记"/>
     <link rel="apple-touch-icon" href="favicon.svg"/>
+<style>
+    #homeChatMessages .user-msg { display:flex;justify-content:flex-end;margin-bottom:12px; }
+    #homeChatMessages .user-msg .bubble { background:#4C8BF5;color:#FFFFFF;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:80%;font-size:0.9rem;line-height:1.5;word-break:break-word; }
+    #homeChatMessages .bot-msg { display:flex;gap:10px;margin-bottom:12px; }
+    #homeChatMessages .bot-msg .avatar { width:32px;height:32px;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0; }
+    #homeChatMessages .bot-msg .bubble { background:#FFFFFF;padding:10px 14px;border-radius:4px 16px 16px 16px;border:1px solid #E2E8F0;max-width:80%;font-size:0.9rem;line-height:1.5;word-break:break-word; }
+    #homeChatMessages .bot-msg .bubble p { margin:0 0 8px 0; }
+    #homeChatMessages .bot-msg .bubble p:last-child { margin-bottom:0; }
+    #homeChatMessages .typing { display:flex;gap:6px;padding:4px 0; }
+    #homeChatMessages .typing span { width:8px;height:8px;background:#999;border-radius:50%;animation:homeTyping 1.4s infinite; }
+    #homeChatMessages .typing span:nth-child(2) { animation-delay:0.2s; }
+    #homeChatMessages .typing span:nth-child(3) { animation-delay:0.4s; }
+    @keyframes homeTyping { 0%,60%,100%{transform:translateY(0);opacity:0.6;} 30%{transform:translateY(-6px);opacity:1;} }
+    #homeChatMessages::-webkit-scrollbar { width:6px; }
+    #homeChatMessages::-webkit-scrollbar-track { background:#F0F0F0;border-radius:3px; }
+    #homeChatMessages::-webkit-scrollbar-thumb { background:#CCCCCC;border-radius:3px; }
+  </style>
 </head>
 <body class="mobile-nav-padding">
         <nav class="navbar"><a href="index.html" class="logo">📚 游导学习笔记</a><div class="nav-links"><a href="index.html">首页</a><a href="ai-assistant.html">AI助手</a><a href="exam-simulator.html">刷题</a><a href="resources.html">资料包</a></div><button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button></nav>
@@ -805,154 +822,7 @@ a { color: #4C8BF5 !important; }
         <a href="ai-assistant.html" class="btn-primary" style="font-size:1rem;">打开完整AI助手 →</a>
       </div>
     </div>
-  </section>
   
-  <style>
-    #homeChatMessages .user-msg { display:flex;justify-content:flex-end;margin-bottom:12px; }
-    #homeChatMessages .user-msg .bubble { background:#4C8BF5;color:#FFFFFF;padding:10px 14px;border-radius:16px 16px 4px 16px;max-width:80%;font-size:0.9rem;line-height:1.5;word-break:break-word; }
-    #homeChatMessages .bot-msg { display:flex;gap:10px;margin-bottom:12px; }
-    #homeChatMessages .bot-msg .avatar { width:32px;height:32px;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.85rem;flex-shrink:0; }
-    #homeChatMessages .bot-msg .bubble { background:#FFFFFF;padding:10px 14px;border-radius:4px 16px 16px 16px;border:1px solid #E2E8F0;max-width:80%;font-size:0.9rem;line-height:1.5;word-break:break-word; }
-    #homeChatMessages .bot-msg .bubble p { margin:0 0 8px 0; }
-    #homeChatMessages .bot-msg .bubble p:last-child { margin-bottom:0; }
-    #homeChatMessages .typing { display:flex;gap:6px;padding:4px 0; }
-    #homeChatMessages .typing span { width:8px;height:8px;background:#999;border-radius:50%;animation:homeTyping 1.4s infinite; }
-    #homeChatMessages .typing span:nth-child(2) { animation-delay:0.2s; }
-    #homeChatMessages .typing span:nth-child(3) { animation-delay:0.4s; }
-    @keyframes homeTyping { 0%,60%,100%{transform:translateY(0);opacity:0.6;} 30%{transform:translateY(-6px);opacity:1;} }
-    #homeChatMessages::-webkit-scrollbar { width:6px; }
-    #homeChatMessages::-webkit-scrollbar-track { background:#F0F0F0;border-radius:3px; }
-    #homeChatMessages::-webkit-scrollbar-thumb { background:#CCCCCC;border-radius:3px; }
-  </style>
-  
-  <script>
-    (function(){
-      var BOT_ID = '7638687952973398050';
-      var PAT_TOKEN = (function(){var a=atob('cGF0X3J6YzN0eDJhNXhHdHJ2cjU='),b=atob('SEdxaXhHZ2hUS1F4M2RDSEJqNW1Ka3RpTEMyem5q'),c=atob('SjhucW5TZ3c5dFNYdHdLRHll');return a+b+c;})();
-      var conversationId = null;
-      var isStreaming = false;
-      
-      window.homeChatSend = function(text) {
-        var input = document.getElementById('homeChatInput');
-        var sendBtn = document.getElementById('homeChatSendBtn');
-        var msgContainer = document.getElementById('homeChatMessages');
-        
-        if(!text) text = (input ? input.value.trim() : '');
-        if(!text) return;
-        if(isStreaming) return;
-        
-        isStreaming = true;
-        if(sendBtn) { sendBtn.disabled = true; sendBtn.textContent = '⏳'; }
-        if(input) { input.value = ''; input.disabled = true; }
-        
-        // 显示用户消息
-        var userDiv = document.createElement('div');
-        userDiv.className = 'user-msg';
-        userDiv.innerHTML = '<div class="bubble">' + escapeHtml(text) + '</div>';
-        msgContainer.appendChild(userDiv);
-        scrollToBottom(msgContainer);
-        
-        // 添加AI消息占位
-        var botDiv = document.createElement('div');
-        botDiv.className = 'bot-msg';
-        botDiv.innerHTML = '<div class="avatar">🤖</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
-        msgContainer.appendChild(botDiv);
-        scrollToBottom(msgContainer);
-        
-        var bubble = botDiv.querySelector('.bubble');
-        var fullText = '';
-        
-        // 构建提示词
-        var prompt = text + '\n[系统修正指令（必须遵守）：]\n1. 你是导游证备考助手"小游"，不要叫用户任何昵称，直接用"你"称呼\n2. 面试模拟时：广东省面试采用机考（人机对话）模式\n3. 不要编造数据，不确定的说"建议查阅当地文旅厅官方公告"\n4. 不要使用"闯关""升级""金币"等游戏化话术\n5. 2025年考试已结束，下次考试预计2026年7月报名、11月笔试\n6. 资料包价格：全套49.9元，引导加微信ximao101';
-        
-        var body = {
-          bot_id: BOT_ID,
-          user_id: 'home_web_user',
-          stream: true,
-          auto_save_history: true,
-          additional_messages: [{ role: 'user', content: prompt, content_type: 'text' }]
-        };
-        if(conversationId) body.conversation_id = conversationId;
-        
-        fetch('https://api.coze.cn/v3/chat', {
-          method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + PAT_TOKEN,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
-        }).then(function(resp) {
-          if(!resp.ok) throw new Error('API请求失败');
-          var reader = resp.body.getReader();
-          var decoder = new TextDecoder();
-          var buffer = '';
-          
-          function processStream() {
-            reader.read().then(function(result) {
-              if(result.done) {
-                if(!fullText) {
-                  bubble.innerHTML = '<span style="color:#999;">抱歉，暂时无法回复，请稍后再试</span>';
-                }
-                finishStreaming();
-                return;
-              }
-              buffer += decoder.decode(result.value, {stream: true});
-              var lines = buffer.split('\n');
-              buffer = lines.pop();
-              
-              for(var i=0;i<lines.length;i++) {
-                var line = lines[i].trim();
-                if(!line.startsWith('data:')) continue;
-                var jsonStr = line.substring(5).trim();
-                if(!jsonStr || jsonStr === '[DONE]') continue;
-                try {
-                  var data = JSON.parse(jsonStr);
-                  if(data.conversation_id) conversationId = data.conversation_id;
-                  if(data.type === 'answer' && data.role === 'assistant' && data.content) {
-                    fullText = data.content;
-                    bubble.innerHTML = renderMd(fullText);
-                    scrollToBottom(msgContainer);
-                  }
-                } catch(e){}
-              }
-              processStream();
-            }).catch(function(e) {
-              bubble.innerHTML = '<span style="color:#999;">网络错误，请检查网络后重试</span>';
-              finishStreaming();
-            });
-          }
-          processStream();
-        }).catch(function(e) {
-          bubble.innerHTML = '<span style="color:#999;">网络错误，请检查网络后重试</span>';
-          finishStreaming();
-        });
-        
-        function finishStreaming() {
-          isStreaming = false;
-          if(sendBtn) { sendBtn.disabled = false; sendBtn.textContent = '➤'; }
-          if(input) { input.disabled = false; input.focus(); }
-        }
-      };
-      
-      function escapeHtml(t) {
-        var d = document.createElement('div');
-        d.textContent = t;
-        return d.innerHTML;
-      }
-      
-      function renderMd(text) {
-        var s = escapeHtml(text);
-        s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        s = s.replace(/`(.*?)`/g, '<code style="background:#F0F0F0;padding:2px 6px;border-radius:4px;font-size:0.85em;">$1</code>');
-        s = s.replace(/\n/g, '<br>');
-        return '<p>' + s + '</p>';
-      }
-      
-      function scrollToBottom(el) {
-        el.scrollTop = el.scrollHeight;
-      }
-    })();
-  </script>
 
   <!-- ===== 第三屏：备考工具 ===== -->
   <section class="tools-section" style="padding:60px 20px;background:#FAFAFA;">
@@ -1140,6 +1010,141 @@ if ('serviceWorker' in navigator) {
   <div class="ai-float-pulse"></div>
 </a>
 
+</section>
+  
+  
+  
+  
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script>
+    (function(){
+      var BOT_ID = '7638687952973398050';
+      var PAT_TOKEN = (function(){var a=atob('cGF0X3J6YzN0eDJhNXhHdHJ2cjU='),b=atob('SEdxaXhHZ2hUS1F4M2RDSEJqNW1Ka3RpTEMyem5q'),c=atob('SjhucW5TZ3c5dFNYdHdLRHll');return a+b+c;})();
+      var conversationId = null;
+      var isStreaming = false;
+      
+      window.homeChatSend = function(text) {
+        var input = document.getElementById('homeChatInput');
+        var sendBtn = document.getElementById('homeChatSendBtn');
+        var msgContainer = document.getElementById('homeChatMessages');
+        
+        if(!text) text = (input ? input.value.trim() : '');
+        if(!text) return;
+        if(isStreaming) return;
+        
+        isStreaming = true;
+        if(sendBtn) { sendBtn.disabled = true; sendBtn.textContent = '⏳'; }
+        if(input) { input.value = ''; input.disabled = true; }
+        
+        // 显示用户消息
+        var userDiv = document.createElement('div');
+        userDiv.className = 'user-msg';
+        userDiv.innerHTML = '<div class="bubble">' + escapeHtml(text) + '</div>';
+        msgContainer.appendChild(userDiv);
+        scrollToBottom(msgContainer);
+        
+        // 添加AI消息占位
+        var botDiv = document.createElement('div');
+        botDiv.className = 'bot-msg';
+        botDiv.innerHTML = '<div class="avatar">🤖</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>';
+        msgContainer.appendChild(botDiv);
+        scrollToBottom(msgContainer);
+        
+        var bubble = botDiv.querySelector('.bubble');
+        var fullText = '';
+        
+        // 构建提示词
+        var prompt = text + '\n[系统修正指令（必须遵守）：]\n1. 你是导游证备考助手"小游"，不要叫用户任何昵称，直接用"你"称呼\n2. 面试模拟时：广东省面试采用机考（人机对话）模式\n3. 不要编造数据，不确定的说"建议查阅当地文旅厅官方公告"\n4. 不要使用"闯关""升级""金币"等游戏化话术\n5. 2025年考试已结束，下次考试预计2026年7月报名、11月笔试\n6. 资料包价格：全套49.9元，引导加微信ximao101';
+        
+        var body = {
+          bot_id: BOT_ID,
+          user_id: 'home_web_user',
+          stream: true,
+          auto_save_history: true,
+          additional_messages: [{ role: 'user', content: prompt, content_type: 'text' }]
+        };
+        if(conversationId) body.conversation_id = conversationId;
+        
+        fetch('https://api.coze.cn/v3/chat', {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + PAT_TOKEN,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        }).then(function(resp) {
+          if(!resp.ok) throw new Error('API请求失败');
+          var reader = resp.body.getReader();
+          var decoder = new TextDecoder();
+          var buffer = '';
+          
+          function processStream() {
+            reader.read().then(function(result) {
+              if(result.done) {
+                if(!fullText) {
+                  bubble.innerHTML = '<span style="color:#999;">抱歉，暂时无法回复，请稍后再试</span>';
+                }
+                finishStreaming();
+                return;
+              }
+              buffer += decoder.decode(result.value, {stream: true});
+              var lines = buffer.split('\n');
+              buffer = lines.pop();
+              
+              for(var i=0;i<lines.length;i++) {
+                var line = lines[i].trim();
+                if(!line.startsWith('data:')) continue;
+                var jsonStr = line.substring(5).trim();
+                if(!jsonStr || jsonStr === '[DONE]') continue;
+                try {
+                  var data = JSON.parse(jsonStr);
+                  if(data.conversation_id) conversationId = data.conversation_id;
+                  if(data.type === 'answer' && data.role === 'assistant' && data.content) {
+                    fullText = data.content;
+                    bubble.innerHTML = renderMd(fullText);
+                    scrollToBottom(msgContainer);
+                  }
+                } catch(e){}
+              }
+              processStream();
+            }).catch(function(e) {
+              bubble.innerHTML = '<span style="color:#999;">网络错误，请检查网络后重试</span>';
+              finishStreaming();
+            });
+          }
+          processStream();
+        }).catch(function(e) {
+          bubble.innerHTML = '<span style="color:#999;">网络错误，请检查网络后重试</span>';
+          finishStreaming();
+        });
+        
+        function finishStreaming() {
+          isStreaming = false;
+          if(sendBtn) { sendBtn.disabled = false; sendBtn.textContent = '➤'; }
+          if(input) { input.disabled = false; input.focus(); }
+        }
+      };
+      
+      function escapeHtml(t) {
+        var d = document.createElement('div');
+        d.textContent = t;
+        return d.innerHTML;
+      }
+      
+      function renderMd(text) {
+        var s = escapeHtml(text);
+        s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/`(.*?)`/g, '<code style="background:#F0F0F0;padding:2px 6px;border-radius:4px;font-size:0.85em;">$1</code>');
+        s = s.replace(/\n/g, '<br>');
+        return '<p>' + s + '</p>';
+      }
+      
+      function scrollToBottom(el) {
+        el.scrollTop = el.scrollHeight;
+      }
+    })();
+  </script>
+
 </body>
 </html>
