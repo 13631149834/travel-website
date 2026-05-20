@@ -504,6 +504,21 @@ function submitQuiz() {
   var scoreEl = document.getElementById('quizScore');
   document.getElementById('scoreNum').textContent = correct + '/' + quizData.length;
   scoreEl.classList.add('show');
+  // 存储练习结果到localStorage
+  try {
+    var path = window.location.pathname;
+    var chapterKey = path.substring(path.lastIndexOf('/')+1);
+    var quizResults = JSON.parse(localStorage.getItem('quizResults') || '{}');
+    quizResults[chapterKey] = {score: correct, total: quizData.length, time: Date.now()};
+    localStorage.setItem('quizResults', JSON.stringify(quizResults));
+    // 更新学习进度
+    var readChapters = JSON.parse(localStorage.getItem('readChapters') || '[]');
+    if(readChapters.indexOf(chapterKey) === -1) {
+      readChapters.push(chapterKey);
+      localStorage.setItem('readChapters', JSON.stringify(readChapters));
+    }
+  } catch(e) {}
+
 }
 
 function resetQuiz() {
