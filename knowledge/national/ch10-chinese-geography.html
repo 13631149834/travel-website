@@ -680,5 +680,18 @@ function resetQuiz() {
 
 document.addEventListener('DOMContentLoaded', renderQuiz);
 
+<script>
+// 记录已读章节
+try {// page-read-tracker
+  var path = window.location.pathname;
+  var chapterKey = path.substring(path.lastIndexOf('/')+1);
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '[]');
+  if(readChapters.indexOf(chapterKey) === -1) {
+    readChapters.push(chapterKey);
+    localStorage.setItem('readChapters', JSON.stringify(readChapters));
+  }
+} catch(e) {}
+</script>
+
 </body>
 </html>
