@@ -769,7 +769,7 @@ function retryWrong() {
 }
 </script>
 
-<nav class="bottom-tabs"><a class="tab-item" href="/index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item" href="/ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="/exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="/resources.html"><span class="tab-icon">📦</span><span class="tab-label">资料包</span></a><a class="tab-item" href="/travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
+<nav class="bottom-tabs"><a class="tab-item" href="/index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item" href="/search.html"><span class="tab-icon">🔍</span><span class="tab-label">搜索</span></a><a class="tab-item" href="/exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="/ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="/travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
 <script>
 // 滚动高亮当前章节
 (function(){
@@ -792,6 +792,21 @@ function retryWrong() {
   }
   window.addEventListener('scroll', update, {passive:true});
   update();
+})();
+</script>
+<!-- 悬浮AI助手按钮 -->
+<a class="floating-ai-btn" id="floatingAI" href="/chat.html" title="遇到问题？问AI">💬</a>
+<span class="floating-ai-label">问AI</span>
+<script>
+(function(){
+  var btn = document.getElementById('floatingAI');
+  if(!btn) return;
+  // 获取当前章节名，预填问题
+  var h1 = document.querySelector('h1');
+  var chapterName = h1 ? h1.textContent.trim() : '';
+  if(chapterName) {
+    btn.href = '/chat.html?q=' + encodeURIComponent(chapterName + '疑问：');
+  }
 })();
 </script>
 </body>

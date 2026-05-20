@@ -536,6 +536,17 @@ setTimeout(function(){ if(msgContainer) msgContainer.scrollTop = msgContainer.sc
     mo.observe(msgContainer, {childList: true, subtree: true});
   }
 var inputEl = document.getElementById('userInput');
+
+// 支持URL预填问题（从章节页悬浮AI按钮跳转）
+try {
+  var urlParams = new URLSearchParams(window.location.search);
+  var prefillQ = urlParams.get('q');
+  if (prefillQ) {
+    inputEl.value = prefillQ;
+    inputEl.focus();
+    inputEl.dispatchEvent(new Event('input'));
+  }
+} catch(e) {}
 var sendBtn = document.getElementById('sendBtn');
 var welcomeEl = document.getElementById('welcome');
 var timerInterval = null;

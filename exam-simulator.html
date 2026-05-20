@@ -1452,6 +1452,20 @@ const analysisHtml = wrongList.length > 0 ? `
 
 document.getElementById('wrongAnalysis').innerHTML = analysisHtml;
 
+// 添加"下一步"引导
+var nextStepHtml = '<div style="margin-top:20px;padding:20px;background:linear-gradient(135deg,#F0F5FF,#E8F0FE);border-radius:16px;text-align:center;">'
+  + '<div style="font-size:0.88rem;color:#475569;font-weight:600;margin-bottom:14px;">接下来做什么？</div>'
+  + '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">';
+if(wrong > 0) {
+  nextStepHtml += '<a href="wrong-questions.html" style="padding:10px 20px;background:#FFF5F5;color:#EF4444;border:1px solid #FECACA;border-radius:12px;font-size:0.85rem;font-weight:600;text-decoration:none;">📋 查看错题（' + wrong + '道）</a>';
+}
+if(score < 60) {
+  nextStepHtml += '<a href="travel-knowledge.html" style="padding:10px 20px;background:#F0FFF4;color:#38A169;border:1px solid #9AE6B4;border-radius:12px;font-size:0.85rem;font-weight:600;text-decoration:none;">📚 回看知识点</a>';
+}
+nextStepHtml += '<a href="ai-assistant.html" style="padding:10px 20px;background:#F0F5FF;color:#4C8BF5;border:1px solid #D0DFFF;border-radius:12px;font-size:0.85rem;font-weight:600;text-decoration:none;">💬 问AI薄弱点</a>';
+nextStepHtml += '</div></div>';
+var wrongAnalysisEl = document.getElementById('wrongAnalysis');
+if(wrongAnalysisEl) { wrongAnalysisEl.innerHTML += nextStepHtml; }
 
 document.getElementById('backToTop').scrollIntoView({ behavior: 'smooth' });
 
@@ -1914,7 +1928,19 @@ if (nextEl) {
     if (resultEl) {
       var pct = Math.round(dailyCorrect / dailyQuestions.length * 100);
       var emoji = pct >= 80 ? '🎉' : pct >= 60 ? '👍' : '💪';
-      resultEl.innerHTML = '<div style="background:#fff;border:1px solid #F0F0F0;border-radius:20px;padding:24px;text-align:center;margin-top:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);"><div style="font-size:2.5rem;margin-bottom:10px;">' + emoji + '</div><div style="font-size:1.2rem;font-weight:700;color:#1A1A1A;margin-bottom:6px;">练习完成！</div><div style="font-size:1rem;color:#666;">答对 ' + dailyCorrect + ' / ' + dailyQuestions.length + ' 题（' + pct + '%）</div><button onclick="resetDailyPractice()" style="margin-top:16px;background:#4C8BF5;color:#fff;border:none;padding:12px 32px;border-radius:25px;font-size:0.9rem;font-weight:600;cursor:pointer;">再练一次</button></div>';
+      resultEl.innerHTML = '<div style="background:#fff;border:1px solid #F0F0F0;border-radius:20px;padding:24px;text-align:center;margin-top:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">'
+      + '<div style="font-size:2.5rem;margin-bottom:10px;">' + emoji + '</div>'
+      + '<div style="font-size:1.2rem;font-weight:700;color:#1A1A1A;margin-bottom:6px;">练习完成！</div>'
+      + '<div style="font-size:1rem;color:#666;">答对 ' + dailyCorrect + ' / ' + dailyQuestions.length + ' 题（' + pct + '%）</div>'
+      + '<div style="margin-top:20px;padding-top:16px;border-top:1px solid #F0F0F0;">'
+      + '<div style="font-size:0.82rem;color:#999;margin-bottom:12px;">接下来做什么？</div>'
+      + '<div style="display:flex;flex-direction:column;gap:8px;align-items:center;">'
+      + (dailyCorrect < dailyQuestions.length ? '<a href="wrong-questions.html" style="display:block;width:100%;max-width:260px;padding:10px 20px;background:#FFF5F5;color:#EF4444;border:1px solid #FECACA;border-radius:12px;font-size:0.88rem;font-weight:600;text-decoration:none;">📋 查看错题（' + (dailyQuestions.length - dailyCorrect) + '道）→</a>' : '')
+      + '<a href="travel-knowledge.html" style="display:block;width:100%;max-width:260px;padding:10px 20px;background:#F0F5FF;color:#4C8BF5;border:1px solid #D0DFFF;border-radius:12px;font-size:0.88rem;font-weight:600;text-decoration:none;">📚 继续看知识点 →</a>'
+      + '<a href="ai-assistant.html" style="display:block;width:100%;max-width:260px;padding:10px 20px;background:#F0FFF4;color:#38A169;border:1px solid #9AE6B4;border-radius:12px;font-size:0.88rem;font-weight:600;text-decoration:none;">💬 不懂的问AI →</a>'
+      + '</div></div>'
+      + '<button onclick="resetDailyPractice()" style="margin-top:16px;background:#F1F5F9;color:#666;border:1px solid #E2E8F0;padding:10px 32px;border-radius:25px;font-size:0.85rem;font-weight:500;cursor:pointer;">再练一次</button>'
+      + '</div>';
     }
   }
 }
@@ -1980,7 +2006,7 @@ window.GameSystem={
 </script>
 <div style="text-align:center;padding:16px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-top:20px;"><a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a></div>
 
-<nav class="bottom-tabs"><a class="tab-item" href="index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item" href="ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="resources.html"><span class="tab-icon">📦</span><span class="tab-label">资料包</span></a><a class="tab-item" href="travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
+<nav class="bottom-tabs"><a class="tab-item" href="index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item" href="search.html"><span class="tab-icon">🔍</span><span class="tab-label">搜索</span></a><a class="tab-item" href="exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
 <p style="text-align:center;font-size:0.7rem;color:#999;padding:8px 0 70px;background:#FAFAFA;">走过弯路，所以更懂路</p>
 
 
