@@ -766,7 +766,7 @@ a { color: #4C8BF5 !important; }
     <link rel="apple-touch-icon" href="favicon.svg"/>
 </head>
 <body>
-      <nav class="navbar"><a href="index.html" class="logo">📚 游导学习笔记</a><div class="nav-links"><a href="index.html">首页</a><a href="ai-assistant.html">AI助手</a><a href="exam-simulator.html">刷题</a><a href="resources.html">资料包</a></div><button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button></nav>
+      <nav class="navbar"><a href="index.html" class="logo">📚 游导学习笔记</a><div class="nav-links"><a href="index.html">首页</a><a href="ai-assistant.html">AI助手</a><a href="exam-simulator.html">刷题</a><a href="travel-knowledge.html">知识库</a><a href="resources.html">资料包</a></div><button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button></nav>
 
   <div class="page-header">
     <h1>备考知识库</h1>
@@ -776,6 +776,71 @@ a { color: #4C8BF5 !important; }
   <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>学习中心</span> <span class="sep">›</span> <span>备考知识</span></div>
   
   <div class="container">
+
+  
+<!-- 站内搜索 -->
+<div style="max-width:1100px;margin:0 auto;padding:0 20px 20px;">
+  <div style="position:relative;">
+    <input type="text" id="knowledgeSearch" placeholder="搜索知识点：如'罚款金额''口诀''八大菜系'..." style="width:100%;padding:14px 20px 14px 44px;border:2px solid #E2E8F0;border-radius:12px;font-size:1rem;outline:none;transition:border-color 0.2s;background:#FFF;" onfocus="this.style.borderColor='#4C8BF5'" onblur="this.style.borderColor='#E2E8F0'" oninput="searchKnowledge(this.value)">
+    <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;color:#999;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+  </div>
+  <div id="searchResults" style="margin-top:8px;"></div>
+</div>
+
+<script>
+const searchData = [{"title": "第1章 导游服务", "keywords": "导游服务 概念 原则 特点 类型 服务范围", "url": "knowledge/business/ch01-tour-guide-service.html", "subject": "导游业务"}, {"title": "第2章 导游", "keywords": "导游 分类 职责 素质 资格 执业", "url": "knowledge/business/ch02-tour-guide.html", "subject": "导游业务"}, {"title": "第3章 团队导游服务规范", "keywords": "地陪 全陪 领队 服务程序 规范 接待计划", "url": "knowledge/business/ch03-team-guide.html", "subject": "导游业务"}, {"title": "第4章 散客导游服务规范", "keywords": "散客 接待 服务程序 散客导游", "url": "knowledge/business/ch04-independent-traveler.html", "subject": "导游业务"}, {"title": "第5章 导游语言技能", "keywords": "语言 交际 态势语言 体态语 口语表达", "url": "knowledge/business/ch05-language-skills.html", "subject": "导游业务"}, {"title": "第6章 导游带团技能", "keywords": "带团 组织 协调 引导 沟通 审美", "url": "knowledge/business/ch06-tour-group-skills.html", "subject": "导游业务"}, {"title": "第7章 导游讲解技能", "keywords": "讲解 虚实结合 触景生情 因人施讲 讲解方法", "url": "knowledge/business/ch07-commentary-skills.html", "subject": "导游业务"}, {"title": "第8章 导游应变技能", "keywords": "应变 突发事件 事故处理 走失 漏接 错接", "url": "knowledge/business/ch08-emergency-handling.html", "subject": "导游业务"}, {"title": "第9章 导游相关知识", "keywords": "交通 航班 火车 住宿 饮食 购物 娱乐", "url": "knowledge/business/ch09-related-knowledge.html", "subject": "导游业务"}, {"title": "第1章 中国式现代化", "keywords": "中国式现代化 五个特征 两步走 2035 2050", "url": "knowledge/policy/ch01-chinese-modernization.html", "subject": "政策法规"}, {"title": "第2章 法治中国建设", "keywords": "依法治国 法治政府 法治社会 宪法实施", "url": "knowledge/policy/ch02-rule-of-law-china.html", "subject": "政策法规"}, {"title": "第3章 十四五规划", "keywords": "十四五 旅游业规划 文旅融合 全域旅游", "url": "knowledge/policy/ch03-14th-five-year-plan.html", "subject": "政策法规"}, {"title": "第4章 旅游方针政策", "keywords": "旅游政策 文旅融合 红色旅游 乡村旅游", "url": "knowledge/policy/ch04-tourism-policy.html", "subject": "政策法规"}, {"title": "第5章 宪法基本知识", "keywords": "宪法 公民权利 基本义务 国家机构", "url": "knowledge/policy/ch05-constitution.html", "subject": "政策法规"}, {"title": "第6章 国家安全法律制度", "keywords": "国家安全 反间谍 网络安全", "url": "knowledge/policy/ch06-national-security.html", "subject": "政策法规"}, {"title": "第7章 民法基本知识", "keywords": "民法 民事主体 民事法律行为 代理 诉讼时效", "url": "knowledge/policy/ch07-civil-law.html", "subject": "政策法规"}, {"title": "第8章 合同法律制度", "keywords": "合同 订立 履行 变更 解除 违约 定金", "url": "knowledge/policy/ch08-contract-law.html", "subject": "政策法规"}, {"title": "第9章 侵权责任法律制度", "keywords": "侵权 归责原则 损害赔偿 精神损害", "url": "knowledge/policy/ch09-tort-law.html", "subject": "政策法规"}, {"title": "第10章 旅游法基础知识", "keywords": "旅游法 旅游者权利 旅游规划 旅游促进", "url": "knowledge/policy/ch10-tourism-law-basics.html", "subject": "政策法规"}, {"title": "第11章 旅游者与消费者法律制度", "keywords": "消费者权利 旅游者权利 知情权 选择权", "url": "knowledge/policy/ch11-tourist-consumer-law.html", "subject": "政策法规"}, {"title": "第12章 旅行社法律制度", "keywords": "旅行社 设立 经营 分社 法律责任 罚款", "url": "knowledge/policy/ch12-travel-agency-law.html", "subject": "政策法规"}, {"title": "第13章 导游管理法律制度", "keywords": "导游 资格 执业 权利义务 证管理 罚款", "url": "knowledge/policy/ch13-guide-management.html", "subject": "政策法规"}, {"title": "第14章 旅游安全与保险", "keywords": "安全 保险 旅游意外险 责任险 事故处理", "url": "knowledge/policy/ch14-safety-insurance.html", "subject": "政策法规"}, {"title": "第15章 出入境与交通法律", "keywords": "护照 签证 出入境 航空 铁路 运输", "url": "knowledge/policy/ch15-entry-exit-transport.html", "subject": "政策法规"}, {"title": "第16章 食品安全娱乐住宿", "keywords": "食品安全 住宿 娱乐 星级饭店", "url": "knowledge/policy/ch16-food-accommodation.html", "subject": "政策法规"}, {"title": "第17章 旅游资源管理", "keywords": "风景名胜区 文物保护 世界遗产 自然保护区", "url": "knowledge/policy/ch17-tourism-resources.html", "subject": "政策法规"}, {"title": "第18章 解决旅游纠纷", "keywords": "纠纷 协商 调解 仲裁 诉讼 投诉", "url": "knowledge/policy/ch18-dispute-resolution.html", "subject": "政策法规"}, {"title": "第1章 中国共产党历程", "keywords": "中共 建党 南昌起义 遵义会议 改革开放", "url": "knowledge/national/ch01-cpc-history.html", "subject": "全国导基"}, {"title": "第2章 旅游业发展概况", "keywords": "旅游业 发展 历程 现状 趋势 入境游", "url": "knowledge/national/ch02-tourism-overview.html", "subject": "全国导基"}, {"title": "第3章 历史文化知识", "keywords": "朝代 夏商周 秦汉 唐宋元明清 历史 文化的", "url": "knowledge/national/ch03-history-culture.html", "subject": "全国导基"}, {"title": "第4章 中国文学知识", "keywords": "诗词 李白 杜甫 四大名著 红楼梦 文学", "url": "knowledge/national/ch04-chinese-literature.html", "subject": "全国导基"}, {"title": "第5章 中国建筑文化", "keywords": "宫殿 故宫 坛庙 宗教建筑 民居 四合院", "url": "knowledge/national/ch05-chinese-architecture.html", "subject": "全国导基"}, {"title": "第6章 中国园林文化", "keywords": "园林 皇家园林 私家园林 拙政园 颐和园", "url": "knowledge/national/ch06-chinese-gardens.html", "subject": "全国导基"}, {"title": "第7章 中国饮食文化", "keywords": "八大菜系 川菜 粤菜 鲁菜 苏菜 茶文化", "url": "knowledge/national/ch07-chinese-cuisine.html", "subject": "全国导基"}, {"title": "第8章 中国传统工艺美术", "keywords": "陶瓷 刺绣 漆器 瓷器 苏绣 景德镇", "url": "knowledge/national/ch08-chinese-crafts.html", "subject": "全国导基"}, {"title": "第9章 中国民族与宗教", "keywords": "56个民族 佛教 道教 伊斯兰教 基督教", "url": "knowledge/national/ch09-chinese-religion.html", "subject": "全国导基"}, {"title": "第10章 中国自然与地理", "keywords": "四大高原 四大盆地 三大平原 河流 山脉", "url": "knowledge/national/ch10-chinese-geography.html", "subject": "全国导基"}, {"title": "第11章 主要客源国概况", "keywords": "客源国 日本 韩国 美国 欧洲 澳大利亚", "url": "knowledge/national/ch11-china-source-markets.html", "subject": "全国导基"}, {"title": "第1章 华北地区", "keywords": "北京 天津 河北 山西 内蒙古 故宫 长城", "url": "knowledge/local/ch01-northchina.html", "subject": "地方导基"}, {"title": "第2章 东北地区", "keywords": "辽宁 吉林 黑龙江 长白山 沈阳故宫", "url": "knowledge/local/ch02-northeast.html", "subject": "地方导基"}, {"title": "第3章 华东地区", "keywords": "上海 江苏 浙江 安徽 福建 江西 山东 西湖 苏州", "url": "knowledge/local/ch03-eastchina.html", "subject": "地方导基"}, {"title": "第4章 华中地区", "keywords": "河南 湖北 湖南 黄鹤楼 张家界 龙门石窟", "url": "knowledge/local/ch04-centralchina.html", "subject": "地方导基"}, {"title": "第5章 华南地区", "keywords": "广东 广西 海南 桂林 丹霞山 天涯海角", "url": "knowledge/local/ch05-southchina.html", "subject": "地方导基"}, {"title": "第6章 西南地区", "keywords": "重庆 四川 贵州 云南 西藏 九寨沟 布达拉宫", "url": "knowledge/local/ch06-southwest.html", "subject": "地方导基"}, {"title": "第7章 西北地区", "keywords": "陕西 甘肃 青海 宁夏 新疆 兵马俑 莫高窟", "url": "knowledge/local/ch07-northwest.html", "subject": "地方导基"}, {"title": "第8章 港澳台地区", "keywords": "香港 澳门 台湾 维多利亚港 日月潭", "url": "knowledge/local/ch08-hmt.html", "subject": "地方导基"}];
+
+function searchKnowledge(query) {
+  const container = document.getElementById('searchResults');
+  if (!query || query.length < 2) {
+    container.innerHTML = '';
+    return;
+  }
+  const q = query.toLowerCase();
+  const results = searchData.filter(item => {
+    return item.title.toLowerCase().includes(q) || 
+           item.keywords.toLowerCase().includes(q) ||
+           item.subject.toLowerCase().includes(q);
+  });
+  if (results.length === 0) {
+    container.innerHTML = '<div style="padding:16px;color:#888;text-align:center;">未找到相关内容，试试其他关键词</div>';
+    return;
+  }
+  const subjectColors = {'导游业务':'#4C8BF5','政策法规':'#D97706','全国导基':'#059669','地方导基':'#DB2777'};
+  let html = '<div style="background:#FFF;border-radius:12px;border:1px solid #E2E8F0;overflow:hidden;">';
+  results.forEach(item => {
+    const color = subjectColors[item.subject] || '#4C8BF5';
+    html += '<a href="'+item.url+'" style="display:flex;align-items:center;gap:12px;padding:12px 16px;text-decoration:none;color:#333;border-bottom:1px solid #F0F0F0;transition:background 0.15s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">';
+    html += '<span style="background:'+color+'15;color:'+color+';padding:3px 10px;border-radius:6px;font-size:0.75rem;font-weight:600;white-space:nowrap;">'+item.subject+'</span>';
+    html += '<span style="font-size:0.9rem;">'+item.title+'</span>';
+    html += '</a>';
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+</script>
+
+  
+<!-- 学习进度 -->
+<div id="progressBar" style="max-width:1100px;margin:0 auto;padding:0 20px 20px;display:none;">
+  <div style="background:#FFF;border:1px solid #E2E8F0;border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <div style="width:36px;height:36px;background:#F0F5FF;border-radius:8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4C8BF5" stroke-width="2"><path d="M12 20V10M6 20V4M18 20v-6"/></svg>
+      </div>
+      <div>
+        <div style="font-size:0.85rem;color:#888;">上次学习</div>
+        <a id="lastChapterLink" href="#" style="font-size:0.95rem;font-weight:600;color:#4C8BF5;text-decoration:none;"></a>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span id="progressText" style="font-size:0.85rem;color:#666;"></span>
+      <div style="width:120px;height:6px;background:#F0F0F0;border-radius:3px;overflow:hidden;">
+        <div id="progressFill" style="height:100%;background:#4C8BF5;border-radius:3px;transition:width 0.3s;"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- 四科章节导航区 -->
   <div style="max-width:1100px;margin:0 auto;padding:0 20px 30px;">
@@ -1422,6 +1487,72 @@ if ('serviceWorker' in navigator) {
   <span>🤖</span>
   <div class="ai-float-pulse"></div>
 </a>
+
+
+<script>
+// 学习进度追踪
+(function(){
+  const STORAGE_KEY = 'youdao_learning_progress';
+  const TOTAL_CHAPTERS = 46;
+  
+  function getProgress() {
+    try {
+      return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"chapters":[],"lastChapter":null}');
+    } catch(e) {
+      return {"chapters":[],"lastChapter":null};
+    }
+  }
+  
+  function saveProgress(data) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch(e) {}
+  }
+  
+  // 记录当前页面
+  const path = window.location.pathname;
+  if (path.includes('/knowledge/')) {
+    const match = path.match(/\/(ch\d+[^/]*\.html)/);
+    if (match) {
+      const progress = getProgress();
+      if (!progress.chapters.includes(match[1])) {
+        progress.chapters.push(match[1]);
+      }
+      progress.lastChapter = match[1];
+      progress.lastTime = Date.now();
+      saveProgress(progress);
+    }
+  }
+  
+  // 显示进度
+  const progress = getProgress();
+  const bar = document.getElementById('progressBar');
+  if (bar && progress.chapters.length > 0) {
+    bar.style.display = 'block';
+    const pct = Math.round((progress.chapters.length / TOTAL_CHAPTERS) * 100);
+    document.getElementById('progressText').textContent = progress.chapters.length + '/' + TOTAL_CHAPTERS + '章';
+    document.getElementById('progressFill').style.width = pct + '%';
+    if (progress.lastChapter) {
+      const link = document.getElementById('lastChapterLink');
+      // 从当前页找对应的章节链接
+      const allLinks = document.querySelectorAll('a[href*="' + progress.lastChapter + '"]');
+      if (allLinks.length > 0) {
+        link.textContent = allLinks[0].textContent.trim();
+        link.href = allLinks[0].href;
+      } else {
+        // 找不到就显示文件名
+        link.textContent = '继续学习 →';
+        // 尝试构造链接
+        const chapterLinks = {
+          'ch01-tour-guide-service.html':'knowledge/business/ch01-tour-guide-service.html',
+          'ch02-tour-guide.html':'knowledge/business/ch02-tour-guide.html'
+        };
+        link.href = chapterLinks[progress.lastChapter] || '#';
+      }
+    }
+  }
+})();
+</script>
 
 </body>
 </html>
