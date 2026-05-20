@@ -76,6 +76,47 @@
     .chapter-nav .nav-row { flex-direction: column; }
     .chapter-nav a { width: 100%; justify-content: center; }
 }
+
+/* 口诀点击展开交互 */
+.mnemonic-toggle {
+    cursor: pointer;
+    user-select: none;
+    position: relative;
+    transition: all 0.3s;
+}
+.mnemonic-toggle:hover {
+    filter: brightness(1.05);
+}
+.mnemonic-toggle .toggle-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+.mnemonic-toggle .toggle-arrow {
+    display: inline-block;
+    transition: transform 0.3s;
+    font-size: 0.8em;
+}
+.mnemonic-toggle.active .toggle-arrow {
+    transform: rotate(90deg);
+}
+.mnemonic-toggle .toggle-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 12px;
+}
+.mnemonic-toggle.active .toggle-content {
+    max-height: 500px;
+    padding: 12px;
+}
+.mnemonic-toggle .toggle-hint {
+    font-size: 0.8em;
+    opacity: 0.7;
+    margin-left: 4px;
+}
+
 </style>
 
 </head>
@@ -323,8 +364,15 @@
 <li>报告<span class="高频考点">旅行社</span>和<span class="高频考点">卫生防疫部门</span></li>
 </ul>
 
-<div class="口诀-box">
-<strong>📌 口诀记忆：</strong>突发事故莫慌张，沉着冷静是首项；误机误车立即报，游客走失搜寻忙；疾病死亡送医院，火灾逃生不乘梯；交通事故先报警，食物中毒催吐先。
+<div class="mnemonic-toggle 口诀-box" style="background: linear-gradient(135deg, #FFF9E6, #FFF3CC); padding: 16px; border-radius: 10px; margin: 16px 0; border-left: 4px solid #FFB800;">
+    <div class="toggle-header" style="color: #B8860B;">
+        <span class="toggle-arrow">&#9654;</span>
+        <span>背不下来？试试口诀</span>
+        <span class="toggle-hint">点击展开</span>
+    </div>
+    <div class="toggle-content" style="color: #5D4E37; line-height: 1.8;">
+        <strong>📌 口诀记忆：</strong>突发事故莫慌张，沉着冷静是首项；误机误车立即报，游客走失搜寻忙；疾病死亡送医院，火灾逃生不乘梯；交通事故先报警，食物中毒催吐先。
+    </div>
 </div>
 
 <h2>三、自然灾害的避险</h2>
@@ -455,6 +503,22 @@
         <a href="ch01-tour-guide-service.html" class="">第1章 导游服务</a><a href="ch02-tour-guide.html" class="">第2章 导游</a><a href="ch03-team-guide.html" class="">第3章 团队导游服务规范</a><a href="ch04-independent-traveler.html" class="">第4章 散客导游服务规范</a><a href="ch05-language-skills.html" class="">第5章 导游语言技能</a><a href="ch06-tour-group-skills.html" class="">第6章 导游带团技能</a><a href="ch07-commentary-skills.html" class="">第7章 导游讲解技能</a><a href="ch08-emergency-handling.html" class="current">第8章 导游应变技能</a><a href="ch09-related-knowledge.html" class="">第9章 导游相关知识</a>
     </div>
 </div>
+
+
+<script>
+document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
+    var header = el.querySelector('.toggle-header');
+    if (header) {
+        header.addEventListener('click', function() {
+            el.classList.toggle('active');
+            var hint = el.querySelector('.toggle-hint');
+            if (hint) {
+                hint.textContent = el.classList.contains('active') ? '点击收起' : '点击展开';
+            }
+        });
+    }
+});
+</script>
 
 </body>
 </html>

@@ -36,7 +36,18 @@
         .footer-cta .slogan { margin-top: 15px; font-size: 1.1em; }
         .wechat { background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 25px; display: inline-block; margin: 10px 0; }
         footer { text-align: center; padding: 20px; color: #999; font-size: 0.85em; }
-    </style>
+    
+/* 口诀点击展开交互 */
+.mnemonic-toggle { cursor: pointer; user-select: none; position: relative; transition: all 0.3s; }
+.mnemonic-toggle:hover { filter: brightness(1.05); }
+.mnemonic-toggle .toggle-header { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.mnemonic-toggle .toggle-arrow { display: inline-block; transition: transform 0.3s; font-size: 0.8em; }
+.mnemonic-toggle.active .toggle-arrow { transform: rotate(90deg); }
+.mnemonic-toggle .toggle-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0 12px; }
+.mnemonic-toggle.active .toggle-content { max-height: 500px; padding: 12px; }
+.mnemonic-toggle .toggle-hint { font-size: 0.8em; opacity: 0.7; margin-left: 4px; }
+
+</style>
 
 <style>
 .chapter-nav {
@@ -107,6 +118,17 @@
     .chapter-nav .nav-row { flex-direction: column; }
     .chapter-nav a { width: 100%; justify-content: center; }
 }
+
+/* 口诀点击展开交互 */
+.mnemonic-toggle { cursor: pointer; user-select: none; position: relative; transition: all 0.3s; }
+.mnemonic-toggle:hover { filter: brightness(1.05); }
+.mnemonic-toggle .toggle-header { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.mnemonic-toggle .toggle-arrow { display: inline-block; transition: transform 0.3s; font-size: 0.8em; }
+.mnemonic-toggle.active .toggle-arrow { transform: rotate(90deg); }
+.mnemonic-toggle .toggle-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0 12px; }
+.mnemonic-toggle.active .toggle-content { max-height: 500px; padding: 12px; }
+.mnemonic-toggle .toggle-hint { font-size: 0.8em; opacity: 0.7; margin-left: 4px; }
+
 </style>
 
 </head>
@@ -388,14 +410,20 @@
                 <tr><td>非洲</td><td>对中国快速发展感兴趣，商务旅游较多</td></tr>
             </table>
             
-            <div class="rhyme">
-                <div class="rhyme-title">📌 口诀记忆</div>
-                <p><strong>日本富士山，韩国景福宫</strong></p>
+            <div class="mnemonic-toggle rhyme" style="background: linear-gradient(135deg, #FFF9E6, #FFF3CC); padding: 16px; border-radius: 10px; margin: 16px 0; border-left: 4px solid #FFB800; border: 2px dashed #f0c000;">
+    <div class="toggle-header" style="color: #B8860B;">
+        <span class="toggle-arrow">&#9654;</span>
+        <span>背不下来？试试口诀</span>
+        <span class="toggle-hint">点击展开</span>
+    </div>
+    <div class="toggle-content" style="color: #5D4E37; line-height: 1.8;">
+        <p><strong>日本富士山，韩国景福宫</strong></p>
                 <p><strong>新加坡鱼尾狮，泰国大皇宫</strong></p>
                 <p><strong>法国埃菲尔，英国大本钟</strong></p>
                 <p><strong>美国自由女神，澳大利亚悉尼歌剧院</strong></p>
                 <p><strong>埃及金字塔，南非好望角</strong></p>
-            </div>
+    </div>
+</div>
             
             <div class="exam-tip">常考题型：选择题、配对题。重点记忆各国首都、货币、著名景点、文化特色。</div>
         </div>
@@ -425,5 +453,17 @@
     </div>
 </div>
 
+<script>
+document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
+    var header = el.querySelector('.toggle-header');
+    if (header) {
+        header.addEventListener('click', function() {
+            el.classList.toggle('active');
+            var hint = el.querySelector('.toggle-hint');
+            if (hint) { hint.textContent = el.classList.contains('active') ? '点击收起' : '点击展开'; }
+        });
+    }
+});
+</script>
 </body>
 </html>

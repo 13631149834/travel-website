@@ -36,7 +36,18 @@
         .footer-cta .slogan { margin-top: 15px; font-size: 1.1em; }
         .wechat { background: rgba(255,255,255,0.2); padding: 10px 20px; border-radius: 25px; display: inline-block; margin: 10px 0; }
         footer { text-align: center; padding: 20px; color: #999; font-size: 0.85em; }
-    </style>
+    
+/* 口诀点击展开交互 */
+.mnemonic-toggle { cursor: pointer; user-select: none; position: relative; transition: all 0.3s; }
+.mnemonic-toggle:hover { filter: brightness(1.05); }
+.mnemonic-toggle .toggle-header { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.mnemonic-toggle .toggle-arrow { display: inline-block; transition: transform 0.3s; font-size: 0.8em; }
+.mnemonic-toggle.active .toggle-arrow { transform: rotate(90deg); }
+.mnemonic-toggle .toggle-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0 12px; }
+.mnemonic-toggle.active .toggle-content { max-height: 500px; padding: 12px; }
+.mnemonic-toggle .toggle-hint { font-size: 0.8em; opacity: 0.7; margin-left: 4px; }
+
+</style>
 
 <style>
 .chapter-nav {
@@ -107,6 +118,17 @@
     .chapter-nav .nav-row { flex-direction: column; }
     .chapter-nav a { width: 100%; justify-content: center; }
 }
+
+/* 口诀点击展开交互 */
+.mnemonic-toggle { cursor: pointer; user-select: none; position: relative; transition: all 0.3s; }
+.mnemonic-toggle:hover { filter: brightness(1.05); }
+.mnemonic-toggle .toggle-header { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.mnemonic-toggle .toggle-arrow { display: inline-block; transition: transform 0.3s; font-size: 0.8em; }
+.mnemonic-toggle.active .toggle-arrow { transform: rotate(90deg); }
+.mnemonic-toggle .toggle-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; padding: 0 12px; }
+.mnemonic-toggle.active .toggle-content { max-height: 500px; padding: 12px; }
+.mnemonic-toggle .toggle-hint { font-size: 0.8em; opacity: 0.7; margin-left: 4px; }
+
 </style>
 
 </head>
@@ -266,15 +288,21 @@
             <h3>2. 其他游记名篇</h3>
             <p>《永州八记》（柳宗元）、《醉翁亭记》（欧阳修）、《游褒禅山记》（王安石）等。</p>
             
-            <div class="rhyme">
-                <div class="rhyme-title">📌 口诀记忆</div>
-                <p><strong>唐诗代表有李白，诗仙美誉天下传</strong></p>
+            <div class="mnemonic-toggle rhyme" style="background: linear-gradient(135deg, #FFF9E6, #FFF3CC); padding: 16px; border-radius: 10px; margin: 16px 0; border-left: 4px solid #FFB800; border: 2px dashed #f0c000;">
+    <div class="toggle-header" style="color: #B8860B;">
+        <span class="toggle-arrow">&#9654;</span>
+        <span>背不下来？试试口诀</span>
+        <span class="toggle-hint">点击展开</span>
+    </div>
+    <div class="toggle-content" style="color: #5D4E37; line-height: 1.8;">
+        <p><strong>唐诗代表有李白，诗仙美誉天下传</strong></p>
                 <p><strong>杜甫诗圣名千古，三吏三别记心间</strong></p>
                 <p><strong>宋词分为两派别，婉约柳永与清照</strong></p>
                 <p><strong>豪放苏轼和辛弃疾，题材广泛词境高</strong></p>
                 <p><strong>元曲四家关白马，郑光祖来是一家</strong></p>
                 <p><strong>明清小说四名著，三水西红传天下</strong></p>
-            </div>
+    </div>
+</div>
             
             <div class="exam-tip">常考题型：选择题、连线题。重点记忆作者与作品、人物称号、重要作品地位。</div>
         </div>
@@ -304,5 +332,17 @@
     </div>
 </div>
 
+<script>
+document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
+    var header = el.querySelector('.toggle-header');
+    if (header) {
+        header.addEventListener('click', function() {
+            el.classList.toggle('active');
+            var hint = el.querySelector('.toggle-hint');
+            if (hint) { hint.textContent = el.classList.contains('active') ? '点击收起' : '点击展开'; }
+        });
+    }
+});
+</script>
 </body>
 </html>
