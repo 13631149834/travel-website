@@ -160,7 +160,20 @@ function getSubject(file) {
 
 function loadWrong() {
   try {
-    allWrong = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+    // 读取章节练习的错题（格式：{chapter, type, q, opts, ans, userAns, explain, time}）
+    var chapterWrong = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+    // 兼容刷题页的错题格式（格式：{question, options, correctAnswer, userAnswer, type, subject, timestamp}）
+    chapterWrong.forEach(function(w) {
+      // 标准化为统一格式
+      w.q = w.q || w.question || '';
+      w.opts = w.opts || w.options || [];
+      w.ans = w.ans || w.correctAnswer || [];
+      w.userAns = w.userAns || w.userAnswer || [];
+      w.explain = w.explain || '';
+      w.time = w.time || (w.timestamp ? new Date(w.timestamp).toLocaleDateString() : '');
+      if(!w.chapter) w.chapter = '';
+    });
+    allWrong = chapterWrong;
   } catch(e) { allWrong = []; }
   updateStats();
   renderList();

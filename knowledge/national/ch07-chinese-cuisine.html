@@ -471,7 +471,7 @@
         </div></div>
 <div class="quiz-actions">
   <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
-  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button><button class="quiz-btn quiz-btn-reset" id="retryWrongBtn" style="background:#FFF5F5;color:#EF4444;border-color:#FECACA;display:none;" onclick="retryWrong()">只做错题</button>
 </div>
 <div class="quiz-score" id="quizScore">
   <div class="score-num" id="scoreNum"></div>
@@ -661,6 +661,68 @@ try {// page-read-tracker
     localStorage.setItem('readChapters', JSON.stringify(readChapters));
   }
 } catch(e) {}
+</script>
+
+
+<script>
+// 只做错题
+(function(){
+  try {
+    var path = window.location.pathname;
+    var chapterFile = path.substring(path.lastIndexOf('/')+1);
+    var wrongQs = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+    var chapterWrong = wrongQs.filter(function(w){return w.chapter === chapterFile;});
+    if(chapterWrong.length > 0) {
+      var btn = document.getElementById('retryWrongBtn');
+      if(btn) { btn.style.display = 'inline-block'; btn.textContent = '只做错题(' + chapterWrong.length + '道)'; }
+    }
+  } catch(e) {}
+})();
+
+function retryWrong() {
+  try {
+    var path = window.location.pathname;
+    var chapterFile = path.substring(path.lastIndexOf('/')+1);
+    var wrongQs = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+    var chapterWrong = wrongQs.filter(function(w){return w.chapter === chapterFile;});
+    if(chapterWrong.length === 0) return;
+    
+    // 从quizData中找到对应的错题
+    var wrongIndices = [];
+    chapterWrong.forEach(function(w) {
+      for(var i = 0; i < quizData.length; i++) {
+        if(quizData[i].q === w.q) { wrongIndices.push(i); break; }
+      }
+    });
+    
+    // 只显示错题
+    submitted = false;
+    userAnswers = {};
+    var container = document.getElementById('quizContainer');
+    if(!container) return;
+    var html = '';
+    wrongIndices.forEach(function(i, idx) {
+      var q = quizData[i];
+      var typeLabel = q.type==='judge'?'判断题':q.type==='single'?'单选题':'多选题';
+      var typeClass = q.type==='judge'?'qtype-judge':q.type==='single'?'qtype-single':'qtype-multi';
+      html += '<div class="quiz-item" id="qi'+idx+'">';
+      html += '<div class="quiz-q"><span class="qtype '+typeClass+'">'+typeLabel+'</span>'+(idx+1)+'. '+q.q+'</div>';
+      html += '<div class="quiz-options">';
+      q.opts.forEach(function(opt, j) {
+        html += '<div class="quiz-opt" data-qi="'+idx+'" data-oi="'+j+'" onclick="selectOpt('+idx+','+j+')">';
+        html += '<span class="opt-letter">'+String.fromCharCode(65+j)+'</span>';
+        html += '<span>'+opt.replace(/^[A-D]\.\s*/,'')+'</span>';
+        html += '</div>';
+      });
+      html += '</div>';
+      html += '<div class="quiz-explain" id="explain'+idx+'">💡 '+q.explain+'</div>';
+      html += '</div>';
+    });
+    container.innerHTML = html;
+    document.getElementById('quizScore').classList.remove('show');
+    document.getElementById('retryWrongBtn').style.display = 'none';
+  } catch(e) {}
+}
 </script>
 
 </body>
