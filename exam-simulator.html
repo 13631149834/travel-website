@@ -2021,5 +2021,63 @@ navigator.serviceWorker.getRegistrations().then(function(registrations) {
 if(typeof toggleTimer === 'function') window.toggleTimer = toggleTimer;
 if(typeof submitExam === 'function') window.submitExam = submitExam;
 </script>
+
+<script>
+// 刷题完成反馈 + 连续天数
+(function() {
+  var today = new Date().toDateString();
+  var quizDates = JSON.parse(localStorage.getItem('quizDates') || '[]');
+  var todayDone = JSON.parse(localStorage.getItem('quizResults') || '[]');
+  
+  // Calculate streak
+  var streak = 0;
+  var uniqueDates = [...new Set(quizDates)].sort().reverse();
+  if (uniqueDates.length > 0) {
+    var latest = uniqueDates[0];
+    var yesterday = new Date(Date.now() - 86400000).toDateString();
+    if (latest === today || latest === yesterday) {
+      streak = 1;
+      var checkDate = new Date(latest);
+      for (var i = 1; i < uniqueDates.length; i++) {
+        var prevDate = new Date(checkDate);
+        prevDate.setDate(prevDate.getDate() - 1);
+        if (uniqueDates[i] === prevDate.toDateString()) {
+          streak++;
+          checkDate = prevDate;
+        } else break;
+      }
+    }
+  }
+  
+  // Add streak badge after stats if streak > 0
+  if (streak > 0) {
+    var statsArea = document.querySelector('.stats-container, .quiz-stats, #quizStats');
+    if (statsArea) {
+      var badge = document.createElement('div');
+      badge.style.cssText = 'display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#78350F;border-radius:20px;font-weight:700;font-size:0.85rem;margin:8px 0;';
+      badge.textContent = '🔥 连续刷题' + streak + '天';
+      statsArea.parentNode.insertBefore(badge, statsArea.nextSibling);
+    }
+  }
+  
+  // Track quiz completion
+  var origSubmit = window.submitAnswer || window.checkAnswer;
+  if (origSubmit) {
+    var wrapped = function() {
+      var result = origSubmit.apply(this, arguments);
+      var quizDates = JSON.parse(localStorage.getItem('quizDates') || '[]');
+      var today = new Date().toDateString();
+      if (quizDates.indexOf(today) === -1) {
+        quizDates.push(today);
+        localStorage.setItem('quizDates', JSON.stringify(quizDates));
+      }
+      return result;
+    };
+    if (window.submitAnswer) window.submitAnswer = wrapped;
+    if (window.checkAnswer) window.checkAnswer = wrapped;
+  }
+})();
+</script>
+
 </body>
 </html>
