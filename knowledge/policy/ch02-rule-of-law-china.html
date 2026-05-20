@@ -491,7 +491,18 @@ function submitQuiz() {
     var ua = userAnswers[i] || [];
     var isCorrect = ua.length === q.ans.length && ua.sort().join() === q.ans.slice().sort().join();
     if(isCorrect) { correct++; item.classList.add('correct'); }
-    else { item.classList.add('wrong'); }
+    else { item.classList.add('wrong');
+      // 存储错题
+      if(!isCorrect) {
+        try {
+          var path = window.location.pathname;
+          var chapterFile = path.substring(path.lastIndexOf('/')+1);
+          var wrongQs = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+          wrongQs.push({chapter: chapterFile, type: q.type, q: q.q, opts: q.opts, ans: q.ans, userAns: ua, explain: q.explain, time: new Date().toLocaleDateString()});
+          localStorage.setItem('wrongQuestions', JSON.stringify(wrongQs));
+        } catch(e) {}
+      }
+ }
     var opts = document.querySelectorAll('.quiz-opt[data-qi="'+i+'"]');
     opts.forEach(function(opt) {
       var oi = parseInt(opt.dataset.oi);

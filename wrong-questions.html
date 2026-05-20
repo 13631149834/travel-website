@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>错题本 - 游导学习笔记</title>
+<meta name="description" content="导游证备考错题本，自动收录练习错题，针对性复习">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<style>
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7;color:#666;background:#FAFAFA;min-height:100vh;padding-bottom:80px}
+a{text-decoration:none;color:inherit}
+
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#FFF;border-bottom:1px solid #F0F0F0;position:sticky;top:0;z-index:100}
+.logo{font-size:1.1rem;font-weight:800;color:#1A1A1A}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:8px 12px;border-radius:10px;font-size:0.85rem;color:#666;transition:all 0.3s}
+.nav-links a:hover{background:#F0F5FF;color:#4C8BF5}
+.nav-links a.active{background:#4C8BF5;color:#FFF}
+
+.page-header{padding:36px 20px 20px;text-align:center;background:linear-gradient(135deg,#FFF5F5,#FFF)}
+.page-header h1{font-size:1.7rem;font-weight:800;color:#1A1A1A;margin-bottom:6px}
+.page-header p{font-size:0.92rem;color:#999}
+
+.container{max-width:700px;margin:0 auto;padding:0 16px}
+
+.stats-bar{display:flex;gap:12px;justify-content:center;margin:20px 0;flex-wrap:wrap}
+.stat-card{background:#FFF;border:1px solid #F0F0F0;border-radius:12px;padding:14px 20px;text-align:center;min-width:100px}
+.stat-num{font-size:1.5rem;font-weight:800;color:#EF4444}
+.stat-label{font-size:0.78rem;color:#999;margin-top:2px}
+
+.filter-bar{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border-radius:20px;font-size:0.82rem;cursor:pointer;border:1.5px solid #E0E0E0;background:#FFF;color:#999;transition:all 0.2s}
+.filter-btn:hover{border-color:#4C8BF5;color:#4C8BF5}
+.filter-btn.active{background:#4C8BF5;color:#FFF;border-color:#4C8BF5}
+
+.wrong-item{background:#FFF;border:1px solid #F0F0F0;border-radius:16px;padding:18px;margin-bottom:12px;transition:all 0.2s}
+.wrong-item:hover{box-shadow:0 2px 10px rgba(0,0,0,0.05)}
+.wrong-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.wrong-subject{padding:2px 10px;border-radius:10px;font-size:0.72rem;font-weight:600}
+.subject-biz{background:#F0F5FF;color:#4C8BF5}
+.subject-policy{background:#FFF7E6;color:#D97706}
+.subject-national{background:#F0FFF4;color:#059669}
+.subject-local{background:#FDF2F8;color:#DB2777}
+.wrong-time{font-size:0.72rem;color:#CCC}
+.wrong-q{font-size:0.92rem;color:#1A1A1A;font-weight:600;margin-bottom:8px;line-height:1.6}
+.wrong-q .qtype{display:inline-block;font-size:0.68rem;padding:2px 8px;border-radius:10px;margin-right:6px;font-weight:500}
+.qtype-judge{background:#E0F2FE;color:#0284C7}
+.qtype-single{background:#F0FDF4;color:#16A34A}
+.qtype-multi{background:#FEF3C7;color:#D97706}
+
+.wrong-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.wrong-opt{padding:8px 12px;border-radius:8px;font-size:0.85rem;color:#444;display:flex;align-items:flex-start;gap:6px}
+.wrong-opt.was-selected{background:#FFF5F5;color:#EF4444;text-decoration:line-through}
+.wrong-opt.is-correct{background:#F0FFF4;color:#16A34A;font-weight:500}
+
+.wrong-explain{background:#FFF9E6;border-radius:8px;padding:10px 14px;font-size:0.82rem;color:#5D4E37;line-height:1.6;border-left:3px solid #FFB800}
+.wrong-actions{display:flex;gap:8px;margin-top:10px}
+.wrong-btn{padding:6px 14px;border-radius:8px;font-size:0.8rem;cursor:pointer;border:none;transition:all 0.2s;font-weight:500}
+.btn-remove{background:#FFF5F5;color:#EF4444}
+.btn-remove:hover{background:#FEE2E2}
+.btn-retry{background:#F0F5FF;color:#4C8BF5}
+.btn-retry:hover{background:#E0EAFF}
+
+.empty-state{text-align:center;padding:60px 20px;color:#CCC}
+.empty-state .emoji{font-size:3rem;margin-bottom:12px}
+.empty-state p{font-size:0.92rem}
+.empty-state a{color:#4C8BF5;font-weight:500}
+
+.clear-btn{display:none;margin:20px auto;padding:10px 24px;border-radius:10px;background:#FFF5F5;color:#EF4444;border:1px solid #FEE2E2;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.clear-btn:hover{background:#FEE2E2}
+.clear-btn.show{display:block}
+
+.bottom-tabs{position:fixed;bottom:0;left:0;right:0;background:#FFF;border-top:1px solid #F0F0F0;display:flex;justify-content:space-around;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -1px 6px rgba(0,0,0,0.04)}
+.bottom-tabs .tab-item{display:flex;flex-direction:column;align-items:center;flex:1;font-size:0.65rem;color:#999;gap:2px;padding:4px 0;text-decoration:none}
+.bottom-tabs .tab-item span:first-child{font-size:1.25rem}
+
+.back-to-top{position:fixed;bottom:100px;right:16px;width:40px;height:40px;border-radius:50%;background:#FFF;border:1px solid #E2E8F0;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:#666;z-index:90;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+.back-to-top.visible{display:flex}
+
+@media(max-width:600px){
+  .nav-links{display:none}
+  .stats-bar{gap:8px}
+  .stat-card{padding:10px 14px;min-width:80px}
+  .stat-num{font-size:1.2rem}
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+<a href="index.html" class="logo">📚 游导学习笔记</a>
+<div class="nav-links">
+<a href="index.html">首页</a>
+<a href="ai-assistant.html">AI助手</a>
+<a href="exam-simulator.html">刷题</a>
+<a href="travel-knowledge.html">知识库</a>
+<a href="wrong-questions.html" class="active">错题本</a>
+<a href="resources.html">资料包</a>
+</div>
+</nav>
+
+<div class="page-header">
+<h1>📋 错题本</h1>
+<p>做错的题自动收录，反复练到不出错</p>
+</div>
+
+<div class="container">
+<div class="stats-bar" id="statsBar">
+  <div class="stat-card"><div class="stat-num" id="totalWrong">0</div><div class="stat-label">总错题</div></div>
+  <div class="stat-card"><div class="stat-num" id="bizWrong" style="color:#4C8BF5">0</div><div class="stat-label">导游业务</div></div>
+  <div class="stat-card"><div class="stat-num" id="policyWrong" style="color:#D97706">0</div><div class="stat-label">政策法规</div></div>
+  <div class="stat-card"><div class="stat-num" id="nationalWrong" style="color:#059669">0</div><div class="stat-label">全国导基</div></div>
+  <div class="stat-card"><div class="stat-num" id="localWrong" style="color:#DB2777">0</div><div class="stat-label">地方导基</div></div>
+</div>
+
+<div class="filter-bar">
+  <button class="filter-btn active" onclick="filterWrong('all',this)">全部</button>
+  <button class="filter-btn" onclick="filterWrong('business',this)">💼 导游业务</button>
+  <button class="filter-btn" onclick="filterWrong('policy',this)">⚖️ 政策法规</button>
+  <button class="filter-btn" onclick="filterWrong('national',this)">📚 全国导基</button>
+  <button class="filter-btn" onclick="filterWrong('local',this)">📖 地方导基</button>
+</div>
+
+<div id="wrongList"></div>
+
+<button class="clear-btn" id="clearBtn" onclick="clearAll()">🗑️ 清空错题本</button>
+</div>
+
+<button class="back-to-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<nav class="bottom-tabs">
+<a class="tab-item" href="index.html"><span>🏠</span><span>首页</span></a>
+<a class="tab-item" href="ai-assistant.html"><span>💬</span><span>AI助手</span></a>
+<a class="tab-item" href="exam-simulator.html"><span>✏️</span><span>刷题</span></a>
+<a class="tab-item" href="resources.html"><span>📦</span><span>资料包</span></a>
+<a class="tab-item" href="travel-knowledge.html"><span>📚</span><span>知识库</span></a>
+</nav>
+<p style="text-align:center;font-size:0.7rem;color:#999;padding:8px 0 70px;background:#FAFAFA;">走过弯路，所以更懂路</p>
+
+<script>
+var allWrong = [];
+var currentFilter = 'all';
+
+var subjectMap = {
+  'business': {name:'导游业务', cls:'subject-biz', dir:'knowledge/business/'},
+  'policy': {name:'政策法规', cls:'subject-policy', dir:'knowledge/policy/'},
+  'national': {name:'全国导基', cls:'subject-national', dir:'knowledge/national/'},
+  'local': {name:'地方导基', cls:'subject-local', dir:'knowledge/local/'}
+};
+
+function getSubject(file) {
+  if(file.indexOf('business') > -1) return 'business';
+  if(file.indexOf('policy') > -1) return 'policy';
+  if(file.indexOf('national') > -1) return 'national';
+  if(file.indexOf('local') > -1) return 'local';
+  return 'unknown';
+}
+
+function loadWrong() {
+  try {
+    allWrong = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+  } catch(e) { allWrong = []; }
+  updateStats();
+  renderList();
+}
+
+function updateStats() {
+  var counts = {business:0, policy:0, national:0, local:0, total:0};
+  allWrong.forEach(function(w) {
+    var s = getSubject(w.chapter);
+    if(counts[s] !== undefined) counts[s]++;
+    counts.total++;
+  });
+  document.getElementById('totalWrong').textContent = counts.total;
+  document.getElementById('bizWrong').textContent = counts.business;
+  document.getElementById('policyWrong').textContent = counts.policy;
+  document.getElementById('nationalWrong').textContent = counts.national;
+  document.getElementById('localWrong').textContent = counts.local;
+  document.getElementById('clearBtn').classList.toggle('show', counts.total > 0);
+}
+
+function renderList() {
+  var list = document.getElementById('wrongList');
+  var filtered = currentFilter === 'all' ? allWrong : allWrong.filter(function(w) { return getSubject(w.chapter) === currentFilter; });
+  
+  if(filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state"><div class="emoji">🎉</div><p>' + (allWrong.length === 0 ? '还没有错题，去做几道练习吧！<br><a href="travel-knowledge.html">去知识库刷题</a>' : '该科目暂无错题') + '</p></div>';
+    return;
+  }
+  
+  var html = '';
+  filtered.forEach(function(w, i) {
+    var s = getSubject(w.chapter);
+    var info = subjectMap[s] || {name:'未知', cls:'', dir:''};
+    var typeLabel = w.type==='judge'?'判断题':w.type==='single'?'单选题':'多选题';
+    var typeClass = w.type==='judge'?'qtype-judge':w.type==='single'?'qtype-single':'qtype-multi';
+    
+    html += '<div class="wrong-item" id="wi'+i+'">';
+    html += '<div class="wrong-header"><span class="wrong-subject '+info.cls+'">'+info.name+'</span><span class="wrong-time">'+(w.time||'')+'</span></div>';
+    html += '<div class="wrong-q"><span class="qtype '+typeClass+'">'+typeLabel+'</span>'+w.q+'</div>';
+    html += '<div class="wrong-opts">';
+    if(w.opts) {
+      w.opts.forEach(function(opt, j) {
+        var cls = '';
+        if(w.userAns && w.userAns.indexOf(j) > -1 && (!w.ans || w.ans.indexOf(j) === -1)) cls = ' was-selected';
+        if(w.ans && w.ans.indexOf(j) > -1) cls = ' is-correct';
+        html += '<div class="wrong-opt'+cls+'"><span>'+String.fromCharCode(65+j)+'.</span><span>'+opt+'</span></div>';
+      });
+    }
+    html += '</div>';
+    html += '<div class="wrong-explain">💡 '+w.explain+'</div>';
+    html += '<div class="wrong-actions">';
+    html += '<button class="wrong-btn btn-retry" onclick="goChapter(\''+info.dir+w.chapter+'\')">📖 重做本章</button>';
+    html += '<button class="wrong-btn btn-remove" onclick="removeOne('+i+')">✕ 移除</button>';
+    html += '</div>';
+    html += '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function filterWrong(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
+  if(btn) btn.classList.add('active');
+  renderList();
+}
+
+function removeOne(idx) {
+  var filtered = currentFilter === 'all' ? allWrong : allWrong.filter(function(w) { return getSubject(w.chapter) === currentFilter; });
+  var target = filtered[idx];
+  if(!target) return;
+  var realIdx = allWrong.indexOf(target);
+  if(realIdx > -1) allWrong.splice(realIdx, 1);
+  try { localStorage.setItem('wrongQuestions', JSON.stringify(allWrong)); } catch(e) {}
+  updateStats();
+  renderList();
+}
+
+function clearAll() {
+  if(!confirm('确认清空所有错题？此操作不可恢复。')) return;
+  allWrong = [];
+  try { localStorage.setItem('wrongQuestions', JSON.stringify(allWrong)); } catch(e) {}
+  updateStats();
+  renderList();
+}
+
+function goChapter(url) {
+  window.location.href = url;
+}
+
+// 回到顶部
+window.addEventListener('scroll', function(){
+  var btn = document.getElementById('backTop');
+  if(window.scrollY > 400) btn.classList.add('visible');
+  else btn.classList.remove('visible');
+});
+
+loadWrong();
+</script>
+
+<footer style="text-align:center;padding:20px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-bottom:60px;">
+<a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a> · <a href="index.html" style="color:#4C8BF5;">返回首页</a>
+<p style="margin-top:6px;">© 2025-2026 游导学习笔记</p>
+<p style="margin-top:4px;color:#999;font-size:0.8rem;">走过弯路，所以更懂路</p>
+</footer>
+
+<a href="ai-assistant.html" class="ai-float-btn" title="AI助手" style="position:fixed;bottom:90px;right:16px;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);color:#FFF;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 4px 16px rgba(76,139,245,0.35);z-index:90;text-decoration:none;">
+🤖
+</a>
+
+</body>
+</html>

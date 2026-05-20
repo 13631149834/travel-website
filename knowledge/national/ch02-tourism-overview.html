@@ -537,6 +537,17 @@ function submitQuiz() {
             item.classList.add('correct');
         } else {
             item.classList.add('wrong');
+      // 存储错题
+      if(!isCorrect) {
+        try {
+          var path = window.location.pathname;
+          var chapterFile = path.substring(path.lastIndexOf('/')+1);
+          var wrongQs = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+          wrongQs.push({chapter: chapterFile, type: q.type, q: q.q, opts: q.opts, ans: q.ans, userAns: ua, explain: q.explain, time: new Date().toLocaleDateString()});
+          localStorage.setItem('wrongQuestions', JSON.stringify(wrongQs));
+        } catch(e) {}
+      }
+
         }
         // 显示正确答案
         if (Array.isArray(q.ans)) {
