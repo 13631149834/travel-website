@@ -858,7 +858,15 @@ margin-top: 6px;
 <p class="section-desc">每天坚持练习真题，积少成多，备考更轻松（无需激活码）</p>
 
 <div class="tip-box">
-<strong>💡 提示：</strong>每日一练包含全部题目，随机打乱顺序，涵盖政策法规、导游业务、全国导基、地方导基四大科目。
+<strong>💡 选择科目：</strong>点击下方按钮筛选你想练的科目，或选"全部"随机练习
+</div>
+
+<div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
+  <button onclick="filterSubject('all')" id="filter-all" style="padding:8px 16px;border-radius:10px;border:2px solid #4C8BF5;background:#4C8BF5;color:#FFF;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">📋 全部科目</button>
+  <button onclick="filterSubject('policy')" id="filter-policy" style="padding:8px 16px;border-radius:10px;border:2px solid #E2E8F0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">⚖️ 政策法规(20)</button>
+  <button onclick="filterSubject('service')" id="filter-service" style="padding:8px 16px;border-radius:10px;border:2px solid #E2E8F0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">💼 导游业务(20)</button>
+  <button onclick="filterSubject('guidebook')" id="filter-guidebook" style="padding:8px 16px;border-radius:10px;border:2px solid #E2E8F0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">📚 全国导基(19)</button>
+  <button onclick="filterSubject('local')" id="filter-local" style="padding:8px 16px;border-radius:10px;border:2px solid #E2E8F0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">🗺️ 地方导基(20)</button>
 </div>
 
 <div id="dailyQuestions"><div class="loading-state"><div class="loading-spinner"></div><p style="text-align:center;color:#999;font-size:0.9rem;padding:40px 20px;">正在加载每日一练题目...</p></div></div>
@@ -1098,6 +1106,32 @@ var examQuestions = [
 {type:'interview',question:'面试中可以用方言讲解吗？',options:['A. 可以全程用','B. 可以适当使用增添趣味','C. 绝对不行','D. 只能用方言'],answer:1,analysis:'面试以普通话为主，适当使用方言增添趣味是被允许的，但不能全程使用。'},
 
 ];
+
+// ========== 科目筛选功能 ==========
+var currentFilter = 'all';
+function filterSubject(type) {
+  currentFilter = type;
+  // Update button styles
+  var types = ['all','policy','service','guidebook','local'];
+  types.forEach(function(t) {
+    var btn = document.getElementById('filter-' + t);
+    if (btn) {
+      if (t === type) {
+        btn.style.background = '#4C8BF5';
+        btn.style.borderColor = '#4C8BF5';
+        btn.style.color = '#FFF';
+      } else {
+        btn.style.background = '#FFF';
+        btn.style.borderColor = '#E2E8F0';
+        btn.style.color = '#4A5568';
+      }
+    }
+  });
+  // Re-render daily questions with filter
+  if (typeof renderDailyQuestions === 'function') {
+    renderDailyQuestions();
+  }
+}
 
 // ========== 正式考试启动函数 ==========
 function startExam() {
@@ -1766,12 +1800,23 @@ function renderDailyQuestions() {
 var container = document.getElementById('dailyQuestions');
 if (!container) return;
 
-// If already rendered, don't re-render
-if (container.querySelector('.question-card')) return;
+// Clear existing questions for re-rendering (subject filter)
+container.innerHTML = '';
+
+// Filter by subject if needed
+var pool = dailyBank.slice();
+if (currentFilter && currentFilter !== 'all') {
+  pool = pool.filter(function(q) { return q.type === currentFilter; });
+}
+
+if (pool.length === 0) {
+  container.innerHTML = '<div style="text-align:center;padding:40px;color:#999;">该科目暂无题目</div>';
+  return;
+}
 
 // Random shuffle questions
-var shuffled = dailyBank.slice().sort(function() { return Math.random() - 0.5; });
-dailyQuestions = shuffled.slice(0, dailyBank.length);
+var shuffled = pool.sort(function() { return Math.random() - 0.5; });
+dailyQuestions = shuffled.slice(0, pool.length);
 dailyQIndex = 0;
 dailyAnswered = {};
 dailyCorrect = 0;
