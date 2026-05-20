@@ -165,6 +165,7 @@
 footer{margin-bottom:70px!important}
 </style>
 
+<link rel="stylesheet" href="../../css/chapter.css">
 </head>
 <body>
 <nav>
@@ -178,10 +179,59 @@ footer{margin-bottom:70px!important}
 </div>
 <main>
 <section class="knowledge-content">
+<!-- 章节目录导航 -->
+<div class="chapter-toc">
+<div class="chapter-toc-inner">
+  <div class="chapter-toc-toggle" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">
+    <span>📑 本章目录（4个板块）</span>
+    <span class="toc-arrow">▼</span>
+  </div>
+  <div class="chapter-toc-list">
+    <a href="#section-1">一、地陪服务程序</a>
+<a href="#section-2">二、全陪服务程序</a>
+<a href="#section-3">三、领队服务程序</a>
+<a href="#section-4">✏️ 章节练习</a>
+
+  </div>
+</div>
+</div>
+
 <h1>第3章 团队导游服务规范</h1>
+<!-- 标记已读 - 顶部 -->
+<div class="read-progress-top" id="readProgressTop">
+  <span class="read-label" id="readLabel">📖 读完这一章了？</span>
+  <button class="mark-btn" id="markReadBtnTop" onclick="markRead()">✓ 标记已读</button>
+</div>
+<script>
+(function() {
+  var key = 'business:ch03-team-guide';
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var top = document.getElementById('readProgressTop');
+  var btn = document.getElementById('markReadBtnTop');
+  var label = document.getElementById('readLabel');
+  if (readChapters[key]) {
+    top.classList.add('completed');
+    label.textContent = '✅ 已完成本章';
+    btn.textContent = '✓ 已完成';
+    btn.style.background = '#38A169';
+    btn.disabled = true;
+  }
+  window.markRead = function() {
+    var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+    readChapters[key] = { date: new Date().toISOString() };
+    localStorage.setItem('readChapters', JSON.stringify(readChapters));
+    top.classList.add('completed');
+    label.textContent = '✅ 已完成本章';
+    btn.textContent = '✓ 已完成';
+    btn.style.background = '#38A169';
+    btn.disabled = true;
+  };
+})();
+</script>
+
 <span style="display:inline-block;background:#E8F5E9;color:#2E7D32;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;margin-left:8px;">⏱️ 约20分钟 · 10个知识点</span>
 
-<h2>一、地陪服务程序</h2>
+<h2 id="section-1" >一、地陪服务程序</h2>
 
 <h3>★1. 服务准备（接团前）</h3>
 <p>地陪的服务准备是<span class="高频考点">保证接待质量的前提</span>，主要包括：</p>
@@ -197,6 +247,51 @@ footer{margin-bottom:70px!important}
 <tr><td>游览项目</td><td>景点名称、门票、游览时间、特殊安排</td></tr>
 <tr><td>其他事项</td><td>会见、座谈、文艺演出等安排</td></tr>
 </table>
+<div class="mobile-cards">
+<div class="mobile-card">
+  <div class="mc-label">计划内容</div>
+  <div class="mc-value">组团社信息</div>
+  <div class="mc-label">核对重点</div>
+  <div class="mc-value">联络人、电话、地址</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">计划内容</div>
+  <div class="mc-value">旅游者信息</div>
+  <div class="mc-label">核对重点</div>
+  <div class="mc-value">人数、姓名、国籍、职业、宗教信仰</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">计划内容</div>
+  <div class="mc-value">交通票据</div>
+  <div class="mc-label">核对重点</div>
+  <div class="mc-value">航班/车次、时间、票价、票数</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">计划内容</div>
+  <div class="mc-value">住宿安排</div>
+  <div class="mc-label">核对重点</div>
+  <div class="mc-value">饭店名称、地址、电话、房型、用房数</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">计划内容</div>
+  <div class="mc-value">餐饮安排</div>
+  <div class="mc-label">核对重点</div>
+  <div class="mc-value">餐厅名称、地址、电话、用餐人数、特殊要求</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">计划内容</div>
+  <div class="mc-value">游览项目</div>
+  <div class="mc-label">核对重点</div>
+  <div class="mc-value">景点名称、门票、游览时间、特殊安排</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">计划内容</div>
+  <div class="mc-value">其他事项</div>
+  <div class="mc-label">核对重点</div>
+  <div class="mc-value">会见、座谈、文艺演出等安排</div>
+</div>
+</div>
+
 
 <div class="exam-tip">
 <span class="高频考点">常出单选题</span>：地陪接团前熟悉接待计划的重点内容包括旅游者信息、交通票据、住宿餐饮安排、游览项目等。注意：不包括团队利润分成等商业信息。
@@ -220,6 +315,33 @@ footer{margin-bottom:70px!important}
 <tr><td>现金</td><td>少量现金（小额开销）</td></tr>
 <tr><td>物品</td><td>通讯工具、记事本、接站牌、导游旗</td></tr>
 </table>
+<div class="mobile-cards">
+<div class="mobile-card">
+  <div class="mc-label">物品类型</div>
+  <div class="mc-value">证件</div>
+  <div class="mc-label">具体内容</div>
+  <div class="mc-value">导游证、身份证、出团证明</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">物品类型</div>
+  <div class="mc-value">票据</div>
+  <div class="mc-label">具体内容</div>
+  <div class="mc-value">接待计划、支票、发票、门票结算单</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">物品类型</div>
+  <div class="mc-value">现金</div>
+  <div class="mc-label">具体内容</div>
+  <div class="mc-value">少量现金（小额开销）</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">物品类型</div>
+  <div class="mc-value">物品</div>
+  <div class="mc-label">具体内容</div>
+  <div class="mc-value">通讯工具、记事本、接站牌、导游旗</div>
+</div>
+</div>
+
 
 <h3>1.4 语言和知识准备</h3>
 <ul>
@@ -308,6 +430,39 @@ footer{margin-bottom:70px!important}
 <tr><td>集合时</td><td>明确<span class="高频考点">集合时间和地点</span></td></tr>
 <tr><td>出园后</td><td>核实<span class="高频考点">人数</span>，确认无遗留</td></tr>
 </table>
+<div class="mobile-cards">
+<div class="mobile-card">
+  <div class="mc-label">环节</div>
+  <div class="mc-value">入园前</div>
+  <div class="mc-label">服务要求</div>
+  <div class="mc-value">介绍<span class="高频考点">景点概况</span>、开放时间、门票价格</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">环节</div>
+  <div class="mc-value">入园时</div>
+  <div class="mc-label">服务要求</div>
+  <div class="mc-value">购票后带领团队<span class="高频考点">入园</span></div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">环节</div>
+  <div class="mc-value">游览中</div>
+  <div class="mc-label">服务要求</div>
+  <div class="mc-value">进行<span class="高频考点">专业、生动</span>的导游讲解</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">环节</div>
+  <div class="mc-value">集合时</div>
+  <div class="mc-label">服务要求</div>
+  <div class="mc-value">明确<span class="高频考点">集合时间和地点</span></div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">环节</div>
+  <div class="mc-value">出园后</div>
+  <div class="mc-label">服务要求</div>
+  <div class="mc-value">核实<span class="高频考点">人数</span>，确认无遗留</div>
+</div>
+</div>
+
 
 <div class="exam-tip">
 <span class="高频考点">常出多选题</span>：景点讲解服务的各个环节均可能成为考点，尤其注意入园前的景点概况介绍和集合时间的明确告知。
@@ -367,7 +522,7 @@ footer{margin-bottom:70px!important}
 <li>完成<span class="高频考点">工作日志</span>和总结</li>
 </ul>
 
-<h2>二、全陪服务程序</h2>
+<h2 id="section-2" >二、全陪服务程序</h2>
 
 <h3>★1. 服务准备</h3>
 <ul>
@@ -400,7 +555,7 @@ footer{margin-bottom:70px!important}
 <li>完成<span class="高频考点">工作日志</span></li>
 </ul>
 
-<h2>三、领队服务程序</h2>
+<h2 id="section-3" >三、领队服务程序</h2>
 
 <h3>★1. 服务准备</h3>
 <ul>
@@ -447,7 +602,7 @@ footer{margin-bottom:70px!important}
     </div>
 </div>
 
-<h2>本章易混淆知识点对比</h2>
+<h2 id="section-4" >本章易混淆知识点对比</h2>
 
 <table>
 <tr><th>对比项</th><th>地陪</th><th>全陪</th><th>领队</th></tr>
@@ -458,6 +613,69 @@ footer{margin-bottom:70px!important}
 <tr><td>欢送辞</td><td>必须</td><td>不必须</td><td>可选择</td></tr>
 <tr><td>接团提前量</td><td>国内30分/国际60分</td><td>30分钟</td><td>根据航司要求</td></tr>
 </table>
+<div class="mobile-cards">
+<div class="mobile-card">
+  <div class="mc-label">对比项</div>
+  <div class="mc-value">服务范围</div>
+  <div class="mc-label">地陪</div>
+  <div class="mc-value">本地区</div>
+  <div class="mc-label">全陪</div>
+  <div class="mc-value">全程</div>
+  <div class="mc-label">领队</div>
+  <div class="mc-value">全程（出境）</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">对比项</div>
+  <div class="mc-value">代表利益</div>
+  <div class="mc-label">地陪</div>
+  <div class="mc-value">地接社</div>
+  <div class="mc-label">全陪</div>
+  <div class="mc-value">组团社</div>
+  <div class="mc-label">领队</div>
+  <div class="mc-value">组团社</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">对比项</div>
+  <div class="mc-value">首要任务</div>
+  <div class="mc-label">地陪</div>
+  <div class="mc-value">景点讲解</div>
+  <div class="mc-label">全陪</div>
+  <div class="mc-value">协调监督</div>
+  <div class="mc-label">领队</div>
+  <div class="mc-value">通关管理</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">对比项</div>
+  <div class="mc-value">欢迎辞</div>
+  <div class="mc-label">地陪</div>
+  <div class="mc-value">必须</div>
+  <div class="mc-label">全陪</div>
+  <div class="mc-value">不必须</div>
+  <div class="mc-label">领队</div>
+  <div class="mc-value">不必须</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">对比项</div>
+  <div class="mc-value">欢送辞</div>
+  <div class="mc-label">地陪</div>
+  <div class="mc-value">必须</div>
+  <div class="mc-label">全陪</div>
+  <div class="mc-value">不必须</div>
+  <div class="mc-label">领队</div>
+  <div class="mc-value">可选择</div>
+</div>
+<div class="mobile-card">
+  <div class="mc-label">对比项</div>
+  <div class="mc-value">接团提前量</div>
+  <div class="mc-label">地陪</div>
+  <div class="mc-value">国内30分/国际60分</div>
+  <div class="mc-label">全陪</div>
+  <div class="mc-value">30分钟</div>
+  <div class="mc-label">领队</div>
+  <div class="mc-value">根据航司要求</div>
+</div>
+</div>
+
 
 <div class="exam-tip">
 <span class="高频考点">常出单选题</span>：地陪必须致欢迎辞和欢送辞，全陪和领队则不必须；接团提前量的区分是重要考点。
@@ -467,7 +685,7 @@ footer{margin-bottom:70px!important}
 
 
 <section class="quiz-section">
-<h2>✏️ 章节练习</h2>
+<h2 id="section-5" >✏️ 章节练习</h2>
 <p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
 <div id="quizContainer"></div>
 <div class="quiz-actions">
@@ -496,45 +714,7 @@ footer{margin-bottom:70px!important}
 <div class="watermark">ximao101</div>
 
 
-<!-- 学习进度追踪 -->
-<div id="readProgress" style="margin:20px 0;padding:16px 20px;background:linear-gradient(135deg,#F0F5FF,#E8F0FE);border-radius:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-  <div>
-    <span id="readStatus" style="font-size:0.9rem;color:#555;">📖 读完这一章了？</span>
-    <span id="readCheck" style="display:none;font-size:0.9rem;color:#38A169;font-weight:600;">✅ 已完成</span>
-  </div>
-  <button id="markReadBtn" onclick="markAsRead()" style="padding:8px 20px;border:none;border-radius:10px;background:#4C8BF5;color:#fff;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#3B7AE0'" onmouseout="this.style.background='#4C8BF5'">✓ 标记已读</button>
-</div>
 
-<script>
-(function() {
-  var key = 'business:ch03-team-guide';
-  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
-  
-  if (readChapters[key]) {
-    document.getElementById('readStatus').style.display = 'none';
-    document.getElementById('readCheck').style.display = 'inline';
-    document.getElementById('markReadBtn').textContent = '✓ 已完成';
-    document.getElementById('markReadBtn').style.background = '#38A169';
-    document.getElementById('markReadBtn').disabled = true;
-    document.getElementById('markReadBtn').style.cursor = 'default';
-    document.getElementById('readProgress').style.background = 'linear-gradient(135deg,#F0FFF4,#C6F6D5)';
-  }
-  
-  window.markAsRead = function() {
-    var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
-    readChapters[key] = { date: new Date().toISOString() };
-    localStorage.setItem('readChapters', JSON.stringify(readChapters));
-    
-    document.getElementById('readStatus').style.display = 'none';
-    document.getElementById('readCheck').style.display = 'inline';
-    document.getElementById('markReadBtn').textContent = '✓ 已完成';
-    document.getElementById('markReadBtn').style.background = '#38A169';
-    document.getElementById('markReadBtn').disabled = true;
-    document.getElementById('markReadBtn').style.cursor = 'default';
-    document.getElementById('readProgress').style.background = 'linear-gradient(135deg,#F0FFF4,#C6F6D5)';
-  };
-})();
-</script>
 <div class="chapter-nav">
     <div class="nav-row">
         <a href="ch02-tour-guide.html" class="prev-link">← 第2章 导游</a>
@@ -762,5 +942,29 @@ function retryWrong() {
 </script>
 
 <nav class="bottom-tabs"><a class="tab-item" href="/index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item" href="/ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="/exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="/resources.html"><span class="tab-icon">📦</span><span class="tab-label">资料包</span></a><a class="tab-item" href="/travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
+<script>
+// 滚动高亮当前章节
+(function(){
+  var tocLinks = document.querySelectorAll('.chapter-toc-list a');
+  if(!tocLinks.length) return;
+  var sections = [];
+  tocLinks.forEach(function(a){
+    var id = a.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el,link:a});
+  });
+  function update(){
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    sections.forEach(function(s){
+      if(s.el.offsetTop <= scrollY) current = s;
+    });
+    tocLinks.forEach(function(a){a.classList.remove('active-section');});
+    if(current) current.link.classList.add('active-section');
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
 </body>
 </html>

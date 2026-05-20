@@ -165,6 +165,7 @@
 footer{margin-bottom:70px!important}
 </style>
 
+<link rel="stylesheet" href="../../css/chapter.css">
 </head>
 <body>
 <nav>
@@ -178,10 +179,60 @@ footer{margin-bottom:70px!important}
 </div>
 <main>
 <section class="knowledge-content">
+<!-- 章节目录导航 -->
+<div class="chapter-toc">
+<div class="chapter-toc-inner">
+  <div class="chapter-toc-toggle" onclick="this.classList.toggle('active');this.nextElementSibling.classList.toggle('show')">
+    <span>📑 本章目录（5个板块）</span>
+    <span class="toc-arrow">▼</span>
+  </div>
+  <div class="chapter-toc-list">
+    <a href="#section-1">一、个别要求的处理</a>
+<a href="#section-2">二、问题与事故的处理</a>
+<a href="#section-3">三、自然灾害的避险</a>
+<a href="#section-4">四、游客投诉的处理</a>
+<a href="#section-5">✏️ 章节练习</a>
+
+  </div>
+</div>
+</div>
+
 <h1>第8章 导游应变技能</h1>
+<!-- 标记已读 - 顶部 -->
+<div class="read-progress-top" id="readProgressTop">
+  <span class="read-label" id="readLabel">📖 读完这一章了？</span>
+  <button class="mark-btn" id="markReadBtnTop" onclick="markRead()">✓ 标记已读</button>
+</div>
+<script>
+(function() {
+  var key = 'business:ch08-emergency-handling';
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var top = document.getElementById('readProgressTop');
+  var btn = document.getElementById('markReadBtnTop');
+  var label = document.getElementById('readLabel');
+  if (readChapters[key]) {
+    top.classList.add('completed');
+    label.textContent = '✅ 已完成本章';
+    btn.textContent = '✓ 已完成';
+    btn.style.background = '#38A169';
+    btn.disabled = true;
+  }
+  window.markRead = function() {
+    var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+    readChapters[key] = { date: new Date().toISOString() };
+    localStorage.setItem('readChapters', JSON.stringify(readChapters));
+    top.classList.add('completed');
+    label.textContent = '✅ 已完成本章';
+    btn.textContent = '✓ 已完成';
+    btn.style.background = '#38A169';
+    btn.disabled = true;
+  };
+})();
+</script>
+
 <span style="display:inline-block;background:#E8F5E9;color:#2E7D32;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;margin-left:8px;">⏱️ 约20分钟 · 9个知识点</span>
 
-<h2>一、个别要求的处理</h2>
+<h2 id="section-1" >一、个别要求的处理</h2>
 
 <h3>★1. 处理个别要求的基本原则</h3>
 
@@ -266,7 +317,7 @@ footer{margin-bottom:70px!important}
 <li>要求<span class="高频考点">更换导游</span>：报告旅行社，耐心解释</li>
 </ul>
 
-<h2>二、问题与事故的处理</h2>
+<h2 id="section-2" >二、问题与事故的处理</h2>
 
 <h3>★1. 旅游计划变更的处理</h3>
 
@@ -422,7 +473,7 @@ footer{margin-bottom:70px!important}
     </div>
 </div>
 
-<h2>三、自然灾害的避险</h2>
+<h2 id="section-3" >三、自然灾害的避险</h2>
 
 <h3>★1. 地震避险</h3>
 
@@ -501,7 +552,7 @@ footer{margin-bottom:70px!important}
 </ol>
 </div>
 
-<h2>四、游客投诉的处理</h2>
+<h2 id="section-4" >四、游客投诉的处理</h2>
 
 <h3>★1. 处理投诉的基本原则</h3>
 <ul>
@@ -527,7 +578,7 @@ footer{margin-bottom:70px!important}
 
 
 <section class="quiz-section">
-<h2>✏️ 章节练习</h2>
+<h2 id="section-5" >✏️ 章节练习</h2>
 <p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
 <div id="quizContainer"></div>
 <div class="quiz-actions">
@@ -556,45 +607,7 @@ footer{margin-bottom:70px!important}
 <div class="watermark">ximao101</div>
 
 
-<!-- 学习进度追踪 -->
-<div id="readProgress" style="margin:20px 0;padding:16px 20px;background:linear-gradient(135deg,#F0F5FF,#E8F0FE);border-radius:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
-  <div>
-    <span id="readStatus" style="font-size:0.9rem;color:#555;">📖 读完这一章了？</span>
-    <span id="readCheck" style="display:none;font-size:0.9rem;color:#38A169;font-weight:600;">✅ 已完成</span>
-  </div>
-  <button id="markReadBtn" onclick="markAsRead()" style="padding:8px 20px;border:none;border-radius:10px;background:#4C8BF5;color:#fff;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;" onmouseover="this.style.background='#3B7AE0'" onmouseout="this.style.background='#4C8BF5'">✓ 标记已读</button>
-</div>
 
-<script>
-(function() {
-  var key = 'business:ch08-emergency-handling';
-  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
-  
-  if (readChapters[key]) {
-    document.getElementById('readStatus').style.display = 'none';
-    document.getElementById('readCheck').style.display = 'inline';
-    document.getElementById('markReadBtn').textContent = '✓ 已完成';
-    document.getElementById('markReadBtn').style.background = '#38A169';
-    document.getElementById('markReadBtn').disabled = true;
-    document.getElementById('markReadBtn').style.cursor = 'default';
-    document.getElementById('readProgress').style.background = 'linear-gradient(135deg,#F0FFF4,#C6F6D5)';
-  }
-  
-  window.markAsRead = function() {
-    var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
-    readChapters[key] = { date: new Date().toISOString() };
-    localStorage.setItem('readChapters', JSON.stringify(readChapters));
-    
-    document.getElementById('readStatus').style.display = 'none';
-    document.getElementById('readCheck').style.display = 'inline';
-    document.getElementById('markReadBtn').textContent = '✓ 已完成';
-    document.getElementById('markReadBtn').style.background = '#38A169';
-    document.getElementById('markReadBtn').disabled = true;
-    document.getElementById('markReadBtn').style.cursor = 'default';
-    document.getElementById('readProgress').style.background = 'linear-gradient(135deg,#F0FFF4,#C6F6D5)';
-  };
-})();
-</script>
 <div class="chapter-nav">
     <div class="nav-row">
         <a href="ch07-commentary-skills.html" class="prev-link">← 第7章 导游讲解技能</a>
@@ -822,5 +835,29 @@ function retryWrong() {
 </script>
 
 <nav class="bottom-tabs"><a class="tab-item" href="/index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item" href="/ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="/exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="/resources.html"><span class="tab-icon">📦</span><span class="tab-label">资料包</span></a><a class="tab-item" href="/travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
+<script>
+// 滚动高亮当前章节
+(function(){
+  var tocLinks = document.querySelectorAll('.chapter-toc-list a');
+  if(!tocLinks.length) return;
+  var sections = [];
+  tocLinks.forEach(function(a){
+    var id = a.getAttribute('href').replace('#','');
+    var el = document.getElementById(id);
+    if(el) sections.push({el:el,link:a});
+  });
+  function update(){
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    sections.forEach(function(s){
+      if(s.el.offsetTop <= scrollY) current = s;
+    });
+    tocLinks.forEach(function(a){a.classList.remove('active-section');});
+    if(current) current.link.classList.add('active-section');
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
 </body>
 </html>

@@ -1,0 +1,393 @@
+/* ===== 章节页体验升级 ===== */
+
+/* 1. 章节目录导航 */
+.chapter-toc {
+  position: sticky;
+  top: 56px;
+  z-index: 50;
+  background: #fff;
+  border-bottom: 1px solid #E2E8F0;
+  padding: 0;
+  margin: 0 -20px 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.chapter-toc-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 12px 20px;
+}
+.chapter-toc-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  padding: 4px 0;
+}
+.chapter-toc-toggle span {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1A1A1A;
+}
+.chapter-toc-toggle .toc-arrow {
+  font-size: 0.7rem;
+  color: #999;
+  transition: transform 0.3s;
+}
+.chapter-toc-toggle.active .toc-arrow {
+  transform: rotate(180deg);
+}
+.chapter-toc-list {
+  display: none;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid #F1F5F9;
+}
+.chapter-toc-list.show {
+  display: flex;
+}
+.chapter-toc-list a {
+  display: inline-block;
+  padding: 5px 12px;
+  background: #F8FAFC;
+  color: #475569;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  text-decoration: none;
+  border: 1px solid #E2E8F0;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.chapter-toc-list a:hover {
+  background: #4C8BF5;
+  color: #fff;
+  border-color: #4C8BF5;
+}
+.chapter-toc-list a.active-section {
+  background: #4C8BF5;
+  color: #fff;
+  border-color: #4C8BF5;
+}
+@media (min-width: 769px) {
+  .chapter-toc-list { display: flex !important; }
+  .chapter-toc-toggle { display: none; }
+}
+
+/* 2. 大板块视觉分区 - h2 彩色标题卡 */
+.knowledge-content h2 {
+  position: relative;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1A1A1A;
+  margin: 36px 0 18px;
+  padding: 14px 18px 14px 22px;
+  background: linear-gradient(135deg, #F0F5FF, #E8F0FE);
+  border-radius: 12px;
+  border-left: 4px solid #4C8BF5;
+}
+.knowledge-content h2::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: 4px 0 0 4px;
+}
+
+/* 3. 表格手机端自适应 - 卡片式 */
+@media (max-width: 640px) {
+  .knowledge-content table,
+  .knowledge-content .highlight-box table {
+    display: none;
+  }
+  .mobile-cards {
+    display: block !important;
+  }
+}
+@media (min-width: 641px) {
+  .mobile-cards {
+    display: none !important;
+  }
+}
+.mobile-cards {
+  display: none;
+}
+.mobile-card {
+  background: #fff;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.mobile-card .mc-label {
+  font-size: 0.72rem;
+  color: #94A3B8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.mobile-card .mc-value {
+  font-size: 0.92rem;
+  color: #1A1A1A;
+  line-height: 1.5;
+}
+.mobile-card .mc-value .高频考点 {
+  color: #4C8BF5;
+  font-weight: 600;
+}
+.mobile-card .mc-highlight {
+  background: #FFF9E6;
+  border-left: 3px solid #FFB800;
+  padding: 2px 8px;
+  border-radius: 0 6px 6px 0;
+  margin-left: 4px;
+  font-size: 0.75rem;
+  color: #B8860B;
+  font-weight: 500;
+}
+
+/* 4. 标记已读 - 顶部浮动 */
+.read-progress-top {
+  margin: -10px 0 20px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #F0F5FF, #E8F0FE);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #D0DFFF;
+}
+.read-progress-top.completed {
+  background: linear-gradient(135deg, #F0FFF4, #C6F6D5);
+  border-color: #9AE6B4;
+}
+.read-progress-top .read-label {
+  font-size: 0.88rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.read-progress-top.completed .read-label {
+  color: #2D6A4F;
+}
+.read-progress-top .mark-btn {
+  padding: 7px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #4C8BF5;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.read-progress-top .mark-btn:hover {
+  background: #3B7AE0;
+}
+.read-progress-top.completed .mark-btn {
+  background: #38A169;
+  cursor: default;
+}
+
+/* 5. 更好的间距和呼吸感 */
+.knowledge-content h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #334155;
+  margin: 24px 0 12px;
+  padding-left: 12px;
+  border-left: 3px solid #CBD5E1;
+}
+.knowledge-content p {
+  margin-bottom: 14px;
+  line-height: 1.8;
+  color: #475569;
+}
+.knowledge-content ul {
+  margin: 10px 0 16px 8px;
+}
+.knowledge-content li {
+  margin-bottom: 8px;
+  line-height: 1.7;
+  color: #475569;
+  padding-left: 4px;
+}
+.knowledge-content li::before {
+  content: '•';
+  color: #4C8BF5;
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+/* 6. highlight-box 和 exam-tip 更醒目 */
+.knowledge-content .highlight-box {
+  background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+  border-left: 4px solid #F59E0B;
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 0.92rem;
+  line-height: 1.7;
+}
+.knowledge-content .exam-tip {
+  background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+  border-left: 4px solid #22C55E;
+  border-radius: 0 12px 12px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-size: 0.88rem;
+  color: #166534;
+  line-height: 1.7;
+}
+
+/* 7. 口诀盒子更醒目 */
+.knowledge-content .mnemonic-toggle {
+  background: linear-gradient(135deg, #FFF9E6, #FFF3CC) !important;
+  border-left: 4px solid #FFB800 !important;
+  border-radius: 0 12px 12px 0 !important;
+  padding: 16px 20px !important;
+  margin: 16px 0 !important;
+}
+
+/* 8. CTA box 柔化 */
+.knowledge-content + .cta-box,
+section.cta-box {
+  background: linear-gradient(135deg, #F8FAFC, #F1F5F9) !important;
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 24px;
+  margin: 30px 0;
+  text-align: center;
+}
+section.cta-box h3 {
+  font-size: 1rem;
+  color: #64748B;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+section.cta-box .highlight {
+  background: none;
+  font-size: 0.88rem;
+  color: #64748B;
+}
+section.cta-box .highlight a {
+  color: #4C8BF5;
+  text-decoration: underline;
+}
+
+/* 9. 章节练习区样式优化 */
+.quiz-section {
+  background: linear-gradient(135deg, #F8FAFC, #F1F5F9);
+  border-radius: 16px;
+  border: 1px solid #E2E8F0;
+  padding: 24px;
+  margin: 30px 0;
+}
+
+/* 10. 表格通用美化 */
+.knowledge-content table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #E2E8F0;
+  font-size: 0.88rem;
+}
+.knowledge-content table th {
+  background: #F0F5FF;
+  color: #1E40AF;
+  font-weight: 600;
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 2px solid #D0DFFF;
+  font-size: 0.82rem;
+}
+.knowledge-content table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #F1F5F9;
+  color: #475569;
+  line-height: 1.6;
+}
+.knowledge-content table tr:last-child td {
+  border-bottom: none;
+}
+.knowledge-content table tr:hover td {
+  background: #F8FAFC;
+}
+
+/* ===== 通用章节页样式（不依赖 .knowledge-content） ===== */
+
+/* 大板块视觉分区 - 通用 */
+.content-card h2,
+.chapter-content h2 {
+  position: relative;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1A1A1A;
+  margin: 36px 0 18px;
+  padding: 14px 18px 14px 22px;
+  background: linear-gradient(135deg, #F0F5FF, #E8F0FE) !important;
+  border-radius: 12px;
+  border-left: 4px solid #4C8BF5 !important;
+}
+
+/* 通用表格美化 */
+.content-card table,
+.chapter-content table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 16px 0;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #E2E8F0;
+  font-size: 0.88rem;
+}
+.content-card table th,
+.chapter-content table th {
+  background: #F0F5FF;
+  color: #1E40AF;
+  font-weight: 600;
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 2px solid #D0DFFF;
+  font-size: 0.82rem;
+}
+.content-card table td,
+.chapter-content table td {
+  padding: 10px 14px;
+  border-bottom: 1px solid #F1F5F9;
+  color: #475569;
+  line-height: 1.6;
+}
+
+/* 通用口诀/关键点美化 */
+.key-point,
+.high-freq {
+  border-radius: 0 12px 12px 0 !important;
+  padding: 16px 20px !important;
+  margin: 16px 0 !important;
+}
+
+/* 通用标记已读样式 - 不依赖readProgressTop */
+.read-progress-top {
+  margin: -10px 0 20px;
+  padding: 12px 18px;
+  background: linear-gradient(135deg, #F0F5FF, #E8F0FE);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #D0DFFF;
+}
