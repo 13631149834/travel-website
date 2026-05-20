@@ -817,6 +817,78 @@ a { color: #4C8BF5 !important; }
     </div>
   </section>
 
+  <!-- ===== 每日一推高频考点 ===== -->
+  <section class="daily-tip-section" style="padding:40px 20px;background:linear-gradient(135deg,#FFF9E6 0%,#FFF3CC 100%);">
+    <div style="max-width:600px;margin:0 auto;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+        <span style="font-size:1.3rem;">🔥</span>
+        <h2 style="font-size:1.3rem;font-weight:800;color:#B8860B;margin:0;">今日必背考点</h2>
+        <span id="tipDate" style="margin-left:auto;font-size:0.8rem;color:#C4A35A;"></span>
+      </div>
+      <div id="dailyTipCard" style="background:#FFFFFF;border-radius:16px;padding:24px;box-shadow:0 4px 20px rgba(184,134,11,0.1);border:1px solid rgba(184,134,11,0.15);">
+        <div id="tipSubject" style="display:inline-block;padding:3px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;margin-bottom:12px;"></div>
+        <h3 id="tipTitle" style="font-size:1.1rem;font-weight:700;color:#1A1A1A;margin-bottom:10px;line-height:1.5;"></h3>
+        <p id="tipContent" style="font-size:0.92rem;color:#555;line-height:1.8;margin-bottom:14px;"></p>
+        <div id="tipMnemonic" style="display:none;background:linear-gradient(135deg,#FFF9E6,#FFF3CC);padding:12px 16px;border-radius:10px;border-left:3px solid #FFB800;margin-bottom:14px;">
+          <div style="font-size:0.8rem;color:#B8860B;font-weight:600;margin-bottom:4px;">💡 口诀速记</div>
+          <div id="tipMnemonicText" style="font-size:0.9rem;color:#5D4E37;line-height:1.6;font-weight:600;"></div>
+        </div>
+        <a id="tipLink" href="travel-knowledge.html" style="display:inline-flex;align-items:center;gap:4px;font-size:0.85rem;color:#4C8BF5;font-weight:600;text-decoration:none;">查看完整章节 →</a>
+      </div>
+    </div>
+    <script>
+    (function(){
+      var tips = [
+        {s:'导游业务',sc:'#4C8BF5',bg:'#F0F5FF',t:'导游服务的核心原则是什么？',c:'宾客至上原则是导游服务的核心原则。导游应将旅游者利益放在首位，满足其合理需求，维护其合法权益。',m:'宾客至上是核心，合理可能两手抓',l:'knowledge/business/ch01-tour-guide-service.html'},
+        {s:'政策法规',sc:'#F59E0B',bg:'#FFF7E6',t:'旅行社质量保证金缴纳标准',c:'经营国内旅游业务和入境旅游业务的旅行社，应当存入质量保证金20万元；经营出境旅游业务的，应当增存120万元质量保证金。',m:'国内入境20万，出境再加120万',l:'knowledge/policy/ch12-travel-agency-law.html'},
+        {s:'全国导基',sc:'#10B981',bg:'#F0FFF4',t:'中国世界遗产有多少项？',c:'截至2024年，中国共有57项世界遗产，其中文化遗产39项、自然遗产14项、双重遗产4项，位居世界第二。',m:'57项世遗中国有，39文14自然4双留',l:'knowledge/national/ch02-tourism-overview.html'},
+        {s:'导游业务',sc:'#4C8BF5',bg:'#F0F5FF',t:'全陪、地陪、领队如何区分？',c:'全陪代表组团社全程陪同；地陪代表地接社负责地方接待；领队代表组团社全程陪同出境旅游团队。',m:'全陪组团全程陪，地陪地接地方走，领队出境全程管',l:'knowledge/business/ch01-tour-guide-service.html'},
+        {s:'政策法规',sc:'#F59E0B',bg:'#FFF7E6',t:'导游证有效期多长？',c:'导游证有效期为3年。导游证持有人需要在有效期满前3个月内向所在地旅游主管部门提出换发申请。资格证终身有效。',m:'导游证3年要换，资格证终身管',l:'knowledge/policy/ch13-guide-management.html'},
+        {s:'全国导基',sc:'#10B981',bg:'#F0FFF4',t:'中国四大名园是哪四个？',c:'中国四大名园：北京颐和园、河北承德避暑山庄、苏州拙政园、苏州留园。颐和园和避暑山庄为皇家园林，拙政园和留园为私家园林。',m:'颐避拙留四大园，皇家私家各一半',l:'knowledge/national/ch06-chinese-gardens.html'},
+        {s:'导游业务',sc:'#4C8BF5',bg:'#F0F5FF',t:'游客走失时导游如何处理？',c:'全陪应立即报告旅行社并寻求公安部门帮助；地陪应稳定其他游客情绪，继续行程；领队应与境外接待社联系。一般寻找2小时未果应报警。',m:'走失2小时要报警，全陪报告地陪稳',l:'knowledge/business/ch08-emergency-handling.html'},
+        {s:'政策法规',sc:'#F59E0B',bg:'#FFF7E6',t:'旅游投诉时效是多长？',c:'旅游投诉时效为90日，从投诉者知道或者应当知道权利被侵害时起算。超过投诉时效的投诉，旅游投诉处理机构不予受理。',m:'投诉90日要记牢，过期不受理亏了',l:'knowledge/policy/ch18-dispute-resolution.html'},
+        {s:'全国导基',sc:'#10B981',bg:'#F0FFF4',t:'中国五大宗教是哪五个？',c:'中国五大宗教：佛教、道教、伊斯兰教、天主教、基督教。其中佛教和道教为本土发展，其余为外来宗教传入。',m:'佛道伊天基五大教，佛道本土余外来',l:'knowledge/national/ch09-chinese-religion.html'},
+        {s:'地方导基',sc:'#EC4899',bg:'#FDF2F8',t:'北京有多少处世界遗产？',c:'北京拥有7处世界遗产：长城、故宫、周口店北京人遗址、颐和园、天坛、明十三陵、大运河（北京段），是全国世界遗产最多的城市。',m:'京城七处世遗多，长城故宫天坛和',l:'knowledge/local/ch01-northchina.html'},
+        {s:'导游业务',sc:'#4C8BF5',bg:'#F0F5FF',t:'导游语言的基本要求',c:'导游语言要求：语音规范、语调自然、语速适中、用语恰当。讲解时注意"言之有物、言之有据、言之有理、言之有情"。',m:'物据理情四有言，语调自然语速适',l:'knowledge/business/ch05-language-skills.html'},
+        {s:'政策法规',sc:'#F59E0B',bg:'#FFF7E6',t:'无证导游如何处罚？',c:'未取得导游证从事导游活动的，由旅游主管部门责令改正并予以公告，处1000元以上3万元以下罚款；有违法所得的，并处没收违法所得。',m:'无证导游罚1千到3万，违法所得要没收',l:'knowledge/policy/ch13-guide-management.html'},
+        {s:'全国导基',sc:'#10B981',bg:'#F0FFF4',t:'中国四大佛教名山',c:'中国四大佛教名山：山西五台山（文殊菩萨）、浙江普陀山（观音菩萨）、四川峨眉山（普贤菩萨）、安徽九华山（地藏菩萨）。',m:'五台文殊普陀音，峨眉普贤九华地',l:'knowledge/national/ch09-chinese-religion.html'},
+        {s:'导游业务',sc:'#4C8BF5',bg:'#F0F5FF',t:'导游服务的基本特点',c:'导游服务的基本特点：独立性强、脑体高度结合、复杂多变、跨文化性。其中独立性是导游服务最显著的特点。',m:'独立脑体复杂跨文化，独立性最显著',l:'knowledge/business/ch01-tour-guide-service.html'},
+        {s:'政策法规',sc:'#F59E0B',bg:'#FFF7E6',t:'旅游者投诉可以找哪些部门？',c:'旅游者可以向旅游投诉处理机构、消费者协会、旅游主管部门投诉。也可通过12301旅游服务热线进行投诉。',m:'12301投诉热线，旅投消协旅游部',l:'knowledge/policy/ch18-dispute-resolution.html'},
+        {s:'全国导基',sc:'#10B981',bg:'#F0FFF4',t:'中国古典园林的分类',c:'按隶属关系分为：皇家园林（如颐和园、避暑山庄）和私家园林（如拙政园、留园）。按地域风格分为：北方园林、江南园林、岭南园林。',m:'皇家私家按归属，北方江南岭南分',l:'knowledge/national/ch06-chinese-gardens.html'},
+        {s:'导游业务',sc:'#4C8BF5',bg:'#F0F5FF',t:'导游带团中的"合理而可能"原则',c:'导游应在合理且可能的范围内满足游客要求。"合理"和"可能"两个条件缺一不可。不合理或不可能的要求要耐心解释。',m:'合理可能两条件，缺一不可要解释',l:'knowledge/business/ch01-tour-guide-service.html'},
+        {s:'政策法规',sc:'#F59E0B',bg:'#FFF7E6',t:'旅行社可以扣留游客证件吗？',c:'旅行社不得扣留游客的身份证件。旅行社也不得要求游客提供人身伤害担保，或以任何方式变相强迫游客购物。',m:'证件不可扣，购物不可逼',l:'knowledge/policy/ch10-tourism-law-basics.html'},
+        {s:'地方导基',sc:'#EC4899',bg:'#FDF2F8',t:'陕西的代表性世界遗产',c:'陕西拥有3处世界遗产：秦始皇陵及兵马俑坑、长城（陕西段）、丝绸之路（陕西段）。兵马俑被誉为"世界第八大奇迹"。',m:'秦陵兵马世界奇，丝路长城在陕西',l:'knowledge/local/ch07-northwest.html'},
+        {s:'全国导基',sc:'#10B981',bg:'#F0FFF4',t:'中国四大石窟',c:'中国四大石窟：甘肃敦煌莫高窟、山西大同云冈石窟、河南洛阳龙门石窟、甘肃天水麦积山石窟。均为世界文化遗产。',m:'莫高云冈和龙门，加上麦积四大窟',l:'knowledge/national/ch05-chinese-architecture.html'},
+        {s:'导游业务',sc:'#4C8BF5',bg:'#F0F5FF',t:'导游讲解应遵循的原则',c:'导游讲解应遵循：针对性原则、计划性原则、灵活性原则。针对不同游客群体采用不同讲解方式，这就是针对性。',m:'针对计划灵活三原则，因人而异是关键',l:'knowledge/business/ch07-commentary-skills.html'},
+        {s:'政策法规',sc:'#F59E0B',bg:'#FFF7E6',t:'旅游合同中的"定金"规则',c:'给付定金一方不履行合同的，无权要求返还定金；收受定金一方不履行合同的，应当双倍返还定金。定金数额不得超过主合同标的额的20%。',m:'定金不超20%，收方违约双倍还',l:'knowledge/policy/ch08-contract-law.html'},
+        {s:'全国导基',sc:'#10B981',bg:'#F0FFF4',t:'中国八大菜系',c:'中国八大菜系：鲁菜、川菜、粤菜、苏菜、闽菜、浙菜、湘菜、徽菜。鲁菜为北方菜系代表，川菜以麻辣著称。',m:'鲁川粤苏闽浙湘徽，八大菜系各显味',l:'knowledge/national/ch07-chinese-cuisine.html'},
+        {s:'地方导基',sc:'#EC4899',bg:'#FDF2F8',t:'上海的城市名片',c:'上海标志性景点：外滩万国建筑群、东方明珠塔、豫园、城隍庙、迪士尼乐园。外滩是上海最经典的城市名片。',m:'外滩明珠豫园庙，上海名片数外滩',l:'knowledge/local/ch03-eastchina.html'},
+        {s:'导游业务',sc:'#4C8BF5',bg:'#F0F5FF',t:'团队导游服务中全陪的工作流程',c:'全陪服务流程：准备工作→首站接团→入住饭店→核商日程→各站服务→末站送团→后续工作。全陪的核心职责是协调和监督。',m:'全陪流程七步走，协调监督是核心',l:'knowledge/business/ch03-team-guide.html'},
+        {s:'政策法规',sc:'#F59E0B',bg:'#FFF7E6',t:'旅行社变更行程如何处理？',c:'旅行社擅自变更旅游行程安排，由旅游主管部门责令改正，处2万元以上10万元以下罚款；情节严重的，吊销旅行社业务经营许可证。',m:'擅变行程罚2万到10万，严重吊证',l:'knowledge/policy/ch10-tourism-law-basics.html'},
+        {s:'全国导基',sc:'#10B981',bg:'#F0FFF4',t:'中国三大古建筑群',c:'中国三大古建筑群：北京故宫、曲阜孔庙、泰山岱庙。故宫是世界上现存规模最大的宫殿建筑群。',m:'故宫孔庙和岱庙，三大古建国宝级',l:'knowledge/national/ch05-chinese-architecture.html'},
+        {s:'地方导基',sc:'#EC4899',bg:'#FDF2F8',t:'云南的世界遗产',c:'云南拥有6处世界遗产：丽江古城、三江并流、石林、红河哈尼梯田、澄江化石地、普洱景迈山古茶林，位居全国前列。',m:'云南六处世遗多，丽江石林梯田茶',l:'knowledge/local/ch06-southwest.html'},
+        {s:'导游业务',sc:'#4C8BF5',bg:'#F0F5FF',t:'游客食物中毒的应急处理',c:'导游应立即拨打120急救，保留食物样本和餐具供化验，报告旅行社，安抚其他游客情绪，协助患者就医并保留医疗凭证。',m:'中毒先打120，留样本报旅行社保凭证',l:'knowledge/business/ch08-emergency-handling.html'},
+        {s:'政策法规',sc:'#F59E0B',bg:'#FFF7E6',t:'强迫购物的处罚标准',c:'旅行社和导游强迫或者变相强迫旅游者购物的，由旅游主管部门责令改正，对旅行社处1万元以上5万元以下罚款；对导游处1000元以上3万元以下罚款。',m:'强迫购物社1到5万，导游1千到3万',l:'knowledge/policy/ch11-tourist-consumer-law.html'}
+      ];
+      var now = new Date();
+      var idx = Math.floor((now.getTime() / 86400000)) % tips.length;
+      var tip = tips[idx];
+      var dateStr = (now.getMonth()+1) + '月' + now.getDate() + '日';
+      document.getElementById('tipDate').textContent = dateStr;
+      document.getElementById('tipSubject').textContent = tip.s;
+      document.getElementById('tipSubject').style.background = tip.bg;
+      document.getElementById('tipSubject').style.color = tip.sc;
+      document.getElementById('tipTitle').textContent = tip.t;
+      document.getElementById('tipContent').textContent = tip.c;
+      if(tip.m){
+        document.getElementById('tipMnemonic').style.display = 'block';
+        document.getElementById('tipMnemonicText').textContent = tip.m;
+      }
+      document.getElementById('tipLink').href = tip.l;
+    })();
+    </script>
+  </section>
+
   <!-- ===== 第二屏：AI助手直接可用 ===== -->
   <section class="ai-demo-section" style="padding:60px 20px;background:#FFFFFF;">
     <div style="max-width:600px;margin:0 auto;">
