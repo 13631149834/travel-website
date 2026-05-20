@@ -894,10 +894,10 @@ function searchKnowledge(query) {
         </div>
       </div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <span id="bizProgress" style="font-size:0.78rem;color:#4C8BF5;background:#F0F5FF;padding:2px 8px;border-radius:8px;">💼 导游业务: 0/9</span>
-        <span id="policyProgress" style="font-size:0.78rem;color:#D97706;background:#FFF7E6;padding:2px 8px;border-radius:8px;">⚖️ 政策法规: 0/18</span>
-        <span id="nationalProgress" style="font-size:0.78rem;color:#059669;background:#F0FFF4;padding:2px 8px;border-radius:8px;">📚 全国导基: 0/11</span>
-        <span id="localProgress" style="font-size:0.78rem;color:#DB2777;background:#FDF2F8;padding:2px 8px;border-radius:8px;">📖 地方导基: 0/8</span>
+        <span id="bizProgress" style="font-size:0.78rem;color:#4C8BF5;background:#F0F5FF;padding:2px 8px;border-radius:8px;">💼 导游业务: <span id="prog-business">0</span>/9</span>
+        <span id="policyProgress" style="font-size:0.78rem;color:#D97706;background:#FFF7E6;padding:2px 8px;border-radius:8px;">⚖️ 政策法规: <span id="prog-policy">0</span>/18</span>
+        <span id="nationalProgress" style="font-size:0.78rem;color:#059669;background:#F0FFF4;padding:2px 8px;border-radius:8px;">📚 全国导基: <span id="prog-national">0</span>/11</span>
+        <span id="localProgress" style="font-size:0.78rem;color:#DB2777;background:#FDF2F8;padding:2px 8px;border-radius:8px;">📖 地方导基: <span id="prog-local">0</span>/8</span>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;position:relative;z-index:10;">
@@ -1606,6 +1606,33 @@ if ('serviceWorker' in navigator) {
     }
   }
 })();
+</script>
+
+
+<script>
+function updateKnowledgeProgress() {
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var subjects = {business: 0, policy: 0, national: 0, local: 0};
+  
+  for (var key in readChapters) {
+    var sub = key.split(':')[0];
+    if (subjects.hasOwnProperty(sub)) subjects[sub]++;
+  }
+  
+  var ids = {business: 'prog-business', policy: 'prog-policy', national: 'prog-national', local: 'prog-local'};
+  for (var sub in ids) {
+    var el = document.getElementById(ids[sub]);
+    if (el) el.textContent = subjects[sub];
+  }
+  
+  // Update progress bar if exists
+  var total = 46, done = subjects.business + subjects.policy + subjects.national + subjects.local;
+  var bar = document.getElementById('totalProgressBar');
+  if (bar) bar.style.width = Math.round(done/total*100) + '%';
+  var pct = document.getElementById('totalProgressPct');
+  if (pct) pct.textContent = Math.round(done/total*100) + '%';
+}
+updateKnowledgeProgress();
 </script>
 
 </body>

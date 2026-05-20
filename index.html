@@ -835,6 +835,76 @@ a { color: #4C8BF5 !important; }
         </div>
       </div>
       
+      
+<!-- 继续学习卡片：根据进度推荐下一章 -->
+<div id="continueLearning" style="display:none;margin-bottom:28px;padding:20px;background:linear-gradient(135deg,#F0FFF4,#C6F6D5);border-radius:16px;border-left:4px solid #38A169;">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+    <div>
+      <p style="margin:0;font-size:0.95rem;color:#2D3748;font-weight:600;" id="continueText">🔥 继续学习</p>
+      <p style="margin:4px 0 0;font-size:0.8rem;color:#718096;" id="continueSub">上次学到的地方，接着来</p>
+    </div>
+    <a id="continueLink" href="travel-knowledge.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 24px;border-radius:12px;background:#38A169;color:#fff;text-decoration:none;font-weight:600;font-size:0.85rem;transition:all 0.2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(56,161,105,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      继续学习 →
+    </a>
+  </div>
+</div>
+
+<script>
+(function() {
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  
+  // Define chapter order
+  var paths = {
+    business: ['ch01-tour-guide-service','ch02-tour-guide','ch03-team-guide','ch04-independent-traveler','ch05-language-skills','ch06-tour-group-skills','ch07-commentary-skills','ch08-emergency-handling','ch09-related-knowledge'],
+    policy: ['ch01-constitution','ch02-tourism-law','ch03-travel-agency-regulation','ch04-guide-regulation','ch05-consumer-protection','ch06-civil-code-contract','ch07-civil-code-tort','ch08-safety-regulation','ch09-insurance-regulation','ch10-entry-exit','ch11-heritage-protection','ch12-religion-regulation','ch13-food-safety','ch14-transportation','ch15-environmental','ch16-entertainment','ch17-customs','ch18-foreign-exchange'],
+    national: ['ch01-history','ch02-literature','ch03-architecture','ch04-garden','ch05-cuisine','ch06-craft','ch07-ethnic-religion','ch08-landscape','ch09-source-countries','ch10-tea-wine','ch11-poetry-calligraphy'],
+    local: ['ch01-north','ch02-northeast','ch03-east','ch04-central','ch05-south','ch06-southwest','ch07-northwest','ch08-hk-macao-taiwan']
+  };
+  
+  var subjectNames = {business:'导游业务', policy:'政策法规', national:'全国导基', local:'地方导基'};
+  
+  // Count total read and find next unread chapter
+  var totalRead = 0;
+  var nextChapter = null;
+  var nextSubject = null;
+  var subjectOrder = ['business', 'policy', 'national', 'local'];
+  
+  for (var i = 0; i < subjectOrder.length; i++) {
+    var sub = subjectOrder[i];
+    var chs = paths[sub];
+    for (var j = 0; j < chs.length; j++) {
+      var key = sub + ':' + chs[j];
+      if (readChapters[key]) {
+        totalRead++;
+      } else if (!nextChapter) {
+        nextChapter = chs[j];
+        nextSubject = sub;
+      }
+    }
+  }
+  
+  if (totalRead > 0) {
+    var card = document.getElementById('continueLearning');
+    var textEl = document.getElementById('continueText');
+    var subEl = document.getElementById('continueSub');
+    var linkEl = document.getElementById('continueLink');
+    
+    if (nextChapter && nextSubject) {
+      textEl.textContent = '🔥 继续学习 · 已读' + totalRead + '章';
+      subEl.textContent = '下一章：' + subjectNames[nextSubject] + ' → 接着学';
+      linkEl.href = 'knowledge/' + nextSubject + '/' + nextChapter + '.html';
+    } else {
+      textEl.textContent = '🎉 全部读完了！';
+      subEl.textContent = '46章已全部完成，接下来刷题巩固吧';
+      linkEl.href = 'exam-simulator.html';
+      linkEl.textContent = '去刷题 →';
+    }
+    
+    card.style.display = 'block';
+  }
+})();
+</script>
+
       <!-- 你是哪种考生？ -->
       <div id="onboardingSection" style="margin-bottom:28px;">
         <p style="font-size:0.95rem;color:#444;font-weight:600;margin-bottom:14px;">🎯 你是哪种考生？</p>
@@ -1195,6 +1265,51 @@ if ('serviceWorker' in navigator) {
   <span>🤖</span>
   <div class="ai-float-pulse"></div>
 </a>
+
+
+<script>
+(function() {
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var dates = [];
+  for (var key in readChapters) {
+    var d = new Date(readChapters[key].date);
+    dates.push(d.toDateString());
+  }
+  // Unique dates
+  var uniqueDates = [...new Set(dates)].sort().reverse();
+  
+  // Calculate streak
+  var streak = 0;
+  var today = new Date().toDateString();
+  var yesterday = new Date(Date.now() - 86400000).toDateString();
+  
+  if (uniqueDates.length > 0) {
+    var latest = uniqueDates[0];
+    if (latest === today || latest === yesterday) {
+      streak = 1;
+      var checkDate = new Date(latest);
+      for (var i = 1; i < uniqueDates.length; i++) {
+        var prevDate = new Date(checkDate);
+        prevDate.setDate(prevDate.getDate() - 1);
+        if (uniqueDates[i] === prevDate.toDateString()) {
+          streak++;
+          checkDate = prevDate;
+        } else break;
+      }
+    }
+  }
+  
+  if (streak > 0) {
+    var countdownEl = document.getElementById('heroCountdown');
+    if (countdownEl) {
+      var streakBadge = document.createElement('span');
+      streakBadge.style.cssText = 'display:inline-flex;align-items:center;gap:4px;margin-left:12px;padding:6px 14px;border-radius:20px;background:linear-gradient(135deg,#FBBF24,#F59E0B);color:#78350F;font-weight:700;font-size:0.8rem;box-shadow:0 2px 8px rgba(251,191,36,0.3);';
+      streakBadge.textContent = '🔥 连续' + streak + '天';
+      countdownEl.parentNode.insertBefore(streakBadge, countdownEl.nextSibling);
+    }
+  }
+})();
+</script>
 
 </body>
 </html>

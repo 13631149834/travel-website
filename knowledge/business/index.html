@@ -177,5 +177,31 @@ class="chapter-list">
 })();
 </script>
 
+
+<script>
+// 动态更新学习进度（从localStorage读取）
+function updateRealProgress() {
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var subjects = {
+    'business': { total: 9, key: 'business' },
+    'policy': { total: 18, key: 'policy' },
+    'national': { total: 11, key: 'national' },
+    'local': { total: 8, key: 'local' }
+  };
+  
+  for (var sub in subjects) {
+    var info = subjects[sub];
+    var count = 0;
+    for (var key in readChapters) {
+      if (key.startsWith(info.key + ':')) count++;
+    }
+    // Try to find and update progress elements
+    var progressEls = document.querySelectorAll('.progress-count[data-subject="' + sub + '"]');
+    progressEls.forEach(function(el) { el.textContent = count; });
+  }
+}
+updateRealProgress();
+</script>
+
 </body>
 </html>
