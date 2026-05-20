@@ -629,7 +629,7 @@ a{text-decoration:none;color:inherit}
 
   <div class="page-header">
     <h1>备考心得</h1>
-    <p class="page-desc">分享你的备考故事和旅行感动</p>
+    <p class="page-desc">过来人的真实经验，帮你少走弯路</p>
   </div>
 
 
@@ -638,6 +638,12 @@ a{text-decoration:none;color:inherit}
 
 <div class="container">
   <div class="posts-section">
+    <div class="tabs" style="margin-bottom:16px;">
+      <button class="tab-btn active" onclick="filterPosts('all', this)">✨ 全部</button>
+      <button class="tab-btn" onclick="filterPosts('examinee', this)">📚 备考人</button>
+      <button class="tab-btn" onclick="filterPosts('guide', this)">🏛️ 导游说</button>
+      <button class="tab-btn" onclick="filterPosts('tourist', this)">🎒 游客说</button>
+    </div>
     <div id="postsGrid"></div>
   </div>
 </div>
@@ -649,9 +655,18 @@ a{text-decoration:none;color:inherit}
     <h3>✨ 分享你的故事</h3>
     <div class="form-group"><label>你的身份</label>
       <div class="identity-select">
-        
-        
-        
+        <div class="identity-option" onclick="selectIdentity(this, 'examinee')" data-identity="examinee">
+          <div class="icon">👩‍🎓</div>
+          <div class="text">备考人</div>
+        </div>
+        <div class="identity-option" onclick="selectIdentity(this, 'guide')" data-identity="guide">
+          <div class="icon">👨‍💼</div>
+          <div class="text">导游</div>
+        </div>
+        <div class="identity-option" onclick="selectIdentity(this, 'tourist')" data-identity="tourist">
+          <div class="icon">🎒</div>
+          <div class="text">游客</div>
+        </div>
       </div>
     </div>
     <div class="form-group"><label>昵称（选填）</label><input type="text" id="authorName" placeholder="给自己起个名字"></div>
@@ -676,11 +691,18 @@ a{text-decoration:none;color:inherit}
 
   // 示例发帖数据
   const samplePosts = [
-    {id:1, category:'备考心得', author:'小雨广州', avatar:'👩‍🎓', time:'来自学员反馈', content:'复习了2个多月，终于过了4科。感觉模拟题真的很有用，考试遇到了好几道类似的。', likes:0, comments:0},
-    {id:2, category:'备考心得', author:'阿杰深圳', avatar:'👨‍🎓', time:'来自学员反馈', content:'面试那关比想象中难，临场发挥很重要。多练几遍对着手机讲，找找感觉。', likes:0, comments:0},
-    {id:3, category:'备考心得', author:'小美成都', avatar:'👩‍🎓', time:'来自学员反馈', content:'口诀确实好记，但还是要理解着背，不然换种问法就懵了。', likes:0, comments:0},
-    {id:4, category:'备考心得', author:'东东佛山', avatar:'👨‍🎓', time:'来自学员反馈', content:'踩了不少坑，建议早点开始准备，别等到最后一个月才慌。', likes:0, comments:0},
-    {id:5, category:'备考心得', author:'小陈杭州', avatar:'👩‍🎓', time:'来自学员反馈', content:'政策法规那科花了我最多时间，法条真的要反复看。', likes:0, comments:0}
+    {id:1, category:'备考人', author:'曼曼学姐', avatar:'👩‍🎓', time:'考了两次才上岸', content:'第一次考导游证，笔试过了面试挂了。当时觉得自己背了那么多导游词，结果一上考场脑子空白，磕磕巴巴说了两分钟就结束了。第二次我改变了策略：每天对着镜子练3篇，录音回放找问题，考前一周每天模拟一次完整面试流程。最后面试87分上岸。记住：导游词不是背的，是讲出来的。'},
+    {id:2, category:'备考人', author:'在职备考的小李', avatar:'👨‍💼', time:'三个月上岸分享', content:'上班族备考最怕的就是时间碎片化。我的办法是把所有考点做成卡片，通勤路上刷，午休看20分钟。政策法规那科我是最后一周突击的，重点背罚款金额和天数这类数字考点，结果真的考了好几道。建议在职党别贪多，先把高频考点拿下，低频的后面有时间再补。'},
+    {id:3, category:'备考人', author:'二战上岸的阿花', avatar:'👩‍🎓', time:'走过弯路才懂路', content:'一战的时候什么都不懂，买了本教材就开始啃，啃了两个月发现重点完全没抓到。后来才明白导游证考试是有套路的：判断题40道、单选90道、多选35道，多选占分最重但最容易丢分。二战我把多选题当重点练，每天30道，错题反复看。最后多选只错了4道，笔试总分267上岸。'},
+    {id:4, category:'导游说', author:'带团三年的小周', avatar:'👨‍💼', time:'导游日常分享', content:'拿到导游证只是第一步，真正带团才发现考试学的那些东西只是基础。但基础很重要——政策法规帮我在处理投诉时心里有底，导游业务让我知道遇到突发状况怎么应对。记得有次游客食物中毒，我第一时间拨打了120并保留了食物样本，事后旅行社说我的处理很专业。这些都是备考时学到的。'},
+    {id:5, category:'备考人', author:'零基础转行的琳琳', avatar:'👩‍🎓', time:'从零开始到上岸', content:'我原来做行政，完全零基础。刚开始看全国导基的时候直接懵了——中国古建筑、园林、宗教、文学啥都要背。后来发现一个窍门：先通读一遍建立框架，再用口诀记关键数字和分类。比如中国四大名园、五大宗教创始人、世界遗产数量，这些数字考点考了不下5道。口诀记忆法救了我的命。'},
+    {id:6, category:'备考人', author:'二战差一分的阿伟', avatar:'👨‍🎓', time:'差一分的那种痛', content:'一战笔试差1分没过，那种感觉真的崩溃。后来复盘发现：多选题太粗心了，很多"以下说法正确的有"这种题，选项里往往有一个是半对半错的，看着像对其实有陷阱。二战我专门练了200道多选题，养成了每个选项都要验证的习惯。最后笔试过了，面试也顺利上岸。差一分不可怕，可怕的是不知道差在哪。'},
+    {id:7, category:'导游说', author:'金牌导游老赵', avatar:'👨‍💼', time:'十年带团经验', content:'做导游十年了，说句真心话：考证那点知识，带团的时候都会用上。特别是导游业务里的应急处理和投诉处理，几乎每个月都会遇到。我建议还在备考的朋友，别只为了考试而学，想想以后真的带团了怎么用，这样记得更牢，面试的时候讲出来也更自然。'},
+    {id:8, category:'备考人', author:'宝妈考证明明', avatar:'👩‍🎓', time:'带娃也能上岸', content:'孩子两岁的时候决定考导游证，白天带娃只能晚上学。每天哄完孩子9点，学到11点，雷打不动2小时。用了三个月，把四科过了一遍，又用一个月刷题巩固。面试的时候我选了本省的导游词，因为带孩子去过很多景点，讲起来特别有感觉。最终一次上岸，现在周末偶尔带团，兼顾了家庭和收入。'},
+    {id:9, category:'备考人', author:'面试逆袭的小何', avatar:'👨‍🎓', time:'面试从58到82', content:'一战面试58分，紧张到声音发抖，导游词背到一半忘了，考官问我问题我只会说"嗯对是的"。后来发现面试不是考你背得多熟，而是考你能不能像导游一样自然地讲解。二战我改变了方法：不再死背导游词，而是理解景点的逻辑线，用自己的话串联。模拟面试时录视频，看自己的表情和手势。最后82分上岸。'},
+    {id:10, category:'游客说', avatar:'🎒', author:'旅行爱好者小林', time:'跟团游的真实感受', content:'去过很多地方跟团游，遇到过特别好的导游也遇到过不靠谱的。好的导游真的能让整个旅程升级——讲景点故事引人入胜，遇到问题冷静处理，还会推荐地道的当地美食。所以我特别理解为什么导游证考试要考这么多内容，导游确实需要全面的知识储备和应变能力。'},
+    {id:11, category:'备考人', author:'口诀大王小陈', avatar:'👩‍🎓', time:'我的口诀记忆法', content:'政策法规那么多罚款金额怎么记？我编了一套口诀：无证导游罚1千到3万、变更行程罚2万到10万、强迫购物罚1万到5万......数字考点编成顺口溜，多念几遍就记住了。全国导基也一样，四大名园"颐避拙留"、五大宗教"佛道伊天基"，口诀能省一半背诵时间。建议大家自己也编口诀，自己编的记得最牢。'},
+    {id:12, category:'备考人', author:'终于上岸的小王', avatar:'👨‍🎓', time:'我的备考时间线', content:'5月开始准备，5-6月通读教材建立框架，7-8月精读重点章节做笔记，9月集中刷题整理错题，10月查漏补缺+面试练习，11月考前冲刺做模拟卷。全程5个月，每天2-3小时。最大的感触是：别拖到最后两个月才开始，导游证四科内容真的不少，早开始早主动。口诀、数字考点、高频错题这三样是最值得花时间的。'}
   ];
 
   const categoryIcons = {'备考人':'📚','导游说':'🏛️','游客说':'🎒','全部':'✨'};
@@ -843,7 +865,7 @@ if ('serviceWorker' in navigator) {
 
 <footer style="text-align:center;padding:20px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-bottom:60px;">
   <a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a> · <a href="index.html" style="color:#4C8BF5;">返回首页</a>
-  <p style="margin-top:6px;">© 2026 游导学习笔记</p>
+  <p style="margin-top:6px;">© 2025-2026 游导学习笔记</p>
   <p style="margin-top:8px;color:#999;font-size:0.8rem;">公众号：冲刺上岸 & 证好有你</p>
 </footer>
 
