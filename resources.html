@@ -783,11 +783,10 @@
 
   <div id="paidSection">
   <div style="padding:0 0 24px;">
-    
     <h2 style="font-size:1.3rem;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:6px;">全套备考资料，一步到位</h2>
     <p style="font-size:0.85rem;color:#999;text-align:center;margin-bottom:28px;">7天不满意全额退款，放心试</p>
 
-    <!-- 全套资料包 -->
+    <!-- 唯一套餐 -->
     <div style="background:#FFFFFF;border:2px solid #4C8BF5;border-radius:18px;padding:28px;margin-bottom:16px;position:relative;box-shadow:0 4px 16px rgba(76,139,245,0.15);transition:all 0.2s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(76,139,245,0.25)'" onmouseout="this.style.boxShadow='0 4px 16px rgba(76,139,245,0.15)'">
       <div style="position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:#FF6B35;color:#FFFFFF;padding:4px 16px;border-radius:12px;font-size:0.75rem;font-weight:700;white-space:nowrap;">🔥 全科备考</div>
       <div style="font-size:2.5rem;color:#4C8BF5;font-weight:900;text-align:center;margin-bottom:4px;">¥49.9 <span style="font-size:0.85rem;color:#999;font-weight:400;">元</span></div>
@@ -799,16 +798,8 @@
         <p>🤖 AI练习 + 智能答疑</p>
         <p>💬 1v1微信答疑到考前</p>
       </div>
-      <button onclick="buyPack('全套','49.9')" style="width:100%;padding:14px;border-radius:25px;font-size:1rem;font-weight:700;border:none;cursor:pointer;background:#4C8BF5;color:#FFFFFF;transition:all 0.2s;" onmouseover="this.style.background='#3B7AE0'" onmouseout="this.style.background='#4C8BF5'">立即购买 →</button>
+      <button onclick="openBuyModal()" style="width:100%;padding:14px;border-radius:25px;font-size:1rem;font-weight:700;border:none;cursor:pointer;background:#4C8BF5;color:#FFFFFF;transition:all 0.2s;" onmouseover="this.style.background='#3B7AE0'" onmouseout="this.style.background='#4C8BF5'">立即购买 →</button>
       <div style="font-size:0.75rem;color:#999;text-align:center;margin-top:8px;">闲鱼搜"导游证备考资料" ¥49.9</div>
-    </div>
-      <div style="font-size:2rem;color:#4C8BF5;font-weight:800;margin-bottom:4px;">¥49.9 <span style="font-size:0.85rem;color:#999;font-weight:400;">全套</span></div>
-      <div style="border:none;border-top:1px solid #F0F0F0;margin:14px 0;"></div>
-      <div style="font-size:0.9rem;color:#333;line-height:1.7;margin-bottom:18px;">
-        <strong>1v1微信答疑</strong> + 面试模拟 + 导游词批改
-      </div>
-      <button onclick="buyPack('C','99')" style="width:100%;padding:12px;border-radius:25px;font-size:0.95rem;font-weight:700;border:none;cursor:pointer;background:#F0F5FF;color:#4C8BF5;transition:all 0.2s;" onmouseover="this.style.background='#E0EAFF'" onmouseout="this.style.background='#F0F5FF'">深度备考 →</button>
-      <div style="font-size:0.75rem;color:#999;text-align:center;margin-top:8px;">微信搜"ximao101" 获取全套资料</div>
     </div>
 
     <!-- 底部说明 -->
@@ -816,7 +807,6 @@
       <p style="font-size:0.8rem;color:#999;">ximao101独家整理 · 7天不满意全额退款</p>
       <p style="font-size:0.78rem;color:#666;margin-top:8px;">💬 也可加微信 <strong>ximao101</strong>（备注"导游证"）</p>
     </div>
-
   </div>
 </div><!-- end paidSection -->
   <div class="trust-section">
@@ -965,9 +955,33 @@ function closeSampleModal() {
 }
 
 
-function buyPack(pack, price) {
-  if (pack === 'C') {
-    alert('【推荐】闲鱼搜索"导游证备考资料"下单（平台担保）\n\n或添加微信：ximao101（备注"导游证"）\n\n全套¥49.9：全部资料+1v1答疑+面试模拟\n\n💡 7天不满意可全额退款');
+function openBuyModal() {
+    var existing = document.getElementById('buyModal');
+    if (existing) { existing.style.display = 'flex'; return; }
+    var modal = document.createElement('div');
+    modal.id = 'buyModal';
+    modal.style.cssText = 'display:flex;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;align-items:center;justify-content:center;padding:20px;';
+    modal.innerHTML = '<div style="background:#fff;border-radius:20px;padding:32px 24px;max-width:360px;width:100%;text-align:center;position:relative;">' +
+      '<button onclick="closeBuyModal()" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.5rem;color:#999;cursor:pointer;">&times;</button>' +
+      '<div style="font-size:1.5rem;font-weight:800;color:#1A1A1A;margin-bottom:4px;">获取全套资料</div>' +
+      '<div style="font-size:2rem;font-weight:900;color:#4C8BF5;margin:12px 0;">¥49.9</div>' +
+      '<div style="font-size:0.85rem;color:#666;margin-bottom:24px;line-height:1.8;">📚 4科笔记+真题 · 📝 面试190问+导游词<br>🤖 AI答疑 · 💬 1v1微信到考前</div>' +
+      '<div style="background:#F0F9FF;border:1px solid #BAE6FD;border-radius:14px;padding:16px;margin-bottom:16px;text-align:left;">' +
+        '<div style="font-weight:700;color:#0369A1;font-size:0.9rem;margin-bottom:8px;">🛒 方式一：闲鱼下单（推荐）</div>' +
+        '<div style="font-size:0.85rem;color:#555;line-height:1.7;">打开闲鱼APP → 搜索<br><strong style="color:#4C8BF5;">"导游证备考资料"</strong><br>平台担保交易，更安心</div>' +
+      '</div>' +
+      '<div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:14px;padding:16px;text-align:left;">' +
+        '<div style="font-weight:700;color:#C2410C;font-size:0.9rem;margin-bottom:8px;">💬 方式二：微信联系</div>' +
+        '<div style="font-size:0.85rem;color:#555;line-height:1.7;">添加微信 <strong style="color:#C2410C;">ximao101</strong><br>备注"导游证"即可</div>' +
+      '</div>' +
+      '<div style="font-size:0.75rem;color:#999;margin-top:16px;">✅ 7天不满意全额退款</div>' +
+    '</div>';
+    document.body.appendChild(modal);
+    modal.addEventListener('click', function(e) { if (e.target === modal) closeBuyModal(); });
+  }
+  function closeBuyModal() {
+    var modal = document.getElementById('buyModal');
+    if (modal) modal.style.display = 'none';
   } else {
     alert('【推荐】闲鱼搜索"导游证备考资料"下单（平台担保）\n\n或添加微信：ximao101（备注"导游证"）\n\n' + pack + '包价格：¥' + price + '\n\n💡 7天不满意可全额退款');
   }
