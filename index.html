@@ -796,33 +796,118 @@ a { color: #4C8BF5 !important; }
 
   
   <!-- ===== 第一屏：人设驱动 ===== -->
-  <section class="hero-section" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px 60px;background:linear-gradient(180deg,#E8F5E9 0%,#FFFFFF 100%);position:relative;overflow:hidden;">
+  <section class="hero-section" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px 40px;background:linear-gradient(180deg,#E8F5E9 0%,#FFFFFF 100%);position:relative;overflow:hidden;">
     <div style="position:absolute;top:0;left:0;right:0;bottom:0;background:radial-gradient(circle at 30% 20%,rgba(76,139,245,0.08) 0%,transparent 50%),radial-gradient(circle at 70% 80%,rgba(76,139,245,0.05) 0%,transparent 50%);"></div>
+    
     <div style="position:relative;z-index:1;max-width:700px;text-align:center;">
       <p style="font-size:1.2rem;color:#4C8BF5;font-weight:700;margin-bottom:12px;">你好，我是曼曼 👋</p>
       <h1 style="font-size:clamp(1.8rem,6vw,2.8rem);font-weight:900;color:#1A1A1A;margin-bottom:20px;line-height:1.3;">
         考了两次才上岸，<br>这些弯路你别走
       </h1>
-      <p style="font-size:1.1rem;color:#666;margin-bottom:32px;font-weight:500;">
+      <p style="font-size:1.1rem;color:#666;margin-bottom:24px;font-weight:500;">
         持证导游 · AI备考助手 · 走过弯路所以更懂路
       </p>
-      <a href="ai-assistant.html" class="btn-primary" style="font-size:1.1rem;padding:16px 40px;box-shadow:0 4px 20px rgba(76,139,245,0.3);">
-        立即体验AI助手 →
-      </a>
-      <div style="margin-top:40px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      
+      <!-- 考试倒计时（自动计算） -->
+      <div id="heroCountdown" style="display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FF6B6B,#FF8E53);color:#FFF;padding:10px 24px;border-radius:40px;font-weight:800;font-size:1rem;box-shadow:0 4px 16px rgba(255,107,107,0.3);margin-bottom:28px;">
+        🔥 距离考试还有 <span id="heroDays">--</span> 天
+      </div>
+      
+      <!-- 新手引导：3步开始 -->
+      <div style="margin-bottom:32px;">
+        <p style="color:#999;font-size:0.9rem;margin-bottom:16px;">不知道从哪开始？跟着走就行 ↓</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <a href="travel-knowledge.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 20px;border-radius:16px;background:#F0F5FF;text-decoration:none;transition:all 0.2s;min-width:90px;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(76,139,245,0.2)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <span style="font-size:1.6rem;">📖</span>
+            <span style="font-size:0.8rem;font-weight:700;color:#4C8BF5;">第1步</span>
+            <span style="font-size:0.75rem;color:#666;">看知识点</span>
+          </a>
+          <a href="exam-guide.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 20px;border-radius:16px;background:#FFF5F5;text-decoration:none;transition:all 0.2s;min-width:90px;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(255,107,107,0.2)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <span style="font-size:1.6rem;">✏️</span>
+            <span style="font-size:0.8rem;font-weight:700;color:#FF6B6B;">第2步</span>
+            <span style="font-size:0.75rem;color:#666;">做练习题</span>
+          </a>
+          <a href="wrong-questions.html" style="display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 20px;border-radius:16px;background:#F0FFF4;text-decoration:none;transition:all 0.2s;min-width:90px;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(56,161,105,0.2)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <span style="font-size:1.6rem;">📋</span>
+            <span style="font-size:0.8rem;font-weight:700;color:#38A169;">第3步</span>
+            <span style="font-size:0.75rem;color:#666;">查错题</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- 你是哪种考生？ -->
+      <div id="onboardingSection" style="margin-bottom:28px;">
+        <p style="font-size:0.95rem;color:#444;font-weight:600;margin-bottom:14px;">🎯 你是哪种考生？</p>
+        <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+          <button onclick="showPath('zero')" id="btn-zero" style="padding:10px 20px;border-radius:12px;border:2px solid #E2E8F0;background:#FFF;cursor:pointer;font-size:0.9rem;font-weight:600;color:#4A5568;transition:all 0.2s;">🌱 零基础小白</button>
+          <button onclick="showPath('has')" id="btn-has" style="padding:10px 20px;border-radius:12px;border:2px solid #E2E8F0;background:#FFF;cursor:pointer;font-size:0.9rem;font-weight:600;color:#4A5568;transition:all 0.2s;">📖 有基础在学</button>
+          <button onclick="showPath('retry')" id="btn-retry" style="padding:10px 20px;border-radius:12px;border:2px solid #E2E8F0;background:#FFF;cursor:pointer;font-size:0.9rem;font-weight:600;color:#4A5568;transition:all 0.2s;">💪 二战冲刺</button>
+        </div>
+        <div id="pathResult" style="margin-top:14px;display:none;padding:16px;border-radius:12px;text-align:left;font-size:0.88rem;line-height:1.8;"></div>
+      </div>
+      
+      <div style="margin-top:8px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="ai-assistant.html" class="btn-primary" style="font-size:1rem;padding:14px 32px;box-shadow:0 4px 20px rgba(76,139,245,0.3);">
+          💬 问AI助手
+        </a>
+        <a href="free-materials.html" style="display:inline-flex;align-items:center;gap:6px;padding:14px 28px;border-radius:12px;border:2px solid #4C8BF5;color:#4C8BF5;font-weight:700;font-size:1rem;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='#4C8BF5';this.style.color='#FFF'" onmouseout="this.style.background='';this.style.color='#4C8BF5'">
+          🆓 免费试看
+        </a>
+      </div>
+      
+      <div style="margin-top:32px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
         <span class="badge-item">🏆 助考上岸</span>
         <span class="badge-item">🤖 AI秒回</span>
         <span class="badge-item">📚 全科覆盖</span>
         <span class="badge-item">✏️ 章节练习</span>
         <span class="badge-item">📋 错题追踪</span>
       </div>
-      <div style="margin-top:24px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-        <a href="travel-knowledge.html" style="display:inline-flex;align-items:center;gap:4px;padding:8px 18px;border-radius:12px;background:#F0F5FF;color:#4C8BF5;font-size:0.85rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='#4C8BF5';this.style.color='#FFF'" onmouseout="this.style.background='#F0F5FF';this.style.color='#4C8BF5'">📚 知识库</a>
-        <a href="exam-simulator.html" style="display:inline-flex;align-items:center;gap:4px;padding:8px 18px;border-radius:12px;background:#F0FDF4;color:#059669;font-size:0.85rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='#059669';this.style.color='#FFF'" onmouseout="this.style.background='#F0FDF4';this.style.color='#059669'">✏️ 刷题</a>
-        <a href="wrong-questions.html" style="display:inline-flex;align-items:center;gap:4px;padding:8px 18px;border-radius:12px;background:#FFF5F5;color:#EF4444;font-size:0.85rem;font-weight:600;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.background='#EF4444';this.style.color='#FFF'" onmouseout="this.style.background='#FFF5F5';this.style.color='#EF4444'">📋 错题本</a>
-      </div>
     </div>
-  </section>
+</section>
+
+<script>
+// Auto countdown to exam date (2026-11-21)
+(function(){
+  var exam = new Date('2026-11-21T09:00:00+08:00');
+  var now = new Date();
+  var diff = Math.ceil((exam - now) / (1000*60*60*24));
+  var el = document.getElementById('heroDays');
+  if(el) el.textContent = diff > 0 ? diff : '0';
+})();
+
+// Tool section countdown auto-set
+(function(){
+  var exam = new Date('2026-11-21T09:00:00+08:00');
+  var now = new Date();
+  var diff = Math.ceil((exam - now) / (1000*60*60*24));
+  var el = document.getElementById('homeCountdownDays');
+  if(el) el.textContent = diff > 0 ? diff : '0';
+})();
+
+// Onboarding path selector
+function showPath(type) {
+  var result = document.getElementById('pathResult');
+  var btns = ['zero','has','retry'];
+  btns.forEach(function(b){
+    var btn = document.getElementById('btn-'+b);
+    btn.style.background = '#FFF';
+    btn.style.borderColor = '#E2E8F0';
+    btn.style.color = '#4A5568';
+  });
+  var activeBtn = document.getElementById('btn-'+type);
+  activeBtn.style.background = '#F0F5FF';
+  activeBtn.style.borderColor = '#4C8BF5';
+  activeBtn.style.color = '#4C8BF5';
+  
+  var paths = {
+    zero: '<div style="color:#2D3748;"><strong style="color:#4C8BF5;">🌱 零基础小白，建议这样走：</strong><br>① 先看 <a href="exam-guide.html" style="color:#4C8BF5;font-weight:600;">考试指南</a>，了解考什么、怎么考<br>② 每天1章 <a href="travel-knowledge.html" style="color:#4C8BF5;font-weight:600;">知识库</a>，先看导游业务（最实用）<br>③ 看完一章做一章 <a href="exam-guide.html" style="color:#4C8BF5;font-weight:600;">练习题</a><br>④ 遇到不懂的随时问 <a href="ai-assistant.html" style="color:#4C8BF5;font-weight:600;">AI助手</a><br><span style="color:#999;font-size:0.8rem;">💡 别急着买资料，先用免费的试一周，觉得适合再升级</span></div>',
+    has: '<div style="color:#2D3748;"><strong style="color:#4C8BF5;">📖 有基础，重点突破：</strong><br>① 直接去 <a href="exam-guide.html" style="color:#4C8BF5;font-weight:600;">刷题练习</a>，测测现在什么水平<br>② 错题自动进 <a href="wrong-questions.html" style="color:#4C8BF5;font-weight:600;">错题本</a>，专攻薄弱点<br>③ 用 <a href="travel-knowledge.html" style="color:#4C8BF5;font-weight:600;">知识库</a> 查漏补缺，只看还不会的<br>④ <a href="ai-assistant.html" style="color:#4C8BF5;font-weight:600;">AI助手</a> 帮你出专项模拟题<br><span style="color:#999;font-size:0.8rem;">💡 你需要的是效率，不是从零开始</span></div>',
+    retry: '<div style="color:#2D3748;"><strong style="color:#4C8BF5;">💪 二战冲刺，这次一定上岸：</strong><br>① 先看 <a href="mistakes.html" style="color:#4C8BF5;font-weight:600;">5大坑我全踩过</a>，上次可能就栽在这些<br>② 重点刷 <a href="exam-guide.html" style="color:#4C8BF5;font-weight:600;">错题重做</a>，别再同一个地方丢分<br>③ 口诀速记是提分关键 → <a href="free-materials.html" style="color:#4C8BF5;font-weight:600;">免费速记口诀</a><br>④ 考前冲刺建议拿 <a href="resources.html" style="color:#4C8BF5;font-weight:600;">全套资料包</a>，省时间<br><span style="color:#999;font-size:0.8rem;">💡 走过弯路的人更懂路，这次方法要对</span></div>'
+  };
+  result.innerHTML = paths[type];
+  result.style.display = 'block';
+}
+</script>
 
   <!-- ===== 每日一推高频考点 ===== -->
   <section class="daily-tip-section" style="padding:40px 20px;background:linear-gradient(135deg,#FFF9E6 0%,#FFF3CC 100%);">
@@ -954,10 +1039,10 @@ a { color: #4C8BF5 !important; }
       
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
         <!-- 倒计时卡片 -->
-        <div class="glass-card" style="padding:24px;text-align:center;cursor:pointer;" onclick="openDatePicker()">
+        <div class="glass-card" style="padding:24px;text-align:center;">
           <div style="font-size:2.5rem;font-weight:800;color:#4C8BF5;" id="homeCountdownDays">--</div>
           <div style="font-size:0.9rem;color:#666;margin-top:8px;">距离考试还有</div>
-          <div style="font-size:0.75rem;color:#999;margin-top:4px;">点击设置日期</div>
+          <div style="font-size:0.75rem;color:#FF6B6B;margin-top:4px;">2026年11月21日笔试</div>
         </div>
         
         <!-- 报名条件自查 -->
