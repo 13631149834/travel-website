@@ -197,6 +197,41 @@
     margin-left: 4px;
 }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -351,6 +386,20 @@
         </div>
     </div>
 
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer"></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
 <div class="chapter-nav">
     <div class="nav-row">
         <a href="ch07-northwest.html" class="prev-link">← 第7章 西北地区</a>
@@ -378,5 +427,138 @@ document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
 });
 </script>
 
+<script>
+
+// 章节练习题数据
+const quizData = [{'type': 'judge', 'qtype': '判断', 'q': '香港和澳门都实行"一国两制"政策，保持原有的资本主义制度50年不变。', 'options': ['正确', '错误'], 'ans': 0, 'explain': '香港1997年、澳门1999年回归祖国后，都实行"一国两制"政策，保持原有的资本主义制度和生活方式，50年不变。'}, {'type': 'judge', 'qtype': '判断', 'q': '台湾是中国第一大岛。', 'options': ['正确', '错误'], 'ans': 0, 'explain': '台湾是中国第一大岛，面积约3.6万平方公里，位于东海与南海之间，是中国不可分割的一部分。'}, {'type': 'single', 'qtype': '单选', 'q': '澳门历史城区于哪一年被列入世界遗产？', 'options': ['2003年', '2005年', '2008年', '2010年'], 'ans': 1, 'explain': '澳门历史城区于2005年被列入世界遗产名录，是中国第31处世界遗产，也是香港、澳门回归后首批进入名录的项目。'}, {'type': 'single', 'qtype': '单选', 'q': '香港维多利亚港夜景与哪两个地方并称"世界三大夜景"？', 'options': ['上海外滩、东京湾', '函馆夜景、那不勒斯港', '新加坡港、悉尼港', '长崎夜景、拉斯维加斯'], 'ans': 1, 'explain': '香港维多利亚港夜景与日本函馆夜景、意大利那不勒斯港夜景并称为"世界三大夜景"。'}, {'type': 'single', 'qtype': '单选', 'q': '日月潭位于台湾省的哪个县？', 'options': ['台北县', '南投县', '花莲县', '屏东县'], 'ans': 1, 'explain': '日月潭位于台湾省南投县鱼池乡，是台湾省最大的淡水湖，也是台湾最著名的风景名胜之一。'}, {'type': 'single', 'qtype': '单选', 'q': '"大三巴牌坊"是哪个地方的标志性建筑？', 'options': ['香港', '澳门', '台湾', '厦门'], 'ans': 1, 'explain': '大三巴牌坊是澳门圣保禄学院教堂的遗址，是澳门的标志性建筑和游客必到之处。'}, {'type': 'multi', 'qtype': '多选', 'q': '港澳台地区中，具有世界遗产的是？', 'options': ['香港', '澳门', '台湾', '均没有'], 'ans': [1], 'explain': '澳门历史城区是世界文化遗产。香港和台湾目前暂无常住世界遗产项目，但都有申遗潜力的历史建筑和景观。'}, {'type': 'multi', 'qtype': '多选', 'q': '台湾的主要少数民族包括？', 'options': ['高山族', '汉族', '客家人', '闽南人', '黎族'], 'ans': [0, 2, 3], 'explain': '台湾的主要少数民族是高山族，客家人和闽南人是台湾汉族的主要族群。黎族主要分布在海南。'}];
+
+// 交互JS
+let selectedAnswers = {};
+let submitted = false;
+
+function renderQuiz() {
+    const container = document.getElementById('quizContainer');
+    if (!container) return;
+    
+    let html = '';
+    quizData.forEach((q, index) => {
+        const qtypeClass = q.type === 'judge' ? 'qtype-judge' : (q.type === 'single' ? 'qtype-single' : 'qtype-multi');
+        html += `<div class="quiz-item" id="quiz-item-${index}">
+            <div class="quiz-q">
+                <span class="qtype ${qtypeClass}">${q.qtype}</span>
+                ${index + 1}. ${q.q}
+            </div>
+            <div class="quiz-options">`;
+        
+        q.options.forEach((opt, optIndex) => {
+            const letter = String.fromCharCode(65 + optIndex);
+            html += `<div class="quiz-opt" data-q="${index}" data-opt="${optIndex}" onclick="selectOption(${index}, ${optIndex}, '${q.type}')">
+                <span class="opt-letter">${letter}</span>
+                <span>${opt}</span>
+            </div>`;
+        });
+        
+        html += `</div>
+            <div class="quiz-explain" id="explain-${index}">💡 ${q.explain}</div>
+        </div>`;
+    });
+    
+    container.innerHTML = html;
+}
+
+function selectOption(qIndex, optIndex, qType) {
+    if (submitted) return;
+    
+    if (qType === 'multi') {
+        // 多选题：支持多选
+        const key = `q_${qIndex}`;
+        if (!selectedAnswers[key]) selectedAnswers[key] = [];
+        const idx = selectedAnswers[key].indexOf(optIndex);
+        if (idx > -1) {
+            selectedAnswers[key].splice(idx, 1);
+        } else {
+            selectedAnswers[key].push(optIndex);
+        }
+    } else {
+        // 单选题和判断题：单选
+        selectedAnswers[`q_${qIndex}`] = [optIndex];
+    }
+    
+    updateDisplay(qIndex, qType);
+}
+
+function updateDisplay(qIndex, qType) {
+    const key = `q_${qIndex}`;
+    const selected = selectedAnswers[key] || [];
+    
+    const item = document.getElementById(`quiz-item-${qIndex}`);
+    const opts = item.querySelectorAll('.quiz-opt');
+    
+    opts.forEach((opt, optIndex) => {
+        opt.classList.remove('selected', 'show-correct', 'show-wrong');
+        if (selected.includes(optIndex)) {
+            opt.classList.add('selected');
+        }
+    });
+}
+
+function submitQuiz() {
+    if (submitted) return;
+    submitted = true;
+    
+    let correctCount = 0;
+    quizData.forEach((q, index) => {
+        const key = `q_${index}`;
+        const userAns = selectedAnswers[key] || [];
+        const correctAns = Array.isArray(q.ans) ? q.ans : [q.ans];
+        
+        const isCorrect = userAns.length === correctAns.length && 
+                          userAns.every(v => correctAns.includes(v)) &&
+                          correctAns.every(v => userAns.includes(v));
+        
+        if (isCorrect) correctCount++;
+        
+        const item = document.getElementById(`quiz-item-${index}`);
+        item.classList.add(isCorrect ? 'correct' : 'wrong');
+        
+        const explain = document.getElementById(`explain-${index}`);
+        explain.classList.add('show');
+        
+        const opts = item.querySelectorAll('.quiz-opt');
+        opts.forEach((opt, optIndex) => {
+            if (correctAns.includes(optIndex)) {
+                opt.classList.add('show-correct');
+            } else if (userAns.includes(optIndex)) {
+                opt.classList.add('show-wrong');
+            }
+        });
+    });
+    
+    const scoreEl = document.getElementById('quizScore');
+    const scoreNumEl = document.getElementById('scoreNum');
+    scoreNumEl.textContent = `${correctCount}/${quizData.length}`;
+    scoreEl.classList.add('show');
+}
+
+function resetQuiz() {
+    selectedAnswers = {};
+    submitted = false;
+    
+    document.querySelectorAll('.quiz-item').forEach(item => {
+        item.classList.remove('correct', 'wrong');
+        item.querySelectorAll('.quiz-opt').forEach(opt => {
+            opt.classList.remove('selected', 'show-correct', 'show-wrong');
+        });
+        const explain = item.querySelector('.quiz-explain');
+        if (explain) explain.classList.remove('show');
+    });
+    
+    document.getElementById('quizScore').classList.remove('show');
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', renderQuiz);
+
+</script>
 </body>
 </html>

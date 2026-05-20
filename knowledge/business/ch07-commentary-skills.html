@@ -117,6 +117,41 @@
     margin-left: 4px;
 }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -446,6 +481,21 @@
 
 </section>
 
+
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer"></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
 <section class="cta-box">
 <h3>📚 备考资料推荐</h3>
 <p>更多备考资料 → 微信 <strong>ximao101</strong></p>
@@ -486,6 +536,104 @@ document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
         });
     }
 });
+</script>
+
+
+<script>
+var quizData = [
+  {type:'judge', q:'虚实结合法中，"虚"指传说、故事、典故，"实"指景点实物、史实资料，两者以实为本、以虚为辅', opts:['正确','错误'], ans:[0], explain:'虚实结合法是导游讲解的核心技法。"虚"指民间传说、神话故事、历史典故、趣闻逸事；"实"指景点实物、史实资料、科学数据、形成原理。运用原则是以实为本、以虚为辅、以虚托实、虚实相生。'},
+  {type:'judge', q:'设置悬念时，悬念越多越好，可以充分吸引游客注意力', opts:['正确','错误'], ans:[1], explain:'设置悬念不宜过多过频。悬念设置的方法包括：欲擒故纵法、巧设疑问法、突出矛盾法、节外生枝法。但每个悬念都要合情合理，答案要及时给出。过多过频的悬念会让游客疲劳，降低讲解效果。'},
+  {type:'single', q:'导游讲解的本质是什么？', opts:['A. 信息传递','B. 信息传递+情感沟通+审美引导','C. 单纯讲故事','D. 背书式介绍'], ans:[1], explain:'导游讲解的本质是信息传递+情感沟通+审美引导三位一体的综合过程。讲解不是单纯传递信息，也不是背书式介绍，而是要让游客在获取知识的同时产生情感共鸣、提升审美体验。'},
+  {type:'single', q:'触景生情法的核心特点是什么？', opts:['A. 边看边讲','B. 情景交融','C. 讲完再看','D. 边玩边讲'], ans:[1], explain:'触景生情法又称"情景交融法"，核心特点是见什么景讲什么内容，景物与讲解同步进行，让游客产生身临其境的感觉。'},
+  {type:'single', q:'分段讲解法的结构不包括以下哪项？', opts:['A. 引言（起）','B. 正文（承）','C. 高潮（转）','D. 总结（合）'], ans:[2], explain:'分段讲解法的结构是：引言（起）-开场白介绍概况、正文（承）-逐一部分讲解、过渡（转）-各部分之间的衔接、总结（合）-归纳要点得出结论。不包括"高潮"这个环节。'},
+  {type:'single', q:'类比法运用时需要注意什么？', opts:['A. 可以牵强附会','B. 选取恰当的类比对象','C. 找出真正相似的特征','D. B和C都正确'], ans:[3], explain:'类比法运用要点：①选取恰当的类比对象②找出真正相似的特征③避免牵强附会。只有当两个事物之间确实存在相似之处时才能使用类比，否则会适得其反。'},
+  {type:'multi', q:'讲解前的准备工作包括哪些？', opts:['A. 熟悉讲解内容','B. 了解游客情况','C. 设计讲解方案','D. 直接开始讲解'], ans:[0,1,2], explain:'讲解前准备包括：①熟悉讲解内容（深入了解景点知识、掌握相关资料、收集最新信息）②了解游客情况（年龄、职业、兴趣、文化背景、团队整体水平）③设计讲解方案（确定讲解重点、选择讲解技法、安排时间节奏）。不能直接开始讲解。'},
+  {type:'multi', q:'各类景点讲解的注意事项包括哪些？', opts:['A. 自然景观要介绍形成原因和地质特征','B. 人文景观要运用虚实结合讲述故事','C. 博物馆讲解要按时间顺序或主题组织','D. 宗教场所讲解要客观准确并尊重信仰'], ans:[0,1,2,3], explain:'景点讲解注意事项：自然景观介绍形成原因、地质特征、科学价值；人文景观运用虚实结合解读建筑特色和文化内涵；博物馆按时间顺序或主题组织讲解；宗教场所讲解要客观准确，尊重宗教信仰，说明注意事项和禁忌。'}
+];
+
+var userAnswers = {};
+var submitted = false;
+
+function renderQuiz() {
+  var container = document.getElementById('quizContainer');
+  if(!container) return;
+  var html = '';
+  quizData.forEach(function(q, i) {
+    var typeLabel = q.type==='judge'?'判断题':q.type==='single'?'单选题':'多选题';
+    var typeClass = q.type==='judge'?'qtype-judge':q.type==='single'?'qtype-single':'qtype-multi';
+    html += '<div class="quiz-item" id="qi'+i+'">';
+    html += '<div class="quiz-q"><span class="qtype '+typeClass+'">'+typeLabel+'</span>'+(i+1)+'. '+q.q+'</div>';
+    html += '<div class="quiz-options">';
+    q.opts.forEach(function(opt, j) {
+      html += '<div class="quiz-opt" data-qi="'+i+'" data-oi="'+j+'" onclick="selectOpt('+i+','+j+')">';
+      html += '<span class="opt-letter">'+String.fromCharCode(65+j)+'</span>';
+      html += '<span>'+opt.replace(/^[A-D]\.\s*/,'')+'</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div class="quiz-explain" id="explain'+i+'">💡 '+q.explain+'</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function selectOpt(qi, oi) {
+  if(submitted) return;
+  var q = quizData[qi];
+  if(q.type === 'multi') {
+    if(!userAnswers[qi]) userAnswers[qi] = [];
+    var idx = userAnswers[qi].indexOf(oi);
+    if(idx > -1) userAnswers[qi].splice(idx, 1);
+    else userAnswers[qi].push(oi);
+  } else {
+    userAnswers[qi] = [oi];
+  }
+  updateOptStyles(qi);
+}
+
+function updateOptStyles(qi) {
+  var opts = document.querySelectorAll('.quiz-opt[data-qi="'+qi+'"]');
+  opts.forEach(function(opt) {
+    opt.classList.remove('selected');
+    var oi = parseInt(opt.dataset.oi);
+    if(userAnswers[qi] && userAnswers[qi].indexOf(oi) > -1) {
+      opt.classList.add('selected');
+    }
+  });
+}
+
+function submitQuiz() {
+  submitted = true;
+  var correct = 0;
+  quizData.forEach(function(q, i) {
+    var item = document.getElementById('qi'+i);
+    var ua = userAnswers[i] || [];
+    var isCorrect = ua.length === q.ans.length && ua.sort().join() === q.ans.slice().sort().join();
+    if(isCorrect) { correct++; item.classList.add('correct'); }
+    else { item.classList.add('wrong'); }
+    var opts = document.querySelectorAll('.quiz-opt[data-qi="'+i+'"]');
+    opts.forEach(function(opt) {
+      var oi = parseInt(opt.dataset.oi);
+      opt.classList.remove('selected');
+      if(q.ans.indexOf(oi) > -1) opt.classList.add('show-correct');
+      else if(ua.indexOf(oi) > -1) opt.classList.add('show-wrong');
+    });
+    document.getElementById('explain'+i).classList.add('show');
+  });
+  var scoreEl = document.getElementById('quizScore');
+  document.getElementById('scoreNum').textContent = correct + '/' + quizData.length;
+  scoreEl.classList.add('show');
+}
+
+function resetQuiz() {
+  submitted = false;
+  userAnswers = {};
+  renderQuiz();
+  document.getElementById('quizScore').classList.remove('show');
+}
+
+renderQuiz();
+
 </script>
 
 </body>

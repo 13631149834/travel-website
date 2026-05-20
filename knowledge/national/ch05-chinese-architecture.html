@@ -129,6 +129,41 @@
 .mnemonic-toggle.active .toggle-content { max-height: 500px; padding: 12px; }
 .mnemonic-toggle .toggle-hint { font-size: 0.8em; opacity: 0.7; margin-left: 4px; }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -309,7 +344,153 @@
             <div class="exam-tip">常考题型：选择题、连线题。重点记忆建筑与地名对应、建筑特点、等级排序。</div>
         </div>
         
-        <div class="footer-cta">
+        
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer">        <div class="quiz-item" data-index="0">
+            <div class="quiz-q"><span class="qtype qtype-judge">判断</span>在中国古代屋顶等级中，重檐庑殿顶是等级最高的屋顶形式。</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="0" data-opt="0" onclick="selectOption(0, 0, false)">
+                    <span class="opt-letter">A</span><span>正确</span>
+                </div>
+                <div class="quiz-opt" data-q="0" data-opt="1" onclick="selectOption(0, 1, false)">
+                    <span class="opt-letter">B</span><span>错误</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-0">中国古代屋顶等级由高到低为：重檐庑殿顶 > 重檐歇山顶 > 单檐庑殿顶/歇山顶 > 悬山顶 > 硬山顶。重檐庑殿顶是皇家宫殿专用。</div>
+        </div>
+        <div class="quiz-item" data-index="1">
+            <div class="quiz-q"><span class="qtype qtype-judge">判断</span>应县木塔是世界三大奇塔之一。</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="1" data-opt="0" onclick="selectOption(1, 0, false)">
+                    <span class="opt-letter">A</span><span>正确</span>
+                </div>
+                <div class="quiz-opt" data-q="1" data-opt="1" onclick="selectOption(1, 1, false)">
+                    <span class="opt-letter">B</span><span>错误</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-1">应县木塔是世界三大奇塔之一（另外两座是法国埃菲尔铁塔、意大利比萨斜塔），也是世界最高的木塔。</div>
+        </div>
+        <div class="quiz-item" data-index="2">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>北京故宫的三大殿是指（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="2" data-opt="0" onclick="selectOption(2, 0, false)">
+                    <span class="opt-letter">A</span><span>太和殿、中和殿、保和殿</span>
+                </div>
+                <div class="quiz-opt" data-q="2" data-opt="1" onclick="selectOption(2, 1, false)">
+                    <span class="opt-letter">B</span><span>乾清宫、交泰殿、坤宁宫</span>
+                </div>
+                <div class="quiz-opt" data-q="2" data-opt="2" onclick="selectOption(2, 2, false)">
+                    <span class="opt-letter">C</span><span>午门、神武门、东华门</span>
+                </div>
+                <div class="quiz-opt" data-q="2" data-opt="3" onclick="selectOption(2, 3, false)">
+                    <span class="opt-letter">D</span><span>天安门、端门、午门</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-2">故宫三大殿是外朝的主体建筑：太和殿（举行大典）、中和殿（皇帝休息）、保和殿（宴请群臣）。乾清宫、交泰殿、坤宁宫是内廷后三宫。</div>
+        </div>
+        <div class="quiz-item" data-index="3">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>中国四大名楼不包括（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="3" data-opt="0" onclick="selectOption(3, 0, false)">
+                    <span class="opt-letter">A</span><span>岳阳楼</span>
+                </div>
+                <div class="quiz-opt" data-q="3" data-opt="1" onclick="selectOption(3, 1, false)">
+                    <span class="opt-letter">B</span><span>黄鹤楼</span>
+                </div>
+                <div class="quiz-opt" data-q="3" data-opt="2" onclick="selectOption(3, 2, false)">
+                    <span class="opt-letter">C</span><span>滕王阁</span>
+                </div>
+                <div class="quiz-opt" data-q="3" data-opt="3" onclick="selectOption(3, 3, false)">
+                    <span class="opt-letter">D</span><span>凤凰楼</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-3">中国四大名楼是岳阳楼、黄鹤楼、滕王阁、鹳雀楼。凤凰楼不在四大名楼之列。</div>
+        </div>
+        <div class="quiz-item" data-index="4">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>赵州桥的建造者是（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="4" data-opt="0" onclick="selectOption(4, 0, false)">
+                    <span class="opt-letter">A</span><span>李冰</span>
+                </div>
+                <div class="quiz-opt" data-q="4" data-opt="1" onclick="selectOption(4, 1, false)">
+                    <span class="opt-letter">B</span><span>李春</span>
+                </div>
+                <div class="quiz-opt" data-q="4" data-opt="2" onclick="selectOption(4, 2, false)">
+                    <span class="opt-letter">C</span><span>张衡</span>
+                </div>
+                <div class="quiz-opt" data-q="4" data-opt="3" onclick="selectOption(4, 3, false)">
+                    <span class="opt-letter">D</span><span>鲁班</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-4">赵州桥由隋朝工匠李春建造，是世界上现存最早、保存最完好的敞肩石拱桥，被誉为'天下第一桥'。</div>
+        </div>
+        <div class="quiz-item" data-index="5">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>明长城东起鸭绿江，西至嘉峪关，全长约（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="5" data-opt="0" onclick="selectOption(5, 0, false)">
+                    <span class="opt-letter">A</span><span>6000公里</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="1" onclick="selectOption(5, 1, false)">
+                    <span class="opt-letter">B</span><span>8851公里</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="2" onclick="selectOption(5, 2, false)">
+                    <span class="opt-letter">C</span><span>10000公里</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="3" onclick="selectOption(5, 3, false)">
+                    <span class="opt-letter">D</span><span>12000公里</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-5">明长城东起鸭绿江，西至嘉峪关，全长约8851公里，是世界上规模最大的军事防御工程。</div>
+        </div>
+        <div class="quiz-item" data-index="6">
+            <div class="quiz-q"><span class="qtype qtype-multi">多选</span>以下哪些是北京故宫的特点（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="6" data-opt="0" onclick="selectOption(6, 0, true)">
+                    <span class="opt-letter">A</span><span>占地约72万平方米</span>
+                </div>
+                <div class="quiz-opt" data-q="6" data-opt="1" onclick="selectOption(6, 1, true)">
+                    <span class="opt-letter">B</span><span>由外朝和内廷两部分组成</span>
+                </div>
+                <div class="quiz-opt" data-q="6" data-opt="2" onclick="selectOption(6, 2, true)">
+                    <span class="opt-letter">C</span><span>建筑布局呈中轴对称</span>
+                </div>
+                <div class="quiz-opt" data-q="6" data-opt="3" onclick="selectOption(6, 3, true)">
+                    <span class="opt-letter">D</span><span>全部用黄金装饰</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-6">故宫占地约72万平方米，建筑面积约15万平方米；由外朝（三大殿）和内廷（后三宫）组成；沿中轴线对称布局。故宫并非全部用黄金装饰。</div>
+        </div>
+        <div class="quiz-item" data-index="7">
+            <div class="quiz-q"><span class="qtype qtype-multi">多选</span>下列关于天坛的说法，正确的有（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="7" data-opt="0" onclick="selectOption(7, 0, true)">
+                    <span class="opt-letter">A</span><span>是明清皇帝祭天的场所</span>
+                </div>
+                <div class="quiz-opt" data-q="7" data-opt="1" onclick="selectOption(7, 1, true)">
+                    <span class="opt-letter">B</span><span>主要建筑包括祈年殿、圜丘</span>
+                </div>
+                <div class="quiz-opt" data-q="7" data-opt="2" onclick="selectOption(7, 2, true)">
+                    <span class="opt-letter">C</span><span>祈年殿为三重檐攒尖顶</span>
+                </div>
+                <div class="quiz-opt" data-q="7" data-opt="3" onclick="selectOption(7, 3, true)">
+                    <span class="opt-letter">D</span><span>祈年殿覆以黄色琉璃瓦</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-7">天坛是明清皇帝祭天祈谷的场所；主要建筑有祈年殿、圜丘、回音壁；祈年殿为三重檐攒尖顶，覆以蓝色琉璃瓦（而非黄色）。</div>
+        </div></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
+<div class="footer-cta">
             <h3>备考推荐</h3>
             <div class="wechat">微信：ximao101</div>
             <div style="margin-top: 12px; font-size: 0.9em; opacity: 0.95;">走过弯路，所以更懂路</div>
@@ -346,5 +527,113 @@ document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
     }
 });
 </script>
+
+var quizData = [{"type": "judge", "q": "在中国古代屋顶等级中，重檐庑殿顶是等级最高的屋顶形式。", "options": ["正确", "错误"], "ans": 0, "explain": "中国古代屋顶等级由高到低为：重檐庑殿顶 > 重檐歇山顶 > 单檐庑殿顶/歇山顶 > 悬山顶 > 硬山顶。重檐庑殿顶是皇家宫殿专用。"}, {"type": "judge", "q": "应县木塔是世界三大奇塔之一。", "options": ["正确", "错误"], "ans": 0, "explain": "应县木塔是世界三大奇塔之一（另外两座是法国埃菲尔铁塔、意大利比萨斜塔），也是世界最高的木塔。"}, {"type": "single", "q": "北京故宫的三大殿是指（）", "options": ["太和殿、中和殿、保和殿", "乾清宫、交泰殿、坤宁宫", "午门、神武门、东华门", "天安门、端门、午门"], "ans": 0, "explain": "故宫三大殿是外朝的主体建筑：太和殿（举行大典）、中和殿（皇帝休息）、保和殿（宴请群臣）。乾清宫、交泰殿、坤宁宫是内廷后三宫。"}, {"type": "single", "q": "中国四大名楼不包括（）", "options": ["岳阳楼", "黄鹤楼", "滕王阁", "凤凰楼"], "ans": 3, "explain": "中国四大名楼是岳阳楼、黄鹤楼、滕王阁、鹳雀楼。凤凰楼不在四大名楼之列。"}, {"type": "single", "q": "赵州桥的建造者是（）", "options": ["李冰", "李春", "张衡", "鲁班"], "ans": 1, "explain": "赵州桥由隋朝工匠李春建造，是世界上现存最早、保存最完好的敞肩石拱桥，被誉为'天下第一桥'。"}, {"type": "single", "q": "明长城东起鸭绿江，西至嘉峪关，全长约（）", "options": ["6000公里", "8851公里", "10000公里", "12000公里"], "ans": 1, "explain": "明长城东起鸭绿江，西至嘉峪关，全长约8851公里，是世界上规模最大的军事防御工程。"}, {"type": "multi", "q": "以下哪些是北京故宫的特点（）", "options": ["占地约72万平方米", "由外朝和内廷两部分组成", "建筑布局呈中轴对称", "全部用黄金装饰"], "ans": [0, 1, 2], "explain": "故宫占地约72万平方米，建筑面积约15万平方米；由外朝（三大殿）和内廷（后三宫）组成；沿中轴线对称布局。故宫并非全部用黄金装饰。"}, {"type": "multi", "q": "下列关于天坛的说法，正确的有（）", "options": ["是明清皇帝祭天的场所", "主要建筑包括祈年殿、圜丘", "祈年殿为三重檐攒尖顶", "祈年殿覆以黄色琉璃瓦"], "ans": [0, 1, 2], "explain": "天坛是明清皇帝祭天祈谷的场所；主要建筑有祈年殿、圜丘、回音壁；祈年殿为三重檐攒尖顶，覆以蓝色琉璃瓦（而非黄色）。"}];
+var selectedAnswers = {};
+var submitted = false;
+
+function renderQuiz() {
+    var container = document.getElementById('quizContainer');
+    var html = '';
+    quizData.forEach(function(q, idx) {
+        var qTypeClass = q.type === 'judge' ? 'qtype-judge' : (q.type === 'single' ? 'qtype-single' : 'qtype-multi');
+        var qTypeText = q.type === 'judge' ? '判断' : (q.type === 'single' ? '单选' : '多选');
+        html += '<div class="quiz-item" data-index="' + idx + '">';
+        html += '<div class="quiz-q"><span class="qtype ' + qTypeClass + '">' + qTypeText + '</span>' + q.q + '</div>';
+        html += '<div class="quiz-options">';
+        q.options.forEach(function(opt, optIdx) {
+            var letter = String.fromCharCode(65 + optIdx);
+            html += '<div class="quiz-opt" data-q="' + idx + '" data-opt="' + optIdx + '" onclick="selectOption(' + idx + ', ' + optIdx + ', ' + (q.type === 'multi' ? 'true' : 'false') + ')">';
+            html += '<span class="opt-letter">' + letter + '</span><span>' + opt + '</span></div>';
+        });
+        html += '</div>';
+        html += '<div class="quiz-explain" id="explain-' + idx + '">' + q.explain + '</div>';
+        html += '</div>';
+    });
+    container.innerHTML = html;
+}
+
+function selectOption(qIdx, optIdx, isMulti) {
+    if (submitted) return;
+    if (isMulti) {
+        var item = document.querySelector('.quiz-item[data-index="' + qIdx + '"]');
+        var opt = item.querySelector('.quiz-opt[data-opt="' + optIdx + '"]');
+        if (selectedAnswers[qIdx] && selectedAnswers[qIdx].includes(optIdx)) {
+            selectedAnswers[qIdx] = selectedAnswers[qIdx].filter(function(x) { return x !== optIdx; });
+            opt.classList.remove('selected');
+        } else {
+            if (!selectedAnswers[qIdx]) selectedAnswers[qIdx] = [];
+            selectedAnswers[qIdx].push(optIdx);
+            opt.classList.add('selected');
+        }
+    } else {
+        selectedAnswers[qIdx] = optIdx;
+        var item = document.querySelector('.quiz-item[data-index="' + qIdx + '"]');
+        item.querySelectorAll('.quiz-opt').forEach(function(o) { o.classList.remove('selected'); });
+        item.querySelector('.quiz-opt[data-opt="' + optIdx + '"]').classList.add('selected');
+    }
+}
+
+function submitQuiz() {
+    submitted = true;
+    var correctCount = 0;
+    quizData.forEach(function(q, idx) {
+        var item = document.querySelector('.quiz-item[data-index="' + idx + '"]');
+        var userAns = selectedAnswers[idx];
+        var isCorrect = false;
+        if (q.type === 'multi') {
+            if (Array.isArray(userAns) && userAns.length === q.ans.length && userAns.every(function(x) { return q.ans.includes(x); })) {
+                isCorrect = true;
+            }
+        } else {
+            if (userAns === q.ans) isCorrect = true;
+        }
+        if (isCorrect) {
+            correctCount++;
+            item.classList.add('correct');
+        } else {
+            item.classList.add('wrong');
+        }
+        // 显示正确答案
+        if (Array.isArray(q.ans)) {
+            q.ans.forEach(function(a) {
+                item.querySelector('.quiz-opt[data-opt="' + a + '"]').classList.add('show-correct');
+            });
+        } else {
+            item.querySelector('.quiz-opt[data-opt="' + q.ans + '"]').classList.add('show-correct');
+        }
+        // 显示错误选项
+        if (q.type !== 'multi') {
+            item.querySelectorAll('.quiz-opt').forEach(function(o, oi) {
+                if (oi !== q.ans && oi === userAns) {
+                    o.classList.add('show-wrong');
+                }
+            });
+        }
+        // 显示解析
+        document.getElementById('explain-' + idx).classList.add('show');
+    });
+    // 显示分数
+    var scoreEl = document.getElementById('quizScore');
+    var scoreNumEl = document.getElementById('scoreNum');
+    scoreEl.classList.add('show');
+    scoreNumEl.textContent = correctCount + '/' + quizData.length;
+}
+
+function resetQuiz() {
+    submitted = false;
+    selectedAnswers = {};
+    document.querySelectorAll('.quiz-item').forEach(function(item) {
+        item.classList.remove('correct', 'wrong');
+        item.querySelectorAll('.quiz-opt').forEach(function(o) {
+            o.classList.remove('selected', 'show-correct', 'show-wrong');
+        });
+        item.querySelector('.quiz-explain').classList.remove('show');
+    });
+    document.getElementById('quizScore').classList.remove('show');
+}
+
+document.addEventListener('DOMContentLoaded', renderQuiz);
+
 </body>
 </html>

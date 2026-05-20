@@ -117,6 +117,41 @@
     margin-left: 4px;
 }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -288,6 +323,20 @@
 
 </section>
 
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer"></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
 <section class="cta-box">
 <h3>📚 备考资料推荐</h3>
 <p>更多备考资料 → 微信 <strong>ximao101</strong></p>
@@ -328,6 +377,102 @@ document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
         });
     }
 });
+</script>
+
+<script>
+var quizData = [
+  {type:'judge', q:'导游服务的核心原则是合理而可能原则。', opts:['正确','错误'], ans:[1], explain:'导游服务的核心原则是宾客至上原则，而非合理而可能原则。合理而可能原则是另一个重要原则，强调在合理且可能的范围内满足游客要求。'},
+  {type:'single', q:'导游服务最显著的特点是（）', opts:['A. 脑体高度结合','B. 独立性强','C. 复杂多变','D. 跨文化性'], ans:[1], explain:'独立性强是导游服务最显著的特点。导游需要独立思考、独立处理问题、独立进行讲解，这与团队协作的其他服务行业形成鲜明对比。'},
+  {type:'single', q:'近代旅游的开创者是（）', opts:['A. 托马斯·库克','B. 希尔顿','C. 迈克尔·波特','D. 亚瑟·安德森'], ans:[0], explain:'1841年，英国人托马斯·库克组织了第一次团队旅游，开创了近代旅游业的先河，也催生了现代导游服务的雏形。'},
+  {type:'single', q:'按业务范围划分，全程陪同旅游团队的导游称为（）', opts:['A. 领队','B. 全陪','C. 地陪','D. 景点讲解员'], ans:[1], explain:'按业务范围划分：领队是全程陪同出境旅游团队；全陪是全程陪同旅游团队；地陪是负责地方接待工作。全陪代表组团社。'},
+  {type:'multi', q:'导游服务的属性包括（）', opts:['A. 社会性','B. 文化性','C. 经济性','D. 涉外性'], ans:[0,1,2,3], explain:'导游服务具有社会性、文化性、经济性、涉外性等多重属性，这是导游服务区别于一般服务行业的重要特征。'},
+  {type:'multi', q:'导游服务在旅游业中的地位表现为（）', opts:['A. 旅游服务质量的标志','B. 旅游产品价值的最终体现','C. 旅游企业形象的代表','D. 旅游团队运转的纽带'], ans:[0,1,2,3], explain:'导游服务处于核心地位，体现在四个方面：标志、体现、代表、纽带。口诀：标志体现代表纽带。'},
+  {type:'single', q:'导游证有效期为（）', opts:['A. 1年','B. 2年','C. 3年','D. 5年'], ans:[2], explain:'导游证有效期为3年，需在有效期满前3个月申请换发。导游资格证则终身有效。'},
+  {type:'judge', q:'规范化服务是导游服务的基础，个性化服务是导游服务的提升。', opts:['正确','错误'], ans:[0], explain:'规范化服务与个性化服务相结合原则要求：规范化服务是基础，个性化服务是提升，两者相辅相成。'}
+];
+
+var userAnswers = {};
+var submitted = false;
+
+function renderQuiz() {
+  var container = document.getElementById('quizContainer');
+  if(!container) return;
+  var html = '';
+  quizData.forEach(function(q, i) {
+    var typeLabel = q.type==='judge'?'判断题':q.type==='single'?'单选题':'多选题';
+    var typeClass = q.type==='judge'?'qtype-judge':q.type==='single'?'qtype-single':'qtype-multi';
+    html += '<div class="quiz-item" id="qi'+i+'">';
+    html += '<div class="quiz-q"><span class="qtype '+typeClass+'">'+typeLabel+'</span>'+(i+1)+'. '+q.q+'</div>';
+    html += '<div class="quiz-options">';
+    q.opts.forEach(function(opt, j) {
+      html += '<div class="quiz-opt" data-qi="'+i+'" data-oi="'+j+'" onclick="selectOpt('+i+','+j+')">';
+      html += '<span class="opt-letter">'+String.fromCharCode(65+j)+'</span>';
+      html += '<span>'+opt.replace(/^[A-D]\.\s*/,'')+'</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div class="quiz-explain" id="explain'+i+'">💡 '+q.explain+'</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function selectOpt(qi, oi) {
+  if(submitted) return;
+  var q = quizData[qi];
+  if(q.type === 'multi') {
+    if(!userAnswers[qi]) userAnswers[qi] = [];
+    var idx = userAnswers[qi].indexOf(oi);
+    if(idx > -1) userAnswers[qi].splice(idx, 1);
+    else userAnswers[qi].push(oi);
+  } else {
+    userAnswers[qi] = [oi];
+  }
+  updateOptStyles(qi);
+}
+
+function updateOptStyles(qi) {
+  var opts = document.querySelectorAll('.quiz-opt[data-qi="'+qi+'"]');
+  opts.forEach(function(opt) {
+    opt.classList.remove('selected');
+    var oi = parseInt(opt.dataset.oi);
+    if(userAnswers[qi] && userAnswers[qi].indexOf(oi) > -1) {
+      opt.classList.add('selected');
+    }
+  });
+}
+
+function submitQuiz() {
+  submitted = true;
+  var correct = 0;
+  quizData.forEach(function(q, i) {
+    var item = document.getElementById('qi'+i);
+    var ua = userAnswers[i] || [];
+    var isCorrect = ua.length === q.ans.length && ua.sort().join() === q.ans.slice().sort().join();
+    if(isCorrect) { correct++; item.classList.add('correct'); }
+    else { item.classList.add('wrong'); }
+    var opts = document.querySelectorAll('.quiz-opt[data-qi="'+i+'"]');
+    opts.forEach(function(opt) {
+      var oi = parseInt(opt.dataset.oi);
+      opt.classList.remove('selected');
+      if(q.ans.indexOf(oi) > -1) opt.classList.add('show-correct');
+      else if(ua.indexOf(oi) > -1) opt.classList.add('show-wrong');
+    });
+    document.getElementById('explain'+i).classList.add('show');
+  });
+  var scoreEl = document.getElementById('quizScore');
+  document.getElementById('scoreNum').textContent = correct + '/' + quizData.length;
+  scoreEl.classList.add('show');
+}
+
+function resetQuiz() {
+  submitted = false;
+  userAnswers = {};
+  renderQuiz();
+  document.getElementById('quizScore').classList.remove('show');
+}
+
+renderQuiz();
 </script>
 
 </body>

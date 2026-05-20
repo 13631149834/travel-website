@@ -117,6 +117,41 @@
     margin-left: 4px;
 }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -478,6 +513,21 @@
 
 </section>
 
+
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer"></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
 <section class="cta-box">
 <h3>📚 备考资料推荐</h3>
 <p>更多备考资料 → 微信 <strong>ximao101</strong></p>
@@ -518,6 +568,104 @@ document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
         });
     }
 });
+</script>
+
+
+<script>
+var quizData = [
+  {type:'judge', q:'旅行社责任保险是强制保险，由旅行社投保；旅游意外保险是自愿保险，由游客自愿投保', opts:['正确','错误'], ans:[0], explain:'旅行社责任保险属于强制保险，是国家规定旅行社必须投保的险种，保障因旅行社过失造成的游客损失。旅游意外保险则是游客自愿购买的个人险种。两者性质不同、保障范围不同，不能混淆。'},
+  {type:'judge', q:'普通护照的有效期一般为5年，未成年人的护照有效期为10年', opts:['正确','错误'], ans:[1], explain:'普通护照有效期一般为10年；未成年人的护照有效期为5年。这是护照有效期的重要考点，与儿童票、火车票的规定恰好相反，要注意区分。'},
+  {type:'single', q:'组团社和地接社的主要区别是什么？', opts:['A. 组团社负责接待，地接社负责招徕','B. 组团社负责招徕，地接社负责接待','C. 两者职责相同','D. 没有明确区别'], ans:[1], explain:'组团社与地接社的区分是高频考点：组团社负责招徕、组织旅游者；地接社负责接待到达当地的旅游者。简单记忆：招徕=组团社，接待=地接社。'},
+  {type:'single', q:'航空运输中，经济舱免费托运行李的重量是多少？', opts:['A. 10kg','B. 15kg','C. 20kg','D. 30kg'], ans:[2], explain:'航空行李免费托运额度：经济舱20kg，商务舱30kg，头等舱40kg。手提行李5kg以内。注意不同舱位的区别。'},
+  {type:'single', q:'铁路运输中，儿童免票的身高标准是多少？', opts:['A. 1.1米以下','B. 1.2米以下','C. 1.3米以下','D. 1.5米以下'], ans:[1], explain:'火车儿童票规定：1.2米以下免票（不占座），1.2-1.5米半价票（占座），1.5米以上成人票。这是常考的身高节点。'},
+  {type:'single', q:'护照、签证、通行证的区分中，前往香港、澳门需要什么证件？', opts:['A. 护照+签证','B. 港澳通行证+签注','C. 台湾通行证+签注','D. 只要护照即可'], ans:[1], explain:'出境证件区分：出境旅游需要护照+签证；前往港澳需要港澳通行证+签注；前往台湾需要台湾通行证+签注。不能混淆。'},
+  {type:'multi', q:'我国旅游景区质量等级划分为哪几个等级？', opts:['A. AAAA级','B. AAAA级','C. AAA级','D. AA级和A级'], ans:[0,1,2,3], explain:'我国旅游景区质量等级划分为：AAAAA级（世界级精品）、AAAA级（国家级精品）、AAA级（省级精品）、AA级（地方级）、A级（基础级）。AAAAA级是最高等级。'},
+  {type:'multi', q:'机票类型中，儿童票和婴儿票的价格分别是成人票的多少？', opts:['A. 儿童票是成人票价的50%','B. 儿童票是成人票价的10%','C. 婴儿票是成人票价的50%','D. 婴儿票是成人票价的10%'], ans:[0,3], explain:'机票价格：儿童票（2-12岁）为成人票价的50%，提供座位；婴儿票（2岁以下）为成人票价的10%，不提供座位。注意与火车票儿童票的区别。'}
+];
+
+var userAnswers = {};
+var submitted = false;
+
+function renderQuiz() {
+  var container = document.getElementById('quizContainer');
+  if(!container) return;
+  var html = '';
+  quizData.forEach(function(q, i) {
+    var typeLabel = q.type==='judge'?'判断题':q.type==='single'?'单选题':'多选题';
+    var typeClass = q.type==='judge'?'qtype-judge':q.type==='single'?'qtype-single':'qtype-multi';
+    html += '<div class="quiz-item" id="qi'+i+'">';
+    html += '<div class="quiz-q"><span class="qtype '+typeClass+'">'+typeLabel+'</span>'+(i+1)+'. '+q.q+'</div>';
+    html += '<div class="quiz-options">';
+    q.opts.forEach(function(opt, j) {
+      html += '<div class="quiz-opt" data-qi="'+i+'" data-oi="'+j+'" onclick="selectOpt('+i+','+j+')">';
+      html += '<span class="opt-letter">'+String.fromCharCode(65+j)+'</span>';
+      html += '<span>'+opt.replace(/^[A-D]\.\s*/,'')+'</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div class="quiz-explain" id="explain'+i+'">💡 '+q.explain+'</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function selectOpt(qi, oi) {
+  if(submitted) return;
+  var q = quizData[qi];
+  if(q.type === 'multi') {
+    if(!userAnswers[qi]) userAnswers[qi] = [];
+    var idx = userAnswers[qi].indexOf(oi);
+    if(idx > -1) userAnswers[qi].splice(idx, 1);
+    else userAnswers[qi].push(oi);
+  } else {
+    userAnswers[qi] = [oi];
+  }
+  updateOptStyles(qi);
+}
+
+function updateOptStyles(qi) {
+  var opts = document.querySelectorAll('.quiz-opt[data-qi="'+qi+'"]');
+  opts.forEach(function(opt) {
+    opt.classList.remove('selected');
+    var oi = parseInt(opt.dataset.oi);
+    if(userAnswers[qi] && userAnswers[qi].indexOf(oi) > -1) {
+      opt.classList.add('selected');
+    }
+  });
+}
+
+function submitQuiz() {
+  submitted = true;
+  var correct = 0;
+  quizData.forEach(function(q, i) {
+    var item = document.getElementById('qi'+i);
+    var ua = userAnswers[i] || [];
+    var isCorrect = ua.length === q.ans.length && ua.sort().join() === q.ans.slice().sort().join();
+    if(isCorrect) { correct++; item.classList.add('correct'); }
+    else { item.classList.add('wrong'); }
+    var opts = document.querySelectorAll('.quiz-opt[data-qi="'+i+'"]');
+    opts.forEach(function(opt) {
+      var oi = parseInt(opt.dataset.oi);
+      opt.classList.remove('selected');
+      if(q.ans.indexOf(oi) > -1) opt.classList.add('show-correct');
+      else if(ua.indexOf(oi) > -1) opt.classList.add('show-wrong');
+    });
+    document.getElementById('explain'+i).classList.add('show');
+  });
+  var scoreEl = document.getElementById('quizScore');
+  document.getElementById('scoreNum').textContent = correct + '/' + quizData.length;
+  scoreEl.classList.add('show');
+}
+
+function resetQuiz() {
+  submitted = false;
+  userAnswers = {};
+  renderQuiz();
+  document.getElementById('quizScore').classList.remove('show');
+}
+
+renderQuiz();
+
 </script>
 
 </body>

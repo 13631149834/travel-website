@@ -177,6 +177,41 @@
     margin-left: 4px;
 }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -400,7 +435,111 @@
             </div>
         </div>
 
-        <div class="footer-promotion">
+        
+
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer"></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
+
+<script>
+var quizData = [{"type": "judge", "q": "旅行社可以出租、出借旅行社业务经营许可证。", "opts": ["正确", "错误"], "ans": [1], "explain": "根据《旅游法》，旅行社不得出租、出借旅行社业务经营许可证，或者以其他方式转让旅行社业务经营许可。这是违法行为。"}, {"type": "judge", "q": "旅行社组织、接待旅游者，可以指定具体购物场所。", "opts": ["正确", "错误"], "ans": [1], "explain": "根据《旅游法》，旅行社组织、接待旅游者，不得指定具体购物场所，不得安排另行付费旅游项目。但是，经双方协商一致或者旅游者要求，且不影响其他旅游者行程安排的除外。"}, {"type": "single", "q": "设立旅行社的注册资本最低限额是？", "opts": ["10万元", "20万元", "30万元", "50万元"], "ans": [2], "explain": "根据《旅游法》，设立旅行社要有固定的经营场所、有必要的营业设施、有符合规定的注册资本（不少于30万元）、有必要的经营管理人员和导游。"}, {"type": "single", "q": "旅行社安排的另行付费旅游项目，导游私自收取回扣，可能面临的罚款是？", "opts": ["1000元以上5000元以下", "2000元以上2万元以下", "5000元以上5万元以下", "违法所得1倍以上5倍以下"], "ans": [2], "explain": "根据《旅游法》，导游私自收取回扣的，由旅游主管部门责令退还，没收违法所得，并处1000元以上3万元以下罚款；情节严重的，吊销导游证。旅行社安排另行付费旅游项目的，由旅游主管部门责令改正，没收违法所得，责令停业整顿，并处5000元以上5万元以下罚款。"}, {"type": "single", "q": "包价旅游合同应当包含的内容不包括？", "opts": ["旅游行程安排", "旅游交通、住宿标准", "导游员家庭住址", "违约责任"], "ans": [2], "explain": "包价旅游合同内容包括：旅游行程安排；旅游交通；住宿标准；餐饮标准；游览项目；时间安排；费用说明；违约责任等。不包括导游员家庭住址。"}, {"type": "single", "q": "旅行社以不合理低价组织旅游活动，诱骗旅游者，由旅游主管部门可以处的罚款是？", "opts": ["1万元以上5万元以下", "2万元以上10万元以下", "5万元以上10万元以下", "违法所得1倍以上5倍以下"], "ans": [2], "explain": "根据《旅游法》，旅行社以不合理的低价组织旅游活动，诱骗旅游者，由旅游主管部门责令改正，没收违法所得，责令停业整顿，并处5万元以上10万元以下罚款。"}, {"type": "multi", "q": "旅行社经营规范包括？", "opts": ["不得转让许可证", "不得超范围经营", "不得虚假宣传", "不得指定购物场所", "可以强制消费"], "ans": [0, 1, 2, 3], "explain": "旅行社经营规范包括：不得转让许可证；不得超范围经营；不得虚假宣传；不得以不合理低价诱骗旅游者；不得指定购物场所（经协商一致除外）；不得强制或变相强制消费。"}, {"type": "multi", "q": "设立旅行社应当具备的条件包括？", "opts": ["有固定的经营场所", "有必要的营业设施", "有符合规定的注册资本", "有必要的经营管理人员和导游", "必须具备国际旅行社资质"], "ans": [0, 1, 2, 3], "explain": "设立旅行社应当具备的条件包括：有固定的经营场所；有必要的营业设施；有符合规定的注册资本（不少于30万元）；有必要的经营管理人员和导游；法律、行政法规规定的其他条件。不要求必须具备国际旅行社资质，国内社满足条件也可设立。"}];
+
+var userAnswers = {};
+var submitted = false;
+
+function renderQuiz() {
+  var container = document.getElementById('quizContainer');
+  if(!container) return;
+  var html = '';
+  quizData.forEach(function(q, i) {
+    var typeLabel = q.type==='judge'?'判断题':q.type==='single'?'单选题':'多选题';
+    var typeClass = q.type==='judge'?'qtype-judge':q.type==='single'?'qtype-single':'qtype-multi';
+    html += '<div class="quiz-item" id="qi'+i+'">';
+    html += '<div class="quiz-q"><span class="qtype '+typeClass+'">'+typeLabel+'</span>'+(i+1)+'. '+q.q+'</div>';
+    html += '<div class="quiz-options">';
+    q.opts.forEach(function(opt, j) {
+      html += '<div class="quiz-opt" data-qi="'+i+'" data-oi="'+j+'" onclick="selectOpt('+i+','+j+')">';
+      html += '<span class="opt-letter">'+String.fromCharCode(65+j)+'</span>';
+      html += '<span>'+opt.replace(/^[A-D]\.\s*/,'')+'</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div class="quiz-explain" id="explain'+i+'">💡 '+q.explain+'</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function selectOpt(qi, oi) {
+  if(submitted) return;
+  var q = quizData[qi];
+  if(q.type === 'multi') {
+    if(!userAnswers[qi]) userAnswers[qi] = [];
+    var idx = userAnswers[qi].indexOf(oi);
+    if(idx > -1) userAnswers[qi].splice(idx, 1);
+    else userAnswers[qi].push(oi);
+  } else {
+    userAnswers[qi] = [oi];
+  }
+  updateOptStyles(qi);
+}
+
+function updateOptStyles(qi) {
+  var opts = document.querySelectorAll('.quiz-opt[data-qi="'+qi+'"]');
+  opts.forEach(function(opt) {
+    opt.classList.remove('selected');
+    var oi = parseInt(opt.dataset.oi);
+    if(userAnswers[qi] && userAnswers[qi].indexOf(oi) > -1) {
+      opt.classList.add('selected');
+    }
+  });
+}
+
+function submitQuiz() {
+  submitted = true;
+  var correct = 0;
+  quizData.forEach(function(q, i) {
+    var item = document.getElementById('qi'+i);
+    var ua = userAnswers[i] || [];
+    var isCorrect = ua.length === q.ans.length && ua.sort().join() === q.ans.slice().sort().join();
+    if(isCorrect) { correct++; item.classList.add('correct'); }
+    else { item.classList.add('wrong'); }
+    var opts = document.querySelectorAll('.quiz-opt[data-qi="'+i+'"]');
+    opts.forEach(function(opt) {
+      var oi = parseInt(opt.dataset.oi);
+      opt.classList.remove('selected');
+      if(q.ans.indexOf(oi) > -1) opt.classList.add('show-correct');
+      else if(ua.indexOf(oi) > -1) opt.classList.add('show-wrong');
+    });
+    document.getElementById('explain'+i).classList.add('show');
+  });
+  var scoreEl = document.getElementById('quizScore');
+  document.getElementById('scoreNum').textContent = correct + '/' + quizData.length;
+  scoreEl.classList.add('show');
+}
+
+function resetQuiz() {
+  submitted = false;
+  userAnswers = {};
+  renderQuiz();
+  document.getElementById('quizScore').classList.remove('show');
+}
+
+renderQuiz();
+</script>
+
+<div class="footer-promotion">
             <h3>📚 备考全套资料 · 备考冲刺必备</h3>
             <div class="price">全套 ¥49.9</div>
             <p>含：高频考点汇总 · 真题题库 · 记忆口诀 · 模拟试卷</p>

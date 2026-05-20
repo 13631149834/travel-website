@@ -129,6 +129,41 @@
 .mnemonic-toggle.active .toggle-content { max-height: 500px; padding: 12px; }
 .mnemonic-toggle .toggle-hint { font-size: 0.8em; opacity: 0.7; margin-left: 4px; }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -274,7 +309,153 @@
             <div class="exam-tip">常考题型：选择题、判断题。重点记忆历史朝代顺序、重要时间节点、科技成就人物。</div>
         </div>
         
-        <div class="footer-cta">
+        
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer">        <div class="quiz-item" data-index="0">
+            <div class="quiz-q"><span class="qtype qtype-judge">判断</span>科举制度开始于隋朝，废止于清朝末年。</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="0" data-opt="0" onclick="selectOption(0, 0, false)">
+                    <span class="opt-letter">A</span><span>正确</span>
+                </div>
+                <div class="quiz-opt" data-q="0" data-opt="1" onclick="selectOption(0, 1, false)">
+                    <span class="opt-letter">B</span><span>错误</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-0">科举制度始于隋炀帝大业元年（605年），终于清光绪三十一年（1905年），在中国历史上实行了约1300年。</div>
+        </div>
+        <div class="quiz-item" data-index="1">
+            <div class="quiz-q"><span class="qtype qtype-judge">判断</span>中国历史上的'四大发明'是造纸术、印刷术、指南针和火药。</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="1" data-opt="0" onclick="selectOption(1, 0, false)">
+                    <span class="opt-letter">A</span><span>正确</span>
+                </div>
+                <div class="quiz-opt" data-q="1" data-opt="1" onclick="selectOption(1, 1, false)">
+                    <span class="opt-letter">B</span><span>错误</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-1">造纸术（西汉）、印刷术（隋唐雕版、北宋活字）、火药（唐代）、指南针（宋代）被称为中国四大发明，对世界文明发展产生了重大影响。</div>
+        </div>
+        <div class="quiz-item" data-index="2">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>秦朝统一六国的时间是（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="2" data-opt="0" onclick="selectOption(2, 0, false)">
+                    <span class="opt-letter">A</span><span>公元前300年</span>
+                </div>
+                <div class="quiz-opt" data-q="2" data-opt="1" onclick="selectOption(2, 1, false)">
+                    <span class="opt-letter">B</span><span>公元前221年</span>
+                </div>
+                <div class="quiz-opt" data-q="2" data-opt="2" onclick="selectOption(2, 2, false)">
+                    <span class="opt-letter">C</span><span>公元前200年</span>
+                </div>
+                <div class="quiz-opt" data-q="2" data-opt="3" onclick="selectOption(2, 3, false)">
+                    <span class="opt-letter">D</span><span>公元前180年</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-2">公元前221年，秦始皇灭掉最后一个诸侯国齐国，统一六国，建立秦朝，标志着中国进入封建社会。</div>
+        </div>
+        <div class="quiz-item" data-index="3">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>《太初历》是由哪个朝代制定的（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="3" data-opt="0" onclick="selectOption(3, 0, false)">
+                    <span class="opt-letter">A</span><span>商朝</span>
+                </div>
+                <div class="quiz-opt" data-q="3" data-opt="1" onclick="selectOption(3, 1, false)">
+                    <span class="opt-letter">B</span><span>西汉</span>
+                </div>
+                <div class="quiz-opt" data-q="3" data-opt="2" onclick="selectOption(3, 2, false)">
+                    <span class="opt-letter">C</span><span>东汉</span>
+                </div>
+                <div class="quiz-opt" data-q="3" data-opt="3" onclick="selectOption(3, 3, false)">
+                    <span class="opt-letter">D</span><span>三国时期</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-3">《太初历》是西汉制定的，是中国第一部较完整的历法，奠定了中国农历的基础。</div>
+        </div>
+        <div class="quiz-item" data-index="4">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>中医经典《伤寒杂病论》的作者是（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="4" data-opt="0" onclick="selectOption(4, 0, false)">
+                    <span class="opt-letter">A</span><span>扁鹊</span>
+                </div>
+                <div class="quiz-opt" data-q="4" data-opt="1" onclick="selectOption(4, 1, false)">
+                    <span class="opt-letter">B</span><span>华佗</span>
+                </div>
+                <div class="quiz-opt" data-q="4" data-opt="2" onclick="selectOption(4, 2, false)">
+                    <span class="opt-letter">C</span><span>张仲景</span>
+                </div>
+                <div class="quiz-opt" data-q="4" data-opt="3" onclick="selectOption(4, 3, false)">
+                    <span class="opt-letter">D</span><span>李时珍</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-4">张仲景是东汉著名医学家，著有《伤寒杂病论》，确立了中医辨证论治的原则，被后世尊称为'医圣'。</div>
+        </div>
+        <div class="quiz-item" data-index="5">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>宗法制度的核心是（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="5" data-opt="0" onclick="selectOption(5, 0, false)">
+                    <span class="opt-letter">A</span><span>分封制</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="1" onclick="selectOption(5, 1, false)">
+                    <span class="opt-letter">B</span><span>嫡长子继承制</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="2" onclick="selectOption(5, 2, false)">
+                    <span class="opt-letter">C</span><span>井田制</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="3" onclick="selectOption(5, 3, false)">
+                    <span class="opt-letter">D</span><span>郡县制</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-5">宗法制度是以血缘关系为基础，以嫡长子继承制为核心的政治制度，周朝确立的宗法制度影响中国数千年。</div>
+        </div>
+        <div class="quiz-item" data-index="6">
+            <div class="quiz-q"><span class="qtype qtype-multi">多选</span>以下哪些属于诸子百家中的代表人物和著作（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="6" data-opt="0" onclick="selectOption(6, 0, true)">
+                    <span class="opt-letter">A</span><span>孔子《论语》</span>
+                </div>
+                <div class="quiz-opt" data-q="6" data-opt="1" onclick="selectOption(6, 1, true)">
+                    <span class="opt-letter">B</span><span>老子《道德经》</span>
+                </div>
+                <div class="quiz-opt" data-q="6" data-opt="2" onclick="selectOption(6, 2, true)">
+                    <span class="opt-letter">C</span><span>韩非子《墨子》</span>
+                </div>
+                <div class="quiz-opt" data-q="6" data-opt="3" onclick="selectOption(6, 3, true)">
+                    <span class="opt-letter">D</span><span>墨子《墨经》</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-6">孔子是儒家代表，著有《论语》；老子是道家代表，著有《道德经》；墨子才是墨家代表，著有《墨子》/《墨经》。韩非子是法家代表，著有《韩非子》。</div>
+        </div>
+        <div class="quiz-item" data-index="7">
+            <div class="quiz-q"><span class="qtype qtype-multi">多选</span>关于古代天文历法成就，以下说法正确的是（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="7" data-opt="0" onclick="selectOption(7, 0, true)">
+                    <span class="opt-letter">A</span><span>商朝出现阴阳合历</span>
+                </div>
+                <div class="quiz-opt" data-q="7" data-opt="1" onclick="selectOption(7, 1, true)">
+                    <span class="opt-letter">B</span><span>春秋时期测定回归年长度为365.25日</span>
+                </div>
+                <div class="quiz-opt" data-q="7" data-opt="2" onclick="selectOption(7, 2, true)">
+                    <span class="opt-letter">C</span><span>《授时历》是郭守敬编制的</span>
+                </div>
+                <div class="quiz-opt" data-q="7" data-opt="3" onclick="selectOption(7, 3, true)">
+                    <span class="opt-letter">D</span><span>祖冲之制定了《大明历》</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-7">商朝出现阴阳合历，春秋测定回归年长度365.25日，《授时历》是元朝郭守敬编制，《大明历》是南北朝祖冲之制定，均为正确表述。</div>
+        </div></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
+<div class="footer-cta">
             <h3>备考推荐</h3>
             <div class="wechat">微信：ximao101</div>
             <div style="margin-top: 12px; font-size: 0.9em; opacity: 0.95;">走过弯路，所以更懂路</div>
@@ -311,5 +492,113 @@ document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
     }
 });
 </script>
+
+var quizData = [{"type": "judge", "q": "科举制度开始于隋朝，废止于清朝末年。", "options": ["正确", "错误"], "ans": 0, "explain": "科举制度始于隋炀帝大业元年（605年），终于清光绪三十一年（1905年），在中国历史上实行了约1300年。"}, {"type": "judge", "q": "中国历史上的'四大发明'是造纸术、印刷术、指南针和火药。", "options": ["正确", "错误"], "ans": 0, "explain": "造纸术（西汉）、印刷术（隋唐雕版、北宋活字）、火药（唐代）、指南针（宋代）被称为中国四大发明，对世界文明发展产生了重大影响。"}, {"type": "single", "q": "秦朝统一六国的时间是（）", "options": ["公元前300年", "公元前221年", "公元前200年", "公元前180年"], "ans": 1, "explain": "公元前221年，秦始皇灭掉最后一个诸侯国齐国，统一六国，建立秦朝，标志着中国进入封建社会。"}, {"type": "single", "q": "《太初历》是由哪个朝代制定的（）", "options": ["商朝", "西汉", "东汉", "三国时期"], "ans": 1, "explain": "《太初历》是西汉制定的，是中国第一部较完整的历法，奠定了中国农历的基础。"}, {"type": "single", "q": "中医经典《伤寒杂病论》的作者是（）", "options": ["扁鹊", "华佗", "张仲景", "李时珍"], "ans": 2, "explain": "张仲景是东汉著名医学家，著有《伤寒杂病论》，确立了中医辨证论治的原则，被后世尊称为'医圣'。"}, {"type": "single", "q": "宗法制度的核心是（）", "options": ["分封制", "嫡长子继承制", "井田制", "郡县制"], "ans": 1, "explain": "宗法制度是以血缘关系为基础，以嫡长子继承制为核心的政治制度，周朝确立的宗法制度影响中国数千年。"}, {"type": "multi", "q": "以下哪些属于诸子百家中的代表人物和著作（）", "options": ["孔子《论语》", "老子《道德经》", "韩非子《墨子》", "墨子《墨经》"], "ans": [0, 1, 3], "explain": "孔子是儒家代表，著有《论语》；老子是道家代表，著有《道德经》；墨子才是墨家代表，著有《墨子》/《墨经》。韩非子是法家代表，著有《韩非子》。"}, {"type": "multi", "q": "关于古代天文历法成就，以下说法正确的是（）", "options": ["商朝出现阴阳合历", "春秋时期测定回归年长度为365.25日", "《授时历》是郭守敬编制的", "祖冲之制定了《大明历》"], "ans": [0, 1, 2, 3], "explain": "商朝出现阴阳合历，春秋测定回归年长度365.25日，《授时历》是元朝郭守敬编制，《大明历》是南北朝祖冲之制定，均为正确表述。"}];
+var selectedAnswers = {};
+var submitted = false;
+
+function renderQuiz() {
+    var container = document.getElementById('quizContainer');
+    var html = '';
+    quizData.forEach(function(q, idx) {
+        var qTypeClass = q.type === 'judge' ? 'qtype-judge' : (q.type === 'single' ? 'qtype-single' : 'qtype-multi');
+        var qTypeText = q.type === 'judge' ? '判断' : (q.type === 'single' ? '单选' : '多选');
+        html += '<div class="quiz-item" data-index="' + idx + '">';
+        html += '<div class="quiz-q"><span class="qtype ' + qTypeClass + '">' + qTypeText + '</span>' + q.q + '</div>';
+        html += '<div class="quiz-options">';
+        q.options.forEach(function(opt, optIdx) {
+            var letter = String.fromCharCode(65 + optIdx);
+            html += '<div class="quiz-opt" data-q="' + idx + '" data-opt="' + optIdx + '" onclick="selectOption(' + idx + ', ' + optIdx + ', ' + (q.type === 'multi' ? 'true' : 'false') + ')">';
+            html += '<span class="opt-letter">' + letter + '</span><span>' + opt + '</span></div>';
+        });
+        html += '</div>';
+        html += '<div class="quiz-explain" id="explain-' + idx + '">' + q.explain + '</div>';
+        html += '</div>';
+    });
+    container.innerHTML = html;
+}
+
+function selectOption(qIdx, optIdx, isMulti) {
+    if (submitted) return;
+    if (isMulti) {
+        var item = document.querySelector('.quiz-item[data-index="' + qIdx + '"]');
+        var opt = item.querySelector('.quiz-opt[data-opt="' + optIdx + '"]');
+        if (selectedAnswers[qIdx] && selectedAnswers[qIdx].includes(optIdx)) {
+            selectedAnswers[qIdx] = selectedAnswers[qIdx].filter(function(x) { return x !== optIdx; });
+            opt.classList.remove('selected');
+        } else {
+            if (!selectedAnswers[qIdx]) selectedAnswers[qIdx] = [];
+            selectedAnswers[qIdx].push(optIdx);
+            opt.classList.add('selected');
+        }
+    } else {
+        selectedAnswers[qIdx] = optIdx;
+        var item = document.querySelector('.quiz-item[data-index="' + qIdx + '"]');
+        item.querySelectorAll('.quiz-opt').forEach(function(o) { o.classList.remove('selected'); });
+        item.querySelector('.quiz-opt[data-opt="' + optIdx + '"]').classList.add('selected');
+    }
+}
+
+function submitQuiz() {
+    submitted = true;
+    var correctCount = 0;
+    quizData.forEach(function(q, idx) {
+        var item = document.querySelector('.quiz-item[data-index="' + idx + '"]');
+        var userAns = selectedAnswers[idx];
+        var isCorrect = false;
+        if (q.type === 'multi') {
+            if (Array.isArray(userAns) && userAns.length === q.ans.length && userAns.every(function(x) { return q.ans.includes(x); })) {
+                isCorrect = true;
+            }
+        } else {
+            if (userAns === q.ans) isCorrect = true;
+        }
+        if (isCorrect) {
+            correctCount++;
+            item.classList.add('correct');
+        } else {
+            item.classList.add('wrong');
+        }
+        // 显示正确答案
+        if (Array.isArray(q.ans)) {
+            q.ans.forEach(function(a) {
+                item.querySelector('.quiz-opt[data-opt="' + a + '"]').classList.add('show-correct');
+            });
+        } else {
+            item.querySelector('.quiz-opt[data-opt="' + q.ans + '"]').classList.add('show-correct');
+        }
+        // 显示错误选项
+        if (q.type !== 'multi') {
+            item.querySelectorAll('.quiz-opt').forEach(function(o, oi) {
+                if (oi !== q.ans && oi === userAns) {
+                    o.classList.add('show-wrong');
+                }
+            });
+        }
+        // 显示解析
+        document.getElementById('explain-' + idx).classList.add('show');
+    });
+    // 显示分数
+    var scoreEl = document.getElementById('quizScore');
+    var scoreNumEl = document.getElementById('scoreNum');
+    scoreEl.classList.add('show');
+    scoreNumEl.textContent = correctCount + '/' + quizData.length;
+}
+
+function resetQuiz() {
+    submitted = false;
+    selectedAnswers = {};
+    document.querySelectorAll('.quiz-item').forEach(function(item) {
+        item.classList.remove('correct', 'wrong');
+        item.querySelectorAll('.quiz-opt').forEach(function(o) {
+            o.classList.remove('selected', 'show-correct', 'show-wrong');
+        });
+        item.querySelector('.quiz-explain').classList.remove('show');
+    });
+    document.getElementById('quizScore').classList.remove('show');
+}
+
+document.addEventListener('DOMContentLoaded', renderQuiz);
+
 </body>
 </html>

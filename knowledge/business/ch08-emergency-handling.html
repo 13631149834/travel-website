@@ -117,6 +117,41 @@
     margin-left: 4px;
 }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -478,6 +513,21 @@
 
 </section>
 
+
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer"></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
 <section class="cta-box">
 <h3>📚 备考资料推荐</h3>
 <p>更多备考资料 → 微信 <strong>ximao101</strong></p>
@@ -518,6 +568,104 @@ document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
         });
     }
 });
+</script>
+
+
+<script>
+var quizData = [
+  {type:'judge', q:'处理游客个别要求时，首先要判断"合理而可能"，只有合理且可能的要求才应满足', opts:['正确','错误'], ans:[0], explain:'处理游客个别要求的基本原则是"合理而可能"。只有当要求同时满足"合理"和"可能"两个条件时，才应积极满足；不合理或不可能实现的，要耐心解释原因。'},
+  {type:'judge', q:'误机事故发生后，导游应立即承担责任，自行安排改签并承担全部费用', opts:['正确','错误'], ans:[1], explain:'误机事故发生后，导游应立即：①报告旅行社②安排尽快离港③联系航空公司争取改签④安排好游客食宿⑤承担相关费用（因导游责任的）。但首先要报告旅行社，而不是自行处理一切。'},
+  {type:'single', q:'误机事故预防中，国内航班应提前多长时间到达机场？', opts:['A. 1小时','B. 2小时','C. 3小时','D. 30分钟'], ans:[1], explain:'误机预防时间要求：国内航班提前2小时到达机场，国际航班提前3小时到达，火车/轮船提前1小时到达车站/码头。这是导游必须牢记的重要时间节点。'},
+  {type:'single', q:'游客走失后，导游首先应该怎么做？', opts:['A. 继续游览','B. 立即报告旅行社','C. 让游客自己找','D. 立即报警'], ans:[1], explain:'游客走失处理程序：①立即报告旅行社②组织寻找③联系景区广播④找不到则报告景区管理部门或报警⑤事后分析原因总结教训。首先要报告旅行社，然后组织寻找。'},
+  {type:'single', q:'食物中毒的正确处理方法是？', opts:['A. 立即催吐（中毒2小时内）','B. 立即大量饮水','C. 继续正常活动','D. 让患者自行处理'], ans:[0], explain:'食物中毒处理方法：①立即催吐（中毒2小时内）②尽快送医院③保留食物样本④报告旅行社和卫生防疫部门。催吐是正确做法，但需在中毒2小时内进行。'},
+  {type:'single', q:'火灾发生时，正确的逃生方法是？', opts:['A. 乘坐电梯快速下楼','B. 迅速疏散到空旷地带','C. 躲在房间不出来','D. 返回取贵重物品'], ans:[1], explain:'火灾逃生原则：①拨打119②迅速疏散到空旷地带③使用灭火器灭火④自救逃生时压低身体⑤切勿乘电梯。绝对不能乘坐电梯（可能停电困人或烟气上升）、躲房间不出来、返回取物品。'},
+  {type:'multi', q:'游客要求自由活动时，导游应该怎么做？', opts:['A. 提醒游客注意安全','B. 提供紧急联络方式','C. 约定集合时间地点','D. 强制要求必须同行'], ans:[0,1,2], explain:'游客要求自由活动时，导游应：①提醒安全注意事项②提供紧急联络方式③约定集合时间和地点。如果不影响团队行程，可以同意自由活动，但不能强制要求同行。'},
+  {type:'multi', q:'自然灾害避险的共同原则包括哪些？', opts:['A. 保持冷静，听从指挥','B. 保护头部最重要','C. 迅速转移到安全地带','D. 及时清点人数并报告旅行社'], ans:[0,1,2,3], explain:'自然灾害避险共同原则：①保持冷静，听从指挥②保护头部最重要③迅速转移到安全地带④及时清点人数⑤立即报告旅行社。导游在灾害发生时要镇定组织疏散、安抚情绪、清点人数并报告旅行社。'}
+];
+
+var userAnswers = {};
+var submitted = false;
+
+function renderQuiz() {
+  var container = document.getElementById('quizContainer');
+  if(!container) return;
+  var html = '';
+  quizData.forEach(function(q, i) {
+    var typeLabel = q.type==='judge'?'判断题':q.type==='single'?'单选题':'多选题';
+    var typeClass = q.type==='judge'?'qtype-judge':q.type==='single'?'qtype-single':'qtype-multi';
+    html += '<div class="quiz-item" id="qi'+i+'">';
+    html += '<div class="quiz-q"><span class="qtype '+typeClass+'">'+typeLabel+'</span>'+(i+1)+'. '+q.q+'</div>';
+    html += '<div class="quiz-options">';
+    q.opts.forEach(function(opt, j) {
+      html += '<div class="quiz-opt" data-qi="'+i+'" data-oi="'+j+'" onclick="selectOpt('+i+','+j+')">';
+      html += '<span class="opt-letter">'+String.fromCharCode(65+j)+'</span>';
+      html += '<span>'+opt.replace(/^[A-D]\.\s*/,'')+'</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div class="quiz-explain" id="explain'+i+'">💡 '+q.explain+'</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function selectOpt(qi, oi) {
+  if(submitted) return;
+  var q = quizData[qi];
+  if(q.type === 'multi') {
+    if(!userAnswers[qi]) userAnswers[qi] = [];
+    var idx = userAnswers[qi].indexOf(oi);
+    if(idx > -1) userAnswers[qi].splice(idx, 1);
+    else userAnswers[qi].push(oi);
+  } else {
+    userAnswers[qi] = [oi];
+  }
+  updateOptStyles(qi);
+}
+
+function updateOptStyles(qi) {
+  var opts = document.querySelectorAll('.quiz-opt[data-qi="'+qi+'"]');
+  opts.forEach(function(opt) {
+    opt.classList.remove('selected');
+    var oi = parseInt(opt.dataset.oi);
+    if(userAnswers[qi] && userAnswers[qi].indexOf(oi) > -1) {
+      opt.classList.add('selected');
+    }
+  });
+}
+
+function submitQuiz() {
+  submitted = true;
+  var correct = 0;
+  quizData.forEach(function(q, i) {
+    var item = document.getElementById('qi'+i);
+    var ua = userAnswers[i] || [];
+    var isCorrect = ua.length === q.ans.length && ua.sort().join() === q.ans.slice().sort().join();
+    if(isCorrect) { correct++; item.classList.add('correct'); }
+    else { item.classList.add('wrong'); }
+    var opts = document.querySelectorAll('.quiz-opt[data-qi="'+i+'"]');
+    opts.forEach(function(opt) {
+      var oi = parseInt(opt.dataset.oi);
+      opt.classList.remove('selected');
+      if(q.ans.indexOf(oi) > -1) opt.classList.add('show-correct');
+      else if(ua.indexOf(oi) > -1) opt.classList.add('show-wrong');
+    });
+    document.getElementById('explain'+i).classList.add('show');
+  });
+  var scoreEl = document.getElementById('quizScore');
+  document.getElementById('scoreNum').textContent = correct + '/' + quizData.length;
+  scoreEl.classList.add('show');
+}
+
+function resetQuiz() {
+  submitted = false;
+  userAnswers = {};
+  renderQuiz();
+  document.getElementById('quizScore').classList.remove('show');
+}
+
+renderQuiz();
+
 </script>
 
 </body>

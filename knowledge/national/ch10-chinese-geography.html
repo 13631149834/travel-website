@@ -129,6 +129,41 @@
 .mnemonic-toggle.active .toggle-content { max-height: 500px; padding: 12px; }
 .mnemonic-toggle .toggle-hint { font-size: 0.8em; opacity: 0.7; margin-left: 4px; }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -336,7 +371,156 @@
             <div class="exam-tip">常考题型：选择题、连线题。重点记忆五岳名称与地点、长江黄河数据、最大湖泊、动植物特产。</div>
         </div>
         
-        <div class="footer-cta">
+        
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer">        <div class="quiz-item" data-index="0">
+            <div class="quiz-q"><span class="qtype qtype-judge">判断</span>中国陆地面积约960万平方千米，是世界第三大国。</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="0" data-opt="0" onclick="selectOption(0, 0, false)">
+                    <span class="opt-letter">A</span><span>正确</span>
+                </div>
+                <div class="quiz-opt" data-q="0" data-opt="1" onclick="selectOption(0, 1, false)">
+                    <span class="opt-letter">B</span><span>错误</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-0">中国陆地面积约960万平方千米，仅次于俄罗斯（约1709万平方千米）和加拿大（约998万平方千米），是世界第三大国。</div>
+        </div>
+        <div class="quiz-item" data-index="1">
+            <div class="quiz-q"><span class="qtype qtype-judge">判断</span>长江是中国第一长河，全长6300余千米。</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="1" data-opt="0" onclick="selectOption(1, 0, false)">
+                    <span class="opt-letter">A</span><span>正确</span>
+                </div>
+                <div class="quiz-opt" data-q="1" data-opt="1" onclick="selectOption(1, 1, false)">
+                    <span class="opt-letter">B</span><span>错误</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-1">长江全长6300余千米，是中国第一长河、世界第三长河，发源于唐古拉山，注入东海。黄河全长5464千米，是中国第二长河。</div>
+        </div>
+        <div class="quiz-item" data-index="2">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>中国地势的特点是（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="2" data-opt="0" onclick="selectOption(2, 0, false)">
+                    <span class="opt-letter">A</span><span>东高西低</span>
+                </div>
+                <div class="quiz-opt" data-q="2" data-opt="1" onclick="selectOption(2, 1, false)">
+                    <span class="opt-letter">B</span><span>西高东低</span>
+                </div>
+                <div class="quiz-opt" data-q="2" data-opt="2" onclick="selectOption(2, 2, false)">
+                    <span class="opt-letter">C</span><span>南高北低</span>
+                </div>
+                <div class="quiz-opt" data-q="2" data-opt="3" onclick="selectOption(2, 3, false)">
+                    <span class="opt-letter">D</span><span>北高南低</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-2">中国地势特点是西高东低，呈三级阶梯状分布：青藏高原为第一级阶梯，高原以东为第二级阶梯，东部为第三级阶梯。</div>
+        </div>
+        <div class="quiz-item" data-index="3">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>中国最大的淡水湖是（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="3" data-opt="0" onclick="selectOption(3, 0, false)">
+                    <span class="opt-letter">A</span><span>青海湖</span>
+                </div>
+                <div class="quiz-opt" data-q="3" data-opt="1" onclick="selectOption(3, 1, false)">
+                    <span class="opt-letter">B</span><span>鄱阳湖</span>
+                </div>
+                <div class="quiz-opt" data-q="3" data-opt="2" onclick="selectOption(3, 2, false)">
+                    <span class="opt-letter">C</span><span>洞庭湖</span>
+                </div>
+                <div class="quiz-opt" data-q="3" data-opt="3" onclick="selectOption(3, 3, false)">
+                    <span class="opt-letter">D</span><span>太湖</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-3">鄱阳湖位于江西省，是中国最大的淡水湖；青海湖位于青海省，是中国最大的湖泊（咸水湖）。</div>
+        </div>
+        <div class="quiz-item" data-index="4">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>五岳之首是（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="4" data-opt="0" onclick="selectOption(4, 0, false)">
+                    <span class="opt-letter">A</span><span>华山</span>
+                </div>
+                <div class="quiz-opt" data-q="4" data-opt="1" onclick="selectOption(4, 1, false)">
+                    <span class="opt-letter">B</span><span>衡山</span>
+                </div>
+                <div class="quiz-opt" data-q="4" data-opt="2" onclick="selectOption(4, 2, false)">
+                    <span class="opt-letter">C</span><span>泰山</span>
+                </div>
+                <div class="quiz-opt" data-q="4" data-opt="3" onclick="selectOption(4, 3, false)">
+                    <span class="opt-letter">D</span><span>嵩山</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-4">东岳泰山被称为'五岳之首''天下第一山'，位于山东，海拔1545米，以雄伟壮丽著称。</div>
+        </div>
+        <div class="quiz-item" data-index="5">
+            <div class="quiz-q"><span class="qtype qtype-single">单选</span>中国四大高原不包括（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="5" data-opt="0" onclick="selectOption(5, 0, false)">
+                    <span class="opt-letter">A</span><span>青藏高原</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="1" onclick="selectOption(5, 1, false)">
+                    <span class="opt-letter">B</span><span>内蒙古高原</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="2" onclick="selectOption(5, 2, false)">
+                    <span class="opt-letter">C</span><span>黄土高原</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="3" onclick="selectOption(5, 3, false)">
+                    <span class="opt-letter">D</span><span>云贵高原</span>
+                </div>
+                <div class="quiz-opt" data-q="5" data-opt="4" onclick="selectOption(5, 4, false)">
+                    <span class="opt-letter">E</span><span>帕米尔高原</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-5">中国四大高原是青藏高原、内蒙古高原、黄土高原、云贵高原。帕米尔高原不属于中国四大高原。</div>
+        </div>
+        <div class="quiz-item" data-index="6">
+            <div class="quiz-q"><span class="qtype qtype-multi">多选</span>黄山四绝包括（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="6" data-opt="0" onclick="selectOption(6, 0, true)">
+                    <span class="opt-letter">A</span><span>奇松</span>
+                </div>
+                <div class="quiz-opt" data-q="6" data-opt="1" onclick="selectOption(6, 1, true)">
+                    <span class="opt-letter">B</span><span>怪石</span>
+                </div>
+                <div class="quiz-opt" data-q="6" data-opt="2" onclick="selectOption(6, 2, true)">
+                    <span class="opt-letter">C</span><span>云海</span>
+                </div>
+                <div class="quiz-opt" data-q="6" data-opt="3" onclick="selectOption(6, 3, true)">
+                    <span class="opt-letter">D</span><span>温泉</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-6">黄山四绝是奇松、怪石、云海、温泉。黄山兼有'雄、奇、险、秀、幽、奥、旷'等特征，有'五岳归来不看山，黄山归来不看岳'之说。</div>
+        </div>
+        <div class="quiz-item" data-index="7">
+            <div class="quiz-q"><span class="qtype qtype-multi">多选</span>以下哪些是中国特有动物（）</div>
+            <div class="quiz-options">
+                <div class="quiz-opt" data-q="7" data-opt="0" onclick="selectOption(7, 0, true)">
+                    <span class="opt-letter">A</span><span>大熊猫</span>
+                </div>
+                <div class="quiz-opt" data-q="7" data-opt="1" onclick="selectOption(7, 1, true)">
+                    <span class="opt-letter">B</span><span>金丝猴</span>
+                </div>
+                <div class="quiz-opt" data-q="7" data-opt="2" onclick="selectOption(7, 2, true)">
+                    <span class="opt-letter">C</span><span>华南虎</span>
+                </div>
+                <div class="quiz-opt" data-q="7" data-opt="3" onclick="selectOption(7, 3, true)">
+                    <span class="opt-letter">D</span><span>袋鼠</span>
+                </div>
+            </div>
+            <div class="quiz-explain" id="explain-7">大熊猫、金丝猴、华南虎、白鱀豚、朱鹮等都是中国特有动物。袋鼠是澳大利亚的特有动物。</div>
+        </div></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
+<div class="footer-cta">
             <h3>备考推荐</h3>
             <div class="wechat">微信：ximao101</div>
             <div style="margin-top: 12px; font-size: 0.9em; opacity: 0.95;">走过弯路，所以更懂路</div>
@@ -373,5 +557,113 @@ document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
     }
 });
 </script>
+
+var quizData = [{"type": "judge", "q": "中国陆地面积约960万平方千米，是世界第三大国。", "options": ["正确", "错误"], "ans": 0, "explain": "中国陆地面积约960万平方千米，仅次于俄罗斯（约1709万平方千米）和加拿大（约998万平方千米），是世界第三大国。"}, {"type": "judge", "q": "长江是中国第一长河，全长6300余千米。", "options": ["正确", "错误"], "ans": 0, "explain": "长江全长6300余千米，是中国第一长河、世界第三长河，发源于唐古拉山，注入东海。黄河全长5464千米，是中国第二长河。"}, {"type": "single", "q": "中国地势的特点是（）", "options": ["东高西低", "西高东低", "南高北低", "北高南低"], "ans": 1, "explain": "中国地势特点是西高东低，呈三级阶梯状分布：青藏高原为第一级阶梯，高原以东为第二级阶梯，东部为第三级阶梯。"}, {"type": "single", "q": "中国最大的淡水湖是（）", "options": ["青海湖", "鄱阳湖", "洞庭湖", "太湖"], "ans": 1, "explain": "鄱阳湖位于江西省，是中国最大的淡水湖；青海湖位于青海省，是中国最大的湖泊（咸水湖）。"}, {"type": "single", "q": "五岳之首是（）", "options": ["华山", "衡山", "泰山", "嵩山"], "ans": 2, "explain": "东岳泰山被称为'五岳之首''天下第一山'，位于山东，海拔1545米，以雄伟壮丽著称。"}, {"type": "single", "q": "中国四大高原不包括（）", "options": ["青藏高原", "内蒙古高原", "黄土高原", "云贵高原", "帕米尔高原"], "ans": 4, "explain": "中国四大高原是青藏高原、内蒙古高原、黄土高原、云贵高原。帕米尔高原不属于中国四大高原。"}, {"type": "multi", "q": "黄山四绝包括（）", "options": ["奇松", "怪石", "云海", "温泉"], "ans": [0, 1, 2, 3], "explain": "黄山四绝是奇松、怪石、云海、温泉。黄山兼有'雄、奇、险、秀、幽、奥、旷'等特征，有'五岳归来不看山，黄山归来不看岳'之说。"}, {"type": "multi", "q": "以下哪些是中国特有动物（）", "options": ["大熊猫", "金丝猴", "华南虎", "袋鼠"], "ans": [0, 1, 2], "explain": "大熊猫、金丝猴、华南虎、白鱀豚、朱鹮等都是中国特有动物。袋鼠是澳大利亚的特有动物。"}];
+var selectedAnswers = {};
+var submitted = false;
+
+function renderQuiz() {
+    var container = document.getElementById('quizContainer');
+    var html = '';
+    quizData.forEach(function(q, idx) {
+        var qTypeClass = q.type === 'judge' ? 'qtype-judge' : (q.type === 'single' ? 'qtype-single' : 'qtype-multi');
+        var qTypeText = q.type === 'judge' ? '判断' : (q.type === 'single' ? '单选' : '多选');
+        html += '<div class="quiz-item" data-index="' + idx + '">';
+        html += '<div class="quiz-q"><span class="qtype ' + qTypeClass + '">' + qTypeText + '</span>' + q.q + '</div>';
+        html += '<div class="quiz-options">';
+        q.options.forEach(function(opt, optIdx) {
+            var letter = String.fromCharCode(65 + optIdx);
+            html += '<div class="quiz-opt" data-q="' + idx + '" data-opt="' + optIdx + '" onclick="selectOption(' + idx + ', ' + optIdx + ', ' + (q.type === 'multi' ? 'true' : 'false') + ')">';
+            html += '<span class="opt-letter">' + letter + '</span><span>' + opt + '</span></div>';
+        });
+        html += '</div>';
+        html += '<div class="quiz-explain" id="explain-' + idx + '">' + q.explain + '</div>';
+        html += '</div>';
+    });
+    container.innerHTML = html;
+}
+
+function selectOption(qIdx, optIdx, isMulti) {
+    if (submitted) return;
+    if (isMulti) {
+        var item = document.querySelector('.quiz-item[data-index="' + qIdx + '"]');
+        var opt = item.querySelector('.quiz-opt[data-opt="' + optIdx + '"]');
+        if (selectedAnswers[qIdx] && selectedAnswers[qIdx].includes(optIdx)) {
+            selectedAnswers[qIdx] = selectedAnswers[qIdx].filter(function(x) { return x !== optIdx; });
+            opt.classList.remove('selected');
+        } else {
+            if (!selectedAnswers[qIdx]) selectedAnswers[qIdx] = [];
+            selectedAnswers[qIdx].push(optIdx);
+            opt.classList.add('selected');
+        }
+    } else {
+        selectedAnswers[qIdx] = optIdx;
+        var item = document.querySelector('.quiz-item[data-index="' + qIdx + '"]');
+        item.querySelectorAll('.quiz-opt').forEach(function(o) { o.classList.remove('selected'); });
+        item.querySelector('.quiz-opt[data-opt="' + optIdx + '"]').classList.add('selected');
+    }
+}
+
+function submitQuiz() {
+    submitted = true;
+    var correctCount = 0;
+    quizData.forEach(function(q, idx) {
+        var item = document.querySelector('.quiz-item[data-index="' + idx + '"]');
+        var userAns = selectedAnswers[idx];
+        var isCorrect = false;
+        if (q.type === 'multi') {
+            if (Array.isArray(userAns) && userAns.length === q.ans.length && userAns.every(function(x) { return q.ans.includes(x); })) {
+                isCorrect = true;
+            }
+        } else {
+            if (userAns === q.ans) isCorrect = true;
+        }
+        if (isCorrect) {
+            correctCount++;
+            item.classList.add('correct');
+        } else {
+            item.classList.add('wrong');
+        }
+        // 显示正确答案
+        if (Array.isArray(q.ans)) {
+            q.ans.forEach(function(a) {
+                item.querySelector('.quiz-opt[data-opt="' + a + '"]').classList.add('show-correct');
+            });
+        } else {
+            item.querySelector('.quiz-opt[data-opt="' + q.ans + '"]').classList.add('show-correct');
+        }
+        // 显示错误选项
+        if (q.type !== 'multi') {
+            item.querySelectorAll('.quiz-opt').forEach(function(o, oi) {
+                if (oi !== q.ans && oi === userAns) {
+                    o.classList.add('show-wrong');
+                }
+            });
+        }
+        // 显示解析
+        document.getElementById('explain-' + idx).classList.add('show');
+    });
+    // 显示分数
+    var scoreEl = document.getElementById('quizScore');
+    var scoreNumEl = document.getElementById('scoreNum');
+    scoreEl.classList.add('show');
+    scoreNumEl.textContent = correctCount + '/' + quizData.length;
+}
+
+function resetQuiz() {
+    submitted = false;
+    selectedAnswers = {};
+    document.querySelectorAll('.quiz-item').forEach(function(item) {
+        item.classList.remove('correct', 'wrong');
+        item.querySelectorAll('.quiz-opt').forEach(function(o) {
+            o.classList.remove('selected', 'show-correct', 'show-wrong');
+        });
+        item.querySelector('.quiz-explain').classList.remove('show');
+    });
+    document.getElementById('quizScore').classList.remove('show');
+}
+
+document.addEventListener('DOMContentLoaded', renderQuiz);
+
 </body>
 </html>

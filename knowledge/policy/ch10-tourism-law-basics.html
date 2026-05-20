@@ -177,6 +177,41 @@
     margin-left: 4px;
 }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -410,7 +445,111 @@
             </div>
         </div>
 
-        <div class="footer-promotion">
+        
+
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer"></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
+
+<script>
+var quizData = [{"type": "judge", "q": "旅游法只适用于境内旅游活动，不适用于出境旅游活动。", "opts": ["正确", "错误"], "ans": [1], "explain": "旅游法适用于在中华人民共和国境内的旅游活动以及由境内旅行社组织的到中华人民共和国境外的旅游活动。出境游领队带回国的购物活动也在旅游法监管范围内。"}, {"type": "judge", "q": "旅游者有权拒绝旅游经营者的强制交易行为。", "opts": ["正确", "错误"], "ans": [0], "explain": "根据《旅游法》，旅游者享有拒绝强制交易权的权利，有权拒绝旅游经营者的强制交易行为。"}, {"type": "single", "q": "旅游法的立法目的不包括？", "opts": ["保障旅游者合法权益", "规范旅游市场秩序", "实现旅游企业利润最大化", "保护和合理利用旅游资源"], "ans": [2], "explain": "旅游法立法目的是：为保障旅游者和旅游经营者的合法权益，规范旅游市场秩序，保护和合理利用旅游资源，推进旅游业持续健康发展。不包括实现旅游企业利润最大化。"}, {"type": "single", "q": "旅游者不履行合同义务应承担的责任不包括？", "opts": ["继续履行", "采取补救措施", "赔偿损失", "缴纳罚款"], "ans": [3], "explain": "旅游者不履行合同义务应承担违约责任，包括继续履行、采取补救措施、赔偿损失等。缴纳罚款是行政责任，由行政机关依法作出，不是违约责任。"}, {"type": "single", "q": "导游被旅行社委派到旅游团后，正确的做法是？", "opts": ["私自转委托", "擅自变更行程", "严格按照接待计划服务", "强制游客消费"], "ans": [2], "explain": "导游和领队为旅游者提供服务必须接受旅行社委派，应当严格按照旅行社确定的接待计划安排旅游活动，不得私自承揽导游业务、擅自变更行程、强制游客消费。"}, {"type": "single", "q": "旅游法规定旅游规划应当突出？", "opts": ["经济利益", "文化建设", "环境保护", "社会管理"], "ans": [1], "explain": "旅游法规定编制旅游规划应当突出地方特色，注重对文化遗产的保护和利用，实现经济效益和社会效益相统一。"}, {"type": "multi", "q": "旅游者的权利包括？", "opts": ["知悉真情权", "自主选择权", "拒绝强制交易权", "人格尊严权", "强制购物权"], "ans": [0, 1, 2, 3], "explain": "旅游者的权利包括：知悉真情权；自主选择权；拒绝强制交易权；人格尊严权；特殊群体优待权；损害赔偿权等。不包括强制购物权。"}, {"type": "multi", "q": "旅游者的义务包括？", "opts": ["文明旅游义务", "安全配合义务", "不损害他人义务", "保护环境义务", "强制消费义务"], "ans": [0, 1, 2, 3], "explain": "旅游者的义务包括：文明旅游义务（遵守社会公德，尊重宗教信仰和民族风俗）；安全配合义务；不损害他人义务；保护环境义务。不包括强制消费义务。"}];
+
+var userAnswers = {};
+var submitted = false;
+
+function renderQuiz() {
+  var container = document.getElementById('quizContainer');
+  if(!container) return;
+  var html = '';
+  quizData.forEach(function(q, i) {
+    var typeLabel = q.type==='judge'?'判断题':q.type==='single'?'单选题':'多选题';
+    var typeClass = q.type==='judge'?'qtype-judge':q.type==='single'?'qtype-single':'qtype-multi';
+    html += '<div class="quiz-item" id="qi'+i+'">';
+    html += '<div class="quiz-q"><span class="qtype '+typeClass+'">'+typeLabel+'</span>'+(i+1)+'. '+q.q+'</div>';
+    html += '<div class="quiz-options">';
+    q.opts.forEach(function(opt, j) {
+      html += '<div class="quiz-opt" data-qi="'+i+'" data-oi="'+j+'" onclick="selectOpt('+i+','+j+')">';
+      html += '<span class="opt-letter">'+String.fromCharCode(65+j)+'</span>';
+      html += '<span>'+opt.replace(/^[A-D]\.\s*/,'')+'</span>';
+      html += '</div>';
+    });
+    html += '</div>';
+    html += '<div class="quiz-explain" id="explain'+i+'">💡 '+q.explain+'</div>';
+    html += '</div>';
+  });
+  container.innerHTML = html;
+}
+
+function selectOpt(qi, oi) {
+  if(submitted) return;
+  var q = quizData[qi];
+  if(q.type === 'multi') {
+    if(!userAnswers[qi]) userAnswers[qi] = [];
+    var idx = userAnswers[qi].indexOf(oi);
+    if(idx > -1) userAnswers[qi].splice(idx, 1);
+    else userAnswers[qi].push(oi);
+  } else {
+    userAnswers[qi] = [oi];
+  }
+  updateOptStyles(qi);
+}
+
+function updateOptStyles(qi) {
+  var opts = document.querySelectorAll('.quiz-opt[data-qi="'+qi+'"]');
+  opts.forEach(function(opt) {
+    opt.classList.remove('selected');
+    var oi = parseInt(opt.dataset.oi);
+    if(userAnswers[qi] && userAnswers[qi].indexOf(oi) > -1) {
+      opt.classList.add('selected');
+    }
+  });
+}
+
+function submitQuiz() {
+  submitted = true;
+  var correct = 0;
+  quizData.forEach(function(q, i) {
+    var item = document.getElementById('qi'+i);
+    var ua = userAnswers[i] || [];
+    var isCorrect = ua.length === q.ans.length && ua.sort().join() === q.ans.slice().sort().join();
+    if(isCorrect) { correct++; item.classList.add('correct'); }
+    else { item.classList.add('wrong'); }
+    var opts = document.querySelectorAll('.quiz-opt[data-qi="'+i+'"]');
+    opts.forEach(function(opt) {
+      var oi = parseInt(opt.dataset.oi);
+      opt.classList.remove('selected');
+      if(q.ans.indexOf(oi) > -1) opt.classList.add('show-correct');
+      else if(ua.indexOf(oi) > -1) opt.classList.add('show-wrong');
+    });
+    document.getElementById('explain'+i).classList.add('show');
+  });
+  var scoreEl = document.getElementById('quizScore');
+  document.getElementById('scoreNum').textContent = correct + '/' + quizData.length;
+  scoreEl.classList.add('show');
+}
+
+function resetQuiz() {
+  submitted = false;
+  userAnswers = {};
+  renderQuiz();
+  document.getElementById('quizScore').classList.remove('show');
+}
+
+renderQuiz();
+</script>
+
+<div class="footer-promotion">
             <h3>📚 备考全套资料 · 备考冲刺必备</h3>
             <div class="price">全套 ¥49.9</div>
             <p>含：高频考点汇总 · 真题题库 · 记忆口诀 · 模拟试卷</p>

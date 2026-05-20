@@ -195,6 +195,41 @@
     margin-left: 4px;
 }
 
+
+/* 章节练习题 */
+.quiz-section { margin: 30px 0; padding: 24px; background: #F8FAFC; border-radius: 16px; border: 1px solid #E2E8F0; }
+.quiz-section h2 { font-size: 1.2rem; color: #1A1A1A; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.quiz-desc { font-size: 0.85rem; color: #888; margin-bottom: 16px; }
+.quiz-item { background: #FFFFFF; border-radius: 12px; padding: 18px; margin-bottom: 12px; border: 1px solid #E8ECF1; transition: all 0.2s; }
+.quiz-item.correct { border-color: #10B981; background: #F0FFF4; }
+.quiz-item.wrong { border-color: #EF4444; background: #FFF5F5; }
+.quiz-q { font-size: 0.92rem; color: #1A1A1A; font-weight: 600; margin-bottom: 12px; line-height: 1.6; }
+.quiz-q .qtype { display: inline-block; font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; margin-right: 6px; font-weight: 500; }
+.qtype-judge { background: #E0F2FE; color: #0284C7; }
+.qtype-single { background: #F0FDF4; color: #16A34A; }
+.qtype-multi { background: #FEF3C7; color: #D97706; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-opt { padding: 10px 14px; border: 1.5px solid #E2E8F0; border-radius: 10px; font-size: 0.88rem; color: #444; cursor: pointer; transition: all 0.2s; display: flex; align-items: flex-start; gap: 8px; }
+.quiz-opt:hover { border-color: #4C8BF5; background: #F0F5FF; }
+.quiz-opt.selected { border-color: #4C8BF5; background: #F0F5FF; color: #1A5CC7; font-weight: 500; }
+.quiz-opt.show-correct { border-color: #10B981; background: #F0FFF4; color: #16A34A; }
+.quiz-opt.show-wrong { border-color: #EF4444; background: #FFF5F5; color: #EF4444; }
+.quiz-opt .opt-letter { min-width: 22px; height: 22px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 600; color: #666; flex-shrink: 0; }
+.quiz-opt.show-correct .opt-letter { background: #10B981; color: #FFF; }
+.quiz-opt.show-wrong .opt-letter { background: #EF4444; color: #FFF; }
+.quiz-explain { display: none; margin-top: 10px; padding: 10px 14px; background: #FFF9E6; border-radius: 8px; font-size: 0.82rem; color: #5D4E37; line-height: 1.6; border-left: 3px solid #FFB800; }
+.quiz-explain.show { display: block; }
+.quiz-actions { display: flex; gap: 10px; margin-top: 16px; }
+.quiz-btn { padding: 10px 24px; border-radius: 10px; font-size: 0.88rem; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+.quiz-btn-submit { background: #4C8BF5; color: #FFF; }
+.quiz-btn-submit:hover { background: #1A5CC7; }
+.quiz-btn-reset { background: #F1F5F9; color: #666; border: 1px solid #E2E8F0; }
+.quiz-btn-reset:hover { background: #E2E8F0; }
+.quiz-score { display: none; text-align: center; padding: 16px; background: #F0F5FF; border-radius: 12px; margin-top: 12px; }
+.quiz-score.show { display: block; }
+.quiz-score .score-num { font-size: 2rem; font-weight: 800; color: #4C8BF5; }
+.quiz-score .score-label { font-size: 0.85rem; color: #666; margin-top: 4px; }
+
 </style>
 
 </head>
@@ -410,6 +445,20 @@
         </div>
     </div>
 
+<section class="quiz-section">
+<h2>✏️ 章节练习</h2>
+<p class="quiz-desc">做完这些题，本章知识点就掌握得差不多了</p>
+<div id="quizContainer"></div>
+<div class="quiz-actions">
+  <button class="quiz-btn quiz-btn-submit" onclick="submitQuiz()">提交答案</button>
+  <button class="quiz-btn quiz-btn-reset" onclick="resetQuiz()">重新作答</button>
+</div>
+<div class="quiz-score" id="quizScore">
+  <div class="score-num" id="scoreNum"></div>
+  <div class="score-label">本章练习得分</div>
+</div>
+</section>
+
 <div class="chapter-nav">
     <div class="nav-row">
         <a href="ch06-southwest.html" class="prev-link">← 第6章 西南地区</a>
@@ -437,5 +486,138 @@ document.querySelectorAll('.mnemonic-toggle').forEach(function(el) {
 });
 </script>
 
+<script>
+
+// 章节练习题数据
+const quizData = [{'type': 'judge', 'qtype': '判断', 'q': '秦始皇陵及兵马俑是世界上规模最大、结构最奇特的帝王陵墓之一。', 'options': ['正确', '错误'], 'ans': 0, 'explain': '秦始皇陵及兵马俑是世界上规模最大、内涵最丰富的帝王陵墓之一，被誉为"世界第八大奇迹"，1987年被列入世界遗产名录。'}, {'type': 'judge', 'qtype': '判断', 'q': '新疆天山是世界自然遗产。', 'options': ['正确', '错误'], 'ans': 0, 'explain': '新疆天山于2013年被列入世界自然遗产名录，是中国西北地区重要的生态屏障。'}, {'type': 'single', 'qtype': '单选', 'q': '"丝绸之路"的起点是？', 'options': ['洛阳', '西安', '敦煌', '兰州'], 'ans': 1, 'explain': '丝绸之路的起点是古都长安（今西安），这里是丝绸之路经济带的东方起点，2014年"丝绸之路：长安-天山廊道的路网"被列入世界遗产。'}, {'type': 'single', 'qtype': '单选', 'q': '"中华水塔"指的是哪个地区？', 'options': ['三江源', '青海湖', '可可西里', '柴达木盆地'], 'ans': 0, 'explain': '三江源地区是长江、黄河、澜沧江的发源地，被誉为"中华水塔"，是中国重要的生态功能区。'}, {'type': 'single', 'qtype': '单选', 'q': '莫高窟位于哪个省份？', 'options': ['陕西', '甘肃', '青海', '新疆'], 'ans': 1, 'explain': '莫高窟位于甘肃省敦煌市，始建于前秦时期，是世界上现存规模最大、内容最丰富的佛教艺术宝库。'}, {'type': 'single', 'qtype': '单选', 'q': '西北地区5A级景区数量最多的省份是？', 'options': ['陕西', '甘肃', '青海', '新疆'], 'ans': 3, 'explain': '新疆以18家5A级景区数量在西北地区排名第一，与四川并列全国第三，仅次于江苏和浙江。'}, {'type': 'multi', 'qtype': '多选', 'q': '下列哪些是世界文化遗产？', 'options': ['莫高窟', '秦始皇陵及兵马俑', '布达拉宫', '青海湖', '大明宫'], 'ans': [0, 1, 2, 4], 'explain': '莫高窟、秦始皇陵及兵马俑、布达拉宫、大明宫都是世界文化遗产。青海湖是世界自然遗产。'}, {'type': 'multi', 'qtype': '多选', 'q': '丝绸之路世界遗产"长安-天山廊道的路网"经过的省份包括？', 'options': ['陕西', '甘肃', '宁夏', '青海', '新疆'], 'ans': [0, 1, 4], 'explain': '丝绸之路世界遗产"长安-天山廊道的路网"经过陕西、甘肃、新疆三省区，不包括宁夏和青海。'}];
+
+// 交互JS
+let selectedAnswers = {};
+let submitted = false;
+
+function renderQuiz() {
+    const container = document.getElementById('quizContainer');
+    if (!container) return;
+    
+    let html = '';
+    quizData.forEach((q, index) => {
+        const qtypeClass = q.type === 'judge' ? 'qtype-judge' : (q.type === 'single' ? 'qtype-single' : 'qtype-multi');
+        html += `<div class="quiz-item" id="quiz-item-${index}">
+            <div class="quiz-q">
+                <span class="qtype ${qtypeClass}">${q.qtype}</span>
+                ${index + 1}. ${q.q}
+            </div>
+            <div class="quiz-options">`;
+        
+        q.options.forEach((opt, optIndex) => {
+            const letter = String.fromCharCode(65 + optIndex);
+            html += `<div class="quiz-opt" data-q="${index}" data-opt="${optIndex}" onclick="selectOption(${index}, ${optIndex}, '${q.type}')">
+                <span class="opt-letter">${letter}</span>
+                <span>${opt}</span>
+            </div>`;
+        });
+        
+        html += `</div>
+            <div class="quiz-explain" id="explain-${index}">💡 ${q.explain}</div>
+        </div>`;
+    });
+    
+    container.innerHTML = html;
+}
+
+function selectOption(qIndex, optIndex, qType) {
+    if (submitted) return;
+    
+    if (qType === 'multi') {
+        // 多选题：支持多选
+        const key = `q_${qIndex}`;
+        if (!selectedAnswers[key]) selectedAnswers[key] = [];
+        const idx = selectedAnswers[key].indexOf(optIndex);
+        if (idx > -1) {
+            selectedAnswers[key].splice(idx, 1);
+        } else {
+            selectedAnswers[key].push(optIndex);
+        }
+    } else {
+        // 单选题和判断题：单选
+        selectedAnswers[`q_${qIndex}`] = [optIndex];
+    }
+    
+    updateDisplay(qIndex, qType);
+}
+
+function updateDisplay(qIndex, qType) {
+    const key = `q_${qIndex}`;
+    const selected = selectedAnswers[key] || [];
+    
+    const item = document.getElementById(`quiz-item-${qIndex}`);
+    const opts = item.querySelectorAll('.quiz-opt');
+    
+    opts.forEach((opt, optIndex) => {
+        opt.classList.remove('selected', 'show-correct', 'show-wrong');
+        if (selected.includes(optIndex)) {
+            opt.classList.add('selected');
+        }
+    });
+}
+
+function submitQuiz() {
+    if (submitted) return;
+    submitted = true;
+    
+    let correctCount = 0;
+    quizData.forEach((q, index) => {
+        const key = `q_${index}`;
+        const userAns = selectedAnswers[key] || [];
+        const correctAns = Array.isArray(q.ans) ? q.ans : [q.ans];
+        
+        const isCorrect = userAns.length === correctAns.length && 
+                          userAns.every(v => correctAns.includes(v)) &&
+                          correctAns.every(v => userAns.includes(v));
+        
+        if (isCorrect) correctCount++;
+        
+        const item = document.getElementById(`quiz-item-${index}`);
+        item.classList.add(isCorrect ? 'correct' : 'wrong');
+        
+        const explain = document.getElementById(`explain-${index}`);
+        explain.classList.add('show');
+        
+        const opts = item.querySelectorAll('.quiz-opt');
+        opts.forEach((opt, optIndex) => {
+            if (correctAns.includes(optIndex)) {
+                opt.classList.add('show-correct');
+            } else if (userAns.includes(optIndex)) {
+                opt.classList.add('show-wrong');
+            }
+        });
+    });
+    
+    const scoreEl = document.getElementById('quizScore');
+    const scoreNumEl = document.getElementById('scoreNum');
+    scoreNumEl.textContent = `${correctCount}/${quizData.length}`;
+    scoreEl.classList.add('show');
+}
+
+function resetQuiz() {
+    selectedAnswers = {};
+    submitted = false;
+    
+    document.querySelectorAll('.quiz-item').forEach(item => {
+        item.classList.remove('correct', 'wrong');
+        item.querySelectorAll('.quiz-opt').forEach(opt => {
+            opt.classList.remove('selected', 'show-correct', 'show-wrong');
+        });
+        const explain = item.querySelector('.quiz-explain');
+        if (explain) explain.classList.remove('show');
+    });
+    
+    document.getElementById('quizScore').classList.remove('show');
+}
+
+// 初始化
+document.addEventListener('DOMContentLoaded', renderQuiz);
+
+</script>
 </body>
 </html>
