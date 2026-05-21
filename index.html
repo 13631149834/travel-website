@@ -974,6 +974,20 @@ a { color: #4C8BF5 !important; }
 </script>
 
       
+      
+      <!-- ===== 学习成就徽章 ===== -->
+      <div id="achievementSection" style="margin-bottom:20px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:1.1rem;">🏆</span>
+            <span style="font-weight:800;color:#1A1A1A;font-size:1rem;">学习成就</span>
+          </div>
+          <span id="achievementCount" style="font-size:0.78rem;color:#999;">0/8 已解锁</span>
+        </div>
+        <div id="achievementGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+        </div>
+      </div>
+
       <!-- ===== 今日推荐学习 ===== -->
       <div id="todayRecommend" style="margin-bottom:20px;">
         <div style="background:linear-gradient(135deg,#4C8BF5 0%,#6BA3FF 100%);border-radius:16px;padding:20px;color:#FFF;position:relative;overflow:hidden;">
@@ -1255,7 +1269,19 @@ function showPath(type) {
   <!-- ===== 第四屏后半：干货推荐 ===== -->
   <section style="padding:60px 20px;background:#FAFAFA;">
     <div style="max-width:800px;margin:0 auto;">
-      <h2 style="font-size:1.5rem;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:8px;">备考干货推荐</h2>
+      <h2 style="font-size:1.5rem;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:8px;">
+      <div style="margin-bottom:16px;">
+        <a href="/interview.html" style="display:flex;align-items:center;gap:14px;padding:16px 20px;background:linear-gradient(135deg,#FFF3E0,#FFE0B2);border-radius:14px;text-decoration:none;border:1px solid #FFB74D;transition:all .2s;" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 4px 12px rgba(230,81,0,0.15)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+          <span style="font-size:1.8rem;">🎤</span>
+          <div>
+            <div style="font-weight:800;color:#E65100;font-size:0.95rem;">面试专区</div>
+            <div style="font-size:0.78rem;color:#999;">导游词模板 · 高频问答 · 评分标准 · 面试避坑</div>
+          </div>
+          <span style="margin-left:auto;color:#E65100;font-size:1.2rem;">→</span>
+        </a>
+      </div>
+
+      备考干货推荐</h2>
       <p style="text-align:center;color:#666;margin-bottom:32px;font-size:0.9rem;">避坑指南 + 职业规划，少走弯路</p>
       
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">
@@ -1599,6 +1625,102 @@ if ('serviceWorker' in navigator) {
   }
 })();
 </script>
+
+
+<script>
+// ===== 学习成就徽章系统 =====
+(function() {
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var studyDates = JSON.parse(localStorage.getItem('youdao_study_dates') || '[]');
+  var quizResults = JSON.parse(localStorage.getItem('quizResults') || '{}');
+  var wrongQs = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+  
+  // 计算统计
+  var readCount = Object.keys(readChapters).length;
+  var totalQ = 0, correctQ = 0;
+  for (var qk in quizResults) {
+    totalQ += (quizResults[qk].total || 0);
+    correctQ += (quizResults[qk].correct || 0);
+  }
+  var accuracy = totalQ > 0 ? Math.round((correctQ / totalQ) * 100) : 0;
+  var streak = 0;
+  var sorted = studyDates.slice().sort().reverse();
+  var checkDate = new Date();
+  for (var i = 0; i < 365; i++) {
+    var ds = checkDate.toISOString().split('T')[0];
+    if (sorted.indexOf(ds) !== -1) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else if (i === 0) {
+      checkDate.setDate(checkDate.getDate() - 1);
+      continue;
+    } else {
+      break;
+    }
+  }
+  
+  // 定义成就
+  var achievements = [
+    {id:'first_chapter', icon:'📖', name:'初学乍练', desc:'完成第1个章节', unlocked: readCount >= 1},
+    {id:'streak_7', icon:'🔥', name:'七日之约', desc:'连续学习7天', unlocked: streak >= 7},
+    {id:'quiz_100', icon:'✏️', name:'刷题百道', desc:'累计刷题100道', unlocked: totalQ >= 100},
+    {id:'accuracy_80', icon:'🎯', name:'精准射手', desc:'正确率超80%', unlocked: totalQ >= 20 && accuracy >= 80},
+    {id:'half_done', icon:'🏔️', name:'半山腰', desc:'完成23个章节(一半)', unlocked: readCount >= 23},
+    {id:'streak_30', icon:'💪', name:'月度坚持', desc:'连续学习30天', unlocked: streak >= 30},
+    {id:'wrong_clear', icon:'🛡️', name:'错题清零', desc:'错题本清空(至少做过题)', unlocked: totalQ >= 10 && wrongQs.length === 0},
+    {id:'all_done', icon:'🎓', name:'全科通关', desc:'完成全部46章', unlocked: readCount >= 46},
+  ];
+  
+  // 保存解锁状态
+  var unlockedData = JSON.parse(localStorage.getItem('youdao_achievements') || '{}');
+  var newlyUnlocked = [];
+  achievements.forEach(function(a) {
+    if (a.unlocked && !unlockedData[a.id]) {
+      unlockedData[a.id] = {date: new Date().toISOString()};
+      newlyUnlocked.push(a);
+    }
+  });
+  localStorage.setItem('youdao_achievements', JSON.stringify(unlockedData));
+  
+  // 渲染徽章
+  var grid = document.getElementById('achievementGrid');
+  var unlockedCount = 0;
+  if (grid) {
+    achievements.forEach(function(a) {
+      var isUnlocked = a.unlocked;
+      if (isUnlocked) unlockedCount++;
+      var div = document.createElement('div');
+      div.style.cssText = 'text-align:center;padding:12px 4px;border-radius:12px;' 
+        + (isUnlocked ? 'background:#FFF3E0;border:1px solid #FFB74D;' : 'background:#F5F5F5;border:1px solid #E2E8F0;opacity:0.5;');
+      div.innerHTML = '<div style="font-size:1.5rem;margin-bottom:4px;' + (isUnlocked ? '' : 'filter:grayscale(1);') + '">' + a.icon + '</div>'
+        + '<div style="font-size:0.7rem;font-weight:700;color:' + (isUnlocked ? '#E65100' : '#999') + ';">' + a.name + '</div>'
+        + '<div style="font-size:0.6rem;color:#999;margin-top:2px;">' + a.desc + '</div>';
+      div.title = a.name + ': ' + a.desc;
+      grid.appendChild(div);
+    });
+  }
+  
+  var countEl = document.getElementById('achievementCount');
+  if (countEl) countEl.textContent = unlockedCount + '/' + achievements.length + ' 已解锁';
+  
+  // 新解锁的成就弹出通知
+  if (newlyUnlocked.length > 0) {
+    var a = newlyUnlocked[0];
+    var notif = document.createElement('div');
+    notif.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#FFF3E0;border:2px solid #FFB74D;border-radius:16px;padding:16px 24px;z-index:99999;text-align:center;box-shadow:0 8px 32px rgba(230,81,0,0.2);animation:notifSlide 0.5s ease;';
+    notif.innerHTML = '<div style="font-size:1.8rem;margin-bottom:4px;">' + a.icon + '</div>'
+      + '<div style="font-size:0.9rem;font-weight:800;color:#E65100;">成就解锁：' + a.name + '</div>'
+      + '<div style="font-size:0.78rem;color:#999;">' + a.desc + '</div>'
+      + '<button onclick="this.parentElement.remove()" style="margin-top:8px;background:none;border:1px solid #FFB74D;color:#E65100;padding:4px 16px;border-radius:8px;font-size:0.75rem;cursor:pointer;">收下</button>';
+    document.body.appendChild(notif);
+    // 5秒后自动消失
+    setTimeout(function() { if (notif.parentElement) notif.remove(); }, 5000);
+  }
+})();
+</script>
+<style>
+@keyframes notifSlide { 0% { transform: translateX(-50%) translateY(-20px); opacity: 0; } 100% { transform: translateX(-50%) translateY(0); opacity: 1; } }
+</style>
 
 </body>
 </html>
