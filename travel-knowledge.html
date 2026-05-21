@@ -1160,5 +1160,46 @@ updateKnowledgeProgress();
 })();
 </script>
 
+<script>
+// 知识库搜索功能
+var tkSearchData = null;
+fetch("search-index.json").then(function(r){return r.json()}).then(function(data){tkSearchData = data;});
+
+function searchKnowledge(query) {
+  var container = document.getElementById("searchResults");
+  if (!query || query.trim().length < 2) {
+    container.innerHTML = "";
+    return;
+  }
+  if (!tkSearchData) {
+    container.innerHTML = '<div style="padding:8px;color:#777;font-size:0.85rem">搜索加载中...</div>';
+    return;
+  }
+  var q = query.trim().toLowerCase();
+  var results = [];
+  for (var i = 0; i < tkSearchData.length; i++) {
+    var item = tkSearchData[i];
+    var title = (item.title || "").toLowerCase();
+    var text = (item.text || "").toLowerCase();
+    var keywords = (item.keywords || "").toLowerCase();
+    if (title.indexOf(q) !== -1 || text.indexOf(q) !== -1 || keywords.indexOf(q) !== -1) {
+      results.push(item);
+      if (results.length >= 8) break;
+    }
+  }
+  if (results.length === 0) {
+    container.innerHTML = '<div style="padding:12px;color:#777;font-size:0.85rem">未找到相关内容，试试其他关键词？</div>';
+    return;
+  }
+  var html = "";
+  for (var j = 0; j < results.length; j++) {
+    var r = results[j];
+    var url = r.url.replace(/^\//, "");
+    var desc = (r.text || "").substring(0, 80).replace(/[<>]/g, "");
+    html += '<a href="' + url + '" style="display:block;padding:10px 14px;margin-bottom:6px;background:#FFF;border:1px solid #F0F0F0;border-radius:10px;text-decoration:none;color:#333;font-size:0.85rem;transition:all 0.2s" onmouseover="this.style.borderColor=\x27#E65100\x27" onmouseout="this.style.borderColor=\x27#F0F0F0\x27"><div style="font-weight:600;color:#1A1A1A;margin-bottom:2px">' + (r.title || "未命名") + '</div><div style="color:#777;font-size:0.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + desc + '</div></a>';
+  }
+  container.innerHTML = html;
+}
+</script>
 </body>
 </html>
