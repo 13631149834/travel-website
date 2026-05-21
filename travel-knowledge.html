@@ -1678,5 +1678,40 @@ updateKnowledgeProgress();
 })();
 </script>
 
+
+<script>
+(function() {
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var studyOrder = [
+    {key:'business:ch01-tour-guide-service', title:'导游业务 · 第1章 导游服务', url:'/knowledge/business/ch01-tour-guide-service.html'},
+    {key:'business:ch03-team-guide', title:'导游业务 · 第3章 团队导游服务规范', url:'/knowledge/business/ch03-team-guide.html'},
+    {key:'business:ch08-emergency-handling', title:'导游业务 · 第8章 导游应变技能', url:'/knowledge/business/ch08-emergency-handling.html'},
+    {key:'business:ch06-tour-group-skills', title:'导游业务 · 第6章 导游带团技能', url:'/knowledge/business/ch06-tour-group-skills.html'},
+    {key:'business:ch02-tour-guide', title:'导游业务 · 第2章 导游', url:'/knowledge/business/ch02-tour-guide.html'},
+    {key:'business:ch07-commentary-skills', title:'导游业务 · 第7章 导游讲解技能', url:'/knowledge/business/ch07-commentary-skills.html'},
+    {key:'policy:ch10-tourism-law-basics', title:'政策法规 · 第10章 旅游法基础知识', url:'/knowledge/policy/ch10-tourism-law-basics.html'},
+    {key:'policy:ch08-contract-law', title:'政策法规 · 第8章 合同法律制度', url:'/knowledge/policy/ch08-contract-law.html'},
+    {key:'policy:ch12-travel-agency-law', title:'政策法规 · 第12章 旅行社法律制度', url:'/knowledge/policy/ch12-travel-agency-law.html'},
+  ];
+  
+  var nextStudy = null;
+  for (var i = 0; i < studyOrder.length; i++) {
+    if (!readChapters[studyOrder[i].key]) {
+      nextStudy = studyOrder[i];
+      break;
+    }
+  }
+  
+  var el = document.getElementById('continueStudy');
+  if (el && nextStudy) {
+    el.style.display = 'block';
+    var titleEl = document.getElementById('continueTitle');
+    var linkEl = document.getElementById('continueLink');
+    if (titleEl) titleEl.textContent = nextStudy.title;
+    if (linkEl) linkEl.href = nextStudy.url;
+  }
+})();
+</script>
+
 </body>
 </html>

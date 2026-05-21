@@ -202,5 +202,28 @@ updateRealProgress();
 </script>
 
 <nav class="bottom-tabs"><a class="tab-item" href="/index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item" href="/ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="/exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="/resources.html"><span class="tab-icon">📦</span><span class="tab-label">资料包</span></a><a class="tab-item" href="/travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
+
+<script>
+// 标记已读章节
+(function() {
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var subjectPrefix = 'local:';
+  
+  document.querySelectorAll('a[href*="ch"]').forEach(function(link) {
+    var href = link.getAttribute('href') || '';
+    var match = href.match(/(ch\d+[^.]*)\.html/);
+    if (match) {
+      var key = subjectPrefix + match[1];
+      if (readChapters[key]) {
+        var badge = document.createElement('span');
+        badge.style.cssText = 'color:#38A169;font-size:0.8rem;margin-right:4px;';
+        badge.textContent = '✅';
+        link.parentNode.insertBefore(badge, link);
+      }
+    }
+  });
+})();
+</script>
+
 </body>
 </html>

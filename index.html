@@ -973,6 +973,20 @@ a { color: #4C8BF5 !important; }
 })();
 </script>
 
+      
+      <!-- ===== 今日推荐学习 ===== -->
+      <div id="todayRecommend" style="margin-bottom:20px;">
+        <div style="background:linear-gradient(135deg,#4C8BF5 0%,#6BA3FF 100%);border-radius:16px;padding:20px;color:#FFF;position:relative;overflow:hidden;">
+          <div style="position:absolute;top:-20px;right:-20px;width:80px;height:80px;background:rgba(255,255,255,0.1);border-radius:50%;"></div>
+          <div style="position:relative;z-index:1;">
+            <div style="font-size:0.82rem;opacity:0.9;margin-bottom:8px;">📚 今日推荐学习</div>
+            <div id="todayRecTitle" style="font-size:1.1rem;font-weight:800;margin-bottom:6px;">导游业务 · 第1章 导游服务</div>
+            <div id="todayRecDesc" style="font-size:0.82rem;opacity:0.85;margin-bottom:14px;">从最实用的一科开始，建立整体认知</div>
+            <a id="todayRecLink" href="/knowledge/business/ch01-tour-guide-service.html" style="display:inline-flex;align-items:center;gap:6px;background:#FFF;color:#4C8BF5;padding:10px 20px;border-radius:12px;font-weight:700;font-size:0.9rem;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.1);">开始学习 →</a>
+          </div>
+        </div>
+      </div>
+
       <!-- 你是哪种考生？ -->
       <div id="onboardingSection" style="margin-bottom:28px;">
         <p style="font-size:0.95rem;color:#444;font-weight:600;margin-bottom:14px;">🎯 你是哪种考生？</p>
@@ -1501,6 +1515,87 @@ if ('serviceWorker' in navigator) {
       + '<button onclick="document.getElementById('welcomeOverlay').remove()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);color:#FFF;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(76,139,245,0.3);">开始学习 🚀</button>'
       + '</div>';
     document.body.appendChild(overlay);
+  }
+})();
+</script>
+
+
+<script>
+// ===== 今日推荐学习 =====
+(function() {
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var studyOrder = [
+    {key:'business:ch01-tour-guide-service', title:'导游业务 · 第1章 导游服务', desc:'从最实用的一科开始，建立整体认知', url:'/knowledge/business/ch01-tour-guide-service.html'},
+    {key:'business:ch03-team-guide', title:'导游业务 · 第3章 团队导游服务规范', desc:'接团送团流程，考试必考', url:'/knowledge/business/ch03-team-guide.html'},
+    {key:'business:ch08-emergency-handling', title:'导游业务 · 第8章 导游应变技能', desc:'应急处理，分值大户', url:'/knowledge/business/ch08-emergency-handling.html'},
+    {key:'business:ch06-tour-group-skills', title:'导游业务 · 第6章 导游带团技能', desc:'带团技能，面试加分项', url:'/knowledge/business/ch06-tour-group-skills.html'},
+    {key:'business:ch02-tour-guide', title:'导游业务 · 第2章 导游', desc:'导游的分类、职责、素质要求', url:'/knowledge/business/ch02-tour-guide.html'},
+    {key:'business:ch07-commentary-skills', title:'导游业务 · 第7章 导游讲解技能', desc:'讲解原则、方法、技巧', url:'/knowledge/business/ch07-commentary-skills.html'},
+    {key:'business:ch05-language-skills', title:'导游业务 · 第5章 导游语言技能', desc:'导游语言的基本要求', url:'/knowledge/business/ch05-language-skills.html'},
+    {key:'business:ch04-independent-traveler', title:'导游业务 · 第4章 散客导游服务规范', desc:'散客接待服务', url:'/knowledge/business/ch04-independent-traveler.html'},
+    {key:'business:ch09-related-knowledge', title:'导游业务 · 第9章 导游相关知识', desc:'交通、住宿、饮食等常识', url:'/knowledge/business/ch09-related-knowledge.html'},
+    {key:'policy:ch10-tourism-law-basics', title:'政策法规 · 第10章 旅游法基础知识', desc:'旅游法框架、旅游者权利，占分最多', url:'/knowledge/policy/ch10-tourism-law-basics.html'},
+    {key:'policy:ch08-contract-law', title:'政策法规 · 第8章 合同法律制度', desc:'违约金/定金必考', url:'/knowledge/policy/ch08-contract-law.html'},
+    {key:'policy:ch12-travel-agency-law', title:'政策法规 · 第12章 旅行社法律制度', desc:'旅行社设立、经营、法律责任', url:'/knowledge/policy/ch12-travel-agency-law.html'},
+    {key:'policy:ch13-guide-management', title:'政策法规 · 第13章 导游管理法律制度', desc:'导游资格、执业、权利义务', url:'/knowledge/policy/ch13-guide-management.html'},
+    {key:'policy:ch11-tourist-consumer-law', title:'政策法规 · 第11章 旅游者与消费者法律制度', desc:'消费者权利、旅游者权利', url:'/knowledge/policy/ch11-tourist-consumer-law.html'},
+    {key:'policy:ch04-tourism-policy', title:'政策法规 · 第4章 旅游方针政策', desc:'文旅融合、全域旅游', url:'/knowledge/policy/ch04-tourism-policy.html'},
+    {key:'policy:ch07-civil-law', title:'政策法规 · 第7章 民法基本知识', desc:'民事主体、民事法律行为', url:'/knowledge/policy/ch07-civil-law.html'},
+    {key:'policy:ch09-tort-law', title:'政策法规 · 第9章 侵权责任法律制度', desc:'侵权责任构成', url:'/knowledge/policy/ch09-tort-law.html'},
+    {key:'policy:ch05-constitution', title:'政策法规 · 第5章 宪法基本知识', desc:'宪法基本原则', url:'/knowledge/policy/ch05-constitution.html'},
+    {key:'policy:ch14-safety-insurance', title:'政策法规 · 第14章 旅游安全与保险', desc:'安全责任、旅游保险', url:'/knowledge/policy/ch14-safety-insurance.html'},
+    {key:'policy:ch18-dispute-resolution', title:'政策法规 · 第18章 解决旅游纠纷', desc:'协商调解仲裁诉讼', url:'/knowledge/policy/ch18-dispute-resolution.html'},
+    {key:'policy:ch01-chinese-modernization', title:'政策法规 · 第1章 中国式现代化', desc:'五个特征、两个阶段', url:'/knowledge/policy/ch01-chinese-modernization.html'},
+    {key:'policy:ch02-rule-of-law-china', title:'政策法规 · 第2章 法治中国建设', desc:'全面依法治国', url:'/knowledge/policy/ch02-rule-of-law-china.html'},
+    {key:'policy:ch03-14th-five-year-plan', title:'政策法规 · 第3章 十四五规划', desc:'发展规划体系', url:'/knowledge/policy/ch03-14th-five-year-plan.html'},
+    {key:'policy:ch06-national-security', title:'政策法规 · 第6章 国家安全法律制度', desc:'国家安全法', url:'/knowledge/policy/ch06-national-security.html'},
+    {key:'policy:ch15-entry-exit-transport', title:'政策法规 · 第15章 出入境与交通', desc:'护照签证、航空铁路', url:'/knowledge/policy/ch15-entry-exit-transport.html'},
+    {key:'policy:ch16-food-accommodation', title:'政策法规 · 第16章 食品安全娱乐住宿', desc:'食品安全法', url:'/knowledge/policy/ch16-food-accommodation.html'},
+    {key:'policy:ch17-tourism-resources', title:'政策法规 · 第17章 旅游资源管理', desc:'风景名胜区、文物保护', url:'/knowledge/policy/ch17-tourism-resources.html'},
+    {key:'national:ch03-history-culture', title:'全国导基 · 第3章 历史文化', desc:'朝代歌、重大事件', url:'/knowledge/national/ch03-history-culture.html'},
+    {key:'national:ch05-chinese-architecture', title:'全国导基 · 第5章 中国建筑艺术', desc:'故宫、天坛、四大名楼', url:'/knowledge/national/ch05-chinese-architecture.html'},
+    {key:'national:ch06-chinese-gardens', title:'全国导基 · 第6章 中国园林艺术', desc:'四大名园', url:'/knowledge/national/ch06-chinese-gardens.html'},
+    {key:'national:ch07-chinese-cuisine', title:'全国导基 · 第7章 中国饮食文化', desc:'十大名茶、八大菜系', url:'/knowledge/national/ch07-chinese-cuisine.html'},
+    {key:'national:ch08-chinese-crafts', title:'全国导基 · 第8章 中国传统工艺美术', desc:'四大名绣、五大名窑', url:'/knowledge/national/ch08-chinese-crafts.html'},
+    {key:'national:ch09-chinese-religion', title:'全国导基 · 第9章 中国民族与宗教', desc:'56个民族、四大宗教', url:'/knowledge/national/ch09-chinese-religion.html'},
+    {key:'national:ch01-cpc-history', title:'全国导基 · 第1章 中国共产党历史', desc:'重大历史事件', url:'/knowledge/national/ch01-cpc-history.html'},
+    {key:'national:ch02-tourism-overview', title:'全国导基 · 第2章 中国旅游业概述', desc:'旅游业发展历程', url:'/knowledge/national/ch02-tourism-overview.html'},
+    {key:'national:ch04-chinese-literature', title:'全国导基 · 第4章 中国文学知识', desc:'诗仙诗圣、四大名著', url:'/knowledge/national/ch04-chinese-literature.html'},
+    {key:'national:ch10-chinese-geography', title:'全国导基 · 第10章 中国旅游景观', desc:'四大高原、五岳', url:'/knowledge/national/ch10-chinese-geography.html'},
+    {key:'national:ch11-china-source-markets', title:'全国导基 · 第11章 中国主要客源国', desc:'入境游', url:'/knowledge/national/ch11-china-source-markets.html'},
+    {key:'local:ch01-northchina', title:'地方导基 · 第1章 华北地区', desc:'北京、天津、河北', url:'/knowledge/local/ch01-northchina.html'},
+    {key:'local:ch02-northeast', title:'地方导基 · 第2章 东北地区', desc:'辽宁、吉林、黑龙江', url:'/knowledge/local/ch02-northeast.html'},
+    {key:'local:ch03-eastchina', title:'地方导基 · 第3章 华东地区', desc:'上海、江苏、浙江', url:'/knowledge/local/ch03-eastchina.html'},
+    {key:'local:ch04-centralchina', title:'地方导基 · 第4章 华中地区', desc:'河南、湖北、湖南', url:'/knowledge/local/ch04-centralchina.html'},
+    {key:'local:ch05-southchina', title:'地方导基 · 第5章 华南地区', desc:'广东、广西、海南', url:'/knowledge/local/ch05-southchina.html'},
+    {key:'local:ch06-southwest', title:'地方导基 · 第6章 西南地区', desc:'重庆、四川、云南', url:'/knowledge/local/ch06-southwest.html'},
+    {key:'local:ch07-northwest', title:'地方导基 · 第7章 西北地区', desc:'陕西、甘肃、新疆', url:'/knowledge/local/ch07-northwest.html'},
+    {key:'local:ch08-hmt', title:'地方导基 · 第8章 港澳台地区', desc:'香港、澳门、台湾', url:'/knowledge/local/ch08-hmt.html'},
+  ];
+  
+  var nextStudy = null;
+  for (var i = 0; i < studyOrder.length; i++) {
+    if (!readChapters[studyOrder[i].key]) {
+      nextStudy = studyOrder[i];
+      break;
+    }
+  }
+  
+  if (nextStudy) {
+    var el;
+    el = document.getElementById('todayRecTitle');
+    if (el) el.textContent = nextStudy.title;
+    el = document.getElementById('todayRecDesc');
+    if (el) el.textContent = nextStudy.desc;
+    el = document.getElementById('todayRecLink');
+    if (el) el.href = nextStudy.url;
+  } else {
+    var el = document.getElementById('todayRecTitle');
+    if (el) el.textContent = '🎉 所有章节已读完！';
+    el = document.getElementById('todayRecDesc');
+    if (el) el.textContent = '接下来重点刷题和面试准备';
+    el = document.getElementById('todayRecLink');
+    if (el) { el.href = '/exam-simulator.html'; el.textContent = '去刷题 →'; }
   }
 })();
 </script>
