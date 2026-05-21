@@ -751,7 +751,54 @@ function checkQualify(){
   },{passive:true});
 })();
 
+
+// === 智能阶段推荐 ===
+function updateSmartRecommend(){
+  var now=new Date();
+  var month=now.getMonth()+1;
+  var stageTitle,stageEmoji,stageDate,stageDesc,stageActions;
+  
+  if(month>=1&&month<=6){
+    stageTitle='基础期（现在-6月）';
+    stageEmoji='📗';
+    stageDate='理解框架 · 搞定高频考点';
+    stageDesc='现在是打基础的时候，重点理解四科框架，每天1-2小时足够。不急不躁，重在理解。';
+    stageActions='<a href="travel-knowledge.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">📖 去看笔记</a><a href="exam-simulator.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">✏️ 每日50题</a><a href="flashcard.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">📜 口诀速记</a>';
+  } else if(month>=7&&month<=9){
+    stageTitle='强化期（7-9月）';
+    stageEmoji='📙';
+    stageDate='大量刷题 · 错题复盘';
+    stageDesc='进入刷题高峰期！每天100题+错题复盘，周末做一套模拟题。同时开始背导游词。';
+    stageActions='<a href="exam-simulator.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">✏️ 去刷题</a><a href="wrong-questions.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">❌ 错题本</a><a href="interview.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">🎤 开始练导游词</a>';
+  } else if(month===10){
+    stageTitle='冲刺期（10月）';
+    stageEmoji='📕';
+    stageDate='真题模拟 · 查漏补缺';
+    stageDesc='最后的冲刺阶段！做历年真题+模拟考试，把错题本吃透。每天保持手感，不要断。';
+    stageActions='<a href="exam-simulator.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">✏️ 真题模拟</a><a href="wrong-questions.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">❌ 错题攻克</a><a href="interview-timer.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">⏱️ 面试计时练</a>';
+  } else if(month===11){
+    stageTitle='考试月！';
+    stageEmoji='🔥';
+    stageDate='考前冲刺 · 自信上考场';
+    stageDesc='考试月来了！保持心态，看错题+翻笔记+练导游词。不要学新内容了，巩固已有知识。';
+    stageActions='<a href="exam-simulator.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">✏️ 最后模拟</a><a href="flashcard.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">📜 考前速记</a><a href="chat.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">🤖 问AI疑点</a>';
+  } else {
+    stageTitle='面试冲刺期（12月）';
+    stageEmoji='🎤';
+    stageDate='导游词+问答 · 全力冲面试';
+    stageDesc='笔试结束，全力冲刺面试！导游词练到肌肉记忆，综合问答背熟套路。';
+    stageActions='<a href="interview.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">🎤 面试专区</a><a href="interview-timer.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">⏱️ 计时练习</a><a href="province-exam.html" class="tool-btn" style="font-size:0.82rem;padding:8px 16px;">🗺️ 本省考点</a>';
+  }
+  
+  document.getElementById('stageEmoji').textContent=stageEmoji;
+  document.getElementById('stageTitle').textContent=stageTitle;
+  document.getElementById('stageDate').textContent=stageDate;
+  document.getElementById('stageDesc').textContent=stageDesc;
+  document.getElementById('stageActions').innerHTML=stageActions;
+}
+
 // === 初始化 ===
+updateSmartRecommend();
 initCountdown();
 loadStats();
 </script>
