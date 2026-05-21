@@ -790,6 +790,20 @@ a { color: #4C8BF5 !important; }
     <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
     <meta name="apple-mobile-web-app-title" content="游导学习笔记"/>
     <link rel="apple-touch-icon" href="favicon.svg"/>
+
+<style>
+/* 首屏入场动画 */
+@keyframes heroFadeIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes heroSlideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes heroScale{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes heroStagger{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.hero-animate{opacity:0;animation:heroFadeIn .8s ease forwards}
+.hero-animate-delay1{opacity:0;animation:heroSlideUp .6s ease .2s forwards}
+.hero-animate-delay2{opacity:0;animation:heroSlideUp .6s ease .4s forwards}
+.hero-animate-delay3{opacity:0;animation:heroScale .5s ease .6s forwards}
+.hero-animate-delay4{opacity:0;animation:heroStagger .5s ease .8s forwards}
+[data-theme="dark"] .hero-animate,[data-theme="dark"] .hero-animate-delay1,[data-theme="dark"] .hero-animate-delay2,[data-theme="dark"] .hero-animate-delay3,[data-theme="dark"] .hero-animate-delay4{animation-fill-mode:forwards}
+</style>
 </head>
 
 <!-- 页面加载进度条 -->
@@ -1048,7 +1062,7 @@ a { color: #4C8BF5 !important; }
           </div>
           <span id="achievementCount" style="font-size:0.78rem;color:#999;">0/8 已解锁</span>
         </div>
-        <div id="achievementGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
+        <div class="hero-animate-delay3"  id="achievementGrid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;">
         </div>
       </div>
 
@@ -1839,6 +1853,13 @@ if ('serviceWorker' in navigator) {
 [data-theme="dark"] .dark-toggle{background:#1a2a3a;color:#FFB74D;border:2px solid #2a3a4a}
 .dark-toggle:hover{transform:scale(1.1)}
 
+
+
+.back-to-top{position:fixed;bottom:80px;left:16px;z-index:998;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.15);transition:all .3s;background:#fff;color:#E65100;opacity:0;pointer-events:none;transform:translateY(10px)}
+.back-to-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+.back-to-top:hover{background:#E65100;color:#fff;transform:translateY(-2px)}
+[data-theme="dark"] .back-to-top{background:#1e2a3a;color:#FFB74D;border:2px solid #2a3a4a}
+
 </style>
 
 
@@ -1928,5 +1949,18 @@ function importStudyData(e){
 })();
 </script>
 
+
+<script>
+// 回到顶部按钮
+(function(){
+  const btn=document.createElement('button');
+  btn.className='back-to-top';btn.id='backToTop';btn.title='回到顶部';btn.textContent='⬆';
+  document.body.appendChild(btn);
+  window.addEventListener('scroll',function(){
+    btn.classList.toggle('visible',window.scrollY>400);
+  },{passive:true});
+  btn.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
+})();
+</script>
 </body>
 </html>
