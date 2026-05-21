@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>口诀闪卡 - 游导学习笔记</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+.flash-hero{text-align:center;padding:40px 20px 30px;background:linear-gradient(135deg,#FFF8E1,#FFE082);margin:-20px -20px 30px;border-radius:0 0 20px 20px}
+.flash-hero h1{font-size:1.8rem;margin:10px 0;color:#E65100}
+.flash-hero .subtitle{color:#666;font-size:.95rem;margin:8px 0 20px}
+.flash-controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0}
+.flash-controls button{padding:8px 18px;border:2px solid #E65100;background:#fff;color:#E65100;border-radius:20px;font-size:.85rem;cursor:pointer;transition:all .2s;font-weight:600}
+.flash-controls button.active{background:#E65100;color:#fff}
+.flash-controls button:hover{background:#E65100;color:#fff}
+.flash-stats{display:flex;gap:20px;justify-content:center;margin:16px 0;font-size:.9rem;color:#666}
+.flash-stats span{display:flex;align-items:center;gap:4px}
+.flash-stats .num{font-weight:bold;color:#E65100;font-size:1.1rem}
+.flash-card-container{display:flex;justify-content:center;align-items:center;min-height:320px;margin:20px 0;perspective:1000px}
+.flash-card{width:100%;max-width:480px;min-height:280px;position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform .6s}
+.flash-card.flipped{transform:rotateY(180deg)}
+.flash-card-face{position:absolute;top:0;left:0;width:100%;min-height:280px;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:30px 24px;box-shadow:0 4px 20px rgba(0,0,0,.12)}
+.flash-front{background:linear-gradient(135deg,#fff,#FFF8E1);border:3px solid #E65100}
+.flash-back{background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;transform:rotateY(180deg)}
+.flash-front .q-label{font-size:.8rem;color:#E65100;font-weight:bold;margin-bottom:8px;letter-spacing:2px}
+.flash-front .q-text{font-size:1.3rem;font-weight:bold;color:#333;text-align:center;line-height:1.6}
+.flash-front .q-hint{font-size:.8rem;color:#999;margin-top:16px}
+.flash-back .a-text{font-size:1.1rem;text-align:center;line-height:1.7;margin:8px 0}
+.flash-back .a-mnemonic{background:rgba(255,255,255,.2);border-radius:12px;padding:14px 18px;margin-top:12px;font-size:1rem;font-weight:bold;text-align:center;line-height:1.5}
+.flash-back .a-tag{font-size:.75rem;opacity:.7;margin-top:12px}
+.flash-nav{display:flex;justify-content:center;gap:16px;margin:20px 0}
+.flash-nav button{padding:12px 28px;border:none;border-radius:25px;font-size:.95rem;cursor:pointer;font-weight:bold;transition:all .2s}
+.btn-prev{background:#fff;color:#E65100;border:2px solid #E65100!important}
+.btn-prev:hover{background:#FFF3E0}
+.btn-next{background:#E65100;color:#fff}
+.btn-next:hover{background:#BF360C}
+.btn-know{background:#4CAF50;color:#fff}
+.btn-know:hover{background:#388E3C}
+.btn-dont{background:#F44336;color:#fff}
+.btn-dont:hover{background:#D32F2F}
+.flash-progress{display:flex;justify-content:center;gap:3px;margin:16px 0;flex-wrap:wrap}
+.flash-dot{width:8px;height:8px;border-radius:50%;background:#e0e0e0;transition:all .3s}
+.flash-dot.done{background:#4CAF50}
+.flash-dot.current{background:#E65100;transform:scale(1.3)}
+.flash-dot.wrong{background:#F44336}
+.mode-toggle{display:flex;justify-content:center;gap:10px;margin:16px 0}
+.mode-btn{padding:8px 20px;border:2px solid #ddd;background:#fff;border-radius:20px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.mode-btn.active{border-color:#E65100;background:#FFF3E0;color:#E65100;font-weight:bold}
+.result-card{background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.08);margin:20px 0}
+.result-card h2{color:#E65100;font-size:1.3rem;margin-bottom:16px}
+.result-stats{display:flex;justify-content:center;gap:30px;margin:20px 0}
+.result-stat{text-align:center}
+.result-stat .num{font-size:2rem;font-weight:bold}
+.result-stat .label{font-size:.8rem;color:#888;margin-top:4px}
+@media(max-width:600px){.flash-card-face{padding:20px 16px;min-height:240px}.flash-front .q-text{font-size:1.1rem}.flash-back .a-text{font-size:.95rem}.flash-controls button{padding:6px 12px;font-size:.8rem}}
+
+/* 夜间模式 */
+[data-theme="dark"]{--bg:#1a1a2e;--bg2:#16213e;--text:#e0e0e0;--text2:#b0b0b0;--card:#1e2a3a;--border:#2a3a4a;--accent:#FF8A65;--accent2:#FF6D00;--link:#90CAF9;--nav-bg:#0f1523;--hero-grad:linear-gradient(135deg,#1a1a2e,#16213e)}
+[data-theme="dark"] body{background:var(--bg)!important;color:var(--text)!important}
+[data-theme="dark"] .main-nav{background:var(--nav-bg)!important;border-bottom-color:var(--border)!important}
+[data-theme="dark"] .main-nav a{color:var(--text2)!important}
+[data-theme="dark"] .main-nav a:hover{color:var(--accent)!important}
+[data-theme="dark"] .container{background:var(--bg)!important}
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:var(--text)!important}
+[data-theme="dark"] p,[data-theme="dark"] li,[data-theme="dark"] span,[data-theme="dark"] td{color:var(--text2)!important}
+[data-theme="dark"] a{color:var(--link)!important}
+[data-theme="dark"] .bottom-nav{background:var(--nav-bg)!important;border-top-color:var(--border)!important}
+[data-theme="dark"] .bottom-nav a{color:var(--text2)!important}
+[data-theme="dark"] .bottom-nav a:hover{color:var(--accent)!important}
+[data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background:var(--card)!important;color:var(--text)!important;border-color:var(--border)!important}
+[data-theme="dark"] .phase-card,[data-theme="dark"] .result-card,[data-theme="dark"] .cta-section{background:var(--card)!important;color:var(--text)!important}
+[data-theme="dark"] .tip-box{background:#1a2a3a!important;color:#90CAF9!important;border-left-color:#1565C0!important}
+[data-theme="dark"] .alloc-item{background:var(--card)!important}
+[data-theme="dark"] .milestone{background:linear-gradient(135deg,#1a2a3a,#1e2a3a)!important}
+
+/* 暗色切换按钮 */
+.dark-toggle{position:fixed;bottom:80px;right:16px;z-index:999;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.2);transition:all .3s;background:#FFF8E1;color:#E65100}
+[data-theme="dark"] .dark-toggle{background:#1a2a3a;color:#FFB74D;border:2px solid #2a3a4a}
+.dark-toggle:hover{transform:scale(1.1)}
+
+</style>
+</head>
+<body>
+<nav class="main-nav"><a href="index.html">首页</a><a href="ai-assistant.html">AI助手</a><a href="exam-simulator.html">刷题</a><a href="travel-knowledge.html">知识库</a><a href="interview.html">面试</a></nav>
+
+<div class="container">
+<div class="flash-hero">
+  <h1>🃏 口诀闪卡</h1>
+  <p class="subtitle">点击翻转看答案 · 刷一遍顶看三遍 | 走过弯路，所以更懂路</p>
+  <div class="flash-stats">
+    <span>📚 共 <span class="num" id="totalCount">0</span> 张</span>
+    <span>✅ 已会 <span class="num" id="knowCount">0</span></span>
+    <span>❌ 还不熟 <span class="num" id="dontCount">0</span></span>
+  </div>
+</div>
+
+<!-- 科目筛选 -->
+<div class="flash-controls" id="subjectFilter">
+  <button class="active" onclick="filterSubject('all')">全部</button>
+  <button onclick="filterSubject('business')">💼 导游业务</button>
+  <button onclick="filterSubject('policy')">⚖️ 政策法规</button>
+  <button onclick="filterSubject('national')">📚 全国导基</button>
+  <button onclick="filterSubject('local')">🗺️ 地方导基</button>
+  <button onclick="filterSubject('interview')">🎤 面试</button>
+</div>
+
+<!-- 模式切换 -->
+<div class="mode-toggle">
+  <button class="mode-btn active" onclick="setMode('flip')" id="modeFlip">👆 翻卡模式</button>
+  <button class="mode-btn" onclick="setMode('test')" id="modeTest">🧠 自测模式</button>
+</div>
+
+<!-- 进度点 -->
+<div class="flash-progress" id="progressDots"></div>
+
+<!-- 闪卡区域 -->
+<div class="flash-card-container" id="cardContainer">
+  <div class="flash-card" id="flashCard" onclick="flipCard()">
+    <div class="flash-card-face flash-front">
+      <div class="q-label" id="cardSubject">全国导基</div>
+      <div class="q-text" id="cardQuestion">四大佛教名山分别是？</div>
+      <div class="q-hint">👆 点击翻转看答案</div>
+    </div>
+    <div class="flash-card-face flash-back">
+      <div class="a-text" id="cardAnswer">五台山（文殊）· 峨眉山（普贤）<br>普陀山（观音）· 九华山（地藏）</div>
+      <div class="a-mnemonic" id="cardMnemonic">📜 口诀：文普观地 → 五峨普九</div>
+      <div class="a-tag" id="cardTag"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 自测模式按钮 -->
+<div id="testButtons" style="display:none">
+  <div style="display:flex;justify-content:center;gap:12px;margin:10px 0">
+    <button class="btn-know" onclick="markCard(true)">✅ 会了</button>
+    <button class="btn-dont" onclick="markCard(false)">❌ 还不熟</button>
+  </div>
+</div>
+
+<!-- 导航按钮 -->
+<div class="flash-nav" id="navButtons">
+  <button class="btn-prev" onclick="prevCard()">← 上一张</button>
+  <button class="btn-next" onclick="nextCard()">下一张 →</button>
+</div>
+
+<!-- 结果页 -->
+<div class="result-card" id="resultCard" style="display:none">
+  <h2>🎉 本轮口诀复习完成！</h2>
+  <div class="result-stats">
+    <div class="result-stat"><div class="num" style="color:#4CAF50" id="resultKnow">0</div><div class="label">✅ 已掌握</div></div>
+    <div class="result-stat"><div class="num" style="color:#F44336" id="resultDont">0</div><div class="label">❌ 需复习</div></div>
+    <div class="result-stat"><div class="num" style="color:#E65100" id="resultRate">0%</div><div class="label">掌握率</div></div>
+  </div>
+  <div id="resultAdvice" style="background:#FFF3E0;border-radius:12px;padding:14px;margin:16px 0;font-size:.9rem;color:#E65100"></div>
+  <div style="margin-top:16px">
+    <button onclick="restartCards()" style="padding:12px 28px;background:#E65100;color:#fff;border:none;border-radius:25px;font-size:1rem;cursor:pointer;font-weight:bold">🔄 再来一轮</button>
+    <button onclick="reviewWrong()" id="reviewWrongBtn" style="display:none;padding:12px 28px;background:#F44336;color:#fff;border:none;border-radius:25px;font-size:1rem;cursor:pointer;font-weight:bold;margin-left:8px">❌ 只复习不会的</button>
+  </div>
+</div>
+
+<div style="text-align:center;margin:30px 0">
+  <a href="travel-knowledge.html" style="display:inline-block;padding:10px 24px;background:#4CAF50;color:#fff;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.9rem">📖 去知识库详细学</a>
+  <a href="exam-simulator.html" style="display:inline-block;padding:10px 24px;background:#1565C0;color:#fff;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.9rem;margin-left:8px">✏️ 去刷题练习</a>
+</div>
+
+</div>
+
+<div class="bottom-nav"><a href="index.html">🏠<span>首页</span></a><a href="search.html">🔍<span>搜索</span></a><a href="exam-simulator.html">✏️<span>刷题</span></a><a href="ai-assistant.html">💬<span>AI助手</span></a><a href="travel-knowledge.html">📚<span>知识库</span></a></div>
+
+<script>
+const allCards=[
+// ===== 全国导基 =====
+{s:"national",q:"四大佛教名山分别是？",a:"五台山（文殊）· 峨眉山（普贤）· 普陀山（观音）· 九华山（地藏）",m:"📜 口诀：文普观地 → 五峨普九",t:"全国导基"},
+{s:"national",q:"五岳分别是？",a:"东岳泰山（鲁）· 西岳华山（陕）· 南岳衡山（湘）· 北岳恒山（晋）· 中岳嵩山（豫）",m:"📜 口诀：东西南北中 → 泰华衡恒嵩",t:"全国导基"},
+{s:"national",q:"四大名楼分别是？",a:"黄鹤楼（武汉）· 岳阳楼（岳阳）· 滕王阁（南昌）· 鹳雀楼（永济）",m:"📜 口诀：黄岳滕鹳",t:"全国导基"},
+{s:"national",q:"四大名园分别是？",a:"拙政园（苏州）· 留园（苏州）· 颐和园（北京）· 避暑山庄（承德）",m:"📜 口诀：拙留颐避",t:"全国导基"},
+{s:"national",q:"四大石窟分别是？",a:"莫高窟（敦煌）· 云冈石窟（大同）· 龙门石窟（洛阳）· 麦积山石窟（天水）",m:"📜 口诀：莫云龙麦",t:"全国导基"},
+{s:"national",q:"四大名绣分别是？",a:"苏绣（苏州）· 湘绣（长沙）· 粤绣（广州）· 蜀绣（成都）",m:"📜 口诀：苏猫湘虎蜀针光，粤绣金红喜洋洋",t:"全国导基"},
+{s:"national",q:"中国双遗产4处？",a:"泰山 · 黄山 · 峨眉山-乐山大佛 · 武夷山",m:"📜 口诀：双遗产四座山——泰黄峨武",t:"全国导基"},
+{s:"national",q:"四大古城分别是？",a:"丽江古城（云南/纳西族）· 平遥古城（山西/晋商）· 凤凰古城（湖南/苗族）· 阆中古城（四川/三国）",m:"📜 口诀：丽平凤阆",t:"全国导基"},
+{s:"national",q:"十大名茶中绿茶之首？",a:"西湖龙井——色翠香郁味醇形美",m:"📜 口诀：龙井碧螺毛峰绿",t:"全国导基"},
+{s:"national",q:"中国五大名窑？",a:"汝窑（天青色）· 官窑 · 哥窑 · 钧窑 · 定窑（白瓷）",m:"📜 口诀：汝官哥钧定，景德镇称雄",t:"全国导基"},
+{s:"national",q:"四大名砚分别是？",a:"端砚（广东肇庆/群砚之首）· 歙砚（安徽）· 洮砚（甘肃）· 澄泥砚（山西）",m:"📜 口诀：端歙洮澄",t:"全国导基"},
+{s:"national",q:"长城全长多少公里？",a:"2.1万公里",m:"📜 口诀：长城两万一",t:"全国导基"},
+{s:"national",q:"京杭大运河全长多少公里？",a:"1794公里",m:"📜 口诀：运河一七九四",t:"全国导基"},
+{s:"national",q:"黄山四奇是？",a:"奇松 · 怪石 · 云海 · 温泉",m:"📜 口诀：松石云泉",t:"全国导基"},
+{s:"national",q:"人口最多的少数民族？",a:"壮族（约1956万），主要分布在广西",m:"📜 口诀：壮满回苗维彝土蒙藏，九大超五百万",t:"全国导基"},
+{s:"national",q:"少数民族最多的省份？",a:"云南省（25个少数民族）",m:"📜 口诀：云南二五民族多",t:"全国导基"},
+{s:"national",q:"分布最广的少数民族？",a:"回族（全国都有分布）",m:"📜 口诀：回走天下",t:"全国导基"},
+{s:"national",q:"八大菜系？",a:"鲁菜·川菜·粤菜·苏菜·闽菜·浙菜·湘菜·徽菜",m:"📜 口诀：鲁川粤苏闽浙湘徽",t:"全国导基"},
+// ===== 政策法规 =====
+{s:"policy",q:"旅游法第35条禁止什么？",a:"禁止强制购物——旅行社不得以不合理的低价组织旅游活动，诱导购物",m:"📜 口诀：35条禁强购",t:"政策法规"},
+{s:"policy",q:"旅游投诉时效是多久？",a:"90日——从旅游合同结束之日起计算",m:"📜 口诀：投诉九十天",t:"政策法规"},
+{s:"policy",q:"导游证（电子证）有效期？",a:"3年——需在有效期满前3个月申请换发",m:"📜 口诀：导游证三年一换",t:"政策法规"},
+{s:"policy",q:"导游资格证有效期？",a:"终身有效——与导游证不同，资格证不会过期",m:"📜 口诀：资格终身，电子三年",t:"政策法规"},
+{s:"policy",q:"旅行社质量保证金多少？",a:"经营境内游20万元 · 经营出境游140万元",m:"📜 口诀：境内二十出境百四",t:"政策法规"},
+{s:"policy",q:"旅行社责任险是什么？",a:"旅行社必须投保的强制保险，保障游客在旅游过程中的人身财产损失",m:"📜 口诀：责任险必须投",t:"政策法规"},
+{s:"policy",q:"旅游法38条关于什么？",a:"导游薪酬——旅行社应当与其聘用的导游依法订立劳动合同，支付劳动报酬",m:"📜 口诀：38条保薪酬",t:"政策法规"},
+{s:"policy",q:"旅游法42条关于什么？",a:"导游服务——导游应当严格执行旅游行程安排，不得擅自变更",m:"📜 口诀：42条管服务",t:"政策法规"},
+{s:"policy",q:"旅游投诉电话？",a:"12301旅游服务热线 / 12345市民热线",m:"📜 口诀：12301投诉热线，旅投消协旅游部",t:"政策法规"},
+// ===== 导游业务 =====
+{s:"business",q:"导游服务三大原则？",a:"① 宾客至上（核心原则）② 合理而可能 ③ 规范化与个性化相结合",m:"📜 口诀：宾至合理双结合",t:"导游业务"},
+{s:"business",q:"地陪和全陪的区别？",a:"地陪：代表地接社，重点景点讲解 · 全陪：代表组团社，重点协调监督",m:"📜 口诀：地陪讲景点，全陪管全程",t:"导游业务"},
+{s:"business",q:"游客走失处理步骤？",a:"了解情况→协助寻找→报告旅行社→必要时报警",m:"📜 口诀：先了解→再寻找→后上报",t:"导游业务"},
+{s:"business",q:"交通事故应急处理？",a:"先救人(120)→保护现场→报告旅行社",m:"📜 口诀：先救人→保现场→报旅行社",t:"导游业务"},
+{s:"business",q:"游客投诉处理步骤？",a:"认真倾听→表示理解并道歉→提出解决方案→超出权限及时上报→跟进结果",m:"📜 口诀：先安抚、再处理、后上报",t:"导游业务"},
+{s:"business",q:"食物中毒应急处理？",a:"立即送医→保留样本→报告卫生部门",m:"📜 口诀：送医留样报卫生",t:"导游业务"},
+{s:"business",q:"火灾应急处理？",a:"湿毛巾捂口鼻→低姿沿墙→不乘电梯→到安全区清点人数→报警119",m:"📜 口诀：捂鼻低走不电梯",t:"导游业务"},
+{s:"business",q:"导游语言四点要求？",a:"语言准确 · 语言清楚 · 语言生动 · 语言礼貌",m:"📜 口诀：准清生礼",t:"导游业务"},
+{s:"business",q:"讲解方法有哪些？",a:"因人施讲 · 触景生情 · 虚实结合 · 画龙点睛",m:"📜 口诀：因人触景虚实点睛",t:"导游业务"},
+// ===== 地方导基 =====
+{s:"local",q:"广东省简称？",a:"粤，省会广州",m:"📜 口诀：广东简称粤，非广非穗",t:"地方导基"},
+{s:"local",q:"广东省5A景区代表？",a:"丹霞山·长隆度假区·广州塔·陈家祠·开平碉楼·西樵山·罗浮山·雁南飞茶田",m:"📜 口诀：丹长广陈开西罗雁",t:"地方导基"},
+{s:"local",q:"广东三大民系？",a:"广府人·客家人·潮汕人",m:"📜 口诀：广客潮三分广东",t:"地方导基"},
+{s:"local",q:"北京5A景区代表？",a:"故宫·八达岭长城·颐和园·天坛·明十三陵·恭王府·慕田峪长城",m:"📜 口诀：故长颐天明恭慕",t:"地方导基"},
+{s:"local",q:"四川省5A景区代表？",a:"九寨沟·峨眉山·乐山大佛·都江堰·青城山·黄龙·稻城亚丁",m:"📜 口诀：九峨乐都青黄稻",t:"地方导基"},
+// ===== 面试 =====
+{s:"interview",q:"面试时间分配？",a:"开场白30秒 → 景点概况1分钟 → 核心讲解2-3分钟 → 结束语30秒",m:"📜 口诀：开概核结 三十/六十/两三/三十",t:"面试"},
+{s:"interview",q:"面试评分标准？",a:"景点讲解50分 · 问答环节30分 · 仪表仪态20分",m:"📜 口诀：五三二 讲问仪",t:"面试"},
+{s:"interview",q:"面试忘词怎么办？",a:"保持微笑→语速放慢→自然过渡（"接下来让我们看看…"）→互动过渡",m:"📜 口诀：笑慢过渡别停五秒",t:"面试"},
+{s:"interview",q:"导游词三段式结构？",a:"第一段：概况（1分钟）→ 第二段：核心亮点（2-3分钟）→ 第三段：总结升华（30秒）",m:"📜 口诀：概核总 三段式",t:"面试"},
+{s:"interview",q:"面试着装要求？",a:"男生：衬衫+西裤/Polo衫 · 女生：衬衫+西裤/裙装 · 禁忌：拖鞋/运动装/花哨",m:"📜 口诀：干净整洁像导游",t:"面试"},
+];
+
+let cards=[...allCards],currentIdx=0,mode='flip',known=new Set(),wrong=new Set(),currentFilter='all';
+
+function filterSubject(sub){
+  currentFilter=sub;
+  document.querySelectorAll('#subjectFilter button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  cards=sub==='all'?[...allCards]:allCards.filter(c=>c.s===sub);
+  currentIdx=0;known.clear();wrong.clear();
+  updateStats();renderDots();showCard();
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('cardContainer').style.display='flex';
+  document.getElementById('navButtons').style.display='flex';
+  if(mode==='test')document.getElementById('testButtons').style.display='block';
+}
+
+function setMode(m){
+  mode=m;
+  document.getElementById('modeFlip').classList.toggle('active',m==='flip');
+  document.getElementById('modeTest').classList.toggle('active',m==='test');
+  document.getElementById('testButtons').style.display=m==='test'?'block':'none';
+}
+
+function showCard(){
+  if(currentIdx>=cards.length){showResult();return}
+  const c=cards[currentIdx];
+  document.getElementById('cardSubject').textContent=c.t;
+  document.getElementById('cardQuestion').textContent=c.q;
+  document.getElementById('cardAnswer').innerHTML=c.a.replace(/·/g,'<br>');
+  document.getElementById('cardMnemonic').innerHTML=c.m;
+  document.getElementById('cardTag').textContent='第'+(currentIdx+1)+'/'+cards.length+'张';
+  document.getElementById('flashCard').classList.remove('flipped');
+  renderDots();updateStats();
+}
+
+function flipCard(){
+  if(mode==='test'){
+    document.getElementById('flashCard').classList.toggle('flipped');
+  }else{
+    document.getElementById('flashCard').classList.toggle('flipped');
+  }
+}
+
+function markCard(know){
+  const key=currentIdx;
+  if(know){known.add(key);wrong.delete(key)}else{wrong.add(key);known.delete(key)}
+  nextCard();
+}
+
+function nextCard(){
+  currentIdx++;
+  if(currentIdx>=cards.length){showResult();return}
+  showCard();
+}
+
+function prevCard(){
+  if(currentIdx>0)currentIdx--;
+  showCard();
+}
+
+function updateStats(){
+  document.getElementById('totalCount').textContent=cards.length;
+  document.getElementById('knowCount').textContent=known.size;
+  document.getElementById('dontCount').textContent=wrong.size;
+}
+
+function renderDots(){
+  let html='';
+  cards.forEach((_,i)=>{
+    let cls='flash-dot';
+    if(i===currentIdx)cls+=' current';
+    else if(known.has(i))cls+=' done';
+    else if(wrong.has(i))cls+=' wrong';
+    html+='<div class="'+cls+'"></div>';
+  });
+  document.getElementById('progressDots').innerHTML=html;
+}
+
+function showResult(){
+  document.getElementById('cardContainer').style.display='none';
+  document.getElementById('navButtons').style.display='none';
+  document.getElementById('testButtons').style.display='none';
+  document.getElementById('resultCard').style.display='block';
+  document.getElementById('resultKnow').textContent=known.size;
+  document.getElementById('resultDont').textContent=wrong.size;
+  const rate=cards.length?Math.round(known.size/cards.length*100):0;
+  document.getElementById('resultRate').textContent=rate+'%';
+  let advice='';
+  if(rate>=90)advice='🎉 太棒了！口诀掌握得很好，继续保持！';
+  else if(rate>=70)advice='💪 不错！再把不熟的几条多过两遍就稳了。';
+  else if(rate>=50)advice='🔥 加油！建议先集中攻薄弱科目，翻转模式多刷几遍。';
+  else advice='📚 别慌！先去知识库看详细内容，理解了再背口诀效率更高。';
+  document.getElementById('resultAdvice').innerHTML=advice;
+  document.getElementById('reviewWrongBtn').style.display=wrong.size>0?'inline-block':'none';
+}
+
+function restartCards(){
+  currentIdx=0;known.clear();wrong.clear();
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('cardContainer').style.display='flex';
+  document.getElementById('navButtons').style.display='flex';
+  if(mode==='test')document.getElementById('testButtons').style.display='block';
+  showCard();
+}
+
+function reviewWrong(){
+  cards=allCards.filter((_,i)=>wrong.has(i));
+  currentIdx=0;known.clear();wrong.clear();
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('cardContainer').style.display='flex';
+  document.getElementById('navButtons').style.display='flex';
+  if(mode==='test')document.getElementById('testButtons').style.display='block';
+  showCard();
+}
+
+// init
+showCard();
+</script>
+
+<script>
+(function(){
+  const btn=document.createElement('button');
+  btn.className='dark-toggle';
+  btn.id='darkToggle';
+  btn.title='切换夜间模式';
+  const saved=localStorage.getItem('youdao_theme');
+  if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');btn.textContent='☀️'}
+  else{btn.textContent='🌙'}
+  btn.onclick=function(){
+    const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+    if(isDark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('youdao_theme','light');btn.textContent='🌙'}
+    else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('youdao_theme','dark');btn.textContent='☀️'}
+  };
+  document.body.appendChild(btn);
+})();
+</script>
+
+</body>
+</html>

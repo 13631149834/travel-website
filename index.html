@@ -1260,6 +1260,13 @@ function showPath(type) {
           <div style="font-weight:700;color:#1A1A1A;font-size:1rem;">开始刷题</div>
           <div style="font-size:0.8rem;color:#666;margin-top:8px;">历年真题练习</div>
         </a>
+          <div style="background:#FFF8E1;border-radius:12px;padding:14px;text-align:center;min-width:80px">
+            <a href="flashcard.html" style="text-decoration:none;color:#E65100">
+              <div style="font-size:1.6rem">🃏</div>
+              <div style="font-weight:bold;font-size:.8rem;color:#E65100">口诀闪卡</div>
+              <div style="font-size:.7rem;color:#888">翻转速记口诀</div>
+            </a>
+          </div>
       </div>
     </div>
   </section>
@@ -1749,6 +1756,31 @@ if ('serviceWorker' in navigator) {
 </script>
 <style>
 @keyframes notifSlide { 0% { transform: translateX(-50%) translateY(-20px); opacity: 0; } 100% { transform: translateX(-50%) translateY(0); opacity: 1; } }
+
+/* 夜间模式 */
+[data-theme="dark"]{--bg:#1a1a2e;--bg2:#16213e;--text:#e0e0e0;--text2:#b0b0b0;--card:#1e2a3a;--border:#2a3a4a;--accent:#FF8A65;--accent2:#FF6D00;--link:#90CAF9;--nav-bg:#0f1523;--hero-grad:linear-gradient(135deg,#1a1a2e,#16213e)}
+[data-theme="dark"] body{background:var(--bg)!important;color:var(--text)!important}
+[data-theme="dark"] .main-nav{background:var(--nav-bg)!important;border-bottom-color:var(--border)!important}
+[data-theme="dark"] .main-nav a{color:var(--text2)!important}
+[data-theme="dark"] .main-nav a:hover{color:var(--accent)!important}
+[data-theme="dark"] .container{background:var(--bg)!important}
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:var(--text)!important}
+[data-theme="dark"] p,[data-theme="dark"] li,[data-theme="dark"] span,[data-theme="dark"] td{color:var(--text2)!important}
+[data-theme="dark"] a{color:var(--link)!important}
+[data-theme="dark"] .bottom-nav{background:var(--nav-bg)!important;border-top-color:var(--border)!important}
+[data-theme="dark"] .bottom-nav a{color:var(--text2)!important}
+[data-theme="dark"] .bottom-nav a:hover{color:var(--accent)!important}
+[data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background:var(--card)!important;color:var(--text)!important;border-color:var(--border)!important}
+[data-theme="dark"] .phase-card,[data-theme="dark"] .result-card,[data-theme="dark"] .cta-section{background:var(--card)!important;color:var(--text)!important}
+[data-theme="dark"] .tip-box{background:#1a2a3a!important;color:#90CAF9!important;border-left-color:#1565C0!important}
+[data-theme="dark"] .alloc-item{background:var(--card)!important}
+[data-theme="dark"] .milestone{background:linear-gradient(135deg,#1a2a3a,#1e2a3a)!important}
+
+/* 暗色切换按钮 */
+.dark-toggle{position:fixed;bottom:80px;right:16px;z-index:999;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.2);transition:all .3s;background:#FFF8E1;color:#E65100}
+[data-theme="dark"] .dark-toggle{background:#1a2a3a;color:#FFB74D;border:2px solid #2a3a4a}
+.dark-toggle:hover{transform:scale(1.1)}
+
 </style>
 
 
@@ -1772,6 +1804,25 @@ function showDiagQ(){if(diagIdx>=diagQuestions.length){showDiagResult();return}c
 function diagSelect(idx){if(diagAnswered)return;diagAnswered=true;const q=diagQuestions[diagIdx];diagTotal[q.s]++;if(idx===q.a)diagScore[q.s]++;document.getElementById('diagOpt'+q.a).style.background='#C8E6C9';document.getElementById('diagOpt'+q.a).style.borderColor='#4CAF50';if(idx!==q.a){document.getElementById('diagOpt'+idx).style.background='#FFCDD2';document.getElementById('diagOpt'+idx).style.borderColor='#F44336'}document.getElementById('diagNextBtn').style.display='inline-block';document.getElementById('diagNextBtn').textContent=diagIdx===diagQuestions.length-1?'查看结果 →':'下一题 →'}
 function diagNext(){diagIdx++;if(diagIdx>=diagQuestions.length){showDiagResult();return}showDiagQ()}
 function showDiagResult(){document.getElementById('diagnosticQuiz').style.display='none';document.getElementById('diagResult').style.display='block';const subjects=[{key:'business',name:'💼 导游业务',total:2},{key:'policy',name:'⚖️ 政策法规',total:3},{key:'national',name:'📚 全国导基',total:3},{key:'local',name:'🗺️ 地方导基',total:2}];let html='<div style="margin-bottom:16px">';let weakest='',weakScore=1;subjects.forEach(s=>{const pct=Math.round(diagScore[s.key]/s.total*100);const color=pct>=80?'#4CAF50':pct>=50?'#FF9800':'#F44336';html+='<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:.9rem"><span>'+s.name+'</span><span style="color:'+color+';font-weight:bold">'+diagScore[s.key]+'/'+s.total+' ('+pct+'%)</span></div><div style="background:#f0f0f0;border-radius:4px;height:6px;margin-top:4px"><div style="background:'+color+';height:100%;border-radius:4px;width:'+pct+'%;transition:width .5s"></div></div></div>';if(pct/100<weakScore){weakScore=pct/100;weakest=s.name}});html+='</div>';html+='<div style="background:#FFF3E0;border-radius:10px;padding:14px;margin-top:12px"><p style="margin:0;color:#E65100;font-weight:bold;font-size:.95rem">📌 建议：你最薄弱的是 <strong>'+weakest+'</strong>，建议从这里开始重点突破！</p></div>';const totalCorrect=Object.values(diagScore).reduce((a,b)=>a+b,0);if(totalCorrect>=8)html+='<p style="color:#4CAF50;font-weight:bold;margin-top:12px">🎉 基础不错！按路线图系统复习即可</p>';else if(totalCorrect>=5)html+='<p style="color:#FF9800;font-weight:bold;margin-top:12px">💪 有一定基础，重点补薄弱科目</p>';else html+='<p style="color:#F44336;font-weight:bold;margin-top:12px">🔥 基础需要加强，建议从知识库第1章开始</p>';document.getElementById('diagResultContent').innerHTML=html;localStorage.setItem('youdao_diag_done','1')}
+</script>
+
+
+<script>
+(function(){
+  const btn=document.createElement('button');
+  btn.className='dark-toggle';
+  btn.id='darkToggle';
+  btn.title='切换夜间模式';
+  const saved=localStorage.getItem('youdao_theme');
+  if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');btn.textContent='☀️'}
+  else{btn.textContent='🌙'}
+  btn.onclick=function(){
+    const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+    if(isDark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('youdao_theme','light');btn.textContent='🌙'}
+    else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('youdao_theme','dark');btn.textContent='☀️'}
+  };
+  document.body.appendChild(btn);
+})();
 </script>
 
 </body>

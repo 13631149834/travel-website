@@ -538,6 +538,31 @@
   100% { transform: scale(1.5); opacity: 0; }
 }
 
+
+/* 夜间模式 */
+[data-theme="dark"]{--bg:#1a1a2e;--bg2:#16213e;--text:#e0e0e0;--text2:#b0b0b0;--card:#1e2a3a;--border:#2a3a4a;--accent:#FF8A65;--accent2:#FF6D00;--link:#90CAF9;--nav-bg:#0f1523;--hero-grad:linear-gradient(135deg,#1a1a2e,#16213e)}
+[data-theme="dark"] body{background:var(--bg)!important;color:var(--text)!important}
+[data-theme="dark"] .main-nav{background:var(--nav-bg)!important;border-bottom-color:var(--border)!important}
+[data-theme="dark"] .main-nav a{color:var(--text2)!important}
+[data-theme="dark"] .main-nav a:hover{color:var(--accent)!important}
+[data-theme="dark"] .container{background:var(--bg)!important}
+[data-theme="dark"] h1,[data-theme="dark"] h2,[data-theme="dark"] h3{color:var(--text)!important}
+[data-theme="dark"] p,[data-theme="dark"] li,[data-theme="dark"] span,[data-theme="dark"] td{color:var(--text2)!important}
+[data-theme="dark"] a{color:var(--link)!important}
+[data-theme="dark"] .bottom-nav{background:var(--nav-bg)!important;border-top-color:var(--border)!important}
+[data-theme="dark"] .bottom-nav a{color:var(--text2)!important}
+[data-theme="dark"] .bottom-nav a:hover{color:var(--accent)!important}
+[data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background:var(--card)!important;color:var(--text)!important;border-color:var(--border)!important}
+[data-theme="dark"] .phase-card,[data-theme="dark"] .result-card,[data-theme="dark"] .cta-section{background:var(--card)!important;color:var(--text)!important}
+[data-theme="dark"] .tip-box{background:#1a2a3a!important;color:#90CAF9!important;border-left-color:#1565C0!important}
+[data-theme="dark"] .alloc-item{background:var(--card)!important}
+[data-theme="dark"] .milestone{background:linear-gradient(135deg,#1a2a3a,#1e2a3a)!important}
+
+/* 暗色切换按钮 */
+.dark-toggle{position:fixed;bottom:80px;right:16px;z-index:999;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.2);transition:all .3s;background:#FFF8E1;color:#E65100}
+[data-theme="dark"] .dark-toggle{background:#1a2a3a;color:#FFB74D;border:2px solid #2a3a4a}
+.dark-toggle:hover{transform:scale(1.1)}
+
 </style>
 <script src="mobile-fix.js" defer></script>
   <link rel="canonical" href="https://youdao-travel.com/free-materials.html">
@@ -1206,4 +1231,23 @@ class="footer">
 <a class="tab-item" href="/search.html"><span class="tab-icon">🔍</span><span class="tab-label">搜索</span></a>
 <a class="tab-item" href="travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a>
 </nav>
+
+<script>
+(function(){
+  const btn=document.createElement('button');
+  btn.className='dark-toggle';
+  btn.id='darkToggle';
+  btn.title='切换夜间模式';
+  const saved=localStorage.getItem('youdao_theme');
+  if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');btn.textContent='☀️'}
+  else{btn.textContent='🌙'}
+  btn.onclick=function(){
+    const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+    if(isDark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('youdao_theme','light');btn.textContent='🌙'}
+    else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('youdao_theme','dark');btn.textContent='☀️'}
+  };
+  document.body.appendChild(btn);
+})();
+</script>
+
 </body></html>
