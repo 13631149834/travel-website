@@ -1807,6 +1807,51 @@ function showDiagResult(){document.getElementById('diagnosticQuiz').style.displa
 </script>
 
 
+
+<!-- 学习数据备份 -->
+<div id="dataBackup" style="background:#fff;border-radius:16px;padding:24px;margin:30px auto;max-width:600px;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+  <h2 style="color:#E65100;font-size:1.1rem;margin:0 0 8px">💾 学习数据备份</h2>
+  <p style="color:#888;font-size:.85rem;margin:0 0 16px">清浏览器缓存会丢失进度？一键备份到本地文件，随时恢复</p>
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
+    <button onclick="exportStudyData()" style="padding:12px 24px;background:#4CAF50;color:#fff;border:none;border-radius:20px;font-size:.9rem;cursor:pointer;font-weight:bold;transition:all .2s" onmouseover="this.style.background='#388E3C'" onmouseout="this.style.background='#4CAF50'">📤 导出学习数据</button>
+    <label style="padding:12px 24px;background:#1565C0;color:#fff;border-radius:20px;font-size:.9rem;cursor:pointer;font-weight:bold;display:inline-block;transition:all .2s" onmouseover="this.style.background='#0D47A1'" onmouseout="this.style.background='#1565C0'">📥 导入学习数据<input type="file" accept=".json" onchange="importStudyData(event)" style="display:none"></label>
+  </div>
+  <div id="backupStatus" style="margin-top:12px;font-size:.85rem;display:none"></div>
+</div>
+
+<script>
+function exportStudyData(){
+  const keys=['readChapters','quizResults','wrongQuestions','youdao_study_progress','youdao_study_dates','youdao_visited','youdao_achievements','youdao_province','youdao_diag_done','youdao_theme'];
+  const data={};
+  keys.forEach(k=>{try{const v=localStorage.getItem(k);if(v)data[k]=JSON.parse(v)}catch(e){if(localStorage.getItem(k))data[k]=localStorage.getItem(k)}});
+  data.exportTime=new Date().toISOString();
+  data.version='1.0';
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='游导学习笔记_备份_'+new Date().toISOString().slice(0,10)+'.json';a.click();
+  URL.revokeObjectURL(url);
+  const st=document.getElementById('backupStatus');st.style.display='block';
+  st.textContent='✅ 备份文件已下载！包含 '+Object.keys(data).length+' 项数据';st.style.color='#4CAF50';
+}
+function importStudyData(e){
+  const file=e.target.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(ev){
+    try{
+      const data=JSON.parse(ev.target.result);if(!data.version)throw new Error('无效的备份文件');
+      let count=0;Object.keys(data).forEach(k=>{if(k==='exportTime'||k==='version')return;try{localStorage.setItem(k,typeof data[k]==='object'?JSON.stringify(data[k]):data[k]);count++}catch(e2){}});
+      const st=document.getElementById('backupStatus');st.style.display='block';
+      st.textContent='✅ 已恢复 '+count+' 项数据！页面即将刷新...';st.style.color='#4CAF50';
+      setTimeout(()=>location.reload(),1500);
+    }catch(err){
+      const st=document.getElementById('backupStatus');st.style.display='block';
+      st.textContent='❌ 导入失败：'+err.message;st.style.color='#F44336';
+    }
+  };reader.readAsText(file);
+}
+</script>
+
 <script>
 (function(){
   const btn=document.createElement('button');
