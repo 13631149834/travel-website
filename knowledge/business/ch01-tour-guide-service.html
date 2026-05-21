@@ -193,8 +193,46 @@ footer{margin-bottom:70px!important}
 .share-card-preview .brand{font-size:0.7rem;opacity:0.7;margin-top:12px}
 </style>
 
+
+<!-- PWA Meta -->
+<meta name="theme-color" content="#E65100">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="游导笔记">
+<link rel="manifest" href="../../manifest.json">
+<link rel="apple-touch-icon" href="../../icons/icon-192.png">
+
 </head>
 <body>
+
+<!-- 页面加载进度条 -->
+<style>
+.page-loading-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#E65100,#FF6D00,#FFB74D);z-index:9999;transition:width .3s ease;width:0;opacity:0}
+.page-loading-bar.active{opacity:1}
+.page-loading-bar.done{opacity:0;transition:width .2s ease,opacity .5s ease .3s}
+</style>
+<div class="page-loading-bar" id="loadingBar"></div>
+<script>
+// 加载进度条
+(function(){
+  const bar=document.getElementById('loadingBar');
+  let w=0;
+  function startLoad(){w=0;bar.style.width='0';bar.classList.add('active');bar.classList.remove('done');
+    const t=setInterval(()=>{w+=Math.random()*25;if(w>=80){clearInterval(t);bar.style.width='80%'}else{bar.style.width=w+'%'}},150);
+    window._loadTimer=t}
+  function endLoad(){clearInterval(window._loadTimer);bar.style.width='100%';bar.classList.add('done');
+    setTimeout(()=>{bar.classList.remove('active');bar.classList.remove('done');bar.style.width='0'},800)}
+  startLoad();
+  if(document.readyState==='complete'){endLoad()}else{window.addEventListener('load',endLoad)}
+  // 页面跳转时显示进度条
+  document.addEventListener('click',function(e){
+    const a=e.target.closest('a');
+    if(a&&a.href&&!a.target&&!a.href.startsWith('javascript')&&!a.href.startsWith('#')&&a.origin===location.origin){
+      startLoad()}
+  });
+})();
+</script>
+
 <nav>
 <div class="nav-inner">
 <a href="../../">游导学习笔记</a>
@@ -1014,5 +1052,15 @@ function retryWrong() {
   }
 })();
 </script>
+
+<script>
+// Service Worker注册
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('../../sw.js').then(reg=>{
+    console.log('SW registered:',reg.scope);
+  }).catch(err=>console.log('SW registration failed:',err));
+}
+</script>
+
 </body>
 </html>
