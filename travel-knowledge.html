@@ -818,223 +818,95 @@ a { color: #E65100 !important; }
 </div>
 <button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button></nav>
 
-  <div class="page-header">
-    <h1>备考知识库</h1>
-    <p class="page-desc">考点精要·口诀速记·文化常识</p>
-  </div>
-
-  <div class="breadcrumb"><a href="index.html">首页</a> <span class="sep">›</span> <span>学习中心</span> <span class="sep">›</span> <span>备考知识</span></div>
   
-  <div class="container">
-<!-- 备考路线图横幅 -->
-<div style="background:#E65100;color:#fff;padding:12px 20px;border-radius:12px;margin:16px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-  <span style="font-size:.95rem;font-weight:500">🗺️ 不知道从哪开始？查看184天备考路线图</span>
-  <a href="study-roadmap.html" style="display:inline-block;padding:8px 20px;background:#fff;color:#E65100;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.85rem">查看路线图 →</a>
+<!-- 页面标题 -->
+<div style="text-align:center;padding:28px 20px 20px;">
+  <h1 style="font-size:1.5rem;font-weight:800;color:#1A1A1A;margin-bottom:6px;">📚 备考知识库</h1>
+  <p style="font-size:0.9rem;color:#555;">4科46章，跟着路线走就行</p>
+  <p style="font-size:0.82rem;color:#E65100;font-weight:600;margin-top:6px;">走过弯路，所以更懂路</p>
 </div>
 
-<div style="max-width:1100px;margin:0 auto;padding:0 20px 20px;">
+<!-- 搜索 -->
+<div style="max-width:520px;margin:0 auto 24px;padding:0 20px;">
   <div style="position:relative;">
-    <input type="text" id="knowledgeSearch" placeholder="搜索知识点：如'罚款金额''口诀''八大菜系'..." style="width:100%;padding:14px 20px 14px 44px;border:2px solid #E2E8F0;border-radius:12px;font-size:1rem;outline:none;transition:border-color 0.2s;background:#FFF;" onfocus="this.style.borderColor='#E65100'" onblur="this.style.borderColor='#E2E8F0'" oninput="searchKnowledge(this.value)">
-    <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;color: #777;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    <input type="text" id="knowledgeSearch" placeholder="搜考点：罚款、口诀、八大菜系…" style="width:100%;padding:13px 18px 13px 42px;border:2px solid #F0F0F0;border-radius:14px;font-size:0.95rem;outline:none;background:#FAFAFA;transition:border-color 0.2s;" onfocus="this.style.borderColor='#E65100';this.style.background='#FFF'" onblur="this.style.borderColor='#F0F0F0';this.style.background='#FAFAFA'" oninput="searchKnowledge(this.value)">
+    <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#AAA;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
   </div>
   <div id="searchResults" style="margin-top:8px;"></div>
 </div>
 
-<script>
-const searchData = [{"title": "第1章 导游服务", "keywords": "导游服务 概念 原则 特点 类型 服务范围", "url": "knowledge/business/ch01-tour-guide-service.html", "subject": "导游业务"}, {"title": "第2章 导游", "keywords": "导游 分类 职责 素质 资格 执业", "url": "knowledge/business/ch02-tour-guide.html", "subject": "导游业务"}, {"title": "第3章 团队导游服务规范", "keywords": "地陪 全陪 领队 服务程序 规范 接待计划", "url": "knowledge/business/ch03-team-guide.html", "subject": "导游业务"}, {"title": "第4章 散客导游服务规范", "keywords": "散客 接待 服务程序 散客导游", "url": "knowledge/business/ch04-independent-traveler.html", "subject": "导游业务"}, {"title": "第5章 导游语言技能", "keywords": "语言 交际 态势语言 体态语 口语表达", "url": "knowledge/business/ch05-language-skills.html", "subject": "导游业务"}, {"title": "第6章 导游带团技能", "keywords": "带团 组织 协调 引导 沟通 审美", "url": "knowledge/business/ch06-tour-group-skills.html", "subject": "导游业务"}, {"title": "第7章 导游讲解技能", "keywords": "讲解 虚实结合 触景生情 因人施讲 讲解方法", "url": "knowledge/business/ch07-commentary-skills.html", "subject": "导游业务"}, {"title": "第8章 导游应变技能", "keywords": "应变 突发事件 事故处理 走失 漏接 错接", "url": "knowledge/business/ch08-emergency-handling.html", "subject": "导游业务"}, {"title": "第9章 导游相关知识", "keywords": "交通 航班 火车 住宿 饮食 购物 娱乐", "url": "knowledge/business/ch09-related-knowledge.html", "subject": "导游业务"}, {"title": "第1章 中国式现代化", "keywords": "中国式现代化 五个特征 两步走 2035 2050", "url": "knowledge/policy/ch01-chinese-modernization.html", "subject": "政策法规"}, {"title": "第2章 法治中国建设", "keywords": "依法治国 法治政府 法治社会 宪法实施", "url": "knowledge/policy/ch02-rule-of-law-china.html", "subject": "政策法规"}, {"title": "第3章 十四五规划", "keywords": "十四五 旅游业规划 文旅融合 全域旅游", "url": "knowledge/policy/ch03-14th-five-year-plan.html", "subject": "政策法规"}, {"title": "第4章 旅游方针政策", "keywords": "旅游政策 文旅融合 红色旅游 乡村旅游", "url": "knowledge/policy/ch04-tourism-policy.html", "subject": "政策法规"}, {"title": "第5章 宪法基本知识", "keywords": "宪法 公民权利 基本义务 国家机构", "url": "knowledge/policy/ch05-constitution.html", "subject": "政策法规"}, {"title": "第6章 国家安全法律制度", "keywords": "国家安全 反间谍 网络安全", "url": "knowledge/policy/ch06-national-security.html", "subject": "政策法规"}, {"title": "第7章 民法基本知识", "keywords": "民法 民事主体 民事法律行为 代理 诉讼时效", "url": "knowledge/policy/ch07-civil-law.html", "subject": "政策法规"}, {"title": "第8章 合同法律制度", "keywords": "合同 订立 履行 变更 解除 违约 定金", "url": "knowledge/policy/ch08-contract-law.html", "subject": "政策法规"}, {"title": "第9章 侵权责任法律制度", "keywords": "侵权 归责原则 损害赔偿 精神损害", "url": "knowledge/policy/ch09-tort-law.html", "subject": "政策法规"}, {"title": "第10章 旅游法基础知识", "keywords": "旅游法 旅游者权利 旅游规划 旅游促进", "url": "knowledge/policy/ch10-tourism-law-basics.html", "subject": "政策法规"}, {"title": "第11章 旅游者与消费者法律制度", "keywords": "消费者权利 旅游者权利 知情权 选择权", "url": "knowledge/policy/ch11-tourist-consumer-law.html", "subject": "政策法规"}, {"title": "第12章 旅行社法律制度", "keywords": "旅行社 设立 经营 分社 法律责任 罚款", "url": "knowledge/policy/ch12-travel-agency-law.html", "subject": "政策法规"}, {"title": "第13章 导游管理法律制度", "keywords": "导游 资格 执业 权利义务 证管理 罚款", "url": "knowledge/policy/ch13-guide-management.html", "subject": "政策法规"}, {"title": "第14章 旅游安全与保险", "keywords": "安全 保险 旅游意外险 责任险 事故处理", "url": "knowledge/policy/ch14-safety-insurance.html", "subject": "政策法规"}, {"title": "第15章 出入境与交通法律", "keywords": "护照 签证 出入境 航空 铁路 运输", "url": "knowledge/policy/ch15-entry-exit-transport.html", "subject": "政策法规"}, {"title": "第16章 食品安全娱乐住宿", "keywords": "食品安全 住宿 娱乐 星级饭店", "url": "knowledge/policy/ch16-food-accommodation.html", "subject": "政策法规"}, {"title": "第17章 旅游资源管理", "keywords": "风景名胜区 文物保护 世界遗产 自然保护区", "url": "knowledge/policy/ch17-tourism-resources.html", "subject": "政策法规"}, {"title": "第18章 解决旅游纠纷", "keywords": "纠纷 协商 调解 仲裁 诉讼 投诉", "url": "knowledge/policy/ch18-dispute-resolution.html", "subject": "政策法规"}, {"title": "第1章 中国共产党历程", "keywords": "中共 建党 南昌起义 遵义会议 改革开放", "url": "knowledge/national/ch01-cpc-history.html", "subject": "全国导基"}, {"title": "第2章 旅游业发展概况", "keywords": "旅游业 发展 历程 现状 趋势 入境游", "url": "knowledge/national/ch02-tourism-overview.html", "subject": "全国导基"}, {"title": "第3章 历史文化知识", "keywords": "朝代 夏商周 秦汉 唐宋元明清 历史 文化的", "url": "knowledge/national/ch03-history-culture.html", "subject": "全国导基"}, {"title": "第4章 中国文学知识", "keywords": "诗词 李白 杜甫 四大名著 红楼梦 文学", "url": "knowledge/national/ch04-chinese-literature.html", "subject": "全国导基"}, {"title": "第5章 中国建筑文化", "keywords": "宫殿 故宫 坛庙 宗教建筑 民居 四合院", "url": "knowledge/national/ch05-chinese-architecture.html", "subject": "全国导基"}, {"title": "第6章 中国园林文化", "keywords": "园林 皇家园林 私家园林 拙政园 颐和园", "url": "knowledge/national/ch06-chinese-gardens.html", "subject": "全国导基"}, {"title": "第7章 中国饮食文化", "keywords": "八大菜系 川菜 粤菜 鲁菜 苏菜 茶文化", "url": "knowledge/national/ch07-chinese-cuisine.html", "subject": "全国导基"}, {"title": "第8章 中国传统工艺美术", "keywords": "陶瓷 刺绣 漆器 瓷器 苏绣 景德镇", "url": "knowledge/national/ch08-chinese-crafts.html", "subject": "全国导基"}, {"title": "第9章 中国民族与宗教", "keywords": "56个民族 佛教 道教 伊斯兰教 基督教", "url": "knowledge/national/ch09-chinese-religion.html", "subject": "全国导基"}, {"title": "第10章 中国自然与地理", "keywords": "四大高原 四大盆地 三大平原 河流 山脉", "url": "knowledge/national/ch10-chinese-geography.html", "subject": "全国导基"}, {"title": "第11章 主要客源国概况", "keywords": "客源国 日本 韩国 美国 欧洲 澳大利亚", "url": "knowledge/national/ch11-china-source-markets.html", "subject": "全国导基"}, {"title": "第1章 华北地区", "keywords": "北京 天津 河北 山西 内蒙古 故宫 长城", "url": "knowledge/local/ch01-northchina.html", "subject": "地方导基"}, {"title": "第2章 东北地区", "keywords": "辽宁 吉林 黑龙江 长白山 沈阳故宫", "url": "knowledge/local/ch02-northeast.html", "subject": "地方导基"}, {"title": "第3章 华东地区", "keywords": "上海 江苏 浙江 安徽 福建 江西 山东 西湖 苏州", "url": "knowledge/local/ch03-eastchina.html", "subject": "地方导基"}, {"title": "第4章 华中地区", "keywords": "河南 湖北 湖南 黄鹤楼 张家界 龙门石窟", "url": "knowledge/local/ch04-centralchina.html", "subject": "地方导基"}, {"title": "第5章 华南地区", "keywords": "广东 广西 海南 桂林 丹霞山 天涯海角", "url": "knowledge/local/ch05-southchina.html", "subject": "地方导基"}, {"title": "第6章 西南地区", "keywords": "重庆 四川 贵州 云南 西藏 九寨沟 布达拉宫", "url": "knowledge/local/ch06-southwest.html", "subject": "地方导基"}, {"title": "第7章 西北地区", "keywords": "陕西 甘肃 青海 宁夏 新疆 兵马俑 莫高窟", "url": "knowledge/local/ch07-northwest.html", "subject": "地方导基"}, {"title": "第8章 港澳台地区", "keywords": "香港 澳门 台湾 维多利亚港 日月潭", "url": "knowledge/local/ch08-hmt.html", "subject": "地方导基"}];
+<!-- 4科卡片 2x2 -->
+<div style="max-width:520px;margin:0 auto;padding:0 20px 20px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+    <a href="knowledge/business/index.html" style="text-decoration:none;background:#FFF;border:1px solid #F0F0F0;border-radius:14px;padding:18px 14px;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='#E65100';this.style.boxShadow='0 4px 12px rgba(230,81,0,0.1)'" onmouseout="this.style.borderColor='#F0F0F0';this.style.boxShadow='none'">
+      <div style="font-size:1.8rem;margin-bottom:6px;">💼</div>
+      <div style="font-weight:700;color:#1A1A1A;font-size:0.95rem;">导游业务</div>
+      <div style="font-size:0.75rem;color:#E65100;font-weight:600;margin-top:3px;">9章 · 占25%</div>
+    </a>
+    <a href="knowledge/policy/index.html" style="text-decoration:none;background:#FFF;border:1px solid #F0F0F0;border-radius:14px;padding:18px 14px;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='#D97706';this.style.boxShadow='0 4px 12px rgba(217,119,6,0.1)'" onmouseout="this.style.borderColor='#F0F0F0';this.style.boxShadow='none'">
+      <div style="font-size:1.8rem;margin-bottom:6px;">⚖️</div>
+      <div style="font-weight:700;color:#1A1A1A;font-size:0.95rem;">政策法规</div>
+      <div style="font-size:0.75rem;color:#D97706;font-weight:600;margin-top:3px;">18章 · 占30%</div>
+    </a>
+    <a href="knowledge/national/index.html" style="text-decoration:none;background:#FFF;border:1px solid #F0F0F0;border-radius:14px;padding:18px 14px;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='#059669';this.style.boxShadow='0 4px 12px rgba(5,150,105,0.1)'" onmouseout="this.style.borderColor='#F0F0F0';this.style.boxShadow='none'">
+      <div style="font-size:1.8rem;margin-bottom:6px;">📚</div>
+      <div style="font-weight:700;color:#1A1A1A;font-size:0.95rem;">全国导基</div>
+      <div style="font-size:0.75rem;color:#059669;font-weight:600;margin-top:3px;">11章 · 占25%</div>
+    </a>
+    <a href="knowledge/local/index.html" style="text-decoration:none;background:#FFF;border:1px solid #F0F0F0;border-radius:14px;padding:18px 14px;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='#DB2777';this.style.boxShadow='0 4px 12px rgba(219,39,119,0.1)'" onmouseout="this.style.borderColor='#F0F0F0';this.style.boxShadow='none'">
+      <div style="font-size:1.8rem;margin-bottom:6px;">🗺️</div>
+      <div style="font-weight:700;color:#1A1A1A;font-size:0.95rem;">地方导基</div>
+      <div style="font-size:0.75rem;color:#DB2777;font-weight:600;margin-top:3px;">8章 · 占20%</div>
+    </a>
+  </div>
+</div>
 
-function searchKnowledge(query) {
-  const container = document.getElementById('searchResults');
-  if (!query || query.length < 2) {
-    container.innerHTML = '';
-    return;
-  }
-  const q = query.toLowerCase();
-  const results = searchData.filter(item => {
-    return item.title.toLowerCase().includes(q) || 
-           item.keywords.toLowerCase().includes(q) ||
-           item.subject.toLowerCase().includes(q);
-  });
-  if (results.length === 0) {
-    container.innerHTML = '<div style="padding:16px;color:#888;text-align:center;">未找到相关内容，试试其他关键词</div>';
-    return;
-  }
-  const subjectColors = {'导游业务':'#E65100','政策法规':'#D97706','全国导基':'#059669','地方导基':'#DB2777'};
-  let html = '<div style="background:#FFF;border-radius:12px;border:1px solid #E2E8F0;overflow:hidden;">';
-  results.forEach(item => {
-    const color = subjectColors[item.subject] || '#E65100';
-    html += '<a href="'+item.url+'" style="display:flex;align-items:center;gap:12px;padding:12px 16px;text-decoration:none;color:#333;border-bottom:1px solid #F0F0F0;transition:background 0.15s;" onmouseover="this.style.background='#F8FAFC'" onmouseout="this.style.background='transparent'">';
-    html += '<span style="background:'+color+'15;color:'+color+';padding:3px 10px;border-radius:6px;font-size:0.75rem;font-weight:600;white-space:nowrap;">'+item.subject+'</span>';
-    html += '<span style="font-size:0.9rem;">'+item.title+'</span>';
-    html += '</a>';
-  });
-  html += '</div>';
-  container.innerHTML = html;
-}
-</script>
+<!-- 备考建议 -->
+<div style="max-width:520px;margin:0 auto;padding:0 20px 20px;">
+  <div style="background:#FFF8E1;border-radius:12px;padding:14px 18px;border-left:3px solid #E65100;">
+    <p style="font-size:0.85rem;color:#333;line-height:1.7;margin:0;">💡 <strong style="color:#E65100;">建议顺序</strong>：导游业务→政策法规→全国导基→地方导基</p>
+  </div>
+</div>
 
-  
-<!-- 学习进度 -->
-<div id="progressBar" style="max-width:1100px;margin:0 auto;padding:0 20px 20px;display:none;">
-  <div style="background:#FFF;border:1px solid #E2E8F0;border-radius:12px;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <div style="width:36px;height:36px;background:#FFF8E1;border-radius:8px;display:flex;align-items:center;justify-content:center;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#E65100" stroke-width="2"><path d="M12 20V10M6 20V4M18 20v-6"/></svg>
-      </div>
-      <div>
-        <div style="font-size:0.85rem;color:#888;">上次学习</div>
-        <a id="lastChapterLink" href="#" style="font-size:0.95rem;font-weight:600;color:#E65100;text-decoration:none;"></a>
-      </div>
+<!-- 面试+路线图+闪卡 -->
+<div style="max-width:520px;margin:0 auto;padding:0 20px 24px;">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+    <a href="interview.html" style="text-decoration:none;background:#FFF;border:1px solid #F0F0F0;border-radius:12px;padding:14px 10px;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='#E65100'" onmouseout="this.style.borderColor='#F0F0F0'">
+      <div style="font-size:1.3rem;margin-bottom:4px;">🎤</div>
+      <div style="font-weight:600;color:#1A1A1A;font-size:0.8rem;">面试专区</div>
+    </a>
+    <a href="study-roadmap.html" style="text-decoration:none;background:#FFF;border:1px solid #F0F0F0;border-radius:12px;padding:14px 10px;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='#E65100'" onmouseout="this.style.borderColor='#F0F0F0'">
+      <div style="font-size:1.3rem;margin-bottom:4px;">🗺️</div>
+      <div style="font-weight:600;color:#1A1A1A;font-size:0.8rem;">路线图</div>
+    </a>
+    <a href="flashcard.html" style="text-decoration:none;background:#FFF;border:1px solid #F0F0F0;border-radius:12px;padding:14px 10px;text-align:center;transition:all 0.2s;" onmouseover="this.style.borderColor='#E65100'" onmouseout="this.style.borderColor='#F0F0F0'">
+      <div style="font-size:1.3rem;margin-bottom:4px;">🃏</div>
+      <div style="font-weight:600;color:#1A1A1A;font-size:0.8rem;">口诀闪卡</div>
+    </a>
+  </div>
+</div>
+
+<!-- 学习进度（老用户） -->
+<div id="progressSection" style="max-width:520px;margin:0 auto;padding:0 20px 24px;display:none;">
+  <div style="background:#FAFAFA;border:1px solid #F0F0F0;border-radius:14px;padding:16px 18px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <h3 style="font-size:0.9rem;font-weight:700;color:#1A1A1A;margin:0;">📊 学习进度</h3>
+      <span id="progressText2" style="font-size:0.8rem;color:#E65100;font-weight:600;"></span>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span id="progressText" style="font-size:0.85rem;color:#666;"></span>
-      <div style="width:120px;height:6px;background:#F0F0F0;border-radius:3px;overflow:hidden;">
-        <div id="progressFill" style="height:100%;background:#E65100;border-radius:3px;transition:width 0.3s;"></div>
-      </div>
+    <div style="background:#E2E8F0;border-radius:6px;height:6px;overflow:hidden;margin-bottom:10px;">
+      <div id="readBar" style="height:100%;background:#E65100;border-radius:6px;transition:width 0.5s ease;width:0%;"></div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;">
+      <span id="bizProgress" style="font-size:0.72rem;color:#E65100;background:#FFF8E1;padding:2px 8px;border-radius:6px;">💼 <span id="prog-business">0</span>/9</span>
+      <span id="policyProgress" style="font-size:0.72rem;color:#D97706;background:#FFF7E6;padding:2px 8px;border-radius:6px;">⚖️ <span id="prog-policy">0</span>/18</span>
+      <span id="nationalProgress" style="font-size:0.72rem;color:#059669;background:#F0FFF4;padding:2px 8px;border-radius:6px;">📚 <span id="prog-national">0</span>/11</span>
+      <span id="localProgress" style="font-size:0.72rem;color:#DB2777;background:#FDF2F8;padding:2px 8px;border-radius:6px;">📖 <span id="prog-local">0</span>/8</span>
     </div>
   </div>
 </div>
 
-  <!-- 四科章节导航区 -->
-  <div style="max-width:1100px;margin:0 auto;padding:0 20px 30px;">
-    
-<!-- 快速开始引导 -->
-<div style="margin:0 0 24px;padding:20px;background:linear-gradient(135deg,#FFF8E1,#E8F5E9);border-radius:16px;border:1px solid #E2E8F0;">
-  <p style="font-size:0.95rem;font-weight:700;color:#2D3748;margin:0 0 12px;">🎯 <div style="margin-bottom:20px;">
-  <a href="search.html" style="display:flex;align-items:center;gap:10px;padding:12px 18px;background:#fff;border-radius:14px;border:1px solid #E2E8F0;text-decoration:none;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.04);" onmouseover="this.style.borderColor='#E65100'" onmouseout="this.style.borderColor='#E2E8F0'">
-    <span style="font-size:1rem;">🔍</span>
-    <span style="color:#94A3B8;font-size:0.88rem;">搜索46章考点...</span>
-  </a>
-</div></p>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;">
-    <a href="knowledge/business/index.html" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:#E65100;color:#FFF;text-decoration:none;font-size:0.85rem;font-weight:600;">💼 导游业务（最实用，先看这个）</a>
-    <a href="knowledge/policy/index.html" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:#FFF;border:1px solid #E2E8F0;color:#4A5568;text-decoration:none;font-size:0.85rem;font-weight:600;">⚖️ 政策法规（占分最多）</a>
-    <a href="knowledge/national/index.html" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:#FFF;border:1px solid #E2E8F0;color:#4A5568;text-decoration:none;font-size:0.85rem;font-weight:600;">📚 全国导基（记忆量大）</a>
-    <a href="knowledge/local/index.html" style="display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:#FFF;border:1px solid #E2E8F0;color:#4A5568;text-decoration:none;font-size:0.85rem;font-weight:600;">🗺️ 地方导基（本省重点）</a>
- <a href="interview.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:12px;border:2px solid #FFB74D;color:#E65100;font-weight:700;font-size:0.9rem;text-decoration:none;transition:all .2s;background:#FFF3E0;" onmouseover="this.style.background='#E65100';this.style.color='#FFF'" onmouseout="this.style.background='#FFF3E0';this.style.color='#E65100'">🎤 面试专区</a>
-   </div>
-  <p style="font-size:0.8rem;color: #777;margin:10px 0 0;">💡 建议：先看导游业务建立信心 → 政策法规拿高分 → 全国导基口诀记忆 → 地方导基抓本省</p>
-</div>
-
-<!-- 快速跳转Tab -->
-<div style="position:sticky;top:0;z-index:50;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);padding:10px 0;margin:0 -16px 20px;border-bottom:1px solid #F0F0F0;display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;">
-  <a href="#subjects" style="flex-shrink:0;padding:6px 14px;border-radius:8px;background:#E65100;color:#FFF;text-decoration:none;font-size:0.8rem;font-weight:600;">四科知识</a>
-  <a href="#attractions" style="flex-shrink:0;padding:6px 14px;border-radius:8px;background:#FFF8E1;color:#E65100;text-decoration:none;font-size:0.8rem;font-weight:600;">景点考点</a>
-  <a href="#exam-tips" style="flex-shrink:0;padding:6px 14px;border-radius:8px;background:#FFF8E1;color:#E65100;text-decoration:none;font-size:0.8rem;font-weight:600;">考试技巧</a>
-  <a href="#culture" style="flex-shrink:0;padding:6px 14px;border-radius:8px;background:#FFF8E1;color:#E65100;text-decoration:none;font-size:0.8rem;font-weight:600;">文化禁忌</a>
-  <a href="#national-detail" style="flex-shrink:0;padding:6px 14px;border-radius:8px;background:#FFF8E1;color:#E65100;text-decoration:none;font-size:0.8rem;font-weight:600;">全国导基速记</a>
-  <a href="#free-tickets" style="flex-shrink:0;padding:6px 14px;border-radius:8px;background:#FFF8E1;color:#E65100;text-decoration:none;font-size:0.8rem;font-weight:600;">🎫免票地图</a>
-</div>
-
-<h2 id="subjects" style="font-size:1.6rem;font-weight:800;color:#1A1A1A;margin-bottom:8px;display:flex;align-items:center;gap:10px;"><span style="display:inline-block;width:6px;height:28px;background:#E65100;border-radius:3px;"></span>四科教材知识体系</h2>
-    <p style="color:#666;font-size:0.95rem;margin-bottom:24px;padding-left:16px;">按教材章节逐一梳理，高频考点★标记，口诀辅助记忆</p>
-    <div id="progressSection" style="background:#F8FAFC;border:1px solid #E2E8F0;border-radius:16px;padding:20px;margin-bottom:24px;display:none;">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-        <h3 style="font-size:1rem;font-weight:700;color:#1A1A1A;margin:0;">📊 学习进度</h3>
-        <span id="progressText2" style="font-size:0.85rem;color:#E65100;font-weight:600;"></span>
-      </div>
-      <div style="margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <span style="font-size:0.78rem;color:#666;">📖 已阅读</span>
-          <span id="readPct" style="font-size:0.78rem;color:#E65100;font-weight:600;"></span>
-        </div>
-        <div style="background:#E2E8F0;border-radius:8px;height:8px;overflow:hidden;">
-          <div id="readBar" style="height:100%;background:linear-gradient(90deg,#E65100,#6BA3FF);border-radius:8px;transition:width 0.5s ease;width:0%;"></div>
-        </div>
-      </div>
-      <div style="margin-bottom:16px;">
-        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
-          <span style="font-size:0.78rem;color:#666;">✏️ 已练习</span>
-          <span id="quizPct" style="font-size:0.78rem;color:#10B981;font-weight:600;"></span>
-        </div>
-        <div style="background:#E2E8F0;border-radius:8px;height:8px;overflow:hidden;">
-          <div id="quizBar" style="height:100%;background:linear-gradient(90deg,#10B981,#34D399);border-radius:8px;transition:width 0.5s ease;width:0%;"></div>
-        </div>
-      </div>
-      <div style="display:flex;gap:12px;flex-wrap:wrap;">
-        <span id="bizProgress" style="font-size:0.78rem;color:#E65100;background:#FFF8E1;padding:2px 8px;border-radius:8px;">💼 导游业务: <span id="prog-business">0</span>/9</span>
-        <span id="policyProgress" style="font-size:0.78rem;color:#D97706;background:#FFF7E6;padding:2px 8px;border-radius:8px;">⚖️ 政策法规: <span id="prog-policy">0</span>/18</span>
-        <span id="nationalProgress" style="font-size:0.78rem;color:#059669;background:#F0FFF4;padding:2px 8px;border-radius:8px;">📚 全国导基: <span id="prog-national">0</span>/11</span>
-        <span id="localProgress" style="font-size:0.78rem;color:#DB2777;background:#FDF2F8;padding:2px 8px;border-radius:8px;">📖 地方导基: <span id="prog-local">0</span>/8</span>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;position:relative;z-index:10;">
-      <a href="knowledge/business/index.html" style="text-decoration:none;color:inherit;background:#FFFFFF;border:1px solid #E8EEF5;border-radius:16px;padding:24px;display:block;transition:all 0.3s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(230,81,0,0.15)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='none';this.style.transform='none'">
-        <div style="font-size:1.8rem;margin-bottom:8px;">💼</div>
-        <h3 style="font-size:1.1rem;font-weight:700;color:#1A1A1A;margin-bottom:6px;">导游业务</h3>
-        <p style="font-size:0.85rem;color:#888;margin-bottom:12px;">科目二 · 占25% · 9章全覆盖</p>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span style="font-size:0.75rem;background:#FFF8E1;color:#E65100;padding:3px 10px;border-radius:20px;">服务规范</span>
-          <span style="font-size:0.75rem;background:#FFF8E1;color:#E65100;padding:3px 10px;border-radius:20px;">语言技能</span>
-          <span style="font-size:0.75rem;background:#FFF8E1;color:#E65100;padding:3px 10px;border-radius:20px;">带团讲解</span>
-          <span style="font-size:0.75rem;background:#FFF8E1;color:#E65100;padding:3px 10px;border-radius:20px;">应变处理</span>
-        </div>
-      </a>
-      <a href="knowledge/policy/index.html" style="text-decoration:none;color:inherit;background:#FFFFFF;border:1px solid #E8EEF5;border-radius:16px;padding:24px;display:block;transition:all 0.3s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(230,81,0,0.15)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='none';this.style.transform='none'">
-        <div style="font-size:1.8rem;margin-bottom:8px;">⚖️</div>
-        <h3 style="font-size:1.1rem;font-weight:700;color:#1A1A1A;margin-bottom:6px;">政策与法律法规</h3>
-        <p style="font-size:0.85rem;color:#888;margin-bottom:12px;">科目一 · 占30% · 18章全覆盖</p>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span style="font-size:0.75rem;background:#FEF3C7;color:#D97706;padding:3px 10px;border-radius:20px;">旅游法</span>
-          <span style="font-size:0.75rem;background:#FEF3C7;color:#D97706;padding:3px 10px;border-radius:20px;">合同法</span>
-          <span style="font-size:0.75rem;background:#FEF3C7;color:#D97706;padding:3px 10px;border-radius:20px;">侵权责任</span>
-          <span style="font-size:0.75rem;background:#FEF3C7;color:#D97706;padding:3px 10px;border-radius:20px;">安全保险</span>
-        </div>
-      </a>
-      <a href="knowledge/national/index.html" style="text-decoration:none;color:inherit;background:#FFFFFF;border:1px solid #E8EEF5;border-radius:16px;padding:24px;display:block;transition:all 0.3s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(230,81,0,0.15)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='none';this.style.transform='none'">
-        <div style="font-size:1.8rem;margin-bottom:8px;">📚</div>
-        <h3 style="font-size:1.1rem;font-weight:700;color:#1A1A1A;margin-bottom:6px;">全国导游基础知识</h3>
-        <p style="font-size:0.85rem;color:#888;margin-bottom:12px;">科目三 · 占25% · 11章全覆盖</p>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span style="font-size:0.75rem;background:#ECFDF5;color:#059669;padding:3px 10px;border-radius:20px;">历史文化</span>
-          <span style="font-size:0.75rem;background:#ECFDF5;color:#059669;padding:3px 10px;border-radius:20px;">建筑园林</span>
-          <span style="font-size:0.75rem;background:#ECFDF5;color:#059669;padding:3px 10px;border-radius:20px;">饮食工艺</span>
-          <span style="font-size:0.75rem;background:#ECFDF5;color:#059669;padding:3px 10px;border-radius:20px;">民族宗教</span>
-        </div>
-      </a>
-      <a href="knowledge/local/index.html" style="text-decoration:none;color:inherit;background:#FFFFFF;border:1px solid #E8EEF5;border-radius:16px;padding:24px;display:block;transition:all 0.3s;" onmouseover="this.style.boxShadow='0 8px 24px rgba(230,81,0,0.15)';this.style.transform='translateY(-3px)'" onmouseout="this.style.boxShadow='none';this.style.transform='none'">
-        <div style="font-size:1.8rem;margin-bottom:8px;">🗺️</div>
-        <h3 style="font-size:1.1rem;font-weight:700;color:#1A1A1A;margin-bottom:6px;">地方导游基础知识</h3>
-        <p style="font-size:0.85rem;color:#888;margin-bottom:12px;">科目四 · 占20% · 8章全覆盖</p>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;">
-          <span style="font-size:0.75rem;background:#FCE7F3;color:#DB2777;padding:3px 10px;border-radius:20px;">华北东北</span>
-          <span style="font-size:0.75rem;background:#FCE7F3;color:#DB2777;padding:3px 10px;border-radius:20px;">华东华中</span>
-          <span style="font-size:0.75rem;background:#FCE7F3;color:#DB2777;padding:3px 10px;border-radius:20px;">华南西南</span>
-          <span style="font-size:0.75rem;background:#FCE7F3;color:#DB2777;padding:3px 10px;border-radius:20px;">西北港澳台</span>
-        </div>
-      </a>
-    </div>
-  </div>
-  <div style="max-width:1100px;margin:0 auto;padding:0 20px;"><hr style="border:none;border-top:1px solid #E8EEF5;margin:10px 0 30px;"></div>
-
-    
-<script>
-(function(){
-    var btn = document.querySelector('.back-to-top');
-    if(!btn) return;
-    window.addEventListener('scroll', function(){
-        if(window.scrollY > 400) btn.classList.add('visible');
-        else btn.classList.remove('visible');
-    });
-})();
-</script>
-
-<script>
-// GameSystem stub - 替代gamification.js，不创建任何UI元素
-if(typeof GameSystem==='undefined'){
-  window.GameSystem={
-    state:{sp:{},ach:{},stats:{total:0,streak:0}},
-    addAIChat:function(){},
-    chkAch:function(){},
-    chkSt:function(){},
-    resetDaily:function(){}
-  };
-}
-</script>
-<div style="text-align:center;padding:16px;font-size:0.8rem;color: #777;border-top:1px solid #F0F0F0;margin-top:20px;">
-<a href="privacy.html" style="color:#E65100;">🔒 隐私保护</a>
-<span style="margin:0 12px;color:#ddd;">|</span>
-<span style="color:#ccc;">最后更新：2026年5月</span>
+<div style="text-align:center;padding:8px 20px 16px;">
+  <p style="font-size:0.8rem;color:#E65100;font-weight:600;">走过弯路，所以更懂路</p>
 </div>
 
 <nav class="bottom-tabs"><a class="tab-item" href="index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item" href="ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="search.html"><span class="tab-icon">🔍</span><span class="tab-label">搜索</span></a><a class="tab-item" href="travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
