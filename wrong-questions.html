@@ -2,92 +2,353 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>错题本 - 游导学习笔记</title>
-<meta name="description" content="导游证备考错题本，自动收录练习错题，针对性复习">
-<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
 <style>
-*{-webkit-tap-highlight-color:transparent;box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.7;color:#666;background:#FAFAFA;min-height:100vh;padding-bottom:80px}
-a{text-decoration:none;color:inherit}
+.wrong-hero{text-align:center;padding:30px 20px 20px;background:linear-gradient(135deg,#FFF8E1,#FFE082);margin:-20px -20px 20px;border-radius:0 0 20px 20px}
+.wrong-hero h1{font-size:1.5rem;color:#E65100;margin:8px 0}
+.wrong-hero .subtitle{color:#888;font-size:.85rem;margin:4px 0 12px}
+.wrong-stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.wrong-stat{text-align:center;background:#fff;border-radius:12px;padding:12px 16px;min-width:80px;box-shadow:0 1px 6px rgba(0,0,0,.06)}
+.wrong-stat .num{font-size:1.5rem;font-weight:bold;color:#F44336}
+.wrong-stat .label{font-size:.75rem;color:#888;margin-top:2px}
+.subject-filter{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.subject-filter button{padding:8px 16px;border:2px solid #ddd;background:#fff;border-radius:20px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.subject-filter button.active{border-color:#E65100;background:#FFF3E0;color:#E65100;font-weight:bold}
+.wrong-list{margin:20px 0}
+.wrong-item{background:#fff;border-radius:12px;padding:16px 20px;margin:10px 0;box-shadow:0 1px 6px rgba(0,0,0,.06);border-left:4px solid #F44336;transition:all .2s}
+.wrong-item.mastered{border-left-color:#4CAF50;opacity:.6}
+.wrong-item .q-subject{font-size:.75rem;color:#E65100;font-weight:bold;margin-bottom:6px}
+.wrong-item .q-text{font-size:.9rem;color:#333;line-height:1.5;margin-bottom:8px}
+.wrong-item .q-answer{font-size:.85rem;color:#4CAF50;padding:8px 12px;background:#F1F8E9;border-radius:8px;margin-top:8px}
+.wrong-item .q-explain{font-size:.8rem;color:#666;margin-top:6px;padding:6px 12px;background:#FFF8E1;border-radius:6px}
+.wrong-item .q-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.wrong-item .btn-small{padding:6px 14px;border:none;border-radius:12px;font-size:.8rem;cursor:pointer;font-weight:bold;transition:all .2s}
+.btn-master{background:#4CAF50;color:#fff}
+.btn-master:hover{background:#388E3C}
+.btn-del{background:#fff;color:#F44336;border:1px solid #F44336!important}
+.btn-del:hover{background:#FFEBEE}
+.redo-section{background:linear-gradient(135deg,#F44336,#E65100);border-radius:16px;padding:24px;margin:24px 0;text-align:center;color:#fff}
+.redo-section h2{font-size:1.1rem;margin:0 0 8px}
+.redo-section p{font-size:.85rem;opacity:.9;margin:0 0 16px}
+.redo-btn{display:inline-block;padding:14px 32px;background:#fff;color:#E65100;border-radius:25px;font-size:1rem;font-weight:bold;text-decoration:none;cursor:pointer;border:none;transition:all .2s}
+.redo-btn:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.empty-state{text-align:center;padding:40px 20px;color:#999}
+.empty-state .icon{font-size:3rem;margin-bottom:12px}
+.quiz-mode{display:none}
+.quiz-mode .quiz-card{background:#fff;border-radius:16px;padding:24px;margin:16px 0;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.quiz-mode .quiz-card .q-num{font-size:.8rem;color:#E65100;font-weight:bold;margin-bottom:8px}
+.quiz-mode .quiz-card .q-text{font-size:1rem;font-weight:bold;color:#333;line-height:1.5;margin-bottom:16px}
+.quiz-option{padding:12px 16px;margin:8px 0;background:#FFF8E1;border:2px solid #FFE082;border-radius:10px;cursor:pointer;transition:all .2s;font-size:.9rem;color:#333}
+.quiz-option:hover{border-color:#E65100;background:#FFF3E0}
+.quiz-option.selected{border-color:#E65100;background:#FFF3E0}
+.quiz-option.correct{border-color:#4CAF50;background:#C8E6C9;color:#2E7D32}
+.quiz-option.wrong{border-color:#F44336;background:#FFCDD2;color:#C62828}
+.quiz-feedback{margin-top:12px;padding:12px;border-radius:10px;font-size:.85rem;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.correct-fb{background:#E8F5E9;color:#2E7D32}
+.quiz-feedback.wrong-fb{background:#FFEBEE;color:#C62828}
+.quiz-nav{display:flex;justify-content:center;gap:12px;margin:20px 0}
+.quiz-nav button{padding:12px 28px;border:none;border-radius:25px;font-size:.95rem;cursor:pointer;font-weight:bold}
+@media(max-width:600px){.wrong-stats{gap:8px}.wrong-stat{min-width:60px;padding:8px 10px}.wrong-stat .num{font-size:1.2rem}}
+</style>
+</head>
+<body>
+<nav class="main-nav"><a href="index.html">首页</a><a href="ai-assistant.html">AI助手</a><a href="exam-simulator.html">刷题</a><a href="travel-knowledge.html">知识库</a><a href="interview.html">面试</a></nav>
 
-.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#FFF;border-bottom:1px solid #F0F0F0;position:sticky;top:0;z-index:100}
-.logo{font-size:1.1rem;font-weight:800;color:#1A1A1A}
-.nav-links{display:flex;gap:4px}
-.nav-links a{padding:8px 12px;border-radius:10px;font-size:0.85rem;color:#666;transition:all 0.3s}
-.nav-links a:hover{background:#F0F5FF;color:#4C8BF5}
-.nav-links a.active{background:#4C8BF5;color:#FFF}
+<div class="container">
+<div class="wrong-hero">
+  <h1>📋 错题本</h1>
+  <p class="subtitle">做错的题自动收录，反复练到不出错 | 走过弯路，所以更懂路</p>
+</div>
 
-.page-header{padding:36px 20px 20px;text-align:center;background:linear-gradient(135deg,#FFF5F5,#FFF)}
-.page-header h1{font-size:1.7rem;font-weight:800;color:#1A1A1A;margin-bottom:6px}
-.page-header p{font-size:0.92rem;color:#999}
+<!-- 统计 -->
+<div class="wrong-stats" id="wrongStats">
+  <div class="wrong-stat"><div class="num" id="totalCount">0</div><div class="label">总错题</div></div>
+  <div class="wrong-stat"><div class="num" id="businessCount">0</div><div class="label">导游业务</div></div>
+  <div class="wrong-stat"><div class="num" id="policyCount">0</div><div class="label">政策法规</div></div>
+  <div class="wrong-stat"><div class="num" id="nationalCount">0</div><div class="label">全国导基</div></div>
+  <div class="wrong-stat"><div class="num" id="localCount">0</div><div class="label">地方导基</div></div>
+</div>
 
-.container{max-width:700px;margin:0 auto;padding:0 16px}
+<!-- 重做入口 -->
+<div class="redo-section" id="redoSection" style="display:none">
+  <h2>🔄 重做错题，攻克薄弱点</h2>
+  <p>错题重做是提分最快的方法，每道错题至少做对2次才算真正掌握</p>
+  <button onclick="startRedo('all')" class="redo-btn">🔄 重做全部错题</button>
+  <div style="margin-top:12px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+    <button onclick="startRedo('business')" style="padding:8px 18px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;cursor:pointer;font-size:.85rem">💼 只做导游业务</button>
+    <button onclick="startRedo('policy')" style="padding:8px 18px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;cursor:pointer;font-size:.85rem">⚖️ 只做政策法规</button>
+    <button onclick="startRedo('national')" style="padding:8px 18px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;cursor:pointer;font-size:.85rem">📚 只做全国导基</button>
+    <button onclick="startRedo('local')" style="padding:8px 18px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:16px;cursor:pointer;font-size:.85rem">🗺️ 只做地方导基</button>
+  </div>
+</div>
 
-.stats-bar{display:flex;gap:12px;justify-content:center;margin:20px 0;flex-wrap:wrap}
-.stat-card{background:#FFF;border:1px solid #F0F0F0;border-radius:12px;padding:14px 20px;text-align:center;min-width:100px}
-.stat-num{font-size:1.5rem;font-weight:800;color:#EF4444}
-.stat-label{font-size:0.78rem;color:#999;margin-top:2px}
+<!-- 科目筛选 -->
+<div class="subject-filter" id="subjectFilter">
+  <button class="active" onclick="filterSubject('all')">全部</button>
+  <button onclick="filterSubject('business')">💼 导游业务</button>
+  <button onclick="filterSubject('policy')">⚖️ 政策法规</button>
+  <button onclick="filterSubject('national')">📚 全国导基</button>
+  <button onclick="filterSubject('local')">🗺️ 地方导基</button>
+  <button onclick="clearAllWrong()" style="border-color:#F44336;color:#F44336">🗑️ 清空全部</button>
+</div>
 
-.filter-bar{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap}
-.filter-btn{padding:6px 14px;border-radius:20px;font-size:0.82rem;cursor:pointer;border:1.5px solid #E0E0E0;background:#FFF;color:#999;transition:all 0.2s}
-.filter-btn:hover{border-color:#4C8BF5;color:#4C8BF5}
-.filter-btn.active{background:#4C8BF5;color:#FFF;border-color:#4C8BF5}
+<!-- 浏览模式 -->
+<div id="browseMode">
+  <div class="empty-state" id="emptyState">
+    <div class="icon">✏️</div>
+    <p style="font-size:1rem;font-weight:bold;margin:8px 0">还没有错题</p>
+    <p style="font-size:.85rem">去做几道练习题，做错的会自动收藏到这里</p>
+    <a href="exam-simulator.html" style="display:inline-block;margin-top:16px;padding:10px 24px;background:#E65100;color:#fff;border-radius:20px;text-decoration:none;font-weight:bold">去刷题 →</a>
+  </div>
+  <div class="wrong-list" id="wrongList"></div>
+</div>
 
-.wrong-item{background:#FFF;border:1px solid #F0F0F0;border-radius:16px;padding:18px;margin-bottom:12px;transition:all 0.2s}
-.wrong-item:hover{box-shadow:0 2px 10px rgba(0,0,0,0.05)}
-.wrong-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.wrong-subject{padding:2px 10px;border-radius:10px;font-size:0.72rem;font-weight:600}
-.subject-biz{background:#F0F5FF;color:#4C8BF5}
-.subject-policy{background:#FFF7E6;color:#D97706}
-.subject-national{background:#F0FFF4;color:#059669}
-.subject-local{background:#FDF2F8;color:#DB2777}
-.wrong-time{font-size:0.72rem;color:#CCC}
-.wrong-q{font-size:0.92rem;color:#1A1A1A;font-weight:600;margin-bottom:8px;line-height:1.6}
-.wrong-q .qtype{display:inline-block;font-size:0.68rem;padding:2px 8px;border-radius:10px;margin-right:6px;font-weight:500}
-.qtype-judge{background:#E0F2FE;color:#0284C7}
-.qtype-single{background:#F0FDF4;color:#16A34A}
-.qtype-multi{background:#FEF3C7;color:#D97706}
+<!-- 重做模式 -->
+<div class="quiz-mode" id="redoMode">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px">
+    <h2 style="color:#E65100;font-size:1.1rem;margin:0">🔄 错题重做</h2>
+    <button onclick="exitRedo()" style="padding:6px 16px;background:#fff;color:#E65100;border:2px solid #E65100;border-radius:16px;cursor:pointer;font-size:.85rem;font-weight:bold">退出重做</button>
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:.85rem;color:#666;margin-bottom:12px">
+    <span id="redoProgress">第 1 题</span>
+    <span id="redoScore" style="color:#4CAF50;font-weight:bold">正确: 0</span>
+  </div>
+  <div id="redoCard"></div>
+  <div class="quiz-nav" id="redoNav" style="display:none">
+    <button onclick="nextRedoQ()" style="padding:12px 28px;background:#E65100;color:#fff;border-radius:25px;font-size:.95rem;cursor:pointer;font-weight:bold">下一题 →</button>
+  </div>
+  <div id="redoResult" style="display:none;background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.08);margin:20px 0">
+    <h2 style="color:#E65100;font-size:1.2rem;margin-bottom:16px">🎉 错题重做完成！</h2>
+    <div id="redoResultContent"></div>
+    <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <button onclick="exitRedo()" style="padding:12px 24px;background:#E65100;color:#fff;border:none;border-radius:20px;font-size:.9rem;cursor:pointer;font-weight:bold">返回错题本</button>
+      <button onclick="startRedo(currentRedoFilter)" style="padding:12px 24px;background:#4CAF50;color:#fff;border:none;border-radius:20px;font-size:.9rem;cursor:pointer;font-weight:bold">🔄 再做一遍</button>
+    </div>
+  </div>
+</div>
 
-.wrong-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
-.wrong-opt{padding:8px 12px;border-radius:8px;font-size:0.85rem;color:#444;display:flex;align-items:flex-start;gap:6px}
-.wrong-opt.was-selected{background:#FFF5F5;color:#EF4444;text-decoration:line-through}
-.wrong-opt.is-correct{background:#F0FFF4;color:#16A34A;font-weight:500}
+<div style="text-align:center;margin:30px 0">
+  <a href="exam-simulator.html" style="display:inline-block;padding:10px 20px;background:#E65100;color:#fff;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.9rem;margin:4px">✏️ 去刷题</a>
+  <a href="flashcard.html" style="display:inline-block;padding:10px 20px;background:#7B1FA2;color:#fff;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.9rem;margin:4px">🃏 刷口诀</a>
+  <a href="travel-knowledge.html" style="display:inline-block;padding:10px 20px;background:#1565C0;color:#fff;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.9rem;margin:4px">📖 学知识</a>
+</div>
+</div>
 
-.wrong-explain{background:#FFF9E6;border-radius:8px;padding:10px 14px;font-size:0.82rem;color:#5D4E37;line-height:1.6;border-left:3px solid #FFB800}
-.wrong-actions{display:flex;gap:8px;margin-top:10px}
-.wrong-btn{padding:6px 14px;border-radius:8px;font-size:0.8rem;cursor:pointer;border:none;transition:all 0.2s;font-weight:500}
-.btn-remove{background:#FFF5F5;color:#EF4444}
-.btn-remove:hover{background:#FEE2E2}
-.btn-retry{background:#F0F5FF;color:#4C8BF5}
-.btn-retry:hover{background:#E0EAFF}
+<div class="bottom-nav"><a href="index.html">🏠<span>首页</span></a><a href="search.html">🔍<span>搜索</span></a><a href="exam-simulator.html">✏️<span>刷题</span></a><a href="ai-assistant.html">💬<span>AI助手</span></a><a href="travel-knowledge.html">📚<span>知识库</span></a></div>
 
-.empty-state{text-align:center;padding:60px 20px;color:#CCC}
-.empty-state .emoji{font-size:3rem;margin-bottom:12px}
-.empty-state p{font-size:0.92rem}
-.empty-state a{color:#4C8BF5;font-weight:500}
+<script>
+let allWrong=[],currentFilter='all',currentRedoFilter='all',redoQuestions=[],redoIdx=0,redoCorrect=0,redoAnswered=false;
 
-.clear-btn{display:none;margin:20px auto;padding:10px 24px;border-radius:10px;background:#FFF5F5;color:#EF4444;border:1px solid #FEE2E2;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s}
-.clear-btn:hover{background:#FEE2E2}
-.clear-btn.show{display:block}
-
-.bottom-tabs{position:fixed;bottom:0;left:0;right:0;background:#FFF;border-top:1px solid #F0F0F0;display:flex;justify-content:space-around;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -1px 6px rgba(0,0,0,0.04)}
-.bottom-tabs .tab-item{display:flex;flex-direction:column;align-items:center;flex:1;font-size:0.65rem;color:#999;gap:2px;padding:4px 0;text-decoration:none}
-.bottom-tabs .tab-item span:first-child{font-size:1.25rem}
-
-.back-to-top{position:fixed;bottom:100px;right:16px;width:40px;height:40px;border-radius:50%;background:#FFF;border:1px solid #E2E8F0;display:none;align-items:center;justify-content:center;cursor:pointer;font-size:1rem;color:#666;z-index:90;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-.back-to-top.visible{display:flex}
-
-@media(max-width:600px){
-  .nav-links{display:none}
-  .stats-bar{gap:8px}
-  .stat-card{padding:10px 14px;min-width:80px}
-  .stat-num{font-size:1.2rem}
+function loadWrong(){
+  try{allWrong=JSON.parse(localStorage.getItem('wrongQuestions')||'[]')}catch(e){allWrong=[]}
+  updateStats();renderList();
 }
 
+function updateStats(){
+  document.getElementById('totalCount').textContent=allWrong.length;
+  const counts={business:0,policy:0,national:0,local:0};
+  allWrong.forEach(w=>{if(counts.hasOwnProperty(w.subject))counts[w.subject]++});
+  document.getElementById('businessCount').textContent=counts.business;
+  document.getElementById('policyCount').textContent=counts.policy;
+  document.getElementById('nationalCount').textContent=counts.national;
+  document.getElementById('localCount').textContent=counts.local;
+  document.getElementById('redoSection').style.display=allWrong.length>0?'block':'none';
+  document.getElementById('emptyState').style.display=allWrong.length===0?'block':'none';
+  document.getElementById('subjectFilter').style.display=allWrong.length>0?'flex':'none';
+}
+
+function renderList(){
+  const filtered=currentFilter==='all'?allWrong:allWrong.filter(w=>w.subject===currentFilter);
+  const listEl=document.getElementById('wrongList');
+  if(filtered.length===0){
+    listEl.innerHTML='<div style="text-align:center;padding:20px;color:#999;font-size:.9rem">'+(currentFilter==='all'?'暂无错题':'该科目暂无错题')+'</div>';
+    return;
+  }
+  let html='';
+  filtered.forEach((w,i)=>{
+    const origIdx=allWrong.indexOf(w);
+    html+='<div class="wrong-item'+(w.mastered?' mastered':'')+'">';
+    html+='<div class="q-subject">'+getSubjectLabel(w.subject)+'</div>';
+    html+='<div class="q-text">'+w.question+'</div>';
+    if(w.correctAnswer)html+='<div class="q-answer">✅ 正确答案：'+w.correctAnswer+'</div>';
+    if(w.explanation)html+='<div class="q-explain">💡 '+w.explanation+'</div>';
+    html+='<div class="q-actions">';
+    html+='<button class="btn-small btn-master" onclick="markMastered('+origIdx+')">'+(w.mastered?'已掌握':'✅ 标记已掌握')+'</button>';
+    html+='<button class="btn-small btn-del" onclick="deleteWrong('+origIdx+')">🗑️ 删除</button>';
+    html+='</div></div>';
+  });
+  listEl.innerHTML=html;
+}
+
+function getSubjectLabel(s){
+  const map={business:'💼 导游业务',policy:'⚖️ 政策法规',national:'📚 全国导基',local:'🗺️ 地方导基',interview:'🎤 面试'};
+  return map[s]||s;
+}
+
+function filterSubject(s){
+  currentFilter=s;
+  document.querySelectorAll('#subjectFilter button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderList();
+}
+
+function markMastered(idx){
+  allWrong[idx].mastered=!allWrong[idx].mastered;
+  saveWrong();updateStats();renderList();
+  // 检查成就
+  if(allWrong.every(w=>w.mastered)&&allWrong.length>0){
+    try{const a=JSON.parse(localStorage.getItem('youdao_achievements')||'{}');if(!a.wrong_clear){a.wrong_clear={date:new Date().toISOString()};localStorage.setItem('youdao_achievements',JSON.stringify(a))}}catch(e){}
+  }
+}
+
+function deleteWrong(idx){
+  allWrong.splice(idx,1);
+  saveWrong();updateStats();renderList();
+}
+
+function clearAllWrong(){
+  if(!confirm('确定清空所有错题？此操作不可恢复！'))return;
+  allWrong=[];
+  saveWrong();updateStats();renderList();
+}
+
+function saveWrong(){
+  localStorage.setItem('wrongQuestions',JSON.stringify(allWrong));
+}
+
+// ===== 重做模式 =====
+function startRedo(filter){
+  currentRedoFilter=filter;
+  redoQuestions=filter==='all'?[...allWrong]:allWrong.filter(w=>w.subject===filter);
+  if(redoQuestions.length===0){alert('该科目没有错题');return}
+  // 洗牌
+  for(let i=redoQuestions.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[redoQuestions[i],redoQuestions[j]]=[redoQuestions[j],redoQuestions[i]]}
+  redoIdx=0;redoCorrect=0;redoAnswered=false;
+  document.getElementById('browseMode').style.display='none';
+  document.getElementById('redoMode').style.display='block';
+  document.getElementById('redoResult').style.display='none';
+  showRedoQ();
+}
+
+function showRedoQ(){
+  if(redoIdx>=redoQuestions.length){showRedoResult();return}
+  const q=redoQuestions[redoIdx];
+  document.getElementById('redoProgress').textContent='第 '+(redoIdx+1)+' 题 / 共 '+redoQuestions.length+' 题';
+  document.getElementById('redoScore').textContent='正确: '+redoCorrect;
+  
+  let html='<div class="quiz-card">';
+  html+='<div class="q-num">'+getSubjectLabel(q.subject)+'</div>';
+  html+='<div class="q-text">'+q.question+'</div>';
+  if(q.options&&q.options.length>0){
+    q.options.forEach((opt,i)=>{
+      html+='<div class="quiz-option" id="redoOpt'+i+'" onclick="selectRedoAnswer('+i+')">'+opt+'</div>';
+    });
+  }else{
+    // 判断题
+    html+='<div class="quiz-option" id="redoOpt0" onclick="selectRedoAnswer(0)">A 正确</div>';
+    html+='<div class="quiz-option" id="redoOpt1" onclick="selectRedoAnswer(1)">B 错误</div>';
+  }
+  html+='<div class="quiz-feedback" id="redoFeedback"></div>';
+  html+='</div>';
+  
+  document.getElementById('redoCard').innerHTML=html;
+  document.getElementById('redoNav').style.display='none';
+  redoAnswered=false;
+}
+
+function selectRedoAnswer(idx){
+  if(redoAnswered)return;
+  redoAnswered=true;
+  const q=redoQuestions[redoIdx];
+  let isCorrect=false;
+  
+  if(q.options&&q.options.length>0){
+    const correctIdx=q.options.findIndex(o=>o.startsWith(q.correctAnswer));
+    isCorrect=(idx===correctIdx)||(q.options[idx]&&q.options[idx].startsWith(q.correctAnswer));
+  }else{
+    // 判断题
+    isCorrect=(q.correctAnswer==='正确'&&idx===0)||(q.correctAnswer==='错误'&&idx===1);
+  }
+  
+  // 标记选中
+  const selectedEl=document.getElementById('redoOpt'+idx);
+  if(selectedEl)selectedEl.classList.add('selected');
+  
+  // 标记正确答案
+  if(q.options&&q.options.length>0){
+    const correctIdx=q.options.findIndex(o=>o.startsWith(q.correctAnswer));
+    if(correctIdx>=0){
+      document.getElementById('redoOpt'+correctIdx).classList.add('correct');
+      if(idx!==correctIdx)selectedEl.classList.add('wrong');
+    }
+  }else{
+    const correctIdx=(q.correctAnswer==='正确')?0:1;
+    document.getElementById('redoOpt'+correctIdx).classList.add('correct');
+    if(idx!==correctIdx)selectedEl.classList.add('wrong');
+  }
+  
+  const fb=document.getElementById('redoFeedback');
+  if(isCorrect){
+    redoCorrect++;
+    fb.className='quiz-feedback show correct-fb';
+    fb.innerHTML='✅ 正确！'+(q.explanation?'<br>💡 '+q.explanation:'');
+  }else{
+    fb.className='quiz-feedback show wrong-fb';
+    fb.innerHTML='❌ 正确答案是：'+q.correctAnswer+(q.explanation?'<br>💡 '+q.explanation:'');
+  }
+  
+  document.getElementById('redoScore').textContent='正确: '+redoCorrect;
+  document.getElementById('redoNav').style.display='flex';
+  document.getElementById('redoNav').querySelector('button').textContent=redoIdx===redoQuestions.length-1?'查看结果 →':'下一题 →';
+}
+
+function nextRedoQ(){
+  redoIdx++;
+  if(redoIdx>=redoQuestions.length){showRedoResult();return}
+  showRedoQ();
+}
+
+function showRedoResult(){
+  document.getElementById('redoCard').innerHTML='';
+  document.getElementById('redoNav').style.display='none';
+  document.getElementById('redoResult').style.display='block';
+  
+  const rate=Math.round(redoCorrect/redoQuestions.length*100);
+  let html='<div style="display:flex;gap:30px;justify-content:center;margin:20px 0">';
+  html+='<div style="text-align:center"><div style="font-size:2rem;font-weight:bold;color:#4CAF50">'+redoCorrect+'</div><div style="font-size:.8rem;color:#888">✅ 答对</div></div>';
+  html+='<div style="text-align:center"><div style="font-size:2rem;font-weight:bold;color:#F44336">'+(redoQuestions.length-redoCorrect)+'</div><div style="font-size:.8rem;color:#888">❌ 仍错</div></div>';
+  html+='<div style="text-align:center"><div style="font-size:2rem;font-weight:bold;color:#E65100">'+rate+'%</div><div style="font-size:.8rem;color:#888">正确率</div></div>';
+  html+='</div>';
+  
+  let advice='';
+  if(rate>=90)advice='🎉 太棒了！这些错题基本掌握了，继续保持！';
+  else if(rate>=70)advice='💪 进步很大！还差一点，再做一遍把剩下的也搞定。';
+  else if(rate>=50)advice='🔥 有进步！建议回顾一下知识点，再来一轮重做。';
+  else advice='📚 还需要加油！建议先回知识库重新学一遍，再回来做题。';
+  html+='<div style="background:#FFF3E0;border-radius:12px;padding:14px;font-size:.9rem;color:#E65100">'+advice+'</div>';
+  
+  document.getElementById('redoResultContent').innerHTML=html;
+  
+  // 更新错题本 - 重做正确的可以标记为mastered
+  // 不自动删除，让用户决定
+}
+
+function exitRedo(){
+  document.getElementById('browseMode').style.display='block';
+  document.getElementById('redoMode').style.display='none';
+  loadWrong();
+}
+
+// 初始化
+loadWrong();
+</script>
+
+<style>
 /* 夜间模式 */
-[data-theme="dark"]{--bg:#1a1a2e;--bg2:#16213e;--text:#e0e0e0;--text2:#b0b0b0;--card:#1e2a3a;--border:#2a3a4a;--accent:#FF8A65;--accent2:#FF6D00;--link:#90CAF9;--nav-bg:#0f1523;--hero-grad:linear-gradient(135deg,#1a1a2e,#16213e)}
+[data-theme="dark"]{--bg:#1a1a2e;--bg2:#16213e;--text:#e0e0e0;--text2:#b0b0b0;--card:#1e2a3a;--border:#2a3a4a;--accent:#FF8A65;--accent2:#FF6D00;--link:#90CAF9;--nav-bg:#0f1523}
 [data-theme="dark"] body{background:var(--bg)!important;color:var(--text)!important}
 [data-theme="dark"] .main-nav{background:var(--nav-bg)!important;border-bottom-color:var(--border)!important}
 [data-theme="dark"] .main-nav a{color:var(--text2)!important}
@@ -98,242 +359,20 @@ a{text-decoration:none;color:inherit}
 [data-theme="dark"] a{color:var(--link)!important}
 [data-theme="dark"] .bottom-nav{background:var(--nav-bg)!important;border-top-color:var(--border)!important}
 [data-theme="dark"] .bottom-nav a{color:var(--text2)!important}
-[data-theme="dark"] .bottom-nav a:hover{color:var(--accent)!important}
-[data-theme="dark"] input,[data-theme="dark"] textarea,[data-theme="dark"] select{background:var(--card)!important;color:var(--text)!important;border-color:var(--border)!important}
-[data-theme="dark"] .phase-card,[data-theme="dark"] .result-card,[data-theme="dark"] .cta-section{background:var(--card)!important;color:var(--text)!important}
-[data-theme="dark"] .tip-box{background:#1a2a3a!important;color:#90CAF9!important;border-left-color:#1565C0!important}
-[data-theme="dark"] .alloc-item{background:var(--card)!important}
-[data-theme="dark"] .milestone{background:linear-gradient(135deg,#1a2a3a,#1e2a3a)!important}
-
-/* 暗色切换按钮 */
-.dark-toggle{position:fixed;bottom:80px;right:16px;z-index:999;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.2);transition:all .3s;background:#FFF8E1;color:#E65100}
-[data-theme="dark"] .dark-toggle{background:#1a2a3a;color:#FFB74D;border:2px solid #2a3a4a}
-.dark-toggle:hover{transform:scale(1.1)}
-
+[data-theme="dark"] .wrong-item,[data-theme="dark"] .wrong-stat,[data-theme="dark"] .quiz-card{background:var(--card)!important;color:var(--text)!important}
+[data-theme="dark"] .quiz-option{background:var(--card)!important;border-color:var(--border)!important;color:var(--text)!important}
 </style>
-</head>
-<body>
-
-<nav class="navbar">
-<a href="index.html" class="logo">📚 游导学习笔记</a>
-<div class="nav-links">
-<a href="index.html">首页</a>
-<a href="ai-assistant.html">AI助手</a>
-<a href="exam-simulator.html">刷题</a>
-<a href="exam-simulator.html">知识库</a>
-<a href="wrong-questions.html" class="active">错题本</a>
-<a href="/interview.html">面试</a>
-</div>
-</nav>
-
-<div class="page-header">
-<h1>📋 错题本</h1>
-<p>做错的题自动收录，反复练到不出错</p>
-</div>
-
-<div class="container">
-<div class="stats-bar" id="statsBar">
-  <div class="stat-card"><div class="stat-num" id="totalWrong">0</div><div class="stat-label">总错题</div></div>
-  <div class="stat-card"><div class="stat-num" id="bizWrong" style="color:#4C8BF5">0</div><div class="stat-label">导游业务</div></div>
-  <div class="stat-card"><div class="stat-num" id="policyWrong" style="color:#D97706">0</div><div class="stat-label">政策法规</div></div>
-  <div class="stat-card"><div class="stat-num" id="nationalWrong" style="color:#059669">0</div><div class="stat-label">全国导基</div></div>
-  <div class="stat-card"><div class="stat-num" id="localWrong" style="color:#DB2777">0</div><div class="stat-label">地方导基</div></div>
-</div>
-
-<div class="filter-bar">
-  <button class="filter-btn active" onclick="filterWrong('all',this)">全部</button>
-  <button class="filter-btn" onclick="filterWrong('business',this)">💼 导游业务</button>
-  <button class="filter-btn" onclick="filterWrong('policy',this)">⚖️ 政策法规</button>
-  <button class="filter-btn" onclick="filterWrong('national',this)">📚 全国导基</button>
-  <button class="filter-btn" onclick="filterWrong('local',this)">📖 地方导基</button>
-</div>
-
-<div id="wrongList"></div>
-
-<button class="clear-btn" id="clearBtn" onclick="clearAll()">🗑️ 清空错题本</button>
-</div>
-
-<button class="back-to-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-<nav class="bottom-tabs">
-<a class="tab-item" href="index.html"><span>🏠</span><span>首页</span></a>
-<a class="tab-item" href="search.html"><span>🔍</span><span>搜索</span></a>
-<a class="tab-item" href="exam-simulator.html"><span>✏️</span><span>刷题</span></a>
-<a class="tab-item" href="ai-assistant.html"><span>💬</span><span>AI助手</span></a>
-<a class="tab-item" href="travel-knowledge.html"><span>📚</span><span>知识库</span></a>
-</nav>
-<p style="text-align:center;font-size:0.7rem;color:#999;padding:8px 0 70px;background:#FAFAFA;">走过弯路，所以更懂路</p>
-
-<script>
-var allWrong = [];
-var currentFilter = 'all';
-
-var subjectMap = {
-  'business': {name:'导游业务', cls:'subject-biz', dir:'knowledge/business/'},
-  'policy': {name:'政策法规', cls:'subject-policy', dir:'knowledge/policy/'},
-  'national': {name:'全国导基', cls:'subject-national', dir:'knowledge/national/'},
-  'local': {name:'地方导基', cls:'subject-local', dir:'knowledge/local/'}
-};
-
-function getSubject(file) {
-  if(file.indexOf('business') > -1) return 'business';
-  if(file.indexOf('policy') > -1) return 'policy';
-  if(file.indexOf('national') > -1) return 'national';
-  if(file.indexOf('local') > -1) return 'local';
-  return 'unknown';
-}
-
-function loadWrong() {
-  try {
-    // 读取章节练习的错题（格式：{chapter, type, q, opts, ans, userAns, explain, time}）
-    var chapterWrong = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
-    // 兼容刷题页的错题格式（格式：{question, options, correctAnswer, userAnswer, type, subject, timestamp}）
-    chapterWrong.forEach(function(w) {
-      // 标准化为统一格式
-      w.q = w.q || w.question || '';
-      w.opts = w.opts || w.options || [];
-      w.ans = w.ans || w.correctAnswer || [];
-      w.userAns = w.userAns || w.userAnswer || [];
-      w.explain = w.explain || '';
-      w.time = w.time || (w.timestamp ? new Date(w.timestamp).toLocaleDateString() : '');
-      if(!w.chapter) w.chapter = '';
-    });
-    allWrong = chapterWrong;
-  } catch(e) { allWrong = []; }
-  updateStats();
-  renderList();
-}
-
-function updateStats() {
-  var counts = {business:0, policy:0, national:0, local:0, total:0};
-  allWrong.forEach(function(w) {
-    var s = getSubject(w.chapter);
-    if(counts[s] !== undefined) counts[s]++;
-    counts.total++;
-  });
-  document.getElementById('totalWrong').textContent = counts.total;
-  document.getElementById('bizWrong').textContent = counts.business;
-  document.getElementById('policyWrong').textContent = counts.policy;
-  document.getElementById('nationalWrong').textContent = counts.national;
-  document.getElementById('localWrong').textContent = counts.local;
-  document.getElementById('clearBtn').classList.toggle('show', counts.total > 0);
-}
-
-function renderList() {
-  var list = document.getElementById('wrongList');
-  var filtered = currentFilter === 'all' ? allWrong : allWrong.filter(function(w) { return getSubject(w.chapter) === currentFilter; });
-  
-  if(filtered.length === 0) {
-    list.innerHTML = '<div class="empty-state"><div class="emoji">🎉</div><p>' + (allWrong.length === 0 ? '<div style="text-align:center;padding:40px 20px;">' +
-      '<div style="font-size:3rem;margin-bottom:12px;">✏️</div>' +
-      '<div style="font-size:1.1rem;font-weight:700;color:#4A5568;margin-bottom:8px;">还没有错题，说明你学得不错！</div>' +
-      '<div style="color:#718096;font-size:0.9rem;margin-bottom:20px;">去做几道练习题，做错的会自动收藏到这里</div>' +
-      '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">' +
-        '<a href="exam-simulator.html" style="display:inline-block;padding:10px 20px;border-radius:10px;background:#4C8BF5;color:#FFF;text-decoration:none;font-weight:600;font-size:0.85rem;">✏️ 去刷题练习</a>' +
-        '<a href="exam-simulator.html" style="display:inline-block;padding:10px 20px;border-radius:10px;background:#FFF;border:2px solid #4C8BF5;color:#4C8BF5;text-decoration:none;font-weight:600;font-size:0.85rem;">✏️ 去刷题练习</a>' +
-      '</div></div>' : '该科目暂无错题') + '</p></div>';
-    return;
-  }
-  
-  var html = '';
-  filtered.forEach(function(w, i) {
-    var s = getSubject(w.chapter);
-    var info = subjectMap[s] || {name:'未知', cls:'', dir:''};
-    var typeLabel = w.type==='judge'?'判断题':w.type==='single'?'单选题':'多选题';
-    var typeClass = w.type==='judge'?'qtype-judge':w.type==='single'?'qtype-single':'qtype-multi';
-    
-    html += '<div class="wrong-item" id="wi'+i+'">';
-    html += '<div class="wrong-header"><span class="wrong-subject '+info.cls+'">'+info.name+'</span><span class="wrong-time">'+(w.time||'')+'</span></div>';
-    html += '<div class="wrong-q"><span class="qtype '+typeClass+'">'+typeLabel+'</span>'+w.q+'</div>';
-    html += '<div class="wrong-opts">';
-    if(w.opts) {
-      w.opts.forEach(function(opt, j) {
-        var cls = '';
-        if(w.userAns && w.userAns.indexOf(j) > -1 && (!w.ans || w.ans.indexOf(j) === -1)) cls = ' was-selected';
-        if(w.ans && w.ans.indexOf(j) > -1) cls = ' is-correct';
-        html += '<div class="wrong-opt'+cls+'"><span>'+String.fromCharCode(65+j)+'.</span><span>'+opt+'</span></div>';
-      });
-    }
-    html += '</div>';
-    html += '<div class="wrong-explain">💡 '+w.explain+'</div>';
-    html += '<div class="wrong-actions">';
-    html += '<button class="wrong-btn btn-retry" onclick="goChapter(\''+info.dir+w.chapter+'\')">📖 重做本章</button>';
-    html += '<button class="wrong-btn btn-remove" onclick="removeOne('+i+')">✕ 移除</button>';
-    html += '</div>';
-    html += '</div>';
-  });
-  list.innerHTML = html;
-}
-
-function filterWrong(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active')});
-  if(btn) btn.classList.add('active');
-  renderList();
-}
-
-function removeOne(idx) {
-  var filtered = currentFilter === 'all' ? allWrong : allWrong.filter(function(w) { return getSubject(w.chapter) === currentFilter; });
-  var target = filtered[idx];
-  if(!target) return;
-  var realIdx = allWrong.indexOf(target);
-  if(realIdx > -1) allWrong.splice(realIdx, 1);
-  try { localStorage.setItem('wrongQuestions', JSON.stringify(allWrong)); } catch(e) {}
-  updateStats();
-  renderList();
-}
-
-function clearAll() {
-  if(!confirm('确认清空所有错题？此操作不可恢复。')) return;
-  allWrong = [];
-  try { localStorage.setItem('wrongQuestions', JSON.stringify(allWrong)); } catch(e) {}
-  updateStats();
-  renderList();
-}
-
-function goChapter(url) {
-  window.location.href = url;
-}
-
-// 回到顶部
-window.addEventListener('scroll', function(){
-  var btn = document.getElementById('backTop');
-  if(window.scrollY > 400) btn.classList.add('visible');
-  else btn.classList.remove('visible');
-});
-
-loadWrong();
-</script>
-
-<footer style="text-align:center;padding:20px;font-size:0.8rem;color:#999;border-top:1px solid #F0F0F0;margin-bottom:60px;">
-<a href="privacy.html" style="color:#4C8BF5;">🔒 隐私保护</a> · <a href="index.html" style="color:#4C8BF5;">返回首页</a>
-<p style="margin-top:6px;">© 2025-2026 游导学习笔记</p>
-<p style="margin-top:4px;color:#999;font-size:0.8rem;">走过弯路，所以更懂路</p>
-  <p style="margin-top:6px;color:#999;">ximao101独家整理</p>
-  </footer>
-
-<a href="ai-assistant.html" class="ai-float-btn" title="AI助手" style="position:fixed;bottom:90px;right:16px;width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);color:#FFF;display:flex;align-items:center;justify-content:center;font-size:1.2rem;box-shadow:0 4px 16px rgba(76,139,245,0.35);z-index:90;text-decoration:none;">
-🤖
-</a>
-
 
 <script>
 (function(){
   const btn=document.createElement('button');
-  btn.className='dark-toggle';
-  btn.id='darkToggle';
-  btn.title='切换夜间模式';
+  btn.className='dark-toggle';btn.id='darkToggle';btn.title='切换夜间模式';
   const saved=localStorage.getItem('youdao_theme');
   if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');btn.textContent='☀️'}
   else{btn.textContent='🌙'}
-  btn.onclick=function(){
-    const isDark=document.documentElement.getAttribute('data-theme')==='dark';
-    if(isDark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('youdao_theme','light');btn.textContent='🌙'}
-    else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('youdao_theme','dark');btn.textContent='☀️'}
-  };
+  btn.onclick=function(){const isDark=document.documentElement.getAttribute('data-theme')==='dark';if(isDark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('youdao_theme','light');btn.textContent='🌙'}else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('youdao_theme','dark');btn.textContent='☀️'}};
   document.body.appendChild(btn);
 })();
 </script>
-
 </body>
 </html>
