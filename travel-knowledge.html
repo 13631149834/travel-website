@@ -1640,5 +1640,43 @@ function updateKnowledgeProgress() {
 updateKnowledgeProgress();
 </script>
 
+
+<script>
+// 从localStorage同步学习进度
+(function() {
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var bizRead = 0, lawRead = 0, natRead = 0, localRead = 0;
+  for (var k in readChapters) {
+    if (k.indexOf('business') !== -1) bizRead++;
+    else if (k.indexOf('policy') !== -1) lawRead++;
+    else if (k.indexOf('national') !== -1) natRead++;
+    else if (k.indexOf('local') !== -1) localRead++;
+  }
+  
+  // 尝试更新进度显示（兼容多种DOM结构）
+  var els = document.querySelectorAll('[data-subject]');
+  els.forEach(function(el) {
+    var sub = el.getAttribute('data-subject');
+    var count = sub === 'business' ? bizRead : sub === 'policy' ? lawRead : sub === 'national' ? natRead : localRead;
+    var total = sub === 'business' ? 9 : sub === 'policy' ? 18 : sub === 'national' ? 11 : 8;
+    el.textContent = count + '/' + total;
+  });
+  
+  // 也尝试更新 textContent 中包含 0/9 的元素
+  var progressMap = { '0/9': bizRead+'/9', '0/18': lawRead+'/18', '0/11': natRead+'/11', '0/8': localRead+'/8' };
+  // 更通用：遍历所有文本节点
+  var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  var node;
+  while (node = walker.nextNode()) {
+    var t = node.textContent.trim();
+    for (var p in progressMap) {
+      if (t === p) {
+        node.textContent = progressMap[p];
+      }
+    }
+  }
+})();
+</script>
+
 </body>
 </html>

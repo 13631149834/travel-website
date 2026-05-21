@@ -2105,5 +2105,18 @@ if(typeof submitExam === 'function') window.submitExam = submitExam;
 })();
 </script>
 
+
+<script>
+// 访问刷题页也自动打卡
+(function() {
+  var today = new Date().toISOString().split('T')[0];
+  var studyDates = JSON.parse(localStorage.getItem('youdao_study_dates') || '[]');
+  if (studyDates.indexOf(today) === -1) {
+    studyDates.push(today);
+    localStorage.setItem('youdao_study_dates', JSON.stringify(studyDates));
+  }
+})();
+</script>
+
 </body>
 </html>

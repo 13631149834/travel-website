@@ -813,6 +813,69 @@ a { color: #4C8BF5 !important; }
         🔥 距离考试还有 <span id="heroDays">--</span> 天
       </div>
       
+
+      <!-- ===== 学习进度仪表盘 ===== -->
+      <div id="studyDashboard" style="margin-bottom:28px;display:none;">
+        <div style="background:#FFF;border-radius:20px;padding:24px 20px;box-shadow:0 4px 24px rgba(76,139,245,0.08);border:1px solid #E2E8F0;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:1.1rem;">📊</span>
+              <span style="font-weight:800;color:#1A1A1A;font-size:1rem;">我的学习进度</span>
+            </div>
+            <div id="streakBadge" style="display:none;background:linear-gradient(135deg,#FF6B6B,#FF8E53);color:#FFF;padding:4px 12px;border-radius:20px;font-size:0.78rem;font-weight:700;">
+              🔥 连续 <span id="streakDays">0</span> 天
+            </div>
+          </div>
+          
+          <!-- 进度条总览 -->
+          <div style="margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+              <span style="font-size:0.82rem;color:#666;">总体完成度</span>
+              <span id="totalPercent" style="font-size:0.82rem;font-weight:700;color:#4C8BF5;">0%</span>
+            </div>
+            <div style="background:#F0F0F0;border-radius:8px;height:10px;overflow:hidden;">
+              <div id="totalBar" style="background:linear-gradient(90deg,#4C8BF5,#6BA3FF);height:100%;border-radius:8px;width:0%;transition:width 0.6s ease;"></div>
+            </div>
+          </div>
+          
+          <!-- 四科进度 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div style="background:#F0F5FF;border-radius:12px;padding:12px;text-align:center;">
+              <div style="font-size:0.75rem;color:#4C8BF5;font-weight:600;margin-bottom:4px;">💼 导游业务</div>
+              <div style="font-size:1.2rem;font-weight:800;color:#1A1A1A;" id="bizProgress">0/9</div>
+            </div>
+            <div style="background:#FFF7E6;border-radius:12px;padding:12px;text-align:center;">
+              <div style="font-size:0.75rem;color:#F59E0B;font-weight:600;margin-bottom:4px;">⚖️ 政策法规</div>
+              <div style="font-size:1.2rem;font-weight:800;color:#1A1A1A;" id="lawProgress">0/18</div>
+            </div>
+            <div style="background:#F0FFF4;border-radius:12px;padding:12px;text-align:center;">
+              <div style="font-size:0.75rem;color:#38A169;font-weight:600;margin-bottom:4px;">📚 全国导基</div>
+              <div style="font-size:1.2rem;font-weight:800;color:#1A1A1A;" id="natProgress">0/11</div>
+            </div>
+            <div style="background:#FFF0F6;border-radius:12px;padding:12px;text-align:center;">
+              <div style="font-size:0.75rem;color:#E53E6B;font-weight:600;margin-bottom:4px;">🗺️ 地方导基</div>
+              <div style="font-size:1.2rem;font-weight:800;color:#1A1A1A;" id="localProgress">0/8</div>
+            </div>
+          </div>
+          
+          <!-- 刷题统计 -->
+          <div style="display:flex;gap:10px;justify-content:space-around;padding-top:12px;border-top:1px solid #F0F0F0;">
+            <div style="text-align:center;">
+              <div style="font-size:1.3rem;font-weight:800;color:#4C8BF5;" id="totalQuestions">0</div>
+              <div style="font-size:0.72rem;color:#999;">已刷题</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:1.3rem;font-weight:800;color:#38A169;" id="accuracyRate">0%</div>
+              <div style="font-size:0.72rem;color:#999;">正确率</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:1.3rem;font-weight:800;color:#E53E6B;" id="wrongCount">0</div>
+              <div style="font-size:0.72rem;color:#999;">待攻克错题</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- 新手引导：3步开始 -->
       <div style="margin-bottom:32px;">
         <p style="color:#999;font-size:0.9rem;margin-bottom:16px;"><div style="margin-bottom:20px;">
@@ -1312,6 +1375,132 @@ if ('serviceWorker' in navigator) {
       streakBadge.textContent = '🔥 连续' + streak + '天';
       countdownEl.parentNode.insertBefore(streakBadge, countdownEl.nextSibling);
     }
+  }
+})();
+</script>
+
+
+<script>
+// ===== 学习进度仪表盘 =====
+(function() {
+  // 打卡系统
+  var today = new Date().toISOString().split('T')[0];
+  var studyDates = JSON.parse(localStorage.getItem('youdao_study_dates') || '[]');
+  
+  // 今天是否已打卡
+  var todayChecked = studyDates.indexOf(today) !== -1;
+  
+  // 自动打卡（访问首页即算学习）
+  if (!todayChecked) {
+    studyDates.push(today);
+    localStorage.setItem('youdao_study_dates', JSON.stringify(studyDates));
+  }
+  
+  // 计算连续天数
+  var streak = 0;
+  var sorted = studyDates.slice().sort().reverse();
+  var checkDate = new Date();
+  for (var i = 0; i < 365; i++) {
+    var ds = checkDate.toISOString().split('T')[0];
+    if (sorted.indexOf(ds) !== -1) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else if (i === 0) {
+      // 今天还没学习（刚访问，已经加了），跳过检查昨天
+      checkDate.setDate(checkDate.getDate() - 1);
+      continue;
+    } else {
+      break;
+    }
+  }
+  
+  // 读取已读章节
+  var readChapters = JSON.parse(localStorage.getItem('readChapters') || '{}');
+  var bizRead = 0, lawRead = 0, natRead = 0, localRead = 0;
+  var total = 0;
+  for (var k in readChapters) {
+    total++;
+    if (k.indexOf('business') !== -1) bizRead++;
+    else if (k.indexOf('policy') !== -1) lawRead++;
+    else if (k.indexOf('national') !== -1) natRead++;
+    else if (k.indexOf('local') !== -1) localRead++;
+  }
+  
+  // 读取刷题数据
+  var quizResults = JSON.parse(localStorage.getItem('quizResults') || '{}');
+  var totalQ = 0, correctQ = 0;
+  for (var qk in quizResults) {
+    var r = quizResults[qk];
+    totalQ += (r.total || 0);
+    correctQ += (r.correct || 0);
+  }
+  
+  // 读取错题
+  var wrongQs = JSON.parse(localStorage.getItem('wrongQuestions') || '[]');
+  
+  // 计算百分比
+  var totalChapters = 46;
+  var pct = Math.round((total / totalChapters) * 100);
+  var accuracy = totalQ > 0 ? Math.round((correctQ / totalQ) * 100) : 0;
+  
+  // 更新DOM
+  var dashboard = document.getElementById('studyDashboard');
+  if (dashboard) {
+    dashboard.style.display = total > 0 || totalQ > 0 ? 'block' : 'block'; // 始终显示
+    
+    var el;
+    el = document.getElementById('totalPercent');
+    if (el) el.textContent = pct + '%';
+    el = document.getElementById('totalBar');
+    if (el) el.style.width = pct + '%';
+    el = document.getElementById('bizProgress');
+    if (el) el.textContent = bizRead + '/9';
+    el = document.getElementById('lawProgress');
+    if (el) el.textContent = lawRead + '/18';
+    el = document.getElementById('natProgress');
+    if (el) el.textContent = natRead + '/11';
+    el = document.getElementById('localProgress');
+    if (el) el.textContent = localRead + '/8';
+    el = document.getElementById('totalQuestions');
+    if (el) el.textContent = totalQ;
+    el = document.getElementById('accuracyRate');
+    if (el) el.textContent = accuracy + '%';
+    el = document.getElementById('wrongCount');
+    if (el) el.textContent = wrongQs.length;
+    
+    // 连续天数
+    if (streak > 0) {
+      el = document.getElementById('streakBadge');
+      if (el) el.style.display = 'inline-flex';
+      el = document.getElementById('streakDays');
+      if (el) el.textContent = streak;
+    }
+  }
+})();
+
+// ===== 首次访问欢迎弹窗 =====
+(function() {
+  var visited = localStorage.getItem('youdao_visited');
+  if (!visited) {
+    localStorage.setItem('youdao_visited', '1');
+    var overlay = document.createElement('div');
+    overlay.id = 'welcomeOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+    overlay.innerHTML = '<div style="background:#FFF;border-radius:24px;padding:32px 24px;max-width:420px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);position:relative;">'
+      + '<div style="font-size:2.5rem;margin-bottom:12px;">👋</div>'
+      + '<h2 style="font-size:1.3rem;font-weight:800;color:#1A1A1A;margin-bottom:12px;">欢迎来到游导学习笔记！</h2>'
+      + '<p style="font-size:0.9rem;color:#666;line-height:1.7;margin-bottom:20px;">我是曼曼，考了两次才上岸的过来人。<br>这个网站就是帮你少走弯路的。</p>'
+      + '<div style="text-align:left;background:#F0F5FF;border-radius:14px;padding:16px;margin-bottom:20px;">'
+      + '<div style="font-size:0.85rem;font-weight:700;color:#4C8BF5;margin-bottom:10px;">🎯 3步开始备考：</div>'
+      + '<div style="font-size:0.82rem;color:#555;line-height:2;">'
+      + '<span style="color:#4C8BF5;font-weight:700;">①</span> 看知识点 — 每天1章，先看导游业务<br>'
+      + '<span style="color:#4C8BF5;font-weight:700;">②</span> 做练习题 — 看完一章就刷题巩固<br>'
+      + '<span style="color:#4C8BF5;font-weight:700;">③</span> 查错题本 — 做错的自动收录，反复练<br>'
+      + '</div></div>'
+      + '<p style="font-size:0.78rem;color:#999;margin-bottom:16px;">💡 遇到不懂的随时点右下角 💬问AI，24小时在线</p>'
+      + '<button onclick="document.getElementById('welcomeOverlay').remove()" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);color:#FFF;font-size:1rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(76,139,245,0.3);">开始学习 🚀</button>'
+      + '</div>';
+    document.body.appendChild(overlay);
   }
 })();
 </script>

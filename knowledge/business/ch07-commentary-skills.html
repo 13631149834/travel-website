@@ -166,6 +166,23 @@ footer{margin-bottom:70px!important}
 </style>
 
 <link rel="stylesheet" href="../../css/chapter.css">
+
+<style>
+.chapter-complete-toast {
+  position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: #FFF; border-radius: 20px; padding: 28px 24px; max-width: 340px; width: 90%;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2); z-index: 99998; text-align: center;
+  animation: toastPop 0.4s ease;
+}
+.chapter-complete-toast .overlay-bg {
+  position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.4); z-index: 99997;
+}
+@keyframes toastPop {
+  0% { transform: translate(-50%, -50%) scale(0.8); opacity: 0; }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+</style>
+
 </head>
 <body>
 <nav>
@@ -225,6 +242,30 @@ footer{margin-bottom:70px!important}
     btn.textContent = '✓ 已完成';
     btn.style.background = '#38A169';
     btn.disabled = true;
+    // === 完成引导弹窗 ===
+    var nextLink = document.querySelector('.chapter-nav .next-link');
+    var nextUrl = nextLink ? nextLink.getAttribute('href') : null;
+    var nextText = nextLink ? nextLink.textContent.trim() : null;
+    var subjectMatch = window.location.pathname.match(/\/knowledge\/([^/]+)/);
+    var currentSubject = subjectMatch ? subjectMatch[1] : '';
+    var quizUrl = '/exam-simulator.html';
+    if (currentSubject) quizUrl += '?subject=' + currentSubject;
+    var toastHtml = '<div class="overlay-bg" onclick="this.parentElement.remove()"></div>'
+      + '<div style="font-size:2rem;margin-bottom:8px;">🎉</div>'
+      + '<div style="font-size:1.1rem;font-weight:800;color:#38A169;margin-bottom:6px;">本章已完成！</div>'
+      + '<div style="font-size:0.85rem;color:#666;margin-bottom:18px;">继续加油，离上岸又近一步</div>'
+      + '<div style="display:flex;flex-direction:column;gap:8px;">'
+      + '<a href="' + quizUrl + '" style="display:block;padding:12px;border-radius:12px;background:linear-gradient(135deg,#4C8BF5,#6BA3FF);color:#FFF;text-decoration:none;font-weight:700;font-size:0.9rem;">✏️ 做本章练习题</a>';
+    if (nextUrl && nextText) {
+      toastHtml += '<a href="' + nextUrl + '" style="display:block;padding:12px;border-radius:12px;border:2px solid #4C8BF5;color:#4C8BF5;text-decoration:none;font-weight:700;font-size:0.9rem;">📖 ' + nextText + '</a>';
+    }
+    toastHtml += '<a href="/chat.html" style="display:block;padding:10px;border-radius:12px;background:#F0F5FF;color:#4C8BF5;text-decoration:none;font-weight:600;font-size:0.85rem;">💬 有疑问问AI</a>'
+      + '</div>'
+      + '<button onclick="this.parentElement.remove()" style="margin-top:12px;background:none;border:none;color:#999;font-size:0.8rem;cursor:pointer;">关闭</button>';
+    var toast = document.createElement('div');
+    toast.className = 'chapter-complete-toast';
+    toast.innerHTML = toastHtml;
+    document.body.appendChild(toast);
   };
 })();
 </script>
