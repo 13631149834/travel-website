@@ -904,7 +904,13 @@ a { color: #4C8BF5 !important; }
       </div>
       
       
-<!-- 继续学习卡片：根据进度推荐下一章 -->
+
+      <!-- 备考路线图入口 -->
+      <div style="text-align:center;margin:20px 0">
+        <a href="study-roadmap.html" style="display:inline-block;padding:12px 28px;background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;border-radius:25px;text-decoration:none;font-weight:bold;font-size:.95rem;box-shadow:0 3px 12px rgba(230,81,0,.3);transition:all .2s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">🗺️ 查看184天备考路线图</a>
+      </div>
+
+      <!-- 继续学习卡片：根据进度推荐下一章 -->
 <div id="continueLearning" style="display:none;margin-bottom:28px;padding:20px;background:linear-gradient(135deg,#F0FFF4,#C6F6D5);border-radius:16px;border-left:4px solid #38A169;">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
     <div>
@@ -1200,7 +1206,30 @@ function showPath(type) {
   <!-- ===== 第三屏：备考工具 ===== -->
   <section class="tools-section" style="padding:60px 20px;background:#FAFAFA;">
     <div style="max-width:900px;margin:0 auto;">
-      <h2 style="font-size:1.5rem;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:8px;">备考工具箱</h2>
+      
+      <!-- 入学水平自测 -->
+      <div id="diagnosticSection" style="background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-radius:16px;padding:28px 24px;margin:30px 0;text-align:center">
+        <h2 style="color:#1565C0;font-size:1.2rem;margin:0 0 8px">🧭 第一次来？先测测你的水平</h2>
+        <p style="color:#666;font-size:.9rem;margin:0 0 20px">10道题快速自测，1分钟知道你该重点学什么</p>
+        <div id="diagnosticQuiz" style="display:none;text-align:left;max-width:500px;margin:0 auto">
+          <div id="diagQuestion"></div>
+          <div id="diagOptions" style="margin:12px 0"></div>
+          <div id="diagProgress" style="display:flex;gap:4px;justify-content:center;margin:12px 0"></div>
+          <div style="display:flex;justify-content:center;gap:10px">
+            <button onclick="diagNext()" id="diagNextBtn" style="display:none;padding:10px 28px;background:#E65100;color:#fff;border:none;border-radius:20px;font-size:.95rem;cursor:pointer">下一题 →</button>
+          </div>
+        </div>
+        <div id="diagResult" style="display:none;text-align:left;max-width:500px;margin:0 auto">
+          <div style="background:#fff;border-radius:12px;padding:20px;margin-bottom:16px">
+            <h3 style="color:#E65100;margin:0 0 12px">🎯 自测结果</h3>
+            <div id="diagResultContent"></div>
+          </div>
+          <a href="travel-knowledge.html" style="display:inline-block;padding:12px 30px;background:#E65100;color:#fff;border-radius:25px;text-decoration:none;font-weight:bold">📖 开始针对性学习</a>
+        </div>
+        <button onclick="startDiag()" id="diagStartBtn" style="padding:14px 36px;background:#1565C0;color:#fff;border:none;border-radius:30px;font-size:1rem;font-weight:bold;cursor:pointer;margin-top:10px;transition:all .2s" onmouseover="this.style.background='#0D47A1'" onmouseout="this.style.background='#1565C0'">🚀 开始自测</button>
+      </div>
+
+<h2 style="font-size:1.5rem;font-weight:800;color:#1A1A1A;text-align:center;margin-bottom:8px;">备考工具箱</h2>
       <p style="text-align:center;color:#666;margin-bottom:32px;font-size:0.9rem;">效率备考，185天冲刺</p>
       
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;">
@@ -1721,6 +1750,29 @@ if ('serviceWorker' in navigator) {
 <style>
 @keyframes notifSlide { 0% { transform: translateX(-50%) translateY(-20px); opacity: 0; } 100% { transform: translateX(-50%) translateY(0); opacity: 1; } }
 </style>
+
+
+<script>
+// 入学水平自测
+const diagQuestions=[
+{q:"旅游安全事故发生后，导游首先应该做什么？",o:["A 继续行程","B 报告旅行社","C 保护现场并组织抢救","D 追究责任"],a:2,s:"business",t:"导游业务"},
+{q:"旅游法第35条禁止的行为是？",o:["A 导游小费","B 强制购物","C 景点讲解","D 行程调整"],a:1,s:"policy",t:"政策法规"},
+{q:"以下哪个不是中国双遗产？",o:["A 泰山","B 黄山","C 九寨沟","D 武夷山"],a:2,s:"national",t:"全国导基"},
+{q:"广东省的简称是？",o:["A 广","B 粤","C 穗","D 越"],a:1,s:"local",t:"地方导基"},
+{q:"导游带团时游客走失，第一步应该？",o:["A 直接报警","B 了解情况并寻找","C 继续带团不管","D 取消行程"],a:1,s:"business",t:"导游业务"},
+{q:"旅游投诉时效是多久？",o:["A 30日","B 60日","C 90日","D 180日"],a:2,s:"policy",t:"政策法规"},
+{q:"四大佛教名山中，文殊菩萨的道场是？",o:["A 峨眉山","B 普陀山","C 五台山","D 九华山"],a:2,s:"national",t:"全国导基"},
+{q:"傣族最著名的节日是？",o:["A 火把节","B 泼水节","C 那达慕","D 三月三"],a:1,s:"local",t:"地方导基"},
+{q:"导游证（电子证）有效期是多久？",o:["A 1年","B 3年","C 5年","D 终身"],a:1,s:"policy",t:"政策法规"},
+{q:"拙政园位于哪个城市？",o:["A 杭州","B 扬州","C 苏州","D 南京"],a:2,s:"national",t:"全国导基"}
+];
+let diagIdx=0,diagScore={business:0,policy:0,national:0,local:0},diagTotal={business:0,policy:0,national:0,local:0},diagAnswered=false;
+function startDiag(){document.getElementById('diagStartBtn').style.display='none';document.getElementById('diagnosticQuiz').style.display='block';showDiagQ()}
+function showDiagQ(){if(diagIdx>=diagQuestions.length){showDiagResult();return}const q=diagQuestions[diagIdx];document.getElementById('diagQuestion').innerHTML='<p style="font-weight:bold;font-size:.95rem;color:#333">第'+(diagIdx+1)+'题 / '+diagQuestions.length+'<span style="float:right;color:#1565C0;font-size:.8rem">'+q.t+'</span></p><p style="font-size:.95rem;color:#333;margin:8px 0">'+q.q+'</p>';let optHtml='';q.o.forEach((o,i)=>{optHtml+='<div onclick="diagSelect('+i+')" id="diagOpt'+i+'" style="padding:10px 14px;margin:6px 0;background:#fff;border-radius:8px;cursor:pointer;border:2px solid #e0e0e0;transition:all .2s;font-size:.9rem">'+o+'</div>'});document.getElementById('diagOptions').innerHTML=optHtml;document.getElementById('diagNextBtn').style.display='none';diagAnswered=false;let dots='';for(let i=0;i<diagQuestions.length;i++){dots+='<div style="width:8px;height:8px;border-radius:50%;background:'+(i<diagIdx?'#4CAF50':'#ddd')+'"></div>'}document.getElementById('diagProgress').innerHTML=dots}
+function diagSelect(idx){if(diagAnswered)return;diagAnswered=true;const q=diagQuestions[diagIdx];diagTotal[q.s]++;if(idx===q.a)diagScore[q.s]++;document.getElementById('diagOpt'+q.a).style.background='#C8E6C9';document.getElementById('diagOpt'+q.a).style.borderColor='#4CAF50';if(idx!==q.a){document.getElementById('diagOpt'+idx).style.background='#FFCDD2';document.getElementById('diagOpt'+idx).style.borderColor='#F44336'}document.getElementById('diagNextBtn').style.display='inline-block';document.getElementById('diagNextBtn').textContent=diagIdx===diagQuestions.length-1?'查看结果 →':'下一题 →'}
+function diagNext(){diagIdx++;if(diagIdx>=diagQuestions.length){showDiagResult();return}showDiagQ()}
+function showDiagResult(){document.getElementById('diagnosticQuiz').style.display='none';document.getElementById('diagResult').style.display='block';const subjects=[{key:'business',name:'💼 导游业务',total:2},{key:'policy',name:'⚖️ 政策法规',total:3},{key:'national',name:'📚 全国导基',total:3},{key:'local',name:'🗺️ 地方导基',total:2}];let html='<div style="margin-bottom:16px">';let weakest='',weakScore=1;subjects.forEach(s=>{const pct=Math.round(diagScore[s.key]/s.total*100);const color=pct>=80?'#4CAF50':pct>=50?'#FF9800':'#F44336';html+='<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:.9rem"><span>'+s.name+'</span><span style="color:'+color+';font-weight:bold">'+diagScore[s.key]+'/'+s.total+' ('+pct+'%)</span></div><div style="background:#f0f0f0;border-radius:4px;height:6px;margin-top:4px"><div style="background:'+color+';height:100%;border-radius:4px;width:'+pct+'%;transition:width .5s"></div></div></div>';if(pct/100<weakScore){weakScore=pct/100;weakest=s.name}});html+='</div>';html+='<div style="background:#FFF3E0;border-radius:10px;padding:14px;margin-top:12px"><p style="margin:0;color:#E65100;font-weight:bold;font-size:.95rem">📌 建议：你最薄弱的是 <strong>'+weakest+'</strong>，建议从这里开始重点突破！</p></div>';const totalCorrect=Object.values(diagScore).reduce((a,b)=>a+b,0);if(totalCorrect>=8)html+='<p style="color:#4CAF50;font-weight:bold;margin-top:12px">🎉 基础不错！按路线图系统复习即可</p>';else if(totalCorrect>=5)html+='<p style="color:#FF9800;font-weight:bold;margin-top:12px">💪 有一定基础，重点补薄弱科目</p>';else html+='<p style="color:#F44336;font-weight:bold;margin-top:12px">🔥 基础需要加强，建议从知识库第1章开始</p>';document.getElementById('diagResultContent').innerHTML=html;localStorage.setItem('youdao_diag_done','1')}
+</script>
 
 </body>
 </html>

@@ -114,7 +114,106 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hira
 <!-- Tab1: 面试流程 -->
 <div class="tab-content active" id="tab-flow">
   <div class="card">
-    <h2>📋 面试全流程</h2>
+    <h2>
+<!-- 面试省份选择器 -->
+<div id="provinceSelector" style="background:#fff;border-radius:16px;padding:24px;margin-bottom:28px;box-shadow:0 2px 12px rgba(0,0,0,.08)">
+  <h3 style="color:#E65100;font-size:1.1rem;margin:0 0 6px">🗺️ 选择你报考的省份</h3>
+  <p style="color:#888;font-size:.85rem;margin:0 0 14px">各省面试景点不同，选择后查看该省常考景点和导游词框架</p>
+  <select id="provinceSelect" onchange="showProvinceInfo()" style="width:100%;max-width:400px;padding:12px 16px;border:2px solid #E65100;border-radius:10px;font-size:1rem;color:#333;background:#FFF8E1;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml;utf8,<svg fill=\'%23E65100\' viewBox=\'0 0 24 24\' xmlns=\'http://www.w3.org/2000/svg\'><path d=\'M7 10l5 5 5-5z\'/></svg>');background-repeat:no-repeat;background-position:right 12px center;background-size:20px">
+    <option value="">— 请选择省份 —</option>
+    <option value="guangdong">广东省</option>
+    <option value="beijing">北京市</option>
+    <option value="shanghai">上海市</option>
+    <option value="sichuan">四川省</option>
+    <option value="yunnan">云南省</option>
+    <option value="shaanxi">陕西省</option>
+    <option value="zhejiang">浙江省</option>
+    <option value="jiangsu">江苏省</option>
+    <option value="shandong">山东省</option>
+    <option value="hunan">湖南省</option>
+    <option value="fujian">福建省</option>
+    <option value="hubei">湖北省</option>
+    <option value="henan">河南省</option>
+    <option value="anhui">安徽省</option>
+    <option value="chongqing">重庆市</option>
+    <option value="guizhou">贵州省</option>
+    <option value="guangxi">广西壮族自治区</option>
+    <option value="hainan">海南省</option>
+    <option value="heilongjiang">黑龙江省</option>
+    <option value="jilin">吉林省</option>
+    <option value="liaoning">辽宁省</option>
+    <option value="hebei">河北省</option>
+    <option value="shanxi">山西省</option>
+    <option value="gansu">甘肃省</option>
+    <option value="qinghai">青海省</option>
+    <option value="ningxia">宁夏回族自治区</option>
+    <option value="xinjiang">新疆维吾尔自治区</option>
+    <option value="xizang">西藏自治区</option>
+    <option value="neimenggu">内蒙古自治区</option>
+    <option value="tianjin">天津市</option>
+    <option value="jiangxi">江西省</option>
+  </select>
+  <div id="provinceInfo" style="display:none;margin-top:16px"></div>
+</div>
+
+<script>
+const provinceData={
+guangdong:{name:'广东省',spots:['丹霞山（世界地质公园，红石公园）','开平碉楼与村落（世界文化遗产）','陈家祠（岭南建筑艺术明珠）','广州塔（小蛮腰，城市地标）','西樵山（岭南名山，理学名山）','长隆旅游度假区（5A级综合度假区）','罗浮山（道教第七洞天）','雁南飞茶田（客家茶文化景区）'],feature:'广东面试侧重岭南文化、粤菜知识、广府/客家/潮汕三大民系。讲解时融入岭南特色元素可加分。',tips:'广东竞争较大，建议选自己最熟的2-3个5A景区深度准备。丹霞山和开平碉楼是高频考点。'},
+beijing:{name:'北京市',spots:['故宫博物院（世界最大宫殿建筑群）','八达岭长城（世界文化遗产）','颐和园（皇家园林博物馆）','天坛公园（祭天建筑群）','明十三陵（明代帝陵群）','恭王府（清代王府）','慕田峪长城（万里长城精华段）'],feature:'北京面试侧重皇家文化、明清历史、中轴线布局。故宫和长城几乎是必考。',tips:'故宫讲解要分前朝后寝，长城要区分各段特点。北京考生多，竞争激烈。'},
+shanghai:{name:'上海市',spots:['东方明珠广播电视塔','上海野生动物园','豫园（江南古典园林）','朱家角古镇（江南水乡）','上海科技馆','外滩万国建筑博览群'],feature:'上海面试侧重海派文化、近代历史、中西融合特色。',tips:'外滩和豫园是高频考点。讲解时注意海派文化的"兼容并蓄"特色。'},
+sichuan:{name:'四川省',spots:['九寨沟（世界自然遗产）','峨眉山-乐山大佛（世界双遗产）','都江堰-青城山（世界文化遗产）','黄龙风景区（世界自然遗产）','稻城亚丁（蓝色星球最后净土）','四姑娘山','阆中古城','武侯祠'],feature:'四川面试侧重巴蜀文化、三国历史、藏羌民族风情。九寨沟和峨眉山是必考。',tips:'四川景点多、题材丰富，选自己最熟悉的2-3个深度准备。讲解时融入大熊猫、川菜等特色元素。'},
+yunnan:{name:'云南省',spots:['石林（世界自然遗产，喀斯特地貌）','丽江古城（世界文化遗产）','玉龙雪山','大理崇圣寺三塔','西双版纳热带植物园','普达措国家公园','腾冲热海','昆明世博园'],feature:'云南面试侧重少数民族文化、自然景观、茶马古道。25个民族是重点。',tips:'云南少数民族多，面试时讲解景点要融入当地民族风情。石林和丽江是高频。'},
+shaanxi:{name:'陕西省',spots:['秦始皇兵马俑（世界文化遗产）','华山（西岳，五岳之一）','华清宫（唐代皇家温泉）','大雁塔（玄奘藏经）','法门寺（佛教圣地）','黄帝陵','壶口瀑布'],feature:'陕西面试侧重秦汉唐历史、丝绸之路文化。兵马俑几乎是必考。',tips:'陕西历史底蕴深厚，面试讲解要有历史纵深感。兵马俑+华清宫是最常组合。'},
+zhejiang:{name:'浙江省',spots:['西湖（世界文化景观）','普陀山（观音道场）','雁荡山','乌镇（江南水乡）','南浔古镇','千岛湖','横店影视城','天台山'],feature:'浙江面试侧重江南水乡文化、佛教文化、茶文化。西湖几乎必考。',tips:'西湖讲解要点：苏堤白堤、三潭印月、雷峰塔。加入白蛇传传说可加分。'},
+jiangsu:{name:'江苏省',spots:['拙政园（四大名园之一）','留园（四大名园之一）','中山陵','鼋头渚','灵山大佛','周庄古镇','瘦西湖','虎丘'],feature:'江苏面试侧重园林文化、吴文化、运河文化。苏州园林是重点。',tips:'江苏5A景区全国最多，选2-3个深度准备。园林讲解用"移步换景"等术语。'},
+shandong:{name:'山东省',spots:['泰山（五岳之首，双遗产）','曲阜三孔（孔庙孔府孔林）','崂山','刘公岛','蓬莱阁','天下第一泉趵突泉','沂蒙山'],feature:'山东面试侧重儒家文化、齐鲁文化、泰山封禅文化。泰山+三孔是必考。',tips:'泰山讲解要分中天门以上/以下，三孔要突出"礼"文化。孔子相关典故要准备。'},
+hunan:{name:'湖南省',spots:['张家界国家森林公园','天门山','凤凰古城','南岳衡山','岳麓山','橘子洲头','韶山'],feature:'湖南面试侧重湖湘文化、红色旅游、少数民族风情。',tips:'张家界和凤凰古城是高频考点。凤凰讲解要融入沈从文《边城》。'},
+fujian:{name:'福建省',spots:['武夷山（双遗产）','鼓浪屿','永定土楼','清源山','太姥山','三坊七巷','湄洲岛'],feature:'福建面试侧重闽南文化、客家土楼、茶文化。武夷山和鼓浪屿是高频。',tips:'武夷山讲解要融入朱子理学和茶文化，鼓浪屿要突出万国建筑和钢琴之岛。'},
+hubei:{name:'湖北省',spots:['黄鹤楼','武当山','三峡大坝','神农架','东湖','木兰天池','恩施大峡谷'],feature:'湖北面试侧重楚文化、三国文化、道教文化。黄鹤楼是高频。',tips:'黄鹤楼讲解加入崔颢诗句是加分项。武当山要突出道教文化和太极拳。'},
+henan:{name:'河南省',spots:['龙门石窟（世界文化遗产）','少林寺','清明上河园','殷墟','云台山','白马寺','嵩山'],feature:'河南面试侧重中原文化、佛教文化、功夫文化。龙门石窟+少林寺是必考。',tips:'河南历史底蕴极深，讲解要有"华夏文明发源地"的格局感。'},
+anhui:{name:'安徽省',spots:['黄山（双遗产）','西递宏村（世界文化遗产）','九华山（地藏菩萨道场）','天柱山','琅琊山','徽州古城'],feature:'安徽面试侧重徽文化、徽派建筑、黄山文化。黄山几乎是必考。',tips:'黄山讲解"四绝"（奇松怪石云海温泉）是基本，加入徐霞客"黄山归来不看岳"可加分。'},
+chongqing:{name:'重庆市',spots:['大足石刻（世界文化遗产）','武隆天坑地缝','长江三峡','洪崖洞','磁器口古镇','白帝城','巫山小三峡'],feature:'重庆面试侧重巴渝文化、山城文化、三峡文化。',tips:'大足石刻和三峡是高频考点。三峡讲解要分段（瞿塘峡/巫峡/西陵峡）。'},
+guizhou:{name:'贵州省',spots:['黄果树瀑布','荔波小七孔','西江千户苗寨','梵净山（世界自然遗产）','织金洞','镇远古城','赤水丹霞'],feature:'贵州面试侧重苗族侗族文化、喀斯特地貌、红色旅游。',tips:'黄果树瀑布和西江苗寨是高频考点。苗族银饰、蜡染等元素可融入讲解。'},
+guangxi:{name:'广西壮族自治区',spots:['漓江游船','德天瀑布','青秀山','两江四湖','龙脊梯田','北海银滩','象鼻山'],feature:'广西面试侧重壮族文化、喀斯特山水、桂林山水甲天下。',tips:'漓江和德天瀑布是高频考点。壮族三月三歌圩节要了解。'},
+hainan:{name:'海南省',spots:['南山文化旅游区','天涯海角','蜈支洲岛','呀诺达雨林','分界洲岛','博鳌亚洲论坛','五指山'],feature:'海南面试侧重热带海洋文化、黎苗文化、南海文化。',tips:'南山和天涯海角是高频考点。海南考生竞争相对较小，但面试标准不减。'},
+heilongjiang:{name:'黑龙江省',spots:['太阳岛','镜泊湖','漠河北极村','五大连池','雪乡','亚布力','扎龙自然保护区'],feature:'黑龙江面试侧重冰雪文化、中俄边境文化、满族文化。',tips:'冰雪大世界和镜泊湖是高频考点。漠河北极村讲解加入极光知识。'},
+jilin:{name:'吉林省',spots:['长白山天池','伪满皇宫','净月潭','松花湖','六鼎山','查干湖'],feature:'吉林面试侧重满族文化、冰雪文化、长白山文化。',tips:'长白山天池几乎必考，讲解要涵盖天池、瀑布、温泉、垂直植被带。'},
+liaoning:{name:'辽宁省',spots:['沈阳故宫','千山风景区','本溪水洞','大连老虎滩','鸭绿江断桥','兴城古城','凤凰山'],feature:'辽宁面试侧重清代文化、满族文化、海滨文化。',tips:'沈阳故宫和本溪水洞是高频考点。沈阳故宫与北京故宫对比讲解可加分。'},
+hebei:{name:'河北省',spots:['承德避暑山庄','山海关','白洋淀','清东陵/清西陵','野三坡','西柏坡','北戴河'],feature:'河北面试侧重皇家文化、长城文化、红色旅游。',tips:'避暑山庄和山海关是高频考点。避暑山庄要讲外八庙的"民族融合"意义。'},
+shanxi:{name:'山西省',spots:['云冈石窟（世界文化遗产）','平遥古城（世界文化遗产）','五台山（双遗产）','壶口瀑布','乔家大院','悬空寺','应县木塔'],feature:'山西面试侧重晋商文化、佛教文化、古建文化。',tips:'云冈石窟和平遥古城是必考。山西古建全国第一，讲解要突出"地上文物看山西"。'},
+gansu:{name:'甘肃省',spots:['敦煌莫高窟（世界文化遗产）','鸣沙山月牙泉','嘉峪关','麦积山石窟','张掖丹霞','拉卜楞寺','黄河铁桥'],feature:'甘肃面试侧重丝绸之路文化、石窟文化、敦煌文化。',tips:'莫高窟几乎必考，讲解要涵盖藏经洞、飞天、壁画三大主题。'},
+qinghai:{name:'青海省',spots:['青海湖','塔尔寺','茶卡盐湖','祁连山','可可西里','门源油菜花','日月山'],feature:'青海面试侧重藏族文化、盐湖文化、三江源生态。',tips:'青海湖和塔尔寺是高频考点。塔尔寺讲解突出"酥油花、壁画、堆绣"三绝。'},
+ningxia:{name:'宁夏回族自治区',spots:['沙坡头','西夏王陵','镇北堡影视城','沙湖','贺兰山岩画','水洞沟','六盘山'],feature:'宁夏面试侧重回族文化、西夏文化、沙漠文化。',tips:'沙坡头和西夏王陵是高频考点。沙坡头讲解突出"治沙奇迹"。'},
+xinjiang:{name:'新疆维吾尔自治区',spots:['天山天池','喀纳斯湖','那拉提草原','葡萄沟','坎儿井','火焰山','赛里木湖','可可托海'],feature:'新疆面试侧重维吾尔族文化、丝路文化、绿洲文化。',tips:'天池和喀纳斯是高频考点。讲解要突出多民族融合特色。'},
+xizang:{name:'西藏自治区',spots:['布达拉宫（世界文化遗产）','大昭寺','纳木错','巴松措','珠穆朗玛峰','雅鲁藏布大峡谷','扎什伦布寺'],feature:'西藏面试侧重藏族文化、藏传佛教、高原生态。',tips:'布达拉宫几乎必考，讲解要突出"红宫白宫"结构和藏传佛教意义。'},
+neimenggu:{name:'内蒙古自治区',spots:['呼伦贝尔大草原','成吉思汗陵','响沙湾','额济纳胡杨林','阿尔山','昭君墓','大召寺'],feature:'内蒙古面试侧重蒙古族文化、草原文化、游牧文化。',tips:'呼伦贝尔草原和成吉思汗陵是高频考点。那达慕大会要了解。'},
+tianjin:{name:'天津市',spots:['古文化街','五大道','盘山','独乐寺','意式风情区','天津之眼','黄崖关长城'],feature:'天津面试侧重津味文化、近代历史、民俗文化。',tips:'五大道和古文化街是高频考点。讲解可融入相声、杨柳青年画等民俗。'},
+jiangxi:{name:'江西省',spots:['庐山（世界文化景观）','井冈山','滕王阁','三清山','龙虎山','婺源','景德镇'],feature:'江西面试侧重红色文化、陶瓷文化、道教文化。',tips:'庐山和滕王阁是高频考点。滕王阁讲解加入王勃《滕王阁序》必加分。'}
+};
+
+function showProvinceInfo(){
+  const sel=document.getElementById('provinceSelect');
+  const prov=sel.value;
+  const info=document.getElementById('provinceInfo');
+  if(!prov){info.style.display='none';return}
+  const d=provinceData[prov];
+  if(!d){info.style.display='none';return}
+  let spotsHtml='';
+  d.spots.forEach((s,i)=>{spotsHtml+='<div style="padding:10px 14px;margin:6px 0;background:#FFF8E1;border-radius:8px;border-left:3px solid #E65100;font-size:.9rem;color:#444"><strong>'+(i+1)+'.</strong> '+s+'</div>'});
+  info.innerHTML='<div style="background:linear-gradient(135deg,#FFF8E1,#FFE082);border-radius:12px;padding:18px;margin-bottom:12px"><h4 style="color:#E65100;margin:0 0 10px;font-size:1.05rem">'+d.name+'面试常考景点</h4>'+spotsHtml+'</div><div style="background:#E3F2FD;border-radius:10px;padding:14px;margin-bottom:10px"><p style="margin:0;font-size:.9rem;color:#1565C0"><strong>📍 考情特点：</strong>'+d.feature+'</p></div><div style="background:#FFF3E0;border-radius:10px;padding:14px"><p style="margin:0;font-size:.9rem;color:#E65100"><strong>💡 备考建议：</strong>'+d.tips+'</p></div><div style="text-align:center;margin-top:14px"><a href="ai-assistant.html" style="display:inline-block;padding:10px 24px;background:#E65100;color:#fff;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.9rem">💬 问AI助手要'+d.name+'导游词</a></div>';
+  info.style.display='block';
+  localStorage.setItem('youdao_province',prov);
+}
+
+// 恢复上次选择
+window.addEventListener('DOMContentLoaded',function(){
+  const saved=localStorage.getItem('youdao_province');
+  if(saved){document.getElementById('provinceSelect').value=saved;showProvinceInfo()}
+});
+</script>
+
+
+📋 面试全流程</h2>
     <div class="step-list">
       <div class="step-item">
         <h3>抽题（3选1景点）</h3>
