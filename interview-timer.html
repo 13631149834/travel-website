@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面试计时练习 - 游导学习笔记</title>
+<meta name="description" content="导游证面试计时练习器，模拟3-5分钟讲解，含倒计时、录音和评分提示">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#E65100">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background:linear-gradient(180deg,#FFF8E1,#FFE082);min-height:100vh;color:#333;padding-bottom:80px}
+[data-theme="dark"] body{background:linear-gradient(180deg,#1a1a2e,#16213e);color:#e0e0e0}
+
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid #f0f0f0;position:sticky;top:0;z-index:100}
+[data-theme="dark"] .navbar{background:#222;border-bottom-color:#333}
+.logo{font-size:1.1rem;font-weight:800;color:#1a1a1a;display:flex;align-items:center;gap:8px;text-decoration:none}
+[data-theme="dark"] .logo{color:#e0e0e0}
+.logo-icon{width:32px;height:32px;background:#E65100;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.9rem}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:8px 12px;border-radius:10px;font-size:0.85rem;color:#666;transition:all 0.3s;text-decoration:none}
+.nav-links a:hover{background:#F0F5FF;color:#E65100}
+[data-theme="dark"] .nav-links a{color:#aaa}
+
+.container{max-width:600px;margin:0 auto;padding:20px 16px}
+
+/* 核心计时器 */
+.timer-hero{text-align:center;padding:30px 0 20px}
+.timer-hero h1{font-size:1.5rem;font-weight:800;color:#1a1a1a;margin-bottom:4px}
+[data-theme="dark"] .timer-hero h1{color:#e0e0e0}
+.timer-hero p{font-size:0.88rem;color:#888}
+
+.timer-ring{position:relative;width:240px;height:240px;margin:24px auto}
+.timer-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer-ring circle{fill:none;stroke-width:8}
+.timer-bg{stroke:#f0f0f0}
+[data-theme="dark"] .timer-bg{stroke:#333}
+.timer-progress{stroke:#E65100;stroke-linecap:round;transition:stroke-dashoffset 0.5s ease}
+.timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer-digits{font-size:3rem;font-weight:800;color:#1a1a1a;font-variant-numeric:tabular-nums;line-height:1}
+[data-theme="dark"] .timer-digits{color:#e0e0e0}
+.timer-label{font-size:0.82rem;color:#999;margin-top:4px}
+
+/* 时间选择 */
+.time-options{display:flex;justify-content:center;gap:8px;margin:16px 0}
+.time-opt{padding:8px 18px;border:2px solid #E0E0E0;border-radius:20px;font-size:0.88rem;font-weight:600;cursor:pointer;background:#fff;color:#666;transition:all 0.2s}
+.time-opt:hover{border-color:#E65100;color:#E65100}
+.time-opt.active{background:#E65100;border-color:#E65100;color:#fff}
+[data-theme="dark"] .time-opt{background:#2a2a2a;border-color:#444;color:#aaa}
+[data-theme="dark"] .time-opt.active{background:#E65100;border-color:#E65100;color:#fff}
+
+/* 控制按钮 */
+.controls{display:flex;justify-content:center;gap:12px;margin:20px 0}
+.ctrl-btn{padding:14px 32px;border:none;border-radius:16px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;touch-action:manipulation}
+.ctrl-btn:active{transform:scale(0.96)}
+.btn-start{background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;box-shadow:0 4px 16px rgba(230,81,0,0.3)}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(230,81,0,0.4)}
+.btn-pause{background:#FFF3E0;color:#E65100;border:2px solid #E65100}
+.btn-reset{background:#F5F5F5;color:#666;border:2px solid #E0E0E0}
+[data-theme="dark"] .btn-pause{background:#3a2a1a;border-color:#E65100}
+[data-theme="dark"] .btn-reset{background:#2a2a2a;border-color:#444;color:#aaa}
+
+/* 阶段提示 */
+.stage-hint{background:#fff;border-radius:16px;padding:16px 20px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);border:1px solid #f0f0f0}
+[data-theme="dark"] .stage-hint{background:#2a2a2a;border-color:#333}
+.stage-hint h3{font-size:0.95rem;font-weight:700;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+[data-theme="dark"] .stage-hint h3{color:#e0e0e0}
+.stage-hint p{font-size:0.85rem;color:#666;line-height:1.7}
+.stage-hint .current{color:#E65100;font-weight:700}
+
+/* 评分提示 */
+.score-tips{background:#fff;border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);border:1px solid #f0f0f0}
+[data-theme="dark"] .score-tips{background:#2a2a2a;border-color:#333}
+.score-tips h3{font-size:0.95rem;font-weight:700;color:#1a1a1a;margin-bottom:12px}
+[data-theme="dark"] .score-tips h3{color:#e0e0e0}
+.score-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:0.88rem}
+.score-item:last-child{border-bottom:none}
+.score-icon{font-size:1.2rem;width:28px;text-align:center}
+.score-name{font-weight:600;color:#1a1a1a;flex:1}
+[data-theme="dark"] .score-name{color:#e0e0e0}
+.score-val{color:#E65100;font-weight:700;font-size:0.9rem}
+
+/* 面试备忘 */
+.memo-section{background:#fff;border-radius:16px;padding:16px 20px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);border:1px solid #f0f0f0}
+[data-theme="dark"] .memo-section{background:#2a2a2a;border-color:#333}
+.memo-section h3{font-size:0.95rem;font-weight:700;color:#1a1a1a;margin-bottom:8px}
+[data-theme="dark"] .memo-section h3{color:#e0e0e0}
+.memo-input{width:100%;min-height:100px;padding:12px;border:1.5px solid #E0E0E0;border-radius:12px;font-size:0.88rem;font-family:inherit;resize:vertical;line-height:1.7;color:#333;transition:border-color 0.2s}
+.memo-input:focus{outline:none;border-color:#E65100}
+.memo-input::placeholder{color:#bbb}
+[data-theme="dark"] .memo-input{background:#1a1a1a;border-color:#444;color:#e0e0e0}
+.memo-save{font-size:0.78rem;color:#999;margin-top:6px}
+
+/* 结果弹窗 */
+.result-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;padding:20px}
+.result-overlay.show{display:flex}
+.result-card{background:#fff;border-radius:24px;padding:32px;max-width:380px;width:100%;text-align:center;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes popIn{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}
+[data-theme="dark"] .result-card{background:#2a2a2a}
+.result-card .emoji{font-size:3.5rem;margin-bottom:12px}
+.result-card h2{font-size:1.3rem;font-weight:800;color:#1a1a1a;margin-bottom:6px}
+[data-theme="dark"] .result-card h2{color:#e0e0e0}
+.result-card p{font-size:0.9rem;color:#666;line-height:1.6;margin-bottom:20px}
+.result-card .time-result{font-size:2.5rem;font-weight:800;color:#E65100;margin-bottom:8px}
+.result-btns{display:flex;gap:10px;justify-content:center}
+.result-btns button{padding:12px 24px;border:none;border-radius:12px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-again{background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;box-shadow:0 4px 12px rgba(230,81,0,0.2)}
+.btn-back{background:#F5F5F5;color:#666}
+[data-theme="dark"] .btn-back{background:#333;color:#aaa}
+
+/* 底部导航 */
+.bottom-tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #f0f0f0;display:flex;justify-content:space-around;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -1px 6px rgba(0,0,0,0.04)}
+[data-theme="dark"] .bottom-tabs{background:#222;border-top-color:#333}
+.tab-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.68rem;color:#999;text-decoration:none;padding:4px 8px;transition:color 0.2s}
+.tab-item.active{color:#E65100}
+.tab-icon{font-size:1.15rem}
+
+footer{text-align:center;padding:16px;font-size:0.78rem;color:#999;border-top:1px solid #f0f0f0;margin-top:20px}
+[data-theme="dark"] footer{border-top-color:#333}
+
+@media(max-width:768px){
+  .navbar{position:fixed;top:0;left:0;right:0;width:100%;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+  .nav-links{display:none}
+  .container{padding-top:70px}
+}
+</style>
+</head>
+<body>
+<div class="navbar">
+  <a href="index.html" class="logo"><span class="logo-icon">📚</span>游导学习笔记</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="ai-assistant.html">AI助手</a>
+    <a href="exam-simulator.html">刷题</a>
+    <a href="travel-knowledge.html">知识库</a>
+    <a href="interview.html">面试</a>
+  </div>
+</div>
+
+<div class="container">
+  <div class="timer-hero">
+    <h1>🎤 面试计时练习</h1>
+    <p>模拟真实面试，对着计时器练导游词</p>
+  </div>
+
+  <!-- 核心计时器 -->
+  <div class="timer-ring">
+    <svg viewBox="0 0 120 120">
+      <circle class="timer-bg" cx="60" cy="60" r="54"/>
+      <circle class="timer-progress" id="timerProgress" cx="60" cy="60" r="54" stroke-dasharray="339.29" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-center">
+      <div class="timer-digits" id="timerDigits">3:00</div>
+      <div class="timer-label" id="timerStage">准备开始</div>
+    </div>
+  </div>
+
+  <!-- 时间选择 -->
+  <div class="time-options">
+    <button class="time-opt" onclick="setDuration(3)">3分钟</button>
+    <button class="time-opt active" onclick="setDuration(4)">4分钟</button>
+    <button class="time-opt" onclick="setDuration(5)">5分钟</button>
+  </div>
+
+  <!-- 控制按钮 -->
+  <div class="controls" id="controls">
+    <button class="ctrl-btn btn-start" id="startBtn" onclick="startTimer()">▶ 开始练习</button>
+    <button class="ctrl-btn btn-reset" onclick="resetTimer()">↺ 重置</button>
+  </div>
+
+  <!-- 阶段提示 -->
+  <div class="stage-hint">
+    <h3>📋 讲解节奏提示</h3>
+    <p id="stageTip">
+      <span class="current">⏱ 0:00-0:30</span> 开场白：微笑问好，报景点名称<br>
+      <span>⏱ 0:30-1:30</span> 景点概况：位置、历史、地位<br>
+      <span>⏱ 1:30-3:30</span> 核心讲解：2-3个亮点深度讲<br>
+      <span>⏱ 3:30-4:00</span> 结束语：总结升华，感谢考官
+    </p>
+  </div>
+
+  <!-- 评分标准 -->
+  <div class="score-tips">
+    <h3>📊 面试评分提醒</h3>
+    <div class="score-item"><span class="score-icon">🎯</span><span class="score-name">景点讲解</span><span class="score-val">50分</span></div>
+    <div class="score-item"><span class="score-icon">💬</span><span class="score-name">问答环节</span><span class="score-val">30分</span></div>
+    <div class="score-item"><span class="score-icon">👔</span><span class="score-name">仪表仪态</span><span class="score-val">20分</span></div>
+  </div>
+
+  <!-- 面试备忘 -->
+  <div class="memo-section">
+    <h3>📝 讲解要点备忘</h3>
+    <textarea class="memo-input" id="memoInput" placeholder="写下你的讲解要点关键词，比如：&#10;&#10;故宫：&#10;1. 中轴线布局&#10;2. 太和殿-三大殿核心&#10;3. 故宫博物院186万件藏品" oninput="saveMemo()"></textarea>
+    <div class="memo-save">自动保存到本地</div>
+  </div>
+
+  <footer>
+    走过弯路，所以更懂路 · © 2025-2026 游导学习笔记<br>
+    <a href="interview.html" style="color:#E65100;text-decoration:none;font-weight:600">← 返回面试专区</a>
+  </footer>
+</div>
+
+<!-- 完成弹窗 -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-card">
+    <div class="emoji">🎉</div>
+    <h2>练习完成！</h2>
+    <div class="time-result" id="resultTime">4:00</div>
+    <p id="resultTip">讲解时间刚好，节奏控制得不错！继续加油💪</p>
+    <div class="result-btns">
+      <button class="btn-again" onclick="resetTimer();document.getElementById('resultOverlay').classList.remove('show')">再练一次</button>
+      <button class="btn-back" onclick="location.href='interview.html'">回面试专区</button>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-tabs">
+  <a class="tab-item" href="index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a>
+  <a class="tab-item" href="ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a>
+  <a class="tab-item" href="exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a>
+  <a class="tab-item" href="search.html"><span class="tab-icon">🔍</span><span class="tab-label">搜索</span></a>
+  <a class="tab-item" href="travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a>
+</nav>
+
+<!-- AI悬浮按钮 -->
+<a href="ai-assistant.html" style="position:fixed;bottom:76px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem;text-decoration:none;box-shadow:0 4px 16px rgba(230,81,0,0.35);z-index:998;transition:all 0.25s" title="AI助手">🤖</a>
+
+<!-- 夜间模式 -->
+<script>
+(function(){
+  var btn=document.createElement('button');
+  btn.style.cssText='position:fixed;bottom:80px;right:16px;z-index:999;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.2);transition:all .3s;background:#FFF8E1;color:#E65100';
+  btn.title='切换夜间模式';
+  var saved=localStorage.getItem('youdao_theme');
+  if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');btn.textContent='☀️'}
+  else{btn.textContent='🌙'}
+  btn.onclick=function(){
+    var isDark=document.documentElement.getAttribute('data-theme')==='dark';
+    if(isDark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('youdao_theme','light');btn.textContent='🌙'}
+    else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('youdao_theme','dark');btn.textContent='☀️'}
+  };
+  document.body.appendChild(btn);
+})();
+</script>
+
+<script>
+var duration = 4; // 分钟
+var totalSeconds = duration * 60;
+var remainingSeconds = totalSeconds;
+var timerInterval = null;
+var isRunning = false;
+var isPaused = false;
+
+var circumference = 2 * Math.PI * 54; // 339.29
+var progressEl = document.getElementById('timerProgress');
+var digitsEl = document.getElementById('timerDigits');
+var stageEl = document.getElementById('timerStage');
+var startBtn = document.getElementById('startBtn');
+
+// 加载备忘
+try {
+  var savedMemo = localStorage.getItem('youdao_interview_memo');
+  if (savedMemo) document.getElementById('memoInput').value = savedMemo;
+} catch(e) {}
+
+function saveMemo() {
+  try { localStorage.setItem('youdao_interview_memo', document.getElementById('memoInput').value); } catch(e) {}
+}
+
+function setDuration(min) {
+  if (isRunning) return;
+  duration = min;
+  totalSeconds = duration * 60;
+  remainingSeconds = totalSeconds;
+  document.querySelectorAll('.time-opt').forEach(function(b) { b.classList.remove('active'); });
+  event.target.classList.add('active');
+  updateDisplay();
+  progressEl.style.strokeDashoffset = '0';
+}
+
+function updateDisplay() {
+  var min = Math.floor(remainingSeconds / 60);
+  var sec = remainingSeconds % 60;
+  digitsEl.textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+  
+  // 更新进度环
+  var elapsed = totalSeconds - remainingSeconds;
+  var progress = elapsed / totalSeconds;
+  progressEl.style.strokeDashoffset = (circumference * (1 - progress)).toString();
+  
+  // 更新阶段提示
+  var totalMin = duration;
+  var elapsedMin = elapsed / 60;
+  if (elapsedMin < 0.5) {
+    stageEl.textContent = '📢 开场白';
+    stageEl.style.color = '#E65100';
+  } else if (elapsedMin < 1.5) {
+    stageEl.textContent = '🏛️ 景点概况';
+    stageEl.style.color = '#F59E0B';
+  } else if (elapsedMin < totalMin - 0.5) {
+    stageEl.textContent = '🎯 核心讲解';
+    stageEl.style.color = '#38A169';
+  } else {
+    stageEl.textContent = '👋 结束语';
+    stageEl.style.color = '#E53E6B';
+  }
+  
+  // 颜色变化
+  if (remainingSeconds <= 30) {
+    digitsEl.style.color = '#EF4444';
+    progressEl.style.stroke = '#EF4444';
+  } else if (remainingSeconds <= 60) {
+    digitsEl.style.color = '#F59E0B';
+    progressEl.style.stroke = '#F59E0B';
+  } else {
+    digitsEl.style.color = '';
+    progressEl.style.stroke = '#E65100';
+  }
+}
+
+function startTimer() {
+  if (isRunning && !isPaused) {
+    // 暂停
+    isPaused = true;
+    clearInterval(timerInterval);
+    startBtn.textContent = '▶ 继续';
+    startBtn.className = 'ctrl-btn btn-start';
+    stageEl.textContent = '⏸ 已暂停';
+    return;
+  }
+  
+  if (isPaused) {
+    // 恢复
+    isPaused = false;
+    startBtn.textContent = '⏸ 暂停';
+    startBtn.className = 'ctrl-btn btn-pause';
+  } else {
+    // 开始
+    isRunning = true;
+    startBtn.textContent = '⏸ 暂停';
+    startBtn.className = 'ctrl-btn btn-pause';
+  }
+  
+  timerInterval = setInterval(function() {
+    remainingSeconds--;
+    updateDisplay();
+    
+    if (remainingSeconds <= 0) {
+      clearInterval(timerInterval);
+      isRunning = false;
+      isPaused = false;
+      showResult();
+    }
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  isRunning = false;
+  isPaused = false;
+  remainingSeconds = totalSeconds;
+  startBtn.textContent = '▶ 开始练习';
+  startBtn.className = 'ctrl-btn btn-start';
+  progressEl.style.strokeDashoffset = '0';
+  digitsEl.style.color = '';
+  progressEl.style.stroke = '#E65100';
+  stageEl.textContent = '准备开始';
+  stageEl.style.color = '';
+  updateDisplay();
+}
+
+function showResult() {
+  var overlay = document.getElementById('resultOverlay');
+  var timeEl = document.getElementById('resultTime');
+  var tipEl = document.getElementById('resultTip');
+  
+  var min = Math.floor(totalSeconds / 60);
+  var sec = totalSeconds % 60;
+  timeEl.textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+  
+  var tips = [
+    '讲解时间刚好，节奏控制得不错！继续加油💪',
+    '完成一次完整练习！多练几次就会越来越自然',
+    '坚持练习，面试一定没问题！每天练2-3次效果最好',
+    '熟练度是练出来的，不是背出来的，继续加油！'
+  ];
+  tipEl.textContent = tips[Math.floor(Math.random() * tips.length)];
+  
+  overlay.classList.add('show');
+}
+
+// 初始化
+updateDisplay();
+</script>
+</body>
+</html>
