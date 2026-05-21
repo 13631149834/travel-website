@@ -446,5 +446,24 @@ if('serviceWorker' in navigator){
   btn.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
 })();
 </script>
+
+<script>
+// 页面跳转淡出效果
+(function(){
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a');
+    if(!a)return;
+    var href=a.getAttribute('href');
+    if(!href||href.startsWith('#')||href.startsWith('javascript')||href.startsWith('http')||href.startsWith('mailto')||href.startsWith('tel'))return;
+    // Same page anchors
+    if(href.startsWith('#'))return;
+    e.preventDefault();
+    document.body.style.transition='opacity 0.15s ease';
+    document.body.style.opacity='0.6';
+    setTimeout(function(){location.href=href;},150);
+  });
+})();
+</script>
+
 </body>
 </html>

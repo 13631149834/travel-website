@@ -1,5 +1,5 @@
 // 游导学习笔记 Service Worker
-const CACHE_NAME = 'youdao-v2';
+const CACHE_NAME = 'youdao-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
@@ -23,6 +23,9 @@ const STATIC_ASSETS = [
   '/province-exam.html',
   '/privacy.html',
   '/404.html',
+  '/css/common.css',
+  '/css/chapter.css',
+  '/interview-timer.html',
   '/css/style.css',
   '/search-index.json',
   '/manifest.json'
