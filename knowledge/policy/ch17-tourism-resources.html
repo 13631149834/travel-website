@@ -264,6 +264,7 @@ footer{margin-bottom:70px!important}
 
 </head>
 <body>
+<div class="chapter-reading-bar" id="chapterReadingBar"></div>
 
 <!-- 页面加载进度条 -->
 <style>
@@ -914,5 +915,20 @@ if('serviceWorker' in navigator){
   btn.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
 })();
 </script>
+
+<script>
+// 阅读进度条
+(function(){
+  var bar = document.getElementById('chapterReadingBar');
+  if(!bar) return;
+  window.addEventListener('scroll', function(){
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+    bar.style.width = progress + '%';
+  }, {passive: true});
+})();
+</script>
+
 </body>
 </html>
