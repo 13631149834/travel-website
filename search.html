@@ -208,6 +208,7 @@ function doSearch(q){
     var kw=item.keywords;
     if(title.indexOf(q)>-1)score+=10;
     if(kw.indexOf(q)>-1)score+=5;
+    if(item.text&&item.text.toLowerCase().indexOf(q)>-1)score+=2;
     if(score>0)results.push({item:item,score:score});
   });
   results.sort(function(a,b){return b.score-a.score;});
@@ -234,7 +235,7 @@ function doSearch(q){
     var typeLabel=item.type==='chapter'?'章节':'页面';
     var subjectTag=item.subject?'<div class="result-subject">'+item.subject+'</div>':'';
     
-    html+='<a class="result-item" href="'+item.url+'">'
+    html+='<a class="result-item" href="'+item.url.replace(/^\//,'')+'">'
       +'<span class="result-type '+typeClass+'">'+typeLabel+'</span>'
       +subjectTag
       +'<div class="result-title">'+item.title+'</div>'
@@ -313,8 +314,6 @@ if('serviceWorker' in navigator){
 })();
 </script>
 
-<p style="text-align:center;font-size:0.75rem;color: #777;padding:4px 0;">走过弯路，所以更懂路</p>
-
-<p style="text-align:center;color: #777;font-size:0.8rem;margin:20px 0;">走过弯路，所以更懂路</p>
+<p style="text-align:center;color: #777;font-size:0.8rem;margin:20px 0 70px;">走过弯路，所以更懂路</p>
 </body>
 </html>

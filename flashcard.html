@@ -17,7 +17,7 @@
 .flash-stats span{display:flex;align-items:center;gap:4px}
 .flash-stats .num{font-weight:bold;color:#E65100;font-size:1.1rem}
 .flash-card-container{display:flex;justify-content:center;align-items:center;min-height:320px;margin:20px 0;perspective:1000px}
-.flash-card{width:100%;max-width:480px;min-height:280px;position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform .6s}
+.flash-card{width:100%;max-width:480px;min-height:280px;position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform .6s;z-index:10}
 .flash-card.flipped{transform:rotateY(180deg)}
 .flash-card-face{position:absolute;top:0;left:0;width:100%;min-height:280px;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:30px 24px;box-shadow:0 4px 20px rgba(0,0,0,.12)}
 .flash-front{background:linear-gradient(135deg,#fff,#FFF8E1);border:3px solid #E65100}
@@ -346,6 +346,22 @@ function flipCard(){
     document.getElementById('flashCard').classList.toggle('flipped');
   }
 }
+// 移动端触摸优化
+(function(){
+  var card = document.getElementById('flashCard');
+  if(!card) return;
+  var lastTap = 0;
+  card.addEventListener('touchend', function(e){
+    var now = Date.now();
+    if(now - lastTap < 300) return;
+    lastTap = now;
+    flipCard();
+  }, {passive: true});
+})();
+
+
+
+
 
 function markCard(know){
   const key=currentIdx;
