@@ -1,0 +1,478 @@
+/**
+ * 游导学习笔记 - 精致化5.0 触摸热区优化
+ * 底部导航热区≥48px、列表项≥48px、按钮padding补偿、相邻可点击间距≥8px
+ */
+
+/* ================================================
+   触摸热区基础规范
+   ================================================ */
+
+/* 最小触摸目标尺寸 */
+:root {
+  --touch-target-min: 48px;
+  --touch-gap-min: 8px;
+}
+
+/* ================================================
+   底部导航热区
+   ================================================ */
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--touch-target-min);
+  min-height: var(--touch-target-min);
+  padding: 8px 12px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transition: all var(--anim-fast) var(--ease-out);
+}
+
+.bottom-nav-item:active {
+  background: rgba(230, 81, 0, 0.1);
+  transform: scale(0.95);
+}
+
+.bottom-nav-item .nav-icon {
+  font-size: 1.4rem;
+  margin-bottom: 2px;
+}
+
+.bottom-nav-item .nav-text {
+  font-size: 0.7rem;
+  color: #777;
+}
+
+.bottom-nav-item.active .nav-text {
+  color: #E65100;
+  font-weight: 600;
+}
+
+/* ================================================
+   列表项热区
+   ================================================ */
+
+.list-touch-item {
+  display: flex;
+  align-items: center;
+  min-height: var(--touch-target-min);
+  padding: 12px 16px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transition: all var(--anim-fast) var(--ease-out);
+}
+
+.list-touch-item:hover {
+  background: #FFF3E0;
+}
+
+.list-touch-item:active {
+  background: #FFE0B2;
+  transform: scale(0.99);
+}
+
+/* 列表项内部间距 */
+.list-touch-item .item-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.list-touch-item .item-icon {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFF3E0;
+  border-radius: 10px;
+  font-size: 1.2rem;
+}
+
+.list-touch-item .item-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.list-touch-item .item-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.list-touch-item .item-desc {
+  font-size: 0.78rem;
+  color: #999;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================
+   按钮热区
+   ================================================ */
+
+/* 小按钮热区增强 */
+.btn-touch {
+  min-height: var(--touch-target-min);
+  min-width: var(--touch-target-min);
+  padding: 10px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  cursor: pointer;
+  transition: all var(--anim-fast) var(--ease-out);
+}
+
+.btn-touch:active {
+  transform: scale(0.96);
+}
+
+/* 主按钮 */
+.btn-primary-touch {
+  min-height: 48px;
+  padding: 14px 28px;
+  background: #E65100;
+  color: #FFF;
+  border: none;
+  border-radius: 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(230, 81, 0, 0.3);
+}
+
+.btn-primary-touch:hover {
+  background: #BF360C;
+  transform: translateY(-1px);
+}
+
+.btn-primary-touch:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(230, 81, 0, 0.3);
+}
+
+/* 次要按钮 */
+.btn-secondary-touch {
+  min-height: 48px;
+  padding: 12px 24px;
+  background: #FFF;
+  color: #E65100;
+  border: 2px solid #E65100;
+  border-radius: 24px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.btn-secondary-touch:active {
+  background: #FFF3E0;
+}
+
+/* ================================================
+   图标按钮热区
+   ================================================ */
+
+.icon-btn-touch {
+  width: var(--touch-target-min);
+  height: var(--touch-target-min);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: all var(--anim-fast) var(--ease-out);
+}
+
+.icon-btn-touch:active {
+  background: rgba(230, 81, 0, 0.1);
+  transform: scale(0.9);
+}
+
+.icon-btn-touch svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* ================================================
+   搜索框热区
+   ================================================ */
+
+.search-input-touch {
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 16px; /* iOS防止缩放 */
+  border: 1px solid #EEEEEE;
+  border-radius: 24px;
+  width: 100%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.search-input-touch:focus {
+  border-color: #E65100;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(230, 81, 0, 0.1);
+}
+
+/* ================================================
+   标签/复选框热区
+   ================================================ */
+
+.tag-touch {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 6px 14px;
+  background: #FAFAFA;
+  border: 1px solid #EEEEEE;
+  border-radius: 18px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: all var(--anim-fast) var(--ease-out);
+  user-select: none;
+}
+
+.tag-touch:hover {
+  background: #FFF3E0;
+  border-color: #E65100;
+}
+
+.tag-touch:active {
+  transform: scale(0.95);
+}
+
+.tag-touch.selected {
+  background: #E65100;
+  color: #FFF;
+  border-color: #E65100;
+}
+
+/* ================================================
+   卡片热区
+   ================================================ */
+
+.card-touch {
+  min-height: 80px;
+  padding: 16px;
+  background: #FFFFFF;
+  border: 1px solid #F0F0F0;
+  border-radius: 16px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: all var(--anim-normal) var(--ease-out);
+}
+
+.card-touch:hover {
+  border-color: #E65100;
+  box-shadow: 0 4px 16px rgba(230, 81, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card-touch:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(230, 81, 0, 0.1);
+}
+
+/* ================================================
+   相邻热区间距
+   ================================================ */
+
+/* 热区组合间距 */
+.touch-group {
+  display: flex;
+  gap: var(--touch-gap-min);
+}
+
+.touch-group .touch-item {
+  flex: 1;
+  min-height: var(--touch-target-min);
+}
+
+/* 网格热区 */
+.touch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--touch-target-min), 1fr));
+  gap: var(--touch-gap-min);
+}
+
+/* ================================================
+   手势热区
+   ================================================ */
+
+/* 左滑操作热区 */
+.swipe-action-item {
+  position: relative;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.swipe-action-content {
+  position: relative;
+  z-index: 1;
+  background: #FFFFFF;
+  transition: transform var(--anim-normal) var(--ease-out);
+}
+
+.swipe-action-delete {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #E53E3E;
+  color: #FFFFFF;
+  z-index: 0;
+}
+
+/* ================================================
+   下拉刷新热区
+   ================================================ */
+
+.pull-to-refresh {
+  touch-action: pull;
+  -webkit-overflow-scrolling: touch;
+}
+
+.pull-indicator {
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #E65100;
+  font-size: 0.85rem;
+}
+
+/* ================================================
+   输入表单热区
+   ================================================ */
+
+.form-group-touch {
+  margin-bottom: 16px;
+}
+
+.form-label-touch {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.form-input-touch {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 16px;
+  font-size: 16px; /* iOS防止缩放 */
+  border: 1px solid #EEEEEE;
+  border-radius: 12px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.form-input-touch:focus {
+  border-color: #E65100;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(230, 81, 0, 0.1);
+}
+
+.form-error-touch {
+  font-size: 0.75rem;
+  color: #E53E3E;
+  margin-top: 4px;
+}
+
+/* ================================================
+   响应式触摸优化
+   ================================================ */
+
+/* 平板端增大热区 */
+@media (min-width: 768px) {
+  :root {
+    --touch-target-min: 52px;
+  }
+}
+
+/* 小屏手机减小间距 */
+@media (max-width: 375px) {
+  .list-touch-item {
+    padding: 10px 12px;
+  }
+  
+  .btn-primary-touch {
+    padding: 12px 24px;
+  }
+}
+
+/* ================================================
+   无障碍触摸优化
+   ================================================ */
+
+/* 聚焦样式（键盘导航） */
+.touch-target:focus {
+  outline: 2px solid #E65100;
+  outline-offset: 2px;
+}
+
+/* 禁用状态触摸效果禁用 */
+.touch-target:disabled,
+.touch-target.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ================================================
+   触摸反馈
+   ================================================ */
+
+/* 点击涟漪效果 */
+.ripple-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple-effect::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(230, 81, 0, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s, height 0.3s;
+}
+
+.ripple-effect:active::after {
+  width: 200%;
+  height: 200%;
+}
+
+/* 点击缩放反馈 */
+.click-scale:active {
+  transform: scale(0.96);
+}
+
+/* 点击背景反馈 */
+.click-bg:active {
+  background: rgba(230, 81, 0, 0.1);
+}

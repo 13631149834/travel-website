@@ -1,0 +1,506 @@
+/**
+ * 游导学习笔记 - 精致化5.0 组件动画一致性规范
+ * 所有卡片hover上浮2px、按钮active下沉1px、弹窗淡入+缩放出现/消失、动画方向统一
+ */
+
+/* ================================================
+   动画基础规范
+   ================================================ */
+
+/* 动画时长常量 */
+:root {
+  --anim-fast: 0.15s;
+  --anim-normal: 0.2s;
+  --anim-slow: 0.3s;
+  --anim-very-slow: 0.5s;
+  
+  /* 缓动函数 */
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ================================================
+   卡片动画规范
+   ================================================ */
+
+/* 通用卡片 - 上浮2px */
+.card-hover {
+  transition: transform var(--anim-normal) var(--ease-out),
+              box-shadow var(--anim-normal) var(--ease-out);
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(230, 81, 0, 0.15);
+}
+
+/* 卡片组动画 */
+.card-animated {
+  transition: all var(--anim-normal) var(--ease-out);
+}
+
+.card-animated:hover {
+  transform: translateY(-2px);
+  border-color: #E65100;
+}
+
+/* ================================================
+   按钮动画规范
+   ================================================ */
+
+/* 主按钮 - 下沉1px */
+.btn-animated {
+  transition: all var(--anim-fast) var(--ease-out);
+}
+
+.btn-animated:hover {
+  transform: translateY(-1px);
+}
+
+.btn-animated:active {
+  transform: translateY(1px);
+}
+
+/* 次要按钮 */
+.btn-secondary-animated {
+  transition: all var(--anim-fast) var(--ease-out);
+}
+
+.btn-secondary-animated:hover {
+  transform: translateY(-1px);
+  background: #FFF3E0;
+}
+
+.btn-secondary-animated:active {
+  transform: translateY(0);
+  background: #FFE0B2;
+}
+
+/* 文字按钮 */
+.btn-text-animated {
+  transition: all var(--anim-fast) var(--ease-out);
+}
+
+.btn-text-animated:hover {
+  color: #BF360C;
+}
+
+.btn-text-animated:active {
+  transform: scale(0.98);
+}
+
+/* ================================================
+   弹窗动画规范
+   ================================================ */
+
+/* 弹窗淡入+缩放出现 */
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 弹窗淡出+缩放消失 */
+@keyframes modalFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+/* 弹窗容器 */
+.modal-animated {
+  animation: modalFadeIn var(--anim-slow) var(--ease-bounce);
+}
+
+.modal-animated.closing {
+  animation: modalFadeOut var(--anim-normal) var(--ease-out) forwards;
+}
+
+/* 弹窗内容 */
+.modal-content-animated {
+  animation: modalFadeIn var(--anim-slow) var(--ease-bounce);
+}
+
+/* ================================================
+   Toast动画规范
+   ================================================ */
+
+/* Toast从上方滑入 */
+@keyframes toastSlideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Toast向上滑出 */
+@keyframes toastSlideUp {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-100%);
+  }
+}
+
+.toast-animated {
+  animation: toastSlideDown var(--anim-normal) var(--ease-out);
+}
+
+.toast-animated.hiding {
+  animation: toastSlideUp var(--anim-normal) var(--ease-out) forwards;
+}
+
+/* ================================================
+   列表项动画规范
+   ================================================ */
+
+/* 列表项依次出现 */
+@keyframes listItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.list-item-animated {
+  animation: listItemFadeIn var(--anim-normal) var(--ease-out) backwards;
+}
+
+.list-item-animated:nth-child(1) { animation-delay: 0ms; }
+.list-item-animated:nth-child(2) { animation-delay: 50ms; }
+.list-item-animated:nth-child(3) { animation-delay: 100ms; }
+.list-item-animated:nth-child(4) { animation-delay: 150ms; }
+.list-item-animated:nth-child(5) { animation-delay: 200ms; }
+.list-item-animated:nth-child(6) { animation-delay: 250ms; }
+.list-item-animated:nth-child(7) { animation-delay: 300ms; }
+.list-item-animated:nth-child(8) { animation-delay: 350ms; }
+
+/* 列表项hover效果 */
+.list-item-hover {
+  transition: all var(--anim-fast) var(--ease-out);
+}
+
+.list-item-hover:hover {
+  background: #FFF3E0;
+  transform: translateX(4px);
+}
+
+.list-item-hover:active {
+  transform: translateX(2px);
+}
+
+/* ================================================
+   标签/徽章动画规范
+   ================================================ */
+
+/* 标签出现 */
+@keyframes tagPopIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.tag-animated {
+  animation: tagPopIn var(--anim-normal) var(--ease-bounce);
+}
+
+/* 标签hover */
+.tag-animated:hover {
+  transform: scale(1.05);
+}
+
+.tag-animated:active {
+  transform: scale(0.98);
+}
+
+/* ================================================
+   页面过渡动画
+   ================================================ */
+
+/* 页面淡入 */
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.page-animated {
+  animation: pageFadeIn var(--anim-slow) var(--ease-out);
+}
+
+/* 页面滑入 */
+@keyframes pageSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.page-slide-animated {
+  animation: pageSlideUp var(--anim-slow) var(--ease-out);
+}
+
+/* ================================================
+   加载动画规范
+   ================================================ */
+
+/* 加载旋转 */
+@keyframes loadingSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spin {
+  animation: loadingSpin 0.8s linear infinite;
+}
+
+/* 加载脉冲 */
+@keyframes loadingPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.loading-pulse {
+  animation: loadingPulse 1.5s ease-in-out infinite;
+}
+
+/* 骨架屏微光 */
+@keyframes skeletonShimmer {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+/* ================================================
+   成就/奖励动画
+   ================================================ */
+
+/* 成就弹出 */
+@keyframes achievementPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.achievement-animated {
+  animation: achievementPop var(--anim-very-slow) var(--ease-bounce);
+}
+
+/* 庆祝礼花 */
+@keyframes confettiFall {
+  to {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+.confetti-animated {
+  animation: confettiFall 3s linear forwards;
+}
+
+/* ================================================
+   翻转动画
+   ================================================ */
+
+/* 卡片翻转 */
+.card-flip {
+  perspective: 1000px;
+}
+
+.card-flip-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.card-flip.flipped .card-flip-inner {
+  transform: rotateY(180deg);
+}
+
+.card-flip-front,
+.card-flip-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.card-flip-back {
+  transform: rotateY(180deg);
+}
+
+/* ================================================
+   进度条动画
+   ================================================ */
+
+/* 进度条填充 */
+@keyframes progressFill {
+  from {
+    width: 0;
+  }
+}
+
+.progress-animated {
+  animation: progressFill 1s var(--ease-out) forwards;
+}
+
+/* 进度条脉冲 */
+@keyframes progressPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+.progress-pulse {
+  animation: progressPulse 2s ease-in-out infinite;
+}
+
+/* ================================================
+   响应式动画控制
+   ================================================ */
+
+/* 减少动画（无障碍） */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .skeleton::after {
+    animation: none;
+  }
+}
+
+/* ================================================
+   动画性能优化
+   ================================================ */
+
+/* 使用transform和opacity（GPU加速） */
+.anim-transform {
+  will-change: transform;
+  -webkit-will-change: transform;
+}
+
+.anim-opacity {
+  will-change: opacity;
+  -webkit-will-change: opacity;
+}
+
+/* 硬件加速提示 */
+.hw-accelerate {
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+}
+
+/* ================================================
+   常见动画组合
+   ================================================ */
+
+/* 卡片完整动画 */
+.card-full-animation {
+  transition: transform var(--anim-normal) var(--ease-out),
+              box-shadow var(--anim-normal) var(--ease-out),
+              border-color var(--anim-fast) var(--ease-out),
+              background-color var(--anim-fast) var(--ease-out);
+}
+
+.card-full-animation:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(230, 81, 0, 0.15);
+}
+
+.card-full-animation:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(230, 81, 0, 0.1);
+}
+
+/* 按钮完整动画 */
+.btn-full-animation {
+  transition: transform var(--anim-fast) var(--ease-out),
+              background-color var(--anim-fast) var(--ease-out),
+              box-shadow var(--anim-fast) var(--ease-out);
+}
+
+.btn-full-animation:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(230, 81, 0, 0.3);
+}
+
+.btn-full-animation:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 4px rgba(230, 81, 0, 0.2);
+}
+
+/* 链接完整动画 */
+.link-full-animation {
+  transition: color var(--anim-fast) var(--ease-out),
+              transform var(--anim-fast) var(--ease-out);
+}
+
+.link-full-animation:hover {
+  color: #BF360C;
+}
+
+.link-full-animation:active {
+  transform: scale(0.98);
+}

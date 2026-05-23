@@ -1,0 +1,120 @@
+/**
+ * 游导学习笔记 - 精致化5.0 iOS Safari专项优化
+ * 100vh→100dvh、安全区域env(safe-area-inset-bottom)、弹性滚动、输入框font-size≥16px
+ */
+
+/* 1. 视口高度修正 - 100vh → 100dvh */
+.full-height { height: 100vh; height: 100dvh; }
+.min-full-height { min-height: 100vh; min-height: 100dvh; }
+
+/* 2. 安全区域适配 - 底部 */
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.margin-bottom-safe { margin-bottom: env(safe-area-inset-bottom); }
+
+/* 3. 安全区域适配 - 顶部 */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.margin-top-safe { margin-top: env(safe-area-inset-top); }
+
+/* 4. 弹性滚动优化 - 阻止橡皮筋效果 */
+.no-bounce { overscroll-behavior: none; -webkit-overflow-scrolling: touch; }
+
+/* 5. 输入框字号修复（防止iOS缩放） */
+input[type="text"], input[type="search"], input[type="email"], 
+input[type="number"], input[type="tel"], textarea, select {
+  font-size: 16px !important;
+}
+
+/* 6. 触摸高亮透明 */
+.no-tap-highlight { -webkit-tap-highlight-color: transparent; tap-highlight-color: transparent; }
+
+/* 7. 触摸操作优化 */
+.touch-action-manip { touch-action: manipulation; }
+
+/* 8. 禁用长按弹出菜单 */
+.no-context-menu { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+
+/* 9. 触摸目标尺寸 */
+.touch-target { min-height: 44px; min-width: 44px; display: inline-flex; align-items: center; justify-content: center; }
+.list-item-touch { min-height: 48px; padding: 12px 16px; touch-action: manipulation; }
+
+/* 10. 固定底部导航适配 */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 11. 弹窗适配 */
+.modal-ios {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 12. 吸底按钮栏 */
+.bottom-action-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  background: #FFFFFF;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+/* 13. 状态栏适配 */
+.status-bar-spacer { height: env(safe-area-inset-top); background: transparent; }
+
+/* 14. 内容安全区域 */
+.safe-content {
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+
+/* 15. 横屏检测与提示 */
+@media (orientation: landscape) and (max-height: 500px) {
+  .landscape-warning {
+    display: flex; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.9); z-index: 99999;
+    align-items: center; justify-content: center; flex-direction: column; gap: 16px;
+  }
+  .landscape-warning-icon { font-size: 3rem; }
+  .landscape-warning-text { color: #FFFFFF; font-size: 1rem; text-align: center; }
+}
+
+/* 16. iOS开关样式 */
+.switch-ios {
+  -webkit-appearance: none; appearance: none;
+  width: 51px; height: 31px; background: #E5E5E5; border-radius: 16px;
+  position: relative; cursor: pointer; transition: background 0.2s;
+}
+.switch-ios::before {
+  content: ''; position: absolute; width: 27px; height: 27px;
+  background: #FFFFFF; border-radius: 50%; top: 2px; left: 2px;
+  transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.switch-ios:checked { background: #E65100; }
+.switch-ios:checked::before { transform: translateX(20px); }
+
+/* 17. 下拉选择器 */
+.select-ios {
+  -webkit-appearance: none; appearance: none;
+  background: #FFFFFF url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E") no-repeat right 12px center;
+  padding-right: 36px;
+}
+
+/* 18. 性能优化：使用transform而非top/left */
+.animating-element { will-change: transform; -webkit-will-change: transform; }
+
+/* 19. 加载指示器 */
+.loading-spinner {
+  width: 20px; height: 20px; border: 2px solid #EEEEEE;
+  border-top-color: #E65100; border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
