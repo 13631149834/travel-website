@@ -912,6 +912,57 @@ input[type="text"], input[type="search"], textarea { font-size: 16px !important;
 </style>
 
 <link rel="stylesheet" href="css/v3-components.css">
+
+<script>
+// 免费体验：每天可问3个问题，激活后无限
+(function() {
+  var FREE_LIMIT = 3;
+  var STORAGE_KEY = 'yd_free_chat';
+  
+  function getTodayCount() {
+    var data = localStorage.getItem(STORAGE_KEY);
+    if (!data) return 0;
+    try {
+      var obj = JSON.parse(data);
+      var today = new Date().toISOString().split('T')[0];
+      if (obj.date !== today) return 0;
+      return obj.count || 0;
+    } catch(e) { return 0; }
+  }
+  
+  function incrementCount() {
+    var today = new Date().toISOString().split('T')[0];
+    var data = { date: today, count: getTodayCount() + 1 };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+  
+  function isActivated() {
+    return localStorage.getItem('youdao_activated') === 'true';
+  }
+  
+  window.freeChatCheck = function() {
+    if (isActivated()) return true;
+    var count = getTodayCount();
+    if (count >= FREE_LIMIT) {
+      showUpgradeTip();
+      return false;
+    }
+    return true;
+  };
+  
+  window.freeChatUsed = function() {
+    if (!isActivated()) incrementCount();
+  };
+  
+  function showUpgradeTip() {
+    var tip = document.createElement('div');
+    tip.id = 'freeLimitTip';
+    tip.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border:2px solid #E65100;border-radius:16px;padding:20px 24px;z-index:10000;text-align:center;max-width:340px;box-shadow:0 8px 30px rgba(0,0,0,0.15);';
+    tip.innerHTML = '<p style="font-size:1rem;font-weight:700;color:#E65100;margin-bottom:8px;">😊 今日3次免费体验已用完</p><p style="font-size:0.85rem;color:#555;margin-bottom:12px;">激活后可以无限提问，还有362份备考资料+1v1答疑</p><a href="activate.html" style="display:inline-block;padding:10px 24px;background:#E65100;color:#fff;border-radius:20px;font-weight:700;text-decoration:none;font-size:0.9rem;">了解激活方式</a><p style="font-size:0.75rem;color:#999;margin-top:8px;">全套¥69.9｜走过弯路，所以更懂路</p><button onclick="this.parentElement.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;">×</button>';
+    document.body.appendChild(tip);
+  }
+})();
+</script>
 </head>
 
 <!-- 页面加载进度条 -->
@@ -1490,7 +1541,8 @@ function clearHistory(){
 }
 
 /* ===== 发送消息（入队列） ===== */
-function sendMessage(){if(!checkRateLimit())return;if(typeof GameSystem!=='undefined')GameSystem.addAIChat();
+function sendMessage(){
+    if (typeof freeChatCheck === 'function' && !freeChatCheck()) return;if(!checkRateLimit())return;if(typeof GameSystem!=='undefined')GameSystem.addAIChat();
   var text = inputEl.value.trim();
   if(!text) return;
   inputEl.value = '';
@@ -2074,5 +2126,28 @@ document.addEventListener('DOMContentLoaded', initMsgInteractions);
 <script src="auth.js"></script>
 <script src="js/feedback-widget.js"></script>
 <div style="text-align:center;padding:12px;font-size:0.78rem;color:#999;">走过弯路，所以更懂路</div>
+
+<script>
+// Hook into chat to track free usage
+document.addEventListener('DOMContentLoaded', function() {
+  var chatBox = document.querySelector('[class*=chat]') || document.querySelector('[class*=message]') || document.querySelector('main');
+  if (chatBox) {
+    var observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        m.addedNodes.forEach(function(node) {
+          if (node.nodeType === 1 && typeof freeChatUsed === 'function') {
+            // Check if this is an AI response (assistant message)
+            var text = node.textContent || '';
+            if (text.length > 20) {
+              freeChatUsed();
+            }
+          }
+        });
+      });
+    });
+    observer.observe(chatBox, { childList: true, subtree: true });
+  }
+});
+</script>
 </body>
 </html>

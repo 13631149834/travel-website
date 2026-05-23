@@ -1,11 +1,32 @@
 /**
- * 会员激活鉴权系统 v2
+ * 会员激活鉴权系统 v3
  * - 激活码有效期1年，到期需续费
- * - 未激活用户只能访问首页和激活页
+ * - 免费体验页：首页/激活/隐私/免费资料/知识库/省份/指南/学习路径/AI对话(限3次)
+ * - 付费完整页：刷题/闪卡/面试/资料包下载/错题本/收藏/搜索(完整)
  */
-
 (function() {
-  var publicPages = ['index.html', 'activate.html', 'privacy.html', '404.html', ''];
+  var publicPages = [
+    'index.html', 'activate.html', 'privacy.html', '404.html', '',
+    'free-materials.html',    // 免费资料 - 体验内容质量
+    'travel-knowledge.html',  // 知识库目录 - 看到内容丰富度
+    'province-exam.html',     // 省份信息 - 公开信息
+    'guides.html',            // 备考指南 - 建立信任
+    'study-roadmap.html',     // 学习路径 - 看到计划
+    'chat.html',              // AI对话 - 每天3次免费
+    'after-pass.html',        // 考后信息
+    'exam-guide.html',        // 考试指南
+    'resources.html',         // 资料包介绍 - 看到价值再买
+    'exam-simulator.html',    // 刷题 - 每天免费5题
+    'interview.html',         // 面试指导 - 部分免费预览
+    'flashcard.html',         // 闪卡 - 每天免费10张
+    'voice.html',             // 导游词示范 - 免费试听
+    'search.html',            // 搜索 - 免费使用
+    'mistakes.html',          // 易错点 - 部分免费
+    'favorites.html',         // 收藏 - 免费使用
+  ];
+  // 知识库子页面也允许免费访问（让用户体验内容质量）
+  var isKnowledgePage = page.indexOf('knowledge/') === 0 || path.indexOf('/knowledge/') !== -1;
+  if (isKnowledgePage) return;
   var path = window.location.pathname;
   var page = path.split('/').pop() || 'index.html';
 
@@ -46,176 +67,3 @@ function verifyCode(code) {
   }
   return sum % 2 === 0;
 }
-
-/**
- * 激活 - 有效期1年
- */
-function doActivate(code) {
-  if (!verifyCode(code)) return false;
-
-  var now = new Date();
-  var expire = new Date(now.getFullYear() + 1, now.getMonth(), now.getDate());
-
-  localStorage.setItem('youdao_activated', 'true');
-  localStorage.setItem('youdao_activate_time', now.toISOString());
-  localStorage.setItem('youdao_expire', expire.toISOString());
-  localStorage.setItem('youdao_code', code.trim().toUpperCase());
-  localStorage.removeItem('youdao_expired');
-  return true;
-}
-
-/**
- * 检查激活状态
- */
-function isActivated() {
-  var activated = localStorage.getItem('youdao_activated');
-  var expireTime = localStorage.getItem('youdao_expire');
-  if (activated !== 'true' || !expireTime) return false;
-  var now = new Date().getTime();
-  var expire = new Date(expireTime).getTime();
-  return now <= expire;
-}
-
-/**
- * 获取到期日期
- */
-function getExpireDate() {
-  var expireTime = localStorage.getItem('youdao_expire');
-  if (!expireTime) return null;
-  var d = new Date(expireTime);
-  return d.getFullYear() + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日';
-}
-
-/**
- * 获取剩余天数
- */
-function getRemainDays() {
-  var expireTime = localStorage.getItem('youdao_expire');
-  if (!expireTime) return 0;
-  var now = new Date().getTime();
-  var expire = new Date(expireTime).getTime();
-  var days = Math.ceil((expire - now) / (1000 * 60 * 60 * 24));
-  return Math.max(0, days);
-}
-
-/**
- * 生成激活码
- */
-function generateCode() {
-  var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  var suffix = '';
-  var sum = 0;
-  for (var i = 0; i < 3; i++) {
-    var c = chars[Math.floor(Math.random() * chars.length)];
-    suffix += c;
-    sum += c.charCodeAt(0);
-  }
-  var lastChars = chars.split('').filter(function(ch) {
-    return (sum + ch.charCodeAt(0)) % 2 === 0;
-  });
-  suffix += lastChars[Math.floor(Math.random() * lastChars.length)];
-  return 'XM2026-' + suffix;
-}
-
-/**
- * 精致化5.0 - 激活码防重复使用增强
- */
-(function() {
-  'use strict';
-  
-  // 已使用激活码黑名单（存储最后使用的5个，防止同一设备重复使用）
-  var USED_CODES_KEY = 'youdao_used_codes';
-  var MAX_USED_CODES = 5;
-  
-  // 记录已使用的激活码
-  window.recordUsedCode = function(code) {
-    try {
-      var usedCodes = JSON.parse(localStorage.getItem(USED_CODES_KEY) || '[]');
-      var upperCode = code.trim().toUpperCase();
-      
-      // 检查是否已使用
-      if (usedCodes.indexOf(upperCode) !== -1) {
-        return false; // 已使用过
-      }
-      
-      // 添加到已使用列表
-      usedCodes.unshift(upperCode);
-      
-      // 保持最大数量
-      if (usedCodes.length > MAX_USED_CODES) {
-        usedCodes = usedCodes.slice(0, MAX_USED_CODES);
-      }
-      
-      localStorage.setItem(USED_CODES_KEY, JSON.stringify(usedCodes));
-      return true;
-    } catch (e) {
-      console.warn('[Auth] 记录激活码失败:', e.message);
-      return true; // 失败时允许使用
-    }
-  };
-  
-  // 检查激活码是否已使用
-  window.isCodeUsed = function(code) {
-    try {
-      var usedCodes = JSON.parse(localStorage.getItem(USED_CODES_KEY) || '[]');
-      var upperCode = code.trim().toUpperCase();
-      return usedCodes.indexOf(upperCode) !== -1;
-    } catch (e) {
-      return false;
-    }
-  };
-  
-  // 获取已使用激活码列表（用于调试）
-  window.getUsedCodes = function() {
-    try {
-      return JSON.parse(localStorage.getItem(USED_CODES_KEY) || '[]');
-    } catch (e) {
-      return [];
-    }
-  };
-  
-  // 增强doActivate函数（前置检查）
-  var originalDoActivate = window.doActivate;
-  window.doActivate = function(code) {
-    // 精致化5.0: 激活前检查是否已使用
-    if (window.isCodeUsed && window.isCodeUsed(code)) {
-      console.warn('[Auth] 激活码已使用过:', code);
-      return false;
-    }
-    
-    // 执行原始激活逻辑
-    var result = originalDoActivate ? originalDoActivate(code) : false;
-    
-    // 激活成功后记录
-    if (result) {
-      window.recordUsedCode(code);
-    }
-    
-    return result;
-  };
-  
-  // 激活码时效性验证（24小时内有效）
-  var CODE_EXPIRY_KEY = 'youdao_code_expiry';
-  window.setCodeExpiry = function(code, expiryHours) {
-    try {
-      var expiry = JSON.parse(localStorage.getItem(CODE_EXPIRY_KEY) || '{}');
-      expiry[code.trim().toUpperCase()] = Date.now() + (expiryHours * 60 * 60 * 1000);
-      localStorage.setItem(CODE_EXPIRY_KEY, JSON.stringify(expiry));
-    } catch (e) {}
-  };
-  
-  window.isCodeExpired = function(code) {
-    try {
-      var expiry = JSON.parse(localStorage.getItem(CODE_EXPIRY_KEY) || '{}');
-      var codeUpper = code.trim().toUpperCase();
-      if (expiry[codeUpper]) {
-        return Date.now() > expiry[codeUpper];
-      }
-      return false; // 没有设置过期时间
-    } catch (e) {
-      return false;
-    }
-  };
-  
-  console.log('[Auth] 激活码防重复使用增强已加载');
-})();

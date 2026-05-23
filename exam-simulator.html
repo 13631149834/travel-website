@@ -1944,6 +1944,74 @@ margin-top: 6px;
 <link rel="stylesheet" href="css/v3-components.css">
 <script src="js/error-recovery.js"></script>
 <script src="js/seasonal-theme.js"></script>
+
+<script>
+// 免费体验：每天5题，激活后无限
+(function() {
+  var FREE_LIMIT = 5;
+  var STORAGE_KEY = 'yd_free_exam-simulator';
+  
+  function isActivated() {
+    return localStorage.getItem('youdao_activated') === 'true';
+  }
+  
+  function getTodayCount() {
+    var data = localStorage.getItem(STORAGE_KEY);
+    if (!data) return 0;
+    try {
+      var obj = JSON.parse(data);
+      var today = new Date().toISOString().split('T')[0];
+      if (obj.date !== today) return 0;
+      return obj.count || 0;
+    } catch(e) { return 0; }
+  }
+  
+  function incrementCount() {
+    var today = new Date().toISOString().split('T')[0];
+    var data = { date: today, count: getTodayCount() + 1 };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+  
+  window.freeCheck = function() {
+    if (isActivated()) return true;
+    var count = getTodayCount();
+    if (count >= FREE_LIMIT) {
+      showUpgradeTip(count);
+      return false;
+    }
+    return true;
+  };
+  
+  window.freeUsed = function() {
+    if (!isActivated()) incrementCount();
+  };
+  
+  function showUpgradeTip(used) {
+    var existing = document.getElementById('freeUpgradeTip');
+    if (existing) existing.remove();
+    var tip = document.createElement('div');
+    tip.id = 'freeUpgradeTip';
+    tip.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#FFF8E1,#FFF3E0);border:2px solid #E65100;border-radius:16px;padding:20px 24px;z-index:10000;text-align:center;max-width:340px;box-shadow:0 8px 30px rgba(0,0,0,0.15);';
+    tip.innerHTML = '<p style="font-size:1rem;font-weight:700;color:#E65100;margin-bottom:8px;">😊 今日5题已体验完</p><p style="font-size:0.85rem;color:#555;margin-bottom:12px;">激活后无限题，还有362份资料+智能助手+1v1答疑</p><a href="activate.html" style="display:inline-block;padding:10px 24px;background:#E65100;color:#fff;border-radius:20px;font-weight:700;text-decoration:none;font-size:0.9rem;">了解激活方式</a><p style="font-size:0.75rem;color:#999;margin-top:8px;">全套¥69.9｜走过弯路，所以更懂路</p><button onclick="this.parentElement.remove()" style="position:absolute;top:8px;right:12px;background:none;border:none;font-size:1.2rem;cursor:pointer;color:#999;">×</button>';
+    document.body.appendChild(tip);
+  }
+  
+  // Show remaining count badge on page load
+  document.addEventListener('DOMContentLoaded', function() {
+    if (!isActivated()) {
+      var count = getTodayCount();
+      var remaining = FREE_LIMIT - count;
+      if (remaining > 0) {
+        var badge = document.createElement('div');
+        badge.style.cssText = 'position:fixed;top:60px;right:12px;background:#E65100;color:#fff;padding:6px 14px;border-radius:20px;font-size:0.78rem;font-weight:600;z-index:9999;box-shadow:0 2px 8px rgba(230,81,0,0.3);';
+        badge.textContent = '免费体验：今日还剩' + remaining + '题';
+        document.body.appendChild(badge);
+        setTimeout(function() { badge.style.opacity = '0'; badge.style.transition = 'opacity 0.5s'; setTimeout(function() { badge.remove(); }, 500); }, 5000);
+      }
+    }
+  });
+})();
+</script>
 </head>
 
 <!-- 页面加载进度条 -->
