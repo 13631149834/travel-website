@@ -5,6 +5,9 @@
  * - 付费完整页：刷题/闪卡/面试/资料包下载/错题本/收藏/搜索(完整)
  */
 (function() {
+  var path = window.location.pathname;
+  var page = path.split('/').pop() || 'index.html';
+
   var publicPages = [
     'index.html', 'activate.html', 'privacy.html', '404.html', '',
     'free-materials.html',    // 免费资料 - 体验内容质量
@@ -24,11 +27,10 @@
     'mistakes.html',          // 易错点 - 部分免费
     'favorites.html',         // 收藏 - 免费使用
   ];
+
   // 知识库子页面也允许免费访问（让用户体验内容质量）
   var isKnowledgePage = page.indexOf('knowledge/') === 0 || path.indexOf('/knowledge/') !== -1;
   if (isKnowledgePage) return;
-  var path = window.location.pathname;
-  var page = path.split('/').pop() || 'index.html';
 
   if (publicPages.indexOf(page) !== -1) return;
 

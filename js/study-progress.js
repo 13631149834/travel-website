@@ -468,7 +468,7 @@
       transform: scale(1.05);
     }
     .checkin-btn.done {
-      background: #81C784;
+      background: #E65100;
     }
     .checkin-btn:disabled {
       cursor: default;
