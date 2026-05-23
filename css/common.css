@@ -1318,3 +1318,382 @@ img[loading="lazy"].loaded, img.loaded {
     overflow-x: hidden;
   }
 }
+
+/* ================================================
+   精致化5.0 - 骨架屏设计
+   ================================================ */
+
+/* 骨架屏容器 */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: #FFF3E0;
+  border-radius: 8px;
+}
+
+/* 骨架屏微光动画 */
+.skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+
+/* 骨架屏元素 */
+.skeleton-line {
+  height: 16px;
+  background: #FFE0B2;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.skeleton-line.short { width: 60%; }
+.skeleton-line.medium { width: 80%; }
+.skeleton-line.long { width: 100%; }
+
+.skeleton-circle {
+  width: 48px;
+  height: 48px;
+  background: #FFE0B2;
+  border-radius: 50%;
+}
+
+.skeleton-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+/* 骨架屏占位 - 品牌色浅色 */
+.skeleton-placeholder {
+  background: #FFF3E0;
+  border: 1px dashed #FFE0B2;
+}
+
+/* ================================================
+   精致化5.0 - 触摸热区优化
+   ================================================ */
+
+/* 底部导航触摸热区 */
+.bottom-tabs,
+.bottom-nav,
+.nav-tabs {
+  min-height: 56px;
+}
+
+.bottom-tabs a,
+.bottom-nav a,
+.nav-tabs a,
+.nav-tabs button {
+  min-height: 48px;
+  min-width: 48px;
+  padding: 12px 16px;
+}
+
+/* 列表项触摸热区 */
+.list-item,
+.list-row,
+.table-row,
+.card-item {
+  min-height: 48px;
+  padding: 12px 16px;
+}
+
+/* 按钮触摸热区补偿 */
+.btn,
+button,
+.touchable {
+  min-height: 44px;
+  min-width: 44px;
+  padding: 10px 20px;
+}
+
+/* 重要按钮在拇指区 */
+@media (max-width: 768px) {
+  .primary-action,
+  .cta-primary,
+  .main-cta {
+    position: fixed;
+    bottom: 72px;
+    right: 16px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(230, 81, 0, 0.3);
+  }
+}
+
+/* 相邻元素间距 */
+.btn + .btn,
+button + button,
+.list-item + .list-item {
+  margin-top: 8px;
+}
+
+/* ================================================
+   精致化5.0 - 表格设计规范
+   ================================================ */
+
+/* 表格容器 - 窄屏横向滚动 */
+.table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 16px 0;
+  border-radius: 8px;
+}
+
+/* 表格样式 */
+.data-table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+/* 表头 - 品牌橙底白字 */
+.data-table thead {
+  background: #E65100;
+  color: #FFFFFF;
+}
+
+.data-table thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* 表格行 - 交替行背景 */
+.data-table tbody tr:nth-child(even) {
+  background: #FFF3E0;
+}
+
+.data-table tbody tr:hover {
+  background: #FFE0B2;
+}
+
+/* 表格单元格 */
+.data-table td {
+  padding: 10px 16px;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+/* 最小字号 */
+.data-table,
+.data-table th,
+.data-table td {
+  font-size: 14px;
+}
+
+/* ================================================
+   精致化5.0 - iOS Safari专项适配
+   ================================================ */
+
+/* 使用动态视口高度替代100vh */
+.full-height {
+  min-height: 100dvh;
+}
+
+body {
+  /* 原有样式补充 */
+  min-height: 100dvh;
+  /* iOS Safari底部安全区域 */
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: calc(env(safe-area-inset-bottom) + 70px);
+}
+
+/* 固定底部导航安全区域 */
+.bottom-tabs,
+.fixed-bottom {
+  bottom: env(safe-area-inset-bottom);
+}
+
+/* 输入框字号不小于16px - 防止iOS缩放 */
+input,
+textarea,
+select {
+  font-size: 16px;
+}
+
+/* iOS Safari输入框圆角修复 */
+input[type="text"],
+input[type="search"],
+input[type="number"],
+textarea {
+  border-radius: 8px;
+  -webkit-appearance: none;
+}
+
+/* iOS Safari按钮点击高亮 */
+button,
+.btn,
+.touchable {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS Safari惯性滚动 */
+.scroll-touch {
+  -webkit-overflow-scrolling: touch;
+  overflow-y: auto;
+}
+
+/* ================================================
+   精致化5.0 - 品牌色使用比例提醒
+   说明：以下注释说明品牌色使用规范
+   #E65100 ≤15% 仅强调
+   #FFF3E0 30-40% 背景
+   白色 30-40%
+   #333 10-15% 深灰
+   #eee 5-10% 浅灰
+   ================================================ */
+
+/* 阅读体验优化 - 正文行宽 */
+.readable-content {
+  max-width: 35em;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.readable-content p {
+  line-height: 1.8;
+  margin-bottom: 16px;
+}
+
+/* 口诀独立样式块 */
+.mnemonic-box {
+  background: linear-gradient(135deg, #FFF8E1, #FFE082);
+  border-left: 4px solid #E65100;
+  border-radius: 0 8px 8px 0;
+  padding: 16px 20px;
+  margin: 16px 0;
+  font-weight: 600;
+}
+
+/* 长文目录锚点 */
+.toc-fixed {
+  position: fixed;
+  top: 80px;
+  right: 16px;
+  background: #FFFFFF;
+  border: 1px solid #F0F0F0;
+  border-radius: 8px;
+  padding: 12px;
+  z-index: 100;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.toc-item {
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #666;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.toc-item:hover,
+.toc-item.active {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+/* ================================================
+   精致化5.0 - 刷新行为保持
+   ================================================ */
+
+/* 滚动位置保持 */
+.scroll-position {
+  scroll-margin-top: 80px;
+}
+
+/* 表单输入保持 */
+.form-persisted input,
+.form-persisted textarea {
+  transition: border-color 0.2s;
+}
+
+/* ================================================
+   精致化5.0 - 仪式感设计
+   ================================================ */
+
+/* 首日仪式 */
+.first-day-badge {
+  background: linear-gradient(135deg, #E65100, #FF6D00);
+  color: #FFFFFF;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 通关仪式 */
+.milestone-complete {
+  background: linear-gradient(135deg, #FFF8E1, #FFE082);
+  border: 2px solid #E65100;
+  border-radius: 16px;
+  padding: 24px;
+  text-align: center;
+}
+
+.milestone-complete .icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+/* 打卡7天仪式 */
+.checkin-streak {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.checkin-day {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #F0F0F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.checkin-day.completed {
+  background: #E65100;
+  color: #FFFFFF;
+}
+
+/* 可分享截图样式 */
+.shareable-card {
+  background: #FFFFFF;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.shareable-card::before {
+  content: '走过弯路，所以更懂路';
+  display: block;
+  font-size: 12px;
+  color: #BF360C;
+  text-align: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #FFF3E0;
+}

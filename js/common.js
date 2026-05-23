@@ -1530,3 +1530,397 @@
   };
 
 })();
+
+// ========== 精致化5.0：场景化问候语 ==========
+window.SceneGreetings = {
+  // 获取当前时段
+  getTimeSlot() {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return 'morning';
+    if (hour >= 12 && hour < 14) return 'noon';
+    if (hour >= 14 && hour < 18) return 'afternoon';
+    if (hour >= 18 && hour < 22) return 'evening';
+    return 'night';
+  },
+  
+  // 判断是否周末
+  isWeekend() {
+    const day = new Date().getDay();
+    return day === 0 || day === 6;
+  },
+  
+  // 判断是否考前1个月
+  isPreExamMonth() {
+    const now = new Date();
+    const examDates = [new Date(now.getFullYear(), 10, 15)]; // 11月15日笔试
+    const oneMonthLater = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
+    return examDates.some(d => d >= now && d <= oneMonthLater);
+  },
+  
+  // 获取场景化问候
+  getGreeting() {
+    const slot = this.getTimeSlot();
+    const weekend = this.isWeekend();
+    const preExam = this.isPreExamMonth();
+    
+    const greetings = {
+      morning: {
+        normal: ['早安，今日学习目标定好了吗', '清晨时光，记忆最佳', '早起的鸟儿有虫吃'],
+        weekend: ['周末早安，睡到自然醒了吗', '周末早晨，学习也不耽误', '轻松周末，保持学习节奏'],
+        exam: ['早！距离考试不足30天', '冲刺阶段，早起打卡别忘', '考前最后一个多月，拼了']
+      },
+      noon: {
+        normal: ['午休时间，休息也是学习', '午餐后小憩片刻', '下午学习更高效'],
+        weekend: ['周末愉快，午餐加鸡腿', '周末午间，轻松一下', '周末也要好好吃饭'],
+        exam: ['午休缩短，效率优先', '午饭别耽误太久', '时间紧迫，抓紧每分钟']
+      },
+      afternoon: {
+        normal: ['下午学习时光', '午后提神，继续努力', '下午的学习效率更高'],
+        weekend: ['周末下午，学习之余', '休闲时光也要进步', '周末学习两不误'],
+        exam: ['下午复习黄金期', '查漏补缺的时段', '专注冲刺']
+      },
+      evening: {
+        normal: ['晚间学习时光', '晚上效率最高', '夜色中的努力'],
+        weekend: ['周末夜晚，放松身心', '周末晚上也适合学习', '愉快周末'],
+        exam: ['最后冲刺阶段', '夜深人静，适合复盘', '考前最后的夜晚']
+      },
+      night: {
+        normal: ['夜深了，早点休息', '熬夜伤身，明天继续', '太晚了，明天再学'],
+        weekend: ['周末也别太晚', '愉快的一天结束', '早睡早起好习惯'],
+        exam: ['考前冲刺夜', '别熬太晚，保持状态', '最后冲刺']
+      }
+    };
+    
+    const slotGreetings = greetings[slot];
+    const type = preExam ? 'exam' : (weekend ? 'weekend' : 'normal');
+    const list = slotGreetings[type];
+    
+    return list[Math.floor(Math.random() * list.length)];
+  }
+};
+
+// ========== 精致化5.0：内容循环推荐 ==========
+window.ContentLoop = {
+  // 学完一章推荐下一章
+  recommendNextChapter(currentChapter) {
+    const chapterOrder = [
+      'business-ch01', 'business-ch02', 'business-ch03', 'business-ch04', 'business-ch05',
+      'business-ch06', 'business-ch07', 'business-ch08', 'business-ch09',
+      'policy-ch01', 'policy-ch02', 'policy-ch03', 'policy-ch04',
+      'national-ch01', 'national-ch02', 'national-ch03',
+      'local-ch01', 'local-ch02'
+    ];
+    
+    const idx = chapterOrder.indexOf(currentChapter);
+    if (idx === -1 || idx >= chapterOrder.length - 1) {
+      return { type: 'complete', message: '恭喜完成基础知识学习' };
+    }
+    
+    return {
+      type: 'next',
+      chapter: chapterOrder[idx + 1],
+      message: '学完这一章，继续下一节'
+    };
+  },
+  
+  // 刷完题推荐错题复习
+  recommendReviewAfterExercise(stats) {
+    if (stats.wrongCount > 0) {
+      return {
+        type: 'review_wrong',
+        message: '有' + stats.wrongCount + '道错题待复习，要来一波吗'
+      };
+    }
+    if (stats.accuracy < 70) {
+      return {
+        type: 'review_weak',
+        message: '正确率还有提升空间，建议复习薄弱章节'
+      };
+    }
+    return {
+      type: 'practice_more',
+      message: '今天的练习完成得很棒'
+    };
+  },
+  
+  // 打完卡推荐未完成项
+  recommendAfterCheckin(checkinData) {
+    const completed = checkinData.completed;
+    const total = checkinData.total;
+    if (completed >= total) {
+      return {
+        type: 'all_done',
+        message: '今日任务全部完成，太棒了',
+        action: 'share'
+      };
+    }
+    return {
+      type: 'continue',
+      remaining: total - completed,
+      message: '还有' + (total - completed) + '项待完成，继续加油'
+    };
+  }
+};
+
+// ========== 精致化5.0：localStorage版本控制与数据迁移 ==========
+window.StorageMigration = {
+  VERSION: '5.0.0',
+  KEYS: {
+    VERSION: 'app_version',
+    PROGRESS: 'study_progress',
+    PREFERENCES: 'user_preferences',
+    SEARCH_HISTORY: 'search_history',
+    FAVORITES: 'favorites',
+    CHECKIN: 'daily_checkin',
+    FLASHCARD_PROGRESS: 'flashcard_progress',
+    EXAM_STATS: 'exam_stats',
+    WEAK_TOPICS: 'weak_topics'
+  },
+  
+  // 迁移旧数据
+  migrate() {
+    const currentVersion = localStorage.getItem(this.KEYS.VERSION);
+    
+    if (!currentVersion) {
+      // 首次使用，初始化
+      this.init();
+      return;
+    }
+    
+    if (currentVersion === this.VERSION) {
+      // 当前版本，无需迁移
+      return;
+    }
+    
+    // 版本升级迁移
+    try {
+      this.migrateFromV4(currentVersion);
+      localStorage.setItem(this.KEYS.VERSION, this.VERSION);
+      console.log('数据迁移完成: ' + currentVersion + ' -> ' + this.VERSION);
+    } catch (e) {
+      console.error('数据迁移失败，降级到安全模式:', e);
+      this.fallback();
+    }
+  },
+  
+  // 从v4迁移
+  migrateFromV4(fromVersion) {
+    // 迁移学习进度
+    const oldProgress = localStorage.getItem('study_progress_v4');
+    if (oldProgress) {
+      const data = JSON.parse(oldProgress);
+      localStorage.setItem(this.KEYS.PROGRESS, JSON.stringify(data));
+    }
+    
+    // 迁移用户偏好
+    const oldPrefs = localStorage.getItem('user_settings');
+    if (oldPrefs) {
+      const data = JSON.parse(oldPrefs);
+      localStorage.setItem(this.KEYS.PREFERENCES, JSON.stringify({
+        ...data,
+        migrated: true,
+        migratedAt: Date.now()
+      }));
+    }
+  },
+  
+  // 初始化
+  init() {
+    localStorage.setItem(this.KEYS.VERSION, this.VERSION);
+    localStorage.setItem(this.KEYS.PREFERENCES, JSON.stringify({
+      version: this.VERSION,
+      theme: 'light',
+      notifications: true,
+      createdAt: Date.now()
+    }));
+  },
+  
+  // 降级处理
+  fallback() {
+    // 保留用户数据到内存，创建备份提示
+    const backup = {};
+    Object.keys(this.KEYS).forEach(key => {
+      const value = localStorage.getItem(key);
+      if (value) backup[key] = value;
+    });
+    sessionStorage.setItem('backup_' + Date.now(), JSON.stringify(backup));
+    showToast('数据加载异常，部分功能可能受限', 'warning');
+  },
+  
+  // 清除所有数据
+  clearAll() {
+    Object.values(this.KEYS).forEach(key => {
+      localStorage.removeItem(key);
+    });
+    localStorage.removeItem(this.KEYS.VERSION);
+    this.init();
+    showToast('已清除所有本地数据', 'success');
+  },
+  
+  // 获取容量使用情况
+  getUsage() {
+    let total = 0;
+    Object.values(this.KEYS).forEach(key => {
+      const value = localStorage.getItem(key);
+      if (value) total += value.length;
+    });
+    
+    // 估算localStorage总容量5MB
+    return {
+      used: total,
+      usedKB: Math.round(total / 1024),
+      usedMB: (total / (1024 * 1024)).toFixed(2),
+      percent: Math.round((total / (5 * 1024 * 1024)) * 100)
+    };
+  }
+};
+
+// ========== 精致化5.0：隐私保护功能 ==========
+window.PrivacyUtils = {
+  // localStorage数据用途说明
+  DATA_PURPOSE: {
+    study_progress: '记录学习进度，刷新后恢复',
+    user_preferences: '保存您的使用偏好设置',
+    search_history: '保存搜索历史，方便快速查询',
+    favorites: '收藏的学习内容',
+    daily_checkin: '每日打卡记录',
+    flashcard_progress: '闪卡学习进度',
+    exam_stats: '刷题统计数据'
+  },
+  
+  // 获取隐私数据摘要
+  getDataSummary() {
+    const summary = [];
+    Object.entries(this.DATA_PURPOSE).forEach(([key, desc]) => {
+      const has = localStorage.getItem(key) !== null;
+      summary.push({ key: key, desc: desc, hasData: has });
+    });
+    return summary;
+  },
+  
+  // 生成隐私说明HTML
+  renderPrivacyInfo() {
+    const summary = this.getDataSummary();
+    let html = '<div class="privacy-info">';
+    html += '<h3>本地数据说明</h3>';
+    html += '<p class="privacy-note">以下数据仅保存在您的设备中，不会上传到服务器</p>';
+    html += '<ul>';
+    summary.forEach(item => {
+      html += '<li><span class="key">' + item.key + '</span><span class="desc">' + item.desc + '</span><span class="status">' + (item.hasData ? '✓ 有数据' : '○ 无数据') + '</span></li>';
+    });
+    html += '</ul>';
+    html += '</div>';
+    return html;
+  },
+  
+  // 清除指定数据
+  clearData(key) {
+    if (this.DATA_PURPOSE[key]) {
+      localStorage.removeItem(key);
+      showToast('已清除' + key, 'success');
+      return true;
+    }
+    return false;
+  }
+};
+
+// ========== 精致化5.0：学习路径可视化 ==========
+window.RoadmapUtils = {
+  // 渲染学习路径
+  renderRoadmap(containerId, currentChapter) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    
+    const progress = JSON.parse(localStorage.getItem('study_progress') || '{}');
+    const chapters = [
+      { id: 'business-ch01', name: '导游服务', category: '笔试' },
+      { id: 'business-ch02', name: '导游概述', category: '笔试' },
+      { id: 'policy-ch01', name: '政策法规', category: '笔试' },
+      { id: 'national-ch01', name: '全国导基', category: '笔试' },
+      { id: 'local-ch01', name: '地方导基', category: '笔试' },
+      { id: 'interview', name: '面试技巧', category: '面试' }
+    ];
+    
+    let html = '<div class="roadmap-container">';
+    html += '<div class="roadmap-track">';
+    
+    chapters.forEach((chapter, idx) => {
+      const isCompleted = progress[chapter.id] && progress[chapter.id].learned;
+      const isCurrent = chapter.id === currentChapter;
+      const classes = ['roadmap-node'];
+      if (isCompleted) classes.push('roadmap-done');
+      if (isCurrent) classes.push('roadmap-current');
+      
+      html += '<a href="' + chapter.id + '.html" class="' + classes.join(' ') + '">' +
+        '<span class="roadmap-label">' + chapter.name + '</span>' +
+        '<span class="roadmap-category">' + chapter.category + '</span>' +
+      '</a>';
+      
+      if (idx < chapters.length - 1) {
+        html += '<span class="roadmap-connector"></span>';
+      }
+    });
+    
+    html += '</div></div>';
+    container.innerHTML = html;
+  }
+};
+
+// ========== 精致化5.0：防滥用节流增强 ==========
+(function() {
+  const clickTracker = {};
+  const MAX_CLICKS_PER_SECOND = 5;
+  const CLICK_WINDOW = 1000;
+  
+  window.isRapidClick = function(elementId) {
+    const now = Date.now();
+    if (!clickTracker[elementId]) {
+      clickTracker[elementId] = [];
+    }
+    
+    const clicks = clickTracker[elementId].filter(t => now - t < CLICK_WINDOW);
+    clicks.push(now);
+    clickTracker[elementId] = clicks;
+    
+    if (clicks.length > MAX_CLICKS_PER_SECOND) {
+      showToast('操作太频繁了，请稍后再试', 'warning');
+      return true;
+    }
+    return false;
+  };
+  
+  // 防止10标签页同时操作
+  window.isMultiTabActive = function() {
+    const tabKey = 'tab_active_' + location.pathname;
+    const lastActive = parseInt(sessionStorage.getItem(tabKey) || '0');
+    const now = Date.now();
+    
+    if (now - lastActive < 1000) {
+      // 短时间内多次激活，可能是多标签
+      const count = parseInt(sessionStorage.getItem('tab_count') || '0') + 1;
+      sessionStorage.setItem('tab_count', count.toString());
+      if (count > 5) {
+        showToast('检测到多标签页同时使用，部分功能受限', 'warning');
+      }
+    } else {
+      sessionStorage.setItem('tab_count', '1');
+    }
+    
+    sessionStorage.setItem(tabKey, now.toString());
+  };
+})();
+
+// 页面加载时执行数据迁移
+document.addEventListener('DOMContentLoaded', function() {
+  // 执行数据迁移
+  if (window.StorageMigration) {
+    window.StorageMigration.migrate();
+  }
+  
+  // 检测多标签
+  if (window.isMultiTabActive) {
+    window.isMultiTabActive();
+  }
+});
+
+})();
