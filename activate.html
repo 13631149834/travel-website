@@ -2,7 +2,8 @@
 <html lang="zh-CN">
 <head>
   <meta name="description" content="激活游导学习笔记，解锁全部功能">
-  <meta charset="UTF-8">
+  <meta charset="UTF-8"
+  <meta http-equiv="Content-Security-Policy" content="default-src "self"; script-src "self" "unsafe-inline" "unsafe-eval" https://www.coze.cn https://api.coze.cn; style-src "self" "unsafe-inline" https://fonts.googleapis.com; font-src "self" https://fonts.gstatic.com; img-src "self" data: https:; connect-src "self" https://www.coze.cn https://api.coze.cn; frame-ancestors "none"; base-uri "self"; form-action "self";">>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>会员激活 - 游导学习笔记</title>
   <meta property="og:title" content="会员激活 - 游导学习笔记">
@@ -126,6 +127,57 @@
 <script src="auth.js"></script>
 <script src="js/common.js"></script>
 <script>
+
+// ========== 激活系统核心函数 ==========
+function isActivated() {
+  var activated = localStorage.getItem('youdao_activated');
+  var expireTime = localStorage.getItem('youdao_expire');
+  if (activated !== 'true' || !expireTime) return false;
+  var now = new Date().getTime();
+  var expire = new Date(expireTime).getTime();
+  return now <= expire;
+}
+
+function getExpireDate() {
+  var expireTime = localStorage.getItem('youdao_expire');
+  if (!expireTime) return '未激活';
+  var d = new Date(expireTime);
+  return d.getFullYear() + '年' + (d.getMonth()+1) + '月' + d.getDate() + '日';
+}
+
+function getRemainDays() {
+  var expireTime = localStorage.getItem('youdao_expire');
+  if (!expireTime) return 0;
+  var now = new Date().getTime();
+  var expire = new Date(expireTime).getTime();
+  var days = Math.ceil((expire - now) / (1000*60*60*24));
+  return days > 0 ? days : 0;
+}
+
+function doActivate(code) {
+  // 使用auth.js中的verifyCode进行验证
+  if (typeof verifyCode === 'function') {
+    if (!verifyCode(code)) return false;
+  } else {
+    // 回退验证：格式XM2026-XXXX，后4位字符码之和为偶数
+    var pattern = /^XM2026-[A-Z0-9]{4}$/;
+    if (!pattern.test(code)) return false;
+    var suffix = code.split('-')[1];
+    var sum = 0;
+    for (var i = 0; i < suffix.length; i++) {
+      sum += suffix.charCodeAt(i);
+    }
+    if (sum % 2 !== 0) return false;
+  }
+  // 激活成功：写入localStorage，有效期1年
+  var now = new Date();
+  var expire = new Date(now.getTime() + 365*24*60*60*1000);
+  localStorage.setItem('youdao_activated', 'true');
+  localStorage.setItem('youdao_expire', expire.toISOString());
+  localStorage.removeItem('youdao_expired');
+  return true;
+}
+
 (function(){
   var isExpired = localStorage.getItem('youdao_expired') === 'true';
   if (isActivated()) {
