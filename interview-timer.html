@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>面试计时练习 - 游导学习笔记</title>
+<meta name="description" content="面试口述计时器，模拟真实面试场景，提升表达能力">
+<meta property="og:title" content="面试计时练习 - 游导学习笔记">
+<meta property="og:description" content="面试口述计时器，模拟真实面试场景，提升表达能力">
+<meta property="og:type" content="website">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#E65100">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background-color:#FFF3E0;background-image:linear-gradient(#FFE0B2 1px,transparent 1px),linear-gradient(90deg,#FFE0B2 1px,transparent 1px),linear-gradient(rgba(255,224,178,0.3) 1px,transparent 1px),linear-gradient(90deg,rgba(255,224,178,0.3) 1px,transparent 1px);background-size:20px 20px,20px 20px,4px 4px,4px 4px;background-position:-1px -1px,-1px -1px,-1px -1px,-1px -1px;min-height:100dvh;color:#333;padding-bottom:80px}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#fff;border-bottom:1px solid #f0f0f0;position:sticky;top:0;z-index:100}
+.logo{font-size:1.1rem;font-weight:800;color:#1a1a1a;display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:#E65100;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:0.9rem}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:8px 12px;border-radius:10px;font-size:0.85rem;color:#666;transition:all 0.3s;text-decoration:none}
+.nav-links a:hover{background:#FFF3E0;color:#E65100}
+;margin:0 auto;padding:20px 16px}
+
+/* 核心计时器 */
+.timer-tip {
+  font-size: 0.85rem;
+  color: #E65100;
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  margin-top: 12px;
+  display: inline-block;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.8; transform: scale(1.02); }
+}
+.timer-tip.hidden { display: none; }
+.timer-hero{text-align:center;padding:30px 0 20px}
+.timer-hero h1{font-size:1.5rem;font-weight:800;color:#1a1a1a;margin-bottom:4px}
+.timer-hero p{font-size:0.88rem;color:#888}
+
+.timer-ring{position:relative;width:240px;height:240px;margin:24px auto}
+.timer-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+.timer-ring circle{fill:none;stroke-width:8}
+.timer-bg{stroke:#f0f0f0}
+.timer-progress{stroke:#E65100;stroke-linecap:round;transition:stroke-dashoffset 0.5s ease}
+.timer-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.timer-digits{font-size:3rem;font-weight:800;color:#1a1a1a;font-variant-numeric:tabular-nums;line-height:1}
+.timer-label{font-size:0.82rem;color: #777;margin-top:4px}
+
+/* 时间选择 */
+.time-options{display:flex;justify-content:center;gap:8px;margin:16px 0;flex-wrap:wrap}
+.time-opt{padding:8px 18px;border:2px solid #E0E0E0;border-radius:20px;font-size:0.88rem;font-weight:600;cursor:pointer;background:#fff;color:#666;transition:all 0.2s}
+.time-opt:hover{border-color:#E65100;color:#E65100}
+.time-opt.active{background:#E65100;border-color:#E65100;color:#fff}
+/* 自定义时长输入 */
+.custom-time{display:flex;align-items:center;gap:8px;justify-content:center;margin:8px 0}
+.custom-time input{width:60px;height:36px;text-align:center;border:2px solid #E0E0E0;border-radius:12px;font-size:0.95rem;font-weight:700;color:#E65100;background:#fff}
+.custom-time input:focus{outline:none;border-color:#E65100}
+.custom-time span{font-size:0.85rem;color:#666}
+/* 全屏模式 */
+.fullscreen-btn{position:fixed;top:70px;right:16px;width:36px;height:36px;border-radius:50%;border:1px solid #F0F0F0;background:#FFF;cursor:pointer;font-size:0.9rem;z-index:300;box-shadow:0 2px 8px rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center}
+.fullscreen-btn:hover{background:#FFF3E0}
+body.is-fullscreen{background:#1a1a2e!important}
+body.is-fullscreen .navbar{display:none!important}
+body.is-fullscreen .container{padding-top:20px}
+body.is-fullscreen .bottom-tabs{display:none!important}
+body.is-fullscreen .timer-ring{transform:scale(1.3)}
+body.is-fullscreen .exit-fullscreen{display:flex!important}
+.exit-fullscreen{display:none!important;position:fixed;top:20px;right:20px;padding:10px 20px;background:rgba(255,255,255,0.9);color:#333;border:none;border-radius:20px;font-size:0.85rem;cursor:pointer;z-index:600;box-shadow:0 2px 12px rgba(0,0,0,0.15)}
+
+/* 控制按钮 */
+.controls{display:flex;justify-content:center;gap:12px;margin:20px 0}
+.ctrl-btn{padding:14px 32px;border:none;border-radius:16px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;touch-action:manipulation}
+.ctrl-btn:active{transform:scale(0.96)}
+.btn-start{background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;box-shadow:0 4px 16px rgba(230,81,0,0.3)}
+.btn-start:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(230,81,0,0.4)}
+.btn-pause{background:#FFF3E0;color:#E65100;border:2px solid #E65100}
+.btn-reset{background:#F5F5F5;color:#666;border:2px solid #E0E0E0}
+/* 阶段提示 */
+.stage-hint{background:#fff;border-radius:16px;padding:16px 20px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);border:1px solid #f0f0f0}
+.stage-hint h3{font-size:0.95rem;font-weight:700;color:#1a1a1a;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.stage-hint p{font-size:0.85rem;color:#666;line-height:1.7}
+.stage-hint .current{color:#E65100;font-weight:700}
+
+/* 评分提示 */
+.score-tips{background:#fff;border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);border:1px solid #f0f0f0}
+.score-tips h3{font-size:0.95rem;font-weight:700;color:#1a1a1a;margin-bottom:12px}
+.score-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #f0f0f0;font-size:0.88rem}
+.score-item:last-child{border-bottom:none}
+.score-icon{font-size:1.2rem;width:28px;text-align:center}
+.score-name{font-weight:600;color:#1a1a1a;flex:1}
+.score-val{color:#E65100;font-weight:700;font-size:0.9rem}
+
+/* 面试备忘 */
+.memo-section{background:#fff;border-radius:16px;padding:16px 20px;margin:16px 0;box-shadow:0 2px 8px rgba(0,0,0,0.04);border:1px solid #f0f0f0}
+.memo-section h3{font-size:0.95rem;font-weight:700;color:#1a1a1a;margin-bottom:8px}
+.memo-input{width:100%;min-height:100px;padding:12px;border:1.5px solid #E0E0E0;border-radius:12px;font-size:0.88rem;font-family:inherit;resize:vertical;line-height:1.7;color:#333;transition:border-color 0.2s}
+.memo-input:focus{outline:none;border-color:#E65100}
+.memo-input::placeholder{color:#bbb}
+.memo-save{font-size:0.78rem;color: #777;margin-top:6px}
+
+/* 结果弹窗 */
+.result-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:200;align-items:center;justify-content:center;padding:20px}
+.result-overlay.show{display:flex}
+.result-card{background:#fff;border-radius:24px;padding:32px;max-width:380px;width:100%;text-align:center;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes popIn{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}
+.result-card .emoji{font-size:3.5rem;margin-bottom:12px}
+.result-card h2{font-size:1.3rem;font-weight:800;color:#1a1a1a;margin-bottom:6px}
+.result-card p{font-size:0.9rem;color:#666;line-height:1.6;margin-bottom:20px}
+.result-card .time-result{font-size:2.5rem;font-weight:800;color:#E65100;margin-bottom:8px}
+.result-btns{display:flex;gap:10px;justify-content:center}
+.result-btns button{padding:12px 24px;border:none;border-radius:12px;font-size:0.9rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-again{background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;box-shadow:0 4px 12px rgba(230,81,0,0.2)}
+.btn-back{background:#F5F5F5;color:#666}
+/* 底部导航 */
+.bottom-tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #f0f0f0;display:flex;justify-content:space-around;padding:8px 0;padding-bottom:max(8px,env(safe-area-inset-bottom));z-index:100;box-shadow:0 -1px 6px rgba(0,0,0,0.04)}
+.tab-item{display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.68rem;color: #777;text-decoration:none;padding:4px 8px;transition:color 0.2s}
+.tab-item.active{color:#E65100}
+.tab-icon{font-size:1.15rem}
+
+footer{text-align:center;padding:16px;font-size:0.78rem;color: #777;border-top:1px solid #f0f0f0;margin-top:20px}
+@media(max-width:768px){
+  .navbar{position:fixed;top:0;left:0;right:0;width:100%;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+  .nav-links{display:none}
+  .container{padding-top:70px}
+}
+/* 交互细节：文字选中颜色 */
+::selection { background: #FFE0B2; color: #BF360C; }
+::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+/* 交互细节：禁止长按弹出菜单 */
+.quick-btn, .feature-card, .card, .guide-card { -webkit-touch-callout: none; }
+
+/* 交互细节：滚动区域 */
+.messages, .chat-area { -webkit-overflow-scrolling: touch; }
+
+</style>
+<style>
+::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+/* 交互细节：禁止长按弹出菜单 */
+.quick-btn, .feature-card, .card, .guide-card { -webkit-touch-callout: none; }
+
+/* 交互细节：滚动区域 */
+.messages, .chat-area { -webkit-overflow-scrolling: touch; }
+
+</style>
+<link rel="stylesheet" href="css/v3-components.css">
+</head>
+<body>
+<div class="navbar">
+  <a href="index.html" class="logo"><span class="logo-icon">📚</span>游导学习笔记</a>
+  <div class="nav-links">
+    <a href="index.html">首页</a>
+    <a href="ai-assistant.html">AI助手</a>
+    <a href="exam-simulator.html">刷题</a>
+    <a href="travel-knowledge.html">知识库</a>
+    <a href="interview.html">面试</a>
+  </div>
+</div>
+
+<div class="container">
+  <!-- 全屏按钮 -->
+  <button class="fullscreen-btn" onclick="toggleFullscreen()" title="全屏模式">⛶</button>
+  <button class="exit-fullscreen" onclick="toggleFullscreen()">退出全屏</button>
+  
+  <div class="timer-hero">
+    <h1>🎤 面试计时练习</h1>
+    <p>模拟真实面试，对着计时器练导游词</p>
+    <p class="timer-tip" id="timerTip">💡 按下方「开始练习」键启动计时</p>
+    <p class="slogan-mini">走过弯路，所以更懂路</p>
+  </div>
+
+  <!-- 核心计时器 -->
+  <div class="timer-ring">
+    <svg viewBox="0 0 120 120">
+      <circle class="timer-bg" cx="60" cy="60" r="54"/>
+      <circle class="timer-progress" id="timerProgress" cx="60" cy="60" r="54" stroke-dasharray="339.29" stroke-dashoffset="0"/>
+    </svg>
+    <div class="timer-center">
+      <div class="timer-digits" id="timerDigits">3:00</div>
+      <div class="timer-label" id="timerStage">准备开始</div>
+    </div>
+  </div>
+
+  <!-- 时间选择 -->
+  <div class="time-options">
+    <button class="time-opt" onclick="setDuration(3)">3分钟</button>
+    <button class="time-opt" onclick="setDuration(5)">5分钟</button>
+    <button class="time-opt active" onclick="setDuration(8)">8分钟</button>
+    <button class="time-opt" onclick="setDuration(10)">10分钟</button>
+  </div>
+  
+  <!-- 自定义时长 -->
+  <div class="custom-time">
+    <span>自定义:</span>
+    <input type="number" id="customMinutes" min="1" max="60" value="5" placeholder="5">
+    <span>分钟</span>
+    <button class="time-opt" style="padding:6px 12px;font-size:0.8rem" onclick="setCustomDuration()">确定</button>
+  </div>
+
+  <!-- 控制按钮 -->
+  <div class="controls" id="controls">
+    <button class="ctrl-btn btn-start" data-track="btn"  id="startBtn" onclick="startTimer()">▶ 开始练习</button>
+    <button class="ctrl-btn btn-reset" data-track="btn"  onclick="resetTimer()">↺ 重置</button>
+  </div>
+
+  <!-- 阶段提示 -->
+  <div class="stage-hint">
+    <h3>📋 讲解节奏提示</h3>
+    <p id="stageTip">
+      <span class="current">⏱ 0:00-0:30</span> 开场白：微笑问好，报景点名称<br>
+      <span>⏱ 0:30-1:30</span> 景点概况：位置、历史、地位<br>
+      <span>⏱ 1:30-3:30</span> 核心讲解：2-3个亮点深度讲<br>
+      <span>⏱ 3:30-4:00</span> 结束语：总结升华，感谢考官
+    </p>
+  </div>
+
+  <!-- 评分标准 -->
+  <div class="score-tips">
+    <h3>📊 面试评分提醒</h3>
+    <div class="score-item"><span class="score-icon">🎯</span><span class="score-name">景点讲解</span><span class="score-val">50分</span></div>
+    <div class="score-item"><span class="score-icon">💬</span><span class="score-name">问答环节</span><span class="score-val">30分</span></div>
+    <div class="score-item"><span class="score-icon">👔</span><span class="score-name">仪表仪态</span><span class="score-val">20分</span></div>
+    <div style="margin-top:12px;padding:10px;background:#FFF3E0;border-radius:8px;font-size:0.78rem;color:#BF360C;line-height:1.6;">
+      <strong>⏱ 推荐时间分配：</strong><br>
+      讲解环节：3-5分钟（占50%）<br>
+      问答环节：2分钟（占30%）<br>
+      礼仪表现：全程（占20%）
+    </div>
+  </div>
+
+  <!-- 面试备忘 -->
+  <div class="memo-section">
+    <h3>📝 讲解要点备忘</h3>
+    <textarea class="memo-input" id="memoInput" placeholder="写下你的讲解要点关键词，比如：&#10;&#10;故宫：&#10;1. 中轴线布局&#10;2. 太和殿-三大殿核心&#10;3. 故宫博物院186万件藏品" oninput="saveMemo()"></textarea>
+    <div class="memo-save">自动保存到本地</div>
+  </div>
+
+  <footer>
+    走过弯路，所以更懂路 · © 2025-2026 游导学习笔记<br>
+    <a href="interview.html" style="color:#E65100;text-decoration:none;font-weight:600">← 返回面试专区</a>
+  
+<p style="text-align:center;color: #777;font-size:0.8rem;margin:20px 0;">走过弯路，所以更懂路</p>
+<p style="margin-top:6px;">©2025-2026 游导学习笔记 ximao101整理</p></footer>
+</div>
+
+<!-- 完成弹窗 -->
+<div class="result-overlay" id="resultOverlay">
+  <div class="result-card">
+    <div class="emoji">🎉</div>
+    <h2>练习完成！</h2>
+    <div class="time-result" id="resultTime">4:00</div>
+    <p id="resultTip">讲解时间刚好，节奏控制得不错！继续加油💪</p>
+    <div class="result-btns">
+      <button class="btn-again" data-track="btn"  onclick="resetTimer();document.getElementById('resultOverlay').classList.remove('show')">再练一次</button>
+      <button class="btn-back" data-track="btn"  onclick="location.href='interview.html'">回面试专区</button>
+    </div>
+  </div>
+</div>
+
+<nav class="bottom-tabs">
+  <a class="tab-item" href="index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a>
+  <a class="tab-item tab-active" href="ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a>
+  <a class="tab-item" href="exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a>
+  <a class="tab-item" href="search.html"><span class="tab-icon">🔍</span><span class="tab-label">搜索</span></a>
+  <a class="tab-item" href="travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a>
+</nav>
+
+<!-- AI悬浮按钮 -->
+<a href="ai-assistant.html" style="position:fixed;bottom:76px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem;text-decoration:none;box-shadow:0 4px 16px rgba(230,81,0,0.35);z-index:998;transition:all 0.25s" title="AI助手">🤖</a>
+
+<!-- 夜间模式 -->
+<script src="js/common.js"></script>
+<script>
+var duration = 4; // 分钟
+var totalSeconds = duration * 60;
+var remainingSeconds = totalSeconds;
+var timerInterval = null;
+var isRunning = false;
+var isPaused = false;
+
+var circumference = 2 * Math.PI * 54; // 339.29
+var progressEl = document.getElementById('timerProgress');
+var digitsEl = document.getElementById('timerDigits');
+var stageEl = document.getElementById('timerStage');
+var startBtn = document.getElementById('startBtn');
+
+// 精致化5.0：计时器时间范围配置（秒）
+var TIMER_CONFIG = {
+  minSeconds: 10,   // 最少10秒
+  maxSeconds: 600,  // 最多600秒（10分钟）
+  minMinutes: Math.ceil(10 / 60),  // 最少1分钟
+  maxMinutes: Math.floor(600 / 60)  // 最多10分钟
+};
+
+// 加载备忘
+try {
+  var savedMemo = localStorage.getItem('youdao_interview_memo');
+  if (savedMemo) document.getElementById('memoInput').value = savedMemo;
+  
+  // 检查是否已显示过计时器提示，已显示则隐藏
+  var tip = document.getElementById('timerTip');
+  if (tip && localStorage.getItem('timer_tip_dismissed')) {
+    tip.classList.add('hidden');
+  }
+} catch(e) {}
+
+function saveMemo() {
+  try { localStorage.setItem('youdao_interview_memo', document.getElementById('memoInput').value); } catch(e) {}
+}
+
+function setDuration(min) {
+  if (isRunning) return;
+  duration = min;
+  totalSeconds = duration * 60;
+  remainingSeconds = totalSeconds;
+  document.querySelectorAll('.time-opt').forEach(function(b) { b.classList.remove('active'); });
+  event.target.classList.add('active');
+  updateDisplay();
+  progressEl.style.strokeDashoffset = '0';
+}
+
+function setCustomDuration() {
+  var input = document.getElementById('customMinutes');
+  var val = parseInt(input.value);
+  
+  // 精致化5.0：使用 ValidationUtils 进行验证
+  if (typeof ValidationUtils !== 'undefined') {
+    var result = ValidationUtils.validateTimerInput(val * 60);
+    if (!result.valid) {
+      // 显示错误提示
+      if (typeof showToast === 'function') {
+        showToast(result.message, 'warning');
+      } else {
+        alert(result.message);
+      }
+      return;
+    }
+    val = Math.floor(result.value / 60);
+  } else {
+    // 回退验证
+    if (isNaN(val) || val < TIMER_CONFIG.minMinutes || val > TIMER_CONFIG.maxMinutes) {
+      alert('时间范围：' + TIMER_CONFIG.minMinutes + '-' + TIMER_CONFIG.maxMinutes + '分钟');
+      return;
+    }
+  }
+  
+  setDuration(val);
+  // 更新预设按钮状态
+  document.querySelectorAll('.time-opt').forEach(function(b) { b.classList.remove('active'); });
+}
+
+function toggleFullscreen() {
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    document.body.classList.add('is-fullscreen');
+    // 尝试进入全屏
+    var elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    }
+  } else {
+    document.body.classList.remove('is-fullscreen');
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
+
+function updateDisplay() {
+  var min = Math.floor(remainingSeconds / 60);
+  var sec = remainingSeconds % 60;
+  digitsEl.textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+  
+  // 更新进度环
+  var elapsed = totalSeconds - remainingSeconds;
+  var progress = elapsed / totalSeconds;
+  progressEl.style.strokeDashoffset = (circumference * (1 - progress)).toString();
+  
+  // 更新阶段提示
+  var totalMin = duration;
+  var elapsedMin = elapsed / 60;
+  if (elapsedMin < 0.5) {
+    stageEl.textContent = '📢 开场白';
+    stageEl.style.color = '#E65100';
+  } else if (elapsedMin < 1.5) {
+    stageEl.textContent = '🏛️ 景点概况';
+    stageEl.style.color = '#F59E0B';
+  } else if (elapsedMin < totalMin - 0.5) {
+    stageEl.textContent = '🎯 核心讲解';
+    stageEl.style.color = '#E65100';
+  } else {
+    stageEl.textContent = '👋 结束语';
+    stageEl.style.color = '#E53E6B';
+  }
+  
+  // 颜色变化
+  if (remainingSeconds <= 30) {
+    digitsEl.style.color = '#EF4444';
+    progressEl.style.stroke = '#EF4444';
+  } else if (remainingSeconds <= 60) {
+    digitsEl.style.color = '#F59E0B';
+    progressEl.style.stroke = '#F59E0B';
+  } else {
+    digitsEl.style.color = '';
+    progressEl.style.stroke = '#E65100';
+  }
+}
+
+function startTimer() {
+  // 隐藏首次使用提示（localStorage标记）
+  try {
+    var tip = document.getElementById('timerTip');
+    if (tip && !localStorage.getItem('timer_tip_dismissed')) {
+      tip.classList.add('hidden');
+      localStorage.setItem('timer_tip_dismissed', 'true');
+    }
+  } catch(e) {}
+  
+  if (isRunning && !isPaused) {
+    // 暂停
+    isPaused = true;
+    clearInterval(timerInterval);
+    startBtn.textContent = '▶ 继续';
+    startBtn.className = 'ctrl-btn btn-start';
+    stageEl.textContent = '⏸ 已暂停';
+    return;
+  }
+  
+  if (isPaused) {
+    // 恢复
+    isPaused = false;
+    startBtn.textContent = '⏸ 暂停';
+    startBtn.className = 'ctrl-btn btn-pause';
+  } else {
+    // 开始
+    isRunning = true;
+    startBtn.textContent = '⏸ 暂停';
+    startBtn.className = 'ctrl-btn btn-pause';
+  }
+  
+  timerInterval = setInterval(function() {
+    remainingSeconds--;
+    updateDisplay();
+    
+    if (remainingSeconds <= 0) {
+      clearInterval(timerInterval);
+      isRunning = false;
+      isPaused = false;
+      // 震动提醒 - 多种模式
+      if (navigator.vibrate) {
+        navigator.vibrate([200, 100, 200, 100, 200]);
+      }
+      // 全屏模式下的视觉提示
+      if (document.body.classList.contains('is-fullscreen')) {
+        triggerTimerEndVisual();
+      }
+      showResult();
+    }
+  }, 1000);
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  isRunning = false;
+  isPaused = false;
+  remainingSeconds = totalSeconds;
+  startBtn.textContent = '▶ 开始练习';
+  startBtn.className = 'ctrl-btn btn-start';
+  progressEl.style.strokeDashoffset = '0';
+  digitsEl.style.color = '';
+  progressEl.style.stroke = '#E65100';
+  stageEl.textContent = '准备开始';
+  stageEl.style.color = '';
+  updateDisplay();
+}
+
+function triggerTimerEndVisual() {
+  var timerRing = document.querySelector('.timer-ring');
+  if (timerRing) {
+    timerRing.style.animation = 'timerEndPulse 0.5s ease 3';
+  }
+  // 添加动画样式
+  var style = document.createElement('style');
+  style.textContent = '@keyframes timerEndPulse { 0%,100%{transform:scale(1.3)}50%{transform:scale(1.4)} }';
+  document.head.appendChild(style);
+}
+
+function showResult() {
+  var overlay = document.getElementById('resultOverlay');
+  var timeEl = document.getElementById('resultTime');
+  var tipEl = document.getElementById('resultTip');
+  
+  var min = Math.floor(totalSeconds / 60);
+  var sec = totalSeconds % 60;
+  timeEl.textContent = min + ':' + (sec < 10 ? '0' : '') + sec;
+  
+  var tips = [
+    '讲解时间刚好，节奏控制得不错！继续加油💪',
+    '完成一次完整练习！多练几次就会越来越自然',
+    '坚持练习，面试建议没问题！每天练2-3次效果更佳',
+    '熟练度是练出来的，不是背出来的，继续加油！'
+  ];
+  tipEl.textContent = tips[Math.floor(Math.random() * tips.length)];
+  
+  overlay.classList.add('show');
+}
+
+// 初始化
+updateDisplay();
+</script>
+
+<a href="chat.html" class="ai-float-btn" title="AI助手"><span>🤖</span></a>
+<script>
+// 页面跳转淡出效果
+(function(){
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a');
+    if(!a)return;
+    var href=a.getAttribute('href');
+    if(!href||href.startsWith('#')||href.startsWith('javascript')||href.startsWith('http')||href.startsWith('mailto')||href.startsWith('tel'))return;
+    // Same page anchors
+    if(href.startsWith('#'))return;
+    e.preventDefault();
+    document.body.style.transition='opacity 0.15s ease';
+    document.body.style.opacity='0.6';
+    setTimeout(function(){location.href=href;},150);
+  });
+})();
+</script>
+
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js').then(function(r){/* SW注册成功 */}).catch(function(e){/* SW注册失败，忽略 */})}
+</script>
+<script src="auth.js"></script>
+<script src="js/feedback-widget.js"></script>
+</body>
+</html>

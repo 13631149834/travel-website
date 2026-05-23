@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>导游证AI助手小游 - 24小时在线答疑 | 游导学习笔记 - 2026年5月更新</title>
+<meta name="description" content="导游证AI备考助手小游，24小时在线回答你的备考问题，免费体验"/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:title" content="AI助手 - 游导学习笔记"/>
+  <meta property="og:description" content="导游证备考AI智能助手，24小时在线解答备考疑惑"/>
+  <meta property="og:url" content="https://youdao-travel.com/ai-assistant.html"/>
+  <meta property="og:site_name" content="游导学习笔记">
+  <meta property="og:image" content="https://youdao-travel.com/images/og-share.jpg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+<link href="favicon.svg" rel="icon" type="image/svg+xml"/>
+<style>
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif}
+body{background-color:#FFF3E0;background-image:linear-gradient(#FFE0B2 1px,transparent 1px),linear-gradient(90deg,#FFE0B2 1px,transparent 1px),linear-gradient(rgba(255,224,178,0.3) 1px,transparent 1px),linear-gradient(90deg,rgba(255,224,178,0.3) 1px,transparent 1px);background-size:20px 20px,20px 20px,4px 4px,4px 4px;background-position:-1px -1px,-1px -1px,-1px -1px,-1px -1px;color:#666666;display:flex;flex-direction:column;min-height:100dvh;padding-bottom:70px}
+.navbar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:#FFFFFF;border-bottom:1px solid #F0F0F0;position:sticky;top:0;z-index:100}
+.logo{font-size:1.1rem;font-weight:800;color:#1A1A1A;display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:#E65100;border-radius:8px;display:flex;align-items:center;justify-content:center}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:8px 12px;border-radius:10px;font-size:0.88rem;color: #666666;transition:all 0.3s;text-decoration:none}
+.nav-links a:hover{background:#FFF3E0;color:#E65100}
+.nav-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:8px}
+.nav-toggle span{width:22px;height:2px;background:#1A1A1A;border-radius:2px}
+
+/* 面包屑导航 */
+.breadcrumb{padding:12px 20px;font-size:0.8rem;color: #777;background:#FAFAFA;border-bottom:1px solid #F0F0F0}
+.breadcrumb a{color:#E65100;text-decoration:none}
+.breadcrumb a:hover{text-decoration:underline}
+.breadcrumb .sep{margin:0 6px;color:#CCC}
+
+/* 主内容区 */
+.main-content{max-width:768px;margin:0 auto;padding:24px 20px}
+
+/* 页面标题区 */
+.page-header{text-align:center;margin-bottom:32px}
+.page-header h1{font-size:1.6rem;color:#1A1A1A;font-weight:800;margin-bottom:8px}
+.page-desc{font-size:0.95rem;color: #777;line-height:1.6}
+
+/* 功能卡片区域 */
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin:28px 0}
+.feature-card{background:#FFFFFF;border:1px solid #F0F0F0;border-radius:18px;padding:28px 24px;box-shadow:0 2px 8px rgba(0,0,0,0.04);transition:all 0.3s}
+.feature-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.1)}
+.feature-card .feature-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin:0 auto 14px}
+.feature-card h3{font-size:1.15rem;color:#1A1A1A;margin-bottom:6px;font-weight:700;text-align:center}
+.feature-card p{color: #777;font-size:0.85rem;margin-bottom:16px;line-height:1.5}
+.feature-card .feature-link{display:inline-flex;align-items:center;gap:4px;color:#E65100;font-size:0.9rem;font-weight:600;text-decoration:none}
+.feature-card .feature-link:hover{color:#BF360C}
+.feature-card .feature-link::after{content:'→';transition:transform 0.2s}
+.feature-card .feature-link:hover::after{transform:translateX(3px)}
+
+/* 热门问题区域 */
+.hot-questions{margin:32px 0;padding:24px;background:#FAFAFA;border-radius:18px}
+.hot-questions h3{font-size:1.1rem;color:#1A1A1A;margin-bottom:16px;font-weight:700;display:flex;align-items:center;gap:6px}
+.hot-question{display:flex;align-items:center;gap:10px;padding:12px 16px;background:#FFFFFF;border-radius:12px;margin-bottom:8px;cursor:pointer;transition:all 0.2s;text-decoration:none;color:#666}
+.hot-question:hover{background:#FFF3E0;color:#E65100}
+.hot-question .q-icon{color:#E65100;font-weight:700;font-size:0.9rem}
+.hot-question .q-text{font-size:0.9rem;flex:1}
+.hot-question .q-arrow{opacity:0;transition:opacity 0.2s}
+.hot-question:hover .q-arrow{opacity:1}
+.hot-more{text-align:center;margin-top:12px}
+.hot-more a{color:#E65100;font-size:0.85rem;text-decoration:none}
+.hot-more a:hover{text-decoration:underline}
+
+/* 统计区域 */
+.stats-row{display:flex;justify-content:center;gap:32px;margin:28px 0;padding:20px;background:#FFF3E0;border-radius:18px}
+.stat-item{text-align:center}
+.stat-num{font-size:1.5rem;color:#E65100;font-weight:800}
+.stat-label{font-size:0.75rem;color:#666;margin-top:2px}
+
+/* CTA区域 */
+.cta-section{text-align:center;margin:36px 0;padding:36px 20px;background:linear-gradient(135deg,#E65100,#FF6D00);border-radius:18px;color:#FFFFFF}
+.cta-section h3{font-size:1.3rem;margin-bottom:8px;font-weight:800}
+.cta-section p{font-size:0.9rem;opacity:0.9;margin-bottom:20px}
+.cta-btn{display:inline-flex;align-items:center;gap:6px;padding:14px 32px;background:#FFFFFF;color:#E65100;border-radius:25px;font-size:1rem;font-weight:700;text-decoration:none;transition:all 0.2s;box-shadow:0 4px 12px rgba(0,0,0,0.15)}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.2)}
+
+/* 全局重点突出样式 */
+.hl{color:#E65100;font-weight:700}
+.key-point{display:inline-block;background:#FFF3E0;border:1px solid #E65100;border-radius:8px;padding:2px 10px;color:#E65100;font-weight:700;font-size:0.92em}
+.key-num{color:#E65100;font-weight:800;font-size:1.1em}
+.key-tag{display:inline-block;background:#FFF3E0;color:#E65100;padding:1px 8px;border-radius:4px;font-weight:600;font-size:0.85em}
+.em-text{font-weight:700;color:#1A0F00}
+
+/* === 全局字体强制深色 === */
+.container, .container *, .section, .section *, .hero, .hero *,
+.glass-card, .glass-card *, .content-card, .content-card *,
+.card, .card *, .info-box, .info-box *, .tip-box, .tip-box *,
+.question-card, .question-card *, .pricing-card, .pricing-card *,
+.pricing-grid, .pricing-grid *, .compare-section, .compare-section *,
+.trust-grid, .trust-grid *, .province-card, .province-card *,
+.detail-content, .detail-content *, .detail-header, .detail-header *,
+.post-card, .post-card *, .knowledge-card, .knowledge-card *,
+.tool-card, .tool-card *, .process-content, .process-content *,
+.exam-result, .exam-result *, .section-block, .section-block *,
+.mnemonic-box, .mnemonic-box *, .calc-group, .calc-group *,
+.calc-result, .calc-result *, .modal-body, .modal-body *,
+.form-group, .form-group *, .faq-item, .faq-item *,
+#dailyQuestions, #dailyQuestions *, #examSection, #examSection *,
+#chatArea, #chatArea *, .history-notice, .quote-bar {
+  color: #1A1A1A;
+}
+.btn-primary, .btn-primary *, .pricing-btn, .mode-tab.active,
+.submit-multi-btn, .activation-btn {
+  color: #fff;
+}
+.yes, .check { color: #BF360C; }
+.no, .cross { color: #757575; }
+.correct { color: #BF360C; }
+.wrong { color: #B91C1C; }
+.hl { color: #E65100; font-weight: 700; }
+.key-point {color: #E65100; background: #FFF3E0; border-color: #FFF3E0; }
+.key-num { color: #E65100; font-weight: 800; }
+.key-tag { color: #E65100; background: #FFF3E0; }
+.em-text { color: #1A0F00; }
+.pricing-price { color: #E65100; }
+.price-tag { color: #E65100; }
+a { color: #E65100; }
+.navbar a, .footer a, .bottom-tabs a { color: #666666; }
+::placeholder { color: #9E9E9E; }
+.bottom-tabs { color: #777777; }
+.bottom-tabs a { color: #777777; }
+  .bottom-tabs .tab-active span { color: #E65100; }
+.bottom-tabs span { color: #777777; }
+.footer { color: #777777; }
+.footer p { color: #777777; }
+.footer strong { color: #E65100; }
+.footer a { color: #E65100; }
+.logo { color: #E65100; }
+.logo-icon { color: #E65100; }
+.logo span { color: #E65100; }
+.nav-links { color: #666666; }
+.nav-links a { color: #666666; }
+.nav-links a:hover { color: #E65100; }
+.nav-links a.active { color: #FFFFFF; }
+.nav-toggle span { background: #1A1A1A; }
+.mode-tab { color: #666666; }
+.mode-tab.active { color: #FFFFFF; background: #E65100; }
+.tab-icon { color: #777777; }
+.tab-text { color: #777777; }
+
+@media(min-width:769px){
+  html{background:#FFFFFF}
+  body{max-width:768px;margin:0 auto;background:#FFFFFF;min-height:100dvh;position:relative}
+  .navbar{max-width:768px;margin:0 auto;left:50%;transform:translateX(-50%);right:auto;background:#FFFFFF;border-bottom:1px solid #EEEEEE;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:56px;box-shadow:none}
+  .navbar .logo{font-size:1.2rem;font-weight:700;color:#1A1A1A;text-decoration:none;display:flex;align-items:center;gap:8px}
+  .navbar .logo-icon{width:32px;height:32px;background:#E65100;border-radius:8px;display:flex;align-items:center;justify-content:center}
+  .nav-links{display:flex;align-items:center;gap:8px;flex-wrap:wrap;position:static;width:auto;background:transparent;box-shadow:none;padding:0}
+  .nav-links a{padding:8px 16px;border-radius:20px;font-size:0.9rem;color:#666666;text-decoration:none;transition:all 0.3s ease;white-space:nowrap}
+  .nav-links a:hover{color:#E65100;background:#FFF3E0}
+  .nav-links a.active{background:#E65100;color:#FFFFFF}
+  .nav-links a.active:hover{background:#BF360C}
+  .nav-toggle{display:none}
+  .bottom-tabs{display:none}
+  ;margin:0 auto;padding:0 24px}
+  .main-content{max-width:768px;padding:32px 24px}
+  .page-header h1{font-size:1.8rem}
+  .feature-grid{grid-template-columns:repeat(2,1fr)}
+}
+
+.nav-more{position:relative}
+.nav-more-btn{cursor:pointer;padding:6px 14px;font-size:0.9rem;color:#666}
+.nav-more:hover .nav-dropdown{display:block}
+.nav-dropdown{display:none;position:absolute;top:100%;right:0;background:#FFFFFF;border:1px solid #F0F0F0;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,0.12);min-width:160px;z-index:200;padding:8px 0}
+.nav-dropdown a{display:block;padding:10px 20px;color:#666;font-size:0.9rem;white-space:nowrap}
+.nav-dropdown a:hover{background:#FFF3E0;color:#E65100}
+.nav-links a.active{background:#E65100;color:#FFFFFF;border-radius:20px;padding:6px 14px}
+.nav-more-btn.active{background:#E65100;color:#FFFFFF;border-radius:20px;padding:6px 14px}
+.bottom-tabs .tab-active span{color:#E65100}
+
+@media(max-width:768px){
+  .navbar{position:fixed;top:0;left:0;right:0;width:100%;z-index:9999;max-width:none;margin:0;padding:14px 20px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+  .nav-links{display:none;position:absolute;top:100%;left:0;right:0;background:#FFFFFF;flex-direction:column;padding:12px;border-radius:0 0 16px 16px}
+  .nav-links.open{display:flex}
+  .nav-toggle{display:flex}
+  .feature-grid{grid-template-columns:1fr}
+  .stats-row{flex-wrap:wrap;gap:20px}
+  .stat-item{flex:1;min-width:80px}
+}
+
+/* 回到顶部按钮 */
+.back-to-top {
+    position: fixed;
+    bottom: 130px;
+    left:16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #E65100;
+    color: #FFFFFF;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(230,81,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 90;
+    transition: all 0.3s;
+    opacity: 0;
+}
+.back-to-top:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(230,81,0,0.35);
+}
+.back-to-top.visible {
+    display: flex;
+    opacity: 1;
+}
+@media (min-width: 769px) {
+    .back-to-top {
+        bottom: 40px;
+        right: calc(50% - 620px);
+    }
+}
+
+
+/* AI助手悬浮按钮 */
+.ai-float-btn {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, #E65100, #FF6D00);
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(230, 81, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+.ai-float-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(230, 81, 0, 0.5);
+}
+.ai-float-btn span {
+  font-size: 1.5rem;
+  filter: grayscale(0);
+}
+.ai-float-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #E65100, #FF6D00);
+  border-radius: 50%;
+  animation: aiPulse 2s infinite;
+  z-index: -1;
+}
+@keyframes aiPulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+</style>
+  <meta property="og:image" content="https://youdao-travel.com/images/og-share.jpg">
+<style>
+/* Global readability improvements */
+.section-block p, .item-card p, .template-box p, .plan-card p { line-height: 1.7; }
+.section-block ul, .item-card ul { line-height: 1.8; }
+.section-block li, .item-card li { margin-bottom: 4px; }
+.item-card h4 { margin-bottom: 10px; }
+.step-list { gap: 14px; }
+.step-item { padding: 12px 0; }
+
+/* AI助手悬浮按钮 */
+.ai-float-btn {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 54px;
+  height: 54px;
+  background: linear-gradient(135deg, #E65100, #FF6D00);
+  border-radius: 50%;
+  box-shadow: 0 4px 16px rgba(230, 81, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9998;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-decoration: none;
+}
+.ai-float-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(230, 81, 0, 0.5);
+}
+.ai-float-btn span {
+  font-size: 1.5rem;
+  filter: grayscale(0);
+}
+.ai-float-pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #E65100, #FF6D00);
+  border-radius: 50%;
+  animation: aiPulse 2s infinite;
+  z-index: -1;
+}
+@keyframes aiPulse {
+  0% { transform: scale(1); opacity: 0.5; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+
+/* 打印样式 */
+@media print {
+  .navbar, .bottom-tabs, .ai-float-btn, .back-to-top, footer, .cta-section, .fab { display: none; }
+  body { padding: 0; color: #333; background: #fff; }
+  .container, .main-content, .page-header { padding: 20px 0; }
+  a { color: #333; text-decoration: none; }
+  @page { margin: 1cm; }
+}
+
+</style>
+<script src="mobile-fix.js" defer></script>
+  <link rel="canonical" href="https://youdao-travel.com/ai-assistant.html">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "AI备考助手 - 游导学习笔记",
+    "description": "导游证AI备考助手，7×24小时在线智能答疑",
+    "url": "https://youdao-travel.com/ai-assistant.html"
+  }
+  </script>
+<link rel="stylesheet" href="css/common.css">
+    <link rel="manifest" href="manifest.json"/>
+    <meta name="theme-color" content="#E65100"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+    <meta name="apple-mobile-web-app-title" content="游导学习笔记"/>
+    <link rel="apple-touch-icon" href="favicon.svg"/>
+<link rel="stylesheet" href="css/v3-components.css">
+<script src="js/error-recovery.js"></script>
+<script src="js/seasonal-theme.js"></script>
+</head>
+
+<!-- 页面加载进度条 -->
+<style>
+.page-loading-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#E65100,#FF6D00,#FFB74D);z-index:9999;transition:width .3s ease;width:0;opacity:0}
+.page-loading-bar.active{opacity:1}
+.page-loading-bar.done{opacity:0;transition:width .2s ease,opacity .5s ease .3s}
+</style>
+<div class="page-loading-bar" id="loadingBar"></div>
+<script>
+// 加载进度条
+(function(){
+  const bar=document.getElementById('loadingBar');
+  let w=0;
+  function startLoad(){w=0;bar.style.width='0';bar.classList.add('active');bar.classList.remove('done');
+    const t=setInterval(()=>{w+=Math.random()*25;if(w>=80){clearInterval(t);bar.style.width='80%'}else{bar.style.width=w+'%'}},150);
+    window._loadTimer=t}
+  function endLoad(){clearInterval(window._loadTimer);bar.style.width='100%';bar.classList.add('done');
+    setTimeout(()=>{bar.classList.remove('active');bar.classList.remove('done');bar.style.width='0'},800)}
+  startLoad();
+  if(document.readyState==='complete'){endLoad()}else{window.addEventListener('load',endLoad)}
+  // 页面跳转时显示进度条
+  document.addEventListener('click',function(e){
+    const a=e.target.closest('a');
+    if(a&&a.href&&!a.target&&!a.href.startsWith('javascript')&&!a.href.startsWith('#')&&a.origin===location.origin){
+      startLoad()}
+  });
+})();
+</script>
+
+<body>
+
+<!-- 页面加载进度条 -->
+<style>
+.page-loading-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#E65100,#FF6D00,#FFB74D);z-index:9999;transition:width .3s ease;width:0;opacity:0}
+.page-loading-bar.active{opacity:1}
+.page-loading-bar.done{opacity:0;transition:width .2s ease,opacity .5s ease .3s}
+
+
+.back-to-top{position:fixed;bottom:80px;left:16px;z-index:998;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.15);transition:all .3s;background:#fff;color:#E65100;opacity:0;pointer-events:none;transform:translateY(10px)}
+.back-to-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+.back-to-top:hover{background:#E65100;color:#fff;transform:translateY(-2px)}
+</style>
+<div class="page-loading-bar" id="loadingBar"></div>
+<script>
+// 加载进度条
+(function(){
+  const bar=document.getElementById('loadingBar');
+  let w=0;
+  function startLoad(){w=0;bar.style.width='0';bar.classList.add('active');bar.classList.remove('done');
+    const t=setInterval(()=>{w+=Math.random()*25;if(w>=80){clearInterval(t);bar.style.width='80%'}else{bar.style.width=w+'%'}},150);
+    window._loadTimer=t}
+  function endLoad(){clearInterval(window._loadTimer);bar.style.width='100%';bar.classList.add('done');
+    setTimeout(()=>{bar.classList.remove('active');bar.classList.remove('done');bar.style.width='0'},800)}
+  startLoad();
+  if(document.readyState==='complete'){endLoad()}else{window.addEventListener('load',endLoad)}
+  // 页面跳转时显示进度条
+  document.addEventListener('click',function(e){
+    const a=e.target.closest('a');
+    if(a&&a.href&&!a.target&&!a.href.startsWith('javascript')&&!a.href.startsWith('#')&&a.origin===location.origin){
+      startLoad()}
+  });
+})();
+</script>
+
+    <nav class="navbar"><a href="index.html" class="logo">📚 游导学习笔记</a><div class="nav-links"><a href="index.html">首页</a><a href="ai-assistant.html">AI助手</a><a href="exam-simulator.html">刷题</a><a href="travel-knowledge.html">知识库</a><a href="interview.html">面试</a><a href="wrong-questions.html">错题本</a></div><button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button></nav>
+<!-- 备考路线图横幅 -->
+<div style="background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;padding:12px 20px;border-radius:12px;margin:16px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+  <span style="font-size:.95rem;font-weight:500">🗺️ 不知道从哪开始？查看184天备考路线图</span>
+  <a href="study-roadmap.html" style="display:inline-block;padding:8px 20px;background:#fff;color:#E65100;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.85rem">查看路线图 →</a>
+</div>
+
+
+  <div class="breadcrumb">
+    <a href="index.html">首页</a>
+    <span class="sep">›</span>
+    <span>AI助手</span>
+  </div>
+
+  <div class="main-content">
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <h1>🤖 导游证AI备考助手<span class="content-updated">📅 更新于2026年5月</span></h1>
+      <p class="page-desc">24小时在线，有问必答，你的私人备考教练</p>
+      <p style="color:#E65100;font-size:0.85rem;font-weight:600;margin-top:8px;">走过弯路，所以更懂路</p>
+    </div>
+
+    <!-- 客服说明区域 -->
+    <div style="background:linear-gradient(135deg,#FFF3E0,#FFE0B2);border-radius:16px;padding:16px 20px;margin-bottom:24px;text-align:center;">
+      <div style="font-size:1rem;font-weight:700;color:#1A1A1A;margin-bottom:8px;">💬 7×24小时AI在线客服</div>
+      <p style="font-size:0.85rem;color:#666;line-height:1.6;margin-bottom:12px;">AI助手随时待命，复杂问题可联系人工微信 ximao101</p>
+      <!-- 精致化4.0: AI使用提示 -->
+      <p style="font-size:0.78rem;color:#BF360C;margin-top:8px;">💡 为保证服务质量，AI助手每分钟可提问10次，请合理使用</p>
+      <a href="resources.html" style="display:inline-block;background:#E65100;color:#FFF;padding:8px 20px;border-radius:20px;font-size:0.85rem;font-weight:600;text-decoration:none;">了解资料包 ¥69.9 →</a>
+    </div>
+
+    /* 快捷提问按钮样式 */
+.quick-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0;
+  justify-content: center;
+}
+.quick-btn {
+  padding: 10px 16px;
+  background: #FFF;
+  border: 2px solid #FFE0B2;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #E65100;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+.quick-btn:hover {
+  background: #FFF3E0;
+  border-color: #E65100;
+  transform: translateY(-2px);
+}
+.quick-btn:active {
+  transform: scale(0.95);
+}
+
+/* AI回答来源标记 */
+.ai-source {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: #F0F5FF;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #3182CE;
+  margin-left: 8px;
+}
+
+/* 继续追问提示 */
+.continue-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #FFF8E1, #FFE0B2);
+  border-radius: 12px;
+  margin: 12px 0;
+  font-size: 0.85rem;
+  color: #E65100;
+}
+.continue-hint::before {
+  content: '💡';
+}
+
+/* 超时提示 */
+.ai-timeout {
+  padding: 16px;
+  background: #FFF3E0;
+  border-radius: 12px;
+  text-align: center;
+  color: #BF360C;
+  font-size: 0.9rem;
+}
+.ai-timeout .retry-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 8px 20px;
+  background: #E65100;
+  color: #fff;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+/* 无关问题提示 */
+.irrelevant-hint {
+  padding: 16px;
+  background: #FEF3C7;
+  border-radius: 12px;
+  text-align: center;
+  color: #92400E;
+  font-size: 0.9rem;
+}
+
+    <!-- 快捷提问区域（精致化4.0: 首次使用引导） -->
+    <div class="quick-buttons" id="quickButtonsArea">
+      <div class="quick-guide" id="quickGuide" style="background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;padding:12px 16px;border-radius:12px;margin-bottom:16px;text-align:center;font-size:0.85rem;box-shadow:0 4px 12px rgba(230,81,0,0.25);">
+        💡 <strong>点击快捷问题</strong>开始咨询，或在下方直接输入问题
+      </div>
+      <button class="quick-btn" onclick="askQuestion('导游证考试报名条件是什么？')">📋 报名条件</button>
+      <button class="quick-btn" onclick="askQuestion('如何备考全国导游基础知识？')">📚 备考攻略</button>
+      <button class="quick-btn" onclick="askQuestion('面试常见问题有哪些？')">🎤 面试问题</button>
+      <button class="quick-btn" onclick="askQuestion('导游服务规范重点考点？')">📝 规范考点</button>
+      <button class="quick-btn" onclick="askQuestion('地方导游基础知识怎么复习？')">🏛️ 地方导基</button>
+      <button class="quick-btn" onclick="askQuestion('政策法规重点法规有哪些？')">⚖️ 法规重点</button>
+    </div>
+    <script>
+    // 精致化4.0: 首次使用引导消失机制
+    (function(){
+      var guide = document.getElementById('quickGuide');
+      var btns = document.querySelectorAll('.quick-btn');
+      if(!guide) return;
+      
+      // 检查是否已显示过引导
+      if(localStorage.getItem('ai_guide_shown')) {
+        guide.style.display = 'none';
+        return;
+      }
+      
+      // 点击任意快捷问题后隐藏引导
+      btns.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          guide.style.transition = 'opacity 0.3s';
+          guide.style.opacity = '0';
+          setTimeout(function(){ guide.style.display = 'none'; }, 300);
+          localStorage.setItem('ai_guide_shown', 'true');
+        }, {once: true});
+      });
+      
+      // 5秒后自动淡化
+      setTimeout(function(){
+        if(guide && guide.style.display !== 'none') {
+          guide.style.transition = 'opacity 0.5s';
+          guide.style.opacity = '0.5';
+        }
+      }, 5000);
+    })();
+    </script>
+
+    <!-- 功能卡片区域 -->
+    <div class="feature-grid" style="max-width:480px;margin:0 auto;">
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#FFF3E0;">💬</div>
+        <h3>智能问答</h3>
+        <p>政策法规、导游业务、全国导基...随时提问，秒级响应</p>
+        <a href="chat.html" class="feature-link">立即提问</a>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#FFF3E0;">🎤</div>
+        <h3>面试模拟</h3>
+        <p>面试流程模拟练习，导游词讲解演练，自信应对面试</p>
+        <a href="chat.html" class="feature-link">开始模拟</a>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#FFF3E0;">📝</div>
+        <h3>导游词润色</h3>
+        <p>欢迎词、景点讲解、欢送词，专业润色让表达更出色</p>
+        <a href="chat.html" class="feature-link">润色导游词</a>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background:#FCE4EC;">📅</div>
+        <h3>学习计划</h3>
+        <p>根据你的情况，生成个性化备考计划，精准时间规划</p>
+        <a href="chat.html" class="feature-link">制定计划</a>
+      </div>
+    </div>
+
+        
+
+    <!-- 使用统计 -->
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="stat-num">🆓</div>
+        <div class="stat-label">免费使用</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">24h</div>
+        <div class="stat-label">随时提问</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">🎯</div>
+        <div class="stat-label">针对考试</div>
+      </div>
+    </div>
+
+    
+    </div>
+
+</div>
+
+<script>
+// 快捷提问功能
+function askQuestion(question) {
+  // 跳转到聊天页面并自动发送问题
+  window.location.href = 'chat.html?q=' + encodeURIComponent(question);
+}
+
+// 检查是否有关联问题参数
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const q = params.get('q');
+  if (q) {
+    // 延迟跳转到chat页面
+    setTimeout(() => {
+      window.location.href = 'chat.html?q=' + encodeURIComponent(q);
+    }, 500);
+  }
+})();
+</script>
+
+<script>
+// 点击热门问题后跳转并自动发送
+document.querySelectorAll('.hot-question').forEach(item => {
+  item.addEventListener('click', function(e) {
+    const question = this.getAttribute('data-q') || localStorage.getItem('quickQuestion');
+    if(question) {
+      setTimeout(() => {
+        const input = document.getElementById('userInput');
+        if(input) {
+          input.value = question;
+          input.dispatchEvent(new Event('input'));
+        }
+      }, 100);
+    }
+  });
+});
+</script>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">↑</button>
+
+
+
+<script>
+// 回到顶部按钮
+(function(){
+  const btn=document.createElement('button');
+  btn.className='back-to-top';btn.id='backToTop';btn.title='回到顶部';btn.setAttribute('aria-label','回到顶部');btn.textContent='⬆';
+  document.body.appendChild(btn);
+  window.addEventListener('scroll',function(){
+    btn.classList.toggle('visible',window.scrollY>400);
+  },{passive:true});
+  btn.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
+})();
+</script>
+
+<script>
+// 页面跳转淡出效果
+(function(){
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a');
+    if(!a)return;
+    var href=a.getAttribute('href');
+    if(!href||href.startsWith('#')||href.startsWith('javascript')||href.startsWith('http')||href.startsWith('mailto')||href.startsWith('tel'))return;
+    // Same page anchors
+    if(href.startsWith('#'))return;
+    e.preventDefault();
+    document.body.style.transition='opacity 0.15s ease';
+    document.body.style.opacity='0.6';
+    setTimeout(function(){location.href=href;},150);
+  });
+})();
+</script>
+
+<script src="auth.js"></script>
+
+<script>
+// AI助手网络状态检测
+(function(){
+  // 创建网络状态提示元素
+  var netNotice = document.createElement('div');
+  netNotice.id = 'netStatusNotice';
+  netNotice.style.cssText = 'position:fixed;top:60px;left:50%;transform:translateX(-50%);background:#FF6B6B;color:#fff;padding:10px 20px;border-radius:25px;font-size:0.85rem;z-index:99999;display:none;box-shadow:0 4px 12px rgba(0,0,0,0.15);';
+  netNotice.innerHTML = '⚠️ 网络连接不稳定，请检查网络后重试';
+  document.body.appendChild(netNotice);
+  
+  function showOfflineNotice(){
+    netNotice.style.display = 'block';
+    netNotice.innerHTML = '⚠️ 当前无网络连接，请检查网络后重试';
+    netNotice.style.background = '#EF4444';
+    setTimeout(function(){ netNotice.style.display = 'none'; }, 5000);
+  }
+  
+  function showOnlineNotice(){
+    netNotice.style.display = 'block';
+    netNotice.innerHTML = '✓ 网络已恢复';
+    netNotice.style.background = '#22C55E';
+    setTimeout(function(){ netNotice.style.display = 'none'; }, 2000);
+  }
+  
+  // 监听网络状态
+  window.addEventListener('offline', showOfflineNotice);
+  window.addEventListener('online', showOnlineNotice);
+  
+  // 页面加载时检查网络状态
+  if(!navigator.onLine){
+    showOfflineNotice();
+  }
+})();
+</script>
+
+
+  <button class="export-pdf-btn" onclick="window.print()" style="position:fixed;bottom:90px;right:16px;width:44px;height:44px;background:#E65100;color:#fff;border:none;border-radius:50%;cursor:pointer;z-index:99;font-size:1.2rem;box-shadow:0 2px 8px rgba(230,81,0,0.3);display:flex;align-items:center;justify-content:center" title="打印/导出PDF">
+  🖨️
+</button>
+
+<!-- 底部版权信息 -->
+<footer style="text-align:center;padding:24px 16px 100px;color:#999;font-size:0.8rem;background:#FFF3E0;border-top:1px solid #FFE0B2;">
+  <p style="margin-bottom:4px;">©2025-2026 游导学习笔记 ximao101整理</p>
+  <p style="color:#BF360C;font-weight:600;">走过弯路，所以更懂路</p>
+</footer>
+
+<script src="js/feedback-widget.js"></script>
+</body>
+</html>

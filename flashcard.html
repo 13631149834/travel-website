@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>口诀闪卡 - 游导学习笔记</title>
+<meta name="description" content="导游证知识点闪卡，碎片化时间速记，核心考点轻松掌握">
+<meta property="og:title" content="口诀闪卡 - 游导学习笔记">
+<meta property="og:description" content="导游证知识点闪卡，碎片化时间速记，核心考点轻松掌握">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://youdao-travel.com/images/og-share.jpg">
+<meta name="twitter:card" content="summary_large_image"/>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="css/style.css">
+<style>
+/* 方格纸背景（品牌视觉记忆点） */
+body {
+  background-color: #FFF3E0;
+  background-image: 
+    linear-gradient(#FFE0B2 1px, transparent 1px),
+    linear-gradient(90deg, #FFE0B2 1px, transparent 1px),
+    linear-gradient(rgba(255,224,178,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,224,178,0.3) 1px, transparent 1px);
+  background-size: 20px 20px, 20px 20px, 4px 4px, 4px 4px;
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+  min-height: 100dvh;
+}
+.flash-hero{text-align:center;padding:40px 20px 30px;background:linear-gradient(135deg,#FFF8E1,#FFE082);margin:-20px -20px 30px;border-radius:0 0 20px 20px}
+.flash-hero h1{font-size:1.8rem;margin:10px 0;color:#E65100}
+.flash-hero .subtitle{color:#666;font-size:.95rem;margin:8px 0 20px}
+.flash-controls{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:16px 0}
+.flash-controls button{padding:8px 18px;border:2px solid #E65100;background:#fff;color:#E65100;border-radius:20px;font-size:.85rem;cursor:pointer;transition:all .2s;font-weight:600}
+.flash-controls button.active{background:#E65100;color:#fff}
+.flash-controls button:hover{background:#E65100;color:#fff}
+.flash-stats{display:flex;gap:20px;justify-content:center;margin:16px 0;font-size:.9rem;color:#666}
+.flash-stats span{display:flex;align-items:center;gap:4px}
+.flash-stats .num{font-weight:bold;color:#E65100;font-size:1.1rem}
+.flash-card-container{display:flex;justify-content:center;align-items:center;min-height:320px;margin:20px 0;perspective:1000px}
+.flash-card{width:100%;max-width:480px;min-height:280px;position:relative;cursor:pointer;transform-style:preserve-3d;transition:transform .6s;z-index:10;touch-action:manipulation}
+.flash-card.flipped{transform:rotateY(180deg)}
+.flash-card-face{position:absolute;top:0;left:0;width:100%;min-height:280px;backface-visibility:hidden;border-radius:20px;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:30px 24px;box-shadow:0 4px 20px rgba(0,0,0,.12)}
+.flash-front{background:linear-gradient(135deg,#fff,#FFF8E1);border:3px solid #E65100}
+.flash-back{background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;transform:rotateY(180deg)}
+.flash-front .q-label{font-size:.8rem;color:#E65100;font-weight:bold;margin-bottom:8px;letter-spacing:2px}
+.flash-front .q-text{font-size:1.3rem;font-weight:bold;color:#333;text-align:center;line-height:1.6}
+.flash-front .q-hint{font-size:.8rem;color: #777;margin-top:16px}
+.flash-back .a-text{font-size:1.1rem;text-align:center;line-height:1.7;margin:8px 0}
+.flash-back .a-mnemonic{background:rgba(255,255,255,.2);border-radius:12px;padding:14px 18px;margin-top:12px;font-size:1rem;font-weight:bold;text-align:center;line-height:1.5}
+.flash-back .a-tag{font-size:.75rem;opacity:.7;margin-top:12px}
+.flash-nav{display:flex;justify-content:center;gap:16px;margin:20px 0}
+.flash-nav button{padding:12px 28px;border:none;border-radius:25px;font-size:.95rem;cursor:pointer;font-weight:bold;transition:all .2s}
+.btn-prev{background:#fff;color:#E65100;border:2px solid #E65100!important}
+.btn-prev:hover{background:#FFF3E0}
+.btn-next{background:#E65100;color:#fff}
+.btn-next:hover{background:#BF360C}
+.btn-know{background:#E65100;color:#fff}
+.btn-know:hover{background:#BF360C}
+.btn-dont{background:#F44336;color:#fff}
+.btn-dont:hover{background:#D32F2F}
+.flash-progress{display:flex;justify-content:center;gap:3px;margin:16px 0;flex-wrap:wrap}
+.flash-dot{width:8px;height:8px;border-radius:50%;background:#e0e0e0;transition:all .3s}
+.flash-dot.done{background:#E65100}
+.flash-dot.current{background:#E65100;transform:scale(1.3)}
+.flash-dot.wrong{background:#F44336}
+.mode-toggle{display:flex;justify-content:center;gap:10px;margin:16px 0}
+.mode-btn{padding:8px 20px;border:2px solid #ddd;background:#fff;border-radius:20px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.mode-btn.active{border-color:#E65100;background:#FFF3E0;color:#E65100;font-weight:bold}
+.result-card{background:#fff;border-radius:16px;padding:30px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.08);margin:20px 0}
+.result-card h2{color:#E65100;font-size:1.3rem;margin-bottom:16px}
+.result-stats{display:flex;justify-content:center;gap:30px;margin:20px 0}
+.result-stat{text-align:center}
+.result-stat .num{font-size:2rem;font-weight:bold}
+.result-stat .label{font-size:.8rem;color:#888;margin-top:4px}
+@media(max-width:600px){.flash-card-face{padding:20px 16px;min-height:240px}.flash-front .q-text{font-size:1.1rem}.flash-back .a-text{font-size:.95rem}.flash-controls button{padding:6px 12px;font-size:.8rem}}
+
+/* 闪卡增强样式 */
+.fc-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 12px 0;
+  padding: 12px;
+  background: #FFF8E1;
+  border-radius: 12px;
+}
+.fc-filter-btn {
+  padding: 8px 14px;
+  border: 2px solid #E0E0E0;
+  background: #fff;
+  color: #666;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fc-filter-btn:hover {
+  border-color: #E65100;
+  color: #E65100;
+}
+.fc-filter-btn.active {
+  border-color: #E65100;
+  background: #E65100;
+  color: #fff;
+}
+.fc-filter-btn .count {
+  background: rgba(255,255,255,0.3);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+}
+.fc-filter-btn:not(.active) .count {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.fc-action-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.fc-action-btn {
+  padding: 8px 16px;
+  border: 2px solid #E0E0E0;
+  background: #fff;
+  color: #666;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fc-action-btn:hover {
+  border-color: #E65100;
+  background: #FFF3E0;
+  color: #E65100;
+}
+.fc-action-btn.shuffle {
+  background: linear-gradient(135deg, #E65100, #FF6D00);
+  color: #fff;
+  border: none;
+}
+.fc-action-btn.shuffle:hover {
+  transform: scale(1.05);
+}
+
+.fc-card-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  z-index: 5;
+}
+.fc-card-status.mastered {
+  background: #4CAF50;
+  color: #fff;
+}
+.fc-card-status.reviewing {
+  background: #FF9800;
+  color: #fff;
+}
+
+.fc-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 99999;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.fc-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.fc-toast-success { background: #E65100; color: #fff; }
+.fc-toast-info { background: #666; color: #fff; }
+
+.fc-progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: #FAFAFA;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.fc-progress-track {
+  flex: 1;
+  height: 6px;
+  background: #E0E0E0;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+.fc-progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+.fc-progress-mastered { background: #4CAF50; }
+.fc-progress-reviewing { background: #FF9800; }
+.fc-progress-label { font-size: 0.75rem; color: #666; white-space: nowrap; }
+
+/* 交互细节：文字选中颜色 */
+::selection { background: #FFE0B2; color: #BF360C; }
+::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+/* 交互细节：禁止长按弹出菜单 */
+.flash-card, .fc-filter-btn, .fc-action-btn, .flash-nav button, .mode-btn { -webkit-touch-callout: none; }
+
+/* 交互细节：滚动区域 */
+.fc-modal-content, .fc-toast { -webkit-overflow-scrolling: touch; }
+
+
+  /* 闪卡手势滑动 */
+  .flashcard-swipe-area {
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .flashcard-swipe-hint {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #999;
+    margin-top: 10px;
+  }
+  .flashcard-swipe-hint span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f5f5f5;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .flash-card.swiping {
+    transition: none;
+  }
+  .flash-card.swipe-left {
+    transform: translateX(-30px) rotate(-5deg) !important;
+    opacity: 0.8;
+  }
+  .flash-card.swipe-right {
+    transform: translateX(30px) rotate(5deg) !important;
+    opacity: 0.8;
+  }
+  .swipe-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .swipe-indicator.left { left: 10px; color: #B91C1C; }
+  .swipe-indicator.right { right: 10px; color: #16A34A; }
+  .flash-card.swipe-left ~ .swipe-indicator.left { opacity: 1; }
+  .flash-card.swipe-right ~ .swipe-indicator.right { opacity: 1; }
+
+
+/* 打印样式 */
+@media print {
+  .navbar, .bottom-tabs, .ai-float-btn, .back-to-top, .page-loading-bar, footer, .fab, .modal-overlay { display: none !important; }
+  body { padding: 0; color: #000; background: #fff; }
+  .container { padding: 20px 0; max-width: 100%; }
+  .section-block, .card, .glass-card, .hero, .page-header { padding: 16px 0; margin: 8px 0; background: #fff; border: 1px solid #ddd; box-shadow: none; }
+  h1, h2, h3, h4 { color: #000; page-break-after: avoid; }
+  .guide-card, .tool-card, .type-card, .pricing-card, .faq-item { page-break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
+  a[href]::after { content: ""; }
+  img { max-width: 100%; page-break-inside: avoid; }
+  @page { margin: 1cm; size: A4; }
+}
+
+/* 内容更新日期标记 */
+.content-updated {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #999;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+/* 时效性内容过期提示 */
+.content-expired {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  font-size: 0.82rem;
+  color: #B91C1C;
+}
+.content-expired::before {
+  content: '⚠️ ';
+}
+
+/* 百分比计算辅助 - 确保精度 */
+.percent-calc {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 倒计时时区正确 */
+.countdown-timer {
+  font-family: 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+</style>
+
+<!-- PWA Meta -->
+<meta name="theme-color" content="#E65100">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="游导笔记">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+
+<style>
+.ai-float-btn{position:fixed;bottom:76px;right:16px;bottom:calc(76px + env(safe-area-inset-bottom));width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem;text-decoration:none;box-shadow:0 4px 16px rgba(230,81,0,0.35);z-index:998;transition:all 0.25s}
+.ai-float-btn:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(230,81,0,0.45)}
+.ai-float-pulse{position:absolute;width:48px;height:48px;border-radius:50%;background:rgba(230,81,0,0.3);animation:aiPulse 2s infinite;z-index:-1}
+@keyframes aiPulse{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.5);opacity:0}}
+/* 闪卡增强样式 */
+.fc-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 12px 0;
+  padding: 12px;
+  background: #FFF8E1;
+  border-radius: 12px;
+}
+.fc-filter-btn {
+  padding: 8px 14px;
+  border: 2px solid #E0E0E0;
+  background: #fff;
+  color: #666;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fc-filter-btn:hover {
+  border-color: #E65100;
+  color: #E65100;
+}
+.fc-filter-btn.active {
+  border-color: #E65100;
+  background: #E65100;
+  color: #fff;
+}
+.fc-filter-btn .count {
+  background: rgba(255,255,255,0.3);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+}
+.fc-filter-btn:not(.active) .count {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.fc-action-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.fc-action-btn {
+  padding: 8px 16px;
+  border: 2px solid #E0E0E0;
+  background: #fff;
+  color: #666;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fc-action-btn:hover {
+  border-color: #E65100;
+  background: #FFF3E0;
+  color: #E65100;
+}
+.fc-action-btn.shuffle {
+  background: linear-gradient(135deg, #E65100, #FF6D00);
+  color: #fff;
+  border: none;
+}
+.fc-action-btn.shuffle:hover {
+  transform: scale(1.05);
+}
+
+.fc-card-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  z-index: 5;
+}
+.fc-card-status.mastered {
+  background: #4CAF50;
+  color: #fff;
+}
+.fc-card-status.reviewing {
+  background: #FF9800;
+  color: #fff;
+}
+
+.fc-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 99999;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.fc-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.fc-toast-success { background: #E65100; color: #fff; }
+.fc-toast-info { background: #666; color: #fff; }
+
+.fc-progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: #FAFAFA;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.fc-progress-track {
+  flex: 1;
+  height: 6px;
+  background: #E0E0E0;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+.fc-progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+.fc-progress-mastered { background: #4CAF50; }
+.fc-progress-reviewing { background: #FF9800; }
+.fc-progress-label { font-size: 0.75rem; color: #666; white-space: nowrap; }
+
+
+  /* 闪卡手势滑动 */
+  .flashcard-swipe-area {
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .flashcard-swipe-hint {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #999;
+    margin-top: 10px;
+  }
+  .flashcard-swipe-hint span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f5f5f5;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .flash-card.swiping {
+    transition: none;
+  }
+  .flash-card.swipe-left {
+    transform: translateX(-30px) rotate(-5deg) !important;
+    opacity: 0.8;
+  }
+  .flash-card.swipe-right {
+    transform: translateX(30px) rotate(5deg) !important;
+    opacity: 0.8;
+  }
+  .swipe-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .swipe-indicator.left { left: 10px; color: #B91C1C; }
+  .swipe-indicator.right { right: 10px; color: #16A34A; }
+  .flash-card.swipe-left ~ .swipe-indicator.left { opacity: 1; }
+  .flash-card.swipe-right ~ .swipe-indicator.right { opacity: 1; }
+
+
+/* 打印样式 */
+@media print {
+  .navbar, .bottom-tabs, .ai-float-btn, .back-to-top, .page-loading-bar, footer, .fab, .modal-overlay { display: none !important; }
+  body { padding: 0; color: #000; background: #fff; }
+  .container { padding: 20px 0; max-width: 100%; }
+  .section-block, .card, .glass-card, .hero, .page-header { padding: 16px 0; margin: 8px 0; background: #fff; border: 1px solid #ddd; box-shadow: none; }
+  h1, h2, h3, h4 { color: #000; page-break-after: avoid; }
+  .guide-card, .tool-card, .type-card, .pricing-card, .faq-item { page-break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
+  a[href]::after { content: ""; }
+  img { max-width: 100%; page-break-inside: avoid; }
+  @page { margin: 1cm; size: A4; }
+}
+
+/* 内容更新日期标记 */
+.content-updated {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #999;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+/* 时效性内容过期提示 */
+.content-expired {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  font-size: 0.82rem;
+  color: #B91C1C;
+}
+.content-expired::before {
+  content: '⚠️ ';
+}
+
+/* 百分比计算辅助 - 确保精度 */
+.percent-calc {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 倒计时时区正确 */
+.countdown-timer {
+  font-family: 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+</style>
+
+<link rel="stylesheet" href="css/v3-components.css">
+<script src="js/error-recovery.js"></script>
+<script src="js/seasonal-theme.js"></script>
+</head>
+
+<!-- 页面加载进度条 -->
+<style>
+.page-loading-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#E65100,#FF6D00,#FFB74D);z-index:9999;transition:width .3s ease;width:0;opacity:0}
+.page-loading-bar.active{opacity:1}
+.page-loading-bar.done{opacity:0;transition:width .2s ease,opacity .5s ease .3s}
+
+/* 闪卡增强样式 */
+.fc-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 12px 0;
+  padding: 12px;
+  background: #FFF8E1;
+  border-radius: 12px;
+}
+.fc-filter-btn {
+  padding: 8px 14px;
+  border: 2px solid #E0E0E0;
+  background: #fff;
+  color: #666;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fc-filter-btn:hover {
+  border-color: #E65100;
+  color: #E65100;
+}
+.fc-filter-btn.active {
+  border-color: #E65100;
+  background: #E65100;
+  color: #fff;
+}
+.fc-filter-btn .count {
+  background: rgba(255,255,255,0.3);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+}
+.fc-filter-btn:not(.active) .count {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.fc-action-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.fc-action-btn {
+  padding: 8px 16px;
+  border: 2px solid #E0E0E0;
+  background: #fff;
+  color: #666;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fc-action-btn:hover {
+  border-color: #E65100;
+  background: #FFF3E0;
+  color: #E65100;
+}
+.fc-action-btn.shuffle {
+  background: linear-gradient(135deg, #E65100, #FF6D00);
+  color: #fff;
+  border: none;
+}
+.fc-action-btn.shuffle:hover {
+  transform: scale(1.05);
+}
+
+.fc-card-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  z-index: 5;
+}
+.fc-card-status.mastered {
+  background: #4CAF50;
+  color: #fff;
+}
+.fc-card-status.reviewing {
+  background: #FF9800;
+  color: #fff;
+}
+
+.fc-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 99999;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.fc-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.fc-toast-success { background: #E65100; color: #fff; }
+.fc-toast-info { background: #666; color: #fff; }
+
+.fc-progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: #FAFAFA;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.fc-progress-track {
+  flex: 1;
+  height: 6px;
+  background: #E0E0E0;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+.fc-progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+.fc-progress-mastered { background: #4CAF50; }
+.fc-progress-reviewing { background: #FF9800; }
+.fc-progress-label { font-size: 0.75rem; color: #666; white-space: nowrap; }
+
+
+  /* 闪卡手势滑动 */
+  .flashcard-swipe-area {
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .flashcard-swipe-hint {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #999;
+    margin-top: 10px;
+  }
+  .flashcard-swipe-hint span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f5f5f5;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .flash-card.swiping {
+    transition: none;
+  }
+  .flash-card.swipe-left {
+    transform: translateX(-30px) rotate(-5deg) !important;
+    opacity: 0.8;
+  }
+  .flash-card.swipe-right {
+    transform: translateX(30px) rotate(5deg) !important;
+    opacity: 0.8;
+  }
+  .swipe-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .swipe-indicator.left { left: 10px; color: #B91C1C; }
+  .swipe-indicator.right { right: 10px; color: #16A34A; }
+  .flash-card.swipe-left ~ .swipe-indicator.left { opacity: 1; }
+  .flash-card.swipe-right ~ .swipe-indicator.right { opacity: 1; }
+
+
+/* 打印样式 */
+@media print {
+  .navbar, .bottom-tabs, .ai-float-btn, .back-to-top, .page-loading-bar, footer, .fab, .modal-overlay { display: none !important; }
+  body { padding: 0; color: #000; background: #fff; }
+  .container { padding: 20px 0; max-width: 100%; }
+  .section-block, .card, .glass-card, .hero, .page-header { padding: 16px 0; margin: 8px 0; background: #fff; border: 1px solid #ddd; box-shadow: none; }
+  h1, h2, h3, h4 { color: #000; page-break-after: avoid; }
+  .guide-card, .tool-card, .type-card, .pricing-card, .faq-item { page-break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
+  a[href]::after { content: ""; }
+  img { max-width: 100%; page-break-inside: avoid; }
+  @page { margin: 1cm; size: A4; }
+}
+
+/* 内容更新日期标记 */
+.content-updated {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #999;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+/* 时效性内容过期提示 */
+.content-expired {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  font-size: 0.82rem;
+  color: #B91C1C;
+}
+.content-expired::before {
+  content: '⚠️ ';
+}
+
+/* 百分比计算辅助 - 确保精度 */
+.percent-calc {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 倒计时时区正确 */
+.countdown-timer {
+  font-family: 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+</style>
+<div class="page-loading-bar" id="loadingBar"></div>
+<script>
+// 加载进度条
+(function(){
+  const bar=document.getElementById('loadingBar');
+  let w=0;
+  function startLoad(){w=0;bar.style.width='0';bar.classList.add('active');bar.classList.remove('done');
+    const t=setInterval(()=>{w+=Math.random()*25;if(w>=80){clearInterval(t);bar.style.width='80%'}else{bar.style.width=w+'%'}},150);
+    window._loadTimer=t}
+  function endLoad(){clearInterval(window._loadTimer);bar.style.width='100%';bar.classList.add('done');
+    setTimeout(()=>{bar.classList.remove('active');bar.classList.remove('done');bar.style.width='0'},800)}
+  startLoad();
+  if(document.readyState==='complete'){endLoad()}else{window.addEventListener('load',endLoad)}
+  // 页面跳转时显示进度条
+  document.addEventListener('click',function(e){
+    const a=e.target.closest('a');
+    if(a&&a.href&&!a.target&&!a.href.startsWith('javascript')&&!a.href.startsWith('#')&&a.origin===location.origin){
+      startLoad()}
+  });
+})();
+
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>
+
+<body>
+
+<!-- 页面加载进度条 -->
+<style>
+.page-loading-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#E65100,#FF6D00,#FFB74D);z-index:9999;transition:width .3s ease;width:0;opacity:0}
+.page-loading-bar.active{opacity:1}
+.page-loading-bar.done{opacity:0;transition:width .2s ease,opacity .5s ease .3s}
+
+
+.back-to-top{position:fixed;bottom:80px;left:16px;z-index:998;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.15);transition:all .3s;background:#fff;color:#E65100;opacity:0;pointer-events:none;transform:translateY(10px)}
+.back-to-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+.back-to-top:hover{background:#E65100;color:#fff;transform:translateY(-2px)}
+/* 闪卡增强样式 */
+.fc-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 12px 0;
+  padding: 12px;
+  background: #FFF8E1;
+  border-radius: 12px;
+}
+.fc-filter-btn {
+  padding: 8px 14px;
+  border: 2px solid #E0E0E0;
+  background: #fff;
+  color: #666;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fc-filter-btn:hover {
+  border-color: #E65100;
+  color: #E65100;
+}
+.fc-filter-btn.active {
+  border-color: #E65100;
+  background: #E65100;
+  color: #fff;
+}
+.fc-filter-btn .count {
+  background: rgba(255,255,255,0.3);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+}
+.fc-filter-btn:not(.active) .count {
+  background: #FFF3E0;
+  color: #E65100;
+}
+
+.fc-action-bar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 10px 0;
+}
+.fc-action-btn {
+  padding: 8px 16px;
+  border: 2px solid #E0E0E0;
+  background: #fff;
+  color: #666;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.fc-action-btn:hover {
+  border-color: #E65100;
+  background: #FFF3E0;
+  color: #E65100;
+}
+.fc-action-btn.shuffle {
+  background: linear-gradient(135deg, #E65100, #FF6D00);
+  color: #fff;
+  border: none;
+}
+.fc-action-btn.shuffle:hover {
+  transform: scale(1.05);
+}
+
+.fc-card-status {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  z-index: 5;
+}
+.fc-card-status.mastered {
+  background: #4CAF50;
+  color: #fff;
+}
+.fc-card-status.reviewing {
+  background: #FF9800;
+  color: #fff;
+}
+
+.fc-toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-20px);
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  z-index: 99999;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.fc-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.fc-toast-success { background: #E65100; color: #fff; }
+.fc-toast-info { background: #666; color: #fff; }
+
+.fc-progress-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  background: #FAFAFA;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+.fc-progress-track {
+  flex: 1;
+  height: 6px;
+  background: #E0E0E0;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+.fc-progress-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+.fc-progress-mastered { background: #4CAF50; }
+.fc-progress-reviewing { background: #FF9800; }
+.fc-progress-label { font-size: 0.75rem; color: #666; white-space: nowrap; }
+
+
+  /* 闪卡手势滑动 */
+  .flashcard-swipe-area {
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .flashcard-swipe-hint {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #999;
+    margin-top: 10px;
+  }
+  .flashcard-swipe-hint span {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f5f5f5;
+    padding: 4px 10px;
+    border-radius: 12px;
+  }
+  .flash-card.swiping {
+    transition: none;
+  }
+  .flash-card.swipe-left {
+    transform: translateX(-30px) rotate(-5deg) !important;
+    opacity: 0.8;
+  }
+  .flash-card.swipe-right {
+    transform: translateX(30px) rotate(5deg) !important;
+    opacity: 0.8;
+  }
+  .swipe-indicator {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 2rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .swipe-indicator.left { left: 10px; color: #B91C1C; }
+  .swipe-indicator.right { right: 10px; color: #16A34A; }
+  .flash-card.swipe-left ~ .swipe-indicator.left { opacity: 1; }
+  .flash-card.swipe-right ~ .swipe-indicator.right { opacity: 1; }
+
+
+/* 打印样式 */
+@media print {
+  .navbar, .bottom-tabs, .ai-float-btn, .back-to-top, .page-loading-bar, footer, .fab, .modal-overlay { display: none !important; }
+  body { padding: 0; color: #000; background: #fff; }
+  .container { padding: 20px 0; max-width: 100%; }
+  .section-block, .card, .glass-card, .hero, .page-header { padding: 16px 0; margin: 8px 0; background: #fff; border: 1px solid #ddd; box-shadow: none; }
+  h1, h2, h3, h4 { color: #000; page-break-after: avoid; }
+  .guide-card, .tool-card, .type-card, .pricing-card, .faq-item { page-break-inside: avoid; }
+  a { color: #000; text-decoration: none; }
+  a[href]::after { content: ""; }
+  img { max-width: 100%; page-break-inside: avoid; }
+  @page { margin: 1cm; size: A4; }
+}
+
+/* 内容更新日期标记 */
+.content-updated {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #999;
+  background: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+}
+
+/* 时效性内容过期提示 */
+.content-expired {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  font-size: 0.82rem;
+  color: #B91C1C;
+}
+.content-expired::before {
+  content: '⚠️ ';
+}
+
+/* 百分比计算辅助 - 确保精度 */
+.percent-calc {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 倒计时时区正确 */
+.countdown-timer {
+  font-family: 'Courier New', monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+</style>
+<div class="page-loading-bar" id="loadingBar"></div>
+<script>
+// 加载进度条
+(function(){
+  const bar=document.getElementById('loadingBar');
+  let w=0;
+  function startLoad(){w=0;bar.style.width='0';bar.classList.add('active');bar.classList.remove('done');
+    const t=setInterval(()=>{w+=Math.random()*25;if(w>=80){clearInterval(t);bar.style.width='80%'}else{bar.style.width=w+'%'}},150);
+    window._loadTimer=t}
+  function endLoad(){clearInterval(window._loadTimer);bar.style.width='100%';bar.classList.add('done');
+    setTimeout(()=>{bar.classList.remove('active');bar.classList.remove('done');bar.style.width='0'},800)}
+  startLoad();
+  if(document.readyState==='complete'){endLoad()}else{window.addEventListener('load',endLoad)}
+  // 页面跳转时显示进度条
+  document.addEventListener('click',function(e){
+    const a=e.target.closest('a');
+    if(a&&a.href&&!a.target&&!a.href.startsWith('javascript')&&!a.href.startsWith('#')&&a.origin===location.origin){
+      startLoad()}
+  });
+})();
+
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>
+
+<nav class="main-nav"><a href="index.html">首页</a><a href="ai-assistant.html">AI助手</a><a href="exam-simulator.html">刷题</a><a href="travel-knowledge.html">知识库</a><a href="interview.html">面试</a></nav>
+
+<div class="container">
+<div class="flash-hero">
+  <h1>🃏 口诀闪卡<span class="content-updated">📅 更新于2026年5月</span></h1>
+  <p class="subtitle">点击翻转看答案 · 刷一遍顶看三遍 | 走过弯路，所以更懂路</p>
+  <div class="flash-stats">
+    <span>📚 共 <span class="num" id="totalCount">0</span> 张</span>
+    <span>✅ 已会 <span class="num" id="knowCount">0</span></span>
+    <span>❌ 还不熟 <span class="num" id="dontCount">0</span></span>
+    <span class="metrics-badge">✨ 速记神器</span>
+  </div>
+  <p class="slogan-mini">走过弯路，所以更懂路</p>
+</div>
+
+<!-- 闪卡增强功能 -->
+<div class="fc-filter-bar" id="fcFilterBar">
+  <button class="fc-filter-btn active" data-track="btn"  id="filterAll" onclick="fcSetFilter('all')">
+    全部 <span class="count" id="countAll">0</span>
+  </button>
+  <button class="fc-filter-btn" data-track="btn"  id="filterUnstudied" onclick="fcSetFilter('unstudied')">
+    未学 <span class="count" id="countUnstudied">0</span>
+  </button>
+  <button class="fc-filter-btn" data-track="btn"  id="filterMastered" onclick="fcSetFilter('mastered')">
+    已掌握 <span class="count" id="countMastered">0</span>
+  </button>
+  <button class="fc-filter-btn" data-track="btn"  id="filterReviewing" onclick="fcSetFilter('reviewing')">
+    需复习 <span class="count" id="countReviewing">0</span>
+  </button>
+</div>
+
+<div class="fc-action-bar">
+  <button class="fc-action-btn shuffle" data-track="btn"  onclick="fcShuffle()" title="打乱顺序重新学习">
+    🔀 洗牌
+  </button>
+  <button class="fc-action-btn" data-track="btn"  onclick="fcResetOrder()" title="恢复原始顺序">
+    ↩️ 恢复顺序
+  </button>
+</div>
+
+<!-- 进度指示 -->
+<div class="fc-progress-bar" id="fcProgressBar">
+  <span class="fc-progress-label">掌握进度</span>
+  <div class="fc-progress-track">
+    <div class="fc-progress-fill fc-progress-mastered" id="fcMasteredFill" style="width: 0%"></div>
+    <div class="fc-progress-fill fc-progress-reviewing" id="fcReviewingFill" style="width: 0%"></div>
+  </div>
+  <span class="fc-progress-label" id="fcProgressLabel">0/0</span>
+</div>
+
+<!-- 科目筛选 -->
+<div class="flash-controls" id="subjectFilter">
+  <button class="active" onclick="filterSubject('all')">全部</button>
+  <button onclick="filterSubject('business')">💼 导游业务</button>
+  <button onclick="filterSubject('policy')">⚖️ 政策法规</button>
+  <button onclick="filterSubject('national')">📚 全国导基</button>
+  <button onclick="filterSubject('local')">🗺️ 地方导基</button>
+  <button onclick="filterSubject('interview')">🎤 面试</button>
+</div>
+
+<!-- 模式切换 -->
+<div class="mode-toggle">
+  <button class="mode-btn active" data-track="btn"  onclick="setMode('flip')" id="modeFlip">👆 翻卡模式</button>
+  <button class="mode-btn" data-track="btn"  onclick="setMode('test')" id="modeTest">🧠 自测模式</button>
+</div>
+
+<!-- 进度点 -->
+<div class="flash-progress" id="progressDots"></div>
+
+<!-- 闪卡区域 -->
+<div class="flash-card-container" id="cardContainer">
+  <div class="flash-card" id="flashCard" onclick="flipCard()">
+    <div class="flash-card-face flash-front" style="position:relative;">
+      <div class="fc-card-status" id="cardStatus"></div>
+      <div class="q-label" id="cardSubject">全国导基</div>
+      <div class="q-text" id="cardQuestion">四大佛教名山分别是？</div>
+      <div class="q-hint">👆 点击翻转看答案</div>
+    </div>
+    <div class="flash-card-face flash-back">
+      <div class="a-text" id="cardAnswer">五台山（文殊）· 峨眉山（普贤）<br>普陀山（观音）· 九华山（地藏）</div>
+      <div class="a-mnemonic" id="cardMnemonic">📜 口诀：文普观地 → 五峨普九</div>
+      <div class="a-tag" id="cardTag"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 自测模式按钮 -->
+<div id="testButtons" style="display:none">
+  <div style="display:flex;justify-content:center;gap:12px;margin:10px 0">
+    <button class="btn-know" data-track="btn"  onclick="markCard(true)">✅ 会了</button>
+    <button class="btn-dont" data-track="btn"  onclick="markCard(false)">❌ 还不熟</button>
+  </div>
+</div>
+
+<!-- 导航按钮 -->
+<div class="flash-nav" id="navButtons">
+  <button class="btn-prev" data-track="btn"  onclick="prevCard()">← 上一张</button>
+  <button class="btn-next" data-track="btn"  onclick="nextCard()">下一张 →</button>
+</div>
+
+<!-- 结果页 -->
+<div class="result-card" id="resultCard" style="display:none">
+  <h2>🎉 本轮口诀复习完成！</h2>
+  <div class="result-stats">
+    <div class="result-stat"><div class="num" style="color:#E65100" id="resultKnow">0</div><div class="label">✅ 已掌握</div></div>
+    <div class="result-stat"><div class="num" style="color:#F44336" id="resultDont">0</div><div class="label">❌ 需复习</div></div>
+    <div class="result-stat"><div class="num" style="color:#E65100" id="resultRate">0%</div><div class="label">掌握率</div></div>
+  </div>
+  <div id="resultAdvice" style="background:#FFF3E0;border-radius:12px;padding:14px;margin:16px 0;font-size:.9rem;color:#E65100"></div>
+  <div style="margin-top:16px">
+    <button onclick="restartCards()" style="padding:12px 28px;background:#E65100;color:#fff;border:none;border-radius:25px;font-size:1rem;cursor:pointer;font-weight:bold">🔄 再来一轮</button>
+    <button onclick="reviewWrong()" id="reviewWrongBtn" style="display:none;padding:12px 28px;background:#F44336;color:#fff;border:none;border-radius:25px;font-size:1rem;cursor:pointer;font-weight:bold;margin-left:8px">❌ 只复习不会的</button>
+  </div>
+</div>
+
+<div style="text-align:center;margin:30px 0">
+  <a href="travel-knowledge.html" style="display:inline-block;padding:10px 24px;background:#E65100;color:#fff;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.9rem">📖 去知识库详细学</a>
+  <a href="exam-simulator.html" style="display:inline-block;padding:10px 24px;background:#BF360C;color:#fff;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.9rem;margin-left:8px">✏️ 去刷题练习</a>
+</div>
+
+</div>
+
+
+<script>
+const allCards=[
+// ===== 全国导基 =====
+{s:"national",q:"四大佛教名山分别是？",a:"五台山（文殊）· 峨眉山（普贤）· 普陀山（观音）· 九华山（地藏）",m:"📜 口诀：文普观地 → 五峨普九",t:"全国导基"},
+{s:"national",q:"五岳分别是？",a:"东岳泰山（鲁）· 西岳华山（陕）· 南岳衡山（湘）· 北岳恒山（晋）· 中岳嵩山（豫）",m:"📜 口诀：东西南北中 → 泰华衡恒嵩",t:"全国导基"},
+{s:"national",q:"四大名楼分别是？",a:"黄鹤楼（武汉）· 岳阳楼（岳阳）· 滕王阁（南昌）· 鹳雀楼（永济）",m:"📜 口诀：黄岳滕鹳",t:"全国导基"},
+{s:"national",q:"四大名园分别是？",a:"拙政园（苏州）· 留园（苏州）· 颐和园（北京）· 避暑山庄（承德）",m:"📜 口诀：拙留颐避",t:"全国导基"},
+{s:"national",q:"四大石窟分别是？",a:"莫高窟（敦煌）· 云冈石窟（大同）· 龙门石窟（洛阳）· 麦积山石窟（天水）",m:"📜 口诀：莫云龙麦",t:"全国导基"},
+{s:"national",q:"四大名绣分别是？",a:"苏绣（苏州）· 湘绣（长沙）· 粤绣（广州）· 蜀绣（成都）",m:"📜 口诀：苏猫湘虎蜀针光，粤绣金红喜洋洋",t:"全国导基"},
+{s:"national",q:"中国双遗产4处？",a:"泰山 · 黄山 · 峨眉山-乐山大佛 · 武夷山",m:"📜 口诀：双遗产四座山——泰黄峨武",t:"全国导基"},
+{s:"national",q:"四大古城分别是？",a:"丽江古城（云南/纳西族）· 平遥古城（山西/晋商）· 凤凰古城（湖南/苗族）· 阆中古城（四川/三国）",m:"📜 口诀：丽平凤阆",t:"全国导基"},
+{s:"national",q:"十大名茶中绿茶之首？",a:"西湖龙井——色翠香郁味醇形美",m:"📜 口诀：龙井碧螺毛峰绿",t:"全国导基"},
+{s:"national",q:"中国五大名窑？",a:"汝窑（天青色）· 官窑 · 哥窑 · 钧窑 · 定窑（白瓷）",m:"📜 口诀：汝官哥钧定，景德镇称雄",t:"全国导基"},
+{s:"national",q:"四大名砚分别是？",a:"端砚（广东肇庆/群砚之首）· 歙砚（安徽）· 洮砚（甘肃）· 澄泥砚（山西）",m:"📜 口诀：端歙洮澄",t:"全国导基"},
+{s:"national",q:"长城全长多少公里？",a:"2.1万公里",m:"📜 口诀：长城两万一",t:"全国导基"},
+{s:"national",q:"京杭大运河全长多少公里？",a:"1794公里",m:"📜 口诀：运河一七九四",t:"全国导基"},
+{s:"national",q:"黄山四奇是？",a:"奇松 · 怪石 · 云海 · 温泉",m:"📜 口诀：松石云泉",t:"全国导基"},
+{s:"national",q:"人口最多的少数民族？",a:"壮族（约1956万），主要分布在广西",m:"📜 口诀：壮满回苗维彝土蒙藏，九大超五百万",t:"全国导基"},
+{s:"national",q:"少数民族最多的省份？",a:"云南省（25个少数民族）",m:"📜 口诀：云南二五民族多",t:"全国导基"},
+{s:"national",q:"分布最广的少数民族？",a:"回族（全国都有分布）",m:"📜 口诀：回走天下",t:"全国导基"},
+{s:"national",q:"八大菜系？",a:"鲁菜·川菜·粤菜·苏菜·闽菜·浙菜·湘菜·徽菜",m:"📜 口诀：鲁川粤苏闽浙湘徽",t:"全国导基"},
+// ===== 政策法规 =====
+{s:"policy",q:"旅游法第35条禁止什么？",a:"禁止强制购物——旅行社不得以不合理的低价组织旅游活动，诱导购物",m:"📜 口诀：35条禁强购",t:"政策法规"},
+{s:"policy",q:"旅游投诉时效是多久？",a:"90日——从旅游合同结束之日起计算",m:"📜 口诀：投诉九十天",t:"政策法规"},
+{s:"policy",q:"导游证（电子证）有效期？",a:"3年——需在有效期满前3个月申请换发",m:"📜 口诀：导游证三年一换",t:"政策法规"},
+{s:"policy",q:"导游资格证有效期？",a:"终身有效——与导游证不同，资格证不会过期",m:"📜 口诀：资格终身，电子三年",t:"政策法规"},
+{s:"policy",q:"旅行社质量保证金多少？",a:"经营境内游20万元 · 经营出境游140万元",m:"📜 口诀：境内二十出境百四",t:"政策法规"},
+{s:"policy",q:"旅行社责任险是什么？",a:"旅行社必须投保的强制保险，保障游客在旅游过程中的人身财产损失",m:"📜 口诀：责任险必须投",t:"政策法规"},
+{s:"policy",q:"旅游法38条关于什么？",a:"导游薪酬——旅行社应当与其聘用的导游依法订立劳动合同，支付劳动报酬",m:"📜 口诀：38条保薪酬",t:"政策法规"},
+{s:"policy",q:"旅游法42条关于什么？",a:"导游服务——导游应当严格执行旅游行程安排，不得擅自变更",m:"📜 口诀：42条管服务",t:"政策法规"},
+{s:"policy",q:"旅游投诉电话？",a:"12301旅游服务热线 / 12345市民热线",m:"📜 口诀：12301投诉热线，旅投消协旅游部",t:"政策法规"},
+// ===== 导游业务 =====
+{s:"business",q:"导游服务三大原则？",a:"① 宾客至上（核心原则）② 合理而可能 ③ 规范化与个性化相结合",m:"📜 口诀：宾至合理双结合",t:"导游业务"},
+{s:"business",q:"地陪和全陪的区别？",a:"地陪：代表地接社，重点景点讲解 · 全陪：代表组团社，重点协调监督",m:"📜 口诀：地陪讲景点，全陪管全程",t:"导游业务"},
+{s:"business",q:"游客走失处理步骤？",a:"了解情况→协助寻找→报告旅行社→必要时报警",m:"📜 口诀：先了解→再寻找→后上报",t:"导游业务"},
+{s:"business",q:"交通事故应急处理？",a:"先救人(120)→保护现场→报告旅行社",m:"📜 口诀：先救人→保现场→报旅行社",t:"导游业务"},
+{s:"business",q:"游客投诉处理步骤？",a:"认真倾听→表示理解并道歉→提出解决方案→超出权限及时上报→跟进结果",m:"📜 口诀：先安抚、再处理、后上报",t:"导游业务"},
+{s:"business",q:"食物中毒应急处理？",a:"立即送医→保留样本→报告卫生部门",m:"📜 口诀：送医留样报卫生",t:"导游业务"},
+{s:"business",q:"火灾应急处理？",a:"湿毛巾捂口鼻→低姿沿墙→不乘电梯→到安全区清点人数→报警119",m:"📜 口诀：捂鼻低走不电梯",t:"导游业务"},
+{s:"business",q:"导游语言四点要求？",a:"语言准确 · 语言清楚 · 语言生动 · 语言礼貌",m:"📜 口诀：准清生礼",t:"导游业务"},
+{s:"business",q:"讲解方法有哪些？",a:"因人施讲 · 触景生情 · 虚实结合 · 画龙点睛",m:"📜 口诀：因人触景虚实点睛",t:"导游业务"},
+// ===== 地方导基 =====
+{s:"local",q:"广东省简称？",a:"粤，省会广州",m:"📜 口诀：广东简称粤，非广非穗",t:"地方导基"},
+{s:"local",q:"广东省5A景区代表？",a:"丹霞山·长隆度假区·广州塔·陈家祠·开平碉楼·西樵山·罗浮山·雁南飞茶田",m:"📜 口诀：丹长广陈开西罗雁",t:"地方导基"},
+{s:"local",q:"广东三大民系？",a:"广府人·客家人·潮汕人",m:"📜 口诀：广客潮三分广东",t:"地方导基"},
+{s:"local",q:"北京5A景区代表？",a:"故宫·八达岭长城·颐和园·天坛·明十三陵·恭王府·慕田峪长城",m:"📜 口诀：故长颐天明恭慕",t:"地方导基"},
+{s:"local",q:"四川省5A景区代表？",a:"九寨沟·峨眉山·乐山大佛·都江堰·青城山·黄龙·稻城亚丁",m:"📜 口诀：九峨乐都青黄稻",t:"地方导基"},
+// ===== 面试 =====
+{s:"interview",q:"面试时间分配？",a:"开场白30秒 → 景点概况1分钟 → 核心讲解2-3分钟 → 结束语30秒",m:"📜 口诀：开概核结 三十/六十/两三/三十",t:"面试"},
+{s:"interview",q:"面试评分标准？",a:"景点讲解50分 · 问答环节30分 · 仪表仪态20分",m:"📜 口诀：五三二 讲问仪",t:"面试"},
+{s:"interview",q:"面试忘词怎么办？",a:"保持微笑→语速放慢→自然过渡（接下来的内容……）→互动过渡",m:"📜 口诀：笑慢过渡别停五秒",t:"面试"},
+{s:"interview",q:"导游词三段式结构？",a:"第一段：概况（1分钟）→ 第二段：核心亮点（2-3分钟）→ 第三段：总结升华（30秒）",m:"📜 口诀：概核总 三段式",t:"面试"},
+{s:"interview",q:"面试着装要求？",a:"男生：衬衫+西裤/Polo衫 · 女生：衬衫+西裤/裙装 · 禁忌：拖鞋/运动装/花哨",m:"📜 口诀：干净整洁像导游",t:"面试"},
+];
+
+let cards=[...allCards],currentIdx=0,mode='flip',known=new Set(),wrong=new Set(),currentFilter='all';
+let fcCurrentFilter='all'; // 增强筛选
+
+// 闪卡增强功能
+function fcUpdateFilterCounts(){
+  const total=allCards.length;
+  const stats=FlashcardEnhanced.getFlashcardStats(total);
+  document.getElementById('countAll').textContent=total;
+  document.getElementById('countUnstudied').textContent=stats.unstudied;
+  document.getElementById('countMastered').textContent=stats.mastered;
+  document.getElementById('countReviewing').textContent=stats.reviewing;
+  
+  // 更新进度条
+  const masteredPct=(stats.mastered/total*100);
+  const reviewingPct=(stats.reviewing/total*100);
+  document.getElementById('fcMasteredFill').style.width=masteredPct+'%';
+  document.getElementById('fcReviewingFill').style.width=reviewingPct+'%';
+  document.getElementById('fcProgressLabel').textContent=stats.mastered+'/'+total;
+}
+
+function fcSetFilter(filter){
+  fcCurrentFilter=filter;
+  FlashcardEnhanced.updateFilterButtons(filter);
+  
+  // 获取筛选后的卡片索引
+  const progress=FlashcardEnhanced.getCardProgress();
+  let filteredIndices=[];
+  allCards.forEach((_,idx)=>{
+    const isMastered=progress.mastered.includes(idx);
+    const isReviewing=progress.reviewing.includes(idx);
+    if(filter==='all') filteredIndices.push(idx);
+    else if(filter==='unstudied'&&!isMastered&&!isReviewing) filteredIndices.push(idx);
+    else if(filter==='mastered'&&isMastered) filteredIndices.push(idx);
+    else if(filter==='reviewing'&&isReviewing) filteredIndices.push(idx);
+  });
+  
+  // 更新cards数组（保留原始索引）
+  cards=allCards.filter((_,idx)=>filteredIndices.includes(idx));
+  // 同时保存原始索引映射
+  cards._originalIndices=filteredIndices;
+  currentIdx=0;
+  known.clear();wrong.clear();
+  fcUpdateFilterCounts();
+  renderDots();showCard();
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('cardContainer').style.display='flex';
+  document.getElementById('navButtons').style.display='flex';
+  if(mode==='test')document.getElementById('testButtons').style.display='block';
+  
+  FlashcardEnhanced.showToast('已筛选：'+(filter==='all'?'全部':filter==='unstudied'?'未学':filter==='mastered'?'已掌握':'需复习'));
+}
+
+function fcShuffle(){
+  if(cards.length===0)return;
+  // Fisher-Yates洗牌
+  const idxArr=[...Array(cards.length).keys()];
+  for(let i=idxArr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [idxArr[i],idxArr[j]]=[idxArr[j],idxArr[i]];
+  }
+  const newCards=[];
+  const newOriginalIndices=[];
+  idxArr.forEach(i=>{newCards.push(cards[i]);newOriginalIndices.push(cards._originalIndices?cards._originalIndices[i]:i);});
+  cards=newCards;
+  cards._originalIndices=newOriginalIndices;
+  currentIdx=0;
+  showCard();
+  FlashcardEnhanced.showToast('🔀 卡片已打乱');
+}
+
+function fcResetOrder(){
+  cards=[...allCards];
+  delete cards._originalIndices;
+  currentIdx=0;
+  known.clear();wrong.clear();
+  fcUpdateFilterCounts();
+  renderDots();showCard();
+  FlashcardEnhanced.showToast('↩️ 已恢复原始顺序');
+}
+
+function fcGetOriginalIndex(idx){
+  return cards._originalIndices?cards._originalIndices[idx]:idx;
+}
+
+// 修改showCard添加状态显示
+const originalShowCard=showCard;
+showCard=function(){
+  originalShowCard();
+  const origIdx=fcGetOriginalIndex(currentIdx);
+  const status=FlashcardEnhanced.getCardStatus(origIdx);
+  const statusEl=document.getElementById('cardStatus');
+  if(status==='mastered'){statusEl.textContent='✅已掌握';statusEl.className='fc-card-status mastered';statusEl.style.display='block';}
+  else if(status==='reviewing'){statusEl.textContent='🔄需复习';statusEl.className='fc-card-status reviewing';statusEl.style.display='block';}
+  else{statusEl.style.display='none';}
+  fcUpdateFilterCounts();
+};
+
+// 修改markCard保存状态
+const originalMarkCard=markCard;
+markCard=function(know){
+  const origIdx=fcGetOriginalIndex(currentIdx);
+  FlashcardEnhanced.markCardStatus(origIdx,know?'mastered':'reviewing');
+  originalMarkCard(know);
+  fcUpdateFilterCounts();
+  renderDots();
+};
+
+function fcMarkMastered(){
+  const origIdx=fcGetOriginalIndex(currentIdx);
+  FlashcardEnhanced.markCardStatus(origIdx,'mastered');
+  FlashcardEnhanced.showToast('✅ 已掌握', 'success');
+  showCard();
+}
+
+function fcMarkReviewing(){
+  const origIdx=fcGetOriginalIndex(currentIdx);
+  FlashcardEnhanced.markCardStatus(origIdx,'reviewing');
+  FlashcardEnhanced.showToast('🔄 待复习', 'info');
+  showCard();
+}
+
+// 页面加载时初始化
+document.addEventListener('DOMContentLoaded',function(){
+  // 精致化4.0: 检查URL参数，实现从知识库进入时自动定位章节
+  const urlParams = new URLSearchParams(window.location.search);
+  const chapterParam = urlParams.get('chapter');
+  
+  // 加载闪卡增强模块
+  const script=document.createElement('script');
+  script.src='js/flashcard-enhanced.js';
+  script.onload=function(){
+    fcUpdateFilterCounts();
+    
+    // 精致化4.0: 如果有章节参数，自动定位到该章节
+    if (chapterParam) {
+      // 章节参数映射到科目
+      const chapterMap = {
+        'business': '导游业务',
+        'policy': '政策法规',
+        'national': '全国导基',
+        'local': '地方导基'
+      };
+      const subject = chapterMap[chapterParam.replace(/-ch\d+$/, '')];
+      if (subject) {
+        // 延迟执行，确保闪卡数据已加载
+        setTimeout(function() {
+          // 查找对应的筛选按钮并点击
+          const filterBtns = document.querySelectorAll('#subjectFilter button');
+          filterBtns.forEach(function(btn) {
+            if (btn.textContent.includes(subject) || btn.getAttribute('data-subject') === subject) {
+              btn.click();
+              // 显示定位提示
+              if (typeof showToast === 'function') {
+                showToast('已定位到' + subject + '章节', 'info');
+              }
+            }
+          });
+        }, 500);
+      }
+    } else {
+      // 默认按全部筛选
+      fcSetFilter('all');
+    }
+  };
+  document.head.appendChild(script);
+  
+  // 在测试按钮区域添加快捷标记按钮
+  const testBtns=document.getElementById('testButtons');
+  if(testBtns){
+    testBtns.innerHTML+=`
+      <div style="display:flex;justify-content:center;gap:8px;margin-top:8px;">
+        <button onclick="fcMarkMastered()" style="padding:8px 16px;background:#E65100;color:#fff;border:none;border-radius:16px;font-size:.8rem;cursor:pointer;">✅ 掌握</button>
+        <button onclick="fcMarkReviewing()" style="padding:8px 16px;background:#FF9800;color:#fff;border:none;border-radius:16px;font-size:.8rem;cursor:pointer;">🔄 复习</button>
+      </div>
+    `;
+  }
+});
+
+
+function filterSubject(sub){
+  currentFilter=sub;
+  document.querySelectorAll('#subjectFilter button').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  cards=sub==='all'?[...allCards]:allCards.filter(c=>c.s===sub);
+  currentIdx=0;known.clear();wrong.clear();
+  updateStats();renderDots();showCard();
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('cardContainer').style.display='flex';
+  document.getElementById('navButtons').style.display='flex';
+  if(mode==='test')document.getElementById('testButtons').style.display='block';
+}
+
+function setMode(m){
+  mode=m;
+  document.getElementById('modeFlip').classList.toggle('active',m==='flip');
+  document.getElementById('modeTest').classList.toggle('active',m==='test');
+  document.getElementById('testButtons').style.display=m==='test'?'block':'none';
+}
+
+function showCard(){
+  if(currentIdx>=cards.length){showResult();return}
+  const c=cards[currentIdx];
+  document.getElementById('cardSubject').textContent=c.t;
+  document.getElementById('cardQuestion').textContent=c.q;
+  document.getElementById('cardAnswer').innerHTML=c.a.replace(/·/g,'<br>');
+  document.getElementById('cardMnemonic').innerHTML=c.m;
+  document.getElementById('cardTag').textContent='第'+(currentIdx+1)+'/'+cards.length+'张';
+  document.getElementById('flashCard').classList.remove('flipped');
+  renderDots();updateStats();
+}
+
+function flipCard(){
+  if(mode==='test'){
+    document.getElementById('flashCard').classList.toggle('flipped');
+  }else{
+    document.getElementById('flashCard').classList.toggle('flipped');
+  }
+}
+// 移动端触摸优化
+(function(){
+  var card = document.getElementById('flashCard');
+  if(!card) return;
+  var lastTap = 0;
+  card.addEventListener('touchend', function(e){
+    var now = Date.now();
+    if(now - lastTap < 300) return;
+    lastTap = now;
+    flipCard();
+  }, {passive: true});
+})();
+
+// 精致化4.0: 闪卡首次使用引导（localStorage标记）
+(function(){
+  // 检查是否已显示过首次使用引导
+  if(localStorage.getItem('flashcard_flip_guide_shown')) {
+    // 隐藏翻转提示
+    var hint = document.querySelector('.q-hint');
+    if(hint) hint.style.display = 'none';
+    return;
+  }
+  
+  // 首次使用：在闪卡上方显示引导提示
+  var cardContainer = document.getElementById('cardContainer');
+  if(cardContainer) {
+    var guideEl = document.createElement('div');
+    guideEl.id = 'flashcard-flip-guide';
+    guideEl.style.cssText = 'background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;padding:14px 20px;border-radius:12px;margin-bottom:16px;text-align:center;font-size:.9rem;box-shadow:0 4px 12px rgba(230,81,0,0.3);animation:guidePulse 2s ease-in-out infinite;';
+    guideEl.innerHTML = '👆 <strong>点击卡片</strong>或<strong>翻转按钮</strong>查看答案 — 刷一遍顶看三遍';
+    cardContainer.parentNode.insertBefore(guideEl, cardContainer);
+    
+    // 添加动画样式
+    var style = document.createElement('style');
+    style.textContent = '@keyframes guidePulse{0%,100%{opacity:1;transform:translateY(0)}50%{opacity:0.85;transform:translateY(-2px)}}';
+    document.head.appendChild(style);
+    
+    // 点击闪卡后隐藏引导
+    var card = document.getElementById('flashCard');
+    if(card) {
+      card.addEventListener('click', function hideGuide() {
+        var guide = document.getElementById('flashcard-flip-guide');
+        if(guide) {
+          guide.style.transition = 'opacity 0.3s';
+          guide.style.opacity = '0';
+          setTimeout(function(){ guide.remove(); }, 300);
+        }
+        card.removeEventListener('click', hideGuide);
+        // 标记已显示过引导
+        localStorage.setItem('flashcard_flip_guide_shown', 'true');
+        // 隐藏卡片上的翻转提示
+        var hint = document.querySelector('.q-hint');
+        if(hint) hint.style.display = 'none';
+      });
+    }
+    
+    // 3秒后自动淡化提示（如果用户还没操作）
+    setTimeout(function(){
+      var guide = document.getElementById('flashcard-flip-guide');
+      if(guide) {
+        guide.style.transition = 'opacity 0.5s';
+        guide.style.opacity = '0.6';
+      }
+    }, 3000);
+  }
+})();
+
+
+
+
+function markCard(know){
+  const key=currentIdx;
+  if(know){known.add(key);wrong.delete(key)}else{wrong.add(key);known.delete(key)}
+  nextCard();
+}
+
+function nextCard(){
+  currentIdx++;
+  if(currentIdx>=cards.length){showResult();return}
+  showCard();
+}
+
+function prevCard(){
+  if(currentIdx>0)currentIdx--;
+  showCard();
+}
+
+function updateStats(){
+  document.getElementById('totalCount').textContent=cards.length;
+  document.getElementById('knowCount').textContent=known.size;
+  document.getElementById('dontCount').textContent=wrong.size;
+}
+
+function renderDots(){
+  let html='';
+  cards.forEach((_,i)=>{
+    let cls='flash-dot';
+    if(i===currentIdx)cls+=' current';
+    else if(known.has(i))cls+=' done';
+    else if(wrong.has(i))cls+=' wrong';
+    html+='<div class="'+cls+'"></div>';
+  });
+  document.getElementById('progressDots').innerHTML=html;
+}
+
+function showResult(){
+  document.getElementById('cardContainer').style.display='none';
+  document.getElementById('navButtons').style.display='none';
+  document.getElementById('testButtons').style.display='none';
+  document.getElementById('resultCard').style.display='block';
+  document.getElementById('resultKnow').textContent=known.size;
+  document.getElementById('resultDont').textContent=wrong.size;
+  const rate=cards.length?Math.round(known.size/cards.length*100):0;
+  document.getElementById('resultRate').textContent=rate+'%';
+  let advice='';
+  if(rate>=90)advice='🎉 太棒了！口诀掌握得很好，继续保持！';
+  else if(rate>=70)advice='💪 不错！再把不熟的几条多过两遍就稳了。';
+  else if(rate>=50)advice='🔥 加油！建议先集中攻薄弱科目，翻转模式多刷几遍。';
+  else advice='📚 别慌！先去知识库看详细内容，理解了再背口诀效率更高。';
+  document.getElementById('resultAdvice').innerHTML=advice;
+  document.getElementById('reviewWrongBtn').style.display=wrong.size>0?'inline-block':'none';
+}
+
+function restartCards(){
+  currentIdx=0;known.clear();wrong.clear();
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('cardContainer').style.display='flex';
+  document.getElementById('navButtons').style.display='flex';
+  if(mode==='test')document.getElementById('testButtons').style.display='block';
+  showCard();
+}
+
+function reviewWrong(){
+  cards=allCards.filter((_,i)=>wrong.has(i));
+  currentIdx=0;known.clear();wrong.clear();
+  document.getElementById('resultCard').style.display='none';
+  document.getElementById('cardContainer').style.display='flex';
+  document.getElementById('navButtons').style.display='flex';
+  if(mode==='test')document.getElementById('testButtons').style.display='block';
+  showCard();
+}
+
+// init
+showCard();
+
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>
+
+
+
+
+<script>
+// Service Worker注册
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').then(reg=>{
+    // SW注册成功
+  }).catch(err=>{
+    // SW注册失败，忽略
+  });
+}
+
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>
+
+
+<script>
+// 回到顶部按钮
+(function(){
+  const btn=document.createElement('button');
+  btn.className='back-to-top';btn.id='backToTop';btn.title='回到顶部';btn.setAttribute('aria-label','回到顶部');btn.textContent='⬆';
+  document.body.appendChild(btn);
+  window.addEventListener('scroll',function(){
+    btn.classList.toggle('visible',window.scrollY>400);
+  },{passive:true});
+  btn.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
+})();
+
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>
+
+<script>
+// 闪卡滑动手势：左滑=不会，右滑=会了
+(function(){
+  const card=document.getElementById('flashCard');
+  if(!card)return;
+  let touchstartX=0,touchstartY=0,touchendX=0,touchendY=0,isSwiping=false;
+  const minSwipe=60;
+  
+  card.addEventListener('touchstart',function(e){
+    touchstartX=e.changedTouches[0].screenX;
+    touchstartY=e.changedTouches[0].screenY;
+    isSwiping=true;
+    card.style.transition='transform .1s';
+  },{passive:true});
+  
+  card.addEventListener('touchmove',function(e){
+    if(!isSwiping)return;
+    const dx=e.changedTouches[0].screenX-touchstartX;
+    const dy=Math.abs(e.changedTouches[0].screenY-touchstartY);
+    if(dy>Math.abs(dx))return; // 竖向滚动，忽略
+    const rotation=dx*0.05;
+    const opacity=Math.max(0.5,1-Math.abs(dx)/300);
+    card.style.transform='translateX('+dx+'px) rotate('+rotation+'deg)';
+    card.style.opacity=opacity;
+  },{passive:true});
+  
+  card.addEventListener('touchend',function(e){
+    if(!isSwiping)return;
+    isSwiping=false;
+    touchendX=e.changedTouches[0].screenX;
+    touchendY=e.changedTouches[0].screenY;
+    const dx=touchendX-touchstartX;
+    
+    card.style.transition='transform .4s ease, opacity .4s ease';
+    
+    if(dx>minSwipe){
+      // 右滑 = 会了
+      card.style.transform='translateX(200px) rotate(15deg)';
+      card.style.opacity='0';
+      setTimeout(()=>{
+        card.style.transition='none';
+        card.style.transform='';card.style.opacity='';
+        if(typeof mode!=='undefined'&&mode==='test')markCard(true);else nextCard();
+      },400);
+      // 显示提示
+      showToast('✅ 会了 →', '#E65100');
+    }else if(dx<-minSwipe){
+      // 左滑 = 不会
+      card.style.transform='translateX(-200px) rotate(-15deg)';
+      card.style.opacity='0';
+      setTimeout(()=>{
+        card.style.transition='none';
+        card.style.transform='';card.style.opacity='';
+        if(typeof mode!=='undefined'&&mode==='test')markCard(false);else nextCard();
+      },400);
+      showToast('❌ 还不熟 ←', '#F44336');
+    }else{
+      // 未达到滑动阈值，弹回
+      card.style.transform='';
+      card.style.opacity='1';
+    }
+  },{passive:true});
+  
+  // 滑动提示Toast
+  function showToast(msg,color){
+    let toast=document.getElementById('swipeToast');
+    if(!toast){
+      toast=document.createElement('div');
+      toast.id='swipeToast';
+      toast.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);padding:14px 28px;border-radius:16px;color:#fff;font-size:1.1rem;font-weight:bold;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s';
+      document.body.appendChild(toast);
+    }
+    toast.textContent=msg;
+    toast.style.background=color;
+    toast.style.opacity='1';
+    setTimeout(()=>{toast.style.opacity='0'},800);
+  }
+  
+  // 添加滑动提示
+  const hint=document.createElement('div');
+  hint.style.cssText='text-align:center;font-size:.8rem;color: #777;margin:8px 0;padding:8px';
+  hint.innerHTML='👆 点击翻转 · 👈👉 滑动：← 不熟 / 会了 →';
+  const container=card.parentElement;
+  if(container)container.parentElement.insertBefore(hint,container.nextSibling);
+})();
+
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>
+
+
+<!-- AI助手悬浮按钮 -->
+<a href="ai-assistant.html" class="ai-float-btn" title="AI助手">
+  <span>🤖</span>
+  <div class="ai-float-pulse"></div>
+</a>
+
+
+<nav class="bottom-tabs"><a class="tab-item" href="index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item tab-active" href="ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="search.html"><span class="tab-icon">🔍</span><span class="tab-label">搜索</span></a><a class="tab-item" href="travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
+<p style="text-align:center;font-size:0.7rem;color: #777;padding:8px 0 70px;background:#FAFAFA;">走过弯路，所以更懂路</p>
+<script>
+// 页面跳转淡出效果
+(function(){
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a');
+    if(!a)return;
+    var href=a.getAttribute('href');
+    if(!href||href.startsWith('#')||href.startsWith('javascript')||href.startsWith('http')||href.startsWith('mailto')||href.startsWith('tel'))return;
+    // Same page anchors
+    if(href.startsWith('#'))return;
+    e.preventDefault();
+    document.body.style.transition='opacity 0.15s ease';
+    document.body.style.opacity='0.6';
+    setTimeout(function(){location.href=href;},150);
+  });
+})();
+
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>
+
+
+<div style="text-align:center;padding:20px;margin-top:40px;border-top:1px solid #F0F0F0"><p style="color:#777;font-size:0.8rem">© 2025-2026 ximao101 | 游导学习笔记 | 导游证备考资料</p></div>
+<script src="auth.js">
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>
+<script src="js/analytics.js">
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>
+
+  <button class="export-pdf-btn" onclick="window.print()" style="position:fixed;bottom:90px;right:16px;width:44px;height:44px;background:#E65100;color:#fff;border:none;border-radius:50%;cursor:pointer;z-index:99;font-size:1.2rem;box-shadow:0 2px 8px rgba(230,81,0,0.3);display:flex;align-items:center;justify-content:center" title="打印/导出PDF">
+  🖨️
+</button>
+
+<script src="js/feedback-widget.js"></script>
+
+<footer style="text-align:center;padding:20px;font-size:0.8rem;color:#777;border-top:1px solid #F0F0F0;margin-top:40px;">
+  <a href="privacy.html" style="color:#E65100;">隐私保护</a> · <a href="index.html" style="color:#E65100;">返回首页</a>
+  <p style="margin-top:6px;">©2025-2026 游导学习笔记 ximao101整理</p>
+</footer>
+</body>
+</html><script>
+// 闪卡刷完提示
+(function() {
+  // 检查是否刚完成一轮闪卡
+  var lastSession = localStorage.getItem('last_flashcard_session');
+  var now = Date.now();
+  
+  if (lastSession) {
+    var timeDiff = now - parseInt(lastSession);
+    // 如果距离上次刷卡在30分钟内，且还没显示过提示
+    if (timeDiff < 30 * 60 * 1000 && !localStorage.getItem('flashcard_review_tip_shown')) {
+      setTimeout(function() {
+        if (typeof Emotional !== 'undefined') {
+          Emotional.showToast('别忘了回顾之前标记的「待复习」卡片哦～', 'info', 4000);
+        }
+        localStorage.setItem('flashcard_review_tip_shown', 'true');
+      }, 2000);
+    }
+  }
+  
+  // 监听闪卡完成事件（通过localStorage）
+  var originalFCUpdate = window.fcUpdateProgress;
+  if (typeof originalFCUpdate === 'function') {
+    window.fcUpdateProgress = function() {
+      originalFCUpdate.apply(this, arguments);
+      // 检查是否全部刷完
+      var progress = JSON.parse(localStorage.getItem('flashcard_progress') || '{"mastered":[],"reviewing":[]}');
+      var mastered = progress.mastered ? progress.mastered.length : 0;
+      var reviewing = progress.reviewing ? progress.reviewing.length : 0;
+      
+      if (mastered > 0 && reviewing === 0) {
+        localStorage.setItem('last_flashcard_session', Date.now().toString());
+        if (typeof Emotional !== 'undefined') {
+          setTimeout(function() {
+            Emotional.showConfetti(2000);
+            Emotional.showToast('闪卡全部掌握，口诀已经刻进脑子里了！', 'encouragement', 4000);
+          }, 500);
+        }
+      }
+    };
+  }
+})();
+
+  // 闪卡手势滑动
+  (function() {
+    var touchStartX = 0;
+    var touchEndX = 0;
+    var card = document.querySelector('.flash-card');
+    var container = document.querySelector('.flash-card-container');
+    
+    if (!card || !container) return;
+    
+    container.classList.add('flashcard-swipe-area');
+    
+    // 添加滑动提示
+    var hint = document.createElement('div');
+    hint.className = 'flashcard-swipe-hint';
+    hint.innerHTML = '<span>👈 左滑不认识 | 右滑认识 👉</span>';
+    container.parentNode.insertBefore(hint, container.nextSibling);
+    
+    card.addEventListener('touchstart', function(e) {
+      touchStartX = e.changedTouches[0].screenX;
+      card.classList.add('swiping');
+    }, { passive: true });
+    
+    card.addEventListener('touchmove', function(e) {
+      touchEndX = e.changedTouches[0].screenX;
+      var diff = touchEndX - touchStartX;
+      var rotate = diff * 0.05;
+      card.style.transform = 'translateX(' + diff + 'px) rotate(' + rotate + 'deg)';
+      
+      // 显示滑动指示
+      card.classList.remove('swipe-left', 'swipe-right');
+      if (diff < -50) card.classList.add('swipe-left');
+      else if (diff > 50) card.classList.add('swipe-right');
+    }, { passive: true });
+    
+    card.addEventListener('touchend', function(e) {
+      card.classList.remove('swiping');
+      var diff = touchEndX - touchStartX;
+      
+      card.classList.remove('swipe-left', 'swipe-right');
+      card.style.transform = '';
+      
+      // 判断滑动方向
+      if (diff < -80) {
+        // 左滑 - 不认识
+        if (typeof handleDontKnow === 'function') handleDontKnow();
+        else document.querySelector('.btn-dont')?.click();
+      } else if (diff > 80) {
+        // 右滑 - 认识
+        if (typeof handleKnow === 'function') handleKnow();
+        else document.querySelector('.btn-know')?.click();
+      }
+    }, { passive: true });
+  })();
+  
+  // 确保双指缩放不被禁止
+  document.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      // 多点触控时不阻止默认行为（允许缩放）
+    }
+  }, { passive: true });
+
+</script>

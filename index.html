@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>导游证备考 - AI助手+刷题+口诀 | 游导学习笔记</title>
+  <meta name="description" content="导游证备考一站式平台。考了两次才上岸的曼曼，带你用框架+口诀高效备考。AI助手免费答疑，付费资料包¥69.9">
+  <meta name="keywords" content="导游证,导游证考试,备考,AI助手,历年真题,面试指导,导游词">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="游导学习笔记 - 导游证备考一站式">
+  <meta property="og:description" content="AI智能备考+全套备考资料+1v1全程指导，冲刺上岸！">
+  <meta property="og:url" content="https://youdao-travel.com">
+  <meta property="og:site_name" content="游导学习笔记">
+  <meta property="og:image" content="https://youdao-travel.com/images/og-share.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <!-- PWA & Mobile Optimization -->
+  <meta name="theme-color" content="#E65100">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="游导笔记">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <style>
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; line-height: 1.7; color: #1A1A1A; background-color: #FFF3E0; background-image: linear-gradient(#FFE0B2 1px, transparent 1px), linear-gradient(90deg, #FFE0B2 1px, transparent 1px), linear-gradient(rgba(255,224,178,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,224,178,0.3) 1px, transparent 1px); background-size: 20px 20px, 20px 20px, 4px 4px, 4px 4px; background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px; min-height: 100dvh; }
+    a { text-decoration: none; color: #E65100; }
+
+    /* 导航 */
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; background: #FFFFFF; border-bottom: 1px solid #F0F0F0; position: sticky; top: 0; z-index: 9999; }
+    .logo { font-size: 1.1rem; font-weight: 800; color: #E65100; display: flex; align-items: center; gap: 8px; }
+    .logo-icon { width: 32px; height: 32px; background: #E65100; border-radius: 8px; display: flex; align-items: center; justify-content: center; }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-links a { padding: 8px 12px; border-radius: 10px; font-size: 0.85rem; color: #333333; transition: all 0.3s; }
+    .nav-links a:hover { background: #FFF3E0; color: #E65100; }
+    .nav-links a.active { background: #E65100; color: #FFFFFF; font-weight: 600; }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 8px; background: none; border: none; }
+    .nav-toggle span { width: 22px; height: 2px; background: #1A1A1A; border-radius: 2px; }
+
+    /* 首屏Hero */
+    .hero { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 80px 20px 40px; background: #FFFFFF; position: relative; }
+    .hero-inner { max-width: 560px; text-align: center; position: relative; z-index: 1; }
+    .hero-avatar { width: 80px; height: 80px; background: #FFF3E0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; margin: 0 auto 20px; border: none; }
+    .hero-greeting { font-size: 1.3rem; font-weight: 800; color: #1A1A1A; margin-bottom: 8px; }
+    .hero-slogan { font-size: 1rem; color: #BF360C; font-weight: 700; margin-bottom: 28px; letter-spacing: 1px; }
+
+    /* 倒计时 */
+    .countdown-pill { display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #FF6B6B, #FF8E53); color: #FFF; padding: 8px 20px; border-radius: 30px; font-weight: 700; font-size: 0.9rem; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(255,107,107,0.25); }
+
+    /* 首屏一句话说明 */
+    .hero-intro { background: #FFF3E0; border-radius: 16px; padding: 16px 20px; margin-bottom: 24px; text-align: left; }
+    .hero-intro h2 { font-size: 1rem; color: #E65100; font-weight: 700; margin-bottom: 6px; }
+    .hero-intro p { font-size: 0.9rem; color: #1A1A1A; line-height: 1.6; }
+
+    /* CTA按钮 */
+    .cta-area { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .cta-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 16px 40px; background: #E65100; color: #FFFFFF; border-radius: 30px; font-size: 1.05rem; font-weight: 700; transition: all 0.3s; box-shadow: 0 4px 20px rgba(230,81,0,0.3); text-decoration: none; }
+    .cta-primary:hover { transform: translateY(-2px); background: #BF360C; }
+    .cta-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; background: #FFFFFF; color: #E65100; border: 2px solid #E65100; border-radius: 30px; font-size: 0.95rem; font-weight: 600; transition: all 0.3s; text-decoration: none; }
+    .cta-secondary:hover { background: #FFF3E0; transform: translateY(-1px); }
+
+    /* 快速入口矩阵 */
+    .quick-nav { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 28px; }
+    .quick-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 8px; background: #FAFAFA; border: 1px solid #F0F0F0; border-radius: 12px; text-decoration: none; transition: all 0.2s; }
+    .quick-item:hover { border-color: #E65100; background: #FFF8E1; transform: translateY(-2px); }
+    .quick-icon { font-size: 1.4rem; }
+    .quick-text { font-size: 0.75rem; font-weight: 600; color: #333; text-align: center; }
+
+    /* 第2屏：新手引导 */
+    .guide-section { padding: 50px 20px; background: #FFF8E1; }
+    .guide-inner { max-width: 600px; margin: 0 auto; }
+    .guide-header { text-align: center; margin-bottom: 28px; }
+    .guide-title { font-size: 1.4rem; font-weight: 800; color: #1A1A1A; margin-bottom: 8px; }
+    .guide-subtitle { font-size: 0.9rem; color: #555; }
+
+    /* 新手必知卡片 */
+    .guide-cards { display: flex; flex-direction: column; gap: 14px; }
+    .guide-card { background: #FFFFFF; border-radius: 16px; padding: 18px 20px; border: 1px solid #F0F0F0; transition: all 0.2s; }
+    .guide-card:hover { border-color: #E65100; box-shadow: 0 4px 12px rgba(230,81,0,0.1); }
+    .guide-card h3 { font-size: 0.95rem; color: #E65100; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+    .guide-card p { font-size: 0.88rem; color: #444; line-height: 1.6; }
+    .guide-card .highlight { color: #E65100; font-weight: 600; }
+
+    /* 用户分群 */
+    .user-types { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 24px; }
+    .type-card { background: #FFFFFF; border-radius: 14px; padding: 16px; text-align: center; border: 1px solid #F0F0F0; text-decoration: none; transition: all 0.2s; }
+    .type-card:hover { border-color: #E65100; transform: translateY(-2px); }
+    .type-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .type-name { font-size: 0.9rem; font-weight: 700; color: #1A1A1A; margin-bottom: 4px; }
+    .type-desc { font-size: 0.75rem; color: #666; }
+
+    /* 第3屏：备考工具 */
+    .tools-section { padding: 50px 20px; background: #FFFFFF; }
+    .tools-inner { max-width: 600px; margin: 0 auto; text-align: center; }
+    .tools-title { font-size: 1.3rem; font-weight: 800; color: #1A1A1A; margin-bottom: 8px; }
+    .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 24px 0; }
+    .tool-card { background: #FAFAFA; border: 1px solid #F0F0F0; border-radius: 14px; padding: 18px 12px; text-align: center; transition: all 0.2s; text-decoration: none; }
+    .tool-card:hover { border-color: #E65100; background: #FFF8E1; transform: translateY(-2px); }
+    .tool-icon { font-size: 1.6rem; margin-bottom: 8px; }
+    .tool-name { font-size: 0.85rem; font-weight: 700; color: #1A1A1A; }
+    .tool-desc { font-size: 0.72rem; color: #777; margin-top: 4px; }
+
+    /* 第4屏：曼曼的故事 */
+    .story-section { padding: 50px 20px; background: linear-gradient(180deg, #FFFFFF 0%, #FFF3E0 100%); }
+    .story-inner { max-width: 500px; margin: 0 auto; text-align: center; }
+    .story-card { background: #FFFFFF; border-radius: 20px; padding: 28px; box-shadow: 0 4px 20px rgba(0,0,0,0.06); text-align: left; margin-bottom: 24px; }
+    .story-avatar-row { display: flex; gap: 14px; align-items: center; margin-bottom: 18px; }
+    .story-avatar { width: 48px; height: 48px; background: #FFF3E0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .story-name { font-weight: 700; color: #1A1A1A; }
+    .story-role { font-size: 0.8rem; color: #777; }
+    .story-quote { font-size: 0.95rem; color: #666; line-height: 1.9; margin-bottom: 12px; }
+    .story-slogan-bar { background: linear-gradient(135deg, #E65100, #FF6D00); border-radius: 12px; padding: 16px; color: #FFFFFF; font-weight: 700; font-size: 1.05rem; }
+
+    /* 第5屏：资料包 */
+    .package-section { padding: 50px 20px; background: #FFFFFF; }
+    .package-inner { max-width: 400px; margin: 0 auto; text-align: center; }
+    .package-card { background: linear-gradient(135deg, #FFF3E0, #FFE0B2); border-radius: 20px; padding: 32px 24px; border: 2px solid #E65100; }
+    .package-title { font-size: 1.2rem; font-weight: 800; color: #1A1A1A; margin-bottom: 8px; }
+    .package-desc { font-size: 0.9rem; color: #666; margin-bottom: 16px; line-height: 1.6; }
+    .package-price { font-size: 2.5rem; font-weight: 800; color: #E65100; margin-bottom: 8px; }
+    .package-price span { font-size: 1rem; color: #777; font-weight: 400; }
+    .package-includes { font-size: 0.85rem; color: #555; margin-bottom: 20px; line-height: 1.8; }
+    .package-btn { display: inline-block; padding: 14px 36px; background: #E65100; color: #FFF; border-radius: 25px; font-size: 1rem; font-weight: 700; text-decoration: none; transition: all 0.2s; }
+    .package-btn:hover { background: #BF360C; transform: translateY(-2px); }
+    .package-note { font-size: 0.75rem; color: #777; margin-top: 12px; }
+
+    /* 第6屏：加微信 */
+    .wechat-section { padding: 40px 20px; background: #FAFAFA; }
+    .wechat-inner { max-width: 400px; margin: 0 auto; text-align: center; }
+    .wechat-title { font-size: 1.1rem; font-weight: 700; color: #1A1A1A; margin-bottom: 8px; }
+    .wechat-desc { font-size: 0.88rem; color: #666; margin-bottom: 16px; }
+    .wechat-id { display: inline-flex; align-items: center; gap: 8px; background: #FFFFFF; padding: 14px 28px; border-radius: 30px; font-size: 1.1rem; font-weight: 800; color: #E65100; border: 2px dashed #E65100; }
+    .wechat-tip { font-size: 0.78rem; color: #777; }
+
+    /* Footer */
+    .footer { text-align: center; padding: 16px 20px; font-size: 0.78rem; color: #777; border-top: 1px solid #F0F0F0; margin-bottom: 60px; }
+    .footer a { color: #E65100; }
+
+    /* 底部导航 */
+    .bottom-tabs { position: fixed; bottom: 0; left: 0; right: 0; background: #FFFFFF; border-top: 1px solid #F0F0F0; display: flex; justify-content: space-around; padding: 8px 0; padding-bottom: calc(8px + env(safe-area-inset-bottom)); z-index: 100; }
+    .bottom-tabs a { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.7rem; color: #777; text-decoration: none; padding: 4px 0; }
+    .bottom-tabs .tab-icon { font-size: 1.2rem; }
+    .bottom-tabs .tab-active .tab-icon { color: #E65100; }
+    .bottom-tabs .tab-active span { color: #E65100; font-weight: 600; }
+
+    /* AI悬浮按钮 */
+    .ai-float-btn { position: fixed; bottom: 80px; right: 16px; width: 50px; height: 50px; background: #E65100; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; box-shadow: 0 4px 16px rgba(230,81,0,0.3); z-index: 200; transition: transform 0.2s; text-decoration: none; }
+    .ai-float-btn:hover { transform: scale(1.1); }
+
+    /* 最新更新提示 */
+    .update-tip { display: flex; align-items: center; gap: 6px; margin-top: 16px; padding: 8px 14px; background: #FFF8E1; border-radius: 20px; font-size: 0.78rem; color: #666; }
+    .update-badge { font-size: 0.85rem; }
+    .update-text { color: #E65100; font-weight: 500; }
+    
+    /* 学习方法论区块 */
+    .methodology-section { padding: 40px 20px; background: #FFFFFF; }
+    .methodology-inner { max-width: 600px; margin: 0 auto; }
+    .methodology-header { text-align: center; margin-bottom: 24px; }
+    .methodology-title { font-size: 1.3rem; font-weight: 800; color: #1A1A1A; margin-bottom: 6px; }
+    .methodology-subtitle { font-size: 0.88rem; color: #777; }
+    .method-cards { display: flex; flex-direction: column; gap: 12px; }
+    .method-card { background: linear-gradient(135deg, #FFF8E1, #FFF3E0); border-radius: 14px; padding: 16px 18px; border: 1px solid #FFE0B2; }
+    .method-icon { font-size: 1.5rem; margin-bottom: 8px; }
+    .method-name { font-size: 0.95rem; font-weight: 700; color: #E65100; margin-bottom: 6px; }
+    .method-answer { font-size: 0.85rem; color: #555; line-height: 1.5; margin-bottom: 8px; }
+    .method-answer strong { color: #BF360C; }
+    .method-link { font-size: 0.8rem; color: #E65100; font-weight: 600; }
+    .method-quote { background: linear-gradient(135deg, #E65100, #FF6D00); border-radius: 12px; padding: 14px 18px; margin-top: 20px; text-align: center; }
+    .method-quote p { color: #FFFFFF; font-weight: 600; font-size: 0.92rem; }
+
+    /* 回到顶部 */
+    .back-to-top { position: fixed; bottom: 140px; right: 16px; width: 40px; height: 40px; background: #FFFFFF; border: 1px solid #F0F0F0; border-radius: 50%; display: none; align-items: center; justify-content: center; font-size: 1rem; cursor: pointer; z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: all 0.2s; }
+    .back-to-top.show { display: flex; }
+
+    /* 动画（使用transform/opacity保证GPU加速） */
+    @keyframes fadeInUp { from { opacity: 0; -webkit-transform: translateY(10px); transform: translateY(10px); } to { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); } }
+    .fade-in { -webkit-animation: fadeInUp 0.5s ease; animation: fadeInUp 0.5s ease; }
+
+    /* 移动端适配 */
+    @media (max-width: 768px) {
+      .nav-links { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #FFFFFF; flex-direction: column; padding: 12px; gap: 4px; border-radius: 0 0 16px 16px; z-index: 9999; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+      .nav-links.show { display: -webkit-flex; display: flex; }
+      .nav-toggle { display: -webkit-flex; display: flex; }
+      .hero { padding: 70px 16px 30px; min-height: auto; }
+      .hero-greeting { font-size: 1.1rem; }
+      .quick-nav { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .tools-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .tool-card { padding: 14px 8px; }
+      .tool-icon { font-size: 1.3rem; }
+      .tool-name { font-size: 0.78rem; }
+      .tool-desc { font-size: 0.65rem; }
+      .guide-section, .tools-section, .story-section, .package-section, .wechat-section { padding: 40px 16px; }
+      .user-types { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .bottom-tabs { display: -webkit-flex; display: flex; }
+      .back-to-top { bottom: 80px; right: 12px; }
+      .ai-float-btn { bottom: 80px; right: 16px; }
+    }
+    @media (min-width: 769px) {
+      .bottom-tabs { display: none; }
+      body { max-width: 1200px; margin: 0 auto; }
+      .navbar { max-width: 1200px; margin: 0 auto; }
+      .hero { padding: 80px 24px 50px; }
+      .hero-inner, .guide-inner, .tools-inner, .story-inner, .package-inner, .wechat-inner { max-width: 768px; margin-left: auto; margin-right: auto; }
+    }
+
+    /* 页面加载进度条 */
+    /* 页面加载进度条 */
+    .page-loading-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#E65100,#FF6D00,#FFB74D);z-index:99999;transition:width .3s ease;width:0;opacity:0}
+    
+    /* Toast提示 - 2-3秒自动消失 */
+    .toast-container{position:fixed;top:70px;left:50%;transform:translateX(-50%);z-index:99999;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+    .toast{background:#FFFFFF;border-radius:12px;padding:14px 20px;box-shadow:0 4px 20px rgba(0,0,0,0.15);display:flex;align-items:center;gap:10px;min-width:280px;max-width:90vw;animation:toastIn 0.3s ease;pointer-events:auto}
+    .toast.success{border-left:4px solid #BF360C}
+    .toast.error{border-left:4px solid #B91C1C}
+    .toast.info{border-left:4px solid #E65100}
+    .toast-icon{font-size:1.2rem;flex-shrink:0}
+    .toast-text{flex:1;font-size:0.88rem;color:#1A1A1A}
+    .toast-close{background:none;border:none;font-size:1rem;cursor:pointer;color:#999;padding:4px;flex-shrink:0}
+    .toast-close:hover{color:#666}
+    @keyframes toastIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes toastOut{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-10px)}}
+    .toast.hiding{animation:toastOut 0.3s ease forwards}
+
+    /* 交互细节：文字选中颜色 */
+    ::selection { background: #FFE0B2; color: #BF360C; }
+    ::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+    /* 交互细节：可点击元素手型 */
+    .quick-item, .guide-card, .type-card, .tool-card, .nav-links a, .package-btn, .wechat-id { cursor: pointer; }
+
+    /* 交互细节：禁止长按弹出菜单 */
+    .quick-item, .guide-card, .type-card, .tool-card, .package-btn, .share-btn { -webkit-touch-callout: none; }
+    
+    /* 精致化5.0-Y: 情绪触发点标签样式 */
+    .emotion-trigger-tag { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+    .emotion-trigger-tag:hover { background: #E65100 !important; color: #FFFFFF !important; transform: translateY(-1px); }
+    .emotion-trigger-tag:active { transform: translateY(0); }
+
+    /* 打印样式 */
+    @media print {
+      .navbar, .bottom-tabs, .ai-float-btn, .back-to-top, .page-loading-bar, .cta-area, .wechat-section, footer { display: none !important; }
+      body { padding: 0; color: #333; background: #fff; }
+      .hero { min-height: auto; padding: 20px; }
+      .hero-intro, .guide-section, .tools-section, .story-section, .package-section { padding: 20px 0; }
+      a { color: #333; text-decoration: none; }
+      .package-price { color: #333; }
+      @page { margin: 1cm; }
+    }
+  </style>
+
+  <!-- 网络状态检测 -->
+  <style>
+  /* 网络状态提示 */
+  .network-toast { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); background: #E65100; color: #fff; padding: 10px 20px; border-radius: 20px; font-size: 0.85rem; z-index: 99998; opacity: 0; transition: opacity 0.3s; box-shadow: 0 4px 12px rgba(230,81,0,0.3); }
+  .network-toast.show { opacity: 1; }
+  .network-toast.offline { background: #B91C1C; }
+  .network-toast.slow { background: #D97706; }
+  
+  /* 打印样式增强 */
+  @media print {
+    .navbar, .bottom-tabs, .ai-float-btn, .back-to-top, .page-loading-bar, .cta-area, .wechat-section, footer, .network-toast { display: none !important; }
+    body { padding: 0; color: #000; background: #fff; }
+    .hero { min-height: auto; padding: 20px; background: #fff; }
+    .hero-intro, .guide-section, .tools-section, .story-section, .package-section { padding: 20px 0; background: #fff; }
+    .hero-slogan { color: #000; }
+    a { color: #000; text-decoration: none; }
+    a::after { content: " (" attr(href) ")"; font-size: 0.8em; color: #666; }
+    .package-price { color: #000; }
+    @page { margin: 1cm; size: A4; }
+    h1, h2, h3 { color: #000; page-break-after: avoid; }
+    .guide-card, .tool-card, .type-card { page-break-inside: avoid; border: 1px solid #ddd; }
+  }
+  
+  /* 减少动画（无障碍） */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { 
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+  
+  /* ========================
+     精致化2.0 批次L - iOS/Android专项
+     ======================== */
+  /* iOS: touch-action:manipulation */
+  button, a, .quick-item, .guide-card, .type-card, .tool-card { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+  /* iOS: 不触发橡皮筋 - 弹性滚动优化 */
+  html, body { overscroll-behavior: none; }
+  /* iOS: 横屏适配 */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .hero { min-height: auto; padding: 40px 20px; }
+    .bottom-tabs { padding-bottom: calc(4px + env(safe-area-inset-bottom)); }
+  }
+  
+  /* Android: 不触发长按菜单 */
+  button, a, .quick-item, .guide-card, .type-card, .tool-card, .package-btn { 
+    -webkit-touch-callout: none; 
+    user-select: none; 
+    -webkit-user-select: none; 
+  }
+  /* Android: 输入框font-size≥16px防缩放 */
+  input[type="text"], input[type="search"], input[type="email"], input[type="tel"], textarea { font-size: 16px !important; }
+  
+  /* ========================
+     精致化2.0 批次L - 焦点与键盘
+     ======================== */
+  /* Tab顺序符合视觉 - 按DOM顺序自然Tab */
+  *:focus { outline: none; }
+  *:focus-visible { outline: 2px solid #E65100; outline-offset: 2px; }
+  /* Enter触发按钮 */
+  button[role="button"]:active, .btn:active { transform: scale(0.98); }
+  </style>
+<link rel="stylesheet" href="css/v3-components.css">
+<script src="js/error-recovery.js"></script>
+<script src="js/seasonal-theme.js"></script>
+<script src="js/content-lifecycle.js"></script>
+<script src="js/study-roadmap.js"></script>
+</head>
+<body>
+  <div class="page-loading-bar" id="pageLoadingBar"></div>
+  
+  <!-- Toast容器 -->
+  <div class="toast-container" id="toastContainer"></div>
+  
+  <script>
+// ===== 精致化3.0 Q批次：情绪化设计 =====
+(function() {
+  function getTimeBasedGreeting() {
+    const hour = new Date().getHours();
+    const examDate = new Date('2026-11-21');
+    const today = new Date();
+    const daysLeft = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
+    
+    if (hour >= 5 && hour < 9) {
+      if (daysLeft <= 30) return '早上好！冲刺阶段，今天也要加油 💪';
+      return '早上好！今天也要加油 🌅';
+    } else if (hour >= 9 && hour < 12) {
+      if (daysLeft <= 7) return '上午好！按计划来，不要慌 📋';
+      return '上午好！学习状态越来越好了 ✨';
+    } else if (hour >= 12 && hour < 14) {
+      return '中午好！休息一下，下午继续 💪';
+    } else if (hour >= 14 && hour < 18) {
+      return '下午好！继续专注，你可以的 💪';
+    } else if (hour >= 18 && hour < 22) {
+      if (daysLeft <= 7) return '晚上好！最后几天稳住，我们能赢 🏆';
+      return '晚上好！今天的任务完成了吗？ 🌙';
+    } else {
+      return '夜深了，早点休息，明天继续 🌙';
+    }
+  }
+  
+  function injectGreeting() {
+    const greetingEl = document.querySelector('.hero-greeting');
+    if (greetingEl) {
+      greetingEl.textContent = getTimeBasedGreeting();
+    }
+    const heroSlogan = document.querySelector('.hero-slogan');
+    if (heroSlogan && !heroSlogan.textContent.includes('走过弯路')) {
+      heroSlogan.textContent = '走过弯路，所以更懂路';
+    }
+  }
+  
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', injectGreeting);
+  } else {
+    injectGreeting();
+  }
+  
+  // 学习完成庆祝
+  function checkLearningComplete() {
+    try {
+      const progress = localStorage.getItem('yd_task_progress');
+      if (progress) {
+        const tasks = JSON.parse(progress);
+        const doneCount = Object.values(tasks).filter(v => v === 'done').length;
+        if (doneCount >= 10 && doneCount % 5 === 0) {
+          const lastCelebration = localStorage.getItem('yd_last_celebration') || '0';
+          if (parseInt(lastCelebration) !== doneCount) {
+            localStorage.setItem('yd_last_celebration', doneCount.toString());
+            setTimeout(() => {
+              if (typeof showToast === 'function') {
+                const celebrations = [
+                  '🎉 太棒了！今天的目标完成啦',
+                  '🏆 连续学习，进步肉眼可见！',
+                  '✨ 你已经完成了' + doneCount + '个任务，继续保持！'
+                ];
+                showToast(celebrations[Math.floor(Math.random() * celebrations.length)], 'success', 3000);
+              }
+            }, 1000);
+          }
+        }
+      }
+    } catch(e) {}
+  }
+  window.addEventListener('storage', checkLearningComplete);
+  checkLearningComplete();
+})();
+  
+  // Toast通知函数 - 2-3秒自动消失
+  function showToast(message, type, duration) {
+    var container = document.getElementById('toastContainer');
+    if (!container) return;
+    var icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '💡';
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.innerHTML = '<span class="toast-icon">' + icon + '</span><span class="toast-text">' + message + '</span><button class="toast-close" onclick="this.parentElement.remove()">✕</button>';
+    container.appendChild(toast);
+    var autoRemove = setTimeout(function() {
+      if (toast.parentElement) {
+        toast.classList.add('hiding');
+        setTimeout(function() { if (toast.parentElement) toast.remove(); }, 300);
+      }
+    }, duration || 2500);
+    toast.querySelector('.toast-close').onclick = function() {
+      clearTimeout(autoRemove);
+      toast.classList.add('hiding');
+      setTimeout(function() { if (toast.parentElement) toast.remove(); }, 300);
+    };
+  }
+  
+  // 确认弹窗 - 具体文案
+  function showConfirm(title, message, onConfirm, onCancel) {
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px';
+    overlay.innerHTML = '<div style="background:#FFF;border-radius:16px;padding:24px;max-width:360px;width:100%;text-align:center;animation:toastIn 0.3s ease"><h3 style="font-size:1rem;color:#1A1A1A;margin-bottom:12px">' + title + '</h3><p style="font-size:0.88rem;color:#666;margin-bottom:20px;line-height:1.6">' + message + '</p><div style="display:flex;gap:12px;justify-content:center"><button id="confirmCancel" style="padding:10px 24px;background:#F0F0F0;color:#666;border:none;border-radius:10px;font-size:0.9rem;cursor:pointer">取消</button><button id="confirmOk" style="padding:10px 24px;background:#E65100;color:#FFF;border:none;border-radius:10px;font-size:0.9rem;font-weight:600;cursor:pointer">确定</button></div></div>';
+    document.body.appendChild(overlay);
+    overlay.querySelector('#confirmCancel').onclick = function() {
+      document.body.removeChild(overlay);
+      if (onCancel) onCancel();
+    };
+    overlay.querySelector('#confirmOk').onclick = function() {
+      document.body.removeChild(overlay);
+      if (onConfirm) onConfirm();
+    };
+    overlay.onclick = function(e) {
+      if (e.target === overlay) {
+        document.body.removeChild(overlay);
+        if (onCancel) onCancel();
+      }
+    };
+  }
+  
+  // 网络状态检测
+  var networkToast = null;
+  function showNetworkToast(msg, type) {
+    if (!networkToast) {
+      networkToast = document.createElement('div');
+      networkToast.className = 'network-toast';
+      document.body.appendChild(networkToast);
+    }
+    networkToast.textContent = msg;
+    networkToast.className = 'network-toast ' + type;
+    networkToast.classList.add('show');
+    setTimeout(function() { networkToast.classList.remove('show'); }, 3000);
+  }
+  
+  // 监听网络状态
+  window.addEventListener('online', function() {
+    showNetworkToast('网络已恢复，正在同步...', 'online');
+    // 触发数据同步
+    if (typeof syncLocalData === 'function') syncLocalData();
+    setTimeout(function() { showNetworkToast('数据同步完成', 'online'); }, 1000);
+  });
+  
+  window.addEventListener('offline', function() {
+    showNetworkToast('网络已断开，页面可离线使用', 'offline');
+  });
+  
+  // 检测网速（弱网提示）
+  var connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (connection) {
+    connection.addEventListener('change', function() {
+      if (connection.effectiveType === '2g' || connection.effectiveType === 'slow-2g') {
+        showNetworkToast('当前网速较慢，部分内容加载可能需要等待', 'slow');
+      }
+    });
+    if (connection.effectiveType === '2g' || connection.effectiveType === 'slow-2g') {
+      setTimeout(function() { showNetworkToast('当前网速较慢，已启用低流量模式', 'slow'); }, 2000);
+    }
+  }
+  
+  // 数据同步函数（供其他页面调用）
+  function syncLocalData() {
+    // 同步学习进度到服务器（如有）
+    try {
+      var progress = localStorage.getItem('yd_progress');
+      if (progress) {
+        // 本地已有数据，无需额外操作
+        console.log('Local data synced at:', new Date().toISOString());
+      }
+    } catch(e) {}
+  }
+</script>
+
+  <nav class="navbar">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">📚</div>
+      游导学习笔记
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html" class="active">首页</a>
+      <a href="travel-knowledge.html">知识库</a>
+      <a href="exam-simulator.html">刷题</a>
+      <a href="interview.html">面试</a>
+      <a href="free-materials.html">免费资料</a>
+    </div>
+    <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">☰</button>
+  </nav>
+
+  <!-- ===== 第1屏：首屏 ===== -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-avatar"><img src="images/manman-avatar.jpg" alt="曼曼" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" loading="lazy"></div>
+      <div class="hero-greeting">你好，我是曼曼</div>
+      <div class="hero-slogan">走过弯路，所以更懂路</div>
+
+      <!-- 考试倒计时 - 精致化4.0: 添加更新时间标注 -->
+      <div class="countdown-pill">
+        <span>📅</span> 距离2026年11月21日笔试还有 <span id="heroDays">--</span> 天
+        <span style="font-size:0.7rem;opacity:0.8;margin-left:4px;">(参考官方公告)</span>
+      </div>
+      
+      <script>
+      (function() {
+        const examDate = new Date('2026-11-21');
+        const today = new Date();
+        const diff = Math.ceil((examDate - today) / (1000 * 60 * 60 * 24));
+        const daysEl = document.getElementById('heroDays');
+        if (daysEl) {
+          daysEl.textContent = Math.max(0, diff);
+        }
+      })();
+      </script>
+
+      <!-- 首屏一句话说明 -->
+      <div class="hero-intro">
+        <h1 class="hero-title">导游证备考一站式平台</h1>
+        <!-- 精致化4.0: 更明确的价值传递 -->
+        <p>考了两次才上岸。带你用<strong class="highlight">框架+口诀</strong>高效备考<br>
+        <span style="color:#E65100;font-weight:600;">AI免费答疑 · 免费刷题 · 362份备考资料</span></p>
+      </div>
+
+      <!-- CTA - 精致化5.0: 默认选项有推荐标签 -->
+      <div class="cta-area">
+        <a href="exam-guide.html" class="cta-primary">了解导游证考试 <span style="background:#fff;color:#E65100;padding:2px 8px;border-radius:10px;font-size:0.75rem;font-weight:700;margin-left:8px;">推荐</span></a>
+        <a href="free-materials.html" class="cta-secondary">免费开始备考</a>
+      </div>
+
+      <!-- 快速入口矩阵 - 首屏核心入口 -->
+      <div class="quick-nav">
+        <a href="travel-knowledge.html" class="quick-item">
+          <span class="quick-icon">📚</span>
+          <span class="quick-text">知识库</span>
+        </a>
+        <a href="exam-simulator.html" class="quick-item">
+          <span class="quick-icon">✏️</span>
+          <span class="quick-text">刷题</span>
+        </a>
+        <a href="ai-assistant.html" class="quick-item">
+          <span class="quick-icon">🤖</span>
+          <span class="quick-text">AI助手</span>
+        </a>
+        <a href="search.html" class="quick-item">
+          <span class="quick-icon">🔍</span>
+          <span class="quick-text">搜索</span>
+        </a>
+        <a href="guides.html" class="quick-item">
+          <span class="quick-icon">📖</span>
+          <span class="quick-text">备考攻略</span>
+        </a>
+      </div>
+      
+      <!-- 最新更新提示 -->
+      <div class="update-tip" id="updateTip">
+        <span class="update-badge">🆕</span>
+        <span class="update-text">最新：面试计时器上线，模拟真实考试环境</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 第2屏：学习方法论 ===== -->
+  <section class="methodology-section" id="methodology">
+    <div class="methodology-inner">
+      <div class="methodology-header">
+        <div class="methodology-title">备考方法论</div>
+        <div class="methodology-subtitle">走过弯路的人整理的高效学习法</div>
+      </div>
+      
+      <!-- 方法论卡片 -->
+      <div class="method-cards">
+        <div class="method-card">
+          <div class="method-icon">🧠</div>
+          <div class="method-name">怎么背才记得住？</div>
+          <div class="method-answer">
+            <p><strong>用框架代替零散记忆</strong></p>
+            <p>先搭知识框架，再填具体内容。比逐字背诵效率高3倍。</p>
+          </div>
+          <a href="guides.html#memory" class="method-link">了解记忆技巧 →</a>
+        </div>
+        
+        <div class="method-card">
+          <div class="method-icon">⏰</div>
+          <div class="method-name">每天学多少才够？</div>
+          <div class="method-answer">
+            <p><strong>碎片时间+番茄工作法</strong></p>
+            <p>每天25分钟×2次，或5分钟速记，利用碎片时间积少成多。</p>
+          </div>
+          <a href="study-roadmap.html" class="method-link">查看时间规划 →</a>
+        </div>
+        
+        <div class="method-card">
+          <div class="method-icon">📋</div>
+          <div class="method-name">先学什么后学什么？</div>
+          <div class="method-answer">
+            <p><strong>先框架后细节</strong></p>
+            <p>导游业务→政策法规→全国导基→地方导基，重点优先。</p>
+          </div>
+          <a href="study-roadmap.html" class="method-link">查看学习顺序 →</a>
+        </div>
+      </div>
+      
+      <!-- 核心方法论引言 -->
+      <div class="method-quote">
+        <p>"不用死记硬背。理解框架+记住口诀，考试就能过。"</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 第3屏：新手引导 ===== -->
+  <section class="guide-section" id="guide">
+    <div class="guide-inner">
+      <div class="guide-header">
+        <div class="guide-title">新手从哪开始？</div>
+        <div class="guide-subtitle">3分钟搞清楚导游证是什么、怎么考</div>
+      </div>
+
+      <!-- 新手必知卡片 -->
+      <div class="guide-cards">
+        <a href="exam-guide.html" class="guide-card">
+          <h3>导游证是什么？</h3>
+          <p>文旅部颁发的全国导游人员资格证书，是从事导游工作的<strong class="highlight">入门证</strong>。终身有效，换地区不用重新考。</p>
+        </a>
+        <a href="exam-guide.html#exam-type" class="guide-card">
+          <h3>考试考什么？</h3>
+          <p><strong class="highlight">笔试</strong>：4科全选择题 · <strong class="highlight">面试</strong>：景点讲解+问答。两科都过60分拿证。</p>
+        </a>
+        <a href="exam-guide.html#condition" class="guide-card">
+          <h3>我能考吗？</h3>
+          <p>高中/中专及以上学历即可，无年龄限制，无专业要求。</p>
+        </a>
+        <a href="guides.html" class="guide-card">
+          <h3>怎么备考？</h3>
+          <p>先看考试大纲 → 做几道题试试 → 跟着计划走 → 考前冲刺。点击了解详细学习路径。</p>
+        </a>
+      </div>
+
+      <!-- 用户分群入口 - 精致化3.0 Q批次 -->
+      <div style="margin-top:28px;text-align:center;">
+        <div style="font-size:0.9rem;font-weight:700;color:#1A1A1A;margin-bottom:12px;">👋 你是哪类考生？</div>
+        <div class="user-types">
+          <a href="exam-guide.html#timeline" class="type-card">
+            <div class="type-icon">🌱</div>
+            <div class="type-name">零基础</div>
+            <div class="type-desc">从零开始 · 稳步备考</div>
+          </a>
+          <a href="study-roadmap.html" class="type-card">
+            <div class="type-icon">💼</div>
+            <div class="type-name">在职备考</div>
+            <div class="type-desc">碎片化学习 · 5/10/30分钟</div>
+          </a>
+          <a href="mistakes.html" class="type-card">
+            <div class="type-icon">🔄</div>
+            <div class="type-name">二战考生</div>
+            <div class="type-desc">易错点汇总 · 查漏补缺</div>
+          </a>
+          <a href="exam-guide.html#sprint" class="type-card">
+            <div class="type-icon">🚀</div>
+            <div class="type-name">冲刺阶段</div>
+            <div class="type-desc">考前速成 · 高效抢分</div>
+          </a>
+        </div>
+        
+        <!-- 精致化5.0-Y: 情绪触发点入口 -->
+        <div style="margin-top:24px;padding:16px;background:#FFF;border-radius:16px;border:1px solid #FFE0B2;">
+          <div style="font-size:0.85rem;color:#E65100;font-weight:600;margin-bottom:10px;">💭 你是不是也有这些困惑？</div>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+            <a href="exam-guide.html" class="emotion-trigger-tag" style="background:#FFF3E0;color:#BF360C;padding:6px 14px;border-radius:20px;font-size:0.8rem;text-decoration:none;transition:all 0.2s;">导游证到底难不难？</a>
+            <a href="guides.html#memory" class="emotion-trigger-tag" style="background:#FFF3E0;color:#BF360C;padding:6px 14px;border-radius:20px;font-size:0.8rem;text-decoration:none;transition:all 0.2s;">背了忘怎么办？</a>
+            <a href="mistakes.html" class="emotion-trigger-tag" style="background:#FFF3E0;color:#BF360C;padding:6px 14px;border-radius:20px;font-size:0.8rem;text-decoration:none;transition:all 0.2s;">80%的人在笔试卡住</a>
+            <a href="guides.html" class="emotion-trigger-tag" style="background:#FFF3E0;color:#BF360C;padding:6px 14px;border-radius:20px;font-size:0.8rem;text-decoration:none;transition:all 0.2s;">第一次挂在笔试</a>
+          </div>
+        </div>
+        <!-- 快速通关入口 - 有基础用户 - 精致化3.0 -->
+        <div style="margin-top:16px;">
+          <a href="exam-simulator.html" style="display:inline-flex;align-items:center;gap:6px;padding:10px 20px;background:linear-gradient(135deg,#FFF8E1,#FFE0B2);border-radius:20px;font-size:0.82rem;color:#E65100;font-weight:600;text-decoration:none;border:1px dashed #E65100;">
+            ⚡ 快速通关：直接刷题测试水平 →
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 第3屏：备考工具 ===== -->
+  <section class="tools-section">
+    <div class="tools-inner">
+      <div class="tools-title">备考工具箱</div>
+      <div class="tools-grid">
+        <a href="flashcard.html" class="tool-card">
+          <div class="tool-icon">🃏</div>
+          <div class="tool-name">口诀闪卡</div>
+          <div class="tool-desc">翻转速记</div>
+        </a>
+        <a href="wrong-questions.html" class="tool-card">
+          <div class="tool-icon">📋</div>
+          <div class="tool-name">错题本</div>
+          <div class="tool-desc">错题追踪</div>
+        </a>
+        <a href="interview.html" class="tool-card">
+          <div class="tool-icon">🎤</div>
+          <div class="tool-name">面试专区</div>
+          <div class="tool-desc">导游词+问答</div>
+        </a>
+        <a href="interview-timer.html" class="tool-card">
+          <div class="tool-icon">⏱️</div>
+          <div class="tool-name">面试计时</div>
+          <div class="tool-desc">模拟练习</div>
+        </a>
+        <a href="study-roadmap.html" class="tool-card">
+          <div class="tool-icon">🗺️</div>
+          <div class="tool-name">学习路径</div>
+          <div class="tool-desc">30天计划</div>
+        </a>
+        <a href="travel-tools.html" class="tool-card">
+          <div class="tool-icon">🛠️</div>
+          <div class="tool-name">更多工具</div>
+          <div class="tool-desc">持续更新</div>
+        </a>
+      </div>
+      <a href="resources.html" style="color:#E65100;font-weight:600;font-size:0.9rem;">了解全套资料 →</a>
+    </div>
+  </section>
+
+  <!-- ===== 第4屏：曼曼的故事 ===== -->
+  <section class="story-section">
+    <div class="story-inner">
+      <div class="story-card">
+        <div class="story-avatar-row">
+          <div class="story-avatar"><img src="images/manman-avatar.jpg" alt="曼曼" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" loading="lazy"></div>
+          <div>
+            <div class="story-name">曼曼</div>
+            <div class="story-role">持证导游 · 备考过来人</div>
+          </div>
+        </div>
+        <div class="story-quote">"第一次挂在笔试。不是看不懂，是背得太死，一紧张全忘。"</div>
+        <div class="story-quote">"第二次换了思路——只背框架和口诀，上岸了。"</div>
+        <div class="story-quote">"现在我把踩过的坑都整理出来了，不想你走我走过的弯路。"</div>
+      </div>
+      <div class="story-slogan-bar">走过弯路，所以更懂路</div>
+    </div>
+  </section>
+
+  <!-- ===== 第5屏：资料包 ===== -->
+  <section class="package-section">
+    <div class="package-inner">
+      <div class="package-card">
+        <div class="package-title">全套备考资料包</div>
+        <div class="package-desc">框架+口诀+真题+面试，备考一站搞定</div>
+        <div class="package-price">¥69.9 <span>元</span></div>
+        <div class="package-includes">
+          362份资料 · 68篇导游词 · AI答疑 · 微信1v1
+        </div>
+        <a href="resources.html" class="package-btn">了解资料包 →</a>
+        <div class="package-note">ximao101独家整理 · 7天不满意全额退款</div>
+        <!-- 分享按钮 -->
+        <div style="margin-top:16px;display:flex;justify-content:center;gap:10px;">
+          <button onclick="shareToWeixin()" class="share-btn" style="padding:8px 16px;background:#FFF;border:1px solid #E65100;color:#E65100;border-radius:20px;font-size:0.8rem;cursor:pointer;">📱 分享给朋友</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 第6屏：加微信 ===== -->
+  <section class="wechat-section">
+    <div class="wechat-inner">
+      <div class="wechat-title">有问题？加我微信</div>
+      <div class="wechat-desc">备考群 · 随时答疑 · 不用一个人扛</div>
+      <div class="wechat-id">微信：ximao101</div>
+      <div class="wechat-tip">备注"导游证"，拉你进群</div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <a href="privacy.html">隐私保护</a> · <a href="index.html">返回首页</a>
+    <p style="margin-top:4px;">©2025-2026 游导学习笔记 ximao101整理</p>
+  </footer>
+
+  <nav class="bottom-tabs"><a class="tab-item" href="index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a><a class="tab-item" href="ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a><a class="tab-item" href="exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a><a class="tab-item" href="search.html"><span class="tab-icon">🔍</span><span class="tab-label">搜索</span></a><a class="tab-item" href="travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a></nav>
+
+  <a href="ai-assistant.html" class="ai-float-btn" title="AI助手">🤖</a>
+
+  <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+  <script>
+    // 倒计时
+    (function(){
+      var exam = new Date('2026-11-21T09:00:00+08:00');
+      var diff = Math.ceil((exam - new Date()) / (1000*60*60*24));
+      var el = document.getElementById('heroDays');
+      if(el) el.textContent = diff > 0 ? diff : '0';
+    })();
+
+    // 回到顶部
+    window.addEventListener('scroll', function(){
+      var btn = document.getElementById('backToTop');
+      if(btn) btn.classList.toggle('show', window.scrollY > 400);
+    });
+
+    // 页面加载进度条
+    (function(){
+      var bar = document.getElementById('pageLoadingBar');
+      if(bar){ bar.style.width='60%'; bar.style.opacity='1'; }
+      window.addEventListener('load', function(){
+        if(bar){ bar.style.width='100%'; setTimeout(function(){ bar.style.opacity='0'; },300); }
+      });
+    })();
+
+    // Service Worker
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('/sw.js').catch(function(){});
+    }
+  </script>
+
+<script src="auth.js"></script>
+<script src="js/common.js"></script>
+<script>
+// 首页浮动激活入口
+(function(){
+  if(isActivated()) return;
+  
+  var bar = document.createElement('div');
+  bar.id = 'activate-bar';
+  bar.innerHTML = '<div style="position:fixed;bottom:0;left:0;right:0;z-index:99999;background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 -4px 20px rgba(230,81,0,0.3);"><div><div style="font-size:15px;font-weight:700;">🔐 解锁全部备考功能</div><div style="font-size:12px;opacity:0.85;margin-top:2px;">知识库+刷题+AI助手+面试模拟</div></div><a href="activate.html" style="background:#fff;color:#E65100;padding:10px 20px;border-radius:10px;font-weight:700;font-size:14px;text-decoration:none;white-space:nowrap;">输入激活码</a></div>';
+  document.body.appendChild(bar);
+  
+  document.body.style.paddingBottom = '80px';
+})();
+</script>
+
+<script>
+// 分享功能
+function shareToWeixin(){
+  var shareData = {
+    title: '游导学习笔记 - 导游证备考一站式',
+    text: '考了两次才上岸的曼曼，带你用框架+口诀高效备考导游证。AI助手免费答疑，付费资料包¥69.9',
+    url: window.location.href
+  };
+  
+  // 尝试使用Web Share API
+  if(navigator.share){
+    navigator.share(shareData).catch(function(){
+      copyShareLink();
+    });
+  } else {
+    // 降级处理：复制链接
+    copyShareLink();
+  }
+}
+
+function copyShareLink(){
+  var url = window.location.href;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(function(){
+      showToast('链接已复制，可粘贴发送给朋友');
+    }).catch(function(){
+      showToast('请手动复制链接：' + url);
+    });
+  } else {
+    showToast('请手动复制链接：' + url);
+  }
+}
+
+function showToast(msg){
+  var toast = document.createElement('div');
+  toast.style.cssText = 'position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:#333;color:#fff;padding:10px 20px;border-radius:20px;font-size:0.85rem;z-index:99999;opacity:0;transition:opacity 0.3s;white-space:nowrap;';
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  setTimeout(function(){ toast.style.opacity = '1'; }, 10);
+  setTimeout(function(){ toast.style.opacity = '0'; setTimeout(function(){ document.body.removeChild(toast); }, 300); }, 2500);
+}
+
+// ==================== 首次访问引导（Onboarding） ====================
+(function(){
+  var ONBOARDING_KEY = 'ydg_onboarded_v1';
+  
+  // 检查是否已显示过引导
+  if(localStorage.getItem(ONBOARDING_KEY)) return;
+  
+  var step = 0;
+  var steps = [
+    { icon: '📚', title: '导游证备考一站式平台', desc: '刷题+背口诀+AI答疑，全套搞定' },
+    { icon: '🤖', title: 'AI助手24小时在线', desc: '有问必答，不用一个人扛' },
+    { icon: '🎯', title: '跟着计划走，少走弯路', desc: '走过弯路，所以更懂路' }
+  ];
+  
+  function render(){
+    var overlay = document.createElement('div');
+    overlay.id = 'onboarding-overlay';
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:999999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;';
+    
+    var s = steps[step];
+    overlay.innerHTML = `
+      <div style="background:#FFF;border-radius:20px;padding:32px 24px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);">
+        <div style="font-size:3rem;margin-bottom:16px;">${s.icon}</div>
+        <h3 style="font-size:1.2rem;color:#1A1A1A;font-weight:800;margin-bottom:8px;">${s.title}</h3>
+        <p style="font-size:0.9rem;color:#666;line-height:1.6;margin-bottom:24px;">${s.desc}</p>
+        <div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;">
+          ${steps.map(function(_, i){return '<span style="width:8px;height:8px;border-radius:50%;background:'+(i===step?'#E65100':'#DDD')+';"></span>';}).join('')}
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;">
+          ${step > 0 ? '<button onclick="onboardPrev()" style="flex:1;padding:12px;border:1px solid #E65100;color:#E65100;background:#FFF;border-radius:10px;font-size:0.9rem;font-weight:600;cursor:pointer;">上一步</button>' : ''}
+          <button onclick="onboardNext()" style="flex:1;padding:12px;background:#E65100;color:#FFF;border:none;border-radius:10px;font-size:0.9rem;font-weight:600;cursor:pointer;">${step === steps.length-1 ? '开始使用' : '下一步'}</button>
+        </div>
+        <button onclick="onboardSkip()" style="background:none;border:none;color:#999;font-size:0.8rem;cursor:pointer;margin-top:12px;padding:4px;">跳过引导</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+  
+  window.onboardNext = function(){
+    step++;
+    if(step >= steps.length){ onboardFinish(); return; }
+    document.getElementById('onboarding-overlay').remove();
+    render();
+  };
+  
+  window.onboardPrev = function(){
+    step--;
+    document.getElementById('onboarding-overlay').remove();
+    render();
+  };
+  
+  window.onboardSkip = function(){ onboardFinish(); };
+  
+  function onboardFinish(){
+    localStorage.setItem(ONBOARDING_KEY, '1');
+    var overlay = document.getElementById('onboarding-overlay');
+    if(overlay) overlay.remove();
+  }
+  
+  render();
+})();
+</script>
+
+<script src="js/feedback-widget.js"></script>
+</body>
+</html>

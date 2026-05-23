@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta name="description" content="激活游导学习笔记，解锁全部功能">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>会员激活 - 游导学习笔记</title>
+  <meta property="og:title" content="会员激活 - 游导学习笔记">
+  <meta property="og:description" content="激活游导学习笔记，解锁全部功能">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;min-height:100dvh;background-color:#FFF3E0;background-image:linear-gradient(#FFE0B2 1px, transparent 1px),linear-gradient(90deg, #FFE0B2 1px, transparent 1px),linear-gradient(rgba(255,224,178,0.3) 1px, transparent 1px),linear-gradient(90deg, rgba(255,224,178,0.3) 1px, transparent 1px);background-size:20px 20px, 20px 20px, 4px 4px, 4px 4px;display:flex;align-items:center;justify-content:center;padding:20px}
+    .card{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(230,81,0,0.12);max-width:440px;width:100%;overflow:hidden}
+    .card-header{background:linear-gradient(135deg,#E65100,#FF6D00);padding:32px 28px 24px;text-align:center}
+    .card-header h1{color:#fff;font-size:22px;font-weight:800;margin-bottom:6px}
+    .card-header p{color:rgba(255,255,255,0.85);font-size:13px}
+    .badge{display:inline-block;background:rgba(255,255,255,0.2);color:#fff;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;margin-top:10px}
+    .card-body{padding:28px}
+    .input-group{margin-bottom:20px}
+    .input-group label{display:block;font-size:13px;font-weight:700;color:#555;margin-bottom:8px}
+    .input-wrap input{width:100%;padding:14px 16px;border:2px solid #E0E0E0;border-radius:12px;font-size:16px;letter-spacing:2px;text-transform:uppercase;outline:none;transition:border-color 0.2s;font-family:'Courier New',monospace;font-weight:700}
+    .input-wrap input:focus{border-color:#E65100}
+    .input-wrap input::placeholder{font-family:-apple-system,sans-serif;letter-spacing:0;font-weight:400;font-size:14px;text-transform:none}
+    .btn-activate{width:100%;padding:15px;background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:transform 0.15s,box-shadow 0.15s}
+    .btn-activate:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(230,81,0,0.3)}
+    .btn-activate:active{transform:translateY(0)}
+    .btn-activate:disabled{opacity:0.6;cursor:not-allowed;transform:none;box-shadow:none}
+    .msg{padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:16px;display:none}
+    .msg.error{background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;display:block}
+    .msg.success{background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;display:block}
+    .msg.warn{background:#FFFBEB;color:#D97706;border:1px solid #FDE68A;display:block}
+    .features{margin-top:20px;padding-top:20px;border-top:1px solid #F0F0F0}
+    .features h3{font-size:13px;color:#999;font-weight:600;margin-bottom:12px;text-align:center}
+    .feature-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .feature-item{display:flex;align-items:center;gap:6px;font-size:12px;color:#666}
+    .feature-item span{color:#E65100;font-size:14px}
+    .card-footer{background:#FAFAFA;padding:16px 28px;text-align:center;border-top:1px solid #F0F0F0}
+    .card-footer p{font-size:12px;color:#999;line-height:1.6}
+    .card-footer a{color:#E65100;font-weight:600}
+    .price-tag{display:inline-block;background:#FFF3E0;color:#E65100;font-size:20px;font-weight:900;padding:6px 16px;border-radius:8px;margin:8px 0}
+    .success-anim{text-align:center;padding:20px 0}
+    .success-anim .checkmark{width:64px;height:64px;background:#16A34A;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;animation:pop 0.4s ease}
+    .success-anim .checkmark::after{content:"✓";color:#fff;font-size:32px;font-weight:700}
+    .success-anim h2{font-size:20px;color:#1A1A1A;margin-bottom:8px}
+    .success-anim p{font-size:14px;color:#666;margin-bottom:6px}
+    .btn-enter{display:inline-block;padding:12px 32px;background:#E65100;color:#fff;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;transition:background 0.2s}
+    .btn-enter:hover{background:#BF360C}
+    .expire-info{background:#FFF3E0;border-radius:10px;padding:12px 16px;margin:16px 0;font-size:13px;color:#BF360C;font-weight:600;text-align:center}
+    .wechat-tip{background:#F0FDF4;border:1px solid #BBF7D0;border-radius:10px;padding:14px 16px;margin:16px 0;font-size:13px;color:#16A34A;text-align:center;line-height:1.6}
+    .wechat-tip strong{color:#E65100}
+    @keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.1)}100%{transform:scale(1)}}
+  /* 交互细节：文字选中颜色 */
+::selection { background: #FFE0B2; color: #BF360C; }
+::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+/* 交互细节：滚动区域 */
+.modal-content, .toast { -webkit-overflow-scrolling: touch; }
+
+</style>
+<link rel="stylesheet" href="css/v3-components.css">
+<script src="js/error-recovery.js"></script>
+<script src="js/seasonal-theme.js"></script>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    <h1>🔐 会员激活</h1>
+    <p>激活后解锁全部备考功能</p>
+    <div class="badge">游导学习笔记 会员专享</div>
+  </div>
+
+  <div class="card-body" id="inputView">
+    <div class="msg" id="msgBox"></div>
+    <div id="expiredHint" style="display:none" class="msg warn">您的会员已到期，请输入新的激活码续费</div>
+
+    <div class="input-group">
+      <label>输入激活码 <span style="font-weight:400;color:#999;font-size:12px">（格式示例：XM2026-ABCD）</span></label>
+      <div class="input-wrap">
+        <input type="text" id="codeInput" placeholder="XM2026-XXXX" maxlength="11" autocomplete="off">
+      </div>
+      <div style="font-size:12px;color:#999;margin-top:8px;">激活码为11位，含连接符，如 XM2026-XXXX</div>
+    </div>
+
+    <button class="btn-activate" data-track="btn"  id="activateBtn" onclick="handleActivate()">立即激活</button>
+
+    <div class="features">
+      <h3>激活后可使用（有效期1年）</h3>
+      <div class="feature-list">
+        <div class="feature-item"><span>📖</span> 四科46章知识库</div>
+        <div class="feature-item"><span>🃏</span> 闪卡口诀速记</div>
+        <div class="feature-item"><span>📝</span> 刷题+错题本</div>
+        <div class="feature-item"><span>🎯</span> 每日一练</div>
+        <div class="feature-item"><span>🤖</span> AI智能助手</div>
+        <div class="feature-item"><span>🎙️</span> 面试计时模拟</div>
+        <div class="feature-item"><span>📊</span> 学习数据追踪</div>
+        <div class="feature-item"><span>🔍</span> 全站搜索</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body" id="successView" style="display:none">
+    <div class="success-anim">
+      <div class="checkmark"></div>
+      <h2>激活成功！</h2>
+      <p>全部备考功能已解锁</p>
+      <div class="expire-info" id="expireInfo"></div>
+      <div class="wechat-tip">
+        💬 加微信 <strong>ximao101</strong> 进备考群<br>
+        考试动态、免费资料、上岸经验都在群里
+      </div>
+      <a href="index.html" class="btn-enter">开始学习 →</a>
+    </div>
+  </div>
+
+  <div class="card-footer">
+    <p>还没有激活码？加微信 <strong>ximao101</strong> 获取</p>
+    <p>全套方案 <span class="price-tag">¥69.9</span></p>
+    <p style="margin-top:8px;color:#aaa;font-size:11px;">激活码有效期1年 · 到期可续费<br>需要更多资料或服务，随时联系微信ximao101</p>
+    <p style="margin-top:6px;color:#bbb;">走过弯路，所以更懂路 | © 2025-2026 ximao101</p>
+  </div>
+</div>
+
+<script src="auth.js"></script>
+<script src="js/common.js"></script>
+<script>
+(function(){
+  var isExpired = localStorage.getItem('youdao_expired') === 'true';
+  if (isActivated()) {
+    document.getElementById('inputView').style.display = 'none';
+    document.getElementById('successView').style.display = 'block';
+    document.getElementById('expireInfo').innerHTML = '📅 有效期至：' + getExpireDate() + '（剩余' + getRemainDays() + '天）';
+  } else if (isExpired) {
+    document.getElementById('expiredHint').style.display = 'block';
+    document.getElementById('activateBtn').textContent = '续费激活';
+  }
+})();
+
+var codeInput = document.getElementById('codeInput');
+codeInput.addEventListener('input', function() {
+  var val = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+  if (val.length >= 7 && val.indexOf('-') === -1) val = val.substring(0,7) + '-' + val.substring(7);
+  this.value = val;
+});
+codeInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') handleActivate(); });
+
+function handleActivate() {
+  var code = codeInput.value.trim();
+  var msgBox = document.getElementById('msgBox');
+  var btn = document.getElementById('activateBtn');
+  
+  // 精致化5.0：使用 ValidationUtils 进行激活码格式验证
+  if (typeof ValidationUtils !== 'undefined') {
+    var validation = ValidationUtils.validateActivationCode(code);
+    if (!validation.valid) {
+      msgBox.className = 'msg error';
+      msgBox.textContent = validation.message;
+      return;
+    }
+    code = validation.value;
+  } else {
+    // 回退验证
+    if (!code) { msgBox.className='msg error'; msgBox.textContent='请输入激活码'; return; }
+    if (!/^XM\d{4}-[A-Z0-9]{4}$/i.test(code)) {
+      msgBox.className='msg error';
+      msgBox.textContent='激活码格式错误，示例：XM2026-ABCD';
+      return;
+    }
+  }
+  
+  btn.disabled = true;
+  btn.textContent = '验证中...';
+  setTimeout(function() {
+    if (doActivate(code)) {
+      msgBox.className = 'msg success';
+      msgBox.textContent = '激活成功！有效期1年';
+      setTimeout(function() {
+        document.getElementById('inputView').style.display = 'none';
+        document.getElementById('successView').style.display = 'block';
+        document.getElementById('expireInfo').innerHTML = '📅 有效期至：' + getExpireDate() + '（剩余' + getRemainDays() + '天）';
+      }, 500);
+    } else {
+      msgBox.className = 'msg error';
+      msgBox.textContent = '激活码无效，请检查后重新输入';
+      btn.disabled = false;
+      btn.textContent = localStorage.getItem('youdao_expired') === 'true' ? '续费激活' : '立即激活';
+    }
+  }, 800);
+}
+</script>
+
+<footer style="text-align:center;padding:20px;font-size:0.8rem;color:#777;border-top:1px solid #F0F0F0;margin-top:40px;">
+  <a href="privacy.html" style="color:#E65100;">隐私保护</a> · <a href="index.html" style="color:#E65100;">返回首页</a>
+  <p style="margin-top:6px;">©2025-2026 游导学习笔记 ximao101整理</p>
+</footer>
+<script src="js/feedback-widget.js"></script>
+</body>
+</html>

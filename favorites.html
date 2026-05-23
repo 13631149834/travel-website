@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的收藏 - 游导学习笔记</title>
+  <meta name="description" content="我的收藏夹，随时回顾重要知识点">
+  <meta property="og:title" content="我的收藏 - 游导学习笔记">
+  <meta property="og:description" content="我的收藏夹，随时回顾重要知识点">
+  <meta property="og:type" content="website">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      line-height: 1.6;
+      color: #1A1A1A;
+      background-color: #FFF3E0;
+      background-image: linear-gradient(#FFE0B2 1px, transparent 1px), linear-gradient(90deg, #FFE0B2 1px, transparent 1px), linear-gradient(rgba(255,224,178,0.3) 1px, transparent 1px), linear-gradient(90deg, rgba(255,224,178,0.3) 1px, transparent 1px);
+      background-size: 20px 20px, 20px 20px, 4px 4px, 4px 4px;
+      background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+      min-height: 100dvh;
+      padding-bottom: 80px;
+    }
+    a { text-decoration: none; color: inherit; }
+    
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 20px;
+      background: #FFFFFF;
+      border-bottom: 1px solid #F0F0F0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #E65100;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-back {
+      padding: 8px 16px;
+      background: #FFF3E0;
+      color: #E65100;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    
+    .container {
+      max-width: 768px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .page-header {
+      text-align: center;
+      padding: 40px 20px 30px;
+      background: linear-gradient(180deg, #FFF8E1 0%, transparent 100%);
+    }
+    .page-header h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: #1A1A1A;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .slogan {
+      color: #E65100;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+    
+    .favorites-list {
+      margin-top: 20px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+    }
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+    .empty-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1A1A1A;
+      margin-bottom: 8px;
+    }
+    .empty-desc {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 20px;
+    }
+    .empty-cta {
+      display: inline-block;
+      padding: 12px 28px;
+      background: #E65100;
+      color: #fff;
+      border-radius: 25px;
+      font-weight: 700;
+    }
+    
+    .fav-section-title {
+      font-size: 0.85rem;
+      color: #999;
+      margin: 20px 0 12px;
+      font-weight: 600;
+    }
+    
+    .fav-category {
+      margin-bottom: 24px;
+    }
+    .fav-category-name {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #E65100;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .fav-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 16px;
+      background: #FFFFFF;
+      border: 1px solid #F0F0F0;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      transition: all 0.2s;
+    }
+    .fav-item:hover {
+      border-color: #E65100;
+      box-shadow: 0 2px 8px rgba(230,81,0,0.1);
+    }
+    .fav-item-left {
+      flex: 1;
+    }
+    .fav-item-title {
+      font-weight: 600;
+      color: #1A1A1A;
+      font-size: 0.95rem;
+    }
+    .fav-item-date {
+      font-size: 0.75rem;
+      color: #999;
+      margin-top: 4px;
+    }
+    .fav-item-remove {
+      padding: 6px 14px;
+      background: #fff;
+      border: 1px solid #E0E0E0;
+      border-radius: 16px;
+      font-size: 0.78rem;
+      color: #999;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .fav-item-remove:hover {
+      border-color: #EF4444;
+      color: #EF4444;
+    }
+    
+    .quick-nav {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 30px;
+    }
+    .quick-nav a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 16px;
+      background: #FFF8E1;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #E65100;
+      transition: all 0.2s;
+    }
+    .quick-nav a:hover {
+      background: #E65100;
+      color: #fff;
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.78rem;
+      color: #777;
+      border-top: 1px solid #F0F0F0;
+      margin-top: 40px;
+    }
+    .footer a { color: #E65100; }
+    
+    .bottom-tabs {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #FFFFFF;
+      border-top: 1px solid #F0F0F0;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+      z-index: 100;
+    }
+    .bottom-tabs a {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      font-size: 0.7rem;
+      color: #777;
+      text-decoration: none;
+    }
+    .bottom-tabs a.active span { color: #E65100; }
+    .bottom-tabs .tab-icon { font-size: 1.2rem; }
+    .bottom-tabs span { color: #777; }
+    
+    @media (max-width: 768px) {
+      .container { padding: 16px; }
+      .quick-nav { grid-template-columns: 1fr; }
+    }
+  /* 交互细节：文字选中颜色 */
+::selection { background: #FFE0B2; color: #BF360C; }
+::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+/* 交互细节：禁止长按弹出菜单 */
+.quick-btn, .feature-card, .card, .guide-card { -webkit-touch-callout: none; }
+
+/* 交互细节：滚动区域 */
+.messages, .chat-area { -webkit-overflow-scrolling: touch; }
+
+</style>
+<link rel="stylesheet" href="css/v3-components.css">
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo">📚 游导学习笔记</a>
+    <a href="travel-knowledge.html" class="nav-back">← 返回知识库</a>
+  </nav>
+  
+  <div class="page-header">
+    <h1>⭐ 我的收藏</h1>
+    <p>快速回顾重要章节</p>
+    <p class="slogan">走过弯路，所以更懂路</p>
+  </div>
+  
+  <div class="container">
+    <div id="favoritesContent">
+      <!-- 动态加载 -->
+    </div>
+    
+    <div class="quick-nav">
+      <a href="travel-knowledge.html">
+        <span>📚</span> 知识库
+      </a>
+      <a href="study-progress.html">
+        <span>📊</span> 学习进度
+      </a>
+      <a href="flashcard.html">
+        <span>🃏</span> 口诀闪卡
+      </a>
+      <a href="index.html">
+        <span>🏠</span> 返回首页
+      </a>
+    </div>
+  </div>
+  
+  <footer class="footer">
+    <a href="privacy.html">隐私保护</a> · <a href="index.html">返回首页</a>
+    <p style="margin-top:4px;">© 2025-2026 ximao101</p>
+  <p style="margin-top:6px;">©2025-2026 游导学习笔记 ximao101整理</p></footer>
+  
+  <nav class="bottom-tabs">
+    <a href="index.html"><span class="tab-icon">🏠</span><span>首页</span></a>
+    <a href="ai-assistant.html"><span class="tab-icon">💬</span><span>AI助手</span></a>
+    <a href="exam-simulator.html"><span class="tab-icon">✏️</span><span>刷题</span></a>
+    <a href="search.html"><span class="tab-icon">🔍</span><span>搜索</span></a>
+    <a href="travel-knowledge.html" class="active"><span class="tab-icon">📚</span><span>知识库</span></a>
+  </nav>
+  
+  <script src="js/study-progress.js"></script>
+  <script>
+    (function() {
+      const favorites = StudyProgress.getFavorites();
+      const container = document.getElementById('favoritesContent');
+      
+      if (favorites.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">⭐</div>
+            <div class="empty-title">还没有收藏任何章节</div>
+            <div class="empty-desc">在知识库中点击「收藏」按钮<br>即可将重要章节加入这里</div>
+            <a href="travel-knowledge.html" class="empty-cta" data-track="cta" >去知识库看看 →</a>
+          </div>
+        `;
+        return;
+      }
+      
+      // 按分类整理
+      const categories = {
+        'business': { name: '💼 导游业务', items: [] },
+        'policy': { name: '⚖️ 政策法规', items: [] },
+        'national': { name: '📚 全国导基', items: [] },
+        'local': { name: '🗺️ 地方导基', items: [] }
+      };
+      
+      favorites.forEach(f => {
+        const cat = f.id.split('-')[0];
+        if (categories[cat]) {
+          categories[cat].items.push(f);
+        }
+      });
+      
+      let html = `<div class="fav-section-title">共 ${favorites.length} 个收藏</div>`;
+      
+      Object.values(categories).forEach(cat => {
+        if (cat.items.length > 0) {
+          html += `
+            <div class="fav-category">
+              <div class="fav-category-name">${cat.name}</div>
+              ${cat.items.map(item => `
+                <div class="fav-item">
+                  <div class="fav-item-left">
+                    <a href="${item.url}" class="fav-item-title">${item.title}</a>
+                    <div class="fav-item-date">收藏于 ${new Date(item.timestamp).toLocaleDateString()}</div>
+                  </div>
+                  <button class="fav-item-remove" onclick="removeFav('${item.id}')">取消</button>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+      });
+      
+      container.innerHTML = html;
+    })();
+    
+    function removeFav(id) {
+      StudyProgress.toggleFavorite(id, '', '');
+      location.reload();
+    }
+  </script>
+<script src="js/feedback-widget.js"></script>
+</body>
+</html>

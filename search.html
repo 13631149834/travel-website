@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta name="description" content="搜索导游证考试知识点，快速定位你需要的学习内容">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>搜索 | 游导学习笔记</title>
+<meta property="og:title" content="搜索 | 游导学习笔记">
+<meta property="og:description" content="搜索导游证考试知识点，快速定位你需要的学习内容">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/chapter.css">
+<style>
+/* 方格纸背景（品牌视觉记忆点） */
+body {
+  background-color: #FFF3E0;
+  background-image: 
+    linear-gradient(#FFE0B2 1px, transparent 1px),
+    linear-gradient(90deg, #FFE0B2 1px, transparent 1px),
+    linear-gradient(rgba(255,224,178,0.3) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,224,178,0.3) 1px, transparent 1px);
+  background-size: 20px 20px, 20px 20px, 4px 4px, 4px 4px;
+  background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+  min-height: 100dvh;
+}
+.search-header{background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;padding:40px 20px 30px;text-align:center}
+.search-header h1{font-size:1.5rem;margin-bottom:16px;font-weight:800}
+.search-box{max-width:500px;margin:0 auto;position:relative}
+.search-box input{width:100%;padding:14px 20px;border:none;border-radius:50px;font-size:1rem;outline:none;box-shadow:0 4px 20px rgba(0,0,0,0.15)}
+.search-box input::placeholder{color: #777}
+.search-box .search-icon{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:1.2rem;opacity:0.5}
+.search-results{max-width:768px;margin:30px auto;padding:0 20px}
+.result-item{background:#fff;border:1px solid #FFF3E0;border-radius:14px;padding:18px 20px;margin-bottom:12px;transition:all 0.2s;text-decoration:none;display:block}
+.result-item:hover{border-color:#E65100;box-shadow:0 4px 12px rgba(230,81,0,0.1);transform:translateY(-1px)}
+.result-item .result-type{display:inline-block;padding:2px 10px;border-radius:10px;font-size:0.7rem;font-weight:600;margin-bottom:8px}
+.result-type.chapter{background:#FFF3E0;color:#E65100}
+.result-type.page{background:#FFF3E0;color:#E65100}
+.result-item .result-title{font-size:1rem;font-weight:700;color:#1A1A1A;margin-bottom:6px}
+.result-item .result-subject{font-size:0.78rem;color:#E65100;font-weight:600;margin-bottom:4px}
+.result-item .result-snippet{font-size:0.85rem;color:#FF8A65;line-height:1.6}
+.result-snippet mark{background:#FEF3C7;color:#92400E;padding:1px 3px;border-radius:3px}
+.no-result{text-align:center;padding:60px 20px;color:#FFCC80}
+.no-result .emoji{font-size:3rem;margin-bottom:16px}
+.no-result p{font-size:0.95rem}
+.hint-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:20px}
+.hint-tags a{padding:6px 14px;background:rgba(255,255,255,0.2);color:#fff;border-radius:20px;font-size:0.82rem;text-decoration:none;transition:all 0.2s}
+.hint-tags a:hover{background:rgba(255,255,255,0.35)}
+.bottom-tabs{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;background:#fff;border-top:1px solid #eee;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:9999;box-shadow:0 -2px 10px rgba(0,0,0,0.05)}
+.tab-item{display:flex;flex-direction:column;align-items:center;text-decoration:none;color: #777;font-size:0.65rem;padding:4px 8px;transition:color 0.2s}
+.tab-item:hover,.tab-item.active{color:#E65100}
+.tab-icon{font-size:1.2rem;margin-bottom:2px}
+@media(min-width:769px){.bottom-tabs{display:none}}
+footer{margin-bottom:70px!important}
+
+/* 交互细节：文字选中颜色 */
+::selection { background: #FFE0B2; color: #BF360C; }
+::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+/* 交互细节：禁止长按弹出菜单 */
+.quick-btn, .feature-card, .card, .guide-card { -webkit-touch-callout: none; }
+
+/* 交互细节：滚动区域 */
+.messages, .chat-area { -webkit-overflow-scrolling: touch; }
+
+/* 无障碍：屏幕阅读器专用 */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+</style>
+
+<!-- PWA Meta -->
+<meta name="theme-color" content="#E65100">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="游导笔记">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+
+<style>
+.ai-float-btn{position:fixed;bottom:76px;right:16px;width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.3rem;text-decoration:none;box-shadow:0 4px 16px rgba(230,81,0,0.35);z-index:998;transition:all 0.25s}
+.ai-float-btn:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(230,81,0,0.45)}
+.ai-float-pulse{position:absolute;width:48px;height:48px;border-radius:50%;background:rgba(230,81,0,0.3);animation:aiPulse 2s infinite;z-index:-1}
+@keyframes aiPulse{0%{transform:scale(1);opacity:0.5}100%{transform:scale(1.5);opacity:0}}
+/* 交互细节：文字选中颜色 */
+::selection { background: #FFE0B2; color: #BF360C; }
+::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+/* 交互细节：禁止长按弹出菜单 */
+.quick-btn, .feature-card, .card, .guide-card { -webkit-touch-callout: none; }
+
+/* 交互细节：滚动区域 */
+.messages, .chat-area { -webkit-overflow-scrolling: touch; }
+
+</style>
+
+<link rel="stylesheet" href="css/v3-components.css">
+</head>
+
+<!-- 页面加载进度条 -->
+<style>
+.page-loading-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#E65100,#FF6D00,#FFB74D);z-index:9999;transition:width .3s ease;width:0;opacity:0}
+.page-loading-bar.active{opacity:1}
+.page-loading-bar.done{opacity:0;transition:width .2s ease,opacity .5s ease .3s}
+/* 交互细节：文字选中颜色 */
+::selection { background: #FFE0B2; color: #BF360C; }
+::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+/* 交互细节：禁止长按弹出菜单 */
+.quick-btn, .feature-card, .card, .guide-card { -webkit-touch-callout: none; }
+
+/* 交互细节：滚动区域 */
+.messages, .chat-area { -webkit-overflow-scrolling: touch; }
+
+</style>
+<div class="page-loading-bar" id="loadingBar"></div>
+<script>
+// 加载进度条
+(function(){
+  const bar=document.getElementById('loadingBar');
+  let w=0;
+  function startLoad(){w=0;bar.style.width='0';bar.classList.add('active');bar.classList.remove('done');
+    const t=setInterval(()=>{w+=Math.random()*25;if(w>=80){clearInterval(t);bar.style.width='80%'}else{bar.style.width=w+'%'}},150);
+    window._loadTimer=t}
+  function endLoad(){clearInterval(window._loadTimer);bar.style.width='100%';bar.classList.add('done');
+    setTimeout(()=>{bar.classList.remove('active');bar.classList.remove('done');bar.style.width='0'},800)}
+  startLoad();
+  if(document.readyState==='complete'){endLoad()}else{window.addEventListener('load',endLoad)}
+  // 页面跳转时显示进度条
+  document.addEventListener('click',function(e){
+    const a=e.target.closest('a');
+    if(a&&a.href&&!a.target&&!a.href.startsWith('javascript')&&!a.href.startsWith('#')&&a.origin===location.origin){
+      startLoad()}
+  });
+})();
+
+// XSS过滤函数
+function escapeHtml(str) {
+  if (typeof str !== 'string') return str;
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// 搜索输入过滤
+function sanitizeSearchInput(input) {
+  return escapeHtml(input.trim());
+}
+
+</script>
+
+<body>
+
+<!-- 页面加载进度条 -->
+<style>
+.page-loading-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,#E65100,#FF6D00,#FFB74D);z-index:9999;transition:width .3s ease;width:0;opacity:0}
+.page-loading-bar.active{opacity:1}
+.page-loading-bar.done{opacity:0;transition:width .2s ease,opacity .5s ease .3s}
+
+.back-to-top{position:fixed;bottom:80px;left:16px;z-index:998;width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,.15);transition:all .3s;background:#fff;color:#E65100;opacity:0;pointer-events:none;transform:translateY(10px)}
+.back-to-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+.back-to-top:hover{background:#E65100;color:#fff;transform:translateY(-2px)}
+/* 交互细节：文字选中颜色 */
+::selection { background: #FFE0B2; color: #BF360C; }
+::-moz-selection { background: #FFE0B2; color: #BF360C; }
+
+/* 交互细节：禁止长按弹出菜单 */
+.quick-btn, .feature-card, .card, .guide-card { -webkit-touch-callout: none; }
+
+/* 交互细节：滚动区域 */
+.messages, .chat-area { -webkit-overflow-scrolling: touch; }
+
+</style>
+<div class="page-loading-bar" id="loadingBar"></div>
+<script>
+// 加载进度条
+(function(){
+  const bar=document.getElementById('loadingBar');
+  let w=0;
+  function startLoad(){w=0;bar.style.width='0';bar.classList.add('active');bar.classList.remove('done');
+    const t=setInterval(()=>{w+=Math.random()*25;if(w>=80){clearInterval(t);bar.style.width='80%'}else{bar.style.width=w+'%'}},150);
+    window._loadTimer=t}
+  function endLoad(){clearInterval(window._loadTimer);bar.style.width='100%';bar.classList.add('done');
+    setTimeout(()=>{bar.classList.remove('active');bar.classList.remove('done');bar.style.width='0'},800)}
+  startLoad();
+  if(document.readyState==='complete'){endLoad()}else{window.addEventListener('load',endLoad)}
+  // 页面跳转时显示进度条
+  document.addEventListener('click',function(e){
+    const a=e.target.closest('a');
+    if(a&&a.href&&!a.target&&!a.href.startsWith('javascript')&&!a.href.startsWith('#')&&a.origin===location.origin){
+      startLoad()}
+  });
+})();
+</script>
+
+<div class="search-header">
+  <h1>🔍 搜索备考内容</h1>
+  <div class="search-box">
+    <label for="searchInput" class="sr-only">搜索知识点、考点、口诀</label>
+    <input type="text" id="searchInput" placeholder="搜索知识点、考点、口诀..." autofocus aria-label="搜索知识点、考点、口诀">
+    <span class="search-icon" aria-hidden="true">🔍</span>
+  </div>
+  <!-- 精致化4.0: 热门搜索首次使用引导 -->
+  <div class="hint-tags" id="hintTagsArea">
+    <div class="search-guide" id="searchGuide" style="background:rgba(255,255,255,0.15);color:#fff;padding:8px 14px;border-radius:20px;margin-bottom:8px;font-size:0.8rem;">
+      💡 点击热门词快速搜索，或直接输入关键词
+    </div>
+    <span style="font-size:0.75rem;color:rgba(255,255,255,0.7);margin-right:8px;">🔥 热门：</span>
+    <a href="#" onclick="doSearch('五岳')">五岳</a>
+    <a href="#" onclick="doSearch('导游服务原则')">导游服务原则</a>
+    <a href="#" onclick="doSearch('口诀')">口诀</a>
+    <a href="#" onclick="doSearch('罚款')">罚款</a>
+    <a href="#" onclick="doSearch('免票')">免票</a> 
+    <a href="#" onclick="doSearch('景点讲解')">景点讲解</a>
+    <a href="flashcard.html" style="display:inline-block;padding:6px 14px;background:#FFF3E0;color:#E65100;border-radius:15px;text-decoration:none;font-size:.85rem;margin:4px">🃏口诀闪卡</a>
+  </div>
+</div>
+
+<div class="search-results" id="searchResults">
+  <div class="no-result" id="initialHint">
+    <div class="emoji">📚</div>
+    <p>输入关键词，秒搜46章考点</p>
+  </div>
+</div>
+
+<nav class="bottom-tabs">
+<a class="tab-item" href="index.html"><span class="tab-icon">🏠</span><span class="tab-label">首页</span></a>
+<a class="tab-item" href="ai-assistant.html"><span class="tab-icon">💬</span><span class="tab-label">AI助手</span></a>
+<a class="tab-item" href="exam-simulator.html"><span class="tab-icon">✏️</span><span class="tab-label">刷题</span></a>
+<a class="tab-item tab-active" href="search.html"><span class="tab-icon">🔍</span><span class="tab-label">搜索</span></a>
+<a class="tab-item" href="travel-knowledge.html"><span class="tab-icon">📚</span><span class="tab-label">知识库</span></a>
+</nav>
+
+<script src="js/common.js"></script>
+<script>
+// 精致化4.0: 搜索页首次使用引导
+(function(){
+  var guide = document.getElementById('searchGuide');
+  var hintArea = document.getElementById('hintTagsArea');
+  if(!guide) return;
+  
+  // 检查是否已显示过引导
+  if(localStorage.getItem('search_guide_shown')) {
+    guide.style.display = 'none';
+    return;
+  }
+  
+  // 监听搜索操作
+  var searchInput = document.getElementById('searchInput');
+  var hotLinks = document.querySelectorAll('.hint-tags a[onclick]');
+  
+  function hideGuide() {
+    guide.style.transition = 'opacity 0.3s';
+    guide.style.opacity = '0';
+    setTimeout(function(){ guide.style.display = 'none'; }, 300);
+    localStorage.setItem('search_guide_shown', 'true');
+  }
+  
+  // 输入框输入时隐藏
+  if(searchInput) {
+    searchInput.addEventListener('input', hideGuide, {once: true});
+  }
+  
+  // 点击热门搜索时隐藏
+  hotLinks.forEach(function(link){
+    link.addEventListener('click', hideGuide, {once: true});
+  });
+  
+  // 4秒后自动淡化
+  setTimeout(function(){
+    if(guide && guide.style.display !== 'none') {
+      guide.style.transition = 'opacity 0.5s';
+      guide.style.opacity = '0.4';
+    }
+  }, 4000);
+})();
+
+// 搜索防刷节流 - 精致化4.0
+var searchThrottleTimer = null;
+var searchLastTime = 0;
+var SEARCH_THROTTLE_MS = 500; // 500ms节流
+var searchWarningShown = false;
+
+function throttledSearch(q) {
+  var now = Date.now();
+  var timeDiff = now - searchLastTime;
+  
+  if (timeDiff < SEARCH_THROTTLE_MS) {
+    // 显示频率限制提示（每10秒最多1次）
+    if (!searchWarningShown) {
+      searchWarningShown = true;
+      showSearchWarning('搜太快啦，慢慢来～');
+      setTimeout(function() { searchWarningShown = false; }, 10000);
+    }
+    return;
+  }
+  
+  searchLastTime = now;
+  doSearch(q);
+  saveSearchHistory(q);
+}
+
+function showSearchWarning(msg) {
+  var existing = document.getElementById('search-throttle-tip');
+  if (existing) existing.remove();
+  
+  var tip = document.createElement('div');
+  tip.id = 'search-throttle-tip';
+  tip.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#FFECB3;color:#BF360C;padding:8px 20px;border-radius:20px;font-size:0.85rem;z-index:9999;box-shadow:0 2px 10px rgba(0,0,0,0.1);transition:opacity 0.3s;';
+  tip.textContent = '⚠️ ' + msg;
+  document.body.appendChild(tip);
+  
+  setTimeout(function() {
+    tip.style.opacity = '0';
+    setTimeout(function() { tip.remove(); }, 300);
+  }, 2000);
+}
+
+searchInput.addEventListener('input',function(){
+  var q=this.value.trim();
+  
+  // 精致化5.0：使用 ValidationUtils 进行搜索验证
+  if (typeof ValidationUtils !== 'undefined') {
+    var validation = ValidationUtils.validateSearch(q);
+    if (!validation.valid) {
+      resultsEl.innerHTML = getInitialHint();
+      return;
+    }
+    q = validation.value;
+  }
+  
+  if(q.length<2){resultsEl.innerHTML=getInitialHint();return;}
+  
+  // 精致化5.0：使用节流搜索并保存历史
+  throttledSearch(q);
+});
+
+// 同义词映射表
+var synonyms = {
+  '导游词': ['讲解词', '景点讲解', '导游讲解', '讲解'],
+  '导游服务': ['导游服务规范', '服务规范', '服务流程'],
+  '口诀': ['记忆口诀', '速记', '记忆方法', '背诵技巧'],
+  '罚款': ['处罚', '罚金', '行政处罚'],
+  '免票': ['免费', '免门票', '优惠票'],
+  '报名': ['报考', '参加考试'],
+  '面试': ['口试', '现场考试', '导游词讲解'],
+  '笔试': ['书面考试', '理论考试'],
+  '政策法规': ['法规', '法律', '政策'],
+  '导游业务': ['导游实务', '业务知识'],
+  '全国导基': ['全国导游基础', '导基'],
+  '地方导基': ['地方导游基础', '本省导基'],
+  '错题': ['易错题', '易错点', '做错的题'],
+  '真题': ['历年真题', '考试真题'],
+  '模拟题': ['练习题', '模拟练习'],
+  '备考': ['复习', '准备考试', '学习备考'],
+  '上岸': ['通过考试', '考试通过', '拿证'],
+  '证书': ['资格证', '资格证书', '资格证书']
+};
+</script>
+<script>
+function expandQuery(q) {
+  var expanded = [q];
+  var qLower = q.toLowerCase();
+  
+  // 遍历同义词表
+  for (var key in synonyms) {
+    var keyLower = key.toLowerCase();
+    var syns = synonyms[key];
+    
+    // 如果查询词匹配某个词，添加其同义词
+    if (qLower.indexOf(keyLower) > -1 || keyLower.indexOf(qLower) > -1) {
+      for (var i = 0; i < syns.length; i++) {
+        if (expanded.indexOf(syns[i]) === -1) {
+          expanded.push(syns[i]);
+        }
+      }
+    }
+    
+    // 如果查询词是某个词的同义词，也添加那个词
+    for (var i = 0; i < syns.length; i++) {
+      var synLower = syns[i].toLowerCase();
+      if (qLower.indexOf(synLower) > -1 || synLower.indexOf(qLower) > -1) {
+        if (expanded.indexOf(key) === -1) {
+          expanded.push(key);
+        }
+      }
+    }
+  }
+  
+  return expanded;
+}
+
+// 加载搜索索引
+fetch('search-index.json').then(r=>r.json()).then(data=>{
+  searchData = data;
+  // 检查URL参数
+  var params = new URLSearchParams(window.location.search);
+  var q = params.get('q');
+  if(q){searchInput.value=q;doSearch(q);}
+  else{resultsEl.innerHTML=getInitialHint();renderSearchHistory();}
+}).catch(e=>{});
+
+// 搜索历史
+var MAX_HISTORY = 5;
+function getSearchHistory(){
+  try{return JSON.parse(localStorage.getItem('youdao_search_history')||'[]')}catch(e){return []}
+}
+function saveSearchHistory(q){
+  var hist=getSearchHistory();
+  hist=hist.filter(function(h){return h!==q});
+  hist.unshift(q);
+  hist=hist.slice(0,MAX_HISTORY);
+  try{localStorage.setItem('youdao_search_history',JSON.stringify(hist))}catch(e){}
+}
+function clearSearchHistory(){
+  try{localStorage.removeItem('youdao_search_history')}catch(e){}
+  renderSearchHistory();
+}
+function renderSearchHistory(){
+  var hist=getSearchHistory();
+  var el=document.getElementById('searchHistory');
+  if(!el)return;
+  if(!hist.length){el.style.display='none';return;}
+  var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-size:0.82rem;color:#999;">搜索历史</span><button onclick="clearSearchHistory()" style="background:none;border:none;color:#E65100;font-size:0.78rem;cursor:pointer;">清除</button></div>';
+  hist.forEach(function(h){
+    html+='<a href="#" onclick="doSearch(\''+h.replace(/'/g,"\\'")+'\');return false;" style="display:inline-block;padding:6px 12px;background:#FFF3E0;color:#E65100;border-radius:15px;font-size:0.8rem;margin:4px 4px 4px 0;text-decoration:none;">'+h+'</a>';
+  });
+  el.innerHTML=html;
+  el.style.display='block';
+}
+function getInitialHint(){
+  var hist=getSearchHistory();
+  var histHtml='';
+  if(hist.length){
+    histHtml='<div id="searchHistory" style="margin:16px 0;"><div id="searchHistory"></div></div>';
+  }
+  return histHtml+'<div class="no-result"><div class="emoji">📚</div><p>输入关键词，秒搜导游证考点</p></div>';
+}
+
+function doSearch(q){ q = sanitizeSearchInput(q || "");
+  if(!searchData.length)return;
+  searchInput.value=q;
+  var queries = expandQuery(q);
+  var results=[];
+  searchData.forEach(function(item){
+    var score=0;
+    var title=item.title.toLowerCase();
+    var kw=item.keywords;
+    var text=item.text?item.text.toLowerCase():'';
+    
+    // 对每个扩展查询词进行评分
+    queries.forEach(function(expQ){
+      if(title.indexOf(expQ)>-1)score+=10;
+      if(kw.indexOf(expQ)>-1)score+=5;
+      if(text.indexOf(expQ)>-1)score+=2;
+    });
+    
+    // 标题包含多个查询词时额外加分
+    var titleMatchCount = 0;
+    queries.forEach(function(expQ){
+      if(title.indexOf(expQ)>-1)titleMatchCount++;
+    });
+    if(titleMatchCount > 1) score += titleMatchCount * 5;
+    
+    if(score>0)results.push({item:item,score:score});
+  });
+  results.sort(function(a,b){return b.score-a.score;});
+  
+  if(!results.length){
+    resultsEl.innerHTML='<div class="no-result"><div class="emoji">🤔</div><p>没找到"'+q+'"相关内容</p><p style="font-size:0.82rem;color:#FFCC80;margin-top:8px;">试试换个关键词，或去<a href="chat.html" style="color:#E65100;">问AI助手</a></p></div>';
+    return;
+  }
+  
+  var html='';
+  results.slice(0,15).forEach(function(r){
+    var item=r.item;
+    var snippet=item.text;
+    // 优先高亮显示第一个匹配的查询词
+    var firstMatch = queries[0];
+    var idx=snippet.toLowerCase().indexOf(firstMatch);
+    if(idx>-1){
+      var start=Math.max(0,idx-30);
+      var end=Math.min(snippet.length,idx+firstMatch.length+80);
+      snippet=(start>0?'...':'')+snippet.substring(start,end)+(end<snippet.length?'...':'');
+      snippet=snippet.replace(new RegExp('('+firstMatch.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>');
+    }else{
+      snippet=snippet.substring(0,120)+'...';
+    }
+    var typeClass=item.type==='chapter'?'chapter':'page';
+    var typeLabel=item.type==='chapter'?'章节':'页面';
+    var subjectTag=item.subject?'<div class="result-subject">'+item.subject+'</div>':'';
+    
+    html+='<a class="result-item" href="'+item.url.replace(/^\//,'')+'">'
+      +'<span class="result-type '+typeClass+'">'+typeLabel+'</span>'
+      +subjectTag
+      +'<div class="result-title">'+item.title+'</div>'
+      +'<div class="result-snippet">'+snippet+'</div>'
+      +'</a>';
+  });
+  
+  resultsEl.innerHTML=html;
+}
+</script>
+
+
+
+<script>
+// Service Worker注册
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').then(reg=>{
+    // SW注册成功
+  }).catch(err=>{
+    // SW注册失败，忽略
+  });
+}
+</script>
+
+<script>
+// 回到顶部按钮
+(function(){
+  const btn=document.createElement('button');
+  btn.className='back-to-top';btn.id='backToTop';btn.title='回到顶部';btn.setAttribute('aria-label','回到顶部');btn.textContent='⬆';
+  document.body.appendChild(btn);
+  window.addEventListener('scroll',function(){
+    btn.classList.toggle('visible',window.scrollY>400);
+  },{passive:true});
+  btn.onclick=function(){window.scrollTo({top:0,behavior:'smooth'})};
+})();
+</script>
+
+<!-- AI助手悬浮按钮 -->
+<a href="ai-assistant.html" class="ai-float-btn" title="AI助手">
+  <span>🤖</span>
+  <div class="ai-float-pulse"></div>
+</a>
+
+<script>
+// 页面跳转淡出效果
+(function(){
+  document.addEventListener('click',function(e){
+    var a=e.target.closest('a');
+    if(!a)return;
+    var href=a.getAttribute('href');
+    if(!href||href.startsWith('#')||href.startsWith('javascript')||href.startsWith('http')||href.startsWith('mailto')||href.startsWith('tel'))return;
+    // Same page anchors
+    if(href.startsWith('#'))return;
+    e.preventDefault();
+    document.body.style.transition='opacity 0.15s ease';
+    document.body.style.opacity='0.6';
+    setTimeout(function(){location.href=href;},150);
+  });
+})();
+</script>
+
+<p style="text-align:center;color: #777;font-size:0.8rem;margin:20px 0 70px;">走过弯路，所以更懂路</p>
+
+<div style="text-align:center;padding:20px;margin-top:40px;border-top:1px solid #F0F0F0"><p style="color:#777;font-size:0.8rem">© 2025-2026 ximao101 | 游导学习笔记 | 导游证备考资料</p></div>
+<script src="auth.js"></script>
+<script src="js/common.js"></script>
+<script src="js/feedback-widget.js"></script>
+
+<footer style="text-align:center;padding:20px;font-size:0.8rem;color:#777;border-top:1px solid #F0F0F0;margin-top:40px;">
+  <a href="privacy.html" style="color:#E65100;">隐私保护</a> · <a href="index.html" style="color:#E65100;">返回首页</a>
+  <p style="margin-top:6px;">©2025-2026 游导学习笔记 ximao101整理</p>
+</footer>
+</body>
+</html>

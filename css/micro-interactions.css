@@ -1,0 +1,645 @@
+/* 微交互动画样式 */
+
+/* ========== 按钮波纹效果 ========== */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.3) 10%, transparent 10%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10);
+  opacity: 0;
+  transition: transform 0.4s, opacity 0.8s;
+}
+
+.btn-ripple:active::after {
+  transform: scale(0);
+  opacity: 0.3;
+  transition: 0s;
+}
+
+/* 按钮点击缩放 */
+.btn-press:active {
+  transform: scale(0.96);
+  transition: transform 0.1s;
+}
+
+/* 按钮hover上浮 */
+.btn-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(230,81,0,0.3);
+}
+
+/* ========== 卡片按压感 ========== */
+.card-press {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+}
+
+.card-press:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+.card-press:active {
+  transform: scale(0.98) translateY(0);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* ========== 淡入效果 ========== */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.fade-in-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  animation: fadeInLeft 0.5s ease forwards;
+}
+
+.fade-in-right {
+  opacity: 0;
+  transform: translateX(30px);
+  animation: fadeInRight 0.5s ease forwards;
+}
+
+.fade-in-scale {
+  opacity: 0;
+  transform: scale(0.9);
+  animation: fadeInScale 0.4s ease forwards;
+}
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInLeft {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInRight {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes fadeInScale {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 延迟淡入 */
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+.delay-4 { animation-delay: 0.4s; }
+.delay-5 { animation-delay: 0.5s; }
+
+/* ========== 打卡/收藏按钮反馈动画 ========== */
+.btn-feedback {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.btn-feedback.success::before {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  font-size: 24px;
+  color: #fff;
+  animation: checkmarkPop 0.4s ease forwards;
+}
+
+@keyframes checkmarkPop {
+  0% { transform: translate(-50%, -50%) scale(0); }
+  50% { transform: translate(-50%, -50%) scale(1.3); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+/* 心跳动画 */
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.1); }
+}
+
+.heartbeat {
+  animation: heartbeat 1s ease infinite;
+}
+
+/* 收藏按钮动画 */
+.favorite-btn.active {
+  animation: favoritePop 0.3s ease;
+}
+
+@keyframes favoritePop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+/* 打卡按钮动画 */
+.checkin-btn.completed {
+  background: #81C784 !important;
+  animation: checkinPulse 0.5s ease;
+}
+
+@keyframes checkinPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* ========== 成就弹窗动画 ========== */
+@keyframes achievementBounce {
+  0% { transform: scale(0.5); opacity: 0; }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ========== Toast动画 ========== */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-20px);
+  }
+}
+
+/* ========== 加载动画 ========== */
+.loading-dots::after {
+  content: '';
+  animation: loadingDots 1.5s infinite;
+}
+
+@keyframes loadingDots {
+  0% { content: '.'; }
+  33% { content: '..'; }
+  66% { content: '...'; }
+}
+
+/* 骨架屏动画 */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: skeleton 1.5s infinite;
+}
+
+@keyframes skeleton {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ========== 数字滚动动画 ========== */
+.number-scroll {
+  display: inline-block;
+  animation: numberPop 0.3s ease;
+}
+
+@keyframes numberPop {
+  0% { transform: scale(0.8); opacity: 0.5; }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ========== 进度条动画 ========== */
+.progress-animate {
+  transition: width 1s ease-out;
+}
+
+/* ========== 闪卡翻转动画 ========== */
+.flashcard-flip {
+  perspective: 1000px;
+}
+
+.flashcard-inner {
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+
+.flashcard-inner.flipped {
+  transform: rotateY(180deg);
+}
+
+.flashcard-front, .flashcard-back {
+  backface-visibility: hidden;
+}
+
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+/* ========== 列表项依次出现 ========== */
+.stagger-item {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.stagger-item.visible {
+  animation: staggerIn 0.3s ease forwards;
+}
+
+@keyframes staggerIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========== 成就样式 ========== */
+.achievement-header {
+  text-align: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  border-radius: 16px;
+  margin-bottom: 20px;
+}
+
+.ach-level {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ach-level-icon {
+  font-size: 40px;
+}
+
+.ach-level-name {
+  font-size: 28px;
+  font-weight: 800;
+  color: #E65100;
+}
+
+.ach-level-desc {
+  color: #666;
+  font-size: 14px;
+}
+
+.ach-score {
+  margin-top: 10px;
+  color: #BF360C;
+}
+
+.ach-score strong {
+  font-size: 20px;
+}
+
+.ach-section {
+  margin-bottom: 24px;
+}
+
+.ach-section-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 12px;
+  padding-left: 8px;
+  border-left: 4px solid #E65100;
+}
+
+.ach-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.ach-stat-item {
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.ach-stat-num {
+  font-size: 24px;
+  font-weight: 800;
+  color: #E65100;
+  line-height: 1;
+}
+
+.ach-stat-label {
+  font-size: 11px;
+  color: #666;
+  margin-top: 4px;
+}
+
+.ach-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ach-category h4 {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.ach-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.ach-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  transition: all 0.2s;
+}
+
+.ach-item.unlocked {
+  border-color: #E65100;
+  background: #FFF8E1;
+}
+
+.ach-item.locked {
+  opacity: 0.5;
+}
+
+.ach-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.ach-item.locked .ach-icon {
+  filter: grayscale(100%);
+}
+
+.ach-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ach-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #333;
+}
+
+.ach-desc {
+  font-size: 11px;
+  color: #666;
+  margin-top: 2px;
+}
+
+.ach-date {
+  font-size: 10px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* ========== 回访提示样式 ========== */
+.return-tip {
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin: 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: fadeInUp 0.5s ease;
+}
+
+.return-tip-icon {
+  font-size: 24px;
+}
+
+.return-tip-text {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+.return-tip-action {
+  background: #E65100;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.return-tip-action:hover {
+  background: #BF360C;
+}
+
+/* 移动端适配 */
+@media (max-width: 480px) {
+  .ach-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .ach-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .return-tip {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* ========== 章节完成提示 ========== */
+.chapter-complete-toast {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  border-radius: 20px;
+  padding: 30px 40px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(230,81,0,0.3);
+  z-index: 10000;
+  animation: chapterCompleteIn 0.5s ease;
+}
+
+@keyframes chapterCompleteIn {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+  50% { transform: translate(-50%, -50%) scale(1.05); }
+  100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+
+.chapter-complete-toast .toast-icon {
+  font-size: 50px;
+  margin-bottom: 15px;
+}
+
+.chapter-complete-toast .toast-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #E65100;
+  margin-bottom: 8px;
+}
+
+.chapter-complete-toast .toast-message {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.chapter-complete-toast .toast-action {
+  display: inline-flex;
+  gap: 10px;
+}
+
+.chapter-complete-toast .btn-next {
+  padding: 10px 20px;
+  background: #E65100;
+  color: #fff;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+}
+
+.chapter-complete-toast .btn-later {
+  padding: 10px 20px;
+  background: #fff;
+  color: #666;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+
+/* 下一章推荐区域 */
+.next-chapter-card {
+  background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+  border-radius: 16px;
+  padding: 20px;
+  margin: 20px 0;
+  animation: fadeInUp 0.5s ease;
+}
+
+.next-chapter-card h4 {
+  font-size: 14px;
+  color: #E65100;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.next-chapter-card .chapter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  background: #fff;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: all 0.2s;
+  border: 2px solid #E65100;
+}
+
+.next-chapter-card .chapter-btn:hover {
+  background: #E65100;
+  color: #fff;
+}
+
+.next-chapter-card .chapter-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #333;
+}
+
+.next-chapter-card .chapter-btn:hover .chapter-name {
+  color: #fff;
+}
+
+.next-chapter-card .chapter-arrow {
+  font-size: 18px;
+  color: #E65100;
+}
+
+.next-chapter-card .chapter-btn:hover .chapter-arrow {
+  color: #fff;
+}
+
+/* 收藏按钮 */
+.favorite-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #fff;
+  border: 2px solid #E65100;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #E65100;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.favorite-toggle:hover {
+  background: #FFF3E0;
+}
+
+.favorite-toggle.active {
+  background: #E65100;
+  color: #fff;
+}
+
+.favorite-toggle .heart {
+  transition: transform 0.2s;
+}
+
+.favorite-toggle.active .heart {
+  transform: scale(1.2);
+  animation: heartbeat 0.3s ease;
+}
