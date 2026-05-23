@@ -318,7 +318,7 @@
       z-index: 5;
     }
     .fc-card-status.mastered {
-      background: #4CAF50;
+      background: #E65100;
       color: #fff;
     }
     .fc-card-status.reviewing {
@@ -372,7 +372,7 @@
       transition: width 0.3s ease;
     }
     .fc-progress-mastered {
-      background: #4CAF50;
+      background: #E65100;
     }
     .fc-progress-reviewing {
       background: #FF9800;

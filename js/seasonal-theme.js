@@ -13,7 +13,7 @@
   
   // 季节配置
   const SEASONS = {
-    spring: { months: [3, 4, 5], name: '春', accent: '#4CAF50', bg: '#E8F5E9', mood: '清新活跃' },
+    spring: { months: [3, 4, 5], name: '春', accent: '#E65100', bg: '#FFF3E0', mood: '清新活跃' },
     summer: { months: [6, 7, 8], name: '夏', accent: '#2196F3', bg: '#E3F2FD', mood: '专注沉稳' },
     autumn: { months: [9, 10, 11], name: '秋', accent: '#FF9800', bg: '#FFF3E0', mood: '紧张有序' },
     winter: { months: [12, 1, 2], name: '冬', accent: '#E91E63', bg: '#FCE4EC', mood: '温暖期待' }

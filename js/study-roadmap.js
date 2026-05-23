@@ -136,7 +136,7 @@
         transform: translateY(-2px);
       }
       .roadmap-done {
-        border-color: #4CAF50;
+        border-color: #E65100;
         background: #E8F5E9;
       }
       .roadmap-current {
@@ -160,8 +160,8 @@
         font-size: 1.2rem;
       }
       .roadmap-done .node-icon {
-        background: #4CAF50;
-        border-color: #4CAF50;
+        background: #E65100;
+        border-color: #E65100;
         color: #FFF;
       }
       .roadmap-current .node-icon {
@@ -176,7 +176,7 @@
         border-radius: 2px;
       }
       .roadmap-track-line.track-done {
-        background: #4CAF50;
+        background: #E65100;
       }
     `;
     document.head.appendChild(style);

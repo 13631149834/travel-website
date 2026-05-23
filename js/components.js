@@ -380,7 +380,7 @@ const EmptyState = {
     mistakes: {
       icon: '🎉',
       title: '错题本空空如也',
-      desc: '太棒了！继续保持，备考必过！'
+      desc: '太棒了！继续保持，稳稳通过！'
     },
     list: {
       icon: '📋',
