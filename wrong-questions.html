@@ -594,12 +594,11 @@ function loadWrong(){
               var exists = allWrong.some(w => w.question === examQ.question);
               if(!exists) {
                 allWrong.push({
-                  question: examQ.question,
-                  subject: examQ.type,
-                  correctAnswer: examQ.options[examQ.answer],
+                  question: examQ.question || '未知题目',
+                  subject: examQ.type || '未分类',
+                  correctAnswer: (examQ.options && examQ.options[examQ.answer]) ? examQ.options[examQ.answer] : '答案' + (examQ.answer + 1),
                   explanation: examQ.analysis || '',
-                  mastered: false,
-                  fromProgress: true
+                  mastered: false
                 });
               }
             }
@@ -626,7 +625,7 @@ function getExamQuestionByIdx(idx) {
 
 function updateStats(){
   document.getElementById('totalCount').textContent=allWrong.length;
-  const counts={business:0,policy:0,national:0,local:0};
+  const counts={business:0,service:0,policy:0,national:0,guidebook:0,local:0,interview:0};
   allWrong.forEach(w=>{if(counts.hasOwnProperty(w.subject))counts[w.subject]++});
   document.getElementById('businessCount').textContent=counts.business;
   document.getElementById('policyCount').textContent=counts.policy;
@@ -661,7 +660,7 @@ function renderList(){
 }
 
 function getSubjectLabel(s){
-  const map={business:'💼 导游业务',policy:'⚖️ 政策法规',national:'📚 全国导基',local:'🗺️ 地方导基',interview:'🎤 面试'};
+  const map={business:'💼 导游业务',service:'💼 导游业务',policy:'⚖️ 政策法规',national:'📚 全国导基',guidebook:'📚 全国导基',local:'🗺️ 地方导基',interview:'🎤 面试'};
   return map[s]||s;
 }
 
