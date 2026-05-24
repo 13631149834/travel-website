@@ -2939,6 +2939,27 @@ margin-top: 6px;
 
 <div id="examQuestionsArea">
 <!-- 题目卡片 -->
+<div id="examStatsBar" style="display:none;background:#FFFFFF;border:1px solid #F0F0F0;border-radius:16px;padding:12px 16px;margin-bottom:16px;display:flex;justify-content:space-around;align-items:center;flex-wrap:wrap;gap:12px">
+  <div style="text-align:center">
+    <div style="font-size:0.75rem;color:#666666">已答题</div>
+    <div id="statAnswered" style="font-size:1.2rem;font-weight:700;color:#E65100">0</div>
+  </div>
+  <div style="width:1px;height:30px;background:#F0F0F0"></div>
+  <div style="text-align:center">
+    <div style="font-size:0.75rem;color:#666666">正确率</div>
+    <div id="statAccuracy" style="font-size:1.2rem;font-weight:700;color:#4CAF50">0%</div>
+  </div>
+  <div style="width:1px;height:30px;background:#F0F0F0"></div>
+  <div style="text-align:center">
+    <div style="font-size:0.75rem;color:#666666">错题数</div>
+    <div id="statWrong" style="font-size:1.2rem;font-weight:700;color:#EF5350">0</div>
+  </div>
+  <div style="width:1px;height:30px;background:#F0F0F0"></div>
+  <div style="text-align:center">
+    <div style="font-size:0.75rem;color:#666666">剩余</div>
+    <div id="statRemaining" style="font-size:1.2rem;font-weight:700;color:#666666">0</div>
+  </div>
+</div>
 <div id="singleQuestionWrap"></div>
 
 <!-- 题目导航 -->
@@ -3215,9 +3236,28 @@ if (totalEl) totalEl.textContent = examQuestions.length;
 remainingTime = 90 * 60; // 90 minutes
 updateTimerDisplay();
 
+// 保存题目数据供错题本访问
+try {
+  localStorage.setItem('exam_questions_data', JSON.stringify(examQuestions));
+} catch(e) {}
+
 // Start with first question
 renderSingleQuestion(0);
 renderAnswerCard();
+updateExamStats();
+
+// 保存题目数据供错题本访问
+try {
+  localStorage.setItem('exam_questions_data', JSON.stringify(examQuestions));
+} catch(e) {}
+
+// 尝试加载已保存的答题进度
+if(loadExamProgress()) {
+  console.log("已恢复答题进度");
+  renderAnswerCard();
+  updateExamStats();
+  renderSingleQuestion(currentQIndex || 0);
+}
 
 // Start timer
 startTimer();
@@ -3277,12 +3317,76 @@ document.getElementById('prevBtn').style.opacity = idx === 0 ? '0.3' : '1';
 updateProgress();
 }
 
+// 答题记录持久化
+var EXAM_PROGRESS_KEY = 'youdao_exam_progress_' + (currentType || 'all');
+
+// 保存答题进度
+function saveExamProgress() {
+  var data = {
+    answeredQuestions: answeredQuestions,
+    userAnswers: userAnswers,
+    currentQIndex: currentQIndex,
+    timestamp: Date.now()
+  };
+  try {
+    localStorage.setItem(EXAM_PROGRESS_KEY, JSON.stringify(data));
+  } catch(e) { console.log('保存进度失败', e); }
+}
+
+// 加载答题进度
+function loadExamProgress() {
+  try {
+    var saved = localStorage.getItem(EXAM_PROGRESS_KEY);
+    if(saved) {
+      var data = JSON.parse(saved);
+      // 检查是否是今天的数据（24小时内）
+      if(data.timestamp && (Date.now() - data.timestamp < 86400000)) {
+        answeredQuestions = data.answeredQuestions || {};
+        userAnswers = data.userAnswers || {};
+        currentQIndex = data.currentQIndex || 0;
+        return true;
+      }
+    }
+  } catch(e) { console.log('加载进度失败', e); }
+  return false;
+}
+
+// 清除答题进度
+function clearExamProgress() {
+  try {
+    localStorage.removeItem(EXAM_PROGRESS_KEY);
+  } catch(e) {}
+}
+
+// 更新统计显示
+function updateExamStats() {
+  var answered = Object.keys(answeredQuestions).length;
+  var correct = 0, wrong = 0;
+  for(var q in answeredQuestions) {
+    if(answeredQuestions[q] === examQuestions[q].answer) correct++;
+    else wrong++;
+  }
+  var accuracy = answered > 0 ? Math.round(correct / answered * 100) : 0;
+  var remaining = examQuestions.length - answered;
+  
+  var statsBar = document.getElementById('examStatsBar');
+  if(statsBar) {
+    statsBar.style.display = 'flex';
+    document.getElementById('statAnswered').textContent = answered;
+    document.getElementById('statAccuracy').textContent = accuracy + '%';
+    document.getElementById('statWrong').textContent = wrong;
+    document.getElementById('statRemaining').textContent = remaining;
+  }
+}
+
 window.selectExamAnswer = function(qIdx, optIdx) {if(typeof GameSystem!=='undefined')GameSystem.addQuestion();
 if(answeredQuestions[qIdx] !== undefined) return; // 已答过不再改
 userAnswers[qIdx] = optIdx;
 answeredQuestions[qIdx] = optIdx; // 直接确认，立刻出解析
 renderSingleQuestion(qIdx);
 updateAnswerCard(qIdx);
+updateExamStats(); // 更新统计
+saveExamProgress(); // 保存答题进度
 // 答题反馈动效
 var card = document.querySelector('.question-card');
 var isCorrect = optIdx === examQuestions[qIdx].answer;
@@ -3298,6 +3402,8 @@ if(userAnswers[qIdx] === undefined) { alert('请先选择一个答案'); return;
 answeredQuestions[qIdx] = userAnswers[qIdx];
 renderSingleQuestion(qIdx);
 updateAnswerCard(qIdx);
+updateExamStats(); // 更新统计
+saveExamProgress(); // 保存答题进度
 };
 
 window.prevQuestion = function() {

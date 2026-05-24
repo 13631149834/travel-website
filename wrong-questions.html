@@ -577,7 +577,51 @@ let allWrong=[],currentFilter='all',currentRedoFilter='all',redoQuestions=[],red
 
 function loadWrong(){
   try{allWrong=JSON.parse(localStorage.getItem('wrongQuestions')||'[]')}catch(e){allWrong=[]}
+  // 从exam-simulator答题记录同步错题
+  try {
+    var progressKeys = Object.keys(localStorage).filter(k => k.startsWith('youdao_exam_progress_'));
+    progressKeys.forEach(key => {
+      var saved = JSON.parse(localStorage.getItem(key) || '{}');
+      if(saved.answeredQuestions) {
+        for(var qIdx in saved.answeredQuestions) {
+          // 获取题目信息（需要从exam-simulator获取）
+          var qNum = parseInt(qIdx);
+          if(!isNaN(qNum)) {
+            // 读取examQuestions数据
+            var examQ = getExamQuestionByIdx(qNum);
+            if(examQ && saved.answeredQuestions[qIdx] !== examQ.answer) {
+              // 这道题答错了，检查是否已在错题本
+              var exists = allWrong.some(w => w.question === examQ.question);
+              if(!exists) {
+                allWrong.push({
+                  question: examQ.question,
+                  subject: examQ.type,
+                  correctAnswer: examQ.options[examQ.answer],
+                  explanation: examQ.analysis || '',
+                  mastered: false,
+                  fromProgress: true
+                });
+              }
+            }
+          }
+        }
+      }
+    });
+  } catch(e) { console.log('同步错题失败', e); }
   updateStats();renderList();
+}
+
+// 获取examQuestions中的题目（从localStorage读取）
+function getExamQuestionByIdx(idx) {
+  try {
+    // 题目数据存储在localStorage
+    var qData = localStorage.getItem('exam_questions_data');
+    if(qData) {
+      var questions = JSON.parse(qData);
+      if(questions[idx]) return questions[idx];
+    }
+  } catch(e) {}
+  return null;
 }
 
 function updateStats(){
@@ -650,6 +694,14 @@ function clearAllWrong(){
 
 function saveWrong(){
   localStorage.setItem('wrongQuestions',JSON.stringify(allWrong));
+  // 同时清除exam-simulator的答题进度中的错题标记
+  try {
+    var progressKeys = Object.keys(localStorage).filter(k => k.startsWith('youdao_exam_progress_'));
+    progressKeys.forEach(key => {
+      var saved = JSON.parse(localStorage.getItem(key) || '{}');
+      // 不需要修改答题记录，只清除本地错题
+    });
+  } catch(e) {}
 }
 
 // ===== 重做模式 =====
