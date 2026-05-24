@@ -4661,7 +4661,15 @@ if (!container) return;
 container.innerHTML = '';
 
 // Filter by subject if needed
-var pool = dailyBank.slice();
+// 使用examQuestions作为数据源（已合并510题）
+var pool = [];
+if (typeof examQuestions !== 'undefined' && examQuestions.length > 0) {
+  pool = examQuestions.map(function(q) {
+    return {q: q.question, o: q.options, a: q.answer, exp: q.analysis, type: q.type};
+  });
+} else {
+  pool = dailyBank.slice();
+}
 if (currentFilter && currentFilter !== 'all') {
   pool = pool.filter(function(q) { return q.type === currentFilter; });
 }
