@@ -3674,13 +3674,13 @@ userAnswers = {};
 answeredQuestions = {};
 currentQIndex = 0;
 
-// Random select questions from the pool for the exam
-var shuffled = examQuestions.slice().sort(function() { return Math.random() - 0.5; });
-examQuestions = shuffled.slice(0, Math.min(90, shuffled.length));
+// 正式考试：从全部题库随机抽取90题（不破坏原始examQuestions）
+var examPool = examQuestions.slice().sort(function() { return Math.random() - 0.5; });
+window.examPool = examPool.slice(0, Math.min(90, examPool.length));
 
 // Update total count display
 var totalEl = document.getElementById('totalQuestions');
-if (totalEl) totalEl.textContent = examQuestions.length;
+if (totalEl) totalEl.textContent = (window.examPool || examQuestions).length;
 
 // Reset timer
 remainingTime = 90 * 60; // 90 minutes
@@ -3688,7 +3688,7 @@ updateTimerDisplay();
 
 // 保存题目数据供错题本访问
 try {
-  localStorage.setItem('exam_questions_data', JSON.stringify(examQuestions));
+  localStorage.setItem('exam_questions_data', JSON.stringify(window.examPool || examQuestions));
 } catch(e) {}
 
 // Start with first question
@@ -3698,7 +3698,7 @@ updateExamStats();
 
 // 保存题目数据供错题本访问
 try {
-  localStorage.setItem('exam_questions_data', JSON.stringify(examQuestions));
+  localStorage.setItem('exam_questions_data', JSON.stringify(window.examPool || examQuestions));
 } catch(e) {}
 
 // 尝试加载已保存的答题进度
@@ -3716,9 +3716,10 @@ startTimer();
 var answeredQuestions = {};
 
 function renderSingleQuestion(idx) {
-if(idx < 0 || idx >= examQuestions.length) return;
+var pool = window.examPool || examQuestions;
+if(idx < 0 || idx >= pool.length) return;
 currentQIndex = idx;
-var q = examQuestions[idx];
+var q = pool[idx];
 
 // 防御性检查：如果题目数据有问题
 if(!q || typeof q.question === 'undefined') {
@@ -3813,11 +3814,11 @@ function updateExamStats() {
   var answered = Object.keys(answeredQuestions).length;
   var correct = 0, wrong = 0;
   for(var q in answeredQuestions) {
-    if(answeredQuestions[q] === examQuestions[q].answer) correct++;
+    if(answeredQuestions[q] === (window.examPool||examQuestions)[q].answer) correct++;
     else wrong++;
   }
   var accuracy = answered > 0 ? Math.round(correct / answered * 100) : 0;
-  var remaining = examQuestions.length - answered;
+  var remaining = (window.examPool||examQuestions).length - answered;
   
   var statsBar = document.getElementById('examStatsBar');
   if(statsBar) {
@@ -4040,7 +4041,7 @@ examQuestions.forEach((q, index) => {
   }
 });
 
-const total = examQuestions.length;
+const total = (window.examPool||examQuestions).length;
 const score = Math.round((correct / total) * 100);
 const passScore = 60;
 const passed = score >= passScore;
