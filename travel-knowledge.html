@@ -1144,14 +1144,22 @@ a { color: #E65100; }
 })();
 </script>
 
-      <nav class="navbar"><a href="index.html" class="logo">📚 游导学习笔记</a><div class="nav-links"><a href="index.html">首页</a><a href="ai-assistant.html">AI助手</a><a href="exam-simulator.html">刷题</a><a href="travel-knowledge.html">知识库</a><a href="interview.html">面试</a><a href="wrong-questions.html">错题本</a></div>
-
-<!-- 数据备份（不显眼） -->
-<div style="display:flex;gap:12px;justify-content:center;margin:8px 0 0;flex-wrap:wrap">
-  <button onclick="(function(){const keys=['readChapters','quizResults','wrongQuestions','youdao_study_progress','youdao_study_dates','youdao_achievements','youdao_province'];const data={};keys.forEach(k=>{try{const v=localStorage.getItem(k);if(v)data[k]=JSON.parse(v)}catch(e){}});data.exportTime=new Date().toISOString();data.version='1.0';const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='游导学习笔记_备份_'+new Date().toISOString().slice(0,10)+'.json';a.click();})()" style="padding:0;border:none;background:none;color:#AAA;font-size:0.7rem;cursor:pointer;text-decoration:underline">备份进度</button>
-  <label style="color:#AAA;font-size:0.7rem;cursor:pointer;text-decoration:underline">恢复进度<input type="file" accept=".json" onchange="(function(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=function(ev){try{const d=JSON.parse(ev.target.result);Object.keys(d).forEach(k=>{if(k==='exportTime'||k==='version')return;try{localStorage.setItem(k,typeof d[k]==='object'?JSON.stringify(d[k]):d[k])}catch(e2){}});location.reload()}catch(err){alert('导入失败：'+err.message)}};r.readAsText(f)})(event)" style="display:none"></label>
-</div>
-<button class="nav-toggle" onclick="document.querySelector('.nav-links').classList.toggle('show')">☰</button></nav>
+      <nav class="navbar">
+  <a href="index.html" class="logo">
+    <div class="logo-icon">📚</div>
+    游导学习笔记
+  </a>
+  <div class="nav-links" id="navLinks">
+    <a href="index.html">首页</a>
+    <a href="travel-knowledge.html" class="active">知识库</a>
+    <a href="exam-simulator.html">刷题</a>
+    <a href="interview.html">面试</a>
+    <a href="wrong-questions.html">错题本</a>
+    <a href="free-materials.html">免费资料</a>
+    <a href="ai-assistant.html">AI助手</a>
+  </div>
+  <button class="nav-toggle" onclick="document.getElementById('navLinks').classList.toggle('show')">☰</button>
+</nav>
   
 <!-- 面包屑导航 -->
 <div style="max-width:768px;margin:0 auto;padding:16px 20px 0;">
@@ -1176,6 +1184,7 @@ a { color: #E65100; }
     <svg style="position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#AAA;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
   </div>
   <div id="searchResults" style="margin-top:8px;"></div>
+  <a href="favorites.html" style="display:inline-block;margin-top:10px;padding:8px 16px;background:#FFF;border:1px solid #E65100;color:#E65100;border-radius:20px;font-size:0.85rem;text-decoration:none;font-weight:600;">❤️ 我的收藏</a>
 </div>
 
 <!-- 4科卡片 2x2 -->
