@@ -2868,16 +2868,12 @@ margin-top: 6px;
   </button>
 </div>
 
-<div class="tip-box">
-<strong>💡 选择科目：</strong>点击下方按钮筛选你想练的科目，或使用上方"随机刷题"功能
-</div>
-
 <div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0;">
-  <button onclick="filterSubject('policy')" id="filter-policy" style="padding:8px 16px;border-radius:10px;border:2px solid #FFF3E0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">⚖️ 政策法规(20)</button>
-  <button onclick="filterSubject('service')" id="filter-service" style="padding:8px 16px;border-radius:10px;border:2px solid #FFF3E0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">💼 导游业务(20)</button>
-  <button onclick="filterSubject('guidebook')" id="filter-guidebook" style="padding:8px 16px;border-radius:10px;border:2px solid #FFF3E0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">📚 全国导基(19)</button>
-  <button onclick="filterSubject('local')" id="filter-local" style="padding:8px 16px;border-radius:10px;border:2px solid #FFF3E0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">🗺️ 地方导基(20)</button>
-          <button onclick="filterQuestions('interview')" class="filter-btn" data-track="btn"  data-type="interview">🎤 面试(11)</button>
+  <button onclick="filterSubject('policy')" id="filter-policy" style="padding:8px 16px;border-radius:10px;border:2px solid #FFF3E0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">⚖️ 政策法规(<span class="count-policy">0</span>)</button>
+  <button onclick="filterSubject('service')" id="filter-service" style="padding:8px 16px;border-radius:10px;border:2px solid #FFF3E0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">💼 导游业务(<span class="count-service">0</span>)</button>
+  <button onclick="filterSubject('guidebook')" id="filter-guidebook" style="padding:8px 16px;border-radius:10px;border:2px solid #FFF3E0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">📚 全国导基(<span class="count-guidebook">0</span>)</button>
+  <button onclick="filterSubject('local')" id="filter-local" style="padding:8px 16px;border-radius:10px;border:2px solid #FFF3E0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">🗺️ 地方导基(<span class="count-local">0</span>)</button>
+  <button onclick="filterSubject('interview')" id="filter-interview" style="padding:8px 16px;border-radius:10px;border:2px solid #FFF3E0;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">🎤 面试(<span class="count-interview">0</span>)</button>
 </div>
 
 <!-- 排序和分页控制 -->
@@ -3597,7 +3593,23 @@ var examQuestionsExtra = [
 
 // ========== 合并题库 ==========
 examQuestions = examQuestions.concat(examQuestionsExtra);
-;
+
+
+// ========== 动态更新科目题量 ==========
+(function() {
+  var counts = {};
+  examQuestions.forEach(function(q) {
+    counts[q.type] = (counts[q.type] || 0) + 1;
+  });
+  var map = {policy:'policy', service:'service', guidebook:'guidebook', local:'local', interview:'interview'};
+  Object.keys(map).forEach(function(type) {
+    var el = document.querySelector('.count-' + type);
+    if (el) el.textContent = counts[type] || 0;
+  });
+  // 更新全部练习按钮
+  var allBtn = document.getElementById('filter-all');
+  if (allBtn) allBtn.innerHTML = '📋 全部练习(' + examQuestions.length + ')';
+})();;
 
 // ========== 科目筛选功能 ==========
 var currentFilter = 'all';
