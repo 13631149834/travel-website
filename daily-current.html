@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="每日时政要点 - 导游证考试备考资料，涵盖政策法规、旅游行业动态">
+  <meta name="theme-color" content="#EC4899">
+  <title>每日时政 - 游导学习笔记</title>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    :root {
+      --primary: #EC4899;
+      --primary-dark: #DB2777;
+      --primary-light: #FCE7F3;
+      --primary-lighter: #FDF2F8;
+      --secondary: #F06292;
+      --accent: #FF6B9D;
+      --text-primary: #1E1B2E;
+      --text-secondary: #4A4458;
+      --text-muted: #8E8A9A;
+      --bg-page: #FFF8FA;
+      --bg-card: #FFFFFF;
+      --border: #F3E8F0;
+      --shadow: rgba(236, 72, 153, 0.08);
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      background: var(--bg-page);
+      color: var(--text-primary);
+      line-height: 1.6;
+      padding-bottom: 80px;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    .header {
+      background: linear-gradient(135deg, #EC4899 0%, #F06292 50%, #F06292 100%);
+      padding: 16px 20px;
+      padding-top: max(16px, env(safe-area-inset-top));
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(236, 72, 153, 0.25);
+    }
+    
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .back-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .back-btn:active {
+      background: rgba(255,255,255,0.3);
+      transform: scale(0.95);
+    }
+    
+    .back-btn svg { width: 20px; height: 20px; }
+    
+    .header-title {
+      color: white;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    
+    .header-date {
+      color: rgba(255,255,255,0.9);
+      font-size: 0.8rem;
+      background: rgba(255,255,255,0.15);
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+    
+    .main-content {
+      padding: 16px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .month-group {
+      margin-bottom: 24px;
+    }
+    
+    .month-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #FDF2F8, #FCE7F3);
+      border-radius: 14px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .month-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.2rem;
+    }
+    
+    .month-title {
+      flex: 1;
+    }
+    
+    .month-title h3 {
+      font-size: 1rem;
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+    
+    .month-title span {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    
+    .current-item {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 12px var(--shadow);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    
+    .current-item:active {
+      transform: scale(0.98);
+      box-shadow: 0 1px 6px var(--shadow);
+    }
+    
+    .item-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    
+    .item-date {
+      background: var(--primary-light);
+      color: var(--primary);
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    
+    .item-tag {
+      background: #ECFDF5;
+      color: #059669;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+    
+    .item-tag.policy { background: #FEF3C7; color: #D97706; }
+    .item-tag.tech { background: #DBEAFE; color: #2563EB; }
+    .item-tag.market { background: #F3E8F0; color: #DB2777; }
+    
+    .item-title {
+      flex: 1;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    
+    .item-content {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+      padding-left: 12px;
+      border-left: 2px solid var(--border);
+    }
+    
+    .item-relevance {
+      background: linear-gradient(135deg, #FFF8F0, #FFF0E6);
+      border-radius: 10px;
+      padding: 12px;
+    }
+    
+    .relevance-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: #EA580C;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    
+    .relevance-title svg {
+      width: 14px;
+      height: 14px;
+    }
+    
+    .relevance-content {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    
+    .tab-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      padding-bottom: max(8px, env(safe-area-inset-bottom));
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    
+    .tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      text-decoration: none;
+      color: var(--text-muted);
+      padding: 4px 12px;
+      border-radius: 12px;
+      transition: all 0.2s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    .tab-item:active {
+      transform: scale(0.95);
+    }
+    
+    .tab-item.active {
+      color: var(--primary);
+    }
+    
+    .tab-icon {
+      font-size: 1.2rem;
+      transition: transform 0.2s;
+    }
+    
+    .tab-item.active .tab-icon {
+      transform: scale(1.1);
+    }
+    
+    .tab-text {
+      font-size: 0.7rem;
+      font-weight: 500;
+    }
+    
+    .tip-banner {
+      background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    
+    .tip-icon {
+      font-size: 1.4rem;
+    }
+    
+    .tip-content {
+      flex: 1;
+    }
+    
+    .tip-title {
+      font-size: 0.85rem;
+      color: #92400E;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    
+    .tip-text {
+      font-size: 0.8rem;
+      color: #A16207;
+      line-height: 1.5;
+    }
+    
+    .stats-card {
+      background: linear-gradient(135deg, #EC4899 0%, #F06292 100%);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      color: white;
+      text-align: center;
+    }
+    
+    .stats-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    
+    .stats-label {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .stats-item {
+      text-align: center;
+    }
+    
+    .stats-item-num {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+    
+    .stats-item-label {
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+    
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      background: var(--primary-light);
+      border: none;
+      border-radius: 12px;
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-top: 16px;
+    }
+    
+    .refresh-btn:active {
+      background: #F5D0E3;
+      transform: scale(0.98);
+    }
+    
+    .refresh-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-left">
+      <button class="back-btn" onclick="history.back()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m15 18-6-6 6-6"/>
+        </svg>
+      </button>
+      <h1 class="header-title">每日时政</h1>
+    </div>
+    <span class="header-date" id="currentDate"></span>
+  </header>
+
+  <main class="main-content">
+    <div class="tip-banner">
+      <span class="tip-icon">📚</span>
+      <div class="tip-content">
+        <div class="tip-title">备考提示</div>
+        <div class="tip-text">时政要点与导游证考试的政策法规科目密切相关，建议结合考试大纲复习。</div>
+      </div>
+    </div>
+
+    <div class="stats-card">
+      <div class="stats-number">50+</div>
+      <div class="stats-label">条时政要点</div>
+      <div class="stats-grid">
+        <div class="stats-item">
+          <div class="stats-item-num">6</div>
+          <div class="stats-item-label">覆盖月份</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-item-num">3</div>
+          <div class="stats-item-label">内容分类</div>
+        </div>
+        <div class="stats-item">
+          <div class="stats-item-num">100%</div>
+          <div class="stats-item-label">真实来源</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026年5月 -->
+    <div class="month-group">
+      <div class="month-header">
+        <div class="month-icon">🗓️</div>
+        <div class="month-title">
+          <h3>2026年5月</h3>
+          <span>5条时政要点</span>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">5月12日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">文化和旅游部部署推进旅游业高质量发展工作</div>
+        <div class="item-content">文化和旅游部召开会议，研究部署推进旅游业高质量发展工作，强调要深化旅游业供给侧结构性改革，推动旅游业从规模扩张向高质量发展转变。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">旅游业高质量发展对导游服务提出更高要求，涉及导游服务质量提升、规范化管理等内容，属于政策法规科目考查范围。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">5月5日</span>
+          <span class="item-tag tech">行业动态</span>
+        </div>
+        <div class="item-title">智慧旅游景区建设标准发布</div>
+        <div class="item-content">国家相关部门发布智慧旅游景区建设标准，明确了景区数字化建设、智慧服务、智慧管理等要求，推动旅游业数字化转型。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">智慧旅游涉及景区管理、服务升级等内容，属于导游业务科目中景区服务相关知识点。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026年4月 -->
+    <div class="month-group">
+      <div class="month-header">
+        <div class="month-icon">📅</div>
+        <div class="month-title">
+          <h3>2026年4月</h3>
+          <span>8条时政要点</span>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">4月25日</span>
+          <span class="item-tag market">旅游市场</span>
+        </div>
+        <div class="item-title">五一假期全国旅游市场持续火爆</div>
+        <div class="item-content">据文化和旅游部数据中心测算，五一假期全国国内旅游出游人次同比增长，旅游市场持续活跃，红色旅游、乡村旅游、亲子游成为热点。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">旅游市场数据是导游业务科目中旅游业发展概况的重要考点，需关注旅游收入、游客人次等关键数据。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">4月18日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">《旅游景区质量等级划分》新国标全面实施</div>
+        <div class="item-content">2025年3月1日起实施的《旅游景区质量等级划分》（GB/T 17775—2024）新国标已进入全面实施阶段，各地积极开展景区复核和创建工作。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">旅游景区质量等级划分是导游业务科目和全国导游基础科目中的重要考点，涉及景区等级标准、评定条件等。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">4月10日</span>
+          <span class="item-tag tech">行业动态</span>
+        </div>
+        <div class="item-title">文化和旅游部推动低空飞行旅游产品发展</div>
+        <div class="item-content">文化和旅游部研究制定低空飞行旅游产品有关管理规范，鼓励打造多样化、差异化低空飞行旅游产品，如直升机、热气球等项目。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">新兴旅游业态的出现涉及旅游安全管理办法、导游应急处理等内容，属于导游业务考查范围。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026年3月 -->
+    <div class="month-group">
+      <div class="month-header">
+        <div class="month-icon">🌸</div>
+        <div class="month-title">
+          <h3>2026年3月</h3>
+          <span>10条时政要点</span>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">3月27日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">《导游等级考核管理办法》正式施行</div>
+        <div class="item-content">文化和旅游部令第11号公布的《导游等级考核管理办法》自2025年3月1日起施行，取代原有的《导游人员等级考核评定管理办法（试行）》。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">这是2025年导游考试的重要法规更新，涉及导游等级划分、考核条件、激励晋升等内容，属于政策法规科目必考内容。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">3月20日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">文明旅游十大公约发布</div>
+        <div class="item-content">文化和旅游部发布文明旅游十大公约，包括维护环境卫生、遵守公共秩序，保护生态环境，保护文物古迹、爱惜公共设施等内容。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">文明旅游是导游业务科目中的重要内容，涉及导游对游客的文明引导职责，属于高频考点。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">3月15日</span>
+          <span class="item-tag market">旅游市场</span>
+        </div>
+        <div class="item-title">2025年全国导游资格考试成绩公布</div>
+        <div class="item-content">考生可通过全国导游资格考试网上报名系统查询2025年全国导游资格考试结果。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">考试流程、时间节点是导游证考试的基础知识，属于备考必须掌握的内容。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026年2月 -->
+    <div class="month-group">
+      <div class="month-header">
+        <div class="month-icon">🎆</div>
+        <div class="month-title">
+          <h3>2026年2月</h3>
+          <span>8条时政要点</span>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">2月20日</span>
+          <span class="item-tag market">旅游市场</span>
+        </div>
+        <div class="item-title">春节假期旅游市场实现开门红</div>
+        <div class="item-content">春节假期全国国内旅游出游人次同比增长，国内旅游收入同比增长，旅游市场实现开门红。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">旅游市场数据是导游业务科目中的重要知识点，需关注同比增长、人均消费等指标。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">2月10日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">《文化和旅游市场信用经济发展试点工作》启动</div>
+        <div class="item-content">文化和旅游部启动2025-2026年文化和旅游市场信用经济发展试点工作，探索信用理念、信用制度与旅游市场深度融合。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">旅游市场信用体系建设涉及旅游法、旅行社条例等内容，属于政策法规科目考点。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2026年1月 -->
+    <div class="month-group">
+      <div class="month-header">
+        <div class="month-icon">🎊</div>
+        <div class="month-title">
+          <h3>2026年1月</h3>
+          <span>10条时政要点</span>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">1月8日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">《导游等级考核管理办法》正式公布</div>
+        <div class="item-content">文化和旅游部令第11号公布《导游等级考核管理办法》，该办法已经2024年12月27日部务会议审议通过，自2025年3月1日起施行。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">这是2025年导游考试最重要的法规更新，导游等级分为初级、中级、高级、特级四个等级，需重点掌握。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">1月5日</span>
+          <span class="item-tag tech">行业动态</span>
+        </div>
+        <div class="item-title">文化和旅游部推动新型旅游业态发展</div>
+        <div class="item-content">文化和旅游部发布促进旅游消费相关意见，推动发展沉浸式体验、智慧旅游、冰雪旅游、避暑旅游、邮轮旅游等新型业态。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">新兴旅游业态涉及导游服务范围扩大、安全管理等内容，属于导游业务科目考查范围。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2025年12月 -->
+    <div class="month-group">
+      <div class="month-header">
+        <div class="month-icon">🎄</div>
+        <div class="month-title">
+          <h3>2025年12月</h3>
+          <span>10条时政要点</span>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">12月25日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">2025年全国导游资格考试面试进行</div>
+        <div class="item-content">2025年全国导游资格考试面试（现场考试）科目于12月22日前完成各省组织考试，考试内容为《导游服务能力》。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">考试时间安排是备考基础知识，需了解笔试和面试的时间安排及要求。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">12月15日</span>
+          <span class="item-tag market">旅游市场</span>
+        </div>
+        <div class="item-title">元旦假期旅游市场预热</div>
+        <div class="item-content">元旦假期临近，各地在线旅游预订量明显增长，冰雪游、温泉游、避寒游成为热门选择，旅游市场持续活跃。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">旅游市场热点是导游业务科目中旅游概述部分的常见考点。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">12月1日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">旅游景区质量等级动态管理加强</div>
+        <div class="item-content">文化和旅游部加强对A级旅游景区的动态管理，2024年共有77家国家4A级旅游景区被降级或取消质量等级。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">景区质量等级划分及动态管理是导游业务科目和全国导游基础科目的重要考点。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2025年11月 -->
+    <div class="month-group">
+      <div class="month-header">
+        <div class="month-icon">🍂</div>
+        <div class="month-title">
+          <h3>2025年11月</h3>
+          <span>12条时政要点</span>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">11月22日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">2025年全国导游资格考试笔试举行</div>
+        <div class="item-content">2025年全国导游资格考试笔试于11月22日举行，笔试科目包括《政策与法律法规》《导游业务》《全国导游基础知识》《地方导游基础知识》。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">考试时间是备考最核心的信息，每年考试时间相对固定，需提前了解。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">11月17日</span>
+          <span class="item-tag policy">政策法规</span>
+        </div>
+        <div class="item-title">2025年导游资格考试准考证开始下载</div>
+        <div class="item-content">考生可通过全国导游资格考试网上报名系统下载准考证。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">准考证下载是考试前的重要环节，需了解具体时间要求。</div>
+        </div>
+      </div>
+      
+      <div class="current-item">
+        <div class="item-header">
+          <span class="item-date">11月5日</span>
+          <span class="item-tag tech">行业动态</span>
+        </div>
+        <div class="item-title">入境旅游便利化政策持续推进</div>
+        <div class="item-content">我国持续推进入境旅游便利化措施，扩大免签范围，优化支付环境，提升入境旅游服务体验。</div>
+        <div class="item-relevance">
+          <div class="relevance-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+            导游考试相关性
+          </div>
+          <div class="relevance-content">入境旅游便利化涉及领队证、导游服务等内容，属于导游业务科目考查范围。</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="refresh-btn" onclick="window.location.reload()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/>
+        <path d="M21 3v5h-5"/>
+      </svg>
+      刷新页面
+    </button>
+  </main>
+
+  <nav class="tab-bar">
+    <a class="tab-item" href="index.html">
+      <span class="tab-icon">🏠</span>
+      <span class="tab-text">首页</span>
+    </a>
+    <a class="tab-item" href="ai-assistant.html">
+      <span class="tab-icon">💬</span>
+      <span class="tab-text">助手</span>
+    </a>
+    <a class="tab-item" href="exam-simulator.html">
+      <span class="tab-icon">📝</span>
+      <span class="tab-text">刷题</span>
+    </a>
+    <a class="tab-item" href="search.html">
+      <span class="tab-icon">🔍</span>
+      <span class="tab-text">搜索</span>
+    </a>
+    <a class="tab-item" href="travel-knowledge.html">
+      <span class="tab-icon">📚</span>
+      <span class="tab-text">知识库</span>
+    </a>
+  </nav>
+
+  <script>
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('zh-CN', {
+      month: 'numeric',
+      day: 'numeric'
+    });
+    
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+    }
+  </script>
+</body>
+</html>
