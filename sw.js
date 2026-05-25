@@ -1,5 +1,5 @@
 // 游导学习笔记 Service Worker v4.0
-const CACHE_NAME = 'youdao-v61';
+const CACHE_NAME = 'youdao-v62';
 const OFFLINE_CACHE = 'youdao-offline-v1';
 const OFFLINE_HTML = `
 <!DOCTYPE html>

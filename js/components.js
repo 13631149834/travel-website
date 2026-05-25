@@ -203,7 +203,7 @@ const Notification = {
     toast.style.cssText = 'background:#FFFFFF;border-radius:12px;padding:14px 20px;box-shadow:0 4px 24px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;min-width:280px;animation:toastIn 0.3s ease;pointer-events:auto;';
 
     const icons = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
-    const colors = { success: '#0D9488', error: '#0F766E', warning: '#D97706', info: '#2563EB' };
+    const colors = { success: '#0D9488', error: '#0F766E', warning: '#0D9488', info: '#2563EB' };
 
     toast.innerHTML = `
       <span style="font-size:1.2rem;flex-shrink:0;color:${colors[type]}">${icons[type]}</span>
@@ -227,8 +227,8 @@ const Notification = {
     const colors = {
       info: { bg: '#EFF6FF', border: '#2563EB' },
       success: { bg: '#F0FDFA', border: '#0D9488' },
-      error: { bg: '#FFF5F5', border: '#0F766E' },
-      warning: { bg: '#FFFBEB', border: '#D97706' }
+      error: { bg: '#F0FDFA', border: '#0F766E' },
+      warning: { bg: '#F0FDFA', border: '#0D9488' }
     };
     const color = colors[type] || colors.info;
     return `<div style="padding:14px 18px;border-radius:10px;margin:12px 0;font-size:0.88rem;background:${color.bg};border-left:4px solid ${color.border};display:flex;align-items:flex-start;gap:10px;">

@@ -11,8 +11,8 @@
     primary: {
       main: '#0D9488',      // 主青
       dark: '#115E59',      // 深青
-      darker: '#8B3000',    // 更深
-      light: '#FF8A65',     // 浅青
+      darker: '#115E59',    // 更深
+      light: '#5EEAD4',     // 浅青
       lighter: '#CCFBF1'    // 更浅
     },
     
@@ -151,8 +151,8 @@
           /* 主色系 */
           --color-primary-main: #0D9488;
           --color-primary-dark: #115E59;
-          --color-primary-darker: #8B3000;
-          --color-primary-light: #FF8A65;
+          --color-primary-darker: #115E59;
+          --color-primary-light: #5EEAD4;
           --color-primary-lighter: #CCFBF1;
           
           /* 背景色系 */
@@ -255,7 +255,7 @@
                 <span>深青 #115E59</span>
               </div>
               <div class="color-swatch" style="background: ${colors.primary.light}">
-                <span>浅青 #FF8A65</span>
+                <span>浅青 #5EEAD4</span>
               </div>
             </div>
           </div>

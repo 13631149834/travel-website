@@ -135,7 +135,7 @@
       style.textContent = `
         .ritual-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; }
         .ritual-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); }
-        .ritual-content { position: relative; background: linear-gradient(135deg, #F0FDFA, #CCFBF1); border-radius: 24px; padding: 40px 32px; max-width: 340px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(230,81,0,0.3); animation: ritualPop 0.5s ease; }
+        .ritual-content { position: relative; background: linear-gradient(135deg, #F0FDFA, #CCFBF1); border-radius: 24px; padding: 40px 32px; max-width: 340px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(13,148,136,0.3); animation: ritualPop 0.5s ease; }
         @keyframes ritualPop { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
         .ritual-icon { font-size: 4rem; margin-bottom: 16px; }
         .ritual-title { font-size: 1.5rem; color: #1A1A1A; font-weight: 800; margin-bottom: 12px; }

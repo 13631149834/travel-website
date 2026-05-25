@@ -549,7 +549,7 @@
     }
     .study-toast-success { background: #0D9488; color: #fff; }
     .study-toast-info { background: #666; color: #fff; }
-    .study-toast-error { background: #EF4444; color: #fff; }
+    .study-toast-error { background: #0F766E; color: #fff; }
     
     /* 收藏列表样式 */
     .favorites-empty {
@@ -570,7 +570,7 @@
     }
     .favorite-item:hover {
       border-color: #0D9488;
-      box-shadow: 0 2px 8px rgba(230,81,0,0.1);
+      box-shadow: 0 2px 8px rgba(13,148,136,0.1);
     }
     .favorite-title {
       color: #1A1A1A;
@@ -586,8 +586,8 @@
       cursor: pointer;
     }
     .favorite-remove:hover {
-      border-color: #EF4444;
-      color: #EF4444;
+      border-color: #0F766E;
+      color: #0F766E;
     }
     .cta-link {
       display: inline-block;

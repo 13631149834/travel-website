@@ -334,7 +334,7 @@
     toast.setAttribute('aria-live', 'polite');
     toast.innerHTML = '<span class="toast-icon">' + getToastIcon(type) + '</span><span class="toast-message">' + message + '</span>';
     
-    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-20px);background:linear-gradient(135deg,#0D9488,#14B8A6);color:#fff;padding:14px 24px;border-radius:12px;font-size:15px;z-index:99999;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(230,81,0,0.4);opacity:0;transition:all 0.3s ease;max-width:90%;text-align:center;';
+    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-20px);background:linear-gradient(135deg,#0D9488,#14B8A6);color:#fff;padding:14px 24px;border-radius:12px;font-size:15px;z-index:99999;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(13,148,136,0.4);opacity:0;transition:all 0.3s ease;max-width:90%;text-align:center;';
     
     document.body.appendChild(toast);
     
@@ -362,7 +362,7 @@
     container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99998;overflow:hidden;';
     document.body.appendChild(container);
     
-    const colors = ['#0D9488', '#14B8A6', '#FFB74D', '#F0FDFA', '#CCFBF1', '#CCFBF1'];
+    const colors = ['#0D9488', '#14B8A6', '#14B8A6', '#F0FDFA', '#CCFBF1', '#CCFBF1'];
     const confettiCount = 50;
     
     for (let i = 0; i < confettiCount; i++) {

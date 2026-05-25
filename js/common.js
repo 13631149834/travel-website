@@ -940,7 +940,7 @@
     container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:${CONFIG.Z_INDEX_TOAST};overflow:hidden;';
     document.body.appendChild(container);
     
-    const colors = ['#0D9488', '#14B8A6', '#FFB74D', '#CCFBF1', '#F0FDFA'];
+    const colors = ['#0D9488', '#14B8A6', '#14B8A6', '#CCFBF1', '#F0FDFA'];
     
     for (let i = 0; i < 50; i++) {
       const confetti = document.createElement('div');
@@ -1060,7 +1060,7 @@
         padding: 32px;
         text-align: center;
         max-width: 320px;
-        box-shadow: 0 20px 60px rgba(230,81,0,0.3);
+        box-shadow: 0 20px 60px rgba(13,148,136,0.3);
         animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
       }
       .achievement-popup .ach-icon {
@@ -1399,7 +1399,7 @@
           padding: 12px 16px;
           border-radius: 16px;
           z-index: 99999;
-          box-shadow: 0 4px 20px rgba(230,81,0,0.4);
+          box-shadow: 0 4px 20px rgba(13,148,136,0.4);
           animation: slideDown 0.3s ease;
           max-width: 90%;
         }

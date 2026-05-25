@@ -139,7 +139,7 @@
     anxietyRelief: {
       // 焦虑缓解
       tag: '释压',
-      colors: ['#FF8A65', '#FFAB91'],
+      colors: ['#5EEAD4', '#FFAB91'],
       templates: [
         '80%的人都在这里卡住',
         '大部分人都要考两次',
@@ -150,7 +150,7 @@
     achievement: {
       // 成就触发
       tag: '成就',
-      colors: ['#FFB74D', '#FFD54F'],
+      colors: ['#14B8A6', '#5EEAD4'],
       templates: [
         '完成章节有进度对比',
         '连续打卡7天了',
@@ -161,7 +161,7 @@
     scarcity: {
       // 稀缺触发
       tag: '稀缺',
-      colors: ['#FF7043', '#FF8A65'],
+      colors: ['#FF7043', '#5EEAD4'],
       templates: [
         '限时资料包',
         '名额有限',

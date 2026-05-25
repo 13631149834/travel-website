@@ -303,7 +303,7 @@
     }
     .fc-action-btn.shuffle:hover {
       transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(230,81,0,0.3);
+      box-shadow: 0 4px 12px rgba(13,148,136,0.3);
     }
     
     /* 卡片状态标记 */
