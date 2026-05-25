@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>配色方案对比 - 游导学习笔记</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #1a1a2e; color: #fff; padding: 20px; }
+  h1 { text-align: center; font-size: 1.6rem; margin-bottom: 8px; color: #fff; }
+  .subtitle { text-align: center; font-size: 0.9rem; color: #888; margin-bottom: 30px; }
+  
+  .schemes { display: grid; grid-template-columns: 1fr; gap: 24px; max-width: 480px; margin: 0 auto; }
+  @media (min-width: 768px) {
+    .schemes { grid-template-columns: 1fr 1fr; max-width: 960px; }
+  }
+  
+  .scheme-card { border-radius: 20px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+  .scheme-header { padding: 20px; text-align: center; }
+  .scheme-name { font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; }
+  .scheme-desc { font-size: 0.8rem; opacity: 0.8; }
+  
+  /* 方案1: 当前粉色 */
+  .scheme-1 .scheme-header { background: linear-gradient(135deg, #EC4899, #F472B6); }
+  .scheme-1 .mock-body { background: #FDF2F8; }
+  .scheme-1 .mock-nav { background: #fff; border-bottom: 2px solid #FCE4EC; }
+  .scheme-1 .mock-logo { color: #EC4899; }
+  .scheme-1 .mock-btn-primary { background: #EC4899; color: #fff; }
+  .scheme-1 .mock-btn-outline { border: 2px solid #EC4899; color: #EC4899; background: #fff; }
+  .scheme-1 .mock-card { background: #fff; border: 1px solid #FCE4EC; }
+  .scheme-1 .mock-card-title { color: #EC4899; }
+  .scheme-1 .mock-highlight { background: #FDF2F8; }
+  .scheme-1 .mock-tab-active { color: #EC4899; border-bottom: 2px solid #EC4899; }
+  .scheme-1 .mock-badge { background: #EC4899; color: #fff; }
+  .scheme-1 .mock-price { color: #EC4899; }
+  .scheme-1 .mock-slogan { color: #E65100; }
+  
+  /* 方案2: 薄荷青 - 清新冷静，适合学习场景 */
+  .scheme-2 .scheme-header { background: linear-gradient(135deg, #0D9488, #14B8A6); }
+  .scheme-2 .mock-body { background: #F0FDFA; }
+  .scheme-2 .mock-nav { background: #fff; border-bottom: 2px solid #CCFBF1; }
+  .scheme-2 .mock-logo { color: #0D9488; }
+  .scheme-2 .mock-btn-primary { background: #0D9488; color: #fff; }
+  .scheme-2 .mock-btn-outline { border: 2px solid #0D9488; color: #0D9488; background: #fff; }
+  .scheme-2 .mock-card { background: #fff; border: 1px solid #CCFBF1; }
+  .scheme-2 .mock-card-title { color: #0D9488; }
+  .scheme-2 .mock-highlight { background: #F0FDFA; }
+  .scheme-2 .mock-tab-active { color: #0D9488; border-bottom: 2px solid #0D9488; }
+  .scheme-2 .mock-badge { background: #0D9488; color: #fff; }
+  .scheme-2 .mock-price { color: #0D9488; }
+  .scheme-2 .mock-slogan { color: #E65100; }
+  
+  /* 方案3: 暖阳琥珀 - 温暖舒适，知识付费感 */
+  .scheme-3 .scheme-header { background: linear-gradient(135deg, #D97706, #F59E0B); }
+  .scheme-3 .mock-body { background: #FFFBEB; }
+  .scheme-3 .mock-nav { background: #fff; border-bottom: 2px solid #FEF3C7; }
+  .scheme-3 .mock-logo { color: #D97706; }
+  .scheme-3 .mock-btn-primary { background: #D97706; color: #fff; }
+  .scheme-3 .mock-btn-outline { border: 2px solid #D97706; color: #D97706; background: #fff; }
+  .scheme-3 .mock-card { background: #fff; border: 1px solid #FEF3C7; }
+  .scheme-3 .mock-card-title { color: #D97706; }
+  .scheme-3 .mock-highlight { background: #FFFBEB; }
+  .scheme-3 .mock-tab-active { color: #D97706; border-bottom: 2px solid #D97706; }
+  .scheme-3 .mock-badge { background: #D97706; color: #fff; }
+  .scheme-3 .mock-price { color: #D97706; }
+  .scheme-3 .mock-slogan { color: #E65100; }
+  
+  /* 方案4: 靛蓝学院 - 专业权威，教育感强 */
+  .scheme-4 .scheme-header { background: linear-gradient(135deg, #4F46E5, #6366F1); }
+  .scheme-4 .mock-body { background: #EEF2FF; }
+  .scheme-4 .mock-nav { background: #fff; border-bottom: 2px solid #E0E7FF; }
+  .scheme-4 .mock-logo { color: #4F46E5; }
+  .scheme-4 .mock-btn-primary { background: #4F46E5; color: #fff; }
+  .scheme-4 .mock-btn-outline { border: 2px solid #4F46E5; color: #4F46E5; background: #fff; }
+  .scheme-4 .mock-card { background: #fff; border: 1px solid #E0E7FF; }
+  .scheme-4 .mock-card-title { color: #4F46E5; }
+  .scheme-4 .mock-highlight { background: #EEF2FF; }
+  .scheme-4 .mock-tab-active { color: #4F46E5; border-bottom: 2px solid #4F46E5; }
+  .scheme-4 .mock-badge { background: #4F46E5; color: #fff; }
+  .scheme-4 .mock-price { color: #4F46E5; }
+  .scheme-4 .mock-slogan { color: #E65100; }
+  
+  /* 模拟手机界面 */
+  .mock-phone { padding: 12px; }
+  .mock-nav { padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0; }
+  .mock-logo { font-weight: 800; font-size: 0.9rem; }
+  .mock-nav-links { display: flex; gap: 6px; }
+  .mock-nav-links span { font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; color: #666; }
+  .mock-nav-links span.active { color: #fff; }
+  
+  .mock-hero { padding: 24px 16px; text-align: center; }
+  .mock-avatar { width: 48px; height: 48px; border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; background: #fff; }
+  .mock-greeting { font-size: 1rem; font-weight: 800; color: #1A1A1A; margin-bottom: 4px; }
+  .mock-slogan { font-size: 0.8rem; font-weight: 700; margin-bottom: 12px; }
+  .mock-desc { font-size: 0.75rem; color: #666; margin-bottom: 16px; line-height: 1.5; }
+  .mock-buttons { display: flex; gap: 8px; justify-content: center; margin-bottom: 16px; }
+  .mock-btn-primary { padding: 10px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; border: none; }
+  .mock-btn-outline { padding: 10px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+  
+  .mock-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; padding: 0 12px 12px; }
+  .mock-grid-item { background: #fff; border-radius: 10px; padding: 10px 6px; text-align: center; }
+  .mock-grid-icon { font-size: 1.1rem; margin-bottom: 4px; }
+  .mock-grid-text { font-size: 0.6rem; color: #333; font-weight: 600; }
+  
+  .mock-cards { padding: 0 12px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .mock-card { border-radius: 12px; padding: 12px 14px; }
+  .mock-card-title { font-size: 0.8rem; font-weight: 700; margin-bottom: 4px; }
+  .mock-card-text { font-size: 0.7rem; color: #666; line-height: 1.5; }
+  
+  .mock-price-section { padding: 12px; text-align: center; }
+  .mock-price { font-size: 1.6rem; font-weight: 800; margin-bottom: 4px; }
+  .mock-badge { display: inline-block; padding: 3px 10px; border-radius: 10px; font-size: 0.65rem; font-weight: 700; }
+  
+  .mock-bottom-nav { display: flex; justify-content: space-around; padding: 8px 0; background: #fff; border-top: 1px solid #eee; border-radius: 0 0 12px 12px; }
+  .mock-tab { text-align: center; font-size: 0.6rem; color: #999; }
+  .mock-tab-active { font-weight: 700; }
+  .mock-tab-icon { font-size: 0.9rem; display: block; margin-bottom: 2px; }
+  
+  .color-strip { display: flex; height: 32px; }
+  .color-strip div { flex: 1; display: flex; align-items: center; justify-content: center; font-size: 0.55rem; font-weight: 700; }
+  
+  .vote-bar { padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 0 0 12px 12px; text-align: center; }
+  .vote-text { font-size: 0.8rem; color: #aaa; }
+  
+  .current-tag { display: inline-block; background: #fff; color: #EC4899; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-left: 6px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<h1>🎨 配色方案对比</h1>
+<p class="subtitle">4套方案 · 看完选一个方向 · 我来全站替换</p>
+
+<div class="schemes">
+
+<!-- 方案1: 当前粉色 -->
+<div class="scheme-card scheme-1">
+  <div class="scheme-header">
+    <div class="scheme-name">方案A：玫瑰粉 <span class="current-tag">当前</span></div>
+    <div class="scheme-desc">温柔女性化 · 导游证备考感偏弱</div>
+    <div class="color-strip" style="margin-top:8px;border-radius:6px;overflow:hidden;">
+      <div style="background:#EC4899;color:#fff;">主色</div>
+      <div style="background:#F472B6;color:#fff;">辅色</div>
+      <div style="background:#FDF2F8;color:#666;">底色</div>
+      <div style="background:#FCE4EC;color:#666;">边框</div>
+    </div>
+  </div>
+  <div class="mock-phone">
+    <div class="mock-body" style="border-radius:12px;overflow:hidden;">
+      <div class="mock-nav">
+        <span class="mock-logo">📍 游导笔记</span>
+        <div class="mock-nav-links"><span>刷题</span><span class="active" style="background:#EC4899;">首页</span><span>知识</span></div>
+      </div>
+      <div class="mock-hero">
+        <div class="mock-avatar">👩</div>
+        <div class="mock-greeting">考两次上岸的曼曼</div>
+        <div class="mock-slogan">走过弯路，所以更懂路</div>
+        <div class="mock-desc">持证导游·基于官方教材整理<br>1090+真题 · 50章知识库</div>
+        <div class="mock-buttons">
+          <button class="mock-btn-primary">开始刷题</button>
+          <button class="mock-btn-outline">看资料包</button>
+        </div>
+      </div>
+      <div class="mock-grid">
+        <div class="mock-grid-item"><div class="mock-grid-icon">📚</div><div class="mock-grid-text">知识库</div></div>
+        <div class="mock-grid-item"><div class="mock-grid-icon">📝</div><div class="mock-grid-text">刷题</div></div>
+        <div class="mock-grid-item"><div class="mock-grid-icon">🎯</div><div class="mock-grid-text">模拟考</div></div>
+      </div>
+      <div class="mock-cards">
+        <div class="mock-card"><div class="mock-card-title">📖 政策法规</div><div class="mock-card-text">旅行社条例、导游管理条例...</div></div>
+        <div class="mock-card"><div class="mock-card-title">💼 导游业务</div><div class="mock-card-text">导游服务规范、应急处理...</div></div>
+      </div>
+      <div class="mock-price-section">
+        <div class="mock-badge">全套资料</div>
+        <div class="mock-price">¥69.9</div>
+      </div>
+      <div class="mock-bottom-nav">
+        <div class="mock-tab"><span class="mock-tab-icon">🏠</span>首页</div>
+        <div class="mock-tab mock-tab-active"><span class="mock-tab-icon">📝</span>刷题</div>
+        <div class="mock-tab"><span class="mock-tab-icon">🔍</span>搜索</div>
+        <div class="mock-tab"><span class="mock-tab-icon">📚</span>知识</div>
+      </div>
+    </div>
+  </div>
+  <div class="vote-bar"><span class="vote-text">✅ 你正在用这个</span></div>
+</div>
+
+<!-- 方案2: 薄荷青 -->
+<div class="scheme-card scheme-2">
+  <div class="scheme-header">
+    <div class="scheme-name">方案B：薄荷青</div>
+    <div class="scheme-desc">清新冷静 · 适合学习场景 · 护眼舒适</div>
+    <div class="color-strip" style="margin-top:8px;border-radius:6px;overflow:hidden;">
+      <div style="background:#0D9488;color:#fff;">主色</div>
+      <div style="background:#14B8A6;color:#fff;">辅色</div>
+      <div style="background:#F0FDFA;color:#666;">底色</div>
+      <div style="background:#CCFBF1;color:#666;">边框</div>
+    </div>
+  </div>
+  <div class="mock-phone">
+    <div class="mock-body" style="border-radius:12px;overflow:hidden;">
+      <div class="mock-nav">
+        <span class="mock-logo">📍 游导笔记</span>
+        <div class="mock-nav-links"><span>刷题</span><span class="active" style="background:#0D9488;">首页</span><span>知识</span></div>
+      </div>
+      <div class="mock-hero">
+        <div class="mock-avatar">👩</div>
+        <div class="mock-greeting">考两次上岸的曼曼</div>
+        <div class="mock-slogan">走过弯路，所以更懂路</div>
+        <div class="mock-desc">持证导游·基于官方教材整理<br>1090+真题 · 50章知识库</div>
+        <div class="mock-buttons">
+          <button class="mock-btn-primary">开始刷题</button>
+          <button class="mock-btn-outline">看资料包</button>
+        </div>
+      </div>
+      <div class="mock-grid">
+        <div class="mock-grid-item"><div class="mock-grid-icon">📚</div><div class="mock-grid-text">知识库</div></div>
+        <div class="mock-grid-item"><div class="mock-grid-icon">📝</div><div class="mock-grid-text">刷题</div></div>
+        <div class="mock-grid-item"><div class="mock-grid-icon">🎯</div><div class="mock-grid-text">模拟考</div></div>
+      </div>
+      <div class="mock-cards">
+        <div class="mock-card"><div class="mock-card-title">📖 政策法规</div><div class="mock-card-text">旅行社条例、导游管理条例...</div></div>
+        <div class="mock-card"><div class="mock-card-title">💼 导游业务</div><div class="mock-card-text">导游服务规范、应急处理...</div></div>
+      </div>
+      <div class="mock-price-section">
+        <div class="mock-badge">全套资料</div>
+        <div class="mock-price">¥69.9</div>
+      </div>
+      <div class="mock-bottom-nav">
+        <div class="mock-tab"><span class="mock-tab-icon">🏠</span>首页</div>
+        <div class="mock-tab mock-tab-active"><span class="mock-tab-icon">📝</span>刷题</div>
+        <div class="mock-tab"><span class="mock-tab-icon">🔍</span>搜索</div>
+        <div class="mock-tab"><span class="mock-tab-icon">📚</span>知识</div>
+      </div>
+    </div>
+  </div>
+  <div class="vote-bar"><span class="vote-text">🌿 清爽不刺眼，长时间学习不累</span></div>
+</div>
+
+<!-- 方案3: 暖阳琥珀 -->
+<div class="scheme-card scheme-3">
+  <div class="scheme-header">
+    <div class="scheme-name">方案C：暖阳琥珀</div>
+    <div class="scheme-desc">温暖舒适 · 知识付费专业感 · 高级</div>
+    <div class="color-strip" style="margin-top:8px;border-radius:6px;overflow:hidden;">
+      <div style="background:#D97706;color:#fff;">主色</div>
+      <div style="background:#F59E0B;color:#fff;">辅色</div>
+      <div style="background:#FFFBEB;color:#666;">底色</div>
+      <div style="background:#FEF3C7;color:#666;">边框</div>
+    </div>
+  </div>
+  <div class="mock-phone">
+    <div class="mock-body" style="border-radius:12px;overflow:hidden;">
+      <div class="mock-nav">
+        <span class="mock-logo">📍 游导笔记</span>
+        <div class="mock-nav-links"><span>刷题</span><span class="active" style="background:#D97706;">首页</span><span>知识</span></div>
+      </div>
+      <div class="mock-hero">
+        <div class="mock-avatar">👩</div>
+        <div class="mock-greeting">考两次上岸的曼曼</div>
+        <div class="mock-slogan">走过弯路，所以更懂路</div>
+        <div class="mock-desc">持证导游·基于官方教材整理<br>1090+真题 · 50章知识库</div>
+        <div class="mock-buttons">
+          <button class="mock-btn-primary">开始刷题</button>
+          <button class="mock-btn-outline">看资料包</button>
+        </div>
+      </div>
+      <div class="mock-grid">
+        <div class="mock-grid-item"><div class="mock-grid-icon">📚</div><div class="mock-grid-text">知识库</div></div>
+        <div class="mock-grid-item"><div class="mock-grid-icon">📝</div><div class="mock-grid-text">刷题</div></div>
+        <div class="mock-grid-item"><div class="mock-grid-icon">🎯</div><div class="mock-grid-text">模拟考</div></div>
+      </div>
+      <div class="mock-cards">
+        <div class="mock-card"><div class="mock-card-title">📖 政策法规</div><div class="mock-card-text">旅行社条例、导游管理条例...</div></div>
+        <div class="mock-card"><div class="mock-card-title">💼 导游业务</div><div class="mock-card-text">导游服务规范、应急处理...</div></div>
+      </div>
+      <div class="mock-price-section">
+        <div class="mock-badge">全套资料</div>
+        <div class="mock-price">¥69.9</div>
+      </div>
+      <div class="mock-bottom-nav">
+        <div class="mock-tab"><span class="mock-tab-icon">🏠</span>首页</div>
+        <div class="mock-tab mock-tab-active"><span class="mock-tab-icon">📝</span>刷题</div>
+        <div class="mock-tab"><span class="mock-tab-icon">🔍</span>搜索</div>
+        <div class="mock-tab"><span class="mock-tab-icon">📚</span>知识</div>
+      </div>
+    </div>
+  </div>
+  <div class="vote-bar"><span class="vote-text">☀️ 温暖专业，和Slogan橙色天然搭配</span></div>
+</div>
+
+<!-- 方案4: 靛蓝学院 -->
+<div class="scheme-card scheme-4">
+  <div class="scheme-header">
+    <div class="scheme-name">方案D：靛蓝学院</div>
+    <div class="scheme-desc">专业权威 · 教育感强 · 值得信赖</div>
+    <div class="color-strip" style="margin-top:8px;border-radius:6px;overflow:hidden;">
+      <div style="background:#4F46E5;color:#fff;">主色</div>
+      <div style="background:#6366F1;color:#fff;">辅色</div>
+      <div style="background:#EEF2FF;color:#666;">底色</div>
+      <div style="background:#E0E7FF;color:#666;">边框</div>
+    </div>
+  </div>
+  <div class="mock-phone">
+    <div class="mock-body" style="border-radius:12px;overflow:hidden;">
+      <div class="mock-nav">
+        <span class="mock-logo">📍 游导笔记</span>
+        <div class="mock-nav-links"><span>刷题</span><span class="active" style="background:#4F46E5;">首页</span><span>知识</span></div>
+      </div>
+      <div class="mock-hero">
+        <div class="mock-avatar">👩</div>
+        <div class="mock-greeting">考两次上岸的曼曼</div>
+        <div class="mock-slogan">走过弯路，所以更懂路</div>
+        <div class="mock-desc">持证导游·基于官方教材整理<br>1090+真题 · 50章知识库</div>
+        <div class="mock-buttons">
+          <button class="mock-btn-primary">开始刷题</button>
+          <button class="mock-btn-outline">看资料包</button>
+        </div>
+      </div>
+      <div class="mock-grid">
+        <div class="mock-grid-item"><div class="mock-grid-icon">📚</div><div class="mock-grid-text">知识库</div></div>
+        <div class="mock-grid-item"><div class="mock-grid-icon">📝</div><div class="mock-grid-text">刷题</div></div>
+        <div class="mock-grid-item"><div class="mock-grid-icon">🎯</div><div class="mock-grid-text">模拟考</div></div>
+      </div>
+      <div class="mock-cards">
+        <div class="mock-card"><div class="mock-card-title">📖 政策法规</div><div class="mock-card-text">旅行社条例、导游管理条例...</div></div>
+        <div class="mock-card"><div class="mock-card-title">💼 导游业务</div><div class="mock-card-text">导游服务规范、应急处理...</div></div>
+      </div>
+      <div class="mock-price-section">
+        <div class="mock-badge">全套资料</div>
+        <div class="mock-price">¥69.9</div>
+      </div>
+      <div class="mock-bottom-nav">
+        <div class="mock-tab"><span class="mock-tab-icon">🏠</span>首页</div>
+        <div class="mock-tab mock-tab-active"><span class="mock-tab-icon">📝</span>刷题</div>
+        <div class="mock-tab"><span class="mock-tab-icon">🔍</span>搜索</div>
+        <div class="mock-tab"><span class="mock-tab-icon">📚</span>知识</div>
+      </div>
+    </div>
+  </div>
+  <div class="vote-bar"><span class="vote-text">🎓 专业感拉满，知识付费标配色</span></div>
+</div>
+
+</div>
+
+<div style="text-align:center;margin-top:30px;padding:20px;background:rgba(255,255,255,0.05);border-radius:12px;max-width:480px;margin-left:auto;margin-right:auto;">
+  <p style="font-size:0.95rem;color:#fff;margin-bottom:8px;">💡 我的建议</p>
+  <p style="font-size:0.85rem;color:#ccc;line-height:1.8;">
+    <strong>方案B薄荷青</strong>：长时间刷题不累眼，和学习场景最搭<br>
+    <strong>方案C暖阳琥珀</strong>：温暖+专业，Slogan的橙色天然融入，不用改<br>
+    <strong>方案D靛蓝学院</strong>：权威感强，但可能偏冷，和你的"过来人"人设有距离<br>
+    <strong>方案A当前粉色</strong>：温柔但偏女性化，备考网站缺乏专业感
+  </p>
+  <p style="font-size:0.85rem;color:#F59E0B;margin-top:12px;font-weight:700;">我个人推荐方案B薄荷青，护眼+清爽+专业</p>
+</div>
+
+</body>
+</html>
