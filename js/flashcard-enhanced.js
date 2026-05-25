@@ -234,7 +234,7 @@
       justify-content: center;
       margin: 12px 0;
       padding: 12px;
-      background: #FFF8E1;
+      background: #FDF2F8;
       border-radius: 12px;
     }
     .fc-filter-btn {
@@ -252,12 +252,12 @@
       gap: 4px;
     }
     .fc-filter-btn:hover {
-      border-color: #E65100;
-      color: #E65100;
+      border-color: #EC4899;
+      color: #EC4899;
     }
     .fc-filter-btn.active {
-      border-color: #E65100;
-      background: #E65100;
+      border-color: #EC4899;
+      background: #EC4899;
       color: #fff;
     }
     .fc-filter-btn .count {
@@ -270,8 +270,8 @@
       background: rgba(255,255,255,0.3);
     }
     .fc-filter-btn:not(.active) .count {
-      background: #FFF3E0;
-      color: #E65100;
+      background: #FDF2F8;
+      color: #EC4899;
     }
     
     .fc-action-bar {
@@ -292,12 +292,12 @@
       transition: all 0.2s;
     }
     .fc-action-btn:hover {
-      border-color: #E65100;
-      background: #FFF3E0;
-      color: #E65100;
+      border-color: #EC4899;
+      background: #FDF2F8;
+      color: #EC4899;
     }
     .fc-action-btn.shuffle {
-      background: linear-gradient(135deg, #E65100, #FF6D00);
+      background: linear-gradient(135deg, #EC4899, #F472B6);
       color: #fff;
       border: none;
     }
@@ -318,11 +318,11 @@
       z-index: 5;
     }
     .fc-card-status.mastered {
-      background: #E65100;
+      background: #EC4899;
       color: #fff;
     }
     .fc-card-status.reviewing {
-      background: #FF9800;
+      background: #EC4899;
       color: #fff;
     }
     
@@ -345,9 +345,9 @@
       opacity: 1;
       transform: translateX(-50%) translateY(0);
     }
-    .fc-toast-success { background: #E65100; color: #fff; }
+    .fc-toast-success { background: #EC4899; color: #fff; }
     .fc-toast-info { background: #666; color: #fff; }
-    .fc-toast-warning { background: #FF9800; color: #fff; }
+    .fc-toast-warning { background: #EC4899; color: #fff; }
     
     /* 进度条样式 */
     .fc-progress-bar {
@@ -372,10 +372,10 @@
       transition: width 0.3s ease;
     }
     .fc-progress-mastered {
-      background: #E65100;
+      background: #EC4899;
     }
     .fc-progress-reviewing {
-      background: #FF9800;
+      background: #EC4899;
     }
     .fc-progress-label {
       font-size: 0.78rem;

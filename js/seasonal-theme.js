@@ -13,9 +13,9 @@
   
   // 季节配置
   const SEASONS = {
-    spring: { months: [3, 4, 5], name: '春', accent: '#E65100', bg: '#FFF3E0', mood: '清新活跃' },
+    spring: { months: [3, 4, 5], name: '春', accent: '#EC4899', bg: '#FDF2F8', mood: '清新活跃' },
     summer: { months: [6, 7, 8], name: '夏', accent: '#2196F3', bg: '#E3F2FD', mood: '专注沉稳' },
-    autumn: { months: [9, 10, 11], name: '秋', accent: '#FF9800', bg: '#FFF3E0', mood: '紧张有序' },
+    autumn: { months: [9, 10, 11], name: '秋', accent: '#EC4899', bg: '#FDF2F8', mood: '紧张有序' },
     winter: { months: [12, 1, 2], name: '冬', accent: '#E91E63', bg: '#FCE4EC', mood: '温暖期待' }
   };
   
@@ -48,7 +48,7 @@
       style.textContent = `
         /* 考试季氛围：增加紧迫感但不焦虑 */
         :root[data-exam-season="true"] {
-          --season-accent: #E65100;
+          --season-accent: #EC4899;
           --exam-tint: rgba(230, 81, 0, 0.05);
         }
         

@@ -529,7 +529,7 @@
         .metrics-title {
           font-size: 1rem;
           font-weight: 700;
-          color: #E65100;
+          color: #EC4899;
           margin-bottom: 16px;
           text-align: center;
         }
@@ -542,7 +542,7 @@
           display: flex;
           align-items: center;
           gap: 12px;
-          background: #FFF3E0;
+          background: #FDF2F8;
           border-radius: 12px;
           padding: 14px;
         }
@@ -552,7 +552,7 @@
         .metric-value {
           font-size: 1.4rem;
           font-weight: 800;
-          color: #E65100;
+          color: #EC4899;
         }
         .metric-label {
           font-size: 0.75rem;
@@ -579,14 +579,14 @@
           gap: 8px;
         }
         .hot-tag {
-          background: #FFE0B2;
+          background: #FCE4EC;
           color: #333;
           padding: 4px 10px;
           border-radius: 12px;
           font-size: 0.78rem;
         }
         .hot-count {
-          color: #E65100;
+          color: #EC4899;
           font-weight: 700;
         }
       `;

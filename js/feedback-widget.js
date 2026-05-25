@@ -1,6 +1,6 @@
 /**
  * 反馈入口组件
- * 品牌铁律：主色#E65100，版权©2025-2026
+ * 品牌铁律：主色#EC4899，版权©2025-2026
  */
 (function() {
   'use strict';
@@ -23,7 +23,7 @@
       .feedback-trigger {
         width: 48px;
         height: 48px;
-        background: linear-gradient(135deg, #E65100, #FF6D00);
+        background: linear-gradient(135deg, #EC4899, #F472B6);
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -74,7 +74,7 @@
         align-items: center;
         gap: 10px;
         padding: 12px;
-        background: #FFF3E0;
+        background: #FDF2F8;
         border-radius: 10px;
         cursor: pointer;
         transition: all 0.2s;
@@ -83,8 +83,8 @@
         border: 1px solid transparent;
       }
       .feedback-option:hover {
-        background: #FFE0B2;
-        border-color: #E65100;
+        background: #FCE4EC;
+        border-color: #EC4899;
       }
       .feedback-option span:first-child {
         font-size: 1.2rem;

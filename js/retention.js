@@ -118,7 +118,7 @@
     if (score >= 100) return { level: 'master', label: '备考大师', color: '#FFD700' };
     if (score >= 50) return { level: 'senior', label: '资深备考', color: '#C0C0C0' };
     if (score >= 20) return { level: 'intermediate', label: '进阶学员', color: '#CD7F32' };
-    return { level: 'beginner', label: '备考新手', color: '#E65100' };
+    return { level: 'beginner', label: '备考新手', color: '#EC4899' };
   }
   
   // 获取进度数据

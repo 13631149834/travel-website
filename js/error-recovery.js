@@ -44,8 +44,8 @@
         bottom: 100px;
         left: 50%;
         transform: translateX(-50%);
-        background: #FFF3E0;
-        border: 1px solid #E65100;
+        background: #FDF2F8;
+        border: 1px solid #EC4899;
         color: #BF360C;
         padding: 12px 20px;
         border-radius: 12px;

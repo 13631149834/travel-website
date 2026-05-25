@@ -117,7 +117,7 @@
     curiosity: {
       // 好奇触发
       tag: '好奇',
-      colors: ['#E65100', '#FF6D00'],
+      colors: ['#EC4899', '#F472B6'],
       templates: [
         '导游证到底难不难？',
         '一次考过的人是怎么学的？',
@@ -128,7 +128,7 @@
     resonance: {
       // 共鸣触发
       tag: '共鸣',
-      colors: ['#BF360C', '#E65100'],
+      colors: ['#BF360C', '#EC4899'],
       templates: [
         '第一次挂在笔试',
         '面试紧张说不出来话',
@@ -340,7 +340,7 @@
         
         /* 场景提示样式 */
         .scene-toast {
-          background: linear-gradient(135deg, #E65100, #FF6D00);
+          background: linear-gradient(135deg, #EC4899, #F472B6);
           color: #FFF;
           padding: 12px 20px;
           border-radius: 24px;
@@ -414,11 +414,11 @@
         style.id = styleId;
         style.textContent = `
           .scene-banner {
-            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+            background: linear-gradient(135deg, #FDF2F8, #FCE4EC);
             border-radius: 16px;
             padding: 20px;
             text-align: center;
-            border: 1px solid #FFE0B2;
+            border: 1px solid #FCE4EC;
           }
           .scene-banner.compact {
             padding: 12px 16px;
@@ -426,7 +426,7 @@
           .banner-greeting {
             font-size: 1.2rem;
             font-weight: 700;
-            color: #E65100;
+            color: #EC4899;
             margin-bottom: 4px;
           }
           .banner-slogan {
@@ -436,7 +436,7 @@
           }
           .banner-cta {
             display: inline-block;
-            background: #E65100;
+            background: #EC4899;
             color: #FFF;
             padding: 8px 20px;
             border-radius: 20px;

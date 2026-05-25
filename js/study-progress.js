@@ -407,9 +407,9 @@
     /* 学习进度相关样式 */
     .study-btn {
       padding: 8px 16px;
-      border: 2px solid #E65100;
+      border: 2px solid #EC4899;
       background: #fff;
-      color: #E65100;
+      color: #EC4899;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -417,20 +417,20 @@
       transition: all 0.2s;
     }
     .study-btn:hover {
-      background: #FFF3E0;
+      background: #FDF2F8;
     }
     .study-btn.learned {
-      background: #E65100;
+      background: #EC4899;
       color: #fff;
     }
     
     /* 打卡组件样式 */
     .checkin-widget {
-      background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+      background: linear-gradient(135deg, #FDF2F8, #FCE4EC);
       border-radius: 16px;
       padding: 20px;
       margin: 16px 0;
-      border: 1px solid #FFE0B2;
+      border: 1px solid #FCE4EC;
     }
     .checkin-header {
       display: flex;
@@ -444,7 +444,7 @@
     .streak-num {
       font-size: 2.5rem;
       font-weight: 800;
-      color: #E65100;
+      color: #EC4899;
       display: block;
       line-height: 1;
     }
@@ -454,7 +454,7 @@
     }
     .checkin-btn {
       padding: 12px 24px;
-      background: #E65100;
+      background: #EC4899;
       color: #fff;
       border: none;
       border-radius: 25px;
@@ -468,7 +468,7 @@
       transform: scale(1.05);
     }
     .checkin-btn.done {
-      background: #E65100;
+      background: #EC4899;
     }
     .checkin-btn:disabled {
       cursor: default;
@@ -486,7 +486,7 @@
       border-radius: 8px;
     }
     .checkin-day.checked {
-      background: #E65100;
+      background: #EC4899;
       color: #fff;
     }
     .day-name {
@@ -513,9 +513,9 @@
     /* 收藏按钮样式 */
     .favorite-btn {
       padding: 8px 16px;
-      border: 2px solid #FFC107;
+      border: 2px solid #EC4899;
       background: #fff;
-      color: #FFC107;
+      color: #EC4899;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -523,10 +523,10 @@
       transition: all 0.2s;
     }
     .favorite-btn:hover {
-      background: #FFF8E1;
+      background: #FDF2F8;
     }
     .favorite-btn.favorited {
-      background: #FFC107;
+      background: #EC4899;
       color: #fff;
     }
     
@@ -547,7 +547,7 @@
     .study-toast.show {
       transform: translateX(-50%) translateY(0);
     }
-    .study-toast-success { background: #E65100; color: #fff; }
+    .study-toast-success { background: #EC4899; color: #fff; }
     .study-toast-info { background: #666; color: #fff; }
     .study-toast-error { background: #EF4444; color: #fff; }
     
@@ -569,7 +569,7 @@
       transition: all 0.2s;
     }
     .favorite-item:hover {
-      border-color: #E65100;
+      border-color: #EC4899;
       box-shadow: 0 2px 8px rgba(230,81,0,0.1);
     }
     .favorite-title {
@@ -592,13 +592,13 @@
     .cta-link {
       display: inline-block;
       margin-top: 16px;
-      color: #E65100;
+      color: #EC4899;
       font-weight: 600;
     }
     
     /* 学习进度卡片样式 */
     .study-progress-card {
-      background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+      background: linear-gradient(135deg, #FDF2F8, #FCE4EC);
       border-radius: 16px;
       padding: 20px;
       margin: 16px 0;
@@ -619,7 +619,7 @@
       color: #666;
     }
     .study-progress-stats strong {
-      color: #E65100;
+      color: #EC4899;
     }
     .study-progress-bar {
       height: 8px;
@@ -630,7 +630,7 @@
     }
     .study-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #E65100, #FF6D00);
+      background: linear-gradient(90deg, #EC4899, #F472B6);
       border-radius: 4px;
       transition: width 0.3s ease;
     }
@@ -643,7 +643,7 @@
       display: block;
       text-align: center;
       margin-top: 12px;
-      color: #E65100;
+      color: #EC4899;
       font-weight: 600;
       font-size: 0.9rem;
     }

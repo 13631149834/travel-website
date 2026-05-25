@@ -203,7 +203,7 @@ const Notification = {
     toast.style.cssText = 'background:#FFFFFF;border-radius:12px;padding:14px 20px;box-shadow:0 4px 24px rgba(0,0,0,0.15);display:flex;align-items:center;gap:12px;min-width:280px;animation:toastIn 0.3s ease;pointer-events:auto;';
 
     const icons = { success: '✓', error: '✕', warning: '⚠', info: 'ℹ' };
-    const colors = { success: '#E65100', error: '#B91C1C', warning: '#D97706', info: '#2563EB' };
+    const colors = { success: '#EC4899', error: '#DB2777', warning: '#D97706', info: '#2563EB' };
 
     toast.innerHTML = `
       <span style="font-size:1.2rem;flex-shrink:0;color:${colors[type]}">${icons[type]}</span>
@@ -226,8 +226,8 @@ const Notification = {
   alert(message, type = 'info') {
     const colors = {
       info: { bg: '#EFF6FF', border: '#2563EB' },
-      success: { bg: '#FFF3E0', border: '#E65100' },
-      error: { bg: '#FFF5F5', border: '#B91C1C' },
+      success: { bg: '#FDF2F8', border: '#EC4899' },
+      error: { bg: '#FFF5F5', border: '#DB2777' },
       warning: { bg: '#FFFBEB', border: '#D97706' }
     };
     const color = colors[type] || colors.info;
@@ -253,7 +253,7 @@ const Notification = {
         <div style="padding:20px 24px;color:#666;font-size:0.9rem;line-height:1.6">${content}</div>
         <div style="padding:16px 24px 20px;display:flex;gap:12px;justify-content:flex-end;border-top:1px solid #F0F0F0;">
           <button class="modal-btn modal-btn-cancel" style="padding:10px 24px;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;background:#F5F5F5;color:#666">${Security.escapeHtml(cancelText)}</button>
-          <button class="modal-btn modal-btn-confirm" style="padding:10px 24px;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;background:#E65100;color:#FFF">${Security.escapeHtml(confirmText)}</button>
+          <button class="modal-btn modal-btn-confirm" style="padding:10px 24px;border-radius:8px;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s;border:none;background:#EC4899;color:#FFF">${Security.escapeHtml(confirmText)}</button>
         </div>
       </div>
     `;
@@ -400,7 +400,7 @@ const EmptyState = {
         <h3 class="empty-title" style="font-size:1.1rem;color:#333;font-weight:600;margin-bottom:8px;">${Security.escapeHtml(title)}</h3>
         <p class="empty-desc" style="font-size:0.88rem;color:#999;margin-bottom:20px;max-width:300px;margin-left:auto;margin-right:auto;">${Security.escapeHtml(desc)}</p>
         ${options.action ? `
-          <a href="${Security.escapeHtml(options.actionUrl || '#')}" class="empty-action" style="display:inline-flex;align-items:center;gap:6px;padding:12px 24px;background:#E65100;color:#FFF;border-radius:20px;font-size:0.9rem;font-weight:600;text-decoration:none;transition:all 0.2s;">
+          <a href="${Security.escapeHtml(options.actionUrl || '#')}" class="empty-action" style="display:inline-flex;align-items:center;gap:6px;padding:12px 24px;background:#EC4899;color:#FFF;border-radius:20px;font-size:0.9rem;font-weight:600;text-decoration:none;transition:all 0.2s;">
             ${Security.escapeHtml(options.action)}
           </a>
         ` : ''}
@@ -427,11 +427,11 @@ const LoadingState = {
   showGlobal(message = '加载中...') {
     const loading = document.createElement('div');
     loading.id = 'globalLoading';
-    loading.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#FFF3E0;z-index:99998;';
+    loading.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#FDF2F8;z-index:99998;';
     loading.innerHTML = `
       <div style="text-align:center;">
-        <div style="width:40px;height:40px;border:3px solid #FFE0B2;border-top-color:#E65100;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;"></div>
-        <p style="color:#E65100;font-size:0.9rem;">${Security.escapeHtml(message)}</p>
+        <div style="width:40px;height:40px;border:3px solid #FCE4EC;border-top-color:#EC4899;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px;"></div>
+        <p style="color:#EC4899;font-size:0.9rem;">${Security.escapeHtml(message)}</p>
       </div>
       <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
     `;
