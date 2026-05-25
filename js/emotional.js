@@ -334,7 +334,7 @@
     toast.setAttribute('aria-live', 'polite');
     toast.innerHTML = '<span class="toast-icon">' + getToastIcon(type) + '</span><span class="toast-message">' + message + '</span>';
     
-    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-20px);background:linear-gradient(135deg,#EC4899,#F472B6);color:#fff;padding:14px 24px;border-radius:12px;font-size:15px;z-index:99999;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(230,81,0,0.4);opacity:0;transition:all 0.3s ease;max-width:90%;text-align:center;';
+    toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-20px);background:linear-gradient(135deg,#0D9488,#14B8A6);color:#fff;padding:14px 24px;border-radius:12px;font-size:15px;z-index:99999;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(230,81,0,0.4);opacity:0;transition:all 0.3s ease;max-width:90%;text-align:center;';
     
     document.body.appendChild(toast);
     
@@ -362,7 +362,7 @@
     container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:99998;overflow:hidden;';
     document.body.appendChild(container);
     
-    const colors = ['#EC4899', '#F472B6', '#FFB74D', '#FDF2F8', '#FCE4EC', '#FCE4EC'];
+    const colors = ['#0D9488', '#14B8A6', '#FFB74D', '#F0FDFA', '#CCFBF1', '#CCFBF1'];
     const confettiCount = 50;
     
     for (let i = 0; i < confettiCount; i++) {
@@ -394,7 +394,7 @@
     modal.setAttribute('aria-label', '成就解锁');
     modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;display:flex;justify-content:center;align-items:center;opacity:0;transition:opacity 0.3s;';
     
-    modal.innerHTML = '<div style="background:linear-gradient(135deg,#FDF2F8,#FCE4EC);border-radius:20px;padding:40px;text-align:center;max-width:320px;animation:achievementBounce 0.5s ease;"><div style="font-size:60px;margin-bottom:15px;">' + achievement.icon + '</div><div style="font-size:14px;color:#BF360C;margin-bottom:8px;">🏆 成就解锁</div><div style="font-size:22px;font-weight:800;color:#E65100;margin-bottom:10px;">' + achievement.title + '</div><div style="font-size:14px;color:#666;">' + achievement.desc + '</div><div style="margin-top:20px;font-size:12px;color:#999;">走过弯路，所以更懂路</div></div>';
+    modal.innerHTML = '<div style="background:linear-gradient(135deg,#F0FDFA,#CCFBF1);border-radius:20px;padding:40px;text-align:center;max-width:320px;animation:achievementBounce 0.5s ease;"><div style="font-size:60px;margin-bottom:15px;">' + achievement.icon + '</div><div style="font-size:14px;color:#115E59;margin-bottom:8px;">🏆 成就解锁</div><div style="font-size:22px;font-weight:800;color:#E65100;margin-bottom:10px;">' + achievement.title + '</div><div style="font-size:14px;color:#666;">' + achievement.desc + '</div><div style="margin-top:20px;font-size:12px;color:#999;">走过弯路，所以更懂路</div></div>';
     
     document.body.appendChild(modal);
     

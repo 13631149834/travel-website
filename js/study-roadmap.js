@@ -136,12 +136,12 @@
         transform: translateY(-2px);
       }
       .roadmap-done {
-        border-color: #EC4899;
+        border-color: #0D9488;
         background: #E8F5E9;
       }
       .roadmap-current {
-        border-color: #EC4899;
-        background: #FDF2F8;
+        border-color: #0D9488;
+        background: #F0FDFA;
         box-shadow: 0 4px 12px rgba(230, 81, 0, 0.3);
       }
       .roadmap-locked {
@@ -160,13 +160,13 @@
         font-size: 1.2rem;
       }
       .roadmap-done .node-icon {
-        background: #EC4899;
-        border-color: #EC4899;
+        background: #0D9488;
+        border-color: #0D9488;
         color: #FFF;
       }
       .roadmap-current .node-icon {
-        background: #EC4899;
-        border-color: #EC4899;
+        background: #0D9488;
+        border-color: #0D9488;
         color: #FFF;
       }
       .roadmap-track-line {
@@ -176,7 +176,7 @@
         border-radius: 2px;
       }
       .roadmap-track-line.track-done {
-        background: #EC4899;
+        background: #0D9488;
       }
     `;
     document.head.appendChild(style);

@@ -407,9 +407,9 @@
     /* 学习进度相关样式 */
     .study-btn {
       padding: 8px 16px;
-      border: 2px solid #EC4899;
+      border: 2px solid #0D9488;
       background: #fff;
-      color: #EC4899;
+      color: #0D9488;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -417,20 +417,20 @@
       transition: all 0.2s;
     }
     .study-btn:hover {
-      background: #FDF2F8;
+      background: #F0FDFA;
     }
     .study-btn.learned {
-      background: #EC4899;
+      background: #0D9488;
       color: #fff;
     }
     
     /* 打卡组件样式 */
     .checkin-widget {
-      background: linear-gradient(135deg, #FDF2F8, #FCE4EC);
+      background: linear-gradient(135deg, #F0FDFA, #CCFBF1);
       border-radius: 16px;
       padding: 20px;
       margin: 16px 0;
-      border: 1px solid #FCE4EC;
+      border: 1px solid #CCFBF1;
     }
     .checkin-header {
       display: flex;
@@ -444,7 +444,7 @@
     .streak-num {
       font-size: 2.5rem;
       font-weight: 800;
-      color: #EC4899;
+      color: #0D9488;
       display: block;
       line-height: 1;
     }
@@ -454,7 +454,7 @@
     }
     .checkin-btn {
       padding: 12px 24px;
-      background: #EC4899;
+      background: #0D9488;
       color: #fff;
       border: none;
       border-radius: 25px;
@@ -464,11 +464,11 @@
       transition: all 0.2s;
     }
     .checkin-btn:hover:not(:disabled) {
-      background: #BF360C;
+      background: #115E59;
       transform: scale(1.05);
     }
     .checkin-btn.done {
-      background: #EC4899;
+      background: #0D9488;
     }
     .checkin-btn:disabled {
       cursor: default;
@@ -486,7 +486,7 @@
       border-radius: 8px;
     }
     .checkin-day.checked {
-      background: #EC4899;
+      background: #0D9488;
       color: #fff;
     }
     .day-name {
@@ -505,7 +505,7 @@
     .slogan-checkin {
       text-align: center;
       font-size: 0.8rem;
-      color: #BF360C;
+      color: #115E59;
       margin-top: 12px;
       font-weight: 600;
     }
@@ -513,9 +513,9 @@
     /* 收藏按钮样式 */
     .favorite-btn {
       padding: 8px 16px;
-      border: 2px solid #EC4899;
+      border: 2px solid #0D9488;
       background: #fff;
-      color: #EC4899;
+      color: #0D9488;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -523,10 +523,10 @@
       transition: all 0.2s;
     }
     .favorite-btn:hover {
-      background: #FDF2F8;
+      background: #F0FDFA;
     }
     .favorite-btn.favorited {
-      background: #EC4899;
+      background: #0D9488;
       color: #fff;
     }
     
@@ -547,7 +547,7 @@
     .study-toast.show {
       transform: translateX(-50%) translateY(0);
     }
-    .study-toast-success { background: #EC4899; color: #fff; }
+    .study-toast-success { background: #0D9488; color: #fff; }
     .study-toast-info { background: #666; color: #fff; }
     .study-toast-error { background: #EF4444; color: #fff; }
     
@@ -569,7 +569,7 @@
       transition: all 0.2s;
     }
     .favorite-item:hover {
-      border-color: #EC4899;
+      border-color: #0D9488;
       box-shadow: 0 2px 8px rgba(230,81,0,0.1);
     }
     .favorite-title {
@@ -592,13 +592,13 @@
     .cta-link {
       display: inline-block;
       margin-top: 16px;
-      color: #EC4899;
+      color: #0D9488;
       font-weight: 600;
     }
     
     /* 学习进度卡片样式 */
     .study-progress-card {
-      background: linear-gradient(135deg, #FDF2F8, #FCE4EC);
+      background: linear-gradient(135deg, #F0FDFA, #CCFBF1);
       border-radius: 16px;
       padding: 20px;
       margin: 16px 0;
@@ -619,7 +619,7 @@
       color: #666;
     }
     .study-progress-stats strong {
-      color: #EC4899;
+      color: #0D9488;
     }
     .study-progress-bar {
       height: 8px;
@@ -630,7 +630,7 @@
     }
     .study-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #EC4899, #F472B6);
+      background: linear-gradient(90deg, #0D9488, #14B8A6);
       border-radius: 4px;
       transition: width 0.3s ease;
     }
@@ -643,7 +643,7 @@
       display: block;
       text-align: center;
       margin-top: 12px;
-      color: #EC4899;
+      color: #0D9488;
       font-weight: 600;
       font-size: 0.9rem;
     }

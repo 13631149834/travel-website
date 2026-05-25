@@ -95,14 +95,14 @@
     return {
       type: 'poster',
       elements: [
-        { type: 'title', text: title, style: { fontSize: 24, color: '#EC4899' } },
+        { type: 'title', text: title, style: { fontSize: 24, color: '#0D9488' } },
         { type: 'verse', text: verse, style: { fontSize: 18, color: '#333' } },
         { type: 'meaning', text: meaning, style: { fontSize: 14, color: '#666' } },
         { type: 'keywords', text: keywords.join('、'), style: { fontSize: 12, color: '#999' } },
-        { type: 'brand', text: '走过弯路，所以更懂路', style: { fontSize: 10, color: '#BF360C' } }
+        { type: 'brand', text: '走过弯路，所以更懂路', style: { fontSize: 10, color: '#115E59' } }
       ],
       format: 'share',
-      background: '#FDF2F8'
+      background: '#F0FDFA'
     };
   }
   

@@ -135,15 +135,15 @@
       style.textContent = `
         .ritual-modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; display: flex; align-items: center; justify-content: center; }
         .ritual-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); }
-        .ritual-content { position: relative; background: linear-gradient(135deg, #FDF2F8, #FCE4EC); border-radius: 24px; padding: 40px 32px; max-width: 340px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(230,81,0,0.3); animation: ritualPop 0.5s ease; }
+        .ritual-content { position: relative; background: linear-gradient(135deg, #F0FDFA, #CCFBF1); border-radius: 24px; padding: 40px 32px; max-width: 340px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(230,81,0,0.3); animation: ritualPop 0.5s ease; }
         @keyframes ritualPop { 0% { transform: scale(0.5); opacity: 0; } 70% { transform: scale(1.05); } 100% { transform: scale(1); opacity: 1; } }
         .ritual-icon { font-size: 4rem; margin-bottom: 16px; }
         .ritual-title { font-size: 1.5rem; color: #1A1A1A; font-weight: 800; margin-bottom: 12px; }
         .ritual-message { font-size: 0.95rem; color: #666; line-height: 1.6; margin-bottom: 20px; }
-        .ritual-badge { display: inline-flex; align-items: center; gap: 6px; background: #EC4899; color: #FFF; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; }
-        .ritual-achievement { font-size: 1rem; color: #BF360C; font-weight: 700; margin-bottom: 20px; }
+        .ritual-badge { display: inline-flex; align-items: center; gap: 6px; background: #0D9488; color: #FFF; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; margin-bottom: 12px; }
+        .ritual-achievement { font-size: 1rem; color: #115E59; font-weight: 700; margin-bottom: 20px; }
         .ritual-share-btn { width: 100%; padding: 12px; background: #07C160; color: #FFF; border: none; border-radius: 25px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-bottom: 10px; }
-        .ritual-close-btn { width: 100%; padding: 12px; background: #FFF; color: #EC4899; border: 2px solid #EC4899; border-radius: 25px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+        .ritual-close-btn { width: 100%; padding: 12px; background: #FFF; color: #0D9488; border: 2px solid #0D9488; border-radius: 25px; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
       `;
       document.head.appendChild(style);
       document.body.appendChild(modal);

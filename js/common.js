@@ -110,10 +110,10 @@
     VISUAL_GUIDE: {
       // 颜色引导配置
       COLOR_GUIDE: {
-        HIGHLIGHT: '#EC4899',  // 橙色=看这里
-        SECONDARY: '#BF360C',  // 深橙=重点
-        BACKGROUND: '#FDF2F8',  // 暖底背景
-        CTA_COLOR: '#EC4899'   // CTA按钮色
+        HIGHLIGHT: '#0D9488',  // 橙色=看这里
+        SECONDARY: '#115E59',  // 深橙=重点
+        BACKGROUND: '#F0FDFA',  // 暖底背景
+        CTA_COLOR: '#0D9488'   // CTA按钮色
       },
       // 大小引导配置
       SIZE_GUIDE: {
@@ -144,9 +144,9 @@
     Z_INDEX_TOAST: 99999,
     Z_INDEX_MODAL: 99998,
     // 颜色常量
-    BRAND_PRIMARY: '#EC4899',
-    BRAND_DARK: '#BF360C',
-    BRAND_LIGHT: '#FDF2F8',
+    BRAND_PRIMARY: '#0D9488',
+    BRAND_DARK: '#115E59',
+    BRAND_LIGHT: '#F0FDFA',
     
     // 精致化5.0：A/B测试配置
     AB_TEST: {
@@ -344,7 +344,7 @@
           <div style="text-align:center">
             <div style="font-size:1.2rem;margin-bottom:4px">👋</div>
             <div style="font-size:0.9rem;font-weight:600">${message}</div>
-            ${lastPage ? `<a href="${lastPage}" style="color:#FCE4EC;font-size:0.8rem;margin-top:6px;display:inline-block">继续上次位置 →</a>` : ''}
+            ${lastPage ? `<a href="${lastPage}" style="color:#CCFBF1;font-size:0.8rem;margin-top:6px;display:inline-block">继续上次位置 →</a>` : ''}
           </div>
         `;
         toast.style.cssText = `
@@ -363,7 +363,7 @@
           max-width: 90%;
           text-align: center;
           box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-          background: linear-gradient(135deg, #EC4899, #F472B6);
+          background: linear-gradient(135deg, #0D9488, #14B8A6);
           color: #fff;
         `;
         
@@ -824,7 +824,7 @@
       bottom: 80px;
       left: 16px;
       right: 16px;
-      background: linear-gradient(135deg, #EC4899, #F472B6);
+      background: linear-gradient(135deg, #0D9488, #14B8A6);
       color: #fff;
       padding: 14px 16px;
       border-radius: 16px;
@@ -841,7 +841,7 @@
       .install-icon { font-size: 1.4rem; }
       .install-text { flex: 1; font-size: 0.9rem; font-weight: 600; }
       .install-btn { 
-        background: #fff; color: #EC4899; 
+        background: #fff; color: #0D9488; 
         border: none; padding: 8px 16px; 
         border-radius: 20px; font-size: 0.85rem; font-weight: 700;
         cursor: pointer;
@@ -940,7 +940,7 @@
     container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:${CONFIG.Z_INDEX_TOAST};overflow:hidden;';
     document.body.appendChild(container);
     
-    const colors = ['#EC4899', '#F472B6', '#FFB74D', '#FCE4EC', '#FDF2F8'];
+    const colors = ['#0D9488', '#14B8A6', '#FFB74D', '#CCFBF1', '#F0FDFA'];
     
     for (let i = 0; i < 50; i++) {
       const confetti = document.createElement('div');
@@ -1005,9 +1005,9 @@
       }
       .global-toast.show { opacity: 1; }
       .toast-info { background: #333; color: #fff; }
-      .toast-success { background: #EC4899; color: #fff; }
-      .toast-warning { background: #EC4899; color: #fff; }
-      .toast-error { background: #DB2777; color: #fff; }
+      .toast-success { background: #0D9488; color: #fff; }
+      .toast-warning { background: #0D9488; color: #fff; }
+      .toast-error { background: #0F766E; color: #fff; }
     `;
     if (!document.getElementById('toast-styles')) {
       document.head.appendChild(style);
@@ -1055,7 +1055,7 @@
         animation: fadeIn 0.3s ease;
       }
       .achievement-popup {
-        background: linear-gradient(135deg, #FDF2F8, #FCE4EC);
+        background: linear-gradient(135deg, #F0FDFA, #CCFBF1);
         border-radius: 24px;
         padding: 32px;
         text-align: center;
@@ -1068,7 +1068,7 @@
         margin-bottom: 16px;
       }
       .achievement-popup .ach-label {
-        color: #EC4899;
+        color: #0D9488;
         font-size: 0.85rem;
         font-weight: 700;
         margin-bottom: 8px;
@@ -1394,7 +1394,7 @@
           top: 20px;
           left: 50%;
           transform: translateX(-50%);
-          background: linear-gradient(135deg, #EC4899, #F472B6);
+          background: linear-gradient(135deg, #0D9488, #14B8A6);
           color: #fff;
           padding: 12px 16px;
           border-radius: 16px;
