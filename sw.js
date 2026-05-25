@@ -1,5 +1,5 @@
 // 游导学习笔记 Service Worker v4.0
-const CACHE_NAME = 'youdao-v56';
+const CACHE_NAME = 'youdao-v59';
 const OFFLINE_CACHE = 'youdao-offline-v1';
 const OFFLINE_HTML = `
 <!DOCTYPE html>
@@ -10,14 +10,14 @@ const OFFLINE_HTML = `
   <title>当前无网络 - 游导学习笔记</title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background-color:#FFF3E0;background-image:linear-gradient(#FFE0B2 1px,transparent 1px),linear-gradient(90deg,#FFE0B2 1px,transparent 1px),linear-gradient(rgba(255,224,178,0.3) 1px,transparent 1px),linear-gradient(90deg,rgba(255,224,178,0.3) 1px,transparent 1px);background-size:20px 20px,20px 20px,4px 4px,4px 4px;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .offline-card{background:#fff;border-radius:24px;padding:48px 40px;text-align:center;max-width:400px;box-shadow:0 8px 32px rgba(230,81,0,0.15)}
+    body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;background-color:#F8F7FA;background-image:none;background-image:none;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .offline-card{background:#fff;border-radius:24px;padding:48px 40px;text-align:center;max-width:400px;box-shadow:0 8px 32px rgba(236,72,153,0.15)}
     .emoji{font-size:64px;margin-bottom:20px}
-    h1{color:#E65100;font-size:1.5rem;margin-bottom:12px}
-    p{color:#666;font-size:0.95rem;line-height:1.6;margin-bottom:16px}
-    .tip{background:#FFF3E0;border-radius:12px;padding:16px;margin:20px 0;text-align:left}
-    .tip-title{color:#E65100;font-weight:700;margin-bottom:8px;font-size:0.9rem}
-    .tip li{color:#555;font-size:0.85rem;margin:6px 0;list-style:none}
+    h1{color:#EC4899;font-size:1.5rem;margin-bottom:12px}
+    p{color:#4A4458;font-size:0.95rem;line-height:1.6;margin-bottom:16px}
+    .tip{background:#FDF2F8;border-radius:12px;padding:16px;margin:20px 0;text-align:left}
+    .tip-title{color:#EC4899;font-weight:700;margin-bottom:8px;font-size:0.9rem}
+    .tip li{color:#4A4458;font-size:0.85rem;margin:6px 0;list-style:none}
     .btn{background:linear-gradient(135deg,#E65100,#FF6D00);color:#fff;border:none;padding:14px 32px;border-radius:30px;font-size:1rem;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block;margin-top:16px;transition:transform 0.2s}
     .btn:hover{transform:translateY(-2px)}
     .slogan{color:#BF360C;font-size:0.9rem;font-weight:600;margin-top:24px}
