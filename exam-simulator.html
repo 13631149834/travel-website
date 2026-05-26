@@ -2817,45 +2817,32 @@ margin-top: 6px;
 </nav>
 
 <div class="hero">
-<h1>📝 模拟考试<span class="content-updated">📅 更新于2026年5月</span></h1>
+<h1>✏️ 刷题中心<span class="content-updated">📅 更新于2026年5月</span></h1>
       <p style="color:#E65100;font-size:0.85rem;font-weight:600;margin-top:8px;">走过弯路，所以更懂路</p>
-<p>历年真题 · 每日一练 · 正式模考</p>
+<p>逐关练习 · 随机刷题 · 闪卡速记</p>
 </div>
 
 <div class="container">
-<!-- 备考路线图横幅 -->
-<div style="background:linear-gradient(135deg,#6BC5B5,#8FD5C8);color:#fff;padding:12px 20px;border-radius:12px;margin:16px 0;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
-  <span style="font-size:.95rem;font-weight:500">🗺️ 不知道从哪开始？查看184天备考路线图</span>
-  <a href="study-roadmap.html" style="display:inline-block;padding:8px 20px;background:#fff;color:#6BC5B5;border-radius:20px;text-decoration:none;font-weight:bold;font-size:.85rem">查看路线图 →</a>
-</div>
 
-<!-- 激活码区域 -->
-<div style="background:#EDF8F6;border:2px solid #6BC5B5;border-radius:14px;padding:20px;margin-bottom:20px;text-align:center;">
-<h3 style="color:#666666;font-size:1.1rem;margin-bottom:8px;font-weight:700;">📋 导游证模拟考试</h3>
-<p style="color:#666666;font-size:0.88rem;">完全模拟真实考试，四大科目全覆盖，考完即出分数</p>
-</div>
+
+
 
 <!-- 模式切换 -->
 <div class="mode-tabs">
 <div class="mode-tab active" id="tabDaily" onclick="switchMode('daily')">
-<span class="tab-icon">📅</span>
-<span class="tab-title">每日一练</span>
-<span class="tab-desc">全部题目 · 逐题练习</span>
+<span class="tab-icon">✏️</span>
+<span class="tab-title">逐关练习</span>
+<span class="tab-desc">按章节做题</span>
 </div>
 <div class="mode-tab" id="tabExam" onclick="switchMode('exam')">
-<span class="tab-icon">📋</span>
-<span class="tab-title">正式模拟考试</span>
-<span class="tab-desc">全真模拟 · 模拟实战</span>
+<span class="tab-icon">🎲</span>
+<span class="tab-title">随机刷题</span>
+<span class="tab-desc">打乱顺序练</span>
 </div>
-<div class="mode-tab" id="tabWrong" onclick="switchMode('wrong')">
-<span class="tab-icon">📕</span>
-<span class="tab-title">错题本</span>
-<span class="tab-desc">回顾错题 · 巩固</span>
-</div>
-<div class="mode-tab" id="tabStats" onclick="switchMode('stats')">
-<span class="tab-icon">📊</span>
-<span class="tab-title">成绩分析</span>
-<span class="tab-desc">查看趋势 · 提升</span>
+<div class="mode-tab" onclick="location.href='flashcard.html'" style="cursor:pointer;">
+<span class="tab-icon">🃏</span>
+<span class="tab-title">闪卡速记</span>
+<span class="tab-desc">翻转记忆 🆓</span>
 </div>
 </div>
 
@@ -2867,11 +2854,8 @@ margin-top: 6px;
 
 <!-- 随机刷题快捷入口 -->
 <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
-  <button onclick="startRandomPractice()" id="randomPracticeBtn" style="flex:1;min-width:140px;padding:12px 16px;background:linear-gradient(135deg,#6BC5B5,#8FD5C8);color:#FFF;border:none;border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;">
+  <button onclick="startRandomPractice()" id="randomPracticeBtn" style="flex:1;padding:12px 16px;background:linear-gradient(135deg,#6BC5B5,#8FD5C8);color:#FFF;border:none;border-radius:12px;font-size:0.9rem;font-weight:700;cursor:pointer;transition:all 0.2s;">
     🎲 随机刷题
-  </button>
-  <button onclick="filterSubject('all')" id="filter-all" style="flex:1;min-width:120px;padding:12px 16px;background:#FFF;border:2px solid #6BC5B5;color:#6BC5B5;border-radius:12px;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">
-    📋 全部练习
   </button>
 </div>
 
@@ -2883,27 +2867,6 @@ margin-top: 6px;
   <button onclick="filterSubject('interview')" id="filter-interview" style="padding:8px 16px;border-radius:10px;border:2px solid #EDF8F6;background:#FFF;color:#4A5568;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;">🎤 面试(<span class="count-interview">0</span>)</button>
 </div>
 
-<!-- 排序和分页控制 -->
-<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;margin:12px 0;padding:10px 12px;background:#FAFAFA;border-radius:10px;">
-  <div style="display:flex;align-items:center;gap:8px;">
-    <span style="font-size:0.8rem;color:#666;">排序：</span>
-    <select id="sortSelect" onchange="applySort()" style="padding:6px 10px;border:1px solid #E0E0E0;border-radius:8px;font-size:0.8rem;background:#FFF;color:#333;cursor:pointer;">
-      <option value="default">默认顺序</option>
-      <option value="difficulty-easy">难度：易→难</option>
-      <option value="difficulty-hard">难度：难→易</option>
-      <option value="chapter">按章节</option>
-      <option value="hot">热门高频</option>
-    </select>
-  </div>
-  <div style="display:flex;align-items:center;gap:8px;">
-    <span style="font-size:0.8rem;color:#666;">每页：</span>
-    <select id="pageSizeSelect" onchange="changePageSize()" style="padding:6px 10px;border:1px solid #E0E0E0;border-radius:8px;font-size:0.8rem;background:#FFF;color:#333;cursor:pointer;">
-      <option value="10">10题</option>
-      <option value="20" selected>20题</option>
-      <option value="50">50题</option>
-    </select>
-  </div>
-</div>
 <div id="paginationInfo" style="text-align:center;font-size:0.8rem;color:#666;margin-bottom:8px;"></div>
 
 <div id="dailyQuestions"><div class="loading-state"><div class="loading-spinner"></div><p style="text-align:center;color: #777;font-size:0.9rem;padding:40px 20px;">正在加载每日一练题目...</p></div></div>
@@ -3021,27 +2984,15 @@ margin-top: 6px;
 </div>
 </div>
 
-<!-- AI练习 -->
-<div class="section-block">
-<h2><span class="icon">🤖</span>AI智能练习</h2>
-<p class="section-desc">告别题海战术，让AI根据你的薄弱环节生成个性化练习题</p>
-<div class="tip-box">
-<strong>🤖 AI备考助手</strong>
-<p style="margin-top:8px;">输入薄弱知识点，AI自动生成针对性练习题<br>支持历年真题讲解、知识点问答、模拟试卷生成</p>
-<a href="chat.html" style="display:inline-block;margin-top:12px;padding:10px 20px;background:#FFFFFF;color:#666666;border-radius:20px;font-size:0.9rem;font-weight:600;">立即开始AI练习 →</a>
-</div>
-<div class="item-grid" style="margin-top:16px;">
-<div class="item-card">
-<h4>薄弱点突破</h4>
-<p>告诉AI你不理解的知识点，AI用案例讲解直到你懂</p>
-</div>
-<div class="item-card">
-<h4>真题答疑</h4>
-<p>拍照上传错题，AI分析错误原因并举一反三</p>
-</div>
-</div>
+
+
 </div>
 
+
+<!-- 激活码（底部） -->
+<div style="margin:20px 16px;padding:14px 16px;background:#FAFAFA;border:1px dashed #D4EFE9;border-radius:12px;text-align:center;">
+  <span style="font-size:0.8rem;color:#999;">有激活码？</span>
+  <a href="activate.html" style="font-size:0.8rem;color:#6BC5B5;font-weight:600;margin-left:4px;">输入激活码 →</a>
 </div>
 
 <button class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</button>
