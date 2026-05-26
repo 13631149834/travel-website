@@ -1,6 +1,6 @@
 /**
- * 每日能量语 v4.0
- * 每天换一句鼓励语，颜色统一薄荷青，全站协调
+ * 每日能量语 v5.0
+ * 能量卡每天换一种柔和心情色，全站其他保持不变
  */
 (function() {
   'use strict';
@@ -38,13 +38,23 @@
     { text: "别贪多，把做过的题搞懂就够了", icon: "📖" },
   ];
 
+  // 柔和低饱和度渐变，不抢眼
+  var moods = [
+    { name: "元气", icon: "🌟", gradient: "linear-gradient(135deg, #5EEAD4, #99F6E4)" },   // 浅薄荷绿
+    { name: "斗志", icon: "🔥", gradient: "linear-gradient(135deg, #FDA4AF, #FECDD3)" },   // 浅玫瑰粉
+    { name: "治愈", icon: "🌈", gradient: "linear-gradient(135deg, #FCD34D, #FDE68A)" },   // 浅暖黄
+    { name: "专注", icon: "🎯", gradient: "linear-gradient(135deg, #C4B5FD, #DDD6FE)" },   // 浅薰衣草紫
+    { name: "智慧", icon: "✨", gradient: "linear-gradient(135deg, #93C5FD, #BFDBFE)" },   // 浅天空蓝
+  ];
+
   function getDayIndex() {
-    var today = new Date();
-    return Math.floor((today - new Date(today.getFullYear(), 0, 0)) / (86400000));
+    var d = new Date();
+    return Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 86400000);
   }
 
   function init() {
     var q = quotes[getDayIndex() % quotes.length];
+    var mood = moods[getDayIndex() % moods.length];
     var slogan = document.querySelector('.hero-slogan');
     if (!slogan) return;
 
@@ -57,16 +67,19 @@
 
     container.innerHTML =
       '<div style="' +
-        'background:linear-gradient(135deg,#0F766E,#0D9488);' +
+        'background:' + mood.gradient + ';' +
         'border-radius:12px;padding:12px 16px;margin-bottom:16px;' +
         'position:relative;overflow:hidden;' +
-        'transition:transform 0.3s;box-shadow:0 2px 8px rgba(13,148,136,0.15);' +
+        'transition:transform 0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.06);' +
       '" onmouseover="this.style.transform=\'translateY(-1px)\'" onmouseout="this.style.transform=\'translateY(0)\'">' +
-        '<div style="position:absolute;top:-12px;right:-12px;width:50px;height:50px;background:rgba(255,255,255,0.06);border-radius:50%;"></div>' +
+        '<div style="position:absolute;top:-12px;right:-12px;width:50px;height:50px;background:rgba(255,255,255,0.3);border-radius:50%;"></div>' +
         '<div style="display:flex;align-items:center;gap:10px;">' +
           '<span style="font-size:1.2rem;">' + q.icon + '</span>' +
-          '<div style="font-size:0.95rem;color:#FFFFFF;font-weight:600;line-height:1.5;">' +
-            '「' + q.text + '」' +
+          '<div style="flex:1;min-width:0;">' +
+            '<div style="font-size:0.7rem;color:rgba(0,0,0,0.4);margin-bottom:2px;">' + mood.icon + ' ' + mood.name + ' · 每日能量</div>' +
+            '<div style="font-size:0.95rem;color:rgba(0,0,0,0.75);font-weight:600;line-height:1.5;">' +
+              '「' + q.text + '」' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
