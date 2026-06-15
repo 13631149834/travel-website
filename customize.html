@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>定制备考 - 导游证备考助手</title>
+  <meta name="description" content="专属备考方案，雷大大+导优优+游导笔记三角闭环，走过弯路所以更懂路">
+  <meta property="og:title" content="定制备考 - 导游证备考助手">
+  <meta property="og:description" content="专属备考方案，三角闭环高效上岸">
+  <meta property="og:url" content="https://youdao-travel.com/customize.html">
+  <meta name="theme-color" content="#E91E63">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;line-height:1.6;color:#1A1A1A;background:#F5F5F5;min-height:100dvh;padding-bottom:70px}
+    a{text-decoration:none;color:inherit}
+
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:linear-gradient(135deg,#E91E63,#F48FB1);position:sticky;top:0;z-index:9999}
+    .logo{font-size:1rem;font-weight:800;color:#FFF;display:flex;align-items:center;gap:6px}
+    .logo-icon{width:28px;height:28px;background:rgba(255,255,255,.25);border-radius:6px;display:flex;align-items:center;justify-content:center;color:#FFF;font-size:.85rem}
+    .nav-menu a:last-child{border-bottom:none}
+
+    .container{padding:16px}
+
+    /* 顶部Hero */
+    .hero{padding:24px 16px 16px;text-align:center;background:#FFF}
+    .hero h1{font-size:1.3rem;font-weight:800}
+    .hero p{font-size:.8rem;color:#666;margin-top:4px}
+
+    /* 三角闭环核心区 */
+    .triangle-core{margin:16px 0;padding:24px 16px;background:#FFF;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    .triangle-core h2{font-size:1.05rem;font-weight:800;text-align:center;margin-bottom:16px}
+    .tri-visual{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+    .tri-row{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;transition:transform .15s}
+    .tri-row:active{transform:scale(.98)}
+    .tri-emoji{font-size:1.8rem;width:48px;text-align:center;flex-shrink:0}
+    .tri-content{flex:1}
+    .tri-title{font-size:.95rem;font-weight:700;color:#1A1A1A}
+    .tri-sub{font-size:.78rem;color:#666;margin-top:2px}
+    .tri-badge{font-size:.68rem;font-weight:700;padding:2px 8px;border-radius:6px;white-space:nowrap}
+    .tri-arrow{text-align:center;color:#E91E63;font-size:1.2rem;margin:-4px 0}
+
+    /* 定制方案卡片 */
+    .plan-card{background:#FFF;border-radius:16px;padding:20px 16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    .plan-card h3{font-size:1rem;font-weight:800;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+    .plan-card p{font-size:.82rem;color:#666;margin-bottom:12px;line-height:1.7}
+    .plan-btn{display:block;width:100%;padding:14px;border:none;border-radius:12px;font-size:.95rem;font-weight:700;cursor:pointer;text-align:center;text-decoration:none;transition:all .2s}
+    .plan-btn:active{transform:scale(.97)}
+    .plan-btn.pink{background:linear-gradient(135deg,#E91E63,#F48FB1);color:#FFF}
+    .plan-btn.outline{background:#FFF;color:#E91E63;border:2px solid #E91E63}
+
+    /* 特色标签 */
+    .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .tag{font-size:.72rem;padding:4px 10px;border-radius:8px;font-weight:600}
+
+    /* 对比表 */
+    .compare-box{background:#FFF;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+    .compare-box h3{font-size:.95rem;font-weight:800;margin-bottom:12px}
+    .compare-row{display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px 0;font-size:.78rem;border-bottom:1px solid #F5F5F5;align-items:center}
+    .compare-row:last-child{border-bottom:none}
+    .compare-header{font-weight:700;color:#999;font-size:.72rem}
+    .compare-cell{text-align:center}
+    .compare-cell.highlight{color:#E91E63;font-weight:700}
+    .compare-cell.name{text-align:left;font-weight:600;color:#1A1A1A}
+
+    /* 二战专区 */
+    .warrior-box{background:linear-gradient(135deg,#FCE4EC,#FFF1F5);border-radius:16px;padding:20px 16px;margin:16px 0;border:1px solid #FCE7F3}
+    .warrior-box h3{font-size:1rem;font-weight:800;color:#C2185B;margin-bottom:8px}
+    .warrior-box p{font-size:.82rem;color:#666;line-height:1.7;margin-bottom:12px}
+    .warrior-quote{font-size:.85rem;color:#C2185B;font-weight:600;font-style:italic;margin:12px 0;padding:12px;background:rgba(255,255,255,.6);border-radius:10px;border-left:3px solid #E91E63}@media(min-width:481px){body{max-width:960px;margin:0 auto;box-shadow:0 0 40px rgba(0,0,0,.08)}}
+    @media(min-width:769px){}
+    button,a{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+    .footer{text-align:center;padding:16px;font-size:.75rem;color:#666;border-top:1px solid #F0F0F0;margin-top:20px}
+    .footer a{color:#E91E63}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a href="index.html" class="logo"><div class="logo-icon">导</div>导游证备考助手</a>
+  </nav>
+
+  <div class="hero">
+    <h1>🎯 定制备考方案</h1>
+    <p>走过弯路，所以更懂路 · 三角闭环高效上岸</p>
+  </div>
+
+  <div class="container">
+
+    <!-- ===== 三角闭环核心 ===== -->
+    <div class="triangle-core">
+      <h2>🔗 备考三件套，各有所长</h2>
+      <div class="tri-visual">
+        <div class="tri-row" style="background:#FCE4EC;flex-direction:column;align-items:stretch;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <div class="tri-emoji">📖</div>
+            <div class="tri-content">
+              <div class="tri-title">游导笔记（本站）<span class="tri-badge" style="background:#E91E63;color:#FFF;margin-left:6px;">差异化</span></div>
+              <div class="tri-sub">口诀速记+章节框架+免费2章+AI陪练+闪卡</div>
+            </div>
+          </div>
+          <div style="border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <img src="images/youdao-showcase.jpg" alt="游导笔记界面展示" style="width:100%;display:block;" loading="lazy">
+          </div>
+        </div>
+        <div class="tri-arrow">↕</div>
+        <div class="tri-row" style="background:#E3F2FD;flex-direction:column;align-items:stretch;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <div class="tri-emoji">🎥</div>
+            <div class="tri-content">
+              <div class="tri-title">雷大大视频课<span class="tri-badge" style="background:#1565C0;color:#FFF;margin-left:6px;">权威背书</span></div>
+              <div class="tri-sub">系统精讲+名师直播+每章配套推荐+考试动态</div>
+            </div>
+          </div>
+          <div style="border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <img src="images/leidada-showcase.jpg" alt="雷大大视频课界面展示" style="width:100%;display:block;" loading="lazy">
+          </div>
+        </div>
+        <div class="tri-arrow">↕</div>
+        <div class="tri-row" style="background:#E8F5E9;flex-direction:column;align-items:stretch;">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+            <div class="tri-emoji">🤖</div>
+            <div class="tri-content">
+              <div class="tri-title">导优优AI系统<span class="tri-badge" style="background:#2E7D32;color:#FFF;margin-left:6px;">智能刷题</span></div>
+              <div class="tri-sub">AI分析薄弱项+口诀库+面试模拟+错题举一反三</div>
+            </div>
+          </div>
+          <div style="border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+            <img src="images/douyouyou-showcase.jpg" alt="导优优AI系统界面展示" style="width:100%;display:block;" loading="lazy">
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;padding:12px;background:#F8F7FA;border-radius:10px;font-size:.82rem;color:#666;line-height:1.7;">
+        <strong style="color:#1A1A1A;">搭配逻辑：</strong>看游导笔记记框架 → 雷大大视频深入理解 → 导优优AI巩固刷题<br>
+        <span style="color:#E65100;font-weight:600;">走过弯路，所以更懂路</span>
+      </div>
+    </div>
+
+    <!-- ===== 三方对比 ===== -->
+    <div class="compare-box">
+      <h3>📊 三者有什么区别？</h3>
+      <div class="compare-row compare-header">
+        <div class="compare-cell name">功能</div>
+        <div class="compare-cell">游导笔记</div>
+        <div class="compare-cell">雷大大</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell name">口诀速记</div>
+        <div class="compare-cell highlight">✅ 208张</div>
+        <div class="compare-cell" style="color:#999;">❌</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell name">视频精讲</div>
+        <div class="compare-cell" style="color:#999;">推荐链接</div>
+        <div class="compare-cell highlight">✅ 系统课</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell name">AI智能刷题</div>
+        <div class="compare-cell highlight">✅ 导优优</div>
+        <div class="compare-cell" style="color:#999;">❌</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell name">章节笔记</div>
+        <div class="compare-cell highlight">✅ 免费2章</div>
+        <div class="compare-cell" style="color:#999;">❌</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell name">面试模拟</div>
+        <div class="compare-cell highlight">✅ 31省</div>
+        <div class="compare-cell" style="color:#999;">部分</div>
+      </div>
+      <div class="compare-row">
+        <div class="compare-cell name">价格</div>
+        <div class="compare-cell highlight"><a href="resources.html" style="color:#E91E63;text-decoration:underline;font-weight:700">点击查看 →</a></div>
+        <div class="compare-cell" style="color:#666;">数百元</div>
+      </div>
+    </div>
+
+    <!-- ===== 定制方案1：速通方案 ===== -->
+    <div class="plan-card">
+      <h3>⚡ 速通方案（零基础/时间紧）</h3>
+      <p>先看游导笔记建立框架（2章免费），再看雷大大视频深入理解，最后用导优优AI集中刷题。每天2小时，45天搞定。</p>
+      <div class="tags">
+        <span class="tag" style="background:#FCE4EC;color:#E91E63;">零基础友好</span>
+        <span class="tag" style="background:#E3F2FD;color:#1565C0;">45天计划</span>
+        <span class="tag" style="background:#E8F5E9;color:#2E7D32;">三件套协同</span>
+      </div>
+      <a href="learn.html" class="plan-btn pink">开始学习 →</a>
+    
+      <a href="learn.html" class="plan-btn" style="display:inline-block;margin-top:8px;padding:10px 20px;background:#E91E63;color:#FFF;border-radius:10px;font-size:0.85rem;font-weight:700;text-decoration:none;">📖 开始学习 →</a>
+    </div>
+
+    <!-- ===== 定制方案2：二战逆袭 ===== -->
+    <div class="warrior-box">
+      <h3>🔥 二战逆袭专区</h3>
+      <p>第一次挂在笔试？曼曼也是考了两次才上岸。二战最忌讳从头来过——你需要的是精准补漏，不是重复劳动。</p>
+      <div class="warrior-quote">
+        "我第一次死在法规选择题，感觉每条法律都长得一样。后来用口诀+框架法，法规反而成了得分项。"<br>—— 曼曼 · 持证导游 · 走过弯路所以更懂路
+      </div>
+      <p style="font-size:.82rem;color:#666;margin-bottom:12px;">二战专属策略：先刷错题找薄弱 → 口诀攻克记忆盲区 → 导优优AI举一反三 → 雷大大查漏补缺</p>
+      <a href="wrong-questions.html" class="plan-btn pink">查看错题本 →</a>
+      <a href="study-progress.html" class="plan-btn pink" style="margin-left:8px;">制定学习计划 →</a>
+    </div>
+
+    <!-- ===== 定制方案3：冲刺方案 ===== -->
+    <div class="plan-card">
+      <h3>🚀 冲刺方案（考前1个月）</h3>
+      <p>时间不够了？闪卡速记208条口诀 + 导优优AI薄弱项专练 + 每日一练10题。每天1小时，考前突击也来得及。</p>
+      <div class="tags">
+        <span class="tag" style="background:#FFF3E0;color:#E65100;">考前急救</span>
+        <span class="tag" style="background:#FCE4EC;color:#E91E63;">碎片时间</span>
+        <span class="tag" style="background:#E8F5E9;color:#2E7D32;">AI提效</span>
+      </div>
+      <a href="flashcard.html" class="plan-btn pink">开始闪卡速记 →</a>
+    
+      <a href="exam-simulator.html" class="plan-btn" style="display:inline-block;margin-top:8px;padding:10px 20px;background:#E91E63;color:#FFF;border-radius:10px;font-size:0.85rem;font-weight:700;text-decoration:none;">📝 开始冲刺刷题 →</a>
+    </div>
+
+    <!-- ===== 雷大大专区 ===== -->
+    <div class="plan-card" style="border:2px solid #E3F2FD;">
+      <h3>🎥 雷大大系统课</h3>
+      <p>每个章节页面都配有雷大大对应视频课推荐。游导笔记帮你记框架，雷大大帮你深入理解——1+1>2。</p>
+      <div class="tags">
+        <span class="tag" style="background:#E3F2FD;color:#1565C0;">权威认证</span>
+        <span class="tag" style="background:#E3F2FD;color:#1565C0;">系统精讲</span>
+        <span class="tag" style="background:#E3F2FD;color:#1565C0;">曼曼推广</span>
+      </div>
+      <a href="https://leidada.com/" target="_blank" rel="noopener" class="plan-btn outline" style="border-color:#1565C0;color:#1565C0;">访问雷大大官网 →</a>
+    </div>
+
+    <!-- ===== 导优优专区 ===== -->
+    <div class="plan-card" style="border:2px solid #E8F5E9;">
+      <h3>🤖 导优优AI备考系统</h3>
+      <p>AI分析你的薄弱科目，自动推荐题目。口诀库+视频课+面试模拟，一个人也能高效备考。曼曼拿到了优惠价，套餐包含导优优全系统。</p>
+      <div class="tags">
+        <span class="tag" style="background:#E8F5E9;color:#2E7D32;">AI智能</span>
+        <span class="tag" style="background:#E8F5E9;color:#2E7D32;">薄弱项分析</span>
+        <span class="tag" style="background:#E8F5E9;color:#2E7D32;">套餐包含</span>
+      </div>
+      <a href="exam-simulator.html" style="display:inline-block;margin-bottom:10px;padding:8px 16px;background:#FCE4EC;color:#E91E63;border-radius:8px;font-size:0.82rem;font-weight:600;text-decoration:none;">📝 去刷题中心练一练 →</a>
+      <br>
+      <a href="https://sj.qq.com/appdetail/com.cy.daoyouu" target="_blank" rel="noopener" class="plan-btn outline" style="border-color:#2E7D32;color:#2E7D32;">下载导优优APP →</a>
+    </div>
+
+    <!-- ===== 套餐入口 ===== -->
+    <div style="margin:16px 0;padding:20px;background:linear-gradient(135deg,#E91E63,#F48FB1);border-radius:16px;text-align:center;color:#FFF;">
+      <div style="font-size:.82rem;opacity:.85;">全套备考方案</div>
+      <div style="font-size:1rem;font-weight:800;margin:6px 0;">三角闭环 · 高性价比</div>
+      <div style="font-size:.78rem;opacity:.85;margin-bottom:12px;">导学刷题小程序 + 导优优全系统 + 网站激活码 + AI陪练</div>
+      <a href="learn.html" style="display:inline-block;padding:12px 32px;background:#FFF;color:#E91E63;border-radius:12px;font-size:.95rem;font-weight:700;text-decoration:none;">立即开通 →</a>
+      <div style="font-size:.72rem;opacity:.7;margin-top:10px;">走过弯路，所以更懂路 · 7天不满意全额退款</div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <a href="privacy.html">隐私保护</a> · <a href="faq.html">常见问题</a> · <a href="free-materials.html">免费资料</a>
+    <p style="margin-top:4px;"><span style="color:#E65100;">走过弯路，所以更懂路</span> | ©2025-2026 ximao101</p>
+    <p style="margin-top:6px;"><a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener" style="color:#999;text-decoration:none;">蜀ICP备2026026706号-1</a></p>
+  </footer>
+<script src="auth.js"></script>
+  <script src="js/cloud-sync.js" defer></script>
+  <script src="js/user-profile.js" defer></script>
+  <script src="js/theme-engine.js?v5" defer></script>
+
+<style>
+/* 底部导航栏 v2 - 磨砂玻璃+胶囊激活 */
+    .bottom-tabs{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-around;align-items:center;background:rgba(255,255,255,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-top:1px solid rgba(233,30,99,0.08);padding:6px 0 calc(8px + env(safe-area-inset-bottom));z-index:9999;box-shadow:0 -4px 20px rgba(233,30,99,0.06)}
+    .bottom-tabs a{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:0.65rem;color:#999;text-decoration:none;padding:6px 12px;border-radius:20px;transition:all 0.25s ease;position:relative;letter-spacing:0.02em}
+    .bottom-tabs a:hover,.bottom-tabs a.active{color:#E91E63;background:rgba(233,30,99,0.06)}
+    .bottom-tabs .tab-icon{font-size:1.3rem;line-height:1;margin-bottom:1px;transition:transform 0.2s ease}
+    .bottom-tabs a.active .tab-icon{transform:scale(1.1)}
+    .bottom-tabs a.active::after{content:'';position:absolute;top:-1px;left:50%;transform:translateX(-50%);width:20px;height:3px;background:linear-gradient(90deg,#E91E63,#F48FB1);border-radius:0 0 3px 3px}
+    .bottom-tabs a .tab-label{font-weight:500;transition:font-weight 0.2s}
+    .bottom-tabs a.active .tab-label{font-weight:700}
+</style>
+<div class="bottom-tabs" style="position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #F0F0F0;display:flex;justify-content:space-around;padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:9999;">
+<a href="index.html" data-tab="home" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.68rem;color:#999;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-9 9 9"/><path d="M5 10v10a1 1 0 001 1h3v-6h6v6h3a1 1 0 001-1V10"/></svg>首页</a>
+<a href="learn.html" data-tab="learn" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.68rem;color:#999;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>学习</a>
+<a href="customize.html" data-tab="customize" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.68rem;color:#999;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>定制</a>
+<a href="interview.html" data-tab="interview" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.68rem;color:#999;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>面试</a>
+<a href="study-progress.html" data-tab="profile" style="text-decoration:none;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:0.68rem;color:#999;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>我的</a>
+</div><script>
+(function(){
+  var tabs=document.querySelector('.bottom-tabs');
+  if(!tabs)return;
+  var links=tabs.querySelectorAll('a');
+  var path=location.pathname.split('/').pop()||'index.html';
+  links.forEach(function(a){
+    var href=a.getAttribute('href');
+    if(href===path){
+      a.classList.add('active');
+    }
+  });
+})();
+</script>
+</body>
+</html>
